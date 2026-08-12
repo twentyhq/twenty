@@ -6,19 +6,10 @@ import {
   isObject,
   isString,
 } from '@sniptt/guards';
-import {
-  getOutputSchemaFromValue,
-  getOutputSchemaMismatchIssues,
-  inputSchemaToOutputSchema,
-} from 'twenty-shared/logic-function';
-import { isDefined, isValidVariable } from 'twenty-shared/utils';
+import { inputSchemaToOutputSchema } from 'twenty-shared/logic-function';
+import { isDefined } from 'twenty-shared/utils';
 import {
   type BaseOutputSchemaV2,
-  collectOutputSchemaVariablePaths,
-  extractVariablesFromInput,
-  parseVariablePath,
-  resolveVariablePathInOutputSchema,
-  TRIGGER_STEP_ID,
   validateWorkflowStructure,
   WorkflowActionType,
   type WorkflowValidationIssue,
@@ -30,33 +21,21 @@ import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-bu
 import { getPickRecordLoadBalanceConfigError } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-pick-record-load-balance-config-error.util';
 import {
   type WorkflowAction,
-  type WorkflowAiAgentAction,
-  type WorkflowIteratorAction,
   type WorkflowLogicFunctionAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import {
-  type WorkflowTrigger,
-  WorkflowTriggerType,
-} from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
-
-const RECORD_CRUD_ACTION_TYPES = new Set<WorkflowActionType>([
-  WorkflowActionType.CREATE_RECORD,
-  WorkflowActionType.UPDATE_RECORD,
-  WorkflowActionType.DELETE_RECORD,
-  WorkflowActionType.UPSERT_RECORD,
-  WorkflowActionType.FIND_RECORDS,
-]);
-
-const VARIABLE_CONSUMING_ACTION_TYPES = new Set<WorkflowActionType>([
-  WorkflowActionType.HTTP_REQUEST,
-  WorkflowActionType.CODE,
-  WorkflowActionType.LOGIC_FUNCTION,
-  WorkflowActionType.SEND_EMAIL,
-  ...RECORD_CRUD_ACTION_TYPES,
-]);
+import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { hasWorkflowStepLevelOutputSchema } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/has-workflow-step-level-output-schema.util';
+import { buildMissingWorkflowOutputSchemaIssue } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/build-missing-workflow-output-schema-issue.util';
+import { validateWorkflowTriggerTypeRequirements } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-trigger-type-requirements.util';
+import { validateWorkflowRuntimeOutputStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-runtime-output-step.util';
+import { validateWorkflowStepsHaveVariableReferences } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-steps-have-variable-references.util';
+import { validateWorkflowIteratorStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-iterator-step.util';
+import { validateWorkflowAiAgentStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-ai-agent-step.util';
+import { validateWorkflowLogicFunctionOutputSchemaMismatch } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-logic-function-output-schema-mismatch.util';
+import { WORKFLOW_RECORD_CRUD_ACTION_TYPES } from 'src/modules/workflow/workflow-builder/workflow-validation/constants/workflow-record-crud-action-types.constant';
 
 const OBJECT_TARGETING_ACTION_TYPES = new Set<WorkflowActionType>([
-  ...RECORD_CRUD_ACTION_TYPES,
+  ...WORKFLOW_RECORD_CRUD_ACTION_TYPES,
   WorkflowActionType.PICK_RECORD,
 ]);
 
@@ -112,7 +91,8 @@ export class WorkflowValidationWorkspaceService {
       steps: enrichedSteps,
     });
 
-    const triggerIssues = this.validateTriggerTypeRequirements(enrichedTrigger);
+    const triggerIssues =
+      validateWorkflowTriggerTypeRequirements(enrichedTrigger);
 
     const semanticIssues = await this.validateStepTypeRequirements({
       workspaceId,
@@ -125,7 +105,7 @@ export class WorkflowValidationWorkspaceService {
       steps: enrichedSteps ?? [],
     });
 
-    const variableReferenceIssues = this.validateStepsHaveVariableReferences(
+    const variableReferenceIssues = validateWorkflowStepsHaveVariableReferences(
       enrichedSteps ?? [],
     );
 
@@ -226,11 +206,11 @@ export class WorkflowValidationWorkspaceService {
     for (const step of steps) {
       switch (step.type) {
         case WorkflowActionType.AI_AGENT:
-          issues.push(...this.validateAiAgentStep(step));
+          issues.push(...validateWorkflowAiAgentStep(step));
           break;
         case WorkflowActionType.CODE:
         case WorkflowActionType.HTTP_REQUEST:
-          issues.push(...this.validateRuntimeOutputStep(step));
+          issues.push(...validateWorkflowRuntimeOutputStep(step));
           break;
         case WorkflowActionType.LOGIC_FUNCTION:
           issues.push(
@@ -238,201 +218,14 @@ export class WorkflowValidationWorkspaceService {
           );
           break;
         case WorkflowActionType.ITERATOR:
-          issues.push(...this.validateIteratorStep({ step, steps, trigger }));
+          issues.push(
+            ...validateWorkflowIteratorStep({ step, steps, trigger }),
+          );
           break;
       }
     }
 
     return issues;
-  }
-
-  private validateIteratorStep({
-    step,
-    steps,
-    trigger,
-  }: {
-    step: WorkflowIteratorAction;
-    steps: WorkflowAction[];
-    trigger: WorkflowTrigger | null;
-  }): WorkflowValidationIssue[] {
-    const items = step.settings?.input?.items;
-
-    if (!isString(items) || !isValidVariable(items)) {
-      return [];
-    }
-
-    const [variable] = extractVariablesFromInput(items);
-
-    if (!isDefined(variable)) {
-      return [];
-    }
-
-    const [referencedStepId, ...propertyPath] = parseVariablePath(variable);
-
-    if (!isDefined(referencedStepId)) {
-      return [];
-    }
-
-    const outputSchema =
-      referencedStepId === TRIGGER_STEP_ID
-        ? trigger?.settings?.outputSchema
-        : steps.find((currentStep) => currentStep.id === referencedStepId)
-            ?.settings?.outputSchema;
-
-    if (!isDefined(outputSchema) || !isObject(outputSchema)) {
-      return [];
-    }
-
-    const resolved = resolveVariablePathInOutputSchema({
-      schema: outputSchema,
-      propertyPath,
-    });
-
-    if (resolved.found && resolved.type === 'array') {
-      return [];
-    }
-
-    const arrayPathSuggestions = collectOutputSchemaVariablePaths(outputSchema)
-      .filter(
-        (path) =>
-          resolveVariablePathInOutputSchema({
-            schema: outputSchema,
-            propertyPath: path.split('.'),
-          }).type === 'array',
-      )
-      .map((path) => `${referencedStepId}.${path}`);
-
-    const hint = isNonEmptyArray(arrayPathSuggestions)
-      ? `Did you mean "{{${arrayPathSuggestions[0]}}}"?${
-          arrayPathSuggestions.length > 1
-            ? ` Other options: ${arrayPathSuggestions
-                .slice(1)
-                .map((suggestion) => `{{${suggestion}}}`)
-                .join(', ')}.`
-            : ''
-        }`
-      : undefined;
-
-    return [
-      {
-        severity: 'error',
-        code: 'ITERATOR_ITEMS_NOT_ARRAY',
-        message: `Iterator step "${step.name ?? step.id}" must iterate over an array, but "{{${variable}}}" is not an array.`,
-        stepId: step.id,
-        path: variable,
-        ...(isDefined(hint) ? { hint } : {}),
-        ...(isNonEmptyArray(arrayPathSuggestions)
-          ? { suggestions: arrayPathSuggestions }
-          : {}),
-      },
-    ];
-  }
-
-  private validateStepsHaveVariableReferences(
-    steps: WorkflowAction[],
-  ): WorkflowValidationIssue[] {
-    const issues: WorkflowValidationIssue[] = [];
-
-    for (const step of steps) {
-      if (!VARIABLE_CONSUMING_ACTION_TYPES.has(step.type)) {
-        continue;
-      }
-
-      const variables = extractVariablesFromInput(step.settings?.input);
-
-      if (variables.length > 0) {
-        continue;
-      }
-
-      issues.push({
-        severity: 'warning',
-        code: 'STEP_HAS_NO_VARIABLE_REFERENCE',
-        message: `Step "${step.name ?? step.id}" does not reference any variable from previous steps.`,
-        stepId: step.id,
-      });
-    }
-
-    return issues;
-  }
-
-  private validateTriggerTypeRequirements(
-    trigger: WorkflowTrigger | null,
-  ): WorkflowValidationIssue[] {
-    if (trigger?.type !== WorkflowTriggerType.WEBHOOK) {
-      return [];
-    }
-
-    if (this.hasOutputSchema(trigger.settings)) {
-      return [];
-    }
-
-    return [
-      this.buildMissingOutputSchemaIssue({
-        id: TRIGGER_STEP_ID,
-        name: trigger.name,
-      }),
-    ];
-  }
-
-  private validateRuntimeOutputStep(
-    step: WorkflowAction,
-  ): WorkflowValidationIssue[] {
-    if (this.hasStepLevelOutputSchema(step)) {
-      return [];
-    }
-
-    return [
-      this.buildMissingOutputSchemaIssue({ id: step.id, name: step.name }),
-    ];
-  }
-
-  // A CODE/LOGIC_FUNCTION step exposes an output schema either through a
-  // user-declared sample (expectedOutputSchema) or through a schema computed
-  // after a draft/test run (outputSchema). The LINK placeholder is not usable.
-  private hasStepLevelOutputSchema(step: WorkflowAction): boolean {
-    return this.hasOutputSchema(step.settings);
-  }
-
-  private hasOutputSchema(
-    settings:
-      | { outputSchema?: unknown; expectedOutputSchema?: unknown }
-      | null
-      | undefined,
-  ): boolean {
-    const expectedOutputSchema = settings?.expectedOutputSchema;
-
-    if (
-      isObject(expectedOutputSchema) &&
-      Object.keys(expectedOutputSchema).length > 0
-    ) {
-      return true;
-    }
-
-    const outputSchema = settings?.outputSchema;
-
-    return (
-      isObject(outputSchema) &&
-      Object.keys(outputSchema).length > 0 &&
-      !(
-        '_outputSchemaType' in outputSchema &&
-        outputSchema._outputSchemaType === 'LINK'
-      )
-    );
-  }
-
-  private buildMissingOutputSchemaIssue({
-    id,
-    name,
-  }: {
-    id: string;
-    name?: string;
-  }): WorkflowValidationIssue {
-    return {
-      severity: 'error',
-      code: 'CODE_STEP_MISSING_OUTPUT_SCHEMA',
-      message: `Step "${name ?? id}" has no output schema. Declare an expected output schema.`,
-      stepId: id,
-    };
   }
 
   private async validateLogicFunctionStep({
@@ -451,13 +244,13 @@ export class WorkflowValidationWorkspaceService {
       });
 
     issues.push(
-      ...this.validateLogicFunctionOutputSchemaMismatch({
+      ...validateWorkflowLogicFunctionOutputSchemaMismatch({
         step,
         declaredOutputSchema,
       }),
     );
 
-    if (this.hasStepLevelOutputSchema(step)) {
+    if (hasWorkflowStepLevelOutputSchema(step)) {
       return issues;
     }
 
@@ -466,40 +259,10 @@ export class WorkflowValidationWorkspaceService {
     }
 
     issues.push(
-      this.buildMissingOutputSchemaIssue({ id: step.id, name: step.name }),
+      buildMissingWorkflowOutputSchemaIssue({ id: step.id, name: step.name }),
     );
 
     return issues;
-  }
-
-  private validateLogicFunctionOutputSchemaMismatch({
-    step,
-    declaredOutputSchema,
-  }: {
-    step: WorkflowLogicFunctionAction;
-    declaredOutputSchema: BaseOutputSchemaV2 | undefined;
-  }): WorkflowValidationIssue[] {
-    const expectedOutputSchema = step.settings?.expectedOutputSchema;
-
-    if (
-      !isDefined(declaredOutputSchema) ||
-      !isObject(expectedOutputSchema) ||
-      Object.keys(expectedOutputSchema).length === 0
-    ) {
-      return [];
-    }
-
-    const mismatchIssues = getOutputSchemaMismatchIssues(
-      declaredOutputSchema,
-      getOutputSchemaFromValue(expectedOutputSchema),
-    );
-
-    return mismatchIssues.map((mismatchIssue) => ({
-      severity: 'warning',
-      code: 'LOGIC_FUNCTION_OUTPUT_SCHEMA_MISMATCH',
-      message: `Step "${step.name ?? step.id}" expected output schema does not match the function's declared output schema: ${mismatchIssue}`,
-      stepId: step.id,
-    }));
   }
 
   private async getLogicFunctionDeclaredOutputSchema({
@@ -544,36 +307,6 @@ export class WorkflowValidationWorkspaceService {
     } catch {
       return undefined;
     }
-  }
-
-  private validateAiAgentStep(
-    step: WorkflowAiAgentAction,
-  ): WorkflowValidationIssue[] {
-    const issues: WorkflowValidationIssue[] = [];
-
-    if (!isNonEmptyString(step.settings?.input?.agentId)) {
-      issues.push({
-        severity: 'error',
-        code: 'AI_AGENT_MISSING_AGENT',
-        message: `AI Agent step "${step.name ?? step.id}" has no agent selected.`,
-        stepId: step.id,
-      });
-    }
-
-    const outputSchema = step.settings?.outputSchema;
-    const hasOutputSchema =
-      isDefined(outputSchema) && Object.keys(outputSchema).length > 0;
-
-    if (!hasOutputSchema) {
-      issues.push({
-        severity: 'warning',
-        code: 'AI_AGENT_MISSING_OUTPUT_VARIABLE',
-        message: `AI Agent step "${step.name ?? step.id}" has no output variable defined. Downstream steps won't be able to reference its result.`,
-        stepId: step.id,
-      });
-    }
-
-    return issues;
   }
 
   private async validateWorkspaceMetadata({
