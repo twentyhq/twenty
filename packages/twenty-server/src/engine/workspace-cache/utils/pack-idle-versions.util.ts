@@ -10,30 +10,51 @@ export type PackIdleVersionsResult = {
 export const packIdleVersions = <T>({
   localCache,
   minIdleMs,
-  maxEntryVersionsPerRun,
+  ponderationBudget,
+  ponderationOf,
   isPackable,
   pack,
   nowEpochMs = () => Date.now(),
 }: {
   localCache: ReadonlyMap<string, WorkspaceLocalCacheEntry<T>>;
   minIdleMs: number;
-  maxEntryVersionsPerRun: number;
+  ponderationBudget: number;
+  ponderationOf: (localKey: string) => number;
   isPackable: (localKey: string) => boolean;
   pack: (params: { localKey: string; data: T }) => Buffer | undefined;
   nowEpochMs?: () => number;
 }): PackIdleVersionsResult => {
   const idleSince = nowEpochMs() - minIdleMs;
-  const candidates: { localKey: string; hash: string; lastReadAt: number }[] =
-    [];
+  const candidates: {
+    localKey: string;
+    hash: string;
+    lastReadAt: number;
+    ponderation: number;
+  }[] = [];
 
   for (const [localKey, entry] of localCache) {
     if (!isPackable(localKey)) {
       continue;
     }
 
+    const rawPonderation = ponderationOf(localKey);
+    const ponderation =
+      Number.isFinite(rawPonderation) && rawPonderation >= 1
+        ? Math.floor(rawPonderation)
+        : 1;
+
+    if (ponderation > ponderationBudget) {
+      continue;
+    }
+
     for (const [hash, version] of entry.versions) {
       if (version.state === 'live' && version.lastReadAt <= idleSince) {
-        candidates.push({ localKey, hash, lastReadAt: version.lastReadAt });
+        candidates.push({
+          localKey,
+          hash,
+          lastReadAt: version.lastReadAt,
+          ponderation,
+        });
       }
     }
   }
@@ -41,10 +62,15 @@ export const packIdleVersions = <T>({
   candidates.sort((a, b) => a.lastReadAt - b.lastReadAt);
 
   let packed = 0;
+  let spentPonderation = 0;
 
-  for (const { localKey, hash } of candidates) {
-    if (packed >= maxEntryVersionsPerRun) {
+  for (const { localKey, hash, ponderation } of candidates) {
+    if (spentPonderation >= ponderationBudget) {
       break;
+    }
+
+    if (spentPonderation + ponderation > ponderationBudget) {
+      continue;
     }
 
     const entry = localCache.get(localKey);
@@ -66,6 +92,7 @@ export const packIdleVersions = <T>({
       lastReadAt: version.lastReadAt,
     });
     packed += 1;
+    spentPonderation += ponderation;
   }
 
   return {

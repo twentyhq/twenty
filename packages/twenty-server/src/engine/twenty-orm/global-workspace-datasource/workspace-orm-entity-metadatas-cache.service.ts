@@ -18,7 +18,10 @@ import { buildEntitySchemaMetadataMaps } from 'src/engine/twenty-orm/global-work
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 
 @Injectable()
-@WorkspaceCache('ORMEntityMetadatas', { localDataOnly: true })
+@WorkspaceCache('ORMEntityMetadatas', {
+  localDataOnly: true,
+  packingPonderation: 128,
+})
 export class WorkspaceORMEntityMetadatasCacheService extends WorkspaceCacheProvider<
   EntityMetadata[]
 > {
