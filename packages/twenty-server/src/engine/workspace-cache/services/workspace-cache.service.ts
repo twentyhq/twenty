@@ -54,7 +54,11 @@ const MIN_EVICT_KEYS = 100;
 const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000; // 30 minutes idle
 const LOCAL_CACHE_SWEEP_INTERVAL_MS = 60 * 1000;
 const PACKING_INTERVAL_MS = 500;
-const MAX_ENTRY_VERSIONS_PER_PACKING_RUN = 2;
+// Ponderation spent per packing run. Providers weigh in via @WorkspaceCache
+// packingPonderation (~payload size); one weighing more than the whole budget is
+// never packed inline and is left to eviction + Redis rehydration instead.
+const PACKING_PONDERATION_BUDGET = 8;
+const DEFAULT_PACKING_PONDERATION = 1;
 const MIN_IDLE_BEFORE_PACKING_MS = 60 * 1000;
 // Per-provider entry caps, keyed by local cache key prefix (ORM graphs are ~5 MB each).
 const MAX_LOCAL_ENTRIES_BY_KEY_NAME = new Map<string, number>([
@@ -89,6 +93,10 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     WorkspaceCacheProvider<CacheDataType, StoredCacheDataType>
   >();
   private readonly localDataOnlyKeys = new Set<WorkspaceCacheKeyName>();
+  private readonly packingPonderationByKey = new Map<
+    WorkspaceCacheKeyName,
+    number
+  >();
   private readonly memoizer = new PromiseMemoizer<CacheEntriesResult>(
     MEMOIZER_TTL_MS,
   );
@@ -133,6 +141,13 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
         if (options?.localDataOnly) {
           this.localDataOnlyKeys.add(workspaceCacheKeyName);
+        }
+
+        if (isDefined(options?.packingPonderation)) {
+          this.packingPonderationByKey.set(
+            workspaceCacheKeyName,
+            options.packingPonderation,
+          );
         }
       }
     }
@@ -694,7 +709,11 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     const { packed, pending } = packIdleVersions({
       localCache: this.localCache,
       minIdleMs: MIN_IDLE_BEFORE_PACKING_MS,
-      maxEntryVersionsPerRun: MAX_ENTRY_VERSIONS_PER_PACKING_RUN,
+      ponderationBudget: PACKING_PONDERATION_BUDGET,
+      ponderationOf: (localKey) =>
+        this.packingPonderationByKey.get(
+          getKeyNameFromLocalCacheKey(localKey) as WorkspaceCacheKeyName,
+        ) ?? DEFAULT_PACKING_PONDERATION,
       isPackable: (localKey) =>
         !this.localDataOnlyKeys.has(
           getKeyNameFromLocalCacheKey(localKey) as WorkspaceCacheKeyName,

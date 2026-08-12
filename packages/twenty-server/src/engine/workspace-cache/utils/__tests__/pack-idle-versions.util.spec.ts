@@ -27,16 +27,18 @@ const pack = () => Buffer.from('packed');
 
 const run = (
   localCache: Map<string, WorkspaceLocalCacheEntry<string>>,
-  maxEntryVersionsPerRun: number,
+  ponderationBudget: number,
   overrides?: {
     pack?: () => Buffer | undefined;
     isPackable?: (localKey: string) => boolean;
+    ponderationOf?: (localKey: string) => number;
   },
 ) =>
   packIdleVersions({
     localCache,
     minIdleMs: IDLE_MS,
-    maxEntryVersionsPerRun,
+    ponderationBudget,
+    ponderationOf: overrides?.ponderationOf ?? (() => 1),
     isPackable: overrides?.isPackable ?? (() => true),
     pack: overrides?.pack ?? pack,
     nowEpochMs: () => NOW_EPOCH_MS,
@@ -144,5 +146,61 @@ describe('packIdleVersions', () => {
 
     expect(result.packed).toBe(0);
     expect(result.pending).toBe(0);
+  });
+
+  it('should never pack a provider heavier than the whole budget', () => {
+    const localCache = new Map([
+      [`${FIELD_METADATA}:ws-heavy`, liveEntry(IDLE - 1_000)],
+      [`${ORM}:ws-light`, liveEntry(IDLE)],
+    ]);
+
+    const result = run(localCache, 8, {
+      ponderationOf: (localKey) =>
+        localKey.startsWith(FIELD_METADATA) ? 64 : 1,
+    });
+
+    expect(result.packed).toBe(1);
+    expect(result.pending).toBe(0);
+    expect(stateOf(localCache, `${FIELD_METADATA}:ws-heavy`)).toBe('live');
+    expect(stateOf(localCache, `${ORM}:ws-light`)).toBe('packed');
+  });
+
+  it('should stop once the ponderation budget is spent', () => {
+    const localCache = new Map([
+      [`${FIELD_METADATA}:ws-a`, liveEntry(IDLE - 3_000)],
+      [`${FIELD_METADATA}:ws-b`, liveEntry(IDLE - 2_000)],
+      [`${FIELD_METADATA}:ws-c`, liveEntry(IDLE - 1_000)],
+    ]);
+
+    const result = run(localCache, 4, { ponderationOf: () => 3 });
+
+    expect(result.packed).toBe(1);
+    expect(result.pending).toBe(2);
+  });
+
+  it('should skip a candidate that does not fit and pack a lighter one behind it', () => {
+    const ponderationBySuffix: Record<string, number> = {
+      'ws-med': 2,
+      'ws-heavy': 3,
+      'ws-light': 1,
+    };
+    const localCache = new Map([
+      [`${FIELD_METADATA}:ws-med`, liveEntry(IDLE - 3_000)],
+      [`${FIELD_METADATA}:ws-heavy`, liveEntry(IDLE - 2_000)],
+      [`${FIELD_METADATA}:ws-light`, liveEntry(IDLE - 1_000)],
+    ]);
+
+    const result = run(localCache, 4, {
+      ponderationOf: (localKey) =>
+        ponderationBySuffix[localKey.split(':')[1]] ?? 1,
+    });
+
+    // med (2) is packed, heavy (3) does not fit the remaining budget and is
+    // skipped, light (1) behind it still fits and is packed.
+    expect(result.packed).toBe(2);
+    expect(result.pending).toBe(1);
+    expect(stateOf(localCache, `${FIELD_METADATA}:ws-med`)).toBe('packed');
+    expect(stateOf(localCache, `${FIELD_METADATA}:ws-heavy`)).toBe('live');
+    expect(stateOf(localCache, `${FIELD_METADATA}:ws-light`)).toBe('packed');
   });
 });
