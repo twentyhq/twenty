@@ -61,6 +61,7 @@ export const useMassEmailComposerState = ({
 
   const {
     recipients,
+    skippedWithoutEmail,
     skippedWithoutEmailCount,
     loading: recipientsLoading,
   } = useMassEmailRecipients(personIds);
@@ -299,6 +300,7 @@ export const useMassEmailComposerState = ({
     setBodyTemplate,
     recipients,
     includedRecipients,
+    skippedWithoutEmail,
     skippedWithoutEmailCount,
     recipientsLoading,
     resolveForRecipient,

@@ -3,6 +3,7 @@ import { useStore } from 'jotai';
 import { useFirstConnectedAccount } from '@/activities/emails/hooks/useFirstConnectedAccount';
 import { useResolveDefaultEmailRecipient } from '@/activities/emails/hooks/useResolveDefaultEmailRecipient';
 import { massEmailPersonIdsState } from '@/activities/emails/mass-email/states/massEmailPersonIdsState';
+import { massEmailRelatedSourceState } from '@/activities/emails/mass-email/states/massEmailRelatedSourceState';
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
@@ -70,6 +71,7 @@ export const ComposeEmailCommand = () => {
         massEmailPersonIdsState.atom,
         bulkPersonRecords.map((record) => record.id),
       );
+      store.set(massEmailRelatedSourceState.atom, null);
       navigateApp(AppPath.MassEmail);
 
       return;

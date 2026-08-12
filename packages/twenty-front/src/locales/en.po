@@ -306,12 +306,6 @@ msgstr "{0} opted out of this topic"
 msgid "{0} selected"
 msgstr "{0} selected"
 
-#. js-lingui-id: uE0AHs
-#. placeholder {0}: composerState.skippedWithoutEmailCount
-#: src/modules/activities/emails/mass-email/components/MassEmailRecipientList.tsx
-msgid "{0} selected people have no email address and were skipped."
-msgstr "{0} selected people have no email address and were skipped."
-
 #. js-lingui-id: peiknr
 #. placeholder {0}: activeFilterLabels.length
 #. placeholder {0}: activeSortLabels.length
@@ -13174,6 +13168,12 @@ msgstr "No deleted records matching the filter criteria were found."
 msgid "No description available for this application"
 msgstr "No description available for this application"
 
+#. js-lingui-id: E0HtSP
+#. placeholder {0}: formatSkippedLabels( composerState.skippedWithoutEmail.map( (skipped) => skipped.displayName, ), )
+#: src/modules/activities/emails/mass-email/components/MassEmailRecipientList.tsx
+msgid "No email address, skipped: {0}"
+msgstr "No email address, skipped: {0}"
+
 #. js-lingui-id: mINrlz
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "No email exchange has occurred with this record yet."
@@ -13286,6 +13286,13 @@ msgstr "No latest version found"
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 msgid "No limit"
 msgstr "No limit"
+
+#. js-lingui-id: ANScpa
+#. placeholder {0}: massEmailRelatedSource.relationFieldLabel
+#. placeholder {1}: formatSkippedLabels( massEmailRelatedSource.sourceRecordLabelsWithoutRelatedPerson, )
+#: src/modules/activities/emails/mass-email/components/MassEmailRecipientList.tsx
+msgid "No linked {0}, skipped: {1}"
+msgstr "No linked {0}, skipped: {1}"
 
 #. js-lingui-id: vV85hO
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
@@ -13711,6 +13718,13 @@ msgstr "Node"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "None"
 msgstr "None"
+
+#. js-lingui-id: cMbQFQ
+#. placeholder {0}: objectMetadataItem.labelPlural
+#. placeholder {1}: relatedPersonFieldMetadataItem.label
+#: src/modules/activities/emails/related-people/hooks/useComposeEmailToRelatedPeople.ts
+msgid "None of the selected {0} have a linked {1}."
+msgstr "None of the selected {0} have a linked {1}."
 
 #. js-lingui-id: 1IipHp
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -14167,6 +14181,12 @@ msgstr "only on {firstDay} and {secondDay}"
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {remainingDays} and {0}"
 msgstr "only on {remainingDays} and {0}"
+
+#. js-lingui-id: asP63i
+#. placeholder {0}: massEmailRelatedSource.sourceObjectLabelPlural
+#: src/modules/activities/emails/mass-email/components/MassEmailRecipientList.tsx
+msgid "Only the first {MAX_EMAIL_RECIPIENTS} selected {0} were read."
+msgstr "Only the first {MAX_EMAIL_RECIPIENTS} selected {0} were read."
 
 #. js-lingui-id: saaSLd
 #: src/modules/activities/emails/components/EmailThreadNotShared.tsx
@@ -17263,7 +17283,9 @@ msgstr "Send email"
 
 #. js-lingui-id: i/TzEU
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
+#: src/modules/command-menu-item/components/RecordIndexCommandMenuDropdown.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
+#: src/modules/side-panel/hooks/useOpenComposeEmailToRelatedPeoplePickerInSidePanel.ts
 msgid "Send Email"
 msgstr "Send Email"
 
@@ -17795,6 +17817,13 @@ msgstr "Skip creating a Name field "
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
 msgid "Skip the junction object (similar to many-to-many relations)"
 msgstr "Skip the junction object (similar to many-to-many relations)"
+
+#. js-lingui-id: L253KY
+#. placeholder {0}: relatedPersonFieldMetadataItem.label
+#. placeholder {1}: sourceRecordLabelsWithoutRelatedPerson.join(', ')
+#: src/modules/activities/emails/related-people/hooks/useComposeEmailToRelatedPeople.ts
+msgid "Skipped without a linked {0}: {1}"
+msgstr "Skipped without a linked {0}: {1}"
 
 #. js-lingui-id: BIZl8w
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -18822,6 +18851,12 @@ msgstr "The icon your workflow trigger will display in the command menu"
 #: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
 msgid "The keep-separate decision could not be saved."
 msgstr "The keep-separate decision could not be saved."
+
+#. js-lingui-id: 4YoVrr
+#. placeholder {0}: relatedPersonFieldMetadataItem.label
+#: src/modules/activities/emails/related-people/hooks/useComposeEmailToRelatedPeople.ts
+msgid "The linked {0} has no email address."
+msgstr "The linked {0} has no email address."
 
 #. js-lingui-id: HiI1Lo
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx

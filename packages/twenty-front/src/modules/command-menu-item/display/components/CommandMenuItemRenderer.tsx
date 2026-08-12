@@ -2,6 +2,8 @@ import { AppMenuItem } from '@/applications/components/AppMenuItem';
 import { useIsThirdPartyApplication } from '@/applications/hooks/useIsThirdPartyApplication';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandListItemLoader } from '@/command-menu-item/display/components/CommandListItemLoader';
+import { CommandMenuDropdownSubMenuContext } from '@/command-menu-item/contexts/CommandMenuDropdownSubMenuContext';
+import { CommandMenuItemRelatedPeopleButtonRenderer } from '@/command-menu-item/display/components/CommandMenuItemRelatedPeopleButtonRenderer';
 import { interpolateCommandMenuItemFields } from '@/command-menu-item/display/utils/interpolateCommandMenuItemFields';
 import { useCommandMenuItemClick } from '@/command-menu-item/hooks/useCommandMenuItemClick';
 import { getCommandMenuItemLabel } from '@/command-menu-item/utils/getCommandMenuItemLabel';
@@ -19,7 +21,10 @@ import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/feedback';
 import { MenuItem } from 'twenty-ui/navigation';
-import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
+import {
+  EngineComponentKey,
+  type CommandMenuItemFieldsFragment,
+} from '~/generated-metadata/graphql';
 
 const StyledPreviewWrapper = styled.div`
   cursor: not-allowed;
@@ -111,10 +116,26 @@ const CommandMenuItemSelectableRenderer = ({
 
   const isThirdPartyApp = useIsThirdPartyApplication(item.applicationId);
 
+  const subMenuContext = useContext(CommandMenuDropdownSubMenuContext);
+
+  // Choosing a relation happens in a submenu of the list this item lives in,
+  // so it opens that submenu rather than mounting the command.
+  const opensRelatedPeopleSubMenu =
+    item.engineComponentKey ===
+      EngineComponentKey.COMPOSE_EMAIL_TO_RELATED_PEOPLE &&
+    isDefined(subMenuContext);
+
   const onItemClick = () => {
     if (disabled) {
       return;
     }
+
+    if (opensRelatedPeopleSubMenu) {
+      subMenuContext.onContentChange('related-people');
+
+      return;
+    }
+
     handleClick();
   };
 
@@ -166,6 +187,7 @@ const CommandMenuItemSelectableRenderer = ({
         onClick={onItemClick}
         text={getCommandMenuItemLabel(label)}
         disabled={disabled}
+        hasSubMenu={opensRelatedPeopleSubMenu}
       />
     </SelectableListItem>
   );
@@ -179,6 +201,20 @@ export const CommandMenuItemRenderer = ({
   const { displayType } = useContext(CommandMenuContext);
 
   if (displayType === 'button') {
+    // Picking which relation to email through happens in a dropdown anchored to
+    // the button, so this item never goes through the mount-and-execute path.
+    if (
+      item.engineComponentKey ===
+      EngineComponentKey.COMPOSE_EMAIL_TO_RELATED_PEOPLE
+    ) {
+      return (
+        <CommandMenuItemRelatedPeopleButtonRenderer
+          item={item}
+          isPrimaryAction={isPrimaryAction === true}
+        />
+      );
+    }
+
     return (
       <CommandMenuItemButtonRenderer
         item={item}

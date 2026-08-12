@@ -1091,4 +1091,21 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     engineComponentKey: EngineComponentKey.COMPOSE_EMAIL,
     hotKeys: null,
   },
+  // Not bound to an object: the front end shows this only on objects that have
+  // a mapped Person relation, so the mapping can change without a migration.
+  composeEmailToRelatedPeople: {
+    universalIdentifier: 'c4f8a1d6-9e2b-4c7f-8a5d-3b6e9f1c4a72',
+    label: 'Send Email',
+    icon: 'IconMail',
+    isPinned: true,
+    position: 67,
+    shortLabel: 'Send Email',
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords >= 1 and permissionFlags.SEND_EMAIL_TOOL',
+    availabilityObjectMetadataUniversalIdentifier: null,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.COMPOSE_EMAIL_TO_RELATED_PEOPLE,
+    hotKeys: null,
+  },
 } as const;

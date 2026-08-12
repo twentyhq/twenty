@@ -1,12 +1,20 @@
+import { RelatedPersonRelationList } from '@/activities/emails/related-people/components/RelatedPersonRelationList';
 import { COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/command-menu-item/constants/CommandMenuDropdownClickOutsideId';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
+import {
+  CommandMenuDropdownSubMenuContext,
+  type CommandMenuDropdownContentId,
+} from '@/command-menu-item/contexts/CommandMenuDropdownSubMenuContext';
 import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
+import { useDropdownContextCurrentContentId } from '@/dropdown-context-state-management/hooks/useDropdownContextCurrentContentId';
 import { recordIndexCommandMenuDropdownPositionComponentState } from '@/command-menu-item/states/recordIndexCommandMenuDropdownPositionComponentState';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -17,7 +25,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { IconLayoutSidebarRightExpand } from 'twenty-ui/icon';
+import { IconChevronLeft, IconLayoutSidebarRightExpand } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
@@ -65,6 +73,56 @@ export const RecordIndexCommandMenuDropdown = () => {
     dropdownId,
   );
 
+  const { currentContentId, handleContentChange, handleResetContent } =
+    useDropdownContextCurrentContentId<CommandMenuDropdownContentId>();
+
+  const relatedPeopleSelectableListInstanceId = `${dropdownId}-related-people`;
+
+  if (currentContentId === 'related-people') {
+    return (
+      <Dropdown
+        dropdownId={dropdownId}
+        data-select-disable
+        dropdownPlacement="bottom-start"
+        dropdownStrategy="absolute"
+        dropdownOffset={{
+          x: recordIndexCommandMenuDropdownPosition.x ?? 0,
+          y: recordIndexCommandMenuDropdownPosition.y ?? 0,
+        }}
+        onClose={handleResetContent}
+        dropdownComponents={
+          <DropdownContent>
+            <StyledDropdownMenuContainer
+              data-click-outside-id={COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
+            >
+              <DropdownMenuHeader
+                StartComponent={
+                  <DropdownMenuHeaderLeftComponent
+                    onClick={handleResetContent}
+                    Icon={IconChevronLeft}
+                  />
+                }
+              >
+                {t`Send Email`}
+              </DropdownMenuHeader>
+              <DropdownMenuItemsContainer>
+                <RelatedPersonRelationList
+                  selectableListInstanceId={
+                    relatedPeopleSelectableListInstanceId
+                  }
+                  onComposed={() => {
+                    handleResetContent();
+                    closeDropdown(dropdownId);
+                  }}
+                />
+              </DropdownMenuItemsContainer>
+            </StyledDropdownMenuContainer>
+          </DropdownContent>
+        }
+      />
+    );
+  }
+
   return (
     <Dropdown
       dropdownId={dropdownId}
@@ -75,6 +133,7 @@ export const RecordIndexCommandMenuDropdown = () => {
         x: recordIndexCommandMenuDropdownPosition.x ?? 0,
         y: recordIndexCommandMenuDropdownPosition.y ?? 0,
       }}
+      onClose={handleResetContent}
       dropdownComponents={
         <DropdownContent>
           <StyledDropdownMenuContainer
@@ -86,9 +145,13 @@ export const RecordIndexCommandMenuDropdown = () => {
                 selectableItemIdArray={selectedItemIdArray}
                 selectableListInstanceId={dropdownId}
               >
-                {recordIndexCommandMenuItems.map((item) => (
-                  <CommandMenuItemRenderer item={item} key={item.id} />
-                ))}
+                <CommandMenuDropdownSubMenuContext.Provider
+                  value={{ onContentChange: handleContentChange }}
+                >
+                  {recordIndexCommandMenuItems.map((item) => (
+                    <CommandMenuItemRenderer item={item} key={item.id} />
+                  ))}
+                </CommandMenuDropdownSubMenuContext.Provider>
                 <SelectableListItem
                   itemId="more-actions"
                   key="more-actions"

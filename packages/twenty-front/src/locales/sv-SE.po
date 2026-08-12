@@ -311,12 +311,6 @@ msgstr "{0} har avanmält sig från det här ämnet"
 msgid "{0} selected"
 msgstr "{0} valda"
 
-#. js-lingui-id: uE0AHs
-#. placeholder {0}: composerState.skippedWithoutEmailCount
-#: src/modules/activities/emails/mass-email/components/MassEmailRecipientList.tsx
-msgid "{0} selected people have no email address and were skipped."
-msgstr ""
-
 #. js-lingui-id: peiknr
 #. placeholder {0}: activeFilterLabels.length
 #. placeholder {0}: activeSortLabels.length
@@ -13181,6 +13175,12 @@ msgstr "Inga raderade poster som matchar filterkriterierna hittades."
 msgid "No description available for this application"
 msgstr "Ingen beskrivning finns tillgänglig för den här appen"
 
+#. js-lingui-id: E0HtSP
+#. placeholder {0}: formatSkippedLabels( composerState.skippedWithoutEmail.map( (skipped) => skipped.displayName, ), )
+#: src/modules/activities/emails/mass-email/components/MassEmailRecipientList.tsx
+msgid "No email address, skipped: {0}"
+msgstr ""
+
 #. js-lingui-id: mINrlz
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "No email exchange has occurred with this record yet."
@@ -13293,6 +13293,13 @@ msgstr "Ingen senaste version hittad"
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 msgid "No limit"
 msgstr "Ingen gräns"
+
+#. js-lingui-id: ANScpa
+#. placeholder {0}: massEmailRelatedSource.relationFieldLabel
+#. placeholder {1}: formatSkippedLabels( massEmailRelatedSource.sourceRecordLabelsWithoutRelatedPerson, )
+#: src/modules/activities/emails/mass-email/components/MassEmailRecipientList.tsx
+msgid "No linked {0}, skipped: {1}"
+msgstr ""
 
 #. js-lingui-id: vV85hO
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
@@ -13718,6 +13725,13 @@ msgstr "Nod"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "None"
 msgstr "Ingen"
+
+#. js-lingui-id: cMbQFQ
+#. placeholder {0}: objectMetadataItem.labelPlural
+#. placeholder {1}: relatedPersonFieldMetadataItem.label
+#: src/modules/activities/emails/related-people/hooks/useComposeEmailToRelatedPeople.ts
+msgid "None of the selected {0} have a linked {1}."
+msgstr ""
 
 #. js-lingui-id: 1IipHp
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -14174,6 +14188,12 @@ msgstr "endast på {firstDay} och {secondDay}"
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {remainingDays} and {0}"
 msgstr "endast på {remainingDays} och {0}"
+
+#. js-lingui-id: asP63i
+#. placeholder {0}: massEmailRelatedSource.sourceObjectLabelPlural
+#: src/modules/activities/emails/mass-email/components/MassEmailRecipientList.tsx
+msgid "Only the first {MAX_EMAIL_RECIPIENTS} selected {0} were read."
+msgstr ""
 
 #. js-lingui-id: saaSLd
 #: src/modules/activities/emails/components/EmailThreadNotShared.tsx
@@ -17272,7 +17292,9 @@ msgstr "Skicka e-post"
 
 #. js-lingui-id: i/TzEU
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
+#: src/modules/command-menu-item/components/RecordIndexCommandMenuDropdown.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
+#: src/modules/side-panel/hooks/useOpenComposeEmailToRelatedPeoplePickerInSidePanel.ts
 msgid "Send Email"
 msgstr "Skicka e-post"
 
@@ -17804,6 +17826,13 @@ msgstr "Hoppa över att skapa ett namnfält "
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
 msgid "Skip the junction object (similar to many-to-many relations)"
 msgstr "Hoppa över kopplingsobjektet (liknar många-till-många-relationer)"
+
+#. js-lingui-id: L253KY
+#. placeholder {0}: relatedPersonFieldMetadataItem.label
+#. placeholder {1}: sourceRecordLabelsWithoutRelatedPerson.join(', ')
+#: src/modules/activities/emails/related-people/hooks/useComposeEmailToRelatedPeople.ts
+msgid "Skipped without a linked {0}: {1}"
+msgstr ""
 
 #. js-lingui-id: BIZl8w
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -18832,6 +18861,12 @@ msgstr "Ikonen som din arbetsflödesutlösare visar i kommandomenyn"
 #. js-lingui-id: u7SthV
 #: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
 msgid "The keep-separate decision could not be saved."
+msgstr ""
+
+#. js-lingui-id: 4YoVrr
+#. placeholder {0}: relatedPersonFieldMetadataItem.label
+#: src/modules/activities/emails/related-people/hooks/useComposeEmailToRelatedPeople.ts
+msgid "The linked {0} has no email address."
 msgstr ""
 
 #. js-lingui-id: HiI1Lo

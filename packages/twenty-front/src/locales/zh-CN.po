@@ -311,12 +311,6 @@ msgstr "{0} 个已退出此主题订阅"
 msgid "{0} selected"
 msgstr "{0} 已选择"
 
-#. js-lingui-id: uE0AHs
-#. placeholder {0}: composerState.skippedWithoutEmailCount
-#: src/modules/activities/emails/mass-email/components/MassEmailRecipientList.tsx
-msgid "{0} selected people have no email address and were skipped."
-msgstr ""
-
 #. js-lingui-id: peiknr
 #. placeholder {0}: activeFilterLabels.length
 #. placeholder {0}: activeSortLabels.length
@@ -13156,6 +13150,12 @@ msgstr "找不到符合筛选条件的已删除记录。"
 msgid "No description available for this application"
 msgstr "此应用程序没有可用的描述"
 
+#. js-lingui-id: E0HtSP
+#. placeholder {0}: formatSkippedLabels( composerState.skippedWithoutEmail.map( (skipped) => skipped.displayName, ), )
+#: src/modules/activities/emails/mass-email/components/MassEmailRecipientList.tsx
+msgid "No email address, skipped: {0}"
+msgstr ""
+
 #. js-lingui-id: mINrlz
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
 msgid "No email exchange has occurred with this record yet."
@@ -13268,6 +13268,13 @@ msgstr "找不到最新版本"
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 msgid "No limit"
 msgstr "无限制"
+
+#. js-lingui-id: ANScpa
+#. placeholder {0}: massEmailRelatedSource.relationFieldLabel
+#. placeholder {1}: formatSkippedLabels( massEmailRelatedSource.sourceRecordLabelsWithoutRelatedPerson, )
+#: src/modules/activities/emails/mass-email/components/MassEmailRecipientList.tsx
+msgid "No linked {0}, skipped: {1}"
+msgstr ""
 
 #. js-lingui-id: vV85hO
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsDetail.tsx
@@ -13693,6 +13700,13 @@ msgstr "节点"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "None"
 msgstr "无"
+
+#. js-lingui-id: cMbQFQ
+#. placeholder {0}: objectMetadataItem.labelPlural
+#. placeholder {1}: relatedPersonFieldMetadataItem.label
+#: src/modules/activities/emails/related-people/hooks/useComposeEmailToRelatedPeople.ts
+msgid "None of the selected {0} have a linked {1}."
+msgstr ""
 
 #. js-lingui-id: 1IipHp
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -14149,6 +14163,12 @@ msgstr "仅在 {firstDay} 和 {secondDay}"
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
 msgid "only on {remainingDays} and {0}"
 msgstr "仅在 {remainingDays} 和 {0}"
+
+#. js-lingui-id: asP63i
+#. placeholder {0}: massEmailRelatedSource.sourceObjectLabelPlural
+#: src/modules/activities/emails/mass-email/components/MassEmailRecipientList.tsx
+msgid "Only the first {MAX_EMAIL_RECIPIENTS} selected {0} were read."
+msgstr ""
 
 #. js-lingui-id: saaSLd
 #: src/modules/activities/emails/components/EmailThreadNotShared.tsx
@@ -17245,7 +17265,9 @@ msgstr "发送邮件"
 
 #. js-lingui-id: i/TzEU
 #: src/modules/activities/emails/components/EmptyInboxPlaceholder.tsx
+#: src/modules/command-menu-item/components/RecordIndexCommandMenuDropdown.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
+#: src/modules/side-panel/hooks/useOpenComposeEmailToRelatedPeoplePickerInSidePanel.ts
 msgid "Send Email"
 msgstr "发送邮件"
 
@@ -17777,6 +17799,13 @@ msgstr "跳过创建名称字段 "
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
 msgid "Skip the junction object (similar to many-to-many relations)"
 msgstr "跳过连接对象 (类似于多对多关系)"
+
+#. js-lingui-id: L253KY
+#. placeholder {0}: relatedPersonFieldMetadataItem.label
+#. placeholder {1}: sourceRecordLabelsWithoutRelatedPerson.join(', ')
+#: src/modules/activities/emails/related-people/hooks/useComposeEmailToRelatedPeople.ts
+msgid "Skipped without a linked {0}: {1}"
+msgstr ""
 
 #. js-lingui-id: BIZl8w
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -18773,6 +18802,12 @@ msgstr "你的工作流触发器将在命令菜单中显示的图标"
 #. js-lingui-id: u7SthV
 #: src/pages/person-duplicate-review/PersonDuplicatesPage.tsx
 msgid "The keep-separate decision could not be saved."
+msgstr ""
+
+#. js-lingui-id: 4YoVrr
+#. placeholder {0}: relatedPersonFieldMetadataItem.label
+#: src/modules/activities/emails/related-people/hooks/useComposeEmailToRelatedPeople.ts
+msgid "The linked {0} has no email address."
 msgstr ""
 
 #. js-lingui-id: HiI1Lo
