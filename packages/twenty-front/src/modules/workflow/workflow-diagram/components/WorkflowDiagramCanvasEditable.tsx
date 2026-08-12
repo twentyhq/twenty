@@ -24,6 +24,7 @@ import { WorkflowDiagramStepNodeEditable } from '@/workflow/workflow-diagram/wor
 import { useCreateEdge } from '@/workflow/workflow-steps/hooks/useCreateEdge';
 import { useDeleteEdge } from '@/workflow/workflow-steps/hooks/useDeleteEdge';
 import { useUpdateStep } from '@/workflow/workflow-steps/hooks/useUpdateStep';
+import { useTidyUpWorkflowVersion } from '@/workflow/workflow-version/hooks/useTidyUpWorkflowVersion';
 import { prepareIfElseStepWithNewBranch } from '@/workflow/workflow-steps/workflow-actions/if-else-action/utils/prepareIfElseStepWithNewBranch';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/workflow-trigger/hooks/useUpdateWorkflowVersionTrigger';
 import {
@@ -58,6 +59,8 @@ export const WorkflowDiagramCanvasEditable = () => {
   const { deleteEdge } = useDeleteEdge();
 
   const { updateStep } = useUpdateStep();
+
+  const { updateWorkflowVersionPosition } = useTidyUpWorkflowVersion();
 
   const { updateTrigger } = useUpdateWorkflowVersionTrigger();
 
@@ -137,7 +140,20 @@ export const WorkflowDiagramCanvasEditable = () => {
     });
   };
 
-  const onNodeDragStop: OnNodeDrag<WorkflowDiagramNode> = async (_, node) => {
+  const onNodeDragStop: OnNodeDrag<WorkflowDiagramNode> = async (
+    _,
+    node,
+    draggedNodes,
+  ) => {
+    if (draggedNodes.length > 1 && isDefined(flow?.workflowVersionId)) {
+      await updateWorkflowVersionPosition(
+        flow.workflowVersionId,
+        draggedNodes.map(({ id, position }) => ({ id, position })),
+      );
+
+      return;
+    }
+
     const stepToUpdate = flow?.steps?.find((step) => step.id === node.id);
 
     if (isDefined(stepToUpdate)) {

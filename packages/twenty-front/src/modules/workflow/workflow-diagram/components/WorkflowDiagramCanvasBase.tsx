@@ -99,6 +99,8 @@ const defaultFitViewOptions = {
   maxZoom: 1,
 } satisfies FitViewOptions;
 
+const WORKFLOW_DIAGRAM_PAN_ON_DRAG_BUTTONS = [1];
+
 export const WorkflowDiagramCanvasBase = ({
   nodeTypes,
   edgeTypes,
@@ -610,13 +612,20 @@ export const WorkflowDiagramCanvasBase = ({
         onNodeDragStop={onNodeDragStop}
         onBeforeDelete={onBeforeDelete}
         onDelete={onDelete}
-        selectNodesOnDrag={false}
+        selectNodesOnDrag
+        selectionKeyCode="Shift"
+        selectionOnDrag
         proOptions={{ hideAttribution: true }}
-        multiSelectionKeyCode={null}
+        multiSelectionKeyCode="Shift"
         nodesFocusable={false}
         nodesDraggable={nodesDraggable}
         edgesFocusable={isDefined(onDeleteEdge)}
-        panOnDrag={workflowDiagramPanOnDrag}
+        // Keep primary-button drags available for rubber-band selection.
+        panOnDrag={
+          workflowDiagramPanOnDrag
+            ? WORKFLOW_DIAGRAM_PAN_ON_DRAG_BUTTONS
+            : false
+        }
         panOnScroll={true}
         onPaneContextMenu={onPaneContextMenu}
         nodesConnectable={nodesConnectable}
