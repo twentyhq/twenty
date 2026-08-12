@@ -17,6 +17,8 @@ The bot runs with the **Slack Assistant** role, which by default can read, creat
 
 **It acts as whoever tagged it.** The first time someone mentions the bot, their Slack profile email is matched against workspace members and the pair is stored as a **Slack User Link** record. From then on the bot runs with that member's permissions *and* the Slack Assistant role: it can never do more than the person asking, and never more than the role allows. Someone with no link gets the Slack Assistant role on its own, exactly as before.
 
+A link matched on email is re-verified on every request: the bot rechecks that the Slack account's current verified email still points at the same member, and follows the live match rather than the stored record if they disagree. The record is an audit trail, not the source of truth. Links set manually are taken as stored.
+
 Only members of the Slack workspace that installed the app are matched automatically. Guests and Slack Connect users from another Slack workspace are not, because their email is vouched for by someone other than your admin. Link those by hand from **Slack User Links**, where you can also correct or remove any link.
 
 One Slack workspace answers into one Twenty workspace.
