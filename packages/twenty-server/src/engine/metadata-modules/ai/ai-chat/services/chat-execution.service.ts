@@ -62,7 +62,13 @@ import {
   ASK_QUESTIONS_TOOL_NAME,
   createAskQuestionsTool,
 } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
+import {
+  COMPLETE_WORKSPACE_SETUP_TOOL_NAME,
+  createCompleteWorkspaceSetupTool,
+} from 'src/engine/metadata-modules/ai/ai-chat/tools/complete-workspace-setup.tool';
 import { type ExtractedFile } from 'src/engine/metadata-modules/ai/ai-chat/types/extracted-file.type';
+import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
+import { hasSucceededWorkspaceSetupCompletion } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-succeeded-workspace-setup-completion.util';
 import { extractCodeInterpreterFiles } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
 import { injectMessageTimestamps } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-timestamps.util';
 import {
@@ -208,10 +214,20 @@ export class ChatExecutionService {
       ...nativeTools,
     };
 
+    const isWorkspaceSetupThread =
+      isDefined(threadId) &&
+      threadId ===
+        buildWorkspaceSetupChatThreadId({
+          workspaceId: workspace.id,
+          userWorkspaceId,
+        }) &&
+      !hasSucceededWorkspaceSetupCompletion(messages);
+
     const preloadedToolNames = [
       ...Object.keys(preloadedTools),
       ...Object.keys(nativeTools),
       ASK_QUESTIONS_TOOL_NAME,
+      ...(isWorkspaceSetupThread ? [COMPLETE_WORKSPACE_SETUP_TOOL_NAME] : []),
     ];
 
     // ToolSet is constant for the entire conversation — no mutation.
@@ -219,6 +235,12 @@ export class ChatExecutionService {
     const activeTools: ToolSet = {
       ...directTools,
       [ASK_QUESTIONS_TOOL_NAME]: createAskQuestionsTool(),
+      ...(isWorkspaceSetupThread
+        ? {
+            [COMPLETE_WORKSPACE_SETUP_TOOL_NAME]:
+              createCompleteWorkspaceSetupTool(),
+          }
+        : {}),
       [LEARN_TOOLS_TOOL_NAME]: createLearnToolsTool(
         this.toolRegistry,
         toolContext,
@@ -446,6 +468,7 @@ export class ChatExecutionService {
       stopWhen: (step) =>
         stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) ||
         hasToolCall(ASK_QUESTIONS_TOOL_NAME)(step) ||
+        hasToolCall(COMPLETE_WORKSPACE_SETUP_TOOL_NAME)(step) ||
         hasNoMoreAvailableCredits,
       experimental_telemetry: {
         ...AI_TELEMETRY_CONFIG,

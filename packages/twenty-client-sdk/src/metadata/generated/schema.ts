@@ -1,10 +1,10 @@
 // @ts-nocheck
 export type Scalars = {
     String: string,
-    Boolean: boolean,
     UUID: string,
-    JSON: Record<string, unknown>,
     DateTime: string,
+    Boolean: boolean,
+    JSON: Record<string, unknown>,
     Float: number,
     Int: number,
     ConnectionCursor: any,
@@ -14,20 +14,6 @@ export type Scalars = {
 }
 
 export type BillingProductDTO = (BillingLicensedProduct | BillingMeteredProduct) & { __isUnion?: true }
-
-export interface ApplicationRegistrationVariable {
-    id: Scalars['UUID']
-    key: Scalars['String']
-    description: Scalars['String']
-    isSecret: Scalars['Boolean']
-    isRequired: Scalars['Boolean']
-    type: Scalars['String']
-    options?: Scalars['JSON']
-    isFilled: Scalars['Boolean']
-    createdAt: Scalars['DateTime']
-    updatedAt: Scalars['DateTime']
-    __typename: 'ApplicationRegistrationVariable'
-}
 
 export interface ApiKey {
     id: Scalars['UUID']
@@ -56,6 +42,7 @@ export interface ApplicationVariable {
     value: Scalars['String']
     description: Scalars['String']
     isSecret: Scalars['Boolean']
+    isDeprecated: Scalars['Boolean']
     type: Scalars['String']
     options?: Scalars['JSON']
     __typename: 'ApplicationVariable'
@@ -108,6 +95,7 @@ export interface FrontComponent {
     usesSdkClient: Scalars['Boolean']
     applicationTokenPair?: ApplicationTokenPair
     applicationVariables?: Scalars['JSON']
+    frontComponentSharedDependenciesChecksum?: Scalars['String']
     __typename: 'FrontComponent'
 }
 
@@ -399,6 +387,9 @@ export type PermissionFlagType = 'API_KEYS_AND_WEBHOOKS' | 'WORKSPACE' | 'WORKSP
 
 export interface ViewField {
     id: Scalars['UUID']
+    universalIdentifier: Scalars['UUID']
+    applicationId: Scalars['UUID']
+    isSystemSideEffect: Scalars['Boolean']
     fieldMetadataId: Scalars['UUID']
     isVisible: Scalars['Boolean']
     size: Scalars['Float']
@@ -499,6 +490,9 @@ export interface ViewFieldGroup {
 
 export interface View {
     id: Scalars['UUID']
+    universalIdentifier: Scalars['UUID']
+    applicationId: Scalars['UUID']
+    isSystemSideEffect: Scalars['Boolean']
     name: Scalars['String']
     objectMetadataId: Scalars['UUID']
     type: ViewType
@@ -690,6 +684,8 @@ export interface GridPosition {
 
 export interface PageLayoutWidget {
     id: Scalars['UUID']
+    universalIdentifier: Scalars['UUID']
+    isSystemSideEffect: Scalars['Boolean']
     applicationId: Scalars['UUID']
     pageLayoutTabId: Scalars['UUID']
     title: Scalars['String']
@@ -997,6 +993,8 @@ export interface WorkflowVersionConfiguration {
 
 export interface PageLayoutTab {
     id: Scalars['UUID']
+    universalIdentifier: Scalars['UUID']
+    isSystemSideEffect: Scalars['Boolean']
     applicationId: Scalars['UUID']
     title: Scalars['String']
     position: Scalars['Float']
@@ -1021,6 +1019,8 @@ export interface PageLayout {
     tabs?: PageLayoutTab[]
     defaultTabToFocusOnMobileAndSidePanelId?: Scalars['UUID']
     universalIdentifier: Scalars['UUID']
+    applicationId: Scalars['UUID']
+    isSystemSideEffect: Scalars['Boolean']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
@@ -1136,6 +1136,12 @@ export interface BillingSubscriptionItem {
     __typename: 'BillingSubscriptionItem'
 }
 
+export interface BillingCustomer {
+    id: Scalars['UUID']
+    hasPaymentMethod?: Scalars['Boolean']
+    __typename: 'BillingCustomer'
+}
+
 export interface BillingSubscription {
     id: Scalars['UUID']
     status: SubscriptionStatus
@@ -1149,12 +1155,6 @@ export interface BillingSubscription {
 }
 
 export type SubscriptionStatus = 'Active' | 'Canceled' | 'Incomplete' | 'IncompleteExpired' | 'PastDue' | 'Paused' | 'Trialing' | 'Unpaid'
-
-export interface BillingCustomer {
-    id: Scalars['UUID']
-    hasPaymentMethod?: Scalars['Boolean']
-    __typename: 'BillingCustomer'
-}
 
 export interface LogicFunctionExecutionResult {
     /** Execution result in JSON format */
@@ -1404,7 +1404,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_AI_CHAT_PAGE_ENABLED' | 'IS_APP_CLAIMING_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_CALENDAR_WEEK_VIEW_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_LIST_VIEW_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_SETTINGS_DISCOVERY_HERO_ENABLED' | 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED' | 'IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED' | 'IS_WORKSPACE_CACHE_COMPACT_STORAGE_ENABLED' | 'IS_NATIVE_CALL_RECORDING_TABS_ENABLED'
+export type FeatureFlagKey = 'IS_APP_CLAIMING_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_CALENDAR_WEEK_VIEW_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_LIST_VIEW_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_SETTINGS_DISCOVERY_HERO_ENABLED' | 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED' | 'IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED' | 'IS_NATIVE_CALL_RECORDING_TABS_ENABLED' | 'IS_ORM_V2_READ_PATH_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -1412,19 +1412,20 @@ export interface WorkspaceUrls {
     __typename: 'WorkspaceUrls'
 }
 
-export interface ApplicationRegistrationVariableDTO {
+export interface ApplicationRegistrationVariable {
     id: Scalars['UUID']
     key: Scalars['String']
     value?: Scalars['String']
     description: Scalars['String']
     isSecret: Scalars['Boolean']
     isRequired: Scalars['Boolean']
+    isDeprecated: Scalars['Boolean']
     isFilled: Scalars['Boolean']
     type: Scalars['String']
     options?: Scalars['JSON']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
-    __typename: 'ApplicationRegistrationVariableDTO'
+    __typename: 'ApplicationRegistrationVariable'
 }
 
 export interface VersionDistributionEntry {
@@ -2903,7 +2904,7 @@ export interface Query {
     findManyApplicationRegistrations: ApplicationRegistration[]
     findOneApplicationRegistration: ApplicationRegistration
     findApplicationRegistrationStats: ApplicationRegistrationStats
-    findApplicationRegistrationVariables: ApplicationRegistrationVariableDTO[]
+    findApplicationRegistrationVariables: ApplicationRegistrationVariable[]
     applicationRegistrationTarballUrl?: Scalars['String']
     findClaimableApplicationRegistration?: ClaimableApplicationRegistration
     githubClaimAuthorizationUrl: Scalars['String']
@@ -3239,21 +3240,6 @@ export interface BillingProductDTOGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface ApplicationRegistrationVariableGenqlSelection{
-    id?: boolean | number
-    key?: boolean | number
-    description?: boolean | number
-    isSecret?: boolean | number
-    isRequired?: boolean | number
-    type?: boolean | number
-    options?: boolean | number
-    isFilled?: boolean | number
-    createdAt?: boolean | number
-    updatedAt?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface ApiKeyGenqlSelection{
     id?: boolean | number
     name?: boolean | number
@@ -3281,6 +3267,7 @@ export interface ApplicationVariableGenqlSelection{
     value?: boolean | number
     description?: boolean | number
     isSecret?: boolean | number
+    isDeprecated?: boolean | number
     type?: boolean | number
     options?: boolean | number
     __typename?: boolean | number
@@ -3337,6 +3324,7 @@ export interface FrontComponentGenqlSelection{
     usesSdkClient?: boolean | number
     applicationTokenPair?: ApplicationTokenPairGenqlSelection
     applicationVariables?: boolean | number
+    frontComponentSharedDependenciesChecksum?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -3648,6 +3636,9 @@ export interface UserWorkspaceGenqlSelection{
 
 export interface ViewFieldGenqlSelection{
     id?: boolean | number
+    universalIdentifier?: boolean | number
+    applicationId?: boolean | number
+    isSystemSideEffect?: boolean | number
     fieldMetadataId?: boolean | number
     isVisible?: boolean | number
     size?: boolean | number
@@ -3746,6 +3737,9 @@ export interface ViewFieldGroupGenqlSelection{
 
 export interface ViewGenqlSelection{
     id?: boolean | number
+    universalIdentifier?: boolean | number
+    applicationId?: boolean | number
+    isSystemSideEffect?: boolean | number
     name?: boolean | number
     objectMetadataId?: boolean | number
     type?: boolean | number
@@ -3927,6 +3921,8 @@ export interface GridPositionGenqlSelection{
 
 export interface PageLayoutWidgetGenqlSelection{
     id?: boolean | number
+    universalIdentifier?: boolean | number
+    isSystemSideEffect?: boolean | number
     applicationId?: boolean | number
     pageLayoutTabId?: boolean | number
     title?: boolean | number
@@ -4263,6 +4259,8 @@ export interface WorkflowVersionConfigurationGenqlSelection{
 
 export interface PageLayoutTabGenqlSelection{
     id?: boolean | number
+    universalIdentifier?: boolean | number
+    isSystemSideEffect?: boolean | number
     applicationId?: boolean | number
     title?: boolean | number
     position?: boolean | number
@@ -4288,6 +4286,8 @@ export interface PageLayoutGenqlSelection{
     tabs?: PageLayoutTabGenqlSelection
     defaultTabToFocusOnMobileAndSidePanelId?: boolean | number
     universalIdentifier?: boolean | number
+    applicationId?: boolean | number
+    isSystemSideEffect?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
     deletedAt?: boolean | number
@@ -4402,6 +4402,13 @@ export interface BillingSubscriptionItemGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface BillingCustomerGenqlSelection{
+    id?: boolean | number
+    hasPaymentMethod?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface BillingSubscriptionGenqlSelection{
     id?: boolean | number
     status?: boolean | number
@@ -4411,13 +4418,6 @@ export interface BillingSubscriptionGenqlSelection{
     metadata?: boolean | number
     phases?: BillingSubscriptionSchedulePhaseGenqlSelection
     cancelAt?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface BillingCustomerGenqlSelection{
-    id?: boolean | number
-    hasPaymentMethod?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4689,13 +4689,14 @@ export interface WorkspaceUrlsGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface ApplicationRegistrationVariableDTOGenqlSelection{
+export interface ApplicationRegistrationVariableGenqlSelection{
     id?: boolean | number
     key?: boolean | number
     value?: boolean | number
     description?: boolean | number
     isSecret?: boolean | number
     isRequired?: boolean | number
+    isDeprecated?: boolean | number
     isFilled?: boolean | number
     type?: boolean | number
     options?: boolean | number
@@ -6271,7 +6272,7 @@ export interface QueryGenqlSelection{
     findManyApplicationRegistrations?: ApplicationRegistrationGenqlSelection
     findOneApplicationRegistration?: (ApplicationRegistrationGenqlSelection & { __args: {id: Scalars['String']} })
     findApplicationRegistrationStats?: (ApplicationRegistrationStatsGenqlSelection & { __args: {id: Scalars['String']} })
-    findApplicationRegistrationVariables?: (ApplicationRegistrationVariableDTOGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
+    findApplicationRegistrationVariables?: (ApplicationRegistrationVariableGenqlSelection & { __args: {applicationRegistrationId: Scalars['String']} })
     applicationRegistrationTarballUrl?: { __args: {id: Scalars['String']} }
     findClaimableApplicationRegistration?: (ClaimableApplicationRegistrationGenqlSelection & { __args?: {sourcePackage?: (Scalars['String'] | null), universalIdentifier?: (Scalars['String'] | null)} })
     githubClaimAuthorizationUrl?: { __args: {applicationRegistrationId: Scalars['String']} }
@@ -7040,14 +7041,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const ApplicationRegistrationVariable_possibleTypes: string[] = ['ApplicationRegistrationVariable']
-    export const isApplicationRegistrationVariable = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationVariable => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationVariable"')
-      return ApplicationRegistrationVariable_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const ApiKey_possibleTypes: string[] = ['ApiKey']
     export const isApiKey = (obj?: { __typename?: any } | null): obj is ApiKey => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isApiKey"')
@@ -7728,18 +7721,18 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const BillingSubscription_possibleTypes: string[] = ['BillingSubscription']
-    export const isBillingSubscription = (obj?: { __typename?: any } | null): obj is BillingSubscription => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingSubscription"')
-      return BillingSubscription_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const BillingCustomer_possibleTypes: string[] = ['BillingCustomer']
     export const isBillingCustomer = (obj?: { __typename?: any } | null): obj is BillingCustomer => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingCustomer"')
       return BillingCustomer_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const BillingSubscription_possibleTypes: string[] = ['BillingSubscription']
+    export const isBillingSubscription = (obj?: { __typename?: any } | null): obj is BillingSubscription => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isBillingSubscription"')
+      return BillingSubscription_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -7960,10 +7953,10 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const ApplicationRegistrationVariableDTO_possibleTypes: string[] = ['ApplicationRegistrationVariableDTO']
-    export const isApplicationRegistrationVariableDTO = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationVariableDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationVariableDTO"')
-      return ApplicationRegistrationVariableDTO_possibleTypes.includes(obj.__typename)
+    const ApplicationRegistrationVariable_possibleTypes: string[] = ['ApplicationRegistrationVariable']
+    export const isApplicationRegistrationVariable = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationVariable => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationVariable"')
+      return ApplicationRegistrationVariable_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -9670,7 +9663,6 @@ export const enumDatabaseEventAction = {
 }
 
 export const enumFeatureFlagKey = {
-   IS_AI_CHAT_PAGE_ENABLED: 'IS_AI_CHAT_PAGE_ENABLED' as const,
    IS_APP_CLAIMING_ENABLED: 'IS_APP_CLAIMING_ENABLED' as const,
    IS_UNIQUE_INDEXES_ENABLED: 'IS_UNIQUE_INDEXES_ENABLED' as const,
    IS_JSON_FILTER_ENABLED: 'IS_JSON_FILTER_ENABLED' as const,
@@ -9683,8 +9675,8 @@ export const enumFeatureFlagKey = {
    IS_SETTINGS_DISCOVERY_HERO_ENABLED: 'IS_SETTINGS_DISCOVERY_HERO_ENABLED' as const,
    IS_WORKFLOW_VERSION_IN_CORE_ENABLED: 'IS_WORKFLOW_VERSION_IN_CORE_ENABLED' as const,
    IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED: 'IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED' as const,
-   IS_WORKSPACE_CACHE_COMPACT_STORAGE_ENABLED: 'IS_WORKSPACE_CACHE_COMPACT_STORAGE_ENABLED' as const,
-   IS_NATIVE_CALL_RECORDING_TABS_ENABLED: 'IS_NATIVE_CALL_RECORDING_TABS_ENABLED' as const
+   IS_NATIVE_CALL_RECORDING_TABS_ENABLED: 'IS_NATIVE_CALL_RECORDING_TABS_ENABLED' as const,
+   IS_ORM_V2_READ_PATH_ENABLED: 'IS_ORM_V2_READ_PATH_ENABLED' as const
 }
 
 export const enumIdentityProviderType = {

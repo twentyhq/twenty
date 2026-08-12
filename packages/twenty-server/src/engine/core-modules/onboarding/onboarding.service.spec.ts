@@ -9,6 +9,7 @@ import {
   Repository,
 } from 'typeorm';
 
+import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -60,7 +61,7 @@ describe('OnboardingService', () => {
         {
           provide: BillingCreditService,
           useValue: {
-            creditWorkspaceBalance: jest.fn(),
+            grantCredits: jest.fn(),
           },
         },
         {
@@ -248,10 +249,14 @@ describe('OnboardingService', () => {
         },
         mockQueryRunner,
       );
-      expect(billingCreditService.creditWorkspaceBalance).toHaveBeenCalledWith({
-        workspaceId,
-        amountMicro: 2_000_000,
-      });
+      expect(billingCreditService.grantCredits).toHaveBeenCalledWith(
+        expect.objectContaining({
+          workspaceId,
+          amountMicro: 2_000_000,
+          type: BillingCreditGrantType.ONBOARDING_REWARD,
+          idempotencyKey: `onboarding-import-contacts:${workspaceId}`,
+        }),
+      );
     });
 
     it('should claim the step but not credit when the workspace has more than one member', async () => {
@@ -271,9 +276,7 @@ describe('OnboardingService', () => {
         },
         mockQueryRunner,
       );
-      expect(
-        billingCreditService.creditWorkspaceBalance,
-      ).not.toHaveBeenCalled();
+      expect(billingCreditService.grantCredits).not.toHaveBeenCalled();
     });
 
     it('should not credit anything when the step was already consumed', async () => {
@@ -284,9 +287,7 @@ describe('OnboardingService', () => {
         workspaceId,
       });
 
-      expect(
-        billingCreditService.creditWorkspaceBalance,
-      ).not.toHaveBeenCalled();
+      expect(billingCreditService.grantCredits).not.toHaveBeenCalled();
     });
 
     it('should credit only once when two completions race for the same step', async () => {
@@ -302,9 +303,7 @@ describe('OnboardingService', () => {
         service.completeOnboardingConnectAccountStep({ userId, workspaceId }),
       ]);
 
-      expect(billingCreditService.creditWorkspaceBalance).toHaveBeenCalledTimes(
-        1,
-      );
+      expect(billingCreditService.grantCredits).toHaveBeenCalledTimes(1);
     });
 
     it('should not throw when crediting fails', async () => {
@@ -312,7 +311,7 @@ describe('OnboardingService', () => {
       jest.spyOn(userWorkspaceRepository, 'countBy').mockResolvedValue(1);
       jest.spyOn(twentyConfigService, 'get').mockReturnValue(2_000_000);
       jest
-        .spyOn(billingCreditService, 'creditWorkspaceBalance')
+        .spyOn(billingCreditService, 'grantCredits')
         .mockRejectedValue(new Error('billing failure'));
 
       await expect(
@@ -336,9 +335,7 @@ describe('OnboardingService', () => {
         }),
       ).resolves.not.toThrow();
 
-      expect(
-        billingCreditService.creditWorkspaceBalance,
-      ).not.toHaveBeenCalled();
+      expect(billingCreditService.grantCredits).not.toHaveBeenCalled();
     });
   });
 
@@ -373,9 +370,7 @@ describe('OnboardingService', () => {
         },
         { id: `${INSTALL_ONBOARDING_APPS_JOB_NAME}-${workspaceId}` },
       );
-      expect(
-        billingCreditService.creditWorkspaceBalance,
-      ).not.toHaveBeenCalled();
+      expect(billingCreditService.grantCredits).not.toHaveBeenCalled();
     });
 
     it('should not enqueue anything when the step was already consumed', async () => {
@@ -1048,16 +1043,20 @@ describe('OnboardingService', () => {
         rewardAppsCount: 2,
       });
 
-      expect(billingCreditService.creditWorkspaceBalance).toHaveBeenCalledWith({
-        workspaceId,
-        amountMicro: 2_000_000,
-      });
+      expect(billingCreditService.grantCredits).toHaveBeenCalledWith(
+        expect.objectContaining({
+          workspaceId,
+          amountMicro: 2_000_000,
+          type: BillingCreditGrantType.ONBOARDING_REWARD,
+          idempotencyKey: `onboarding-install-apps:${workspaceId}`,
+        }),
+      );
     });
 
     it('should not throw when crediting fails', async () => {
       jest.spyOn(twentyConfigService, 'get').mockReturnValue(1_000_000);
       jest
-        .spyOn(billingCreditService, 'creditWorkspaceBalance')
+        .spyOn(billingCreditService, 'grantCredits')
         .mockRejectedValue(new Error('billing failure'));
 
       await expect(

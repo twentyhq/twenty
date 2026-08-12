@@ -1,19 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { FieldMetadataType, type ViewFilterOperand } from 'twenty-shared/types';
 import {
-  FieldMetadataType,
-  type FilterableAndTSVectorFieldType,
-  type ViewFilterOperand,
-} from 'twenty-shared/types';
-import {
-  FILTER_OPERANDS_MAP,
   getFilterOperandsForFilterableFieldType,
+  getFilterTypeFromFieldType,
+  getFilterValueValidationIssue,
   isDefined,
 } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { getEffectiveFilterFieldType } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-effective-filter-field-type.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getInvalidSelectFilterOptionValues } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-invalid-select-filter-option-values.util';
 import { ViewFilterExceptionCode } from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
@@ -113,6 +112,18 @@ export class FlatViewFilterValidatorService {
 
       if (isDefined(incompatibleOperandError)) {
         validationResult.errors.push(incompatibleOperandError);
+      }
+
+      const invalidValueError = this.getInvalidValueError({
+        operand: flatViewFilterToValidate.operand,
+        fieldType: referencedFieldMetadata.type,
+        subFieldName: flatViewFilterToValidate.subFieldName,
+        relationTargetFieldType,
+        value: flatViewFilterToValidate.value,
+      });
+
+      if (isDefined(invalidValueError)) {
+        validationResult.errors.push(invalidValueError);
       }
 
       if (
@@ -274,6 +285,26 @@ export class FlatViewFilterValidatorService {
       }
 
       if (
+        'value' in flatEntityUpdate ||
+        'fieldMetadataUniversalIdentifier' in flatEntityUpdate ||
+        'operand' in flatEntityUpdate ||
+        'subFieldName' in flatEntityUpdate ||
+        'relationTargetFieldMetadataUniversalIdentifier' in flatEntityUpdate
+      ) {
+        const invalidValueError = this.getInvalidValueError({
+          operand: updatedFlatViewFilter.operand,
+          fieldType: referencedFieldMetadata.type,
+          subFieldName: updatedFlatViewFilter.subFieldName,
+          relationTargetFieldType,
+          value: updatedFlatViewFilter.value,
+        });
+
+        if (isDefined(invalidValueError)) {
+          validationResult.errors.push(invalidValueError);
+        }
+      }
+
+      if (
         ('value' in flatEntityUpdate ||
           'fieldMetadataUniversalIdentifier' in flatEntityUpdate ||
           'operand' in flatEntityUpdate) &&
@@ -353,6 +384,44 @@ export class FlatViewFilterValidatorService {
     };
   }
 
+  private getInvalidValueError({
+    operand,
+    fieldType,
+    subFieldName,
+    relationTargetFieldType,
+    value,
+  }: {
+    operand: ViewFilterOperand;
+    fieldType: FieldMetadataType;
+    subFieldName: string | null | undefined;
+    relationTargetFieldType: FieldMetadataType | undefined;
+    value: ViewFilterValue;
+  }) {
+    const issue = getFilterValueValidationIssue({
+      fieldType: getEffectiveFilterFieldType({
+        fieldType,
+        relationTargetFieldType,
+      }),
+      operand,
+      subFieldName,
+      value,
+    });
+
+    if (!isDefined(issue)) {
+      return undefined;
+    }
+
+    const { stringifiedValue, filterType, hint } = issue;
+
+    return {
+      code: ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
+      message: isNonEmptyString(hint)
+        ? t`Value "${stringifiedValue}" is not valid for operand "${operand}" on field type "${filterType}". ${hint}`
+        : t`Value "${stringifiedValue}" is not valid for operand "${operand}" on field type "${filterType}".`,
+      userFriendlyMessage: msg`Filter value is not valid for this operand`,
+    };
+  }
+
   private getIncompatibleOperandError({
     operand,
     fieldType,
@@ -364,18 +433,15 @@ export class FlatViewFilterValidatorService {
     subFieldName: string | null | undefined;
     relationTargetFieldType: FieldMetadataType | undefined;
   }) {
-    const effectiveFieldType =
-      fieldType === FieldMetadataType.RELATION &&
-      isDefined(relationTargetFieldType)
-        ? relationTargetFieldType
-        : fieldType;
+    const effectiveFieldType = getEffectiveFilterFieldType({
+      fieldType,
+      relationTargetFieldType,
+    });
 
-    if (!(effectiveFieldType in FILTER_OPERANDS_MAP)) {
-      return undefined;
-    }
+    const filterType = getFilterTypeFromFieldType(effectiveFieldType);
 
     const allowedOperands = getFilterOperandsForFilterableFieldType({
-      filterType: effectiveFieldType as FilterableAndTSVectorFieldType,
+      filterType,
       subFieldName,
     });
 
@@ -385,7 +451,7 @@ export class FlatViewFilterValidatorService {
 
     return {
       code: ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
-      message: t`Operand "${operand}" is not supported on field type "${effectiveFieldType}". Supported operands: ${allowedOperands.join(', ')}.`,
+      message: t`Operand "${operand}" is not supported on field type "${filterType}". Supported operands: ${allowedOperands.join(', ')}.`,
       userFriendlyMessage: msg`Filter operand is not supported for this field type`,
     };
   }

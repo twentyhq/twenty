@@ -6,6 +6,7 @@ import { buildApplicationFileList } from 'src/engine/core-modules/application/ap
 describe('buildApplicationFileList', () => {
   it('includes source and built files for logic functions and front components', () => {
     const manifest = {
+      application: {},
       logicFunctions: [
         {
           sourceHandlerPath: 'src/send-email.function.ts',
@@ -58,5 +59,27 @@ describe('buildApplicationFileList', () => {
         isRequired: true,
       },
     ]);
+  });
+
+  it('includes the shared dependencies bundle when the application declares one', () => {
+    const manifest = {
+      application: {
+        frontComponentSharedDependencies: {
+          dependencies: ['react'],
+          builtPath: 'front-component-shared-dependencies.mjs',
+          builtChecksum: 'checksum',
+        },
+      },
+    } as Manifest;
+
+    expect(buildApplicationFileList(manifest)).toEqual(
+      expect.arrayContaining([
+        {
+          relativePath: 'front-component-shared-dependencies.mjs',
+          fileFolder: FileFolder.BuiltFrontComponent,
+          isRequired: true,
+        },
+      ]),
+    );
   });
 });

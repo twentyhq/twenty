@@ -1,5 +1,13 @@
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from '@/metadata/constants/standard-object-universal-identifiers.constant';
+import { buildStandardObjectRecordPageLayout } from '@/metadata/utils/internal/build-standard-object-record-page-layout.util';
+
 // Never mutate an existing universal identifier
 // Deleting an existing universal identifier should be very rare
+// Record-page layout universal identifiers are deterministically derived by
+// buildStandardObjectRecordPageLayout (layout keyed on the object + the
+// name-free RECORD_PAGE discriminator, tabs on their title within the layout,
+// widgets on their title within their tab). The titles passed here MUST match
+// the ones the server standard page-layout configs assign.
 
 export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
   myFirstDashboard: {
@@ -36,617 +44,481 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
       },
     },
   },
-  companyRecordPage: {
-    universalIdentifier: '20202020-a101-4001-8001-c0aba11c0001',
+  companyRecordPage: buildStandardObjectRecordPageLayout({
+    objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
     tabs: {
       home: {
-        universalIdentifier: '20202020-ab01-4001-8001-c0aba11c0101',
+        title: 'Home',
         widgets: {
-          fields: {
-            universalIdentifier: '20202020-ac01-4001-8001-c0aba11c0111',
-          },
-          people: {
-            universalIdentifier: '20202020-ac01-4001-8001-c0aba11c0112',
-          },
-          opportunities: {
-            universalIdentifier: '20202020-ac01-4001-8001-c0aba11c0114',
-          },
+          fields: 'Fields',
+          people: 'People',
+          opportunities: 'Opportunities',
         },
       },
       timeline: {
-        universalIdentifier: '20202020-ab01-4001-8001-c0aba11c0102',
+        title: 'Timeline',
         widgets: {
-          timeline: {
-            universalIdentifier: '20202020-ac01-4001-8001-c0aba11c0121',
-          },
+          timeline: 'Timeline',
         },
       },
       tasks: {
-        universalIdentifier: '20202020-ab01-4001-8001-c0aba11c0103',
+        title: 'Tasks',
         widgets: {
-          tasks: {
-            universalIdentifier: '20202020-ac01-4001-8001-c0aba11c0131',
-          },
+          tasks: 'Tasks',
         },
       },
       notes: {
-        universalIdentifier: '20202020-ab01-4001-8001-c0aba11c0104',
+        title: 'Notes',
         widgets: {
-          notes: {
-            universalIdentifier: '20202020-ac01-4001-8001-c0aba11c0141',
-          },
+          notes: 'Notes',
         },
       },
       files: {
-        universalIdentifier: '20202020-ab01-4001-8001-c0aba11c0105',
+        title: 'Files',
         widgets: {
-          files: {
-            universalIdentifier: '20202020-ac01-4001-8001-c0aba11c0151',
-          },
+          files: 'Files',
         },
       },
       emails: {
-        universalIdentifier: '20202020-ab01-4001-8001-c0aba11c0106',
+        title: 'Emails',
         widgets: {
-          emails: {
-            universalIdentifier: '20202020-ac01-4001-8001-c0aba11c0161',
-          },
+          emails: 'Emails',
         },
       },
       calendar: {
-        universalIdentifier: '20202020-ab01-4001-8001-c0aba11c0107',
+        title: 'Calendar',
         widgets: {
-          calendar: {
-            universalIdentifier: '20202020-ac01-4001-8001-c0aba11c0171',
-          },
+          calendar: 'Calendar',
         },
       },
     },
-  },
-  personRecordPage: {
-    universalIdentifier: '20202020-a102-4002-8002-ae0a1ea11002',
+  }),
+  personRecordPage: buildStandardObjectRecordPageLayout({
+    objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
     tabs: {
       home: {
-        universalIdentifier: '20202020-ab02-4002-8002-ae0a1ea11201',
+        title: 'Home',
         widgets: {
-          fields: {
-            universalIdentifier: '20202020-ac02-4002-8002-ae0a1ea11211',
-          },
-          company: {
-            universalIdentifier: '20202020-ac02-4002-8002-ae0a1ea11212',
-          },
-          pointOfContactForOpportunities: {
-            universalIdentifier: '20202020-ac02-4002-8002-ae0a1ea11213',
-          },
-          listMemberships: {
-            universalIdentifier: 'f344eb7d-23c1-457a-a29b-32fd548b6aba',
-          },
+          fields: 'Fields',
+          company: 'Company',
+          pointOfContactForOpportunities: 'Opportunities',
+          listMemberships: 'Lists',
         },
       },
       timeline: {
-        universalIdentifier: '20202020-ab02-4002-8002-ae0a1ea11202',
+        title: 'Timeline',
         widgets: {
-          timeline: {
-            universalIdentifier: '20202020-ac02-4002-8002-ae0a1ea11221',
-          },
+          timeline: 'Timeline',
         },
       },
       tasks: {
-        universalIdentifier: '20202020-ab02-4002-8002-ae0a1ea11203',
+        title: 'Tasks',
         widgets: {
-          tasks: {
-            universalIdentifier: '20202020-ac02-4002-8002-ae0a1ea11231',
-          },
+          tasks: 'Tasks',
         },
       },
       notes: {
-        universalIdentifier: '20202020-ab02-4002-8002-ae0a1ea11204',
+        title: 'Notes',
         widgets: {
-          notes: {
-            universalIdentifier: '20202020-ac02-4002-8002-ae0a1ea11241',
-          },
+          notes: 'Notes',
         },
       },
       files: {
-        universalIdentifier: '20202020-ab02-4002-8002-ae0a1ea11205',
+        title: 'Files',
         widgets: {
-          files: {
-            universalIdentifier: '20202020-ac02-4002-8002-ae0a1ea11251',
-          },
+          files: 'Files',
         },
       },
       emails: {
-        universalIdentifier: '20202020-ab02-4002-8002-ae0a1ea11206',
+        title: 'Emails',
         widgets: {
-          emails: {
-            universalIdentifier: '20202020-ac02-4002-8002-ae0a1ea11261',
-          },
+          emails: 'Emails',
         },
       },
       calendar: {
-        universalIdentifier: '20202020-ab02-4002-8002-ae0a1ea11207',
+        title: 'Calendar',
         widgets: {
-          calendar: {
-            universalIdentifier: '20202020-ac02-4002-8002-ae0a1ea11271',
-          },
+          calendar: 'Calendar',
         },
       },
     },
-  },
-  opportunityRecordPage: {
-    universalIdentifier: '20202020-a103-4003-8003-0aa0b1ca1003',
+  }),
+  opportunityRecordPage: buildStandardObjectRecordPageLayout({
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity,
     tabs: {
       home: {
-        universalIdentifier: '20202020-ab03-4003-8003-0aa0b1ca1301',
+        title: 'Home',
         widgets: {
-          fields: {
-            universalIdentifier: '20202020-ac03-4003-8003-0aa0b1ca1311',
-          },
-          pointOfContact: {
-            universalIdentifier: '20202020-ac03-4003-8003-0aa0b1ca1312',
-          },
-          company: {
-            universalIdentifier: '20202020-ac03-4003-8003-0aa0b1ca1313',
-          },
-          owner: {
-            universalIdentifier: '20202020-ac03-4003-8003-0aa0b1ca1314',
-          },
+          fields: 'Fields',
+          pointOfContact: 'Point of Contact',
+          company: 'Company',
+          owner: 'Owner',
         },
       },
       timeline: {
-        universalIdentifier: '20202020-ab03-4003-8003-0aa0b1ca1302',
+        title: 'Timeline',
         widgets: {
-          timeline: {
-            universalIdentifier: '20202020-ac03-4003-8003-0aa0b1ca1321',
-          },
+          timeline: 'Timeline',
         },
       },
       tasks: {
-        universalIdentifier: '20202020-ab03-4003-8003-0aa0b1ca1303',
+        title: 'Tasks',
         widgets: {
-          tasks: {
-            universalIdentifier: '20202020-ac03-4003-8003-0aa0b1ca1331',
-          },
+          tasks: 'Tasks',
         },
       },
       notes: {
-        universalIdentifier: '20202020-ab03-4003-8003-0aa0b1ca1304',
+        title: 'Notes',
         widgets: {
-          notes: {
-            universalIdentifier: '20202020-ac03-4003-8003-0aa0b1ca1341',
-          },
+          notes: 'Notes',
         },
       },
       files: {
-        universalIdentifier: '20202020-ab03-4003-8003-0aa0b1ca1305',
+        title: 'Files',
         widgets: {
-          files: {
-            universalIdentifier: '20202020-ac03-4003-8003-0aa0b1ca1351',
-          },
+          files: 'Files',
         },
       },
       emails: {
-        universalIdentifier: '20202020-ab03-4003-8003-0aa0b1ca1306',
+        title: 'Emails',
         widgets: {
-          emails: {
-            universalIdentifier: '20202020-ac03-4003-8003-0aa0b1ca1361',
-          },
+          emails: 'Emails',
         },
       },
       calendar: {
-        universalIdentifier: '20202020-ab03-4003-8003-0aa0b1ca1307',
+        title: 'Calendar',
         widgets: {
-          calendar: {
-            universalIdentifier: '20202020-ac03-4003-8003-0aa0b1ca1371',
-          },
+          calendar: 'Calendar',
         },
       },
     },
-  },
-  noteRecordPage: {
-    universalIdentifier: '20202020-a104-4004-8004-a0be5a11a004',
+  }),
+  noteRecordPage: buildStandardObjectRecordPageLayout({
+    objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.note,
     tabs: {
       home: {
-        universalIdentifier: '20202020-ab04-4004-8004-a0be5a11a401',
+        title: 'Home',
         widgets: {
-          fields: {
-            universalIdentifier: '20202020-ac04-4004-8004-a0be5a11a411',
-          },
-          noteRichText: {
-            universalIdentifier: '20202020-ac04-4004-8004-a0be5a11a412',
-          },
+          fields: 'Fields',
+          noteRichText: 'Note',
         },
       },
       note: {
-        universalIdentifier: '20202020-ab04-4004-8004-a0be5a11a402',
+        title: 'Note',
         widgets: {
-          noteRichText: {
-            universalIdentifier: '20202020-ac04-4004-8004-a0be5a11a421',
-          },
+          noteRichText: 'Note',
         },
       },
       timeline: {
-        universalIdentifier: '20202020-ab04-4004-8004-a0be5a11a403',
+        title: 'Timeline',
         widgets: {
-          timeline: {
-            universalIdentifier: '20202020-ac04-4004-8004-a0be5a11a431',
-          },
+          timeline: 'Timeline',
         },
       },
       files: {
-        universalIdentifier: '20202020-ab04-4004-8004-a0be5a11a404',
+        title: 'Files',
         widgets: {
-          files: {
-            universalIdentifier: '20202020-ac04-4004-8004-a0be5a11a441',
-          },
+          files: 'Files',
         },
       },
     },
-  },
-  taskRecordPage: {
-    universalIdentifier: '20202020-a105-4005-8005-ba5ca11a1005',
+  }),
+  taskRecordPage: buildStandardObjectRecordPageLayout({
+    objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task,
     tabs: {
       home: {
-        universalIdentifier: '20202020-ab05-4005-8005-ba5ca11a5501',
+        title: 'Home',
         widgets: {
-          fields: {
-            universalIdentifier: '20202020-ac05-4005-8005-ba5ca11a5511',
-          },
-          taskRichText: {
-            universalIdentifier: '20202020-ac05-4005-8005-ba5ca11a5512',
-          },
+          fields: 'Fields',
+          taskRichText: 'Task',
         },
       },
       note: {
-        universalIdentifier: '20202020-ab05-4005-8005-ba5ca11a5502',
+        title: 'Note',
         widgets: {
-          taskRichText: {
-            universalIdentifier: '20202020-ac05-4005-8005-ba5ca11a5521',
-          },
+          taskRichText: 'Task',
         },
       },
       timeline: {
-        universalIdentifier: '20202020-ab05-4005-8005-ba5ca11a5503',
+        title: 'Timeline',
         widgets: {
-          timeline: {
-            universalIdentifier: '20202020-ac05-4005-8005-ba5ca11a5531',
-          },
+          timeline: 'Timeline',
         },
       },
       files: {
-        universalIdentifier: '20202020-ab05-4005-8005-ba5ca11a5504',
+        title: 'Files',
         widgets: {
-          files: {
-            universalIdentifier: '20202020-ac05-4005-8005-ba5ca11a5541',
-          },
+          files: 'Files',
         },
       },
     },
-  },
-  workflowRecordPage: {
-    universalIdentifier: '20202020-a106-4006-8006-a0bcf10aa006',
+  }),
+  workflowRecordPage: buildStandardObjectRecordPageLayout({
+    objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflow,
     tabs: {
       flow: {
-        universalIdentifier: '20202020-ab06-4006-8006-a0bcf10a6601',
+        title: 'Flow',
         widgets: {
-          workflow: {
-            universalIdentifier: '20202020-ac06-4006-8006-a0bcf10a6611',
-          },
+          workflow: 'Flow',
         },
       },
     },
-  },
-  workflowVersionRecordPage: {
-    universalIdentifier: '20202020-a107-4007-8007-a0bcf10ab007',
+  }),
+  workflowVersionRecordPage: buildStandardObjectRecordPageLayout({
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowVersion,
     tabs: {
       home: {
-        universalIdentifier: '20202020-ab07-4007-8007-a0bcf10a7701',
+        title: 'Home',
         widgets: {
-          fields: {
-            universalIdentifier: '20202020-ac07-4007-8007-a0bcf10a7711',
-          },
-          workflow: {
-            universalIdentifier: '20202020-ac07-4007-8007-a0bcf10a7712',
-          },
+          fields: 'Fields',
+          workflow: 'Workflow',
         },
       },
       flow: {
-        universalIdentifier: '20202020-ab07-4007-8007-a0bcf10a7702',
+        title: 'Flow',
         widgets: {
-          workflowVersion: {
-            universalIdentifier: '20202020-ac07-4007-8007-a0bcf10a7721',
-          },
+          workflowVersion: 'Flow',
         },
       },
     },
-  },
-  workflowRunRecordPage: {
-    universalIdentifier: '20202020-a108-4008-8008-a0bcf10ac008',
+  }),
+  workflowRunRecordPage: buildStandardObjectRecordPageLayout({
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowRun,
     tabs: {
       home: {
-        universalIdentifier: '20202020-ab08-4008-8008-a0bcf10a8801',
+        title: 'Home',
         widgets: {
-          fields: {
-            universalIdentifier: '20202020-ac08-4008-8008-a0bcf10a8811',
-          },
-          workflow: {
-            universalIdentifier: '20202020-ac08-4008-8008-a0bcf10a8813',
-          },
+          fields: 'Fields',
+          workflow: 'Workflow',
         },
       },
       flow: {
-        universalIdentifier: '20202020-ab08-4008-8008-a0bcf10a8802',
+        title: 'Flow',
         widgets: {
-          workflowRun: {
-            universalIdentifier: '20202020-ac08-4008-8008-a0bcf10a8821',
-          },
+          workflowRun: 'Flow',
         },
       },
     },
-  },
-  blocklistRecordPage: {
-    universalIdentifier: '20202020-a109-4009-8009-b10c115b0001',
+  }),
+  blocklistRecordPage: buildStandardObjectRecordPageLayout({
+    objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.blocklist,
     tabs: {
       home: {
-        universalIdentifier: '20202020-ab09-4009-8009-b10c115b0901',
+        title: 'Home',
         widgets: {
-          fields: {
-            universalIdentifier: '20202020-ac09-4009-8009-b10c115b0911',
-          },
+          fields: 'Fields',
         },
       },
       timeline: {
-        universalIdentifier: '20202020-ab09-4009-8009-b10c115b0902',
+        title: 'Timeline',
         widgets: {
-          timeline: {
-            universalIdentifier: '20202020-ac09-4009-8009-b10c115b0921',
-          },
+          timeline: 'Timeline',
         },
       },
     },
-  },
-  calendarChannelEventAssociationRecordPage: {
-    universalIdentifier: '20202020-a10b-400b-800b-ca1c4e0b0001',
+  }),
+  calendarChannelEventAssociationRecordPage:
+    buildStandardObjectRecordPageLayout({
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarChannelEventAssociation,
+      tabs: {
+        home: {
+          title: 'Home',
+          widgets: {
+            fields: 'Fields',
+          },
+        },
+        timeline: {
+          title: 'Timeline',
+          widgets: {
+            timeline: 'Timeline',
+          },
+        },
+      },
+    }),
+  calendarEventRecordPage: buildStandardObjectRecordPageLayout({
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEvent,
     tabs: {
       home: {
-        universalIdentifier: '20202020-ab0b-400b-800b-ca1c4e0b0b01',
+        title: 'Home',
         widgets: {
-          fields: {
-            universalIdentifier: '20202020-ac0b-400b-800b-ca1c4e0b0b11',
-          },
+          fields: 'Fields',
+          participants: 'Participants',
+          callRecordings: 'Call Recordings',
         },
       },
       timeline: {
-        universalIdentifier: '20202020-ab0b-400b-800b-ca1c4e0b0b02',
+        title: 'Timeline',
         widgets: {
-          timeline: {
-            universalIdentifier: '20202020-ac0b-400b-800b-ca1c4e0b0b21',
-          },
-        },
-      },
-    },
-  },
-  calendarEventRecordPage: {
-    universalIdentifier: 'b9b10e40-9ce2-4704-8ac6-c6e92e2563c1',
-    tabs: {
-      home: {
-        universalIdentifier: 'c80a0407-25f5-438b-8c32-1ce9cde95657',
-        widgets: {
-          fields: {
-            universalIdentifier: 'fea5c1c2-0c1d-4d2e-a14c-a10108b0db0f',
-          },
-          participants: {
-            universalIdentifier: '6faea537-02fa-4993-957c-f2e1654986bd',
-          },
-          callRecordings: {
-            universalIdentifier: 'f473b435-e2d4-4928-8d90-1db0094389f7',
-          },
-        },
-      },
-      timeline: {
-        universalIdentifier: '9cb35d6d-932d-49bc-b303-593116ca5343',
-        widgets: {
-          timeline: {
-            universalIdentifier: '8273e2c4-cc17-4d3e-ba08-5bac612b5d44',
-          },
+          timeline: 'Timeline',
         },
       },
       callRecording: {
-        universalIdentifier: 'a3dff71b-ca06-4709-9b39-ca4f30108ab4',
+        title: 'Call Recording',
         widgets: {
-          transcript: {
-            universalIdentifier: 'dc2f3511-d72e-400b-adc9-fdb8d930dda8',
-          },
+          transcript: 'Transcript',
         },
       },
     },
-  },
-  calendarEventParticipantRecordPage: {
-    universalIdentifier: '20202020-a10c-400c-800c-ca1e0a0c0001',
+  }),
+  calendarEventParticipantRecordPage: buildStandardObjectRecordPageLayout({
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.calendarEventParticipant,
     tabs: {
       home: {
-        universalIdentifier: '20202020-ab0c-400c-800c-ca1e0a0c0c01',
+        title: 'Home',
         widgets: {
-          fields: {
-            universalIdentifier: '20202020-ac0c-400c-800c-ca1e0a0c0c11',
-          },
+          fields: 'Fields',
         },
       },
       timeline: {
-        universalIdentifier: '20202020-ab0c-400c-800c-ca1e0a0c0c02',
+        title: 'Timeline',
         widgets: {
-          timeline: {
-            universalIdentifier: '20202020-ac0c-400c-800c-ca1e0a0c0c21',
-          },
+          timeline: 'Timeline',
         },
       },
     },
-  },
-  callRecordingRecordPage: {
-    universalIdentifier: 'fa475fb3-3fe4-4ab8-8320-495eba5b2e58',
+  }),
+  callRecordingRecordPage: buildStandardObjectRecordPageLayout({
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.callRecording,
     tabs: {
       home: {
-        universalIdentifier: 'f61be659-f6f1-4f1f-b3f9-113370740f1b',
+        title: 'Home',
         widgets: {
-          fields: {
-            universalIdentifier: 'e490d2dd-5b69-4518-b867-9dde815f9cb6',
-          },
+          fields: 'Fields',
         },
       },
       timeline: {
-        universalIdentifier: '9fb360fa-bc10-430c-8425-25d4e9da4386',
+        title: 'Timeline',
         widgets: {
-          timeline: {
-            universalIdentifier: '9347305a-73de-4651-a116-c67b2706beda',
-          },
+          timeline: 'Timeline',
         },
       },
     },
-  },
-  messageChannelMessageAssociationRecordPage: {
-    universalIdentifier: '20202020-a111-4011-8011-a5c4a5110001',
+  }),
+  messageChannelMessageAssociationRecordPage:
+    buildStandardObjectRecordPageLayout({
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageChannelMessageAssociation,
+      tabs: {
+        home: {
+          title: 'Home',
+          widgets: {
+            fields: 'Fields',
+          },
+        },
+        timeline: {
+          title: 'Timeline',
+          widgets: {
+            timeline: 'Timeline',
+          },
+        },
+      },
+    }),
+  messageChannelMessageAssociationMessageFolderRecordPage:
+    buildStandardObjectRecordPageLayout({
+      objectUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageChannelMessageAssociationMessageFolder,
+      tabs: {
+        home: {
+          title: 'Home',
+          widgets: {
+            fields: 'Fields',
+          },
+        },
+        timeline: {
+          title: 'Timeline',
+          widgets: {
+            timeline: 'Timeline',
+          },
+        },
+      },
+    }),
+  messageParticipantRecordPage: buildStandardObjectRecordPageLayout({
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageParticipant,
     tabs: {
       home: {
-        universalIdentifier: '20202020-ab11-4011-8011-a5c4a5111101',
+        title: 'Home',
         widgets: {
-          fields: {
-            universalIdentifier: '20202020-ac11-4011-8011-a5c4a5111111',
-          },
+          fields: 'Fields',
         },
       },
       timeline: {
-        universalIdentifier: '20202020-ab11-4011-8011-a5c4a5111102',
+        title: 'Timeline',
         widgets: {
-          timeline: {
-            universalIdentifier: '20202020-ac11-4011-8011-a5c4a5111121',
-          },
+          timeline: 'Timeline',
         },
       },
     },
-  },
-  messageChannelMessageAssociationMessageFolderRecordPage: {
-    universalIdentifier: '20202020-a112-4012-8012-a5c4a6120001',
+  }),
+  workflowAutomatedTriggerRecordPage: buildStandardObjectRecordPageLayout({
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflowAutomatedTrigger,
     tabs: {
       home: {
-        universalIdentifier: '20202020-ab12-4012-8012-a5c4a6121201',
+        title: 'Home',
         widgets: {
-          fields: {
-            universalIdentifier: '20202020-ac12-4012-8012-a5c4a6121211',
-          },
+          fields: 'Fields',
         },
       },
       timeline: {
-        universalIdentifier: '20202020-ab12-4012-8012-a5c4a6121202',
+        title: 'Timeline',
         widgets: {
-          timeline: {
-            universalIdentifier: '20202020-ac12-4012-8012-a5c4a6121221',
-          },
+          timeline: 'Timeline',
         },
       },
     },
-  },
-  messageParticipantRecordPage: {
-    universalIdentifier: '20202020-a114-4014-8014-a5ea10140001',
+  }),
+  messageThreadRecordPage: buildStandardObjectRecordPageLayout({
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageThread,
     tabs: {
       home: {
-        universalIdentifier: '20202020-ab14-4014-8014-a5ea10141401',
+        title: 'Home',
         widgets: {
-          fields: {
-            universalIdentifier: '20202020-ac14-4014-8014-a5ea10141411',
-          },
-        },
-      },
-      timeline: {
-        universalIdentifier: '20202020-ab14-4014-8014-a5ea10141402',
-        widgets: {
-          timeline: {
-            universalIdentifier: '20202020-ac14-4014-8014-a5ea10141421',
-          },
+          emailThread: 'Thread',
         },
       },
     },
-  },
-  workflowAutomatedTriggerRecordPage: {
-    universalIdentifier: '20202020-a115-4015-8015-a0bcf1150001',
+  }),
+  messageListRecordPage: buildStandardObjectRecordPageLayout({
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageList,
     tabs: {
       home: {
-        universalIdentifier: '20202020-ab15-4015-8015-a0bcf1151501',
+        title: 'Home',
         widgets: {
-          fields: {
-            universalIdentifier: '20202020-ac15-4015-8015-a0bcf1151511',
-          },
-        },
-      },
-      timeline: {
-        universalIdentifier: '20202020-ab15-4015-8015-a0bcf1151502',
-        widgets: {
-          timeline: {
-            universalIdentifier: '20202020-ac15-4015-8015-a0bcf1151521',
-          },
+          fields: 'Fields',
+          members: 'Members',
         },
       },
     },
-  },
-  messageThreadRecordPage: {
-    universalIdentifier: '20202020-95bb-40eb-a699-70e7ea02a79e',
+  }),
+  messageCampaignRecordPage: buildStandardObjectRecordPageLayout({
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.messageCampaign,
     tabs: {
       home: {
-        universalIdentifier: '20202020-f639-48a0-9a44-027cf4e3cd15',
+        title: 'Home',
         widgets: {
-          emailThread: {
-            universalIdentifier: '20202020-d57e-44cb-b220-69a881feb9c3',
-          },
+          details: 'Details',
+          list: 'List',
+          recipients: 'Recipients',
+          fields: 'Fields',
         },
       },
-    },
-  },
-  messageListRecordPage: {
-    universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f60',
-    tabs: {
-      home: {
-        universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f61',
-        widgets: {
-          fields: {
-            universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f62',
-          },
-          members: {
-            universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f63',
-          },
-        },
-      },
-    },
-  },
-  messageCampaignRecordPage: {
-    universalIdentifier: '8704b091-94bd-4f8f-82b1-e2f3eab92217',
-    tabs: {
       composer: {
-        universalIdentifier: '5f21c19d-6c3e-4b8a-9d47-1e8f02a63b71',
+        title: 'Email',
         widgets: {
-          messageCampaign: {
-            universalIdentifier: '9c74d8e2-0b5f-4a19-8630-57d2ba14ce92',
-          },
-        },
-      },
-      home: {
-        universalIdentifier: 'f16785cd-a5b7-4ec1-8f20-ff8b80fb94b9',
-        widgets: {
-          fields: {
-            universalIdentifier: '886296e0-a5b6-4054-b450-ad624180c2ef',
-          },
-          details: {
-            universalIdentifier: 'ce2f82cc-9340-45a2-90a0-c34207e8e3b0',
-          },
-          messages: {
-            universalIdentifier: 'a33b43f4-72a1-476d-9372-30e82f450377',
-          },
-          recipients: {
-            universalIdentifier: 'b667f20a-1d38-453e-b888-3ecab00a1044',
-          },
-          list: {
-            universalIdentifier: 'b04fb8a5-f471-49a7-b82c-8434ea8276c5',
-          },
+          messageCampaign: 'Email',
         },
       },
     },
-  },
-};
+  }),
+} as const;

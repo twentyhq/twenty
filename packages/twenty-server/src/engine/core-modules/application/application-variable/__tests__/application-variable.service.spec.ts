@@ -53,16 +53,8 @@ describe('ApplicationVariableEntityService', () => {
               (value: string, _opts?: { workspaceId?: string }) =>
                 value.replace(/^enc:v2:[0-9a-f]+:/, '').replace(/\|.*$/, ''),
             ),
-            decryptAndMaskVersioned: jest.fn(
-              ({
-                value: _value,
-                mask: _mask,
-                workspaceId: _workspaceId,
-              }: {
-                value: string;
-                mask: string;
-                workspaceId?: string;
-              }) => '********',
+            maskDecryptedValue: jest.fn(
+              (_decryptedValue: string, _mask: string) => '********',
             ),
           },
         },
@@ -93,7 +85,7 @@ describe('ApplicationVariableEntityService', () => {
     ({
       id: '1',
       key: 'KEY',
-      value: '' as EncryptedString | '',
+      value: 'enc:v2:deadbeef:|instance' as EncryptedString,
       description: '',
       isSecret: false,
       type: FieldMetadataType.TEXT,
@@ -180,6 +172,34 @@ describe('ApplicationVariableEntityService', () => {
       ).toHaveBeenCalledTimes(2);
     });
 
+    it('should still inject a deprecated variable so apps can fall back to it', async () => {
+      mockCachedApplicationVariables([
+        makeFlatVariable({
+          universalIdentifier: 'variable-1',
+          key: 'API_KEY',
+          value: `enc:v2:deadbeef:legacy-key|${workspaceA}` as EncryptedString,
+          isSecret: true,
+          isDeprecated: true,
+        }),
+        makeFlatVariable({
+          universalIdentifier: 'variable-2',
+          key: 'NEW_API_KEY',
+          value: `enc:v2:deadbeef:new-key|${workspaceA}` as EncryptedString,
+          isSecret: true,
+        }),
+      ]);
+
+      const result = await service.getServerEnvVariables({
+        workspaceId: workspaceA,
+        applicationId: mockApplicationId,
+      });
+
+      expect(result).toEqual({
+        API_KEY: 'legacy-key',
+        NEW_API_KEY: 'new-key',
+      });
+    });
+
     it('should route each variable to its own workspace HKDF context', async () => {
       mockCachedApplicationVariables([
         makeFlatVariable({
@@ -214,12 +234,12 @@ describe('ApplicationVariableEntityService', () => {
       });
     });
 
-    it('should return an empty string for uninitialised variables without decrypting', async () => {
+    it('should decrypt uninitialised variables to an empty string', async () => {
       mockCachedApplicationVariables([
         makeFlatVariable({
           universalIdentifier: 'variable-1',
           key: 'EMPTY_VALUE',
-          value: '',
+          value: `enc:v2:deadbeef:|${workspaceA}` as EncryptedString,
         }),
       ]);
 
@@ -229,9 +249,6 @@ describe('ApplicationVariableEntityService', () => {
       });
 
       expect(result).toEqual({ EMPTY_VALUE: '' });
-      expect(
-        secretEncryptionService.decryptVersionedOrThrow,
-      ).not.toHaveBeenCalled();
     });
 
     it('should reuse provided application variable maps instead of reading the cache', async () => {
@@ -347,6 +364,35 @@ describe('ApplicationVariableEntityService', () => {
       );
     });
 
+    it('should encrypt an empty value like any other value', async () => {
+      const existingVariable = {
+        id: '1',
+        key: 'API_KEY',
+        value: 'old-encrypted-value',
+        isSecret: true,
+        applicationId: mockApplicationId,
+      } as ApplicationVariableEntity;
+
+      repository.findOne.mockResolvedValue(existingVariable);
+      repository.update.mockResolvedValue({ affected: 1 } as any);
+
+      await service.update({
+        key: 'API_KEY',
+        plainTextValue: '' as PlaintextString,
+        applicationId: mockApplicationId,
+        workspaceId: mockWorkspaceId,
+      });
+
+      expect(secretEncryptionService.encryptVersioned).toHaveBeenCalledWith(
+        '',
+        { workspaceId: mockWorkspaceId },
+      );
+      expect(repository.update).toHaveBeenCalledWith(
+        { key: 'API_KEY', applicationId: mockApplicationId },
+        { value: `enc:v2:deadbeef:|${mockWorkspaceId}` },
+      );
+    });
+
     it('should throw exception when variable not found', async () => {
       repository.findOne.mockResolvedValue(null);
 
@@ -386,12 +432,10 @@ describe('ApplicationVariableEntityService', () => {
       const result = service.getDisplayValue(variable);
 
       expect(result).toBe('https://example.com');
-      expect(
-        secretEncryptionService.decryptAndMaskVersioned,
-      ).not.toHaveBeenCalled();
+      expect(secretEncryptionService.maskDecryptedValue).not.toHaveBeenCalled();
     });
 
-    it('should call decryptAndMaskVersioned with the row workspaceId for secret variables', () => {
+    it('should decrypt once with the row workspaceId and mask the plaintext for secret variables', () => {
       const variable = {
         id: '1',
         key: 'SECRET_KEY',
@@ -401,15 +445,37 @@ describe('ApplicationVariableEntityService', () => {
         workspaceId: mockWorkspaceId,
       } as ApplicationVariableEntity;
 
-      service.getDisplayValue(variable);
+      const result = service.getDisplayValue(variable);
 
+      expect(result).toBe('********');
       expect(
-        secretEncryptionService.decryptAndMaskVersioned,
-      ).toHaveBeenCalledWith({
-        value: 'enc:v2:deadbeef:secret|workspace-123',
-        mask: SECRET_APPLICATION_VARIABLE_MASK,
+        secretEncryptionService.decryptVersionedOrThrow,
+      ).toHaveBeenCalledTimes(1);
+      expect(
+        secretEncryptionService.decryptVersionedOrThrow,
+      ).toHaveBeenCalledWith('enc:v2:deadbeef:secret|workspace-123', {
         workspaceId: mockWorkspaceId,
       });
+      expect(secretEncryptionService.maskDecryptedValue).toHaveBeenCalledWith(
+        'secret',
+        SECRET_APPLICATION_VARIABLE_MASK,
+      );
+    });
+
+    it('should return an empty string when a secret variable decrypts to an empty string', () => {
+      const variable = {
+        id: '1',
+        key: 'SECRET_KEY',
+        value: `enc:v2:deadbeef:|${mockWorkspaceId}`,
+        isSecret: true,
+        applicationId: mockApplicationId,
+        workspaceId: mockWorkspaceId,
+      } as ApplicationVariableEntity;
+
+      const result = service.getDisplayValue(variable);
+
+      expect(result).toBe('');
+      expect(secretEncryptionService.maskDecryptedValue).not.toHaveBeenCalled();
     });
   });
 });

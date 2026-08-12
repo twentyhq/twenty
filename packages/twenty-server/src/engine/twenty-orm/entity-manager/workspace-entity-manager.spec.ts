@@ -239,7 +239,6 @@ describe('WorkspaceEntityManager', () => {
         'test-entity': 'test-entity-id',
       },
       featureFlagsMap: {
-        IS_AI_CHAT_PAGE_ENABLED: false,
         IS_APP_CLAIMING_ENABLED: false,
         IS_UNIQUE_INDEXES_ENABLED: false,
         IS_JSON_FILTER_ENABLED: false,
@@ -252,8 +251,8 @@ describe('WorkspaceEntityManager', () => {
         IS_SETTINGS_DISCOVERY_HERO_ENABLED: false,
         IS_WORKFLOW_VERSION_IN_CORE_ENABLED: false,
         IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED: false,
-        IS_WORKSPACE_CACHE_COMPACT_STORAGE_ENABLED: false,
         IS_NATIVE_CALL_RECORDING_TABS_ENABLED: false,
+        IS_ORM_V2_READ_PATH_ENABLED: false,
       },
       userWorkspaceRoleMap: {},
       apiKeyRoleMap: {},

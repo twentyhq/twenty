@@ -38,6 +38,8 @@ export class WorkspaceCacheMetricsService {
   private readonly logger = new Logger(WorkspaceCacheMetricsService.name);
   private readonly recomputeDurationHistogram: Histogram;
   private readonly redisWriteDurationHistogram: Histogram;
+  private readonly packingDurationHistogram: Histogram;
+  private readonly unpackingDurationHistogram: Histogram;
 
   private localCache?: LocalCache;
   private cacheSizeByKeyName: Record<string, number> = {};
@@ -46,6 +48,7 @@ export class WorkspaceCacheMetricsService {
   private sizeStartupTimer?: ReturnType<typeof setTimeout>;
   private statsCache?: { computedAt: number } & LocalCacheStats;
   private sizeSampleInFlight = false;
+  private packingBacklog = 0;
 
   constructor(private readonly metricsService: MetricsService) {
     const meter = this.metricsService.getMeter();
@@ -64,6 +67,23 @@ export class WorkspaceCacheMetricsService {
       {
         description:
           'Wall-clock time to serialize and write recomputed cache entries to Redis',
+        unit: 's',
+        advice: { explicitBucketBoundaries: CACHE_DURATION_BUCKETS_SECONDS },
+      },
+    );
+    this.packingDurationHistogram = meter.createHistogram(
+      'twenty_workspace_cache_packing_run_duration_seconds',
+      {
+        description: 'Event loop time consumed by one packing run',
+        unit: 's',
+        advice: { explicitBucketBoundaries: CACHE_DURATION_BUCKETS_SECONDS },
+      },
+    );
+    this.unpackingDurationHistogram = meter.createHistogram(
+      'twenty_workspace_cache_unpacking_duration_seconds',
+      {
+        description:
+          'Wall-clock time to unpack one packed cache version back into objects on read',
         unit: 's',
         advice: { explicitBucketBoundaries: CACHE_DURATION_BUCKETS_SECONDS },
       },
@@ -91,6 +111,32 @@ export class WorkspaceCacheMetricsService {
 
   recordRedisWrite(seconds: number): void {
     this.redisWriteDurationHistogram.record(seconds);
+  }
+
+  recordPackingRun({
+    durationSeconds,
+    packed,
+    pending,
+  }: {
+    durationSeconds: number;
+    packed: number;
+    pending: number;
+  }): void {
+    this.packingBacklog = pending;
+
+    if (packed === 0) {
+      return;
+    }
+
+    this.packingDurationHistogram.record(durationSeconds);
+    this.metricsService.incrementCounterBy({
+      key: MetricsKeys.WorkspaceMetadataCachePacked,
+      amount: packed,
+    });
+  }
+
+  recordUnpacking(seconds: number, cacheKey: WorkspaceCacheKeyName): void {
+    this.unpackingDurationHistogram.record(seconds, { cache_key: cacheKey });
   }
 
   recordEviction(amount: number): void {
@@ -169,7 +215,7 @@ export class WorkspaceCacheMetricsService {
 
         for (const version of entry.versions.values()) {
           entryBytes +=
-            version.state === 'cold'
+            version.state === 'packed'
               ? version.blob.byteLength
               : deepSizeBytes(version.data, SIZE_WALK_NODE_CAP);
         }
@@ -267,6 +313,64 @@ export class WorkspaceCacheMetricsService {
             attributes: { provider: keyName },
           }),
         ),
+    });
+    this.metricsService.createMultiObservableGauge({
+      metricName: 'twenty_workspace_cache_local_versions_by_state',
+      options: {
+        description:
+          'Local workspace metadata cache versions by tier (live or packed) and provider',
+      },
+      callback: async () => {
+        const stats = this.getStats();
+
+        return [
+          ...Object.entries(stats.liveVersionsByKeyName).map(
+            ([keyName, value]) => ({
+              value,
+              attributes: { provider: keyName, state: 'live' },
+            }),
+          ),
+          ...Object.entries(stats.packedVersionsByKeyName).map(
+            ([keyName, value]) => ({
+              value,
+              attributes: { provider: keyName, state: 'packed' },
+            }),
+          ),
+        ];
+      },
+    });
+    this.metricsService.createObservableGauge({
+      metricName: 'twenty_workspace_cache_local_live_versions',
+      options: {
+        description:
+          'Total live (object graph) versions in the local workspace metadata cache',
+      },
+      callback: async () => this.getStats().liveVersionsTotal,
+    });
+    this.metricsService.createObservableGauge({
+      metricName: 'twenty_workspace_cache_local_packed_versions',
+      options: {
+        description:
+          'Total packed (serialized buffer) versions in the local workspace metadata cache',
+      },
+      callback: async () => this.getStats().packedVersionsTotal,
+    });
+    this.metricsService.createObservableGauge({
+      metricName: 'twenty_workspace_cache_local_packed_bytes',
+      options: {
+        description:
+          'Exact retained bytes held as packed buffers in the local workspace metadata cache',
+        unit: 'By',
+      },
+      callback: async () => this.getStats().packedBytesTotal,
+    });
+    this.metricsService.createObservableGauge({
+      metricName: 'twenty_workspace_cache_packing_backlog',
+      options: {
+        description:
+          'Versions currently eligible for packing, whether or not the last run reached them',
+      },
+      callback: async () => this.packingBacklog,
     });
   }
 }

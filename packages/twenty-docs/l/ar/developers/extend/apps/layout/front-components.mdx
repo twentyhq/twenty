@@ -601,6 +601,43 @@ export default defineFrontComponent({
 
 راجع [قسم الأصول العامة](/l/ar/developers/extend/apps/config/public-assets) للتفاصيل.
 
+## مشاركة التبعيات عبر مكوّنات الواجهة الأمامية
+
+افتراضيًا، يضمّن كل مكوّن واجهة أمامية نسخته الخاصة من المكتبات التي يستوردها، لذا فإن تطبيقًا يحتوي على خمسة مكوّنات سيتضمّن React خمس مرات. صرّح بالتبعيات المشتركة في ملف `package.json` الخاص بتطبيقك لبناء تلك المكتبات مرة واحدة وجعل كل مكوّن في التطبيق يحمّلها من ملف واحد مخزَّن في الذاكرة المخبئية:
+
+```json package.json
+{
+  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+}
+```
+
+بعد ذلك، يستورد كل مكوّن تبعياته تمامًا كما كان من قبل — دون أي تغيير في كود المكوّن الخاص بك:
+
+```tsx src/front-components/counter.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'counter',
+  component: Counter,
+});
+```
+
+بعض الأمور التي يجب معرفتها:
+
+* **حزمة تبعيات مشتركة واحدة لكل تطبيق.** يتم إنشاء الحزمة من تبعيات تطبيقك نفسه، بحيث تحتفظ بالتحكم الكامل في الإصدارات التي تُصدِرها.
+* **اسرد المعرّفات (specifiers) الدقيقة التي تستوردها.** يُعَدّ `twenty-ui/input` و `twenty-ui/display` مدخلين منفصلين؛ اسم الحزمة وحده لا يشمل المسارات الفرعية. إدراج `react` يغطي تلقائيًا `react/jsx-runtime`.
+* **شارك `react-dom/client` جنبًا إلى جنب مع `react`.** كل مكوّن يقوم بعملية التصيير من خلال `createRoot`، لذا فإن تركه خارجًا يعني أن كل مكوّن ما زال يضمّن React DOM داخل حزمتِه الخاصة.
+* **الحزمة مُخزَّنة في الذاكرة المخبئية.** يتم تقديمها عبر عنوان URL يعتمد على قيمة تجزئة المحتوى (content-hash) مع ذاكرة مخبئية ثابتة طويلة الأجل، لذا يتم تنزيلها مرة واحدة وإعادة استخدامها عبر جميع مكوّنات التطبيق حتى تتغيّر إحدى تبعياتها.
+* **المكوّنات التي لا تستورد أيًا من الحزم المشتركة لا تقوم بتنزيلها أبدًا.**
+
 ## التنسيق
 
 تدعم المكوّنات الأمامية عدة أساليب للتنسيق. يمكنك استخدام:
