@@ -10,6 +10,7 @@ import {
 } from 'src/database/commands/upgrade-version-command/2-31/__tests__/record-page-reconcile-test-setup';
 import { computeRecordPageStackReownUpdates } from 'src/database/commands/upgrade-version-command/2-31/utils/compute-record-page-stack-reown-updates.util';
 import { countRecordPageReownUpdates } from 'src/database/commands/upgrade-version-command/2-31/utils/count-record-page-reown-updates.util';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 
 const OBJECT_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-0000000000bb';
 
@@ -53,6 +54,10 @@ describe('computeRecordPageStackReownUpdates', () => {
     extraViews = [] as Record<string, unknown>[],
     fieldMetadatas = [FIELD_METADATA],
     pageLayoutOverride = {} as Record<string, unknown>,
+    engineOwnedApplicationUniversalIdentifiers = new Set([
+      STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+    ]),
+    objectMetadata = OBJECT_METADATA,
   }: {
     stack: ReturnType<typeof buildStack>;
     extraTabs?: Record<string, unknown>[];
@@ -60,6 +65,8 @@ describe('computeRecordPageStackReownUpdates', () => {
     extraViews?: Record<string, unknown>[];
     fieldMetadatas?: Record<string, unknown>[];
     pageLayoutOverride?: Record<string, unknown>;
+    engineOwnedApplicationUniversalIdentifiers?: Set<string>;
+    objectMetadata?: typeof OBJECT_METADATA;
   }) => {
     const flatPageLayout = {
       ...stack.pageLayout,
@@ -69,13 +76,15 @@ describe('computeRecordPageStackReownUpdates', () => {
     return computeRecordPageStackReownUpdates({
       workspaceId: WORKSPACE_ID,
       logger: { warn: warnMock },
-      flatObjectMetadata: OBJECT_METADATA,
+      flatObjectMetadata: objectMetadata,
       flatPageLayout,
       derivedPageLayoutUniversalIdentifier:
-        DERIVED_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
-      engineOwnedApplicationUniversalIdentifiers: new Set([
-        STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-      ]),
+        getSystemRecordPageLayoutUniversalIdentifier({
+          objectMetadataApplicationUniversalIdentifier:
+            objectMetadata.applicationUniversalIdentifier,
+          objectUniversalIdentifier: objectMetadata.universalIdentifier,
+        }),
+      engineOwnedApplicationUniversalIdentifiers,
       twentyStandardApplicationUniversalIdentifier:
         STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
       flatViewMaps: buildByUniversalIdentifierMap([
@@ -164,7 +173,10 @@ describe('computeRecordPageStackReownUpdates', () => {
     );
   });
 
-  it('warns on a dangling FIELDS widget view and skips the view branch', () => {
+  // A stack without a resolvable system view must not be re-owned at all:
+  // a derived layout whose FIELDS widget dangles would never be repaired by
+  // the backfill, which does not touch widgets of an existing layout.
+  it('warns and re-owns nothing when the only FIELDS widget view is dangling', () => {
     const stack = buildStack();
 
     stack.fieldsWidget.configuration.viewId = 'unknown-view-db-id';
@@ -172,12 +184,9 @@ describe('computeRecordPageStackReownUpdates', () => {
     const reownUpdates = runCompute({ stack });
 
     expect(warnMock).toHaveBeenCalledWith(
-      expect.stringContaining('Dangling FIELDS widget view unknown-view-db-id'),
+      expect.stringContaining('No resolvable system FIELDS widget view'),
     );
-    expect(reownUpdates.viewUpdates).toHaveLength(0);
-    expect(reownUpdates.viewFieldUpdates).toHaveLength(0);
-    // The widget itself is still re-owned.
-    expect(reownUpdates.pageLayoutWidgetUpdates).toHaveLength(1);
+    expect(countRecordPageReownUpdates(reownUpdates)).toBe(0);
   });
 
   it('warns and skips a view field whose displayed field is missing', () => {
@@ -265,6 +274,161 @@ describe('computeRecordPageStackReownUpdates', () => {
       ),
     );
     expect(collidingReownUpdates.pageLayoutUpdates).toHaveLength(0);
+  });
+
+  const buildUserAddedFieldsWidgetAndView = () => {
+    const userFieldsView = {
+      id: 'user-view-db-id',
+      universalIdentifier: 'user-view-universal-identifier',
+      key: null,
+      isSystemSideEffect: false,
+      deletedAt: null,
+      objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+      applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+      viewFieldUniversalIdentifiers: [],
+      viewFieldGroupUniversalIdentifiers: [],
+    };
+
+    const userFieldsWidget = {
+      id: 'user-widget-db-id',
+      universalIdentifier: 'user-widget-universal-identifier',
+      title: 'My fields',
+      isSystemSideEffect: false,
+      deletedAt: null,
+      applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+      configuration: {
+        configurationType: WidgetConfigurationType.FIELDS,
+        viewId: userFieldsView.id,
+        newFieldDefaultVisibility: true,
+      },
+    };
+
+    return { userFieldsView, userFieldsWidget };
+  };
+
+  // A user-added FIELDS widget carries its own view: both views derive the
+  // same object-based identifier, so re-owning both would self-collide on the
+  // unique index at apply time.
+  it('re-owns only the system view when a user-added FIELDS widget carries its own view', () => {
+    const stack = buildStack();
+    const { userFieldsView, userFieldsWidget } =
+      buildUserAddedFieldsWidgetAndView();
+
+    stack.homeTab.widgetUniversalIdentifiers.push(
+      userFieldsWidget.universalIdentifier,
+    );
+
+    const reownUpdates = runCompute({
+      stack,
+      extraWidgets: [userFieldsWidget],
+      extraViews: [userFieldsView],
+      engineOwnedApplicationUniversalIdentifiers: new Set([
+        STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+      ]),
+    });
+
+    expect(reownUpdates.viewUpdates).toHaveLength(1);
+    expect(reownUpdates.viewUpdates[0].id).toBe(stack.view.id);
+  });
+
+  it('re-owns only the system view when the user-added FIELDS widget comes first in walk order', () => {
+    const stack = buildStack();
+    const { userFieldsView, userFieldsWidget } =
+      buildUserAddedFieldsWidgetAndView();
+
+    stack.homeTab.widgetUniversalIdentifiers = [
+      userFieldsWidget.universalIdentifier,
+      ...stack.homeTab.widgetUniversalIdentifiers,
+    ];
+
+    const reownUpdates = runCompute({
+      stack,
+      extraWidgets: [userFieldsWidget],
+      extraViews: [userFieldsView],
+      engineOwnedApplicationUniversalIdentifiers: new Set([
+        STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+      ]),
+    });
+
+    expect(reownUpdates.viewUpdates).toHaveLength(1);
+    expect(reownUpdates.viewUpdates[0].id).toBe(stack.view.id);
+  });
+
+  // Custom objects have no pre-2.31 literal and their engine widget is not
+  // twenty-standard-owned: selection must not fall back to walk order.
+  it('selects the flagged engine view of a custom object even when a user-added FIELDS widget comes first', () => {
+    const customObjectMetadata = {
+      universalIdentifier: '20202020-0000-4000-8000-0000000000cd',
+      applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+    };
+    const stack = buildUnderivedRecordPageStack({
+      idPrefix: 'custom-stack',
+      objectUniversalIdentifier: customObjectMetadata.universalIdentifier,
+      applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+    });
+    const { userFieldsView, userFieldsWidget } =
+      buildUserAddedFieldsWidgetAndView();
+
+    stack.homeTab.widgetUniversalIdentifiers = [
+      userFieldsWidget.universalIdentifier,
+      ...stack.homeTab.widgetUniversalIdentifiers,
+    ];
+
+    const reownUpdates = runCompute({
+      stack,
+      objectMetadata: customObjectMetadata,
+      extraWidgets: [userFieldsWidget],
+      extraViews: [userFieldsView],
+      engineOwnedApplicationUniversalIdentifiers: new Set([
+        STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+      ]),
+    });
+
+    expect(reownUpdates.viewUpdates).toHaveLength(1);
+    expect(reownUpdates.viewUpdates[0].id).toBe(stack.view.id);
+  });
+
+  // Pre-2-15 custom rows are stuck at isSystemSideEffect false, so the engine
+  // view and a user-added view are indistinguishable: refuse selection and
+  // skip the whole stack, otherwise a re-owned layout would keep a FIELDS
+  // widget pointing at an un-reowned view the backfill never repairs.
+  it('warns and re-owns nothing when a custom object has several unflagged FIELDS widget views', () => {
+    const customObjectMetadata = {
+      universalIdentifier: '20202020-0000-4000-8000-0000000000cd',
+      applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+    };
+    const stack = buildUnderivedRecordPageStack({
+      idPrefix: 'custom-stack',
+      objectUniversalIdentifier: customObjectMetadata.universalIdentifier,
+      applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+      isSystemSideEffect: false,
+    });
+    const { userFieldsView, userFieldsWidget } =
+      buildUserAddedFieldsWidgetAndView();
+
+    stack.homeTab.widgetUniversalIdentifiers = [
+      userFieldsWidget.universalIdentifier,
+      ...stack.homeTab.widgetUniversalIdentifiers,
+    ];
+
+    const reownUpdates = runCompute({
+      stack,
+      objectMetadata: customObjectMetadata,
+      extraWidgets: [userFieldsWidget],
+      extraViews: [userFieldsView],
+      engineOwnedApplicationUniversalIdentifiers: new Set([
+        STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+      ]),
+    });
+
+    expect(warnMock).toHaveBeenCalledWith(
+      expect.stringContaining('Ambiguous FIELDS widget views'),
+    );
+    expect(countRecordPageReownUpdates(reownUpdates)).toBe(0);
   });
 
   it('skips the second standard group claiming the same name with a warning', () => {
