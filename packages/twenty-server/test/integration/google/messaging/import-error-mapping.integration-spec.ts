@@ -22,7 +22,29 @@ import { runMessageChannelSync } from 'test/integration/utils/run-message-channe
 
 const HANDLE = 'gmail-import-error-mapping@apple.dev';
 
+// Only a death-certificate response revokes a channel. Transport-level auth
+// failures (401, 403) are deliberately treated as temporary: a prod incident
+// revoked working accounts off transient 401s, so they now retry instead.
 const INSUFFICIENT_PERMISSIONS_FAILURES: [string, GoogleApiFailure][] = [
+  [
+    'a 400 invalid_grant response',
+    {
+      status: 400,
+      reason: 'invalid_grant',
+      message: 'Token has been expired or revoked.',
+    },
+  ],
+  [
+    'a 400 failedPrecondition response for a disabled mail service',
+    {
+      status: 400,
+      reason: 'failedPrecondition',
+      message: 'Mail service not enabled',
+    },
+  ],
+];
+
+const TEMPORARY_FAILURES: [string, GoogleApiFailure][] = [
   [
     'a 401 unauthorized response',
     { status: 401, reason: 'authError', message: 'Invalid Credentials' },
@@ -44,24 +66,13 @@ const INSUFFICIENT_PERMISSIONS_FAILURES: [string, GoogleApiFailure][] = [
     },
   ],
   [
-    'a 400 invalid_grant response',
-    {
-      status: 400,
-      reason: 'invalid_grant',
-      message: 'Token has been expired or revoked.',
-    },
+    'a 500 response with an unmapped reason',
+    { status: 500, reason: 'somethingElse', message: 'Internal error' },
   ],
   [
-    'a 400 failedPrecondition response for a disabled mail service',
-    {
-      status: 400,
-      reason: 'failedPrecondition',
-      message: 'Mail service not enabled',
-    },
+    'a response with an unmapped status',
+    { status: 418, reason: 'teapot', message: 'I am a teapot' },
   ],
-];
-
-const TEMPORARY_FAILURES: [string, GoogleApiFailure][] = [
   [
     'a 403 rate limit response',
     {
@@ -96,14 +107,6 @@ const UNKNOWN_FAILURES: [string, GoogleApiFailure][] = [
   [
     'a 400 response with an unmapped reason',
     { status: 400, reason: 'invalidArgument', message: 'Invalid query' },
-  ],
-  [
-    'a 500 response with an unmapped reason',
-    { status: 500, reason: 'somethingElse', message: 'Internal error' },
-  ],
-  [
-    'a response with an unmapped status',
-    { status: 418, reason: 'teapot', message: 'I am a teapot' },
   ],
 ];
 

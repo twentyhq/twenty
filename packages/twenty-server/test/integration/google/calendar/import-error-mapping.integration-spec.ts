@@ -22,7 +22,20 @@ import { runCalendarChannelListFetch } from 'test/integration/utils/run-calendar
 
 const HANDLE = 'calendar-import-error-mapping@apple.dev';
 
+// See the messaging suite: 401 and 403 are deliberately temporary so a
+// transient auth blip cannot revoke a working account.
 const INSUFFICIENT_PERMISSIONS_FAILURES: [string, GoogleApiFailure][] = [
+  [
+    'a 400 invalid_grant response',
+    {
+      status: 400,
+      reason: 'invalid_grant',
+      message: 'Token has been expired or revoked.',
+    },
+  ],
+];
+
+const TEMPORARY_FAILURES: [string, GoogleApiFailure][] = [
   [
     'a 401 unauthorized response',
     { status: 401, reason: 'authError', message: 'Invalid Credentials' },
@@ -36,16 +49,13 @@ const INSUFFICIENT_PERMISSIONS_FAILURES: [string, GoogleApiFailure][] = [
     },
   ],
   [
-    'a 400 invalid_grant response',
-    {
-      status: 400,
-      reason: 'invalid_grant',
-      message: 'Token has been expired or revoked.',
-    },
+    'a 500 response with an unmapped reason',
+    { status: 500, reason: 'somethingElse', message: 'Internal error' },
   ],
-];
-
-const TEMPORARY_FAILURES: [string, GoogleApiFailure][] = [
+  [
+    'a response with an unmapped status',
+    { status: 418, reason: 'teapot', message: 'I am a teapot' },
+  ],
   [
     'a 403 rateLimitExceeded response',
     {
@@ -84,14 +94,6 @@ const UNKNOWN_FAILURES: [string, GoogleApiFailure][] = [
   [
     'a 400 response with an unmapped reason',
     { status: 400, reason: 'invalidArgument', message: 'Invalid query' },
-  ],
-  [
-    'a 500 response with an unmapped reason',
-    { status: 500, reason: 'somethingElse', message: 'Internal error' },
-  ],
-  [
-    'a response with an unmapped status',
-    { status: 418, reason: 'teapot', message: 'I am a teapot' },
   ],
 ];
 
