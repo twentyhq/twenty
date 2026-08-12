@@ -1,12 +1,10 @@
 import { isDefined } from 'twenty-shared/utils';
 import { type FrontComponentStorageType } from 'twenty-sdk/front-component';
 
+import { STORAGE_PERSISTENCE_FAILURE_WARNING } from '@/polyfills/storage/constants/StoragePersistenceFailureWarning';
+import { type FrontComponentStorageBridge } from '@/polyfills/storage/types/FrontComponentStorageBridge';
 import { type FrontComponentHostCommunicationApiStore } from '@/types/FrontComponentHostCommunicationApiStore';
-import { type FrontComponentStorageBridge } from '@/types/FrontComponentStorageBridge';
 import { getFrontComponentStorageViolationMessage } from '@/utils/getFrontComponentStorageViolationMessage';
-
-const STORAGE_PERSISTENCE_FAILURE_WARNING =
-  'A front component storage write could not be persisted';
 
 export const createFrontComponentStorageBridge = ({
   storageType,

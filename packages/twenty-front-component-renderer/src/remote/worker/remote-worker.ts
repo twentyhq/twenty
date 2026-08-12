@@ -16,11 +16,11 @@ import { installLocalStyleOnBaseElements } from '@/polyfills/dom/utils/installLo
 import { workerGeometryStore } from '@/polyfills/geometry/workerGeometryStore';
 import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
 import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/installWindowGeometryPolyfill';
-import { installStorageShims } from '@/polyfills/storage/utils/installStorageShims';
+import { frontComponentStorageBridges } from '@/polyfills/storage/frontComponentStorageBridges';
+import { installStorageBridge } from '@/polyfills/storage/utils/installStorageBridge';
 import { exposeGlobals } from '@/remote/utils/exposeGlobals';
 import { installStylePropertyOnRemoteElements } from '@/remote/utils/installStylePropertyOnRemoteElements';
 import { patchRemoteElementAttributes } from '@/remote/utils/patchRemoteElementAttributes';
-import { frontComponentStorageBridges } from '@/remote/worker/frontComponentStorageBridges';
 import { buildFrontComponentHostCommunicationApiFromThreadImports } from '@/remote/worker/utils/buildFrontComponentHostCommunicationApiFromThreadImports';
 import { handleCommandConfirmationModalResult } from '@/remote/worker/utils/createCommandConfirmationModalBridge';
 import { installErrorEventBridge } from '@/remote/worker/utils/installErrorEventBridge';
@@ -53,7 +53,7 @@ installWindowGeometryPolyfill({
   geometryStore: workerGeometryStore,
 });
 
-installStorageShims({
+installStorageBridge({
   globalScope: globalThis as unknown as Record<string, unknown>,
   storageBridges: frontComponentStorageBridges,
 });

@@ -1,4 +1,4 @@
-import { type FrontComponentStorageBridge } from '@/types/FrontComponentStorageBridge';
+import { type FrontComponentStorageBridge } from '@/polyfills/storage/types/FrontComponentStorageBridge';
 
 export const createStorageFromFrontComponentStorageBridge = (
   bridge: FrontComponentStorageBridge,

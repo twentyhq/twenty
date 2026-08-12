@@ -2,7 +2,7 @@ import { type RemoteConnection } from '@remote-dom/core/elements';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
 import { workerGeometryStore } from '@/polyfills/geometry/workerGeometryStore';
-import { frontComponentStorageBridges } from '@/remote/worker/frontComponentStorageBridges';
+import { frontComponentStorageBridges } from '@/polyfills/storage/frontComponentStorageBridges';
 import { attachRemoteRenderRootToWorkerDocument } from '@/remote/worker/utils/attachRemoteRenderRootToWorkerDocument';
 import { installHostFetchProxy } from '@/remote/worker/utils/installHostFetchProxy';
 import { loadFrontComponentModule } from '@/remote/worker/utils/loadFrontComponentModule';
