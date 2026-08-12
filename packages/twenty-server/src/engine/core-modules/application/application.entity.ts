@@ -139,14 +139,14 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true, type: 'text' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.32.0_AddFrontComponentSharedDependenciesToApplicationFastInstanceCommand_1786527707132',
+      '2.31.0_AddFrontComponentSharedDependenciesToApplicationFastInstanceCommand_1786529082690',
   })
   frontComponentSharedDependenciesChecksum: string | null;
 
   @Column({ nullable: true, type: 'text' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.32.0_AddFrontComponentSharedDependenciesToApplicationFastInstanceCommand_1786527707132',
+      '2.31.0_AddFrontComponentSharedDependenciesToApplicationFastInstanceCommand_1786529082690',
   })
   frontComponentSharedDependenciesBuiltPath: string | null;
 
