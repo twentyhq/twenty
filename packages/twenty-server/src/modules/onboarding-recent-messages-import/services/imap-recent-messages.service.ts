@@ -59,7 +59,7 @@ export class ImapRecentMessagesService {
     messageFolder: MessageFolder;
     maxCount: number;
   }): Promise<string[]> {
-    const folderPath = getImapFolderPath(messageFolder.externalId);
+    const folderPath = getImapFolderPath(messageFolder.externalId, imapClient);
 
     if (!isDefined(folderPath)) {
       return [];

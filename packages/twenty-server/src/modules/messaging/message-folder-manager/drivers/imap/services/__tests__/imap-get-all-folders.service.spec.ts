@@ -4,6 +4,7 @@ import { type ImapFlow, type ListResponse } from 'imapflow';
 import {
   ConnectedAccountProvider,
   MessageFolderImportPolicy,
+  MessageFolderPendingSyncAction,
 } from 'twenty-shared/types';
 
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -44,13 +45,16 @@ const MESSAGE_CHANNEL: Pick<MessageChannelEntity, 'messageFolderImportPolicy'> =
 
 describe('ImapGetAllFoldersService', () => {
   let service: ImapGetAllFoldersService;
-  let mockImapClient: jest.Mocked<Pick<ImapFlow, 'list' | 'status'>>;
+  let mockImapClient: jest.Mocked<
+    Pick<ImapFlow, 'list' | 'status' | 'enabled'>
+  >;
   let imapFindSentFolderService: jest.Mocked<ImapFindSentFolderService>;
 
   beforeEach(async () => {
     mockImapClient = {
       list: jest.fn().mockResolvedValue([]),
       status: jest.fn(),
+      enabled: new Set<string>(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -232,5 +236,61 @@ describe('ImapGetAllFoldersService', () => {
         expect(paths).not.toContain('Shared Folders');
       },
     );
+  });
+
+  it('persists NFC mailbox identifiers for UTF8=ACCEPT LIST responses', async () => {
+    mockImapClient.enabled.add('UTF8=ACCEPT');
+    mockImapClient.list.mockResolvedValue([
+      createMockMailbox({
+        path: 'Parent/Ane\u0301mo+',
+        name: 'Ane\u0301mo+',
+        parentPath: 'Parent',
+      }),
+    ]);
+    mockImapClient.status.mockResolvedValue({ uidValidity: BigInt(42) } as any);
+
+    const [folder] = await service.getAllMessageFolders(
+      CONNECTED_ACCOUNT,
+      MESSAGE_CHANNEL,
+    );
+
+    expect(mockImapClient.status).toHaveBeenCalledWith('Parent/An\u00e9mo+', {
+      uidValidity: true,
+    });
+    expect(folder).toMatchObject({
+      externalId: 'Parent/An\u00e9mo+:42',
+      name: 'An\u00e9mo+',
+      parentFolderId: null,
+    });
+  });
+
+  it('keeps an existing decomposed external ID to avoid recreating its folder', async () => {
+    mockImapClient.enabled.add('UTF8=ACCEPT');
+    mockImapClient.list.mockResolvedValue([
+      createMockMailbox({
+        path: 'Parent/Ane\u0301mo+',
+        name: 'Ane\u0301mo+',
+      }),
+    ]);
+    mockImapClient.status.mockResolvedValue({ uidValidity: BigInt(42) } as any);
+
+    const [folder] = await service.getAllMessageFolders(
+      CONNECTED_ACCOUNT,
+      MESSAGE_CHANNEL,
+      [
+        {
+          id: 'folder-1',
+          name: 'Ane\u0301mo+',
+          externalId: 'Parent/Ane\u0301mo+:42',
+          isSynced: true,
+          isSentFolder: false,
+          parentFolderId: null,
+          syncCursor: 'preserved-cursor',
+          pendingSyncAction: MessageFolderPendingSyncAction.NONE,
+        },
+      ],
+    );
+
+    expect(folder.externalId).toBe('Parent/Ane\u0301mo+:42');
   });
 });

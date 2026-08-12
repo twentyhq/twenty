@@ -59,6 +59,7 @@ describe('ImapGetMessageListService', () => {
       highestModseq: '1000',
     },
     capabilities: new Set(['CONDSTORE']),
+    enabled: new Set<string>(),
     status: jest.fn().mockResolvedValue({
       uidValidity: 12345,
       uidNext: 100,
@@ -67,6 +68,9 @@ describe('ImapGetMessageListService', () => {
   };
 
   beforeEach(async () => {
+    mockImapClient.getMailboxLock.mockResolvedValue({ release: jest.fn() });
+    mockImapClient.enabled.clear();
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ImapGetMessageListService,
@@ -272,6 +276,94 @@ describe('ImapGetMessageListService', () => {
 
       expect(imapSyncService.syncFolder).toHaveBeenCalledTimes(1);
       expect(result.messageExternalIds).not.toEqual([]);
+    });
+  });
+
+  describe('unavailable mailboxes', () => {
+    const runSync = (messageFolders: MessageFolder[]) =>
+      service.getMessageLists({
+        connectedAccount: mockConnectedAccount,
+        messageChannel: {
+          syncCursor: '',
+          id: 'channel-1',
+          messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
+        },
+        messageFolders,
+      });
+
+    it('normalizes Unicode mailbox names only when UTF8=ACCEPT is enabled', async () => {
+      mockImapClient.enabled.add('UTF8=ACCEPT');
+      const folder = createMockFolder({
+        name: 'Ane\u0301mo+',
+        externalId: 'Parent/Ane\u0301mo+:12345',
+        isSynced: true,
+      });
+
+      await runSync([folder]);
+
+      expect(mockImapClient.getMailboxLock).toHaveBeenCalledWith(
+        'Parent/An\u00e9mo+',
+      );
+      expect(imapSyncService.syncFolder).toHaveBeenCalledWith(
+        mockImapClient,
+        'Parent/An\u00e9mo+',
+        null,
+        expect.anything(),
+      );
+    });
+
+    it('skips an explicitly missing mailbox and continues with later folders', async () => {
+      const missingMailboxError = Object.assign(
+        new Error("Mailbox doesn't exist: Missing (0.001 + 0.000 secs)."),
+        {
+          responseStatus: 'NO',
+          responseText: "Mailbox doesn't exist: Missing (0.001 + 0.000 secs).",
+        },
+      );
+      mockImapClient.getMailboxLock
+        .mockRejectedValueOnce(missingMailboxError)
+        .mockResolvedValueOnce({ release: jest.fn() });
+      const missingFolder = createMockFolder({
+        name: 'Missing',
+        externalId: 'Missing:1',
+        isSynced: true,
+      });
+      const availableFolder = createMockFolder({
+        name: 'Available',
+        externalId: 'Available:1',
+        isSynced: true,
+      });
+
+      const result = await runSync([missingFolder, availableFolder]);
+
+      expect(result.map(({ folderId }) => folderId)).toEqual([
+        availableFolder.id,
+      ]);
+      expect(imapSyncService.syncFolder).toHaveBeenCalledTimes(1);
+    });
+
+    it('fails the channel flow for errors other than an explicit missing mailbox', async () => {
+      const accountError = Object.assign(new Error('Connection lost'), {
+        code: 'ECONNRESET',
+      });
+      mockImapClient.getMailboxLock.mockRejectedValueOnce(accountError);
+      const firstFolder = createMockFolder({
+        name: 'First',
+        externalId: 'First:1',
+        isSynced: true,
+      });
+      const laterFolder = createMockFolder({
+        name: 'Later',
+        externalId: 'Later:1',
+        isSynced: true,
+      });
+
+      await expect(runSync([firstFolder, laterFolder])).rejects.toThrow(
+        'Connection lost',
+      );
+
+      expect(mockImapClient.getMailboxLock).toHaveBeenCalledTimes(1);
+      expect(imapSyncService.syncFolder).not.toHaveBeenCalled();
     });
   });
 });

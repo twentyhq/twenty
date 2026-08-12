@@ -22,4 +22,20 @@ describe('getImapFolderPath', () => {
     expect(getImapFolderPath(null)).toBeNull();
     expect(getImapFolderPath(undefined)).toBeNull();
   });
+
+  it('normalizes a UTF8=ACCEPT mailbox path to NFC', () => {
+    const client = { enabled: new Set(['UTF8=ACCEPT']) };
+
+    expect(getImapFolderPath('Parent/Ane\u0301mo+:42', client)).toBe(
+      'Parent/An\u00e9mo+',
+    );
+  });
+
+  it('preserves a legacy mailbox path without Unicode normalization', () => {
+    const client = { enabled: new Set<string>() };
+
+    expect(getImapFolderPath('Parent/Ane\u0301mo+:42', client)).toBe(
+      'Parent/Ane\u0301mo+',
+    );
+  });
 });
