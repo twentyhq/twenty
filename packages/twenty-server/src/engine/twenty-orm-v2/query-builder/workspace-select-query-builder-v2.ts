@@ -1,5 +1,6 @@
 import { type ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { FindOperator } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -11,10 +12,12 @@ import { type QueryExecutorV2 } from 'src/engine/twenty-orm-v2/executor/types/qu
 import {
   type ExpressionMapLike,
   type FindOptionsLike,
+  type ObjectWhereLike,
   type OrderByConditionLike,
+  type WhereConditionLike,
   type WhereExpressionLike,
-  type WhereFactoryLike,
   isNegatedWhereFactoryLike,
+  isObjectWhereLike,
   isWhereFactoryLike,
 } from 'src/engine/twenty-orm-v2/query-builder/types/query-builder-v2.type';
 import { buildOrderByClauses } from 'src/engine/twenty-orm-v2/sql/utils/build-order-by-clauses.util';
@@ -23,6 +26,7 @@ import { compileNamedParameters } from 'src/engine/twenty-orm-v2/sql/utils/compi
 import {
   RESERVED_PARAMETER_NAMES,
   buildColumnNameByResultAlias,
+  buildCountStatement,
   buildPaginationParameters,
   buildProjection,
   buildSelectStatement,
@@ -37,6 +41,8 @@ import {
   type WhereClause,
 } from 'src/engine/twenty-orm-v2/sql/utils/build-select-statement.util';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm-v2/table-shape/types/workspace-table-shape.type';
+
+let objectWhereParameterSequence = 0;
 
 export type QueryBuilderV2Context = {
   tableShape: WorkspaceTableShape;
@@ -117,7 +123,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
   }
 
   where(
-    condition: string | WhereFactoryLike,
+    condition: WhereConditionLike,
     parameters?: Record<string, unknown>,
   ): this {
     this.whereClauses.length = 0;
@@ -127,14 +133,14 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
   }
 
   andWhere(
-    condition: string | WhereFactoryLike,
+    condition: WhereConditionLike,
     parameters?: Record<string, unknown>,
   ): this {
     return this.appendWhere('and', condition, parameters);
   }
 
   orWhere(
-    condition: string | WhereFactoryLike,
+    condition: WhereConditionLike,
     parameters?: Record<string, unknown>,
   ): this {
     return this.appendWhere('or', condition, parameters);
@@ -282,6 +288,14 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     return this;
   }
 
+  take(count: number): this {
+    return this.limit(count);
+  }
+
+  skip(count: number): this {
+    return this.offset(count);
+  }
+
   getQuery(): string {
     return this.buildSelectStatement().sql;
   }
@@ -354,6 +368,16 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     }
   }
 
+  async getCount(): Promise<number> {
+    this.context.onBeforeExecute(this);
+
+    const sql = buildCountStatement(this.toSelectStatementState());
+    const compiled = compileNamedParameters(sql, this.parameters);
+    const rows = await this.context.executor.execute(compiled);
+
+    return Number(rows[0]?.count ?? 0);
+  }
+
   addJoinCondition(alias: string, condition: string): this {
     const joinClause = this.joinClauses.find(
       (candidate) => candidate.alias === alias,
@@ -396,7 +420,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
 
   private appendWhere(
     operator: 'and' | 'or',
-    condition: string | WhereFactoryLike,
+    condition: WhereConditionLike,
     parameters?: Record<string, unknown>,
   ): this {
     if (isDefined(parameters)) {
@@ -429,11 +453,57 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       return this;
     }
 
+    if (isObjectWhereLike(condition)) {
+      const { sql, parameters: objectParameters } =
+        this.buildObjectWhereClause(condition);
+
+      this.setParameters(objectParameters);
+
+      if (sql.length > 0) {
+        this.whereClauses.push({ operator, sql: `(${sql})` });
+      }
+
+      return this;
+    }
+
     if (condition.length > 0) {
       this.whereClauses.push({ operator, sql: `(${condition})` });
     }
 
     return this;
+  }
+
+  private buildObjectWhereClause(where: ObjectWhereLike): {
+    sql: string;
+    parameters: Record<string, unknown>;
+  } {
+    const conditions: string[] = [];
+    const parameters: Record<string, unknown> = {};
+
+    for (const [columnName, value] of Object.entries(where)) {
+      if (!isDefined(this.tableShape.columnShapeByColumnName[columnName])) {
+        throw new TwentyOrmV2Exception(
+          `Column "${columnName}" does not exist on "${this.tableShape.nameSingular}"`,
+          TwentyOrmV2ExceptionCode.UNKNOWN_COLUMN,
+        );
+      }
+
+      if (!(value instanceof FindOperator) || value.type !== 'in') {
+        throw new TwentyOrmV2Exception(
+          `Object where only supports the "in" operator on "${columnName}"`,
+          TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
+        );
+      }
+
+      const parameterName = `ormV2ObjectWhere_${objectWhereParameterSequence++}`;
+
+      conditions.push(
+        `${quoteColumn(this.alias, columnName)} IN (:...${parameterName})`,
+      );
+      parameters[parameterName] = value.value;
+    }
+
+    return { sql: conditions.join(' AND '), parameters };
   }
 
   private appendOrderBy(
