@@ -6402,6 +6402,7 @@ msgstr "מחיקת שיטה זו תסיר אותה לצמיתות מחשבונך
 
 #. js-lingui-id: Ssdrw4
 #: src/modules/settings/ai/components/SettingsAiModelsTable.tsx
+#: src/pages/settings/applications/components/SettingsApplicationVariableLabelRow.tsx
 msgid "Deprecated"
 msgstr "הוצא משימוש"
 

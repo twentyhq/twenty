@@ -6402,6 +6402,7 @@ msgstr "この方法を削除すると、アカウントから永久に削除さ
 
 #. js-lingui-id: Ssdrw4
 #: src/modules/settings/ai/components/SettingsAiModelsTable.tsx
+#: src/pages/settings/applications/components/SettingsApplicationVariableLabelRow.tsx
 msgid "Deprecated"
 msgstr "非推奨"
 
