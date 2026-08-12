@@ -71,6 +71,7 @@ describe('slackPostMessageHandler', () => {
       messageText: 'hello',
     });
 
+    expect(postMessageMock).toHaveBeenCalledTimes(1);
     expect(postMessageMock).toHaveBeenCalledWith({
       channel: CHANNEL_ID,
       thread_ts: undefined,
@@ -88,6 +89,7 @@ describe('slackPostMessageHandler', () => {
       unfurlMedia: false,
     });
 
+    expect(postMessageMock).toHaveBeenCalledTimes(1);
     expect(postMessageMock).toHaveBeenCalledWith(
       expect.objectContaining({ unfurl_links: false, unfurl_media: false }),
     );

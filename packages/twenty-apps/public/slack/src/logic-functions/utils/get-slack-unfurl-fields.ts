@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-sdk/utils';
+
 import { type SlackUnfurlOptions } from 'src/logic-functions/types/slack-unfurl-options.type';
 
 type SlackUnfurlFields = {
@@ -9,6 +11,6 @@ export const getSlackUnfurlFields = ({
   unfurlLinks,
   unfurlMedia,
 }: SlackUnfurlOptions): SlackUnfurlFields => ({
-  ...(unfurlLinks === undefined ? {} : { unfurl_links: unfurlLinks }),
-  ...(unfurlMedia === undefined ? {} : { unfurl_media: unfurlMedia }),
+  ...(isDefined(unfurlLinks) ? { unfurl_links: unfurlLinks } : {}),
+  ...(isDefined(unfurlMedia) ? { unfurl_media: unfurlMedia } : {}),
 });
