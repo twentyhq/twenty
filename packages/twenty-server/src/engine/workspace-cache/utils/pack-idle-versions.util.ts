@@ -6,9 +6,6 @@ import { getKeyNameFromLocalCacheKey } from 'src/engine/workspace-cache/utils/ge
 export type PackIdleVersionsResult = {
   packed: number;
   remaining: number;
-  // Costliest pack observed in this slice, to budget the next one. Deliberately not
-  // an all-time maximum: one pathological version would throttle packing for ever.
-  packCostEstimateMs: number;
 };
 
 type LiveVersion = { localKey: string; hash: string; lastReadAt: number };
@@ -18,7 +15,6 @@ export const packIdleVersions = <T>({
   liveVersionsPerProvider,
   minIdleMs,
   budgetMs,
-  packCostEstimateMs = 0,
   pack,
   now = () => performance.now(),
   nowEpochMs = () => Date.now(),
@@ -27,7 +23,6 @@ export const packIdleVersions = <T>({
   liveVersionsPerProvider: number;
   minIdleMs: number;
   budgetMs: number;
-  packCostEstimateMs?: number;
   pack: (params: { localKey: string; data: T }) => Buffer | undefined;
   now?: () => number;
   nowEpochMs?: () => number;
@@ -73,45 +68,32 @@ export const packIdleVersions = <T>({
 
   let packed = 0;
   let index = 0;
-  let costliestPackMs = 0;
 
   for (const { localKey, hash } of candidates) {
-    // The first version of a slice always runs: one version is indivisible and can
-    // cost more than the whole budget on its own, so gating it would stall packing
-    // for good. Every version after it is gated on what packing cost last slice,
-    // which keeps the overrun to a single version instead of one per candidate.
-    if (index > 0 && now() - startedAt + packCostEstimateMs >= budgetMs) {
-      break;
-    }
     index += 1;
 
     const entry = localCache.get(localKey);
     const version = entry?.versions.get(hash);
 
-    if (!isDefined(entry) || version?.state !== 'live') {
-      continue;
+    if (isDefined(entry) && version?.state === 'live') {
+      const blob = pack({ localKey, data: version.data });
+
+      if (isDefined(blob)) {
+        entry.versions.set(hash, {
+          state: 'packed',
+          blob,
+          lastReadAt: version.lastReadAt,
+        });
+        packed += 1;
+      }
     }
 
-    const packStartedAt = now();
-    const blob = pack({ localKey, data: version.data });
-
-    costliestPackMs = Math.max(costliestPackMs, now() - packStartedAt);
-
-    if (!isDefined(blob)) {
-      continue;
+    // Checked after packing, so a slice always makes progress: one version is
+    // indivisible and can cost more than the whole budget on its own.
+    if (now() - startedAt >= budgetMs) {
+      break;
     }
-
-    entry.versions.set(hash, {
-      state: 'packed',
-      blob,
-      lastReadAt: version.lastReadAt,
-    });
-    packed += 1;
   }
 
-  return {
-    packed,
-    remaining: candidates.length - index,
-    packCostEstimateMs: costliestPackMs,
-  };
+  return { packed, remaining: candidates.length - index };
 };

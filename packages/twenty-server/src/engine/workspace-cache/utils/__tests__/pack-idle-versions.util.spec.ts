@@ -30,7 +30,6 @@ const run = (
     pack?: () => Buffer | undefined;
     budgetMs?: number;
     minIdleMs?: number;
-    packCostEstimateMs?: number;
     now?: () => number;
   },
 ) =>
@@ -39,7 +38,6 @@ const run = (
     liveVersionsPerProvider,
     minIdleMs: overrides?.minIdleMs ?? 0,
     budgetMs: overrides?.budgetMs ?? NO_BUDGET_LIMIT,
-    packCostEstimateMs: overrides?.packCostEstimateMs ?? 0,
     pack: overrides?.pack ?? pack,
     now: overrides?.now,
     nowEpochMs: () => NOW_EPOCH_MS,
@@ -171,59 +169,31 @@ describe('packIdleVersions', () => {
 
     it('should keep packing one version per slice when a single pack costs more than the whole budget', () => {
       const localCache = buildCache(3);
-      let estimate = 40;
       let remaining = Number.POSITIVE_INFINITY;
       let slices = 0;
 
       while (remaining > 0 && slices < 10) {
         const result = run(localCache, 0, {
-          budgetMs: 25,
-          packCostEstimateMs: estimate,
+          budgetMs: 5,
           now: clockAdvancingPerCall(),
         });
 
         expect(result.packed).toBe(1);
-        estimate = result.packCostEstimateMs;
         remaining = result.remaining;
         slices += 1;
       }
 
       expect(slices).toBe(3);
-      expect(
-        [...localCache.values()].every(
-          (entry) => entry.versions.get('hash-1')?.state === 'packed',
-        ),
-      ).toBe(true);
     });
 
-    it('should stop the rest of the slice once the carried estimate no longer fits', () => {
-      const result = run(buildCache(10), 0, {
-        budgetMs: 25,
-        packCostEstimateMs: 40,
-        now: clockAdvancingPerCall(),
-      });
-
-      expect(result.packed).toBe(1);
-      expect(result.remaining).toBe(9);
-    });
-
-    it('should report the costliest pack so the next slice can budget for it', () => {
+    it('should stop once the budget is spent instead of draining the backlog', () => {
       const result = run(buildCache(10), 0, {
         budgetMs: 25,
         now: clockAdvancingPerCall(),
       });
 
-      expect(result.packCostEstimateMs).toBe(10);
-    });
-
-    it('should stop before a pack the budget cannot absorb rather than overrunning it', () => {
-      const result = run(buildCache(10), 0, {
-        budgetMs: 25,
-        now: clockAdvancingPerCall(),
-      });
-
-      expect(result.packed).toBe(1);
-      expect(result.remaining).toBe(9);
+      expect(result.packed).toBe(3);
+      expect(result.remaining).toBe(7);
     });
 
     it('should pack coldest first so an interrupted slice leaves the hottest behind', () => {

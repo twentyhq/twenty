@@ -86,7 +86,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   >();
   private sweepTimer?: ReturnType<typeof setInterval>;
   private packingTimer?: ReturnType<typeof setInterval>;
-  private packCostEstimateMs = 0;
   private readonly workspaceCacheProviders = new Map<
     WorkspaceCacheKeyName,
     WorkspaceCacheProvider<CacheDataType, StoredCacheDataType>
@@ -694,9 +693,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   private packIdleVersionsSlice(): void {
     const startedAt = performance.now();
 
-    const { packed, remaining, packCostEstimateMs } = packIdleVersions({
+    const { packed, remaining } = packIdleVersions({
       localCache: this.localCache,
-      packCostEstimateMs: this.packCostEstimateMs,
       liveVersionsPerProvider: LIVE_VERSIONS_PER_PROVIDER,
       minIdleMs: MIN_IDLE_BEFORE_PACKING_MS,
       budgetMs: PACKING_BUDGET_MS,
@@ -719,8 +717,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         );
       },
     });
-
-    this.packCostEstimateMs = packCostEstimateMs;
 
     this.cacheMetricsService.recordPackingSlice({
       durationSeconds: (performance.now() - startedAt) / 1000,
