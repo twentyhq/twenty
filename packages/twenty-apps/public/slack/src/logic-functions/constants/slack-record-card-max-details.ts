@@ -1,0 +1,1 @@
+export const SLACK_RECORD_CARD_MAX_DETAILS = 3;

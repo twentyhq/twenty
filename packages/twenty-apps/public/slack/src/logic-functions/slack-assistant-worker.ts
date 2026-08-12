@@ -22,6 +22,7 @@ import { buildSlackAssistantMessages } from 'src/logic-functions/utils/build-sla
 import { buildSlackAssistantRequestName } from 'src/logic-functions/utils/build-slack-assistant-request-name';
 import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agent-response-text';
 import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slack-assistant-context';
+import { fetchSlackAssistantRecordCard } from 'src/logic-functions/utils/fetch-slack-assistant-record-card';
 import { fetchWorkspaceBaseUrl } from 'src/logic-functions/utils/fetch-workspace-base-url';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
@@ -119,6 +120,17 @@ export const slackAssistantWorkerHandler = async (
       });
     }
 
+    const canRenderBlocks =
+      responseText.length <= SLACK_MARKDOWN_BLOCK_MAX_LENGTH;
+
+    const recordCard = canRenderBlocks
+      ? await fetchSlackAssistantRecordCard({
+          client,
+          responseText,
+          workspaceBaseUrl,
+        })
+      : undefined;
+
     const durationMilliseconds = Date.now() - startedAt;
 
     const deliveryResult = await slackPostMessageHandler({
@@ -129,13 +141,15 @@ export const slackAssistantWorkerHandler = async (
       }),
       parentMessageTimestamp,
       messageFormat: 'markdown',
-      messageBlocks:
-        responseText.length > SLACK_MARKDOWN_BLOCK_MAX_LENGTH
-          ? undefined
-          : buildSlackAssistantAnswerBlocks({
-              responseText,
-              durationMilliseconds,
-            }),
+      unfurlLinks: false,
+      unfurlMedia: false,
+      messageBlocks: canRenderBlocks
+        ? buildSlackAssistantAnswerBlocks({
+            responseText,
+            durationMilliseconds,
+            recordCard,
+          })
+        : undefined,
     });
 
     if (!deliveryResult.success) {
