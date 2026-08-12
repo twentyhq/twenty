@@ -1,3 +1,4 @@
+import { type WebClient } from '@slack/web-api';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -7,13 +8,9 @@ import { resolveSlackRunAsForRequest } from 'src/logic-functions/utils/resolve-s
 
 const {
   findSlackAssistantRequestCreatedByMock,
-  getSlackClientMock,
-  resolveSlackBotUserIdOrThrowMock,
   resolveSlackRunAsWorkspaceMemberIdMock,
 } = vi.hoisted(() => ({
   findSlackAssistantRequestCreatedByMock: vi.fn(),
-  getSlackClientMock: vi.fn(),
-  resolveSlackBotUserIdOrThrowMock: vi.fn(),
   resolveSlackRunAsWorkspaceMemberIdMock: vi.fn(),
 }));
 
@@ -24,14 +21,6 @@ vi.mock(
   }),
 );
 
-vi.mock('src/logic-functions/utils/get-slack-client', () => ({
-  getSlackClient: getSlackClientMock,
-}));
-
-vi.mock('src/logic-functions/utils/resolve-slack-bot-user-id-or-throw', () => ({
-  resolveSlackBotUserIdOrThrow: resolveSlackBotUserIdOrThrowMock,
-}));
-
 vi.mock(
   'src/logic-functions/utils/resolve-slack-run-as-workspace-member-id',
   () => ({
@@ -40,6 +29,7 @@ vi.mock(
 );
 
 const client = {} as CoreApiClient;
+const slackClient = {} as WebClient;
 
 const SLACK_USER_ID = 'U0123456789';
 const BOT_USER_ID = 'U0BOT';
@@ -64,10 +54,18 @@ const resolve = (
     requestText: string;
     requestMessage: SlackThreadMessage | undefined;
     identity: SlackUserIdentity | undefined;
+    slackClient: WebClient | undefined;
+    assistantBotUserId: string | undefined;
   }> = {},
 ) =>
   resolveSlackRunAsForRequest({
     client,
+    slackClient:
+      'slackClient' in overrides ? overrides.slackClient : slackClient,
+    assistantBotUserId:
+      'assistantBotUserId' in overrides
+        ? overrides.assistantBotUserId
+        : BOT_USER_ID,
     identity: 'identity' in overrides ? overrides.identity : IDENTITY,
     requestId: 'request-1',
     requestText: overrides.requestText ?? REQUEST_TEXT,
@@ -84,8 +82,6 @@ describe('resolveSlackRunAsForRequest', () => {
       source: 'APPLICATION',
       workspaceMemberId: null,
     });
-    getSlackClientMock.mockResolvedValue({ success: true, client: {} });
-    resolveSlackBotUserIdOrThrowMock.mockResolvedValue(BOT_USER_ID);
     resolveSlackRunAsWorkspaceMemberIdMock.mockResolvedValue('member-1');
   });
 
@@ -134,12 +130,8 @@ describe('resolveSlackRunAsForRequest', () => {
   });
 
   it('should refuse when Slack is not connected', async () => {
-    getSlackClientMock.mockResolvedValue({
-      success: false,
-      error: 'Slack is not connected',
-    });
-
-    expect(await resolve()).toBeUndefined();
+    expect(await resolve({ slackClient: undefined })).toBeUndefined();
+    expect(findSlackAssistantRequestCreatedByMock).not.toHaveBeenCalled();
   });
 
   it('should refuse when the actor cannot be read', async () => {
@@ -161,9 +153,7 @@ describe('resolveSlackRunAsForRequest', () => {
     ).toBe('member-1');
   });
 
-  it('should refuse a mention-stripped request when the bot id cannot be resolved', async () => {
-    resolveSlackBotUserIdOrThrowMock.mockRejectedValue(new Error('no bot id'));
-
-    expect(await resolve()).toBeUndefined();
+  it('should refuse a mention-stripped request when the bot id is unknown', async () => {
+    expect(await resolve({ assistantBotUserId: undefined })).toBeUndefined();
   });
 });

@@ -1,9 +1,11 @@
+import { type WebClient } from '@slack/web-api';
+
 import { type SlackAssistantAgentMessage } from 'src/logic-functions/types/slack-assistant-agent-message.type';
 import { type SlackThreadMessage } from 'src/logic-functions/types/slack-thread-message.type';
 import { type SlackUserIdentity } from 'src/logic-functions/types/slack-user-identity.type';
-import { fetchSlackConversationMessages } from 'src/logic-functions/utils/fetch-slack-conversation-messages';
+import { buildSlackConversationMessages } from 'src/logic-functions/utils/build-slack-conversation-messages';
+import { fetchSlackThreadMessages } from 'src/logic-functions/utils/fetch-slack-thread-messages';
 import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
-import { findSlackMessage } from 'src/logic-functions/utils/find-slack-message';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { resolveSlackBotUserIdOrThrow } from 'src/logic-functions/utils/resolve-slack-bot-user-id-or-throw';
 
@@ -12,6 +14,8 @@ type SlackAssistantContext = {
   requesterName: string | undefined;
   requesterIdentity: SlackUserIdentity | undefined;
   requestMessage: SlackThreadMessage | undefined;
+  slackClient: WebClient | undefined;
+  assistantBotUserId: string | undefined;
 };
 
 const UNREACHABLE_SLACK_CONTEXT: SlackAssistantContext = {
@@ -19,6 +23,8 @@ const UNREACHABLE_SLACK_CONTEXT: SlackAssistantContext = {
   requesterName: undefined,
   requesterIdentity: undefined,
   requestMessage: undefined,
+  slackClient: undefined,
+  assistantBotUserId: undefined,
 };
 
 export const fetchSlackAssistantContext = async ({
@@ -50,28 +56,27 @@ export const fetchSlackAssistantContext = async ({
     },
   );
 
-  const [conversationMessages, requesterIdentity, requestMessage] =
+  const [{ tailMessages, requestMessage }, requesterIdentity] =
     await Promise.all([
-      fetchSlackConversationMessages({
-        client,
-        channelId: slackChannelId,
-        threadTimestamp: parentMessageTimestamp,
-        assistantBotUserId,
-        excludeMessageTimestamps: [slackMessageTimestamp],
-      }),
-      fetchSlackUserIdentity({ client, slackUserId }),
-      findSlackMessage({
+      fetchSlackThreadMessages({
         client,
         slackChannelId,
         parentMessageTimestamp,
-        messageTimestamp: slackMessageTimestamp,
+        requestMessageTimestamp: slackMessageTimestamp,
       }),
+      fetchSlackUserIdentity({ client, slackUserId }),
     ]);
 
   return {
-    conversationMessages,
+    conversationMessages: buildSlackConversationMessages({
+      messages: tailMessages,
+      assistantBotUserId,
+      excludeMessageTimestamps: [slackMessageTimestamp],
+    }),
     requesterName: requesterIdentity?.displayName,
     requesterIdentity,
     requestMessage,
+    slackClient: client,
+    assistantBotUserId,
   };
 };

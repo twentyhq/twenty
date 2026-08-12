@@ -83,7 +83,14 @@ export const slackAssistantWorkerHandler = async (
 
   try {
     const [
-      { conversationMessages, requesterName, requesterIdentity, requestMessage },
+      {
+        conversationMessages,
+        requesterName,
+        requesterIdentity,
+        requestMessage,
+        slackClient,
+        assistantBotUserId,
+      },
       workspaceBaseUrl,
     ] = await Promise.all([
       fetchSlackAssistantContext({
@@ -97,6 +104,8 @@ export const slackAssistantWorkerHandler = async (
 
     const runAsWorkspaceMemberId = await resolveSlackRunAsForRequest({
       client,
+      slackClient,
+      assistantBotUserId,
       identity: requesterIdentity,
       requestId: record.id,
       requestText,
