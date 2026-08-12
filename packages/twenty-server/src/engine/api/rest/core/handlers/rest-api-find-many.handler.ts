@@ -80,7 +80,7 @@ export class RestApiFindManyHandler extends RestApiBaseHandler {
       data: {
         [objectNamePlural]: records,
       },
-      totalCount: Number(aggregatedValues?.totalCount),
+      totalCount: Number(aggregatedValues?.totalCount ?? 0),
       pageInfo,
     };
   }

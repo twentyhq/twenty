@@ -21,6 +21,7 @@ import { buildOrderByClauses } from 'src/engine/twenty-orm-v2/sql/utils/build-or
 import { collectReferencedColumnNames } from 'src/engine/twenty-orm-v2/sql/utils/collect-referenced-column-names.util';
 import { compileNamedParameters } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
 import {
+  RESERVED_PARAMETER_NAMES,
   buildColumnNameByResultAlias,
   buildPaginationParameters,
   buildProjection,
@@ -140,6 +141,15 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
   }
 
   setParameters(parameters: Record<string, unknown>): this {
+    for (const parameterName of Object.keys(parameters)) {
+      if (RESERVED_PARAMETER_NAMES.includes(parameterName)) {
+        throw new TwentyOrmV2Exception(
+          `Parameter name "${parameterName}" is reserved for pagination`,
+          TwentyOrmV2ExceptionCode.INVALID_PARAMETER,
+        );
+      }
+    }
+
     this.parameters = { ...this.parameters, ...parameters };
 
     return this;

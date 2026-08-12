@@ -59,7 +59,7 @@ export const buildWorkspaceTableShape = ({
         fieldMetadataId: flatFieldMetadata.id,
         relationType,
         targetObjectMetadataId:
-          flatFieldMetadata.relationTargetObjectMetadataId ?? '',
+          flatFieldMetadata.relationTargetObjectMetadataId,
         targetFieldMetadataId:
           flatFieldMetadata.relationTargetFieldMetadataId ?? null,
         joinColumnName,

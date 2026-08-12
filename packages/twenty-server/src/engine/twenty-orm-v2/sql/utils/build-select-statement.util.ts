@@ -198,6 +198,11 @@ export const buildOrderByClause = (state: SelectStatementState): string => {
 export const LIMIT_PARAMETER_NAME = 'ormV2Limit';
 export const OFFSET_PARAMETER_NAME = 'ormV2Offset';
 
+export const RESERVED_PARAMETER_NAMES: string[] = [
+  LIMIT_PARAMETER_NAME,
+  OFFSET_PARAMETER_NAME,
+];
+
 export const buildPaginationParameters = (
   state: SelectStatementState,
 ): Record<string, number> => ({

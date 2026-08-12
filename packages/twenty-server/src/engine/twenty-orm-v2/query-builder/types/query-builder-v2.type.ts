@@ -1,4 +1,4 @@
-import { InstanceChecker } from 'typeorm';
+import { InstanceChecker } from 'typeorm/util/InstanceChecker';
 
 export type WhereFactoryLike = {
   whereFactory: (queryBuilder: WhereExpressionLike) => void;

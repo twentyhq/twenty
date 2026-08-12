@@ -501,6 +501,14 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
     ]);
   });
 
+  it('should refuse a caller parameter that collides with a reserved name', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    expect(() =>
+      queryBuilder.andWhere('"person"."id" = :ormV2Limit', { ormV2Limit: 1 }),
+    ).toThrow(TwentyOrmV2Exception);
+  });
+
   it('should report the columns it selected so permissions do not have to parse SQL', () => {
     const { queryBuilder } = buildQueryBuilder();
 

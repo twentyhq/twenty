@@ -76,9 +76,10 @@ one statement shape instead of minting one per page.
 **Prepared statements.** Query text is generated from metadata and repeats across
 requests, so statements carry a name and Postgres parses and plans each once per
 connection. Statement text embeds the workspace schema, so the budget is scoped per
-workspace at 500 shapes: a shared budget would let one busy tenant push every other tenant
+workspace at 200 shapes: a shared budget would let one busy tenant push every other tenant
 onto unnamed statements. A workspace that saturates logs once, then loses plan reuse for
-further shapes.
+further shapes. The number of tracked workspaces is capped at 100 in least-recently-used
+order, so tenant churn cannot grow the cache without bound.
 
 ## What is the same, deliberately
 
