@@ -109,7 +109,7 @@ curl http://localhost:3000
 
 ### Otevření Twenty pro Externí Přístup
 
-Ve výchozím nastavení běží Twenty na `localhost` na portu `3000`. Pro přístup přes externí doménu nebo IP adresu musíte nakonfigurovat `SERVER_URL` ve vašem `.env` souboru.
+Ve výchozím nastavení běží Twenty na `localhost` na portu `3000`. UI řeší API z vlastního původu prohlížeče, takže se načítá z libovolného hostnamu, který dosáhne na kontejner — ale přesto nastavte `SERVER_URL` na svou veřejnou URL: server ji používá pro generované odkazy (e-maily, OAuth callbacky) a k detekci HTTPS pro zabezpečené cookies.
 
 #### Porozumění `SERVER_URL`
 
@@ -229,7 +229,7 @@ Přidejte do svého crontabu (`crontab -e`):
 1. Zastavte aplikaci:
 
 ```bash
-docker compose stop twenty-server twenty-front
+docker compose stop server worker
 ```
 
 2. Obnovte databázi:

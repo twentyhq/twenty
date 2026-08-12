@@ -129,6 +129,8 @@ export const slackAssistantWorkerHandler = async (
       }),
       parentMessageTimestamp,
       messageFormat: 'markdown',
+      unfurlLinks: false,
+      unfurlMedia: false,
       messageBlocks:
         responseText.length > SLACK_MARKDOWN_BLOCK_MAX_LENGTH
           ? undefined
