@@ -102,6 +102,7 @@ const MediaNotes = () => {
   const [savedRecordId, setSavedRecordId] = useState<string | null>(null);
   // Set only when attaching failed, so it doubles as the retry payload.
   const [failedAttach, setFailedAttach] = useState<PendingAttach | null>(null);
+  const [isAttaching, setIsAttaching] = useState(false);
 
   useEffect(() => {
     fetchRecordingFieldMetadataId()
@@ -114,6 +115,7 @@ const MediaNotes = () => {
   // has to be recoverable rather than silent.
   const attachToNewMediaNote = async (pendingAttach: PendingAttach) => {
     setFailedAttach(null);
+    setIsAttaching(true);
 
     try {
       const created = await new CoreApiClient().mutation({
@@ -136,11 +138,16 @@ const MediaNotes = () => {
       setSavedRecordId(created.createMediaNote?.id ?? null);
     } catch {
       setFailedAttach(pendingAttach);
+    } finally {
+      setIsAttaching(false);
     }
   };
 
   const handleCapture = async (mediaType: 'audio' | 'video') => {
-    if (recordingFieldMetadataId === null) {
+    // Starting a new capture mid-attach would let the in-flight attach settle
+    // against a recording the UI has already replaced, offering a retry for
+    // the wrong file.
+    if (recordingFieldMetadataId === null || isAttaching) {
       return;
     }
 
@@ -182,7 +189,7 @@ const MediaNotes = () => {
         <button
           data-testid={MEDIA_NOTES_TEST_IDS.recordAudioButton}
           style={buttonStyle}
-          disabled={recordingFieldMetadataId === null}
+          disabled={recordingFieldMetadataId === null || isAttaching}
           onClick={() => handleCapture('audio')}
         >
           Record a voice note
@@ -190,7 +197,7 @@ const MediaNotes = () => {
         <button
           data-testid={MEDIA_NOTES_TEST_IDS.recordVideoButton}
           style={buttonStyle}
-          disabled={recordingFieldMetadataId === null}
+          disabled={recordingFieldMetadataId === null || isAttaching}
           onClick={() => handleCapture('video')}
         >
           Record a video note
@@ -255,6 +262,7 @@ const MediaNotes = () => {
               <button
                 data-testid={MEDIA_NOTES_TEST_IDS.retryAttachButton}
                 style={buttonStyle}
+                disabled={isAttaching}
                 onClick={() => attachToNewMediaNote(failedAttach)}
               >
                 Retry attaching

@@ -66,11 +66,17 @@ jobs:
 
       # Cheap checks first: a broken app never gets past publish, so failing
       # here avoids paying for the server + browser boot below.
+      #
+      # The example app is outside the root workspaces list, so tsc and oxlint
+      # come from the root node_modules that yarn hoists them into. --no-install
+      # makes that dependency explicit: if hoisting ever stops providing them,
+      # this fails loudly instead of npx silently fetching an unrelated registry
+      # package and exiting 0 on a check that never ran.
       - name: Typecheck and lint media-notes app
         working-directory: packages/twenty-apps/examples/media-notes
         run: |
-          npx tsc --noEmit -p tsconfig.json
-          npx oxlint -c .oxlintrc.json .
+          npx --no-install tsc --noEmit -p tsconfig.json
+          npx --no-install oxlint -c .oxlintrc.json .
 
       - name: Setup server environment
         run: npx nx reset:env:e2e-testing-server twenty-server
