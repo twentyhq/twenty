@@ -19,10 +19,8 @@ const buildRecordReferenceSection = (
 };
 
 const buildPermissionSection = ({
-  requester,
   runAsWorkspaceMemberId,
 }: {
-  requester: string;
   runAsWorkspaceMemberId: string | undefined;
 }): string => {
   const missingToolMeaning =
@@ -32,8 +30,10 @@ const buildPermissionSection = ({
     return `You are answering with the app's own role, not the requester's. ${missingToolMeaning}`;
   }
 
+  // only the member id goes here: a Slack display name is user-set free text
+  // and must not sit in an instruction position
   return [
-    `You are acting as ${requester}, workspace member ${runAsWorkspaceMemberId}, with that member's own permissions. When the request says me, my or mine, it means that member, and you can use their id directly.`,
+    `You are acting as workspace member ${runAsWorkspaceMemberId}, with that member's own permissions. When the request says me, my or mine, it means that member, and you can use their id directly.`,
     missingToolMeaning,
   ].join('\n\n');
 };
@@ -60,7 +60,7 @@ export const buildSlackAssistantMessages = ({
   const requestSections = [
     `This run is killed after ${timeoutSeconds} seconds and the member gets an error instead of an answer. Keep tool calls focused and reply as soon as you have enough to be useful.`,
     buildRecordReferenceSection(workspaceBaseUrl),
-    buildPermissionSection({ requester, runAsWorkspaceMemberId }),
+    buildPermissionSection({ runAsWorkspaceMemberId }),
   ];
 
   if (isNonEmptyArray(conversationMessages)) {

@@ -56,6 +56,8 @@ const resolve = (
     identity: SlackUserIdentity | undefined;
     slackClient: WebClient | undefined;
     assistantBotUserId: string | undefined;
+    threadMessages: SlackThreadMessage[];
+    isDirectMessage: boolean;
   }> = {},
 ) =>
   resolveSlackRunAsForRequest({
@@ -73,6 +75,8 @@ const resolve = (
       'requestMessage' in overrides
         ? overrides.requestMessage
         : MENTION_MESSAGE,
+    threadMessages: overrides.threadMessages ?? [MENTION_MESSAGE],
+    isDirectMessage: overrides.isDirectMessage ?? false,
   });
 
 describe('resolveSlackRunAsForRequest', () => {
@@ -155,5 +159,55 @@ describe('resolveSlackRunAsForRequest', () => {
 
   it('should refuse a mention-stripped request when the bot id is unknown', async () => {
     expect(await resolve({ assistantBotUserId: undefined })).toBeUndefined();
+  });
+
+  const MENTIONLESS_MESSAGE: SlackThreadMessage = {
+    ts: '1700000000.000200',
+    user: SLACK_USER_ID,
+    text: REQUEST_TEXT,
+  };
+
+  it('should refuse a channel message that never addressed the bot', async () => {
+    expect(
+      await resolve({
+        requestMessage: MENTIONLESS_MESSAGE,
+        threadMessages: [MENTIONLESS_MESSAGE],
+      }),
+    ).toBeUndefined();
+    expect(findSlackAssistantRequestCreatedByMock).not.toHaveBeenCalled();
+  });
+
+  it('should accept a mentionless follow-up in a thread the assistant already replied in', async () => {
+    expect(
+      await resolve({
+        requestMessage: MENTIONLESS_MESSAGE,
+        threadMessages: [
+          { ts: '1700000000.000100', user: BOT_USER_ID, text: 'Earlier answer' },
+          MENTIONLESS_MESSAGE,
+        ],
+      }),
+    ).toBe('member-1');
+  });
+
+  it('should not count an assistant reply that came after the message as addressing', async () => {
+    expect(
+      await resolve({
+        requestMessage: MENTIONLESS_MESSAGE,
+        threadMessages: [
+          MENTIONLESS_MESSAGE,
+          { ts: '1700000000.000300', user: BOT_USER_ID, text: 'Later answer' },
+        ],
+      }),
+    ).toBeUndefined();
+  });
+
+  it('should accept a mentionless direct message', async () => {
+    expect(
+      await resolve({
+        requestMessage: MENTIONLESS_MESSAGE,
+        threadMessages: [MENTIONLESS_MESSAGE],
+        isDirectMessage: true,
+      }),
+    ).toBe('member-1');
   });
 });

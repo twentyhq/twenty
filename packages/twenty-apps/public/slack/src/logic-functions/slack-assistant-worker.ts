@@ -88,6 +88,7 @@ export const slackAssistantWorkerHandler = async (
         requesterName,
         requesterIdentity,
         requestMessage,
+        threadMessages,
         slackClient,
         assistantBotUserId,
       },
@@ -110,6 +111,8 @@ export const slackAssistantWorkerHandler = async (
       requestId: record.id,
       requestText,
       requestMessage,
+      threadMessages,
+      isDirectMessage,
     });
 
     if (isNonEmptyString(runAsWorkspaceMemberId)) {

@@ -41,6 +41,20 @@ describe('findWorkspaceMemberIdByEmail', () => {
     ).toBeUndefined();
   });
 
+  it('should escape ilike wildcards so the filter itself is exact', async () => {
+    queryMock.mockResolvedValue(
+      buildQueryResult([{ id: 'member-1', userEmail: 'a_b%c@twenty.com' }]),
+    );
+
+    expect(await findWorkspaceMemberIdByEmail(client, 'a_b%c@twenty.com')).toBe(
+      'member-1',
+    );
+
+    const filter = queryMock.mock.calls[0][0].workspaceMembers.__args.filter;
+
+    expect(filter).toEqual({ userEmail: { ilike: 'a\\_b\\%c@twenty.com' } });
+  });
+
   it('should bind nobody when several members share the same email', async () => {
     queryMock.mockResolvedValue(
       buildQueryResult([

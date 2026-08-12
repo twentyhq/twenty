@@ -17,6 +17,7 @@ const buildSlackUser = (overrides: Record<string, unknown> = {}) => ({
   team_id: INSTALLED_TEAM_ID,
   real_name: 'Ada Lovelace',
   profile: { display_name: 'ada', email: 'ada@twenty.com' },
+  is_email_confirmed: true,
   ...overrides,
 });
 
@@ -71,6 +72,7 @@ describe('fetchSlackUserIdentity', () => {
     ['Slackbot', { id: 'USLACKBOT' }],
     ['a deactivated account', { deleted: true }],
     ['an unconfirmed email', { is_email_confirmed: false }],
+    ['an unknown email confirmation state', { is_email_confirmed: undefined }],
   ])('should not treat %s as a regular member', async (_label, overrides) => {
     usersInfoMock.mockResolvedValue({ user: buildSlackUser(overrides) });
 

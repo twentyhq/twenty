@@ -14,6 +14,7 @@ type SlackAssistantContext = {
   requesterName: string | undefined;
   requesterIdentity: SlackUserIdentity | undefined;
   requestMessage: SlackThreadMessage | undefined;
+  threadMessages: SlackThreadMessage[];
   slackClient: WebClient | undefined;
   assistantBotUserId: string | undefined;
 };
@@ -23,6 +24,7 @@ const UNREACHABLE_SLACK_CONTEXT: SlackAssistantContext = {
   requesterName: undefined,
   requesterIdentity: undefined,
   requestMessage: undefined,
+  threadMessages: [],
   slackClient: undefined,
   assistantBotUserId: undefined,
 };
@@ -76,6 +78,7 @@ export const fetchSlackAssistantContext = async ({
     requesterName: requesterIdentity?.displayName,
     requesterIdentity,
     requestMessage,
+    threadMessages: tailMessages,
     slackClient: client,
     assistantBotUserId,
   };

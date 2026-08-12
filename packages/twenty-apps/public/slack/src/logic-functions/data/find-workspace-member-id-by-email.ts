@@ -5,6 +5,12 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 const CANDIDATES_PER_PAGE = 100;
 const MAX_PAGES = 10;
 
+// % and _ are ilike wildcards and legal in emails; escaping them makes the
+// filter itself an exact case-insensitive match instead of a broad candidate
+// query. The in-code comparison below stays as a second layer.
+const escapeIlikePattern = (value: string): string =>
+  value.replace(/[\\%_]/g, '\\$&');
+
 export const findWorkspaceMemberIdByEmail = async (
   client: CoreApiClient,
   email: string,
@@ -18,7 +24,7 @@ export const findWorkspaceMemberIdByEmail = async (
     const queryResult = await client.query({
       workspaceMembers: {
         __args: {
-          filter: { userEmail: { ilike: email } },
+          filter: { userEmail: { ilike: escapeIlikePattern(email) } },
           first: CANDIDATES_PER_PAGE,
           ...(isDefined(after) ? { after } : {}),
         },
