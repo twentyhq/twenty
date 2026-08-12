@@ -54,8 +54,7 @@ const MIN_EVICT_KEYS = 100;
 const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000; // 30 minutes idle
 const LOCAL_CACHE_SWEEP_INTERVAL_MS = 60 * 1000;
 const PACKING_INTERVAL_MS = 500;
-const PACKING_PONDERATION_BUDGET = 8;
-const DEFAULT_PACKING_PONDERATION = 1;
+const PACKING_PONDERATION_BUDGET = 64;
 const MIN_IDLE_BEFORE_PACKING_MS = 60 * 1000;
 // Per-provider entry caps, keyed by local cache key prefix (ORM graphs are ~5 MB each).
 const MAX_LOCAL_ENTRIES_BY_KEY_NAME = new Map<string, number>([
@@ -136,11 +135,11 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
             instance.constructor,
           );
 
-        if (options?.localDataOnly) {
-          this.localDataOnlyKeys.add(workspaceCacheKeyName);
-        }
+        if (isDefined(options)) {
+          if (options.localDataOnly) {
+            this.localDataOnlyKeys.add(workspaceCacheKeyName);
+          }
 
-        if (isDefined(options?.packingPonderation)) {
           this.packingPonderationByKey.set(
             workspaceCacheKeyName,
             options.packingPonderation,
@@ -710,7 +709,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       ponderationOf: (localKey) =>
         this.packingPonderationByKey.get(
           getKeyNameFromLocalCacheKey(localKey) as WorkspaceCacheKeyName,
-        ) ?? DEFAULT_PACKING_PONDERATION,
+        )!,
       isPackable: (localKey) =>
         !this.localDataOnlyKeys.has(
           getKeyNameFromLocalCacheKey(localKey) as WorkspaceCacheKeyName,
