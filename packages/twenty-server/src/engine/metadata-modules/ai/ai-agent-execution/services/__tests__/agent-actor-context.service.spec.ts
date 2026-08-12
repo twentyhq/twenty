@@ -1,5 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
@@ -135,9 +136,7 @@ describe('AgentActorContextService', () => {
     const viaApplication = {
       id: 'app-1',
       defaultRoleId: 'app-role-1',
-    } as unknown as Parameters<
-      typeof service.buildRunAsWorkspaceMemberContext
-    >[0]['viaApplication'];
+    } as FlatApplication;
 
     const result = await service.buildRunAsWorkspaceMemberContext({
       ...runAsArgs,
