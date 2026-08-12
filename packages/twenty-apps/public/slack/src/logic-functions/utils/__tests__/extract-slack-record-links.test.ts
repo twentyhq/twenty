@@ -17,8 +17,23 @@ describe('extractSlackRecordLinks', () => {
         recordId: 'c-1',
         recordUrl: `${WORKSPACE_BASE_URL}/object/company/c-1`,
         linkLabel: 'ACME',
+        startIndex: 'Created '.length,
       },
     ]);
+  });
+
+  it('should report where a record was first linked', () => {
+    const responseText = [
+      'Two accounts match:',
+      `- [ACME](${WORKSPACE_BASE_URL}/object/company/c-1)`,
+    ].join('\n');
+
+    const [recordLink] = extractSlackRecordLinks({
+      responseText,
+      workspaceBaseUrl: WORKSPACE_BASE_URL,
+    });
+
+    expect(recordLink.startIndex).toBe(responseText.indexOf('[ACME]'));
   });
 
   it('should extract every distinct record of a list answer', () => {

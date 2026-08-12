@@ -109,10 +109,12 @@ describe('fetchSlackAssistantRecordCard', () => {
     expect(card?.details).toEqual(['$12,500', 'New lead', 'ACME']);
   });
 
-  it('should not build a card when the answer lists several records', async () => {
+  it('should not build a card when the answer enumerates records in a list', async () => {
     const responseText = [
-      `- [ACME](${WORKSPACE_BASE_URL}/object/company/c-1)`,
-      `- [Globex](${WORKSPACE_BASE_URL}/object/company/c-2)`,
+      '30 opportunities are in the "New" stage.',
+      '',
+      `- [iPhone Corporate Program](${WORKSPACE_BASE_URL}/object/opportunity/o-1)`,
+      `- [Apple Watch Corporate Wellness](${WORKSPACE_BASE_URL}/object/opportunity/o-2)`,
     ].join('\n');
 
     const card = await fetchSlackAssistantRecordCard({
@@ -123,6 +125,62 @@ describe('fetchSlackAssistantRecordCard', () => {
 
     expect(card).toBeUndefined();
     expect(queryMock).not.toHaveBeenCalled();
+  });
+
+  it('should not build a card for a numbered list of records', async () => {
+    const responseText = [
+      'The three largest deals:',
+      `1. [ACME](${WORKSPACE_BASE_URL}/object/company/c-1)`,
+      `2. [Globex](${WORKSPACE_BASE_URL}/object/company/c-2)`,
+    ].join('\n');
+
+    const card = await fetchSlackAssistantRecordCard({
+      client,
+      responseText,
+      workspaceBaseUrl: WORKSPACE_BASE_URL,
+    });
+
+    expect(card).toBeUndefined();
+    expect(queryMock).not.toHaveBeenCalled();
+  });
+
+  it('should build a card for the record the answer leads with, even when it links related records', async () => {
+    queryMock.mockResolvedValue({
+      opportunities: {
+        edges: [
+          {
+            node: {
+              id: 'o-1',
+              name: 'iPhone Corporate Program',
+              amount: { amountMicros: '3200000000000', currencyCode: 'USD' },
+              stage: 'NEW',
+              company: { name: 'Microsoft' },
+            },
+          },
+        ],
+      },
+    });
+
+    const responseText = [
+      `Details for the first "New" opportunity: [iPhone Corporate Program](${WORKSPACE_BASE_URL}/object/opportunity/o-1)`,
+      '',
+      '- Stage: New',
+      `- Company: [Microsoft](${WORKSPACE_BASE_URL}/object/company/c-1)`,
+      `- Point of contact: [Kimberly Gordon](${WORKSPACE_BASE_URL}/object/person/p-1)`,
+    ].join('\n');
+
+    const card = await fetchSlackAssistantRecordCard({
+      client,
+      responseText,
+      workspaceBaseUrl: WORKSPACE_BASE_URL,
+    });
+
+    expect(card).toEqual({
+      recordName: 'iPhone Corporate Program',
+      objectLabel: 'Opportunity',
+      recordUrl: `${WORKSPACE_BASE_URL}/object/opportunity/o-1`,
+      details: ['$3,200,000', 'New', 'Microsoft'],
+    });
   });
 
   it('should not build a card when the answer links no record', async () => {

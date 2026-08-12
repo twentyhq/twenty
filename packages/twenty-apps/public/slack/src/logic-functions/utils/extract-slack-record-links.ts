@@ -35,6 +35,7 @@ export const extractSlackRecordLinks = ({
       recordId,
       recordUrl,
       linkLabel: linkLabel.trim(),
+      startIndex: match.index ?? 0,
     });
   }
 

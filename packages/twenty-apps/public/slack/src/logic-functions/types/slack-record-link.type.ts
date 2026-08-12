@@ -3,4 +3,5 @@ export type SlackRecordLink = {
   recordId: string;
   recordUrl: string;
   linkLabel: string;
+  startIndex: number;
 };
