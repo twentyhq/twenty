@@ -3,7 +3,9 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
 import { buildFrontComponentStorageKeyPrefix } from '@/host/utils/buildFrontComponentStorageKeyPrefix';
-import { frontComponentStorageService } from '@/host/utils/frontComponentStorageService';
+import { clearFrontComponentStorage } from '@/host/utils/clearFrontComponentStorage';
+import { deleteFrontComponentStorageItem } from '@/host/utils/deleteFrontComponentStorageItem';
+import { setFrontComponentStorageItem } from '@/host/utils/setFrontComponentStorageItem';
 import {
   FRONT_COMPONENT_STORY_DEFAULT_ARGS,
   hostApiMocks,
@@ -70,7 +72,7 @@ const roundTripStory = runFrontComponentStory({
 
 const clearPersistedStorageNamespace = () => {
   for (const area of ['local', 'session'] as const) {
-    frontComponentStorageService.clear({
+    clearFrontComponentStorage({
       area,
       ...PERSISTED_STORAGE_NAMESPACE,
     });
@@ -90,7 +92,7 @@ export const StorageRoundTrip: Story = {
     frontComponentHostCommunicationApi: {
       ...hostApiMocks,
       storageSet: async ({ area, key, serializedValue }) => {
-        frontComponentStorageService.set({
+        setFrontComponentStorageItem({
           ...PERSISTED_STORAGE_NAMESPACE,
           area,
           key,
@@ -98,14 +100,14 @@ export const StorageRoundTrip: Story = {
         });
       },
       storageDelete: async ({ area, key }) => {
-        frontComponentStorageService.delete({
+        deleteFrontComponentStorageItem({
           ...PERSISTED_STORAGE_NAMESPACE,
           area,
           key,
         });
       },
       storageClear: async ({ area }) => {
-        frontComponentStorageService.clear({
+        clearFrontComponentStorage({
           ...PERSISTED_STORAGE_NAMESPACE,
           area,
         });

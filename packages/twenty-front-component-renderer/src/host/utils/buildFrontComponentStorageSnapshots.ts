@@ -1,6 +1,6 @@
 import { type FrontComponentStorageArea } from 'twenty-sdk/front-component';
 
-import { frontComponentStorageService } from '@/host/utils/frontComponentStorageService';
+import { snapshotFrontComponentStorage } from '@/host/utils/snapshotFrontComponentStorage';
 import { type FrontComponentStorageNamespace } from '@/types/FrontComponentStorageNamespace';
 import { type FrontComponentStorageSnapshots } from '@/types/FrontComponentStorageSnapshots';
 
@@ -19,7 +19,7 @@ export const buildFrontComponentStorageSnapshots = (
 
   for (const area of STORAGE_AREAS) {
     try {
-      snapshots[area] = frontComponentStorageService.snapshot({
+      snapshots[area] = snapshotFrontComponentStorage({
         area,
         ...namespace,
       });

@@ -5,10 +5,12 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useRef } from 'react';
 import {
+  clearFrontComponentStorage,
+  deleteFrontComponentStorageItem,
   type FrontComponentExecutionContext,
   type FrontComponentHostCommunicationApi,
   type FrontComponentStorageNamespace,
-  frontComponentStorageService,
+  setFrontComponentStorageItem,
 } from 'twenty-front-component-renderer';
 import {
   AppPath,
@@ -392,7 +394,7 @@ export const useFrontComponentExecutionContext = ({
     key,
     serializedValue,
   }) => {
-    frontComponentStorageService.set({
+    setFrontComponentStorageItem({
       ...requireStorageNamespace(),
       area,
       key,
@@ -402,7 +404,7 @@ export const useFrontComponentExecutionContext = ({
 
   const storageDelete: FrontComponentHostCommunicationApi['storageDelete'] =
     async ({ area, key }) => {
-      frontComponentStorageService.delete({
+      deleteFrontComponentStorageItem({
         ...requireStorageNamespace(),
         area,
         key,
@@ -411,7 +413,7 @@ export const useFrontComponentExecutionContext = ({
 
   const storageClear: FrontComponentHostCommunicationApi['storageClear'] =
     async ({ area }) => {
-      frontComponentStorageService.clear({
+      clearFrontComponentStorage({
         ...requireStorageNamespace(),
         area,
       });

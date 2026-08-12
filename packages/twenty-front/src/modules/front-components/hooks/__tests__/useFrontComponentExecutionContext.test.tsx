@@ -37,7 +37,6 @@ const mockCloseSidePanelMenu = jest.fn();
 const mockSetCommandMenuItemProgress = jest.fn();
 const mockCopyToClipboard = jest.fn();
 const mockSetRecordPageActiveTabId = jest.fn();
-const mockStorageSnapshot = jest.fn();
 const mockStorageSet = jest.fn();
 const mockStorageDelete = jest.fn();
 const mockStorageClear = jest.fn();
@@ -145,12 +144,10 @@ jest.mock('~/hooks/useCopyToClipboard', () => ({
 }));
 
 jest.mock('twenty-front-component-renderer', () => ({
-  frontComponentStorageService: {
-    snapshot: (...args: unknown[]) => mockStorageSnapshot(...args),
-    set: (...args: unknown[]) => mockStorageSet(...args),
-    delete: (...args: unknown[]) => mockStorageDelete(...args),
-    clear: (...args: unknown[]) => mockStorageClear(...args),
-  },
+  setFrontComponentStorageItem: (...args: unknown[]) => mockStorageSet(...args),
+  deleteFrontComponentStorageItem: (...args: unknown[]) =>
+    mockStorageDelete(...args),
+  clearFrontComponentStorage: (...args: unknown[]) => mockStorageClear(...args),
 }));
 
 jest.mock('@/page-layout/utils/setRecordPageActiveTabId', () => ({
@@ -978,7 +975,7 @@ describe('useFrontComponentExecutionContext', () => {
       expect(result.current.storageNamespace).toBe(firstNamespace);
     });
 
-    it('should forward delete and clear to the namespaced service', async () => {
+    it('should forward delete and clear with the namespace applied', async () => {
       const { result } = renderUseFrontComponentExecutionContext({
         frontComponentId: FRONT_COMPONENT_ID,
       });
