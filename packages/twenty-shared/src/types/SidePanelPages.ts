@@ -27,6 +27,7 @@ export enum SidePanelPages {
   CommandMenuEdit = 'command-menu-edit',
   PageLayoutRecordPageWidgetTypeSelect = 'page-layout-record-page-widget-type-select',
   ComposeEmail = 'compose-email',
+  ComposeEmailToRelatedPeoplePicker = 'compose-email-to-related-people-picker',
   SendCampaignTest = 'send-campaign-test',
   EmailBlockSettings = 'email-block-settings',
 }

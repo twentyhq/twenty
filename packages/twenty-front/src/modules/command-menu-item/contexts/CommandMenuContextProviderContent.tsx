@@ -7,7 +7,9 @@ import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenu
 import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
 import { doesCommandMenuItemMatchPageLayoutId } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageLayoutId';
 import { doesCommandMenuItemMatchPageType } from '@/command-menu-item/utils/doesCommandMenuItemMatchPageType';
+import { doesCommandMenuItemMatchRelatedPersonFields } from '@/command-menu-item/utils/doesCommandMenuItemMatchRelatedPersonFields';
 import { doesCommandMenuItemMatchSelectionState } from '@/command-menu-item/utils/doesCommandMenuItemMatchSelectionState';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMemo } from 'react';
@@ -32,10 +34,15 @@ export const CommandMenuContextProviderContent = ({
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
   const commandMenuItemsDraft = useAtomStateValue(commandMenuItemsDraftState);
   const currentPageLayoutId = useAtomStateValue(currentPageLayoutIdState);
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const filteredCommandMenuItems = useMemo(() => {
     const currentObjectMetadataItemId =
       commandMenuContextApi.objectMetadataItem.id;
+    const currentObjectMetadataItem = objectMetadataItems.find(
+      (objectMetadataItem) =>
+        objectMetadataItem.id === currentObjectMetadataItemId,
+    );
     const hasSelectedRecords =
       commandMenuContextApi.numberOfSelectedRecords > 0;
     const commandMenuItemsToDisplay = isInPreviewMode
@@ -49,6 +56,9 @@ export const CommandMenuContextProviderContent = ({
       .filter(doesCommandMenuItemMatchPageType(commandMenuContextApi.pageType))
       .filter(doesCommandMenuItemMatchSelectionState(hasSelectedRecords))
       .filter(doesCommandMenuItemMatchPageLayoutId(currentPageLayoutId))
+      .filter(
+        doesCommandMenuItemMatchRelatedPersonFields(currentObjectMetadataItem),
+      )
       .filter((item) =>
         evaluateConditionalAvailabilityExpression(
           item.conditionalAvailabilityExpression,
@@ -64,6 +74,7 @@ export const CommandMenuContextProviderContent = ({
     commandMenuItemsDraft,
     currentPageLayoutId,
     isInPreviewMode,
+    objectMetadataItems,
   ]);
 
   return (

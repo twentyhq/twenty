@@ -3,6 +3,7 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useMemo } from 'react';
 
 import { type MassEmailRecipient } from '@/activities/emails/mass-email/types/MassEmailRecipient';
+import { type MassEmailSkippedRecipient } from '@/activities/emails/mass-email/types/MassEmailSkippedRecipient';
 import {
   buildPersonPlaceholderValues,
   type PersonRecordForPlaceholders,
@@ -27,36 +28,43 @@ export const useMassEmailRecipients = (personIds: string[]) => {
     skip: personIds.length === 0,
   });
 
-  const recipients: MassEmailRecipient[] = useMemo(
-    () =>
-      records.flatMap((record) => {
-        const email = getPrimaryEmailFromRecord(record);
+  const { recipients, skippedWithoutEmail } = useMemo(() => {
+    const resolvedRecipients: MassEmailRecipient[] = [];
+    const skipped: MassEmailSkippedRecipient[] = [];
 
-        if (email === null) {
-          return [];
-        }
+    for (const record of records) {
+      const placeholderValues = buildPersonPlaceholderValues(
+        record as PersonRecordForPlaceholders,
+      );
 
-        const placeholderValues = buildPersonPlaceholderValues(
-          record as PersonRecordForPlaceholders,
-        );
+      const email = getPrimaryEmailFromRecord(record);
 
-        return [
-          {
-            personId: record.id,
-            email,
-            displayName: placeholderValues.full_name || email,
-            avatarUrl:
-              typeof record.avatarUrl === 'string' ? record.avatarUrl : null,
-            placeholderValues,
-          },
-        ];
-      }),
-    [records],
-  );
+      if (email === null) {
+        skipped.push({
+          personId: record.id,
+          displayName: placeholderValues.full_name || record.id,
+        });
+
+        continue;
+      }
+
+      resolvedRecipients.push({
+        personId: record.id,
+        email,
+        displayName: placeholderValues.full_name || email,
+        avatarUrl:
+          typeof record.avatarUrl === 'string' ? record.avatarUrl : null,
+        placeholderValues,
+      });
+    }
+
+    return { recipients: resolvedRecipients, skippedWithoutEmail: skipped };
+  }, [records]);
 
   return {
     recipients,
-    skippedWithoutEmailCount: records.length - recipients.length,
+    skippedWithoutEmail,
+    skippedWithoutEmailCount: skippedWithoutEmail.length,
     loading,
   };
 };

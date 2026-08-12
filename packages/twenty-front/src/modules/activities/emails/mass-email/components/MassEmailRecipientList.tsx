@@ -2,7 +2,12 @@ import { styled } from '@linaria/react';
 import { useState } from 'react';
 
 import { type MassEmailComposerState } from '@/activities/emails/mass-email/hooks/useMassEmailComposerState';
+import { massEmailRelatedSourceState } from '@/activities/emails/mass-email/states/massEmailRelatedSourceState';
+import { formatSkippedLabels } from '@/activities/emails/mass-email/utils/formatSkippedLabels';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
+import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/data-display';
 import { IconSearch, IconUsers, IconX } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
@@ -121,6 +126,7 @@ export const MassEmailRecipientList = ({
   onSelect,
 }: MassEmailRecipientListProps) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const massEmailRelatedSource = useAtomStateValue(massEmailRelatedSourceState);
 
   const normalizedQuery = searchQuery.trim().toLowerCase();
 
@@ -207,9 +213,27 @@ export const MassEmailRecipientList = ({
           <StyledHint>{t`No recipients match your search.`}</StyledHint>
         )}
       </StyledList>
-      {composerState.skippedWithoutEmailCount > 0 && (
+      {composerState.skippedWithoutEmail.length > 0 && (
         <StyledHint>
-          {t`${composerState.skippedWithoutEmailCount} selected people have no email address and were skipped.`}
+          {t`No email address, skipped: ${formatSkippedLabels(
+            composerState.skippedWithoutEmail.map(
+              (skipped) => skipped.displayName,
+            ),
+          )}`}
+        </StyledHint>
+      )}
+      {isDefined(massEmailRelatedSource) &&
+        massEmailRelatedSource.sourceRecordLabelsWithoutRelatedPerson.length >
+          0 && (
+          <StyledHint>
+            {t`No linked ${massEmailRelatedSource.relationFieldLabel}, skipped: ${formatSkippedLabels(
+              massEmailRelatedSource.sourceRecordLabelsWithoutRelatedPerson,
+            )}`}
+          </StyledHint>
+        )}
+      {massEmailRelatedSource?.hasUnreadSourceRecords === true && (
+        <StyledHint>
+          {t`Only the first ${MAX_EMAIL_RECIPIENTS} selected ${massEmailRelatedSource.sourceObjectLabelPlural} were read.`}
         </StyledHint>
       )}
     </StyledContainer>

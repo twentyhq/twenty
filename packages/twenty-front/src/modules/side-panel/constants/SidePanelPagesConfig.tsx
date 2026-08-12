@@ -5,6 +5,7 @@ import { SidePanelNewSidebarItemPage } from '@/navigation-menu-item/edit/side-pa
 import { SidePanelEmailBlockSettingsPage } from '@/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage';
 import { SidePanelAskAiPage } from '@/side-panel/pages/ask-ai/components/SidePanelAskAiPage';
 import { SidePanelComposeEmailPage } from '@/side-panel/pages/compose-email/components/SidePanelComposeEmailPage';
+import { SidePanelComposeEmailToRelatedPeoplePage } from '@/side-panel/pages/compose-email-related-people/components/SidePanelComposeEmailToRelatedPeoplePage';
 import { SidePanelSendCampaignTestPage } from '@/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage';
 import { SidePanelFrontComponentPage } from '@/side-panel/pages/front-component/components/SidePanelFrontComponentPage';
 import { SidePanelDashboardChartSettings } from '@/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardChartSettings';
@@ -88,6 +89,10 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<SidePanelPages, React.ReactNode>(
     [SidePanelPages.NavigationMenuAddItem, <SidePanelNewSidebarItemPage />],
     [SidePanelPages.CommandMenuEdit, <SidePanelCommandMenuItemEditPage />],
     [SidePanelPages.ComposeEmail, <SidePanelComposeEmailPage />],
+    [
+      SidePanelPages.ComposeEmailToRelatedPeoplePicker,
+      <SidePanelComposeEmailToRelatedPeoplePage />,
+    ],
     [SidePanelPages.SendCampaignTest, <SidePanelSendCampaignTestPage />],
     [SidePanelPages.EmailBlockSettings, <SidePanelEmailBlockSettingsPage />],
   ],

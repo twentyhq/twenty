@@ -38,6 +38,7 @@ describe('useMassEmailComposerState', () => {
     jest.clearAllMocks();
     jest.mocked(useMassEmailRecipients).mockReturnValue({
       recipients,
+      skippedWithoutEmail: [],
       skippedWithoutEmailCount: 0,
       loading: false,
     });
