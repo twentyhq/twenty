@@ -7,9 +7,14 @@ const NAMESPACE = {
   userId: 'user-id',
 };
 
-const OTHER_NAMESPACE = {
+const OTHER_APPLICATION_NAMESPACE = {
   applicationId: 'other-application-id',
   userId: 'user-id',
+};
+
+const OTHER_USER_NAMESPACE = {
+  applicationId: 'application-id',
+  userId: 'other-user-id',
 };
 
 describe('snapshotFrontComponentStorage', () => {
@@ -27,10 +32,17 @@ describe('snapshotFrontComponentStorage', () => {
     });
 
     setFrontComponentStorageItem({
-      ...OTHER_NAMESPACE,
+      ...OTHER_APPLICATION_NAMESPACE,
       area: 'local',
       key: 'theme',
       serializedValue: '"light"',
+    });
+
+    setFrontComponentStorageItem({
+      ...OTHER_USER_NAMESPACE,
+      area: 'local',
+      key: 'theme',
+      serializedValue: '"system"',
     });
 
     setFrontComponentStorageItem({
@@ -53,5 +65,14 @@ describe('snapshotFrontComponentStorage', () => {
     expect(
       snapshotFrontComponentStorage({ ...NAMESPACE, area: 'session' }),
     ).toEqual({ visits: '2' });
+    expect(
+      snapshotFrontComponentStorage({
+        ...OTHER_APPLICATION_NAMESPACE,
+        area: 'local',
+      }),
+    ).toEqual({ theme: '"light"' });
+    expect(
+      snapshotFrontComponentStorage({ ...OTHER_USER_NAMESPACE, area: 'local' }),
+    ).toEqual({ theme: '"system"' });
   });
 });

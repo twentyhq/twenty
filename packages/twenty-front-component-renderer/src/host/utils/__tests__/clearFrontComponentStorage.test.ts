@@ -7,9 +7,14 @@ const NAMESPACE = {
   userId: 'user-id',
 };
 
-const OTHER_NAMESPACE = {
+const OTHER_APPLICATION_NAMESPACE = {
   applicationId: 'other-application-id',
   userId: 'user-id',
+};
+
+const OTHER_USER_NAMESPACE = {
+  applicationId: 'application-id',
+  userId: 'other-user-id',
 };
 
 describe('clearFrontComponentStorage', () => {
@@ -34,10 +39,17 @@ describe('clearFrontComponentStorage', () => {
     });
 
     setFrontComponentStorageItem({
-      ...OTHER_NAMESPACE,
+      ...OTHER_APPLICATION_NAMESPACE,
       area: 'local',
       key: 'theme',
       serializedValue: '"light"',
+    });
+
+    setFrontComponentStorageItem({
+      ...OTHER_USER_NAMESPACE,
+      area: 'local',
+      key: 'theme',
+      serializedValue: '"system"',
     });
 
     window.localStorage.setItem('unrelatedTwentyKey', 'value');
@@ -48,8 +60,14 @@ describe('clearFrontComponentStorage', () => {
       snapshotFrontComponentStorage({ ...NAMESPACE, area: 'local' }),
     ).toEqual({});
     expect(
-      snapshotFrontComponentStorage({ ...OTHER_NAMESPACE, area: 'local' }),
+      snapshotFrontComponentStorage({
+        ...OTHER_APPLICATION_NAMESPACE,
+        area: 'local',
+      }),
     ).toEqual({ theme: '"light"' });
+    expect(
+      snapshotFrontComponentStorage({ ...OTHER_USER_NAMESPACE, area: 'local' }),
+    ).toEqual({ theme: '"system"' });
     expect(window.localStorage.getItem('unrelatedTwentyKey')).toBe('value');
   });
 });
