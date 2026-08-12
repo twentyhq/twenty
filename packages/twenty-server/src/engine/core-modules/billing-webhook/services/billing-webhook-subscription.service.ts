@@ -29,6 +29,7 @@ import { BillingUsageCacheService } from 'src/engine/core-modules/billing/servic
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { type SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
+import { resolveBillingPeriodBoundaryUpdate } from 'src/engine/core-modules/billing/utils/resolve-billing-period-boundary-update.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -144,9 +145,6 @@ export class BillingWebhookSubscriptionService {
         subscriptionWithSchedule,
       );
 
-    // Stripe only ever reports the current window, so the boundary the period
-    // just moved off is captured here or lost. The rollover needs it to bound
-    // the usage it settles.
     const storedSubscription = await this.billingSubscriptionRepository.findOne(
       {
         where: {
@@ -155,23 +153,18 @@ export class BillingWebhookSubscriptionService {
         select: {
           id: true,
           currentPeriodStart: true,
-          previousPeriodStart: true,
+          currentPeriodEnd: true,
         },
       },
     );
 
-    const hasPeriodAdvanced =
-      isDefined(storedSubscription) &&
-      isDefined(incomingSubscription.currentPeriodStart) &&
-      storedSubscription.currentPeriodStart.getTime() <
-        incomingSubscription.currentPeriodStart.getTime();
-
     await this.billingSubscriptionRepository.upsert(
       {
         ...incomingSubscription,
-        ...(hasPeriodAdvanced
-          ? { previousPeriodStart: storedSubscription.currentPeriodStart }
-          : {}),
+        ...resolveBillingPeriodBoundaryUpdate({
+          incomingPeriodStart: incomingSubscription.currentPeriodStart,
+          storedSubscription,
+        }),
       },
       {
         conflictPaths: ['stripeSubscriptionId'],

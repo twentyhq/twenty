@@ -479,9 +479,6 @@ describe('BillingCreditService', () => {
       ).not.toHaveBeenCalled();
     });
 
-    // The banner is up exactly when there is nothing left to spend, so what
-    // decides it is the balance the revoke leaves behind, not the direction of
-    // the adjustment.
     it('leaves the cap in place when the revoke empties the balance', async () => {
       billingCreditGrantService.getActiveCreditsMicro.mockResolvedValue(0);
 
@@ -492,7 +489,10 @@ describe('BillingCreditService', () => {
       ).not.toHaveBeenCalled();
     });
 
-    it('lifts the cap when the revoke leaves other credits behind', async () => {
+    // Taking credits away can never make the workspace spendable again: the
+    // grants it leaves behind may already be spent, and the ledger total says
+    // nothing about that.
+    it('leaves the cap in place even when the revoke leaves other credits behind', async () => {
       billingCreditGrantService.getActiveCreditsMicro.mockResolvedValue(
         500_000,
       );
@@ -501,7 +501,7 @@ describe('BillingCreditService', () => {
 
       expect(
         billingUsageCapService.clearHasReachedCapForWorkspace,
-      ).toHaveBeenCalledWith(workspaceId);
+      ).not.toHaveBeenCalled();
     });
   });
 });

@@ -341,12 +341,13 @@ export class BillingCreditService {
       );
     }
 
-    // Taken from what the ledger actually holds rather than from this call's
-    // delta: a replay carries a delta of zero even though credits were carried
-    // into the period, and a replayed grant may since have been revoked. The
-    // banner should be up exactly when there is nothing left to spend.
+    // The ledger decides rather than this call's delta, since a replay carries
+    // a delta of zero even though credits were carried into the period and a
+    // replayed grant may since have been revoked. A revocation never lifts it
+    // either way: what it leaves behind may already be spent, and only the
+    // usage counter knows that.
     return this.clearCapAndSubscriptionCache(workspaceId, {
-      shouldClearCap: activeCreditsMicro > 0,
+      shouldClearCap: activeCreditsMicro > 0 && availableDeltaMicro >= 0,
     });
   }
 
