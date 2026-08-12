@@ -23,7 +23,9 @@ import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/uti
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
-@WorkspaceCache('flatRowLevelPermissionPredicateGroupMaps')
+@WorkspaceCache('flatRowLevelPermissionPredicateGroupMaps', {
+  packingPonderation: 1,
+})
 export class WorkspaceFlatRowLevelPermissionPredicateGroupMapCacheService extends WorkspaceCacheProvider<FlatRowLevelPermissionPredicateGroupMaps> {
   constructor(
     @InjectWorkspaceScopedRepository(RowLevelPermissionPredicateGroupEntity)

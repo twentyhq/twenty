@@ -12,7 +12,7 @@ import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
 @Injectable()
-@WorkspaceCache('currentBillingSubscription')
+@WorkspaceCache('currentBillingSubscription', { packingPonderation: 1 })
 export class WorkspaceCurrentBillingSubscriptionCacheService extends WorkspaceCacheProvider<CurrentBillingSubscription> {
   constructor(
     private readonly billingSubscriptionService: BillingSubscriptionService,
