@@ -77,25 +77,6 @@ export class SecretEncryptionService {
     return this.maskDecryptedValue(this.decrypt(value), mask);
   }
 
-  public decryptAndMaskVersioned({
-    value,
-    mask,
-    workspaceId,
-  }: {
-    value: EncryptedString;
-    mask: string;
-    workspaceId?: string;
-  }): string {
-    if (!isDefined(value)) {
-      return value;
-    }
-
-    return this.maskDecryptedValue(
-      this.decryptVersionedOrThrow(value, { workspaceId }),
-      mask,
-    );
-  }
-
   public maskDecryptedValue(decryptedValue: string, mask: string): string {
     // Visible-char count caps at 5 and at one-tenth of the secret length, so
     // short secrets reveal nothing and longer secrets reveal a stable prefix.

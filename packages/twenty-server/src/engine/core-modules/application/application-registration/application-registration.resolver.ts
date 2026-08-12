@@ -18,7 +18,6 @@ import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { CreateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/create-application-registration-variable.input';
 import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
@@ -210,7 +209,7 @@ export class ApplicationRegistrationResolver {
     WorkspaceAuthGuard,
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
-  @Mutation(() => ApplicationRegistrationVariableEntity)
+  @Mutation(() => ApplicationRegistrationVariableDTO)
   async createApplicationRegistrationVariable(
     @Args('input') input: CreateApplicationRegistrationVariableInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -225,7 +224,7 @@ export class ApplicationRegistrationResolver {
     WorkspaceAuthGuard,
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
-  @Mutation(() => ApplicationRegistrationVariableEntity)
+  @Mutation(() => ApplicationRegistrationVariableDTO)
   async updateApplicationRegistrationVariable(
     @Args('input') input: UpdateApplicationRegistrationVariableInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

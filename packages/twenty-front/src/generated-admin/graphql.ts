@@ -278,8 +278,8 @@ export type ApplicationRegistrationStats = {
   versionDistribution: Array<VersionDistributionEntry>;
 };
 
-export type ApplicationRegistrationVariableDto = {
-  __typename?: 'ApplicationRegistrationVariableDTO';
+export type ApplicationRegistrationVariable = {
+  __typename?: 'ApplicationRegistrationVariable';
   createdAt: Scalars['DateTime']['output'];
   description: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
@@ -507,7 +507,7 @@ export type Mutation = {
   setMaintenanceMode: Scalars['Boolean']['output'];
   syncMarketplaceCatalog: Scalars['Boolean']['output'];
   updateAdminApplicationRegistration: ApplicationRegistration;
-  updateAdminApplicationRegistrationVariable: ApplicationRegistrationVariableDto;
+  updateAdminApplicationRegistrationVariable: ApplicationRegistrationVariable;
   updateDatabaseConfigVariable: Scalars['Boolean']['output'];
   updateServerAdminAccess: ServerAdmin;
   updateWorkspaceFeatureFlag: Scalars['Boolean']['output'];
@@ -653,7 +653,7 @@ export type Query = {
   findAdminApplicationRegistrationClaims: Array<AdminApplicationRegistrationClaim>;
   findAdminApplicationRegistrationInstalledWorkspaces: ApplicationRegistrationInstalledWorkspaces;
   findAdminApplicationRegistrationStats: ApplicationRegistrationStats;
-  findAdminApplicationRegistrationVariables: Array<ApplicationRegistrationVariableDto>;
+  findAdminApplicationRegistrationVariables: Array<ApplicationRegistrationVariable>;
   findAllApplicationRegistrations: PaginatedApplicationRegistrations;
   findOneAdminApplicationRegistration: ApplicationRegistration;
   getAdminAiModels: AdminAiModels;
@@ -1164,7 +1164,7 @@ export type UpdateAdminApplicationRegistrationVariableMutationVariables = Exact<
 }>;
 
 
-export type UpdateAdminApplicationRegistrationVariableMutation = { __typename?: 'Mutation', updateAdminApplicationRegistrationVariable: { __typename?: 'ApplicationRegistrationVariableDTO', id: string, key: string, description: string, isSecret: boolean, isRequired: boolean, isFilled: boolean, createdAt: string, updatedAt: string } };
+export type UpdateAdminApplicationRegistrationVariableMutation = { __typename?: 'Mutation', updateAdminApplicationRegistrationVariable: { __typename?: 'ApplicationRegistrationVariable', id: string, key: string, description: string, isSecret: boolean, isRequired: boolean, isFilled: boolean, createdAt: string, updatedAt: string } };
 
 export type FindAdminApplicationRegistrationClaimsQueryVariables = Exact<{
   applicationRegistrationId: Scalars['String']['input'];
@@ -1192,7 +1192,7 @@ export type FindAdminApplicationRegistrationVariablesQueryVariables = Exact<{
 }>;
 
 
-export type FindAdminApplicationRegistrationVariablesQuery = { __typename?: 'Query', findAdminApplicationRegistrationVariables: Array<{ __typename?: 'ApplicationRegistrationVariableDTO', id: string, key: string, value?: string | null, description: string, isSecret: boolean, isRequired: boolean, isDeprecated: boolean, isFilled: boolean, type: string, options?: any | null, createdAt: string, updatedAt: string }> };
+export type FindAdminApplicationRegistrationVariablesQuery = { __typename?: 'Query', findAdminApplicationRegistrationVariables: Array<{ __typename?: 'ApplicationRegistrationVariable', id: string, key: string, value?: string | null, description: string, isSecret: boolean, isRequired: boolean, isDeprecated: boolean, isFilled: boolean, type: string, options?: any | null, createdAt: string, updatedAt: string }> };
 
 export type FindAllApplicationRegistrationsQueryVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']['input']>;

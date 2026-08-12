@@ -407,21 +407,6 @@ export type ApplicationRegistrationVariable = {
   options?: Maybe<Scalars['JSON']['output']>;
   type: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
-};
-
-export type ApplicationRegistrationVariableDto = {
-  __typename?: 'ApplicationRegistrationVariableDTO';
-  createdAt: Scalars['DateTime']['output'];
-  description: Scalars['String']['output'];
-  id: Scalars['UUID']['output'];
-  isDeprecated: Scalars['Boolean']['output'];
-  isFilled: Scalars['Boolean']['output'];
-  isRequired: Scalars['Boolean']['output'];
-  isSecret: Scalars['Boolean']['output'];
-  key: Scalars['String']['output'];
-  options?: Maybe<Scalars['JSON']['output']>;
-  type: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
   value?: Maybe<Scalars['String']['output']>;
 };
 
@@ -4574,7 +4559,7 @@ export type Query = {
   findApplicationRegistrationByClientId?: Maybe<PublicApplicationRegistration>;
   findApplicationRegistrationByUniversalIdentifier?: Maybe<ApplicationRegistration>;
   findApplicationRegistrationStats: ApplicationRegistrationStats;
-  findApplicationRegistrationVariables: Array<ApplicationRegistrationVariableDto>;
+  findApplicationRegistrationVariables: Array<ApplicationRegistrationVariable>;
   findClaimableApplicationRegistration?: Maybe<ClaimableApplicationRegistration>;
   findManyAgents: Array<Agent>;
   findManyApplicationRegistrations: Array<ApplicationRegistration>;
@@ -8320,7 +8305,7 @@ export type FindApplicationRegistrationVariablesQueryVariables = Exact<{
 }>;
 
 
-export type FindApplicationRegistrationVariablesQuery = { __typename?: 'Query', findApplicationRegistrationVariables: Array<{ __typename?: 'ApplicationRegistrationVariableDTO', id: string, key: string, value?: string | null, description: string, isSecret: boolean, isRequired: boolean, isDeprecated: boolean, isFilled: boolean, type: string, options?: any | null, createdAt: string, updatedAt: string }> };
+export type FindApplicationRegistrationVariablesQuery = { __typename?: 'Query', findApplicationRegistrationVariables: Array<{ __typename?: 'ApplicationRegistrationVariable', id: string, key: string, value?: string | null, description: string, isSecret: boolean, isRequired: boolean, isDeprecated: boolean, isFilled: boolean, type: string, options?: any | null, createdAt: string, updatedAt: string }> };
 
 export type FindClaimableApplicationRegistrationQueryVariables = Exact<{
   sourcePackage?: InputMaybe<Scalars['String']['input']>;
