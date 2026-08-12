@@ -1,16 +1,15 @@
 import { isString } from '@sniptt/guards';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
-import { buildFrontComponentStorageNamespacePrefix } from '@/host/utils/buildFrontComponentStorageNamespacePrefix';
 import { getNamespacedStorageKeys } from '@/host/utils/getNamespacedStorageKeys';
 import { type FrontComponentStorageScope } from '@/types/FrontComponentStorageScope';
 import { getFrontComponentStorageViolationMessage } from '@/utils/getFrontComponentStorageViolationMessage';
 
 export const setFrontComponentStorageItem = ({
+  namespace,
   storageType,
   key,
   serializedValue,
-  ...namespace
 }: FrontComponentStorageScope & {
   key: string;
   serializedValue: string;
@@ -23,18 +22,16 @@ export const setFrontComponentStorageItem = ({
   }
 
   const storage = window[storageType];
-  const namespacePrefix = buildFrontComponentStorageNamespacePrefix(namespace);
-  const namespacedKey = `${namespacePrefix}${key}`;
+  const namespacedKey = `${namespace}${key}`;
 
   let otherEntriesTotalLength = 0;
 
   for (const existingNamespacedKey of getNamespacedStorageKeys({
     storage,
-    namespacePrefix,
+    namespace,
   })) {
     if (existingNamespacedKey !== namespacedKey) {
-      const existingKeyLength =
-        existingNamespacedKey.length - namespacePrefix.length;
+      const existingKeyLength = existingNamespacedKey.length - namespace.length;
       const existingValueLength =
         storage.getItem(existingNamespacedKey)?.length ?? 0;
 

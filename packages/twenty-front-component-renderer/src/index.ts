@@ -137,7 +137,7 @@ export type { FrontComponentHostCommunicationApi } from './types/FrontComponentH
 export { setFrontComponentStorageItem } from './host/utils/setFrontComponentStorageItem';
 export { deleteFrontComponentStorageItem } from './host/utils/deleteFrontComponentStorageItem';
 export { clearFrontComponentStorage } from './host/utils/clearFrontComponentStorage';
-export type { FrontComponentStorageNamespace } from './types/FrontComponentStorageNamespace';
+export { buildFrontComponentStorageNamespace } from './host/utils/buildFrontComponentStorageNamespace';
 export type { ElementGeometrySnapshot } from './types/ElementGeometrySnapshot';
 export type { ViewportGeometrySnapshot } from './types/ViewportGeometrySnapshot';
 export type { GeometryUpdateBatch } from './types/GeometryUpdateBatch';

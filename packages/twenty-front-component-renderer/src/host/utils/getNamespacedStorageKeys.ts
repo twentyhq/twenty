@@ -2,17 +2,17 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const getNamespacedStorageKeys = ({
   storage,
-  namespacePrefix,
+  namespace,
 }: {
   storage: Storage;
-  namespacePrefix: string;
+  namespace: string;
 }): string[] => {
   const namespacedKeys: string[] = [];
 
   for (let index = 0; index < storage.length; index++) {
     const storageKey = storage.key(index);
 
-    if (isDefined(storageKey) && storageKey.startsWith(namespacePrefix)) {
+    if (isDefined(storageKey) && storageKey.startsWith(namespace)) {
       namespacedKeys.push(storageKey);
     }
   }

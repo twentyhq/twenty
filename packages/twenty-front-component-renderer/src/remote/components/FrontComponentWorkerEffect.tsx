@@ -13,7 +13,6 @@ import { buildFrontComponentStorageSnapshots } from '@/host/utils/buildFrontComp
 import { FRONT_COMPONENT_SANDBOX_DOCUMENT } from '@/remote/sandbox/generated/frontComponentSandboxDocument';
 import { createFrontComponentSandboxIframe } from '@/remote/sandbox/utils/createFrontComponentSandboxIframe';
 import { createFrontComponentSandboxMessageHandler } from '@/remote/sandbox/utils/createFrontComponentSandboxMessageHandler';
-import { type FrontComponentStorageNamespace } from '@/types/FrontComponentStorageNamespace';
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
 import { buildAuthorizationHeadersFromAccessToken } from '@/utils/buildAuthorizationHeadersFromAccessToken';
@@ -26,7 +25,7 @@ type FrontComponentWorkerEffectProps = {
   functionsBaseUrl?: string;
   sdkClientUrls?: SdkClientUrls;
   applicationVariables?: Record<string, string>;
-  storageNamespace?: FrontComponentStorageNamespace;
+  storageNamespace?: string;
   geometryTracker: GeometryTracker;
   setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
   setThread: React.Dispatch<React.SetStateAction<FrontComponentThread | null>>;

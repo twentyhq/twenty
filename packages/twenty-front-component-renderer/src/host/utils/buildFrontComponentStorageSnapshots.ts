@@ -1,7 +1,6 @@
 import { type FrontComponentStorageType } from 'twenty-sdk/front-component';
 
 import { snapshotFrontComponentStorage } from '@/host/utils/snapshotFrontComponentStorage';
-import { type FrontComponentStorageNamespace } from '@/types/FrontComponentStorageNamespace';
 import { type FrontComponentStorageSnapshots } from '@/types/FrontComponentStorageSnapshots';
 
 const STORAGE_SNAPSHOT_FAILURE_WARNING =
@@ -13,7 +12,7 @@ const STORAGE_TYPES: FrontComponentStorageType[] = [
 ];
 
 export const buildFrontComponentStorageSnapshots = (
-  namespace: FrontComponentStorageNamespace,
+  namespace: string,
 ): FrontComponentStorageSnapshots => {
   const snapshots: FrontComponentStorageSnapshots = {
     localStorage: {},
@@ -23,8 +22,8 @@ export const buildFrontComponentStorageSnapshots = (
   for (const storageType of STORAGE_TYPES) {
     try {
       snapshots[storageType] = snapshotFrontComponentStorage({
+        namespace,
         storageType,
-        ...namespace,
       });
     } catch {
       console.warn(STORAGE_SNAPSHOT_FAILURE_WARNING);

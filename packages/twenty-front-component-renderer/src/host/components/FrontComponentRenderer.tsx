@@ -8,7 +8,6 @@ import { FrontComponentInitializeHostCommunicationApiEffect } from '@/remote/com
 import { FrontComponentUpdateContextEffect } from '@/remote/components/FrontComponentUpdateContextEffect';
 import { FrontComponentUpdateHostCommunicationApiEffect } from '@/remote/components/FrontComponentUpdateHostCommunicationApiEffect';
 import { type FrontComponentHostCommunicationApi } from '@/types/FrontComponentHostCommunicationApi';
-import { type FrontComponentStorageNamespace } from '@/types/FrontComponentStorageNamespace';
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
 import { type FrontComponentExecutionContext } from 'twenty-sdk/front-component';
@@ -36,7 +35,7 @@ type FrontComponentRendererProps = {
   functionsBaseUrl?: string;
   sdkClientUrls?: SdkClientUrls;
   applicationVariables?: Record<string, string>;
-  storageNamespace?: FrontComponentStorageNamespace;
+  storageNamespace?: string;
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
   onError: (error?: Error) => void;

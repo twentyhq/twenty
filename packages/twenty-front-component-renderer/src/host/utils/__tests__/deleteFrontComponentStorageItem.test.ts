@@ -1,16 +1,17 @@
+import { buildFrontComponentStorageNamespace } from '../buildFrontComponentStorageNamespace';
 import { deleteFrontComponentStorageItem } from '../deleteFrontComponentStorageItem';
 import { setFrontComponentStorageItem } from '../setFrontComponentStorageItem';
 import { snapshotFrontComponentStorage } from '../snapshotFrontComponentStorage';
 
-const NAMESPACE = {
+const NAMESPACE = buildFrontComponentStorageNamespace({
   applicationId: 'application-id',
   userId: 'user-id',
-};
+});
 
-const OTHER_APPLICATION_NAMESPACE = {
+const OTHER_APPLICATION_NAMESPACE = buildFrontComponentStorageNamespace({
   applicationId: 'other-application-id',
   userId: 'user-id',
-};
+});
 
 describe('deleteFrontComponentStorageItem', () => {
   beforeEach(() => {
@@ -20,41 +21,41 @@ describe('deleteFrontComponentStorageItem', () => {
 
   it('should delete only the namespaced entry', () => {
     setFrontComponentStorageItem({
-      ...NAMESPACE,
+      namespace: NAMESPACE,
       storageType: 'localStorage',
       key: 'theme',
       serializedValue: '"dark"',
     });
 
     setFrontComponentStorageItem({
-      ...NAMESPACE,
+      namespace: NAMESPACE,
       storageType: 'localStorage',
       key: 'locale',
       serializedValue: '"en"',
     });
 
     setFrontComponentStorageItem({
-      ...OTHER_APPLICATION_NAMESPACE,
+      namespace: OTHER_APPLICATION_NAMESPACE,
       storageType: 'localStorage',
       key: 'theme',
       serializedValue: '"light"',
     });
 
     deleteFrontComponentStorageItem({
-      ...NAMESPACE,
+      namespace: NAMESPACE,
       storageType: 'localStorage',
       key: 'theme',
     });
 
     expect(
       snapshotFrontComponentStorage({
-        ...NAMESPACE,
+        namespace: NAMESPACE,
         storageType: 'localStorage',
       }),
     ).toEqual({ locale: '"en"' });
     expect(
       snapshotFrontComponentStorage({
-        ...OTHER_APPLICATION_NAMESPACE,
+        namespace: OTHER_APPLICATION_NAMESPACE,
         storageType: 'localStorage',
       }),
     ).toEqual({ theme: '"light"' });

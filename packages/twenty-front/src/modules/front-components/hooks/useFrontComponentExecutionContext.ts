@@ -3,13 +3,13 @@ import { resolveOpenRecordIn } from '@/object-record/record-index/utils/resolveO
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo, useRef } from 'react';
+import { useRef } from 'react';
 import {
+  buildFrontComponentStorageNamespace,
   clearFrontComponentStorage,
   deleteFrontComponentStorageItem,
   type FrontComponentExecutionContext,
   type FrontComponentHostCommunicationApi,
-  type FrontComponentStorageNamespace,
   setFrontComponentStorageItem,
 } from 'twenty-front-component-renderer';
 import {
@@ -66,7 +66,7 @@ export const useFrontComponentExecutionContext = ({
 }): {
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
-  storageNamespace?: FrontComponentStorageNamespace;
+  storageNamespace?: string;
 } => {
   const currentUser = useAtomStateValue(currentUserState);
   const navigateApp = useNavigateApp();
@@ -370,15 +370,14 @@ export const useFrontComponentExecutionContext = ({
 
   const currentUserId = currentUser?.id;
 
-  const storageNamespace = useMemo(
-    () =>
-      isDefined(currentUserId)
-        ? { applicationId, userId: currentUserId }
-        : undefined,
-    [applicationId, currentUserId],
-  );
+  const storageNamespace = isDefined(currentUserId)
+    ? buildFrontComponentStorageNamespace({
+        applicationId,
+        userId: currentUserId,
+      })
+    : undefined;
 
-  const requireStorageNamespace = (): FrontComponentStorageNamespace => {
+  const requireStorageNamespace = (): string => {
     if (!isDefined(storageNamespace)) {
       throw new CustomError(
         'Device storage requires a signed-in user',
@@ -395,7 +394,7 @@ export const useFrontComponentExecutionContext = ({
     serializedValue,
   }) => {
     setFrontComponentStorageItem({
-      ...requireStorageNamespace(),
+      namespace: requireStorageNamespace(),
       storageType,
       key,
       serializedValue,
@@ -405,7 +404,7 @@ export const useFrontComponentExecutionContext = ({
   const storageDelete: FrontComponentHostCommunicationApi['storageDelete'] =
     async ({ storageType, key }) => {
       deleteFrontComponentStorageItem({
-        ...requireStorageNamespace(),
+        namespace: requireStorageNamespace(),
         storageType,
         key,
       });
@@ -414,7 +413,7 @@ export const useFrontComponentExecutionContext = ({
   const storageClear: FrontComponentHostCommunicationApi['storageClear'] =
     async ({ storageType }) => {
       clearFrontComponentStorage({
-        ...requireStorageNamespace(),
+        namespace: requireStorageNamespace(),
         storageType,
       });
     };

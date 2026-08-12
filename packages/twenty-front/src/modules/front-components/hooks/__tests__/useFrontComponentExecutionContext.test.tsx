@@ -144,6 +144,13 @@ jest.mock('~/hooks/useCopyToClipboard', () => ({
 }));
 
 jest.mock('twenty-front-component-renderer', () => ({
+  buildFrontComponentStorageNamespace: ({
+    applicationId,
+    userId,
+  }: {
+    applicationId: string;
+    userId: string;
+  }) => `frontComponentStorage:${applicationId}:${userId}:`,
   setFrontComponentStorageItem: (...args: unknown[]) => mockStorageSet(...args),
   deleteFrontComponentStorageItem: (...args: unknown[]) =>
     mockStorageDelete(...args),
@@ -175,6 +182,7 @@ const renderUseFrontComponentExecutionContext = (
 
 const FRONT_COMPONENT_ID = 'fc-test-id';
 const APPLICATION_ID = 'application-test-id';
+const STORAGE_NAMESPACE = `frontComponentStorage:${APPLICATION_ID}:user-123:`;
 const COMMAND_MENU_ITEM_ID = 'cmd-item-1';
 
 const parentViewAtom =
@@ -950,29 +958,12 @@ describe('useFrontComponentExecutionContext', () => {
       });
 
       expect(mockStorageSet).toHaveBeenCalledWith({
-        applicationId: APPLICATION_ID,
-        userId: 'user-123',
+        namespace: STORAGE_NAMESPACE,
         storageType: 'localStorage',
         key: 'theme',
         serializedValue: '"dark"',
       });
-    });
-
-    it('should expose a referentially stable namespace to seed the worker', () => {
-      const { result, rerender } = renderUseFrontComponentExecutionContext({
-        frontComponentId: FRONT_COMPONENT_ID,
-      });
-
-      const firstNamespace = result.current.storageNamespace;
-
-      expect(firstNamespace).toEqual({
-        applicationId: APPLICATION_ID,
-        userId: 'user-123',
-      });
-
-      rerender();
-
-      expect(result.current.storageNamespace).toBe(firstNamespace);
+      expect(result.current.storageNamespace).toBe(STORAGE_NAMESPACE);
     });
 
     it('should forward delete and clear with the namespace applied', async () => {
@@ -991,14 +982,12 @@ describe('useFrontComponentExecutionContext', () => {
       });
 
       expect(mockStorageDelete).toHaveBeenCalledWith({
-        applicationId: APPLICATION_ID,
-        userId: 'user-123',
+        namespace: STORAGE_NAMESPACE,
         storageType: 'localStorage',
         key: 'theme',
       });
       expect(mockStorageClear).toHaveBeenCalledWith({
-        applicationId: APPLICATION_ID,
-        userId: 'user-123',
+        namespace: STORAGE_NAMESPACE,
         storageType: 'sessionStorage',
       });
     });

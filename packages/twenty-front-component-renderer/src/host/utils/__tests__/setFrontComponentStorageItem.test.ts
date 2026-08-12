@@ -1,11 +1,12 @@
 import { FRONT_COMPONENT_STORAGE_MAX_VALUE_LENGTH } from '@/constants/FrontComponentStorageMaxValueLength';
+import { buildFrontComponentStorageNamespace } from '../buildFrontComponentStorageNamespace';
 import { setFrontComponentStorageItem } from '../setFrontComponentStorageItem';
 import { snapshotFrontComponentStorage } from '../snapshotFrontComponentStorage';
 
-const NAMESPACE = {
+const NAMESPACE = buildFrontComponentStorageNamespace({
   applicationId: 'application-id',
   userId: 'user-id',
-};
+});
 
 describe('setFrontComponentStorageItem', () => {
   beforeEach(() => {
@@ -16,7 +17,7 @@ describe('setFrontComponentStorageItem', () => {
   it('should refuse a write whose key or value is not a string', () => {
     expect(() =>
       setFrontComponentStorageItem({
-        ...NAMESPACE,
+        namespace: NAMESPACE,
         storageType: 'localStorage',
         key: 'draft',
         serializedValue: ['value'] as unknown as string,
@@ -25,7 +26,7 @@ describe('setFrontComponentStorageItem', () => {
 
     expect(() =>
       setFrontComponentStorageItem({
-        ...NAMESPACE,
+        namespace: NAMESPACE,
         storageType: 'localStorage',
         key: ['draft'] as unknown as string,
         serializedValue: 'value',
@@ -34,7 +35,7 @@ describe('setFrontComponentStorageItem', () => {
 
     expect(
       snapshotFrontComponentStorage({
-        ...NAMESPACE,
+        namespace: NAMESPACE,
         storageType: 'localStorage',
       }),
     ).toEqual({});
@@ -43,7 +44,7 @@ describe('setFrontComponentStorageItem', () => {
   it('should refuse a write that breaks the limits', () => {
     expect(() =>
       setFrontComponentStorageItem({
-        ...NAMESPACE,
+        namespace: NAMESPACE,
         storageType: 'localStorage',
         key: 'draft',
         serializedValue: 'v'.repeat(
@@ -58,7 +59,7 @@ describe('setFrontComponentStorageItem', () => {
 
     expect(
       snapshotFrontComponentStorage({
-        ...NAMESPACE,
+        namespace: NAMESPACE,
         storageType: 'localStorage',
       }),
     ).toEqual({});
