@@ -14,7 +14,7 @@ const EMPTY_PLAINTEXT = '' as PlaintextString;
 
 const LEGACY_EMPTY_VALUE = '' as EncryptedString;
 
-@RegisteredInstanceCommand('2.31.0', 1786459992777, { type: 'slow' })
+@RegisteredInstanceCommand('2.31.0', 1786533438000, { type: 'slow' })
 export class EncryptEmptyApplicationVariablesSlowInstanceCommand
   implements SlowInstanceCommand
 {

@@ -9,7 +9,7 @@ import { buildSecretEncryptionServiceFromEnv } from 'test/integration/upgrade/ut
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
-import { EncryptEmptyApplicationVariablesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-slow-1786459992777-encrypt-empty-application-variables';
+import { EncryptEmptyApplicationVariablesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-slow-1786533438000-encrypt-empty-application-variables';
 
 jest.useRealTimers();
 
@@ -53,7 +53,7 @@ const restoreCheckConstraints = async (
   }
 };
 
-describe('2-31 slow instance command 1786459992777 - EncryptEmptyApplicationVariablesSlowInstanceCommand (integration)', () => {
+describe('2-31 slow instance command 1786533438000 - EncryptEmptyApplicationVariablesSlowInstanceCommand (integration)', () => {
   let dataSource: DataSource;
   let secretEncryptionService: SecretEncryptionService;
   let command: EncryptEmptyApplicationVariablesSlowInstanceCommand;
