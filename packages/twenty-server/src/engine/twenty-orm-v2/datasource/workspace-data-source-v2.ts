@@ -8,7 +8,7 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
-import { PreparedStatementExecutor } from 'src/engine/twenty-orm-v2/executor/prepared-statement-executor';
+import { PoolQueryExecutor } from 'src/engine/twenty-orm-v2/executor/pool-query-executor';
 import {
   TwentyOrmV2Exception,
   TwentyOrmV2ExceptionCode,
@@ -74,10 +74,7 @@ export class WorkspaceDataSourceV2 {
       flatObjectMetadata,
       internalContext: this.internalContext,
       authContext: this.authContext,
-      executor: new PreparedStatementExecutor({
-        pool: this.pool,
-        workspaceId: this.internalContext.workspaceId,
-      }),
+      executor: new PoolQueryExecutor({ pool: this.pool }),
       objectRecordsPermissions,
       shouldBypassPermissionChecks,
       tableShapeByObjectMetadataId: (targetObjectMetadataId) =>

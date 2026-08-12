@@ -2,8 +2,7 @@
 
 A workspace-data ORM that uses no TypeORM. It exposes the same surface as
 `src/engine/twenty-orm` so call sites can move over one at a time, and underneath it
-generates parameterised SQL from field metadata and hands it to `pg` as a prepared
-statement.
+generates parameterised SQL from field metadata and hands it to `pg`.
 
 Behind `IS_ORM_V2_READ_PATH_ENABLED`. Off, nothing changes.
 
@@ -39,7 +38,7 @@ per object type rather than thousands, and it can be rebuilt or discarded freely
 | `query-builder/` | `WorkspaceSelectQueryBuilderV2`, the TypeORM-shaped builder |
 | `repository/` | `WorkspaceRepositoryV2`, permissions and result formatting |
 | `datasource/` | pool ownership and per-request data source |
-| `executor/` | prepared-statement execution against `pg` |
+| `executor/` | statement execution against a `pg` pool |
 
 ## Why not a query-builder library
 
@@ -48,7 +47,7 @@ against a hostile identifier and all escape correctly, so injection safety did n
 winner. Compilation cost did: for a 60-column findMany, TypeORM takes 231µs, Kysely 149µs
 and a direct template string 3.7µs. A builder library replaces the part that field
 metadata already drives while keeping most of the cost, so v2 generates the SQL itself and
-uses `pg` for the driver and prepared statements.
+uses `pg` as the driver.
 
 ## Why named parameters
 
@@ -73,13 +72,14 @@ to-many join at all (relations are separate queries), so a plain LIMIT is correc
 size and offset bind as parameters rather than inlining, so paging through a table reuses
 one statement shape instead of minting one per page.
 
-**Prepared statements.** Query text is generated from metadata and repeats across
-requests, so statements carry a name and Postgres parses and plans each once per
-connection. Statement text embeds the workspace schema, so the budget is scoped per
-workspace at 200 shapes: a shared budget would let one busy tenant push every other tenant
-onto unnamed statements. A workspace that saturates logs once, then loses plan reuse for
-further shapes. The number of tracked workspaces is capped at 100 in least-recently-used
-order, so tenant churn cannot grow the cache without bound.
+**No named prepared statements.** Naming a statement lets Postgres parse and plan it once
+per connection, but the plan is then retained for that connection's life, so naming has to
+be capped or backend memory grows without bound. The resource is per-connection while any
+in-process cap is per-process, and both pools are shared by every tenant, so a cap in the
+executor cannot actually bound what it is trying to bound. Statements are therefore sent
+unnamed. Values still bind separately, so nothing about injection safety depends on this.
+Worth revisiting only with a measurement showing parse and plan are a real share of a
+findMany round trip.
 
 ## What is the same, deliberately
 
