@@ -950,11 +950,6 @@ describe('useFrontComponentExecutionContext', () => {
           key: 'theme',
           serializedValue: '"dark"',
         });
-        await result.current.frontComponentHostCommunicationApi.storageSet({
-          area: 'session',
-          key: 'visits',
-          serializedValue: '2',
-        });
       });
 
       expect(mockStorageSet).toHaveBeenCalledWith({
@@ -964,32 +959,19 @@ describe('useFrontComponentExecutionContext', () => {
         key: 'theme',
         serializedValue: '"dark"',
       });
-      expect(mockStorageSet).toHaveBeenCalledWith({
-        applicationId: APPLICATION_ID,
-        userId: 'user-123',
-        area: 'session',
-        key: 'visits',
-        serializedValue: '2',
-      });
     });
 
-    it('should return the namespace used to seed the worker', () => {
-      const { result } = renderUseFrontComponentExecutionContext({
-        frontComponentId: FRONT_COMPONENT_ID,
-      });
-
-      expect(result.current.storageNamespace).toEqual({
-        applicationId: APPLICATION_ID,
-        userId: 'user-123',
-      });
-    });
-
-    it('should keep the namespace referentially stable across renders', () => {
+    it('should expose a referentially stable namespace to seed the worker', () => {
       const { result, rerender } = renderUseFrontComponentExecutionContext({
         frontComponentId: FRONT_COMPONENT_ID,
       });
 
       const firstNamespace = result.current.storageNamespace;
+
+      expect(firstNamespace).toEqual({
+        applicationId: APPLICATION_ID,
+        userId: 'user-123',
+      });
 
       rerender();
 

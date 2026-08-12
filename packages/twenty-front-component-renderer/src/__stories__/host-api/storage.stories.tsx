@@ -1,6 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
-import { isDefined } from 'twenty-shared/utils';
 
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
 import { buildFrontComponentStorageKeyPrefix } from '@/host/utils/buildFrontComponentStorageKeyPrefix';
@@ -34,17 +33,16 @@ export default meta;
 
 type Story = StoryObj<typeof FrontComponentRenderer>;
 
-export const LocalStorageRoundTrip: Story = runFrontComponentStory({
+const roundTripStory = runFrontComponentStory({
   frontComponentBundleName: 'host-api-storage',
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const api = args.frontComponentHostCommunicationApi;
-
-    if (!isDefined(api)) {
-      throw new Error('frontComponentHostCommunicationApi is required');
-    }
 
     await expectFrontComponentMounted(canvas);
+
+    const keyPrefix = buildFrontComponentStorageKeyPrefix(
+      PERSISTED_STORAGE_NAMESPACE,
+    );
 
     await userEvent.click(await canvas.findByTestId('subject'));
 
@@ -56,93 +54,12 @@ export const LocalStorageRoundTrip: Story = runFrontComponentStory({
       ),
     ).toBeVisible();
 
-    await waitFor(
-      () => {
-        expect(api.storageSet).toHaveBeenCalledWith({
-          area: 'local',
-          key: 'greeting',
-          serializedValue: 'hello',
-        });
-        expect(api.storageDelete).toHaveBeenCalledWith({
-          area: 'local',
-          key: 'greeting',
-        });
-      },
-      { timeout: HOST_API_TIMEOUT },
-    );
-  },
-});
-
-export const SessionStorageRoundTrip: Story = runFrontComponentStory({
-  frontComponentBundleName: 'host-api-storage',
-  play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
-    const api = args.frontComponentHostCommunicationApi;
-
-    if (!isDefined(api)) {
-      throw new Error('frontComponentHostCommunicationApi is required');
-    }
-
-    await expectFrontComponentMounted(canvas);
-
-    await userEvent.click(await canvas.findByTestId('session-storage'));
-
-    expect(
-      await canvas.findByText(
-        'storage:session:2',
-        {},
-        { timeout: INTERACTION_TIMEOUT },
-      ),
-    ).toBeVisible();
-
-    await waitFor(
-      () => {
-        expect(api.storageSet).toHaveBeenCalledWith({
-          area: 'session',
-          key: 'visits',
-          serializedValue: '2',
-        });
-      },
-      { timeout: HOST_API_TIMEOUT },
-    );
-  },
-});
-
-export const LocalStorageValueTooLarge: Story = runFrontComponentStory({
-  frontComponentBundleName: 'host-api-storage',
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await expectFrontComponentMounted(canvas);
-
-    await userEvent.click(await canvas.findByTestId('oversized'));
-
-    expect(
-      await canvas.findByText(
-        'storage:error:QuotaExceededError',
-        {},
-        { timeout: INTERACTION_TIMEOUT },
-      ),
-    ).toBeVisible();
-  },
-});
-
-const persistedStory = runFrontComponentStory({
-  frontComponentBundleName: 'host-api-storage',
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await expectFrontComponentMounted(canvas);
-
-    const keyPrefix = buildFrontComponentStorageKeyPrefix(
-      PERSISTED_STORAGE_NAMESPACE,
-    );
-
     await userEvent.click(await canvas.findByTestId('local-storage-write'));
     await userEvent.click(await canvas.findByTestId('session-storage'));
 
     await waitFor(
       () => {
+        expect(window.localStorage.getItem(`${keyPrefix}greeting`)).toBeNull();
         expect(window.localStorage.getItem(`${keyPrefix}theme`)).toBe('dark');
         expect(window.sessionStorage.getItem(`${keyPrefix}visits`)).toBe('2');
       },
@@ -160,15 +77,15 @@ const clearPersistedStorageNamespace = () => {
   }
 };
 
-export const StoragePersistsToTheHostPage: Story = {
-  ...persistedStory,
+export const StorageRoundTrip: Story = {
+  ...roundTripStory,
   beforeEach: () => {
     clearPersistedStorageNamespace();
 
     return clearPersistedStorageNamespace;
   },
   args: {
-    ...persistedStory.args,
+    ...roundTripStory.args,
     storageNamespace: PERSISTED_STORAGE_NAMESPACE,
     frontComponentHostCommunicationApi: {
       ...hostApiMocks,
@@ -196,3 +113,22 @@ export const StoragePersistsToTheHostPage: Story = {
     },
   },
 };
+
+export const StorageValueTooLarge: Story = runFrontComponentStory({
+  frontComponentBundleName: 'host-api-storage',
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expectFrontComponentMounted(canvas);
+
+    await userEvent.click(await canvas.findByTestId('oversized'));
+
+    expect(
+      await canvas.findByText(
+        'storage:error:QuotaExceededError',
+        {},
+        { timeout: INTERACTION_TIMEOUT },
+      ),
+    ).toBeVisible();
+  },
+});

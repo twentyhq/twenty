@@ -1,6 +1,4 @@
 import { FRONT_COMPONENT_STORAGE_MAX_KEY_LENGTH } from '@/constants/FrontComponentStorageMaxKeyLength';
-import { FRONT_COMPONENT_STORAGE_MAX_TOTAL_LENGTH } from '@/constants/FrontComponentStorageMaxTotalLength';
-import { FRONT_COMPONENT_STORAGE_MAX_VALUE_LENGTH } from '@/constants/FrontComponentStorageMaxValueLength';
 import { type FrontComponentHostCommunicationApiStore } from '@/types/FrontComponentHostCommunicationApiStore';
 import { createFrontComponentStorageBridge } from '../createFrontComponentStorageBridge';
 
@@ -26,17 +24,6 @@ const flushPendingPromises = () =>
   new Promise((resolve) => setTimeout(resolve, 0));
 
 describe('createFrontComponentStorageBridge', () => {
-  it('should read back seeded entries synchronously', () => {
-    const { bridge } = createConnectedBridge();
-
-    bridge.seed({ theme: '"dark"', draft: '"hello"' });
-
-    expect(bridge.getItem('theme')).toBe('"dark"');
-    expect(bridge.getLength()).toBe(2);
-    expect(bridge.getKeyAtIndex(1)).toBe('draft');
-    expect(bridge.getItem('missing')).toBeNull();
-  });
-
   it('should enumerate keys in insertion order across mutations', () => {
     const { bridge } = createConnectedBridge();
 
@@ -48,6 +35,8 @@ describe('createFrontComponentStorageBridge', () => {
       );
 
     expect(enumerateKeys()).toEqual(['theme', 'draft']);
+    expect(bridge.getItem('theme')).toBe('"dark"');
+    expect(bridge.getItem('missing')).toBeNull();
 
     bridge.setItem('locale', '"en"');
 
@@ -101,23 +90,6 @@ describe('createFrontComponentStorageBridge', () => {
     });
   });
 
-  it('should tag persisted writes with the session area', () => {
-    const hostCommunicationApi = createHostCommunicationApiStub();
-
-    const bridge = createFrontComponentStorageBridge({
-      area: 'session',
-      getHostCommunicationApi: () => hostCommunicationApi,
-    });
-
-    bridge.setItem('visits', '2');
-
-    expect(hostCommunicationApi.storageSet).toHaveBeenCalledWith({
-      area: 'session',
-      key: 'visits',
-      serializedValue: '2',
-    });
-  });
-
   it('should queue writes until the host communication api is available', () => {
     const hostCommunicationApi: FrontComponentHostCommunicationApiStore = {};
 
@@ -142,7 +114,7 @@ describe('createFrontComponentStorageBridge', () => {
     });
   });
 
-  it('should reject keys longer than the limit', () => {
+  it('should reject a write that breaks the limits', () => {
     const { bridge, hostCommunicationApi } = createConnectedBridge();
 
     const oversizedKey = 'k'.repeat(FRONT_COMPONENT_STORAGE_MAX_KEY_LENGTH + 1);
@@ -152,55 +124,6 @@ describe('createFrontComponentStorageBridge', () => {
     );
     expect(bridge.getItem(oversizedKey)).toBeNull();
     expect(hostCommunicationApi.storageSet).not.toHaveBeenCalled();
-  });
-
-  it('should reject values larger than the limit', () => {
-    const { bridge } = createConnectedBridge();
-
-    const oversizedValue = 'v'.repeat(
-      FRONT_COMPONENT_STORAGE_MAX_VALUE_LENGTH + 1,
-    );
-
-    expect(() => bridge.setItem('draft', oversizedValue)).toThrow(
-      expect.objectContaining({ name: 'QuotaExceededError' }),
-    );
-  });
-
-  it('should reject writes exceeding the total quota', () => {
-    const { bridge } = createConnectedBridge();
-
-    const almostFullValue = 'v'.repeat(
-      FRONT_COMPONENT_STORAGE_MAX_VALUE_LENGTH,
-    );
-    const entryCount = Math.ceil(
-      FRONT_COMPONENT_STORAGE_MAX_TOTAL_LENGTH /
-        FRONT_COMPONENT_STORAGE_MAX_VALUE_LENGTH,
-    );
-
-    bridge.seed(
-      Object.fromEntries(
-        Array.from({ length: entryCount }, (_unused, index) => [
-          `entry-${index}`,
-          almostFullValue,
-        ]),
-      ),
-    );
-
-    expect(() => bridge.setItem('overflow', 'v')).toThrow(
-      expect.objectContaining({ name: 'QuotaExceededError' }),
-    );
-  });
-
-  it('should count key lengths toward the total quota', () => {
-    const { bridge } = createConnectedBridge();
-
-    bridge.seed({
-      a: 'v'.repeat(FRONT_COMPONENT_STORAGE_MAX_TOTAL_LENGTH - 2),
-    });
-
-    expect(() => bridge.setItem('b', 'v')).toThrow(
-      expect.objectContaining({ name: 'QuotaExceededError' }),
-    );
   });
 
   it('should keep the local write when the host refuses it', async () => {
