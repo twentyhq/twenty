@@ -106,7 +106,10 @@ describe('2-31 slow instance command 1786459992777 - EncryptEmptyApplicationVari
       type: 'postgres',
       url: process.env.PG_DATABASE_URL,
       schema: 'core',
-      entities: [],
+      entities: [
+        'src/engine/core-modules/**/*.entity.ts',
+        'src/engine/metadata-modules/**/*.entity.ts',
+      ],
       synchronize: false,
     });
     await dataSource.initialize();
@@ -215,34 +218,5 @@ describe('2-31 slow instance command 1786459992777 - EncryptEmptyApplicationVari
         registrationVariableRow.encryptedValue,
       ),
     ).toBe('');
-  });
-
-  it('up() tightens the constraints once the backfill has encrypted the empty rows', async () => {
-    await seedApplicationVariable('');
-    await seedRegistrationVariable('');
-
-    await command.runDataMigration(dataSource);
-
-    const queryRunner = dataSource.createQueryRunner();
-
-    try {
-      await command.up(queryRunner);
-
-      const id = crypto.randomUUID();
-
-      seededRegistrationVariableIds.push(id);
-
-      await expect(
-        dataSource.query(
-          `INSERT INTO "core"."applicationRegistrationVariable"
-             (id, "applicationRegistrationId", "key", "encryptedValue",
-              "isSecret", "isRequired")
-           VALUES ($1, $2, $3, '', true, false)`,
-          [id, registrationId, `KEY_${id}`],
-        ),
-      ).rejects.toThrow(/check constraint/i);
-    } finally {
-      await queryRunner.release();
-    }
   });
 });

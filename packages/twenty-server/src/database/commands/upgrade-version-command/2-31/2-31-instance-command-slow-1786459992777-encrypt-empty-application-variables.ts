@@ -2,29 +2,17 @@ import { Logger } from '@nestjs/common';
 
 import { DataSource, QueryRunner } from 'typeorm';
 
+import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
+import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
-const BACKFILL_BATCH_SIZE = 500;
+const EMPTY_PLAINTEXT = '' as PlaintextString;
 
-const FIRST_CURSOR = '00000000-0000-0000-0000-000000000000';
-
-const BACKFILL_TARGETS = [
-  {
-    tableName: 'applicationVariable',
-    valueColumnName: 'value',
-    isWorkspaceScoped: true,
-  },
-  {
-    tableName: 'applicationRegistrationVariable',
-    valueColumnName: 'encryptedValue',
-    isWorkspaceScoped: false,
-  },
-] as const;
-
-type BackfillTarget = (typeof BACKFILL_TARGETS)[number];
+const LEGACY_EMPTY_VALUE = '' as EncryptedString;
 
 @RegisteredInstanceCommand('2.31.0', 1786459992777, { type: 'slow' })
 export class EncryptEmptyApplicationVariablesSlowInstanceCommand
@@ -39,65 +27,66 @@ export class EncryptEmptyApplicationVariablesSlowInstanceCommand
   ) {}
 
   async runDataMigration(dataSource: DataSource): Promise<void> {
-    for (const backfillTarget of BACKFILL_TARGETS) {
-      await this.encryptEmptyValues(dataSource, backfillTarget);
-    }
+    await this.encryptEmptyRegistrationVariables(dataSource);
+    await this.encryptEmptyApplicationVariables(dataSource);
   }
 
-  private async encryptEmptyValues(
+  private async encryptEmptyRegistrationVariables(
     dataSource: DataSource,
-    { tableName, valueColumnName, isWorkspaceScoped }: BackfillTarget,
   ): Promise<void> {
-    const workspaceIdSelection = isWorkspaceScoped ? ', "workspaceId"' : '';
+    const applicationRegistrationVariableRepository = dataSource.getRepository(
+      ApplicationRegistrationVariableEntity,
+    );
+
+    const { affected } = await applicationRegistrationVariableRepository.update(
+      { encryptedValue: LEGACY_EMPTY_VALUE },
+      {
+        encryptedValue:
+          this.secretEncryptionService.encryptVersioned(EMPTY_PLAINTEXT),
+      },
+    );
+
+    this.logger.log(
+      `core.applicationRegistrationVariable: encrypted ${affected ?? 0} empty value(s)`,
+    );
+  }
+
+  // The encryption key is derived from the workspaceId, so each workspace
+  // needs its own envelope of the empty string.
+  private async encryptEmptyApplicationVariables(
+    dataSource: DataSource,
+  ): Promise<void> {
+    const applicationVariableRepository = dataSource.getRepository(
+      ApplicationVariableEntity,
+    );
+
+    const workspaceRows = await applicationVariableRepository
+      .createQueryBuilder('applicationVariable')
+      .select('applicationVariable.workspaceId', 'workspaceId')
+      .where('applicationVariable.value = :legacyEmptyValue', {
+        legacyEmptyValue: LEGACY_EMPTY_VALUE,
+      })
+      .distinct(true)
+      .getRawMany<{ workspaceId: string }>();
+
     let encryptedCount = 0;
-    let cursor: string = FIRST_CURSOR;
 
-    while (true) {
-      const rows: { id: string; workspaceId?: string }[] =
-        await dataSource.query(
-          `SELECT id${workspaceIdSelection}
-           FROM "core"."${tableName}"
-          WHERE id > $1
-            AND "${valueColumnName}" = ''
-          ORDER BY id
-          LIMIT $2`,
-          [cursor, BACKFILL_BATCH_SIZE],
-        );
-
-      if (rows.length === 0) {
-        break;
-      }
-
-      const countRows: { count: string }[] = await dataSource.query(
-        `WITH "encrypted" AS (
-           UPDATE "core"."${tableName}" AS target
-              SET "${valueColumnName}" = source."encryptedValue"
-             FROM (
-               SELECT unnest($1::uuid[]) AS id, unnest($2::text[]) AS "encryptedValue"
-             ) AS source
-            WHERE target.id = source.id
-              AND target."${valueColumnName}" = ''
-           RETURNING target.id
-         )
-         SELECT COUNT(*) AS "count" FROM "encrypted"`,
-        [
-          rows.map(({ id }) => id),
-          rows.map(({ workspaceId }) =>
-            this.secretEncryptionService.encryptVersioned(
-              '' as PlaintextString,
-              isWorkspaceScoped ? { workspaceId } : {},
-            ),
+    for (const { workspaceId } of workspaceRows) {
+      const { affected } = await applicationVariableRepository.update(
+        { workspaceId, value: LEGACY_EMPTY_VALUE },
+        {
+          value: this.secretEncryptionService.encryptVersioned(
+            EMPTY_PLAINTEXT,
+            { workspaceId },
           ),
-        ],
+        },
       );
 
-      encryptedCount += Number(countRows[0]?.count ?? 0);
-
-      cursor = rows[rows.length - 1].id;
+      encryptedCount += affected ?? 0;
     }
 
     this.logger.log(
-      `core.${tableName}: encrypted ${encryptedCount} empty value(s)`,
+      `core.applicationVariable: encrypted ${encryptedCount} empty value(s)`,
     );
   }
 
