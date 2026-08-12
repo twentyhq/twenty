@@ -109,7 +109,7 @@ curl http://localhost:3000
 
 ### Twenty für externen Zugriff freigeben
 
-Standardmäßig läuft Twenty auf `localhost` an Port `3000`. Die UI ruft die API vom ursprünglichen Ursprung des Browsers auf, sodass sie von jedem Hostnamen geladen wird, der den Container erreicht – setze jedoch trotzdem `SERVER_URL` auf deine öffentliche URL: Der Server verwendet sie für generierte Links (E-Mails, OAuth-Callbacks) und zur Erkennung von HTTPS für sichere Cookies.
+Standardmäßig läuft Twenty auf `localhost` an Port `3000`. Die UI bestimmt den API-Endpunkt aus dem eigenen Origin des Browsers, sodass sie von jedem Hostnamen geladen wird, der den Container erreicht – setze dennoch `SERVER_URL` auf deine öffentliche URL: Der Server verwendet sie für generierte Links (E-Mails, OAuth-Callbacks) und um HTTPS für sichere Cookies zu erkennen.
 
 #### Erläuterung von `SERVER_URL`
 
