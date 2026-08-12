@@ -1,9 +1,6 @@
 import { registerEnumType } from '@nestjs/graphql';
 
-import {
-  EMAIL_IMAGE_MIME_TYPES,
-  MEDIA_CAPTURE_MIME_TYPES,
-} from 'twenty-shared/constants';
+import { EMAIL_IMAGE_MIME_TYPES } from 'twenty-shared/constants';
 import { FileFolder } from 'twenty-shared/types';
 
 registerEnumType(FileFolder, {
@@ -82,10 +79,5 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
   [FileFolder.Dpa]: {
     ignoreExpirationToken: false,
     cacheControl: IMMUTABLE_FILE_CACHE_CONTROL,
-  },
-  [FileFolder.MediaCapture]: {
-    ignoreExpirationToken: false,
-    cacheControl: IMMUTABLE_FILE_CACHE_CONTROL,
-    allowedMimeTypes: MEDIA_CAPTURE_MIME_TYPES,
   },
 };

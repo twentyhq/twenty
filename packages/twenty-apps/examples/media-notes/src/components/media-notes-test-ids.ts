@@ -6,4 +6,5 @@ export const MEDIA_NOTES_TEST_IDS = {
   capturedFile: 'media-notes-captured-file',
   capturedAudio: 'media-notes-captured-audio',
   capturedVideo: 'media-notes-captured-video',
+  savedRecord: 'media-notes-saved-record',
 };

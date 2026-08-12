@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
   type CaptureMediaResult,
@@ -6,6 +8,7 @@ import {
   recordVideo,
 } from 'twenty-sdk/front-component';
 
+import { RECORDING_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/media-note.object';
 import { MEDIA_NOTES_TEST_IDS } from './media-notes-test-ids';
 
 export const MEDIA_NOTES_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER =
@@ -23,28 +26,92 @@ const buttonStyle: React.CSSProperties = {
   padding: '8px 12px',
 };
 
-const describeResult = (result: CaptureMediaResult): string => {
-  if (result.status === 'failed') {
-    return `failed:${result.reason}`;
-  }
+// An app declares its fields by universalIdentifier; the per-instance
+// fieldMetadataId that captureMedia needs is resolved at runtime. The
+// metadata API cannot filter on universalIdentifier, so scan the object list.
+const fetchRecordingFieldMetadataId = async (): Promise<string | null> => {
+  const result = await new MetadataApiClient().query({
+    objects: {
+      __args: { paging: { first: 200 } },
+      edges: {
+        node: {
+          fieldsList: { id: true, universalIdentifier: true },
+        },
+      },
+    },
+  });
 
-  return result.status;
+  const fields = (result.objects?.edges ?? []).flatMap(
+    (edge) => edge.node?.fieldsList ?? [],
+  );
+
+  return (
+    fields.find(
+      (field) =>
+        field.universalIdentifier === RECORDING_FIELD_UNIVERSAL_IDENTIFIER,
+    )?.id ?? null
+  );
 };
 
+const describeResult = (result: CaptureMediaResult): string =>
+  result.status === 'failed' ? `failed:${result.reason}` : result.status;
+
 const MediaNotes = () => {
+  const [recordingFieldMetadataId, setRecordingFieldMetadataId] = useState<
+    string | null
+  >(null);
   const [captureResult, setCaptureResult] = useState<CaptureMediaResult | null>(
     null,
   );
+  const [savedRecordId, setSavedRecordId] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchRecordingFieldMetadataId()
+      .then(setRecordingFieldMetadataId)
+      .catch(() => setRecordingFieldMetadataId(null));
+  }, []);
 
   const handleCapture = async (mediaType: 'audio' | 'video') => {
+    if (recordingFieldMetadataId === null) {
+      return;
+    }
+
     setCaptureResult(null);
+    setSavedRecordId(null);
+
+    const params = {
+      fieldMetadataId: recordingFieldMetadataId,
+      maxDurationSeconds: 60,
+    };
 
     const result =
       mediaType === 'audio'
-        ? await recordAudio({ maxDurationSeconds: 60 })
-        : await recordVideo({ maxDurationSeconds: 60 });
+        ? await recordAudio(params)
+        : await recordVideo(params);
 
     setCaptureResult(result);
+
+    if (result.status !== 'captured') {
+      return;
+    }
+
+    // Attaching the uploaded file to a record is what makes it permanent:
+    // until then it is a temporary file owned by the FILES field.
+    const created = await new CoreApiClient().mutation({
+      createMediaNote: {
+        __args: {
+          data: {
+            title: `${mediaType} note`,
+            recording: [
+              { fileId: result.file.fileId, label: result.file.path },
+            ],
+          },
+        },
+        id: true,
+      },
+    });
+
+    setSavedRecordId(created.createMediaNote?.id ?? null);
   };
 
   return (
@@ -55,13 +122,14 @@ const MediaNotes = () => {
       <h3 style={{ fontSize: '15px', margin: '0 0 12px' }}>Media notes</h3>
       <p style={{ color: '#555', fontSize: '13px', margin: '0 0 16px' }}>
         Record a note with your microphone or camera. The recording is stored
-        as a file in Twenty and playable below.
+        in Twenty and attached to a Media note record.
       </p>
 
       <div style={{ marginBottom: '16px' }}>
         <button
           data-testid={MEDIA_NOTES_TEST_IDS.recordAudioButton}
           style={buttonStyle}
+          disabled={recordingFieldMetadataId === null}
           onClick={() => handleCapture('audio')}
         >
           Record a voice note
@@ -69,6 +137,7 @@ const MediaNotes = () => {
         <button
           data-testid={MEDIA_NOTES_TEST_IDS.recordVideoButton}
           style={buttonStyle}
+          disabled={recordingFieldMetadataId === null}
           onClick={() => handleCapture('video')}
         >
           Record a video note
@@ -112,6 +181,14 @@ const MediaNotes = () => {
               src={captureResult.file.url}
               style={{ maxHeight: '200px', width: '100%' }}
             />
+          )}
+          {savedRecordId !== null && (
+            <p
+              data-testid={MEDIA_NOTES_TEST_IDS.savedRecord}
+              style={{ color: '#555', margin: '8px 0 0' }}
+            >
+              Attached to media note {savedRecordId}
+            </p>
           )}
         </div>
       )}

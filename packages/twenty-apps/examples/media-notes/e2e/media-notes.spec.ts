@@ -115,6 +115,12 @@ test.describe('Media notes capture flow', () => {
     expect(audioSrc).toBeTruthy();
     expect(audioSrc).toContain('/file');
 
+    // The recording is attached to a record, which is what makes the
+    // uploaded file permanent instead of a temporary orphan.
+    await expect(
+      page.getByTestId(MEDIA_NOTES_TEST_IDS.savedRecord),
+    ).toContainText('Attached to media note');
+
     await page.screenshot({
       path: path.join(SCREENSHOT_DIR, '04-captured.png'),
     });

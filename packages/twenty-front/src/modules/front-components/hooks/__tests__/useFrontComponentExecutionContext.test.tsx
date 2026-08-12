@@ -171,6 +171,7 @@ const renderUseFrontComponentExecutionContext = (
 
 const FRONT_COMPONENT_ID = 'fc-test-id';
 const COMMAND_MENU_ITEM_ID = 'cmd-item-1';
+const FIELD_METADATA_ID = '20202020-1111-4444-8888-000000000001';
 
 const parentViewAtom =
   contextStoreRecordShowParentViewComponentState.atomFamily({
@@ -940,7 +941,25 @@ describe('useFrontComponentExecutionContext', () => {
         return await result.current.frontComponentHostCommunicationApi.captureMedia(
           {
             mediaType: 'screen',
+            fieldMetadataId: FIELD_METADATA_ID,
           } as unknown as Parameters<
+            typeof result.current.frontComponentHostCommunicationApi.captureMedia
+          >[0],
+        );
+      });
+
+      expect(captureResult).toEqual({ status: 'failed', reason: 'unknown' });
+      expect(mockRequestMediaCapture).not.toHaveBeenCalled();
+    });
+
+    it('should fail without opening the capture flow when fieldMetadataId is missing', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      const captureResult = await act(async () => {
+        return await result.current.frontComponentHostCommunicationApi.captureMedia(
+          { mediaType: 'audio' } as unknown as Parameters<
             typeof result.current.frontComponentHostCommunicationApi.captureMedia
           >[0],
         );
@@ -959,14 +978,14 @@ describe('useFrontComponentExecutionContext', () => {
 
       const captureResult = await act(async () => {
         return await result.current.frontComponentHostCommunicationApi.captureMedia(
-          { mediaType: 'audio' },
+          { mediaType: 'audio', fieldMetadataId: FIELD_METADATA_ID },
         );
       });
 
       expect(mockRequestMediaCapture).toHaveBeenCalledWith({
         frontComponentId: FRONT_COMPONENT_ID,
         mediaType: 'audio',
-        fieldMetadataId: undefined,
+        fieldMetadataId: FIELD_METADATA_ID,
         maxDurationSeconds: undefined,
       });
       expect(captureResult).toEqual({ status: 'cancelled' });
@@ -982,6 +1001,7 @@ describe('useFrontComponentExecutionContext', () => {
       await act(async () => {
         await result.current.frontComponentHostCommunicationApi.captureMedia({
           mediaType: 'video',
+          fieldMetadataId: FIELD_METADATA_ID,
           maxDurationSeconds: '120',
         } as unknown as Parameters<
           typeof result.current.frontComponentHostCommunicationApi.captureMedia
@@ -996,25 +1016,24 @@ describe('useFrontComponentExecutionContext', () => {
       );
     });
 
-    it('should drop a non-string fieldMetadataId', async () => {
-      mockRequestMediaCapture.mockResolvedValue({ status: 'cancelled' });
-
+    it('should fail without opening the capture flow when fieldMetadataId is not a string', async () => {
       const { result } = renderUseFrontComponentExecutionContext({
         frontComponentId: FRONT_COMPONENT_ID,
       });
 
-      await act(async () => {
-        await result.current.frontComponentHostCommunicationApi.captureMedia({
-          mediaType: 'audio',
-          fieldMetadataId: 42,
-        } as unknown as Parameters<
-          typeof result.current.frontComponentHostCommunicationApi.captureMedia
-        >[0]);
+      const captureResult = await act(async () => {
+        return await result.current.frontComponentHostCommunicationApi.captureMedia(
+          {
+            mediaType: 'audio',
+            fieldMetadataId: 42,
+          } as unknown as Parameters<
+            typeof result.current.frontComponentHostCommunicationApi.captureMedia
+          >[0],
+        );
       });
 
-      expect(mockRequestMediaCapture).toHaveBeenCalledWith(
-        expect.objectContaining({ fieldMetadataId: undefined }),
-      );
+      expect(captureResult).toEqual({ status: 'failed', reason: 'unknown' });
+      expect(mockRequestMediaCapture).not.toHaveBeenCalled();
     });
   });
 });

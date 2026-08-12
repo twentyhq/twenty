@@ -104,9 +104,9 @@ export type CaptureMediaMediaType = 'audio' | 'video';
 
 export type CaptureMediaParams = {
   mediaType: CaptureMediaMediaType;
-  // Recordings uploaded for a FILES field can be attached to records; without
-  // a fieldMetadataId the file lands in the generic media-capture folder.
-  fieldMetadataId?: string;
+  // The FILES field the recording is uploaded for. Required: a file uploaded
+  // outside a field can never be attached to a record and would be orphaned.
+  fieldMetadataId: string;
   maxDurationSeconds?: number;
 };
 

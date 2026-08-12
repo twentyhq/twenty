@@ -483,17 +483,42 @@ Front components can trigger navigation, modals, and notifications using functio
 
 `recordAudio` and `recordVideo` open a host-owned recorder: the user consents, records, reviews the result, and only then is the file uploaded. The component never touches the raw media stream.
 
+`fieldMetadataId` is required and must point at a FILES field — the recording is uploaded *for* that field, and attaching it to a record is what makes the file permanent. A file uploaded outside a field could never be attached, so it is not allowed.
+
 ```tsx
 import { recordAudio } from 'twenty-sdk/front-component';
 
-const result = await recordAudio({ maxDurationSeconds: 120 });
+const result = await recordAudio({
+  fieldMetadataId,
+  maxDurationSeconds: 120,
+});
 
 if (result.status === 'captured') {
   // result.file: { fileId, path, url, size, mimeType, durationSeconds }
+  // Attach it to a record to keep it:
+  await new CoreApiClient().mutation({
+    createMediaNote: {
+      __args: {
+        data: { recording: [{ fileId: result.file.fileId, name: result.file.path }] },
+      },
+      id: true,
+    },
+  });
 }
 ```
 
-The result is `captured`, `cancelled`, or `failed` with a reason (`permission-denied`, `no-device`, `device-in-use`, `blocked`, `busy`, `upload-failed`, or `unknown`). Pass a `fieldMetadataId` pointing at a FILES field to upload the recording where it can be attached to records; otherwise it lands in the generic `media-capture` folder.
+The result is `captured`, `cancelled`, or `failed` with a reason (`permission-denied`, `no-device`, `device-in-use`, `blocked`, `busy`, `upload-failed`, or `unknown`).
+
+Your app declares fields by `universalIdentifier`; resolve the instance-specific `fieldMetadataId` at runtime with the metadata client:
+
+```tsx
+const result = await new MetadataApiClient().query({
+  objects: {
+    __args: { paging: { first: 1 }, filter: { nameSingular: { eq: 'mediaNote' } } },
+    edges: { node: { fieldsList: { id: true, universalIdentifier: true } } },
+  },
+});
+```
 
 Here is an example that uses the host API to show a snackbar and close the side panel after an action completes:
 

@@ -7,6 +7,6 @@ import { captureMedia } from './captureMedia';
 export type RecordVideoParams = Omit<CaptureMediaParams, 'mediaType'>;
 
 export const recordVideo = (
-  params?: RecordVideoParams,
+  params: RecordVideoParams,
 ): Promise<CaptureMediaResult> =>
   captureMedia({ ...params, mediaType: 'video' });

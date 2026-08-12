@@ -367,9 +367,12 @@ export const useFrontComponentExecutionContext = ({
     async (params) => {
       // Params come from sandboxed application code: reject malformed shapes
       // here; numeric normalization is owned by the media-capture module.
+      // fieldMetadataId is mandatory — a recording uploaded outside a FILES
+      // field could never be attached to a record and would leak.
       if (
         !isDefined(params) ||
-        (params.mediaType !== 'audio' && params.mediaType !== 'video')
+        (params.mediaType !== 'audio' && params.mediaType !== 'video') ||
+        !isNonEmptyString(params.fieldMetadataId)
       ) {
         return { status: 'failed', reason: 'unknown' };
       }
@@ -377,9 +380,7 @@ export const useFrontComponentExecutionContext = ({
       return await requestMediaCapture({
         frontComponentId,
         mediaType: params.mediaType,
-        fieldMetadataId: isNonEmptyString(params.fieldMetadataId)
-          ? params.fieldMetadataId
-          : undefined,
+        fieldMetadataId: params.fieldMetadataId,
         maxDurationSeconds: isNumber(params.maxDurationSeconds)
           ? params.maxDurationSeconds
           : undefined,

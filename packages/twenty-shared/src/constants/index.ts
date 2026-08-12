@@ -47,7 +47,6 @@ export { IMAGE_IDENTIFIER_FIELD_METADATA_TYPES } from './ImageIdentifierFieldMet
 export { LABEL_IDENTIFIER_FIELD_METADATA_TYPES } from './LabelIdentifierFieldMetadataTypes';
 export { MAX_CUSTOM_INDEXES_PER_OBJECT } from './MaxCustomIndexesPerObject';
 export { MAX_EMAIL_RECIPIENTS } from './MaxEmailRecipients';
-export { MEDIA_CAPTURE_MIME_TYPES } from './MediaCaptureMimeTypes';
 export { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from './MultiItemFieldDefaultMaxValues';
 export { MULTI_ITEM_FIELD_MIN_MAX_VALUES } from './MultiItemFieldMinMaxValues';
 export { MUTATION_MAX_MERGE_RECORDS } from './MutationMaxMergeRecords';

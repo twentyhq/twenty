@@ -3216,7 +3216,7 @@ export interface Mutation {
     __typename: 'Mutation'
 }
 
-export type FileFolder = 'CorePicture' | 'AgentChat' | 'BuiltLogicFunction' | 'BuiltFrontComponent' | 'PublicAsset' | 'Source' | 'FilesField' | 'Dependencies' | 'Workflow' | 'EmailAttachment' | 'EmailImage' | 'AppTarball' | 'GeneratedSdkClient' | 'Dpa' | 'MediaCapture'
+export type FileFolder = 'CorePicture' | 'AgentChat' | 'BuiltLogicFunction' | 'BuiltFrontComponent' | 'PublicAsset' | 'Source' | 'FilesField' | 'Dependencies' | 'Workflow' | 'EmailAttachment' | 'EmailImage' | 'AppTarball' | 'GeneratedSdkClient' | 'Dpa'
 
 export type RunAgentMessageRole = 'user' | 'assistant'
 
@@ -9951,8 +9951,7 @@ export const enumFileFolder = {
    EmailImage: 'EmailImage' as const,
    AppTarball: 'AppTarball' as const,
    GeneratedSdkClient: 'GeneratedSdkClient' as const,
-   Dpa: 'Dpa' as const,
-   MediaCapture: 'MediaCapture' as const
+   Dpa: 'Dpa' as const
 }
 
 export const enumRunAgentMessageRole = {

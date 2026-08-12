@@ -8,7 +8,7 @@ import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomStat
 export type FrontComponentMediaCaptureRequest = {
   frontComponentId: string;
   mediaType: CaptureMediaMediaType;
-  fieldMetadataId?: string;
+  fieldMetadataId: string;
   maxDurationSeconds: number;
   onResult: (result: CaptureMediaResult) => void;
 };

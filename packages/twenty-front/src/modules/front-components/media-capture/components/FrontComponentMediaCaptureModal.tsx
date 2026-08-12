@@ -140,9 +140,7 @@ export const FrontComponentMediaCaptureModal = ({
       });
 
       const uploadedFile = await uploadFile(recordedFile, {
-        fileFolder: isDefined(mediaCaptureRequest.fieldMetadataId)
-          ? FileFolder.FilesField
-          : FileFolder.MediaCapture,
+        fileFolder: FileFolder.FilesField,
         fieldMetadataId: mediaCaptureRequest.fieldMetadataId,
       });
 
