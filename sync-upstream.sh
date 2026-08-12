@@ -36,9 +36,20 @@ set -uo pipefail
 cd "$(dirname "$0")" || exit 1
 
 # Per-repo settings live beside the script so the script itself stays identical everywhere.
-UPSTREAM_REMOTE="${UPSTREAM_REMOTE:-upstream}"
-UPSTREAM_BRANCH="${UPSTREAM_BRANCH:-main}"
+#
+# THE ENVIRONMENT WINS OVER THE FILE. Sourcing the conf last would silently overwrite an explicit
+# `UPSTREAM_BRANCH=v1.6.0 ./sync-upstream.sh` with the conf's own value and merge a different ref
+# than the operator named — and the only trace is one line of output nobody reads twice. Syncing
+# onto a tag or a release branch instead of a red upstream HEAD is a normal, deliberate thing to
+# do, so it gets to override the file.
+_env_remote="${UPSTREAM_REMOTE:-}"
+_env_branch="${UPSTREAM_BRANCH:-}"
+_env_ref="${UPSTREAM_REF:-}"
 [ -f .sync-upstream.conf ] && . ./.sync-upstream.conf
+UPSTREAM_REMOTE="${_env_remote:-${UPSTREAM_REMOTE:-upstream}}"
+UPSTREAM_BRANCH="${_env_branch:-${UPSTREAM_BRANCH:-main}}"
+# UPSTREAM_REF names any ref directly — a tag, or anything not shaped like <remote>/<branch>.
+UPSTREAM_REF="${_env_ref:-${UPSTREAM_REF:-${UPSTREAM_REMOTE}/${UPSTREAM_BRANCH}}}"
 
 WF=".github/workflows"
 
@@ -54,10 +65,23 @@ git remote get-url "$UPSTREAM_REMOTE" >/dev/null 2>&1 || die \
   "no '$UPSTREAM_REMOTE' remote. Add it:  git remote add $UPSTREAM_REMOTE <upstream-url>"
 
 printf 'sync-upstream: fetching %s...\n' "$UPSTREAM_REMOTE"
-git fetch --quiet "$UPSTREAM_REMOTE" || die "fetch failed."
+git fetch --quiet --tags "$UPSTREAM_REMOTE" || die "fetch failed."
 
-REF="${UPSTREAM_REMOTE}/${UPSTREAM_BRANCH}"
+REF="$UPSTREAM_REF"
+
+# A TAG is a ref, not a <remote>/<branch> pair, so `UPSTREAM_BRANCH=v1.6.0` composes a
+# "$UPSTREAM_REMOTE/v1.6.0" that cannot exist. Syncing onto a release tag instead of a moving HEAD
+# is the normal reason to override at all, so resolve the bare name rather than dead-ending on it.
+if ! git rev-parse --verify -q "$REF" >/dev/null && git rev-parse --verify -q "$UPSTREAM_BRANCH" >/dev/null; then
+  printf 'sync-upstream: %s is not a ref; using %s, which is.\n' "$REF" "$UPSTREAM_BRANCH"
+  REF="$UPSTREAM_BRANCH"
+fi
+
 git rev-parse --verify -q "$REF" >/dev/null || die "no such ref: $REF"
+
+# Say what is actually about to be merged, resolved to a commit — the ref name alone is what made
+# a conf-vs-environment mix-up survive a whole merge unnoticed.
+printf 'sync-upstream: target %s = %s\n' "$REF" "$(git rev-parse --short "$REF^{commit}")"
 
 if [ -z "$(git rev-list -1 HEAD.."$REF")" ]; then
   echo "sync-upstream: already up to date with $REF — nothing to merge."
