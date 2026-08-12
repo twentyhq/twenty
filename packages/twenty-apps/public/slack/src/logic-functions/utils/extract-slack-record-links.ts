@@ -16,8 +16,10 @@ export const extractSlackRecordLinks = ({
     return [];
   }
 
+  // The trailing group swallows a view id or anchor the agent may append, so
+  // the record still matches and the card links its canonical page.
   const recordLinkPattern = new RegExp(
-    `\\[([^\\]]+)\\]\\((${escapeRegExp(workspaceBaseUrl)}/object/([a-zA-Z][a-zA-Z0-9]*)/([a-zA-Z0-9-]+))\\)`,
+    `\\[([^\\]]+)\\]\\((${escapeRegExp(workspaceBaseUrl)}/object/([a-zA-Z][a-zA-Z0-9]*)/([a-zA-Z0-9-]+))(?:[/?#][^)\\s]*)?\\)`,
     'g',
   );
 

@@ -229,6 +229,42 @@ describe('fetchSlackAssistantRecordCard', () => {
     expect(card).toBeUndefined();
   });
 
+  it('should still match a record link carrying a view id', async () => {
+    queryMock.mockResolvedValue({
+      companies: { edges: [{ node: { id: 'c-1', name: 'ACME' } }] },
+    });
+
+    const card = await fetchSlackAssistantRecordCard({
+      client,
+      responseText: `Created [ACME](${WORKSPACE_BASE_URL}/object/company/c-1?viewId=v-1).`,
+      workspaceBaseUrl: WORKSPACE_BASE_URL,
+    });
+
+    expect(card?.recordUrl).toBe(`${WORKSPACE_BASE_URL}/object/company/c-1`);
+  });
+
+  it('should degrade to a name-only card when a detail field is rejected', async () => {
+    queryMock
+      .mockRejectedValueOnce(new Error('Field "annualRevenue" does not exist'))
+      .mockResolvedValueOnce({
+        companies: { edges: [{ node: { id: 'c-1', name: 'ACME' } }] },
+      });
+
+    const card = await fetchSlackAssistantRecordCard({
+      client,
+      responseText: buildResponseText('company', 'c-1'),
+      workspaceBaseUrl: WORKSPACE_BASE_URL,
+    });
+
+    expect(queryMock).toHaveBeenCalledTimes(2);
+    expect(card).toEqual({
+      recordName: 'ACME',
+      objectLabel: 'Company',
+      recordUrl: `${WORKSPACE_BASE_URL}/object/company/c-1`,
+      details: [],
+    });
+  });
+
   it('should fall back to the link label when the record has no name', async () => {
     queryMock.mockResolvedValue({
       companies: { edges: [{ node: { id: 'c-1', name: null } }] },

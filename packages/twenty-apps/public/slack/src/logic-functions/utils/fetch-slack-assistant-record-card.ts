@@ -24,6 +24,12 @@ export const fetchSlackAssistantRecordCard = async ({
   });
 
   if (leadRecordLink === undefined) {
+    if (responseText.includes('/object/')) {
+      console.warn(
+        `[slack] the answer links records under a base URL other than ${workspaceBaseUrl}, posting it without a card`,
+      );
+    }
+
     return undefined;
   }
 
@@ -33,6 +39,10 @@ export const fetchSlackAssistantRecordCard = async ({
     firstListMarkerIndex !== undefined &&
     firstListMarkerIndex < leadRecordLink.startIndex
   ) {
+    console.log(
+      '[slack] the answer reaches records inside a list, posting it without a card',
+    );
+
     return undefined;
   }
 

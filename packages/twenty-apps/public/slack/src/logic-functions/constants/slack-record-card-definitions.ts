@@ -27,6 +27,7 @@ export const SLACK_RECORD_CARD_DEFINITIONS: Record<
       emails: { primaryEmail: true },
       company: { name: true },
     },
+    nameOnlyNodeSelection: { id: true, name: FULL_NAME_SELECTION },
     getRecordName: (node: SlackRecordNode) =>
       formatSlackRecordFullName(node.name),
     getDetails: (node: SlackRecordNode) =>
@@ -48,6 +49,7 @@ export const SLACK_RECORD_CARD_DEFINITIONS: Record<
       annualRevenue: { amountMicros: true, currencyCode: true },
       address: { addressCity: true },
     },
+    nameOnlyNodeSelection: { id: true, name: true },
     getRecordName: (node: SlackRecordNode) => readSlackRecordText(node.name),
     getDetails: (node: SlackRecordNode) =>
       keepDefinedDetails([
@@ -69,6 +71,7 @@ export const SLACK_RECORD_CARD_DEFINITIONS: Record<
       closeDate: true,
       company: { name: true },
     },
+    nameOnlyNodeSelection: { id: true, name: true },
     getRecordName: (node: SlackRecordNode) => readSlackRecordText(node.name),
     getDetails: (node: SlackRecordNode) =>
       keepDefinedDetails([
@@ -87,6 +90,7 @@ export const SLACK_RECORD_CARD_DEFINITIONS: Record<
       dueAt: true,
       assignee: { name: FULL_NAME_SELECTION },
     },
+    nameOnlyNodeSelection: { id: true, title: true },
     getRecordName: (node: SlackRecordNode) => readSlackRecordText(node.title),
     getDetails: (node: SlackRecordNode) => {
       const dueDate = formatSlackRecordDate(node.dueAt);
@@ -104,6 +108,7 @@ export const SLACK_RECORD_CARD_DEFINITIONS: Record<
     objectNamePlural: 'notes',
     objectLabel: 'Note',
     nodeSelection: { id: true, title: true, createdAt: true },
+    nameOnlyNodeSelection: { id: true, title: true },
     getRecordName: (node: SlackRecordNode) => readSlackRecordText(node.title),
     getDetails: (node: SlackRecordNode) => {
       const createdDate = formatSlackRecordDate(node.createdAt);

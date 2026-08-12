@@ -19,20 +19,46 @@ export const fetchSlackRecordCard = async (
     SLACK_RECORD_CARD_DEFINITIONS[recordLink.objectNameSingular];
 
   if (definition === undefined) {
+    console.warn(
+      `[slack] no record card is defined for ${recordLink.objectNameSingular}, posting the answer without one`,
+    );
+
     return undefined;
   }
 
-  try {
+  const fetchNode = async (
+    nodeSelection: Record<string, unknown>,
+  ): Promise<SlackRecordNode | undefined> => {
     const queryResult: SlackRecordQueryResult = await client.query({
       [definition.objectNamePlural]: {
         __args: { filter: { id: { eq: recordLink.recordId } }, first: 1 },
-        edges: { node: definition.nodeSelection },
+        edges: { node: nodeSelection },
       },
     });
 
-    const node = queryResult[definition.objectNamePlural]?.edges?.[0]?.node;
+    return queryResult[definition.objectNamePlural]?.edges?.[0]?.node;
+  };
+
+  const readNode = async (): Promise<SlackRecordNode | undefined> => {
+    try {
+      return await fetchNode(definition.nodeSelection);
+    } catch (error) {
+      console.warn(
+        `[slack] could not read every card field of ${recordLink.objectNameSingular} ${recordLink.recordId}, retrying with its name only: ${error instanceof Error ? error.message : String(error)}`,
+      );
+
+      return await fetchNode(definition.nameOnlyNodeSelection);
+    }
+  };
+
+  try {
+    const node = await readNode();
 
     if (node === undefined) {
+      console.warn(
+        `[slack] ${recordLink.objectNameSingular} ${recordLink.recordId} was linked in the answer but could not be read back, posting the answer without a card`,
+      );
+
       return undefined;
     }
 
