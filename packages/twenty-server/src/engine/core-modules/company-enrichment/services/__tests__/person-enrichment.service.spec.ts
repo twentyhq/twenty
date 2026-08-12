@@ -149,6 +149,76 @@ describe('PersonEnrichmentService', () => {
     );
   });
 
+  it('should pass through a transient error from the client', async () => {
+    peopleDataLabsPersonClientService.enrichPersonByEmail.mockResolvedValue({
+      outcome: 'transientError',
+      httpStatus: 429,
+      message: 'rate limited',
+    });
+
+    const result = await service.enrichPersonForWorkspaceCreator({
+      userId: creatorUserId,
+      email: 'ada@acme.com',
+      workspaceId,
+    });
+
+    expect(result).toEqual({ outcome: 'transientError', enrichment: null });
+  });
+
+  it.each([
+    { outcome: 'skipped' },
+    { outcome: 'notFound' },
+    { outcome: 'permanentError', httpStatus: 401, message: 'unauthorized' },
+  ])(
+    'should return unavailable on client outcome $outcome',
+    async (clientResult) => {
+      peopleDataLabsPersonClientService.enrichPersonByEmail.mockResolvedValue(
+        clientResult,
+      );
+
+      const result = await service.enrichPersonForWorkspaceCreator({
+        userId: creatorUserId,
+        email: 'ada@acme.com',
+        workspaceId,
+      });
+
+      expect(result).toEqual({ outcome: 'unavailable', enrichment: null });
+    },
+  );
+
+  it('should not record an enrichment attempt when the client skips', async () => {
+    peopleDataLabsPersonClientService.enrichPersonByEmail.mockResolvedValue({
+      outcome: 'skipped',
+    });
+
+    await service.enrichPersonForWorkspaceCreator({
+      userId: creatorUserId,
+      email: 'ada@acme.com',
+      workspaceId,
+    });
+
+    expect(keyValuePairService.set).not.toHaveBeenCalled();
+  });
+
+  it('should still return the enrichment when recording the attempt fails', async () => {
+    peopleDataLabsPersonClientService.enrichPersonByEmail.mockResolvedValue({
+      outcome: 'matched',
+      data: { full_name: 'Ada Lovelace' },
+    });
+    keyValuePairService.set.mockRejectedValue(
+      new Error('key-value store down'),
+    );
+
+    const result = await service.enrichPersonForWorkspaceCreator({
+      userId: creatorUserId,
+      email: 'ada@acme.com',
+      workspaceId,
+    });
+
+    expect(result.outcome).toBe('matched');
+    expect(result.enrichment).toMatchObject({ fullName: 'Ada Lovelace' });
+  });
+
   it('should return transientError instead of rejecting when a dependency unexpectedly throws', async () => {
     enrichmentThrottleService.consumeToken.mockRejectedValue(
       new Error('redis down'),
