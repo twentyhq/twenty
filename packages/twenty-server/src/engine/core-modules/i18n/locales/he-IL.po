@@ -8430,11 +8430,6 @@ msgstr "לא ניתן לערוך תפקיד זה."
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "לא ניתן לשנות תפקיד זה כי הוא תפקיד מערכת. רק תפקידים מותאמים אישית יכולים להשתנות."
 
-#. js-lingui-id: nzveUr
-#: src/engine/metadata-modules/object-permission/field-permission/__tests__/field-permissions.service.spec.ts
-msgid "This role cannot be modified."
-msgstr "לא ניתן לשנות תפקיד זה."
-
 #. js-lingui-id: DEJJoY
 #: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts
 msgid "This server key is already claimed by another workspace."

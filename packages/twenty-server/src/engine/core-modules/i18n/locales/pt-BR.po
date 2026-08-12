@@ -8430,11 +8430,6 @@ msgstr "Esta função não pode ser editada."
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "Este papel não pode ser modificado porque é um papel do sistema. Apenas papéis personalizados podem ser editados."
 
-#. js-lingui-id: nzveUr
-#: src/engine/metadata-modules/object-permission/field-permission/__tests__/field-permissions.service.spec.ts
-msgid "This role cannot be modified."
-msgstr "Esta função não pode ser modificada."
-
 #. js-lingui-id: DEJJoY
 #: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts
 msgid "This server key is already claimed by another workspace."

@@ -8430,11 +8430,6 @@ msgstr "このロールは編集できません。"
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "このロールはシステムロールであるため変更できません。カスタムロールのみ編集できます。"
 
-#. js-lingui-id: nzveUr
-#: src/engine/metadata-modules/object-permission/field-permission/__tests__/field-permissions.service.spec.ts
-msgid "This role cannot be modified."
-msgstr "このロールは変更できません。"
-
 #. js-lingui-id: DEJJoY
 #: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts
 msgid "This server key is already claimed by another workspace."
