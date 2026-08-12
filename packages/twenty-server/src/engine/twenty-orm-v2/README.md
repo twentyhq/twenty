@@ -101,7 +101,8 @@ factories), `setParameters`, `setFindOptions({ select })`, `addSelect`, `orderBy
 The surface stops there on purpose: anything findMany cannot reach (`getCount`,
 `getRawMany`, `groupBy`, `take` / `skip`) is left to v1 until a runner needs it.
 
-Wired into `CommonFindManyQueryRunnerService` only. Other runners keep `repository`.
+Wired into `CommonFindManyQueryRunnerService` and `CommonFindOneQueryRunnerService`.
+Other runners keep `repository`.
 
 ## Not covered yet
 

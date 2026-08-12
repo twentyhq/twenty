@@ -7,11 +7,7 @@ import {
   QUERY_MAX_RECORDS,
   QUERY_MAX_RECORDS_FROM_RELATION,
 } from 'twenty-shared/constants';
-import {
-  FeatureFlagKey,
-  ObjectRecord,
-  OrderByDirection,
-} from 'twenty-shared/types';
+import { ObjectRecord, OrderByDirection } from 'twenty-shared/types';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import {
@@ -66,7 +62,6 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<CommonFindManyOutput> {
     const {
-      repository,
       authContext,
       rolePermissionConfig,
       flatObjectMetadata,
@@ -74,16 +69,9 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       flatFieldMetadataMaps,
       workspaceDataSource,
       commonQueryParser,
-      featureFlagsMap,
     } = queryRunnerContext;
 
-    const readRepository = featureFlagsMap[
-      FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED
-    ]
-      ? this.workspaceDataSourceV2Service
-          .getDataSource({ useReplica: true })
-          .getRepository(flatObjectMetadata.nameSingular, rolePermissionConfig)
-      : repository;
+    const readRepository = this.getReadRepository(queryRunnerContext);
 
     const queryBuilder: ReadRecordQueryBuilder =
       readRepository.createQueryBuilder(flatObjectMetadata.nameSingular);
