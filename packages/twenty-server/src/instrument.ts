@@ -42,8 +42,6 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
     environment: process.env.SENTRY_ENVIRONMENT,
     release: process.env.APP_VERSION,
     dsn: process.env.SENTRY_DSN,
-    // The Modules integration attaches the installed-module list to every event.
-    // Nothing reads it and it measured 4.6% of server CPU on prod-eu.
     defaultIntegrations: Sentry.getDefaultIntegrations({
       tracesSampleRate,
     }).filter((integration) => integration.name !== 'Modules'),
@@ -74,7 +72,6 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
       nodeProfilingIntegration(),
     ],
     tracesSampleRate,
-    // Continuous CPU profiling measured 10-12% of server CPU on prod-eu at 0.3.
     profilesSampleRate: parseSampleRate(
       process.env.SENTRY_PROFILES_SAMPLE_RATE,
       0.01,

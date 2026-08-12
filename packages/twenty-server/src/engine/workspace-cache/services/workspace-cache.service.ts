@@ -52,11 +52,8 @@ const MAX_LOCAL_CACHE_ENTRIES = 6_000;
 const MIN_EVICT_KEYS = 100;
 const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000; // 30 minutes idle
 const LOCAL_CACHE_SWEEP_INTERVAL_MS = 60 * 1000;
-const LIVE_VERSIONS_PER_PROVIDER = 64;
-const PACKING_INTERVAL_MS = 250;
-const PACKING_BUDGET_MS = 10;
-// Versions read within this window are in the working set. Packing them costs an
-// unpack on the next read, which measured 23 unpacks/s per pod on prod-eu.
+const PACKING_INTERVAL_MS = 1000;
+const MAX_VERSIONS_PER_PACKING_SLICE = 2;
 const MIN_IDLE_BEFORE_PACKING_MS = 60 * 1000;
 // Per-provider entry caps, keyed by local cache key prefix (ORM graphs are ~5 MB each).
 const MAX_LOCAL_ENTRIES_BY_KEY_NAME = new Map<string, number>([
@@ -695,9 +692,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
     const { packed, remaining } = packIdleVersions({
       localCache: this.localCache,
-      liveVersionsPerProvider: LIVE_VERSIONS_PER_PROVIDER,
       minIdleMs: MIN_IDLE_BEFORE_PACKING_MS,
-      budgetMs: PACKING_BUDGET_MS,
+      maxVersionsPerSlice: MAX_VERSIONS_PER_PACKING_SLICE,
       pack: ({ localKey, data }) => {
         const separatorIndex = localKey.lastIndexOf(':');
         const keyName = localKey.slice(
