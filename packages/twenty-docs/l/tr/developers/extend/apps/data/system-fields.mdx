@@ -141,23 +141,26 @@ Skaler sistem alanlarında olduğu gibi, çözümlenen kimlik, `fieldMetadataUni
   `getSystemViewUniversalIdentifier` ve `getSystemViewFieldUniversalIdentifier`, `twenty-sdk` 2.26 sürümünden itibaren kullanılabilir ve Twenty sunucusunun 2.26 veya daha yeni bir sürümünü gerektirir.
 </Note>
 
-Sunucu ayrıca her nesnede bir **sistem görünümü** de sağlar: ana liste görünümü (`All {objectLabelPlural}`, `ViewKey.INDEX` anahtarıyla), gösterilebilir her alan için bir sütunla. Sistem ilişki alanlarında olduğu gibi, tanımlayıcıları **isimden bağımsız** olarak türetilir; bu nedenle bir nesnenin veya alanın adını değiştirmeniz onları asla değiştirmez.
+Sunucu ayrıca her nesnede bir **sistem görünümü** de sağlar: ana liste görünümü (`All {objectLabelPlural}`, `ViewKey.INDEX` ( `SYSTEM_VIEW_KEYS.INDEX` ile türetilmiş) anahtarıyla), gösterilebilir her alan için bir sütunla. Sistem ilişki alanlarında olduğu gibi, tanımlayıcıları **isimden bağımsız** olarak türetilir; bu nedenle bir nesnenin veya alanın adını değiştirmeniz onları asla değiştirmez.
 
 Görünümü çözümlemek için `getSystemViewUniversalIdentifier` kullanın:
 
 ```ts
-import { getSystemViewUniversalIdentifier, ViewKey } from 'twenty-sdk/define';
+import {
+  getSystemViewUniversalIdentifier,
+  SYSTEM_VIEW_KEYS,
+} from 'twenty-sdk/define';
 
 const rocketIndexViewId = getSystemViewUniversalIdentifier({
   objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
-  viewKey: ViewKey.INDEX,
+  viewKey: SYSTEM_VIEW_KEYS.INDEX,
 });
 ```
 
 * `objectMetadataApplicationUniversalIdentifier`, görünümün ad alanını belirleyen, **nesneye** sahip olan uygulamadır.
 * `objectUniversalIdentifier`, görünümün listelediği nesnedir.
-* `viewKey`, bugün için `ViewKey.INDEX` olan sistem görünüm anahtarıdır.
+* `viewKey`, sistem görünümü ayırt edicisidir: ana liste görünümü için `SYSTEM_VIEW_KEYS.INDEX`, kayıt sayfası alanları bileşen görünümü için `SYSTEM_VIEW_KEYS.FIELDS_WIDGET`. Türetmenin anahtarını belirler; yalnızca `INDEX` görünüm satırında da saklanır.
 
 Çözümlenen kimlik, bir `viewUniversalIdentifier` beklendiği her yerde, örneğin bir [`NavigationMenuItemType.VIEW`](/l/tr/developers/extend/apps/layout/navigation-menu-items) kenar çubuğu girdisinde çalışır. Sadece bir nesnenin ana listesini açmak için, `targetObjectUniversalIdentifier` ile `NavigationMenuItemType.OBJECT` kullanmayı tercih edin: hiçbir türetmeye ihtiyaç duymaz.
 

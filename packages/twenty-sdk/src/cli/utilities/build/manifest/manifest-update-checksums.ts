@@ -1,6 +1,7 @@
 import { relative } from 'path';
 import { type Manifest, OUTPUT_DIR } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import type { EntityFilePaths } from '@/cli/utilities/build/manifest/manifest-extract-config';
 
@@ -65,6 +66,26 @@ export const manifestUpdateChecksums = ({
     }
 
     if (fileFolder === FileFolder.BuiltFrontComponent) {
+      const sharedDependencies =
+        result.application.frontComponentSharedDependencies;
+
+      if (
+        isDefined(sharedDependencies) &&
+        sharedDependencies.builtPath === rootBuiltPath
+      ) {
+        result = {
+          ...result,
+          application: {
+            ...result.application,
+            frontComponentSharedDependencies: {
+              ...sharedDependencies,
+              builtChecksum: checksum,
+            },
+          },
+        };
+        continue;
+      }
+
       const frontComponents = result.frontComponents;
       const componentIndex =
         frontComponents.findIndex(

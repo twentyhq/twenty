@@ -601,6 +601,43 @@ export default defineFrontComponent({
 
 자세한 내용은 [퍼블릭 에셋 섹션](/l/ko/developers/extend/apps/config/public-assets)을 참조하세요.
 
+## 프론트 컴포넌트 간의 의존성 공유하기
+
+기본적으로 각 프론트 컴포넌트는 가져온 라이브러리의 사본을 자체적으로 번들링하므로, 컴포넌트가 다섯 개인 앱은 React를 다섯 번 제공하게 됩니다. 앱의 `package.json`에서 공유 의존성을 선언해 해당 라이브러리들을 한 번만 빌드하고, 앱의 모든 컴포넌트가 단일 캐시 파일에서 이를 불러오도록 할 수 있습니다:
+
+```json package.json
+{
+  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+}
+```
+
+그다음 각 컴포넌트는 이전과 완전히 동일한 방식으로 의존성을 import하며, 컴포넌트 코드에는 아무런 변경이 필요하지 않습니다:
+
+```tsx src/front-components/counter.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'counter',
+  component: Counter,
+});
+```
+
+알아두면 좋은 몇 가지 사항:
+
+* **앱당 하나의 공유 의존성 번들.** 번들은 앱 자체의 의존성으로부터 빌드되므로, 배포하는 버전에 대한 완전한 통제권을 유지할 수 있습니다.
+* **가져오는 정확한 specifier를 나열하세요.** `twenty-ui/input`과 `twenty-ui/display`는 두 개의 항목이며, 패키지 이름만으로는 그 하위 경로가 포함되지 않습니다. `react`를 나열하면 `react/jsx-runtime`이 자동으로 포함됩니다.
+* **`react`와 함께 `react-dom/client`도 공유하세요.** 모든 컴포넌트는 `createRoot`를 통해 렌더링되므로, 이를 제외하면 각 컴포넌트가 여전히 React DOM을 번들링하게 됩니다.
+* **번들은 캐시됩니다.** 이 번들은 장기 불변 캐시가 적용된 content-hash URL로 제공되므로, 한 번만 다운로드된 뒤 의존성 중 하나가 변경될 때까지 앱의 모든 컴포넌트에서 재사용됩니다.
+* **공유 패키지를 전혀 import하지 않는 컴포넌트는 이 번들을 다운로드하지 않습니다.**
+
 ## 스타일링
 
 프런트 컴포넌트는 여러 스타일링 방식을 지원합니다. 다음과 같은 방식을 사용할 수 있습니다:

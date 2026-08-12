@@ -7,7 +7,11 @@ import {
   QUERY_MAX_RECORDS,
   QUERY_MAX_RECORDS_FROM_RELATION,
 } from 'twenty-shared/constants';
-import { ObjectRecord, OrderByDirection } from 'twenty-shared/types';
+import {
+  FeatureFlagKey,
+  ObjectRecord,
+  OrderByDirection,
+} from 'twenty-shared/types';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import {
@@ -35,6 +39,7 @@ import { buildCursorPage } from 'src/engine/api/utils/build-cursor-page.util';
 import { getNonToOneJoinAliases } from 'src/engine/api/common/utils/get-non-to-one-join-aliases.util';
 import { getPageInfo } from 'src/engine/api/common/utils/get-page-info.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
+import { type ReadRecordQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/types/record-query-builder.type';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { getCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
@@ -69,11 +74,19 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       flatFieldMetadataMaps,
       workspaceDataSource,
       commonQueryParser,
+      featureFlagsMap,
     } = queryRunnerContext;
 
-    const queryBuilder = repository.createQueryBuilder(
-      flatObjectMetadata.nameSingular,
-    );
+    const readRepository = featureFlagsMap[
+      FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED
+    ]
+      ? this.workspaceDataSourceV2Service
+          .getDataSource({ useReplica: true })
+          .getRepository(flatObjectMetadata.nameSingular, rolePermissionConfig)
+      : repository;
+
+    const queryBuilder: ReadRecordQueryBuilder =
+      readRepository.createQueryBuilder(flatObjectMetadata.nameSingular);
 
     const aggregateQueryBuilder = queryBuilder.clone();
 
@@ -220,7 +233,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       Object.keys(args.selectedFieldsResult.aggregate ?? {}).length > 0;
 
     const parentObjectRecordsAggregatedValues = hasAggregatedFields
-      ? await aggregateQueryBuilder.getRawOne()
+      ? await aggregateQueryBuilder.getRawOne<Record<string, number>>()
       : undefined;
 
     if (isDefined(args.selectedFieldsResult.relations)) {

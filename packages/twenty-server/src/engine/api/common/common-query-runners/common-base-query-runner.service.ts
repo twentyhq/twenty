@@ -56,6 +56,7 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -95,6 +96,8 @@ export abstract class CommonBaseQueryRunnerService<
   protected readonly metricsService: MetricsService;
   @Inject()
   protected readonly featureFlagService: FeatureFlagService;
+  @Inject()
+  protected readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service;
 
   protected abstract readonly operationName: CommonQueryNames;
 
@@ -348,6 +351,7 @@ export abstract class CommonBaseQueryRunnerService<
       workspaceDataSource: globalWorkspaceDataSource,
       rolePermissionConfig,
       repository,
+      featureFlagsMap: context.featureFlagsMap,
     };
   }
 

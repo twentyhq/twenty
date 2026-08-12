@@ -20,8 +20,8 @@ const INDEX_TEMPLATE = `<html>
 </html>`;
 
 // Pull the injected _env_ object back out of the written index.html and
-// normalize whitespace so the multi-line JSON.stringify(..., 2) output can be
-// compared against a compact expected string.
+// normalize whitespace so the multi-line output can be compared against a
+// compact expected string.
 const getInjectedEnv = (): string => {
   const writtenContent = mockedFs.writeFileSync.mock.calls[0][1] as string;
   const match = writtenContent.match(/window\._env_ = (\{[\s\S]*?\});/);
@@ -42,43 +42,11 @@ describe('generateFrontConfig', () => {
     process.env = ORIGINAL_ENV;
   });
 
-  it('should inject the absolute SERVER_URL when set and the toggle is unset', () => {
+  it('should clear any baked value so the front resolves the API origin from the page origin', () => {
     process.env.SERVER_URL = 'http://x.com';
-    delete process.env.FRONT_AUTO_BASE_URL;
-
-    generateFrontConfig();
-
-    expect(getInjectedEnv()).toBe(
-      '{"REACT_APP_SERVER_BASE_URL":"http://x.com"}',
-    );
-  });
-
-  it('should inject an empty _env_ when SERVER_URL is unset', () => {
-    delete process.env.SERVER_URL;
-    delete process.env.FRONT_AUTO_BASE_URL;
 
     generateFrontConfig();
 
     expect(getInjectedEnv()).toBe('{}');
-  });
-
-  it('should inject an empty _env_ when FRONT_AUTO_BASE_URL=true even if SERVER_URL is set', () => {
-    process.env.SERVER_URL = 'http://x.com';
-    process.env.FRONT_AUTO_BASE_URL = 'true';
-
-    generateFrontConfig();
-
-    expect(getInjectedEnv()).toBe('{}');
-  });
-
-  it('should keep the absolute SERVER_URL when FRONT_AUTO_BASE_URL is not exactly "true"', () => {
-    process.env.SERVER_URL = 'http://x.com';
-    process.env.FRONT_AUTO_BASE_URL = 'false';
-
-    generateFrontConfig();
-
-    expect(getInjectedEnv()).toBe(
-      '{"REACT_APP_SERVER_BASE_URL":"http://x.com"}',
-    );
   });
 });

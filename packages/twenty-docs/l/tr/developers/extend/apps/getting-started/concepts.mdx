@@ -34,22 +34,23 @@ your-app/
 
 ## Varlık türleri
 
-| Varlık                   | Amaç                                                     | Belgeler                                                                       |
-| ------------------------ | -------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| **Uygulama**             | Uygulama kimliği, varsayılan rol, değişkenler            | [Uygulama Yapılandırması](/l/tr/developers/extend/apps/config/application)          |
-| **Rol**                  | Nesneler ve alanlar üzerindeki izin kümeleri             | [Roller ve İzinler](/l/tr/developers/extend/apps/config/roles)                      |
-| **Nesne**                | Alanlara sahip özel kayıt türleri                        | [Nesneler](/l/tr/developers/extend/apps/data/objects)                               |
-| **Alan**                 | Diğer uygulamalardaki nesnelere alan ekleyin             | [Nesneleri Genişletme](/l/tr/developers/extend/apps/data/extending-objects)         |
-| **İlişki**               | Nesneler arasındaki çift yönlü bağlantılar               | [İlişkiler](/l/tr/developers/extend/apps/data/relations)                            |
-| **Mantık İşlevi**        | Tetikleyicilerle sunucu tarafı TypeScript                | [Mantıksal İşlevler](/l/tr/developers/extend/apps/logic/logic-functions)            |
-| **Beceri**               | Yeniden kullanılabilir yapay zekâ temsilcisi yönergeleri | [Beceriler ve Temsilciler](/l/tr/developers/extend/apps/logic/skills-and-agents)    |
-| **Temsilci**             | Özel istemlere sahip yapay zekâ asistanları              | [Beceriler ve Temsilciler](/l/tr/developers/extend/apps/logic/skills-and-agents)    |
-| **Bağlantı Sağlayıcısı** | Üçüncü taraf API'ler için OAuth kimlik bilgileri         | [Bağlantılar](/l/tr/developers/extend/apps/logic/connections)                       |
-| **Görünüm**              | Önceden yapılandırılmış kayıt listesi görünümleri        | [Görünümler](/l/tr/developers/extend/apps/layout/views)                             |
-| **Gezinme Menüsü Öğesi** | Özel kenar çubuğu öğeleri                                | [Gezinme Menüsü Öğeleri](/l/tr/developers/extend/apps/layout/navigation-menu-items) |
-| **Sayfa Düzeni**         | Bir kaydın ayrıntı sayfasındaki sekmeler ve widget'lar   | [Sayfa Düzenleri](/l/tr/developers/extend/apps/layout/page-layouts)                 |
-| **Ön Uç Bileşeni**       | Twenty içinde korumalı alandaki React kullanıcı arayüzü  | [Ön Uç Bileşenleri](/l/tr/developers/extend/apps/layout/front-components)           |
-| **Komut Menüsü Öğesi**   | Hızlı işlemler ve Cmd+K girdileri                        | [Komut Menüsü Öğeleri](/l/tr/developers/extend/apps/layout/command-menu-items)      |
+| Varlık                       | Amaç                                                                                                    | Belgeler                                                                                                                 |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| **Uygulama**                 | Uygulama kimliği, varsayılan rol, değişkenler                                                           | [Uygulama Yapılandırması](/l/tr/developers/extend/apps/config/application)                                                    |
+| **Rol**                      | Nesneler ve alanlar üzerindeki izin kümeleri                                                            | [Roller ve İzinler](/l/tr/developers/extend/apps/config/roles)                                                                |
+| **Nesne**                    | Alanlara sahip özel kayıt türleri                                                                       | [Nesneler](/l/tr/developers/extend/apps/data/objects)                                                                         |
+| **Alan**                     | Diğer uygulamalardaki nesnelere alan ekleyin                                                            | [Nesneleri Genişletme](/l/tr/developers/extend/apps/data/extending-objects)                                                   |
+| **İlişki**                   | Nesneler arasındaki çift yönlü bağlantılar                                                              | [İlişkiler](/l/tr/developers/extend/apps/data/relations)                                                                      |
+| **Mantık İşlevi**            | Tetikleyicilerle sunucu tarafı TypeScript                                                               | [Mantıksal İşlevler](/l/tr/developers/extend/apps/logic/logic-functions)                                                      |
+| **Beceri**                   | Yeniden kullanılabilir yapay zekâ temsilcisi yönergeleri                                                | [Beceriler ve Temsilciler](/l/tr/developers/extend/apps/logic/skills-and-agents)                                              |
+| **Temsilci**                 | Özel istemlere sahip yapay zekâ asistanları                                                             | [Beceriler ve Temsilciler](/l/tr/developers/extend/apps/logic/skills-and-agents)                                              |
+| **Bağlantı Sağlayıcısı**     | Üçüncü taraf API'ler için OAuth kimlik bilgileri                                                        | [Bağlantılar](/l/tr/developers/extend/apps/logic/connections)                                                                 |
+| **Görünüm**                  | Önceden yapılandırılmış kayıt listesi görünümleri                                                       | [Görünümler](/l/tr/developers/extend/apps/layout/views)                                                                       |
+| **Gezinme Menüsü Öğesi**     | Özel kenar çubuğu öğeleri                                                                               | [Gezinme Menüsü Öğeleri](/l/tr/developers/extend/apps/layout/navigation-menu-items)                                           |
+| **Sayfa Düzeni**             | Bir kaydın ayrıntı sayfasındaki sekmeler ve widget'lar                                                  | [Sayfa Düzenleri](/l/tr/developers/extend/apps/layout/page-layouts)                                                           |
+| **Ön Uç Bileşeni**           | Twenty içinde korumalı alandaki React kullanıcı arayüzü                                                 | [Ön Uç Bileşenleri](/l/tr/developers/extend/apps/layout/front-components)                                                     |
+| **Paylaşılan Bağımlılıklar** | Uygulamanın ön uç bileşenleri tarafından paylaşılan ve package.json dosyasında bildirilen bağımlılıklar | [Paylaşılan Bağımlılıklar](/l/tr/developers/extend/apps/layout/front-components#sharing-dependencies-across-front-components) |
+| **Komut Menüsü Öğesi**       | Hızlı işlemler ve Cmd+K girdileri                                                                       | [Komut Menüsü Öğeleri](/l/tr/developers/extend/apps/layout/command-menu-items)                                                |
 
 ## Korumalı alan
 

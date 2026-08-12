@@ -27,6 +27,10 @@ export class ApplicationVariableEntityDTO {
   @Field()
   isSecret: boolean;
 
+  @IsBoolean()
+  @Field()
+  isDeprecated: boolean;
+
   @IsString()
   @Field()
   type: string;

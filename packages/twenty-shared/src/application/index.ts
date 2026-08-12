@@ -36,6 +36,8 @@ export { DEFAULT_API_KEY_NAME } from './constants/DefaultApiKeyName';
 export { DEFAULT_API_URL_NAME } from './constants/DefaultApiUrlName';
 export { DEFAULT_APP_ACCESS_TOKEN_NAME } from './constants/DefaultAppAccessTokenName';
 export { DEFAULT_FUNCTIONS_URL_NAME } from './constants/DefaultFunctionsUrlName';
+export { FRONT_COMPONENT_SHARED_DEPENDENCIES_BUILT_PATH } from './constants/FrontComponentSharedDependenciesBuiltPath';
+export { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from './constants/FrontComponentSharedDependenciesImportSpecifier';
 export { GENERATED_DIR } from './constants/GeneratedDirectory';
 export { NODE_ESM_CJS_BANNER } from './constants/NodeEsmCjsBanner';
 export { OUTPUT_DIR } from './constants/OutputDirectory';
@@ -104,6 +106,7 @@ export type {
   CommandMenuItemManifest,
   FrontComponentManifest,
 } from './frontComponentManifestType';
+export type { FrontComponentSharedDependenciesManifest } from './frontComponentSharedDependenciesManifestType';
 export type { IndexFieldManifest } from './indexFieldManifestType';
 export type { IndexManifest } from './indexManifestType';
 export type {
