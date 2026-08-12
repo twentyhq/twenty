@@ -60,11 +60,12 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
     return undefined;
   }
 
-  if (existingLink?.source === SLACK_USER_LINK_SOURCE.MANUAL) {
-    return isNonEmptyString(existingLink.workspaceMemberId)
-      ? existingLink.workspaceMemberId
-      : undefined;
-  }
+  // MANUAL links are stored but not honored yet: link records are writable by
+  // any role with broad object access, so until those writes can be restricted
+  // a stored manual pairing must not decide whose permissions the bot borrows.
+  // The live email match below still applies as if the link were absent.
+  const isManualLink =
+    existingLink?.source === SLACK_USER_LINK_SOURCE.MANUAL;
 
   // link records are ordinary records, so a stored email match is recomputed
   // from the live Slack profile on every run rather than trusted as stored
@@ -96,7 +97,8 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
     return workspaceMemberId;
   }
 
-  if (existingLink.workspaceMemberId !== workspaceMemberId) {
+  // heal only auto links; a manual record is an admin's, even while inert
+  if (!isManualLink && existingLink.workspaceMemberId !== workspaceMemberId) {
     await updateSlackUserLink(client, {
       id: existingLink.id,
       workspaceMemberId,
