@@ -22,8 +22,8 @@ import { runCalendarChannelListFetch } from 'test/integration/utils/run-calendar
 
 const HANDLE = 'calendar-import-error-mapping@apple.dev';
 
-// See the messaging suite: 401 and 403 are deliberately temporary so a
-// transient auth blip cannot revoke a working account.
+// Providers return 401 and 403 transiently, so revoking on them disconnects
+// working accounts. Only a response that proves the grant is gone revokes.
 const INSUFFICIENT_PERMISSIONS_FAILURES: [string, GoogleApiFailure][] = [
   [
     'a 400 invalid_grant response',

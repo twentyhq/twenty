@@ -101,9 +101,8 @@ describe('Gmail token failure modes (integration)', () => {
     expect(channelState.syncStage).toBe(MessageChannelSyncStage.FAILED);
   }, 60000);
 
-  // The messaging driver rejects the unsupported provider before the refresh
-  // service is reached, so this surfaces as a permissions failure rather than
-  // the unknown one the refresh-token path would produce.
+  // The driver rejects the unsupported provider before the refresh service is
+  // reached, so this surfaces as a permissions failure.
   it('fails the channel as insufficient-permissions when the provider cannot refresh tokens', async () => {
     await connectedAccountRepository.update(
       { id: channel.connectedAccountId },

@@ -9,43 +9,15 @@ import {
 
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 
+import { gmailMessage } from 'test/integration/google/mocks/gmail-message.util';
 import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
-import { findCreatedPeopleEmails } from 'test/integration/utils/find-created-people.util';
+import { findCreatedPeopleEmails } from 'test/integration/utils/find-imported-records.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { resetMessageChannelSyncState } from 'test/integration/utils/reset-channel-sync-state.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
 
 const HANDLE = 'gmail-contact-policy@apple.dev';
-
-const gmailMessageBetween = ({
-  from,
-  to,
-}: {
-  from: string;
-  to: string;
-}): gmail_v1.Schema$Message => {
-  const id = `gmail-msg-${randomUUID()}`;
-
-  return {
-    id,
-    threadId: id,
-    historyId: '987654321',
-    internalDate: '1700000000000',
-    labelIds: ['INBOX'],
-    payload: {
-      mimeType: 'text/plain',
-      headers: [
-        { name: 'From', value: from },
-        { name: 'To', value: to },
-        { name: 'Subject', value: `Subject ${id}` },
-        { name: 'Message-ID', value: `<${id}@example.com>` },
-        { name: 'Date', value: 'Wed, 15 Nov 2023 00:00:00 +0000' },
-      ],
-      body: { data: Buffer.from(`body ${id}`).toString('base64'), size: 10 },
-    },
-  };
-};
 
 describe('Gmail contact auto-creation policy (integration)', () => {
   const inbox: gmail_v1.Schema$Message[] = [];
@@ -70,8 +42,8 @@ describe('Gmail contact auto-creation policy (integration)', () => {
       Partial<Pick<MessageChannelEntity, 'isContactAutoCreationEnabled'>>;
   }) => {
     const messages = [
-      gmailMessageBetween({ from: inboundSender, to: HANDLE }),
-      gmailMessageBetween({ from: HANDLE, to: outboundRecipient }),
+      gmailMessage({ from: inboundSender, to: HANDLE }),
+      gmailMessage({ from: HANDLE, to: outboundRecipient }),
     ];
 
     inbox.push(...messages);

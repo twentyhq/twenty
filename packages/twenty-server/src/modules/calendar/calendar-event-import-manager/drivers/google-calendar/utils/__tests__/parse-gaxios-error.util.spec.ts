@@ -22,8 +22,6 @@ describe('parseGaxiosError', () => {
     expect(exception.message).toBe(`socket failure: ${code}`);
   });
 
-  // EHOSTUNREACH and ECONNREFUSED are declared on MessageNetworkExceptionCode
-  // but are not matched here, so they fall through to the unknown branch.
   it.each(['EHOSTUNREACH', 'ECONNREFUSED', 'EPIPE'])(
     'maps the unmatched %s socket failure to an unknown network error',
     (code) => {

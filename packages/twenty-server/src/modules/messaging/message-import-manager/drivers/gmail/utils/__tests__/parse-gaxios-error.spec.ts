@@ -43,9 +43,6 @@ describe('isGmailNetworkError', () => {
     expect(result).toBe(true);
   });
 
-  // ECONNREFUSED is declared on MessageNetworkExceptionCode but is not matched
-  // here, so a refused connection is treated as an unknown error rather than a
-  // temporary one.
   it('should not treat ECONNREFUSED as a network error', () => {
     const result = isGmailNetworkError({ code: 'ECONNREFUSED' });
 

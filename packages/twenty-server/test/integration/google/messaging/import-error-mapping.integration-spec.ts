@@ -22,9 +22,8 @@ import { runMessageChannelSync } from 'test/integration/utils/run-message-channe
 
 const HANDLE = 'gmail-import-error-mapping@apple.dev';
 
-// Only a death-certificate response revokes a channel. Transport-level auth
-// failures (401, 403) are deliberately treated as temporary: a prod incident
-// revoked working accounts off transient 401s, so they now retry instead.
+// Providers return 401 and 403 transiently, so revoking on them disconnects
+// working accounts. Only a response that proves the grant is gone revokes.
 const INSUFFICIENT_PERMISSIONS_FAILURES: [string, GoogleApiFailure][] = [
   [
     'a 400 invalid_grant response',

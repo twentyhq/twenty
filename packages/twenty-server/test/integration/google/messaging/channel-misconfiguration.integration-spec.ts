@@ -17,8 +17,8 @@ import { runMessageChannelSync } from 'test/integration/utils/run-message-channe
 const HANDLE = 'gmail-channel-misconfiguration@apple.dev';
 
 describe('Gmail channel misconfiguration (integration)', () => {
-  // A message without a historyId leaves the full sync with no cursor to store,
-  // which is what raises NO_NEXT_SYNC_CURSOR.
+  // A full sync has no cursor to store when the first message carries no
+  // historyId.
   const inbox = [gmailMessage({ historyId: undefined })];
 
   setupGoogleMock({ handle: HANDLE, inbox });

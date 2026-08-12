@@ -1,7 +1,5 @@
 import { randomUUID } from 'node:crypto';
 
-import { type gmail_v1 } from 'googleapis';
-
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -10,6 +8,7 @@ import { createOneOperationFactory } from 'test/integration/graphql/utils/create
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { googleCalendarEvent } from 'test/integration/google/mocks/google-calendar-event.util';
 import { getGmailMessageSubject } from 'test/integration/google/mocks/gmail-message-subject.util';
+import { gmailMessage } from 'test/integration/google/mocks/gmail-message.util';
 import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import {
@@ -24,32 +23,12 @@ import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs
 const HANDLE = 'gmail-blocklist-cleanup@apple.dev';
 const BLOCKED_HANDLE = `blocked-${randomUUID()}@acme.com`;
 
-const gmailMessageFrom = (from: string): gmail_v1.Schema$Message => {
-  const id = `gmail-msg-${randomUUID()}`;
-
-  return {
-    id,
-    threadId: id,
-    historyId: '987654321',
-    internalDate: '1700000000000',
-    labelIds: ['INBOX'],
-    payload: {
-      mimeType: 'text/plain',
-      headers: [
-        { name: 'From', value: from },
-        { name: 'To', value: HANDLE },
-        { name: 'Subject', value: `Subject ${id}` },
-        { name: 'Message-ID', value: `<${id}@example.com>` },
-        { name: 'Date', value: 'Wed, 15 Nov 2023 00:00:00 +0000' },
-      ],
-      body: { data: Buffer.from(`body ${id}`).toString('base64'), size: 10 },
-    },
-  };
-};
-
 describe('Blocklist cleanup (integration)', () => {
-  const blockedMessage = gmailMessageFrom(BLOCKED_HANDLE);
-  const keptMessage = gmailMessageFrom(`kept-${randomUUID()}@acme.com`);
+  const blockedMessage = gmailMessage({ from: BLOCKED_HANDLE, to: HANDLE });
+  const keptMessage = gmailMessage({
+    from: `kept-${randomUUID()}@acme.com`,
+    to: HANDLE,
+  });
 
   const blockedSubject = getGmailMessageSubject(blockedMessage);
   const keptSubject = getGmailMessageSubject(keptMessage);

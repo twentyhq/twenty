@@ -1,7 +1,5 @@
 import { randomUUID } from 'node:crypto';
 
-import { type gmail_v1 } from 'googleapis';
-
 import {
   ConnectedAccountProvider,
   MessageChannelPendingGroupEmailsAction,
@@ -10,6 +8,7 @@ import {
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 
 import { getGmailMessageSubject } from 'test/integration/google/mocks/gmail-message-subject.util';
+import { gmailMessage } from 'test/integration/google/mocks/gmail-message.util';
 import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { findImportedMessageSubjects } from 'test/integration/utils/find-imported-records.util';
@@ -18,32 +17,15 @@ import { runMessageChannelSync } from 'test/integration/utils/run-message-channe
 
 const HANDLE = 'gmail-pending-group-emails@apple.dev';
 
-const gmailMessageFrom = (from: string): gmail_v1.Schema$Message => {
-  const id = `gmail-msg-${randomUUID()}`;
-
-  return {
-    id,
-    threadId: id,
-    historyId: '987654321',
-    internalDate: '1700000000000',
-    labelIds: ['INBOX'],
-    payload: {
-      mimeType: 'text/plain',
-      headers: [
-        { name: 'From', value: from },
-        { name: 'To', value: HANDLE },
-        { name: 'Subject', value: `Subject ${id}` },
-        { name: 'Message-ID', value: `<${id}@example.com>` },
-        { name: 'Date', value: 'Wed, 15 Nov 2023 00:00:00 +0000' },
-      ],
-      body: { data: Buffer.from(`body ${id}`).toString('base64'), size: 10 },
-    },
-  };
-};
-
 describe('Message channel pending group emails action (integration)', () => {
-  const groupMessage = gmailMessageFrom(`noreply-${randomUUID()}@acme.com`);
-  const directMessage = gmailMessageFrom(`person-${randomUUID()}@acme.com`);
+  const groupMessage = gmailMessage({
+    from: `noreply-${randomUUID()}@acme.com`,
+    to: HANDLE,
+  });
+  const directMessage = gmailMessage({
+    from: `person-${randomUUID()}@acme.com`,
+    to: HANDLE,
+  });
 
   const groupSubject = getGmailMessageSubject(groupMessage);
   const directSubject = getGmailMessageSubject(directMessage);

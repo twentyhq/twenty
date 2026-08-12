@@ -1,7 +1,5 @@
 import { randomUUID } from 'node:crypto';
 
-import { type gmail_v1 } from 'googleapis';
-
 import {
   ConnectedAccountProvider,
   MessageChannelContactAutoCreationPolicy,
@@ -13,6 +11,7 @@ import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channe
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { googleCalendarEvent } from 'test/integration/google/mocks/google-calendar-event.util';
+import { gmailMessage } from 'test/integration/google/mocks/gmail-message.util';
 import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
@@ -26,29 +25,6 @@ const HANDLE = 'gmail-participant-matching@apple.dev';
 
 const UNMATCHED_HANDLE = `unmatched-${randomUUID()}@acme.com`;
 const UNMATCHED_ATTENDEE = `attendee-${randomUUID()}@acme.com`;
-
-const gmailMessageFrom = (from: string): gmail_v1.Schema$Message => {
-  const id = `gmail-msg-${randomUUID()}`;
-
-  return {
-    id,
-    threadId: id,
-    historyId: '987654321',
-    internalDate: '1700000000000',
-    labelIds: ['INBOX'],
-    payload: {
-      mimeType: 'text/plain',
-      headers: [
-        { name: 'From', value: from },
-        { name: 'To', value: HANDLE },
-        { name: 'Subject', value: `Subject ${id}` },
-        { name: 'Message-ID', value: `<${id}@example.com>` },
-        { name: 'Date', value: 'Wed, 15 Nov 2023 00:00:00 +0000' },
-      ],
-      body: { data: Buffer.from(`body ${id}`).toString('base64'), size: 10 },
-    },
-  };
-};
 
 const findParticipantPersonIds = async (
   objectMetadataSingularName: string,
@@ -67,7 +43,7 @@ const findParticipantPersonIds = async (
 describe('Participant matching on person creation (integration)', () => {
   const gmail = setupGoogleMock({
     handle: HANDLE,
-    inbox: [gmailMessageFrom(UNMATCHED_HANDLE)],
+    inbox: [gmailMessage({ from: UNMATCHED_HANDLE, to: HANDLE })],
   });
 
   let channel: Awaited<ReturnType<typeof connectMessagingAccount>>;
@@ -78,8 +54,6 @@ describe('Participant matching on person creation (integration)', () => {
       handle: HANDLE,
     });
 
-    // Auto-creation off, so the participants stay unmatched until the person
-    // is created explicitly and the matching job runs.
     await getCoreRepository<MessageChannelEntity>(MessageChannelEntity).update(
       { id: channel.channelId },
       {

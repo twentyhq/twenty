@@ -8,7 +8,7 @@ import {
 import { googleCalendarEvent } from 'test/integration/google/mocks/google-calendar-event.util';
 import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
-import { findCreatedPeopleEmails } from 'test/integration/utils/find-created-people.util';
+import { findCreatedPeopleEmails } from 'test/integration/utils/find-imported-records.util';
 import {
   queryCalendarChannel,
   updateCalendarChannel,
@@ -74,10 +74,8 @@ describe('Calendar contact auto-creation (integration)', () => {
     expect(await syncEventWithAttendee(attendee)).toEqual([]);
   }, 120000);
 
-  // The server gates calendar contact creation on isContactAutoCreationEnabled
-  // alone: contactAutoCreationPolicy is stored and served but no import path
-  // reads it. These assert the round trip so the values stay addressable if the
-  // policy is ever wired into the import.
+  // Calendar contact creation is gated on isContactAutoCreationEnabled alone;
+  // the policy is stored and served but no import path reads it.
   it.each(Object.values(CalendarChannelContactAutoCreationPolicy))(
     'persists the %s contact auto-creation policy',
     async (contactAutoCreationPolicy) => {
