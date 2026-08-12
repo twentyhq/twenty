@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { isNonEmptyArray } from '@sniptt/guards';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { type ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -235,9 +236,17 @@ export class WorkspaceUpdateQueryBuilder<
         await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
       }
 
-      const after = await eventSelectQueryBuilder.getMany({
-        noFormatting: true,
-      });
+      // Re-running the criteria would match rows inserted concurrently instead
+      // of the rows that were updated, so select the after state by id.
+      eventSelectQueryBuilder.whereInIds(
+        before.map((beforeRecord) => beforeRecord.id),
+      );
+
+      const after = isNonEmptyArray(before)
+        ? await eventSelectQueryBuilder.getMany({
+            noFormatting: true,
+          })
+        : [];
 
       const formattedAfter = formatResult<T[]>(
         after,
