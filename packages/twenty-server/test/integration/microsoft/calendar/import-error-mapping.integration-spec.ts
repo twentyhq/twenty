@@ -23,18 +23,12 @@ import { runCalendarChannelListFetch } from 'test/integration/utils/run-calendar
 
 const HANDLE = 'microsoft-calendar-error-mapping@apple.dev';
 
+// 429 and 503 are retried inside the Graph client before the driver sees them,
+// so they are exercised through the messaging suite instead.
 const TEMPORARY_FAILURES: [string, MicrosoftGraphFailure][] = [
-  [
-    'a 429 throttled response',
-    { status: 429, code: 'ApplicationThrottled', message: 'Too many requests' },
-  ],
   [
     'a 500 response',
     { status: 500, code: 'InternalServerError', message: 'Internal error' },
-  ],
-  [
-    'a 503 response',
-    { status: 503, code: 'ServiceUnavailable', message: 'Service unavailable' },
   ],
 ];
 
