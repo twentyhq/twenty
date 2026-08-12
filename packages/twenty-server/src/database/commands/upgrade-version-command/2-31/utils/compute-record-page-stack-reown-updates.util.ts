@@ -91,6 +91,8 @@ export const computeRecordPageStackReownUpdates = ({
   });
 
   const systemFieldsViewId = selectSystemFieldsViewId({
+    workspaceId,
+    logger,
     stackTree,
     flatObjectMetadata,
     engineOwnedApplicationUniversalIdentifiers,
@@ -224,15 +226,25 @@ export const computeRecordPageStackReownUpdates = ({
 // One system FIELDS_WIDGET view per object: resolve it by identifier first
 // (the pre-2.31 pinned literal for standard objects, then the derived
 // identifier on reruns), then by the twenty-standard-owned widget reference,
-// then by walk order (custom objects, whose single engine widget comes
-// first). Every other FIELDS widget view reached through the layout is
-// user-space and must not be re-owned.
+// then by the isSystemSideEffect flag (post-2-15 custom objects, whose
+// engine view is flagged while user-added views never are). A lone leftover
+// candidate wins by elimination; several leftovers (pre-2-15 custom rows are
+// stuck unflagged, so an added user view is indistinguishable) are ambiguous
+// and selection is refused with a warning rather than scored, matching the
+// layout decision table: the backfill provisions the derived stack next and
+// the untouched views keep working as user-space customs. Every
+// non-selected FIELDS widget view reached through the layout is user-space
+// and must not be re-owned.
 const selectSystemFieldsViewId = ({
+  workspaceId,
+  logger,
   stackTree,
   flatObjectMetadata,
   engineOwnedApplicationUniversalIdentifiers,
   twentyStandardApplicationUniversalIdentifier,
 }: {
+  workspaceId: string;
+  logger: ReownLogger;
   stackTree: ReturnType<typeof collectRecordPageStackTree>;
   flatObjectMetadata: ComputeRecordPageStackReownUpdatesArgs['flatObjectMetadata'];
   engineOwnedApplicationUniversalIdentifiers: Set<string>;
@@ -301,9 +313,23 @@ const selectSystemFieldsViewId = ({
         widgetApplicationUniversalIdentifier ===
         twentyStandardApplicationUniversalIdentifier,
     ) ??
-    candidates[0];
+    candidates.find(({ fieldsView }) => fieldsView.flatView.isSystemSideEffect);
 
-  return selectedCandidate?.fieldsView.flatView.id;
+  if (isDefined(selectedCandidate)) {
+    return selectedCandidate.fieldsView.flatView.id;
+  }
+
+  if (candidates.length > 1) {
+    logger.warn(
+      `Ambiguous FIELDS widget views for object ${flatObjectMetadata.universalIdentifier} in workspace ${workspaceId}, skipping view re-own (candidates: ${candidates
+        .map(({ fieldsView }) => fieldsView.flatView.id)
+        .join(', ')})`,
+    );
+
+    return undefined;
+  }
+
+  return candidates[0]?.fieldsView.flatView.id;
 };
 
 const computeRecordPageViewReownUpdates = ({

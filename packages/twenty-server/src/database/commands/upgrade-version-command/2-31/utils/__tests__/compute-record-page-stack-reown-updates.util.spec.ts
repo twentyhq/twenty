@@ -57,6 +57,7 @@ describe('computeRecordPageStackReownUpdates', () => {
     engineOwnedApplicationUniversalIdentifiers = new Set([
       STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
     ]),
+    objectMetadata = OBJECT_METADATA,
   }: {
     stack: ReturnType<typeof buildStack>;
     extraTabs?: Record<string, unknown>[];
@@ -65,6 +66,7 @@ describe('computeRecordPageStackReownUpdates', () => {
     fieldMetadatas?: Record<string, unknown>[];
     pageLayoutOverride?: Record<string, unknown>;
     engineOwnedApplicationUniversalIdentifiers?: Set<string>;
+    objectMetadata?: typeof OBJECT_METADATA;
   }) => {
     const flatPageLayout = {
       ...stack.pageLayout,
@@ -74,10 +76,14 @@ describe('computeRecordPageStackReownUpdates', () => {
     return computeRecordPageStackReownUpdates({
       workspaceId: WORKSPACE_ID,
       logger: { warn: warnMock },
-      flatObjectMetadata: OBJECT_METADATA,
+      flatObjectMetadata: objectMetadata,
       flatPageLayout,
       derivedPageLayoutUniversalIdentifier:
-        DERIVED_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+        getSystemRecordPageLayoutUniversalIdentifier({
+          objectMetadataApplicationUniversalIdentifier:
+            objectMetadata.applicationUniversalIdentifier,
+          objectUniversalIdentifier: objectMetadata.universalIdentifier,
+        }),
       engineOwnedApplicationUniversalIdentifiers,
       twentyStandardApplicationUniversalIdentifier:
         STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -348,6 +354,80 @@ describe('computeRecordPageStackReownUpdates', () => {
 
     expect(reownUpdates.viewUpdates).toHaveLength(1);
     expect(reownUpdates.viewUpdates[0].id).toBe(stack.view.id);
+  });
+
+  // Custom objects have no pre-2.31 literal and their engine widget is not
+  // twenty-standard-owned: selection must not fall back to walk order.
+  it('selects the flagged engine view of a custom object even when a user-added FIELDS widget comes first', () => {
+    const customObjectMetadata = {
+      universalIdentifier: '20202020-0000-4000-8000-0000000000cd',
+      applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+    };
+    const stack = buildUnderivedRecordPageStack({
+      idPrefix: 'custom-stack',
+      objectUniversalIdentifier: customObjectMetadata.universalIdentifier,
+      applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+    });
+    const { userFieldsView, userFieldsWidget } =
+      buildUserAddedFieldsWidgetAndView();
+
+    stack.homeTab.widgetUniversalIdentifiers = [
+      userFieldsWidget.universalIdentifier,
+      ...stack.homeTab.widgetUniversalIdentifiers,
+    ];
+
+    const reownUpdates = runCompute({
+      stack,
+      objectMetadata: customObjectMetadata,
+      extraWidgets: [userFieldsWidget],
+      extraViews: [userFieldsView],
+      engineOwnedApplicationUniversalIdentifiers: new Set([
+        STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+      ]),
+    });
+
+    expect(reownUpdates.viewUpdates).toHaveLength(1);
+    expect(reownUpdates.viewUpdates[0].id).toBe(stack.view.id);
+  });
+
+  // Pre-2-15 custom rows are stuck at isSystemSideEffect false, so the engine
+  // view and a user-added view are indistinguishable: refuse selection.
+  it('warns and re-owns no view when a custom object has several unflagged FIELDS widget views', () => {
+    const customObjectMetadata = {
+      universalIdentifier: '20202020-0000-4000-8000-0000000000cd',
+      applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+    };
+    const stack = buildUnderivedRecordPageStack({
+      idPrefix: 'custom-stack',
+      objectUniversalIdentifier: customObjectMetadata.universalIdentifier,
+      applicationUniversalIdentifier: CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+      isSystemSideEffect: false,
+    });
+    const { userFieldsView, userFieldsWidget } =
+      buildUserAddedFieldsWidgetAndView();
+
+    stack.homeTab.widgetUniversalIdentifiers = [
+      userFieldsWidget.universalIdentifier,
+      ...stack.homeTab.widgetUniversalIdentifiers,
+    ];
+
+    const reownUpdates = runCompute({
+      stack,
+      objectMetadata: customObjectMetadata,
+      extraWidgets: [userFieldsWidget],
+      extraViews: [userFieldsView],
+      engineOwnedApplicationUniversalIdentifiers: new Set([
+        STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+      ]),
+    });
+
+    expect(warnMock).toHaveBeenCalledWith(
+      expect.stringContaining('Ambiguous FIELDS widget views'),
+    );
+    expect(reownUpdates.viewUpdates).toHaveLength(0);
+    expect(reownUpdates.viewFieldUpdates).toHaveLength(0);
   });
 
   it('skips the second standard group claiming the same name with a warning', () => {
