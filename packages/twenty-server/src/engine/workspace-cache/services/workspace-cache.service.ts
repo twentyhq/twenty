@@ -40,7 +40,8 @@ import {
   type WorkspaceLocalCacheEntry,
 } from 'src/engine/workspace-cache/types/workspace-local-cache-entry.type';
 import { combineCacheHashes } from 'src/engine/workspace-cache/utils/combine-cache-hashes.util';
-import { demoteColdStorageEntries } from 'src/engine/workspace-cache/utils/demote-cold-storage-entries.util';
+import { getKeyNameFromLocalCacheKey } from 'src/engine/workspace-cache/utils/get-key-name-from-local-cache-key.util';
+import { packIdleVersions } from 'src/engine/workspace-cache/utils/pack-idle-versions.util';
 import { sweepLocalCache } from 'src/engine/workspace-cache/utils/sweep-local-cache.util';
 
 const LOCAL_TTL_MS = 100; // 100ms
@@ -52,9 +53,9 @@ const MAX_LOCAL_CACHE_ENTRIES = 6_000;
 const MIN_EVICT_KEYS = 100;
 const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000; // 30 minutes idle
 const LOCAL_CACHE_SWEEP_INTERVAL_MS = 60 * 1000;
-const HOT_ENTRIES_PER_PROVIDER = 64;
-const DEMOTION_INTERVAL_MS = 250;
-const DEMOTION_BUDGET_MS = 10;
+const PACKING_INTERVAL_MS = 500;
+const MAX_ENTRY_VERSIONS_PER_PACKING_RUN = 2;
+const MIN_IDLE_BEFORE_PACKING_MS = 60 * 1000;
 // Per-provider entry caps, keyed by local cache key prefix (ORM graphs are ~5 MB each).
 const MAX_LOCAL_ENTRIES_BY_KEY_NAME = new Map<string, number>([
   ['ORMEntityMetadatas', 128],
@@ -82,7 +83,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     WorkspaceLocalCacheEntry<CacheDataType>
   >();
   private sweepTimer?: ReturnType<typeof setInterval>;
-  private demotionTimer?: ReturnType<typeof setInterval>;
+  private packingTimer?: ReturnType<typeof setInterval>;
   private readonly workspaceCacheProviders = new Map<
     WorkspaceCacheKeyName,
     WorkspaceCacheProvider<CacheDataType, StoredCacheDataType>
@@ -144,8 +145,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     if (isDefined(this.sweepTimer)) {
       clearInterval(this.sweepTimer);
     }
-    if (isDefined(this.demotionTimer)) {
-      clearInterval(this.demotionTimer);
+    if (isDefined(this.packingTimer)) {
+      clearInterval(this.packingTimer);
     }
     this.cacheMetricsService.stop();
   }
@@ -157,11 +158,11 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     );
     this.sweepTimer.unref();
 
-    this.demotionTimer = setInterval(
-      () => this.demoteColdEntries(),
-      DEMOTION_INTERVAL_MS,
+    this.packingTimer = setInterval(
+      () => this.runPacking(),
+      PACKING_INTERVAL_MS,
     );
-    this.demotionTimer.unref();
+    this.packingTimer.unref();
   }
 
   public async getOrRecompute<const K extends WorkspaceCacheKeyName[]>(
@@ -608,7 +609,12 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       const version = entry?.versions.get(entry.latestHash);
 
       if (isDefined(entry) && isDefined(version)) {
-        const data = this.readVersion({ keyName, entry, version });
+        const data = this.readVersion({
+          keyName,
+          entry,
+          hash: entry.latestHash,
+          version,
+        });
 
         Object.assign(result.data, { [keyName]: data });
         result.hashes[keyName] = entry.latestHash;
@@ -660,7 +666,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       this.localCache.set(localKey, entry);
     }
 
-    entry.versions.set(hash, { state: 'hot', data, lastReadAt: Date.now() });
+    entry.versions.set(hash, { state: 'live', data, lastReadAt: Date.now() });
     entry.latestHash = hash;
     entry.lastHashCheckedAt = Date.now();
 
@@ -682,23 +688,21 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  private demoteColdEntries(): void {
+  private runPacking(): void {
     const startedAt = performance.now();
 
-    const { demoted, remaining } = demoteColdStorageEntries({
+    const { packed, pending } = packIdleVersions({
       localCache: this.localCache,
-      hotEntriesPerProvider: HOT_ENTRIES_PER_PROVIDER,
-      budgetMs: DEMOTION_BUDGET_MS,
-      serialize: ({ localKey, data }) => {
-        const separatorIndex = localKey.lastIndexOf(':');
-        const keyName = localKey.slice(
-          0,
-          separatorIndex,
+      minIdleMs: MIN_IDLE_BEFORE_PACKING_MS,
+      maxEntryVersionsPerRun: MAX_ENTRY_VERSIONS_PER_PACKING_RUN,
+      isPackable: (localKey) =>
+        !this.localDataOnlyKeys.has(
+          getKeyNameFromLocalCacheKey(localKey) as WorkspaceCacheKeyName,
+        ),
+      pack: ({ localKey, data }) => {
+        const keyName = getKeyNameFromLocalCacheKey(
+          localKey,
         ) as WorkspaceCacheKeyName;
-
-        if (this.localDataOnlyKeys.has(keyName)) {
-          return undefined;
-        }
 
         return Buffer.from(
           JSON.stringify(
@@ -709,41 +713,43 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       },
     });
 
-    this.cacheMetricsService.recordDemotionSlice({
+    this.cacheMetricsService.recordPackingRun({
       durationSeconds: (performance.now() - startedAt) / 1000,
-      demoted,
-      remaining,
+      packed,
+      pending,
     });
   }
 
   private readVersion({
     keyName,
     entry,
+    hash,
     version,
   }: {
     keyName: WorkspaceCacheKeyName;
     entry: WorkspaceLocalCacheEntry<CacheDataType>;
+    hash: string;
     version: VersionEntry<CacheDataType>;
   }): CacheDataType {
-    if (version.state === 'hot') {
+    if (version.state === 'live') {
       version.lastReadAt = Date.now();
 
       return version.data;
     }
 
-    const hydrateStartedAt = performance.now();
+    const unpackStartedAt = performance.now();
     const data = this.getProviderOrThrow(keyName).decodeFromCacheStorage(
       JSON.parse(version.blob.toString('utf8')),
     );
 
-    entry.versions.set(entry.latestHash, {
-      state: 'hot',
+    entry.versions.set(hash, {
+      state: 'live',
       data,
       lastReadAt: Date.now(),
     });
 
-    this.cacheMetricsService.recordHydration(
-      (performance.now() - hydrateStartedAt) / 1000,
+    this.cacheMetricsService.recordUnpacking(
+      (performance.now() - unpackStartedAt) / 1000,
       keyName,
     );
 
