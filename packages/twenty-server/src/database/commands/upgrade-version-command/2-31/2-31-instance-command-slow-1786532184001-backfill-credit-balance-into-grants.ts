@@ -32,6 +32,10 @@ export class BackfillCreditBalanceIntoGrantsSlowInstanceCommand
     // Expiry follows the workspace's current period, but never lands in the
     // past: a backfilled grant that expires on creation would silently delete
     // the balance it was meant to preserve.
+    //
+    // billingCustomer has no foreign key to workspace, so it outlives deleted
+    // workspaces, while billingCreditGrant does have one. Without the join
+    // those orphans fail the insert and take the whole upgrade down with them.
     await dataSource.query(
       `INSERT INTO "core"."billingCreditGrant" (
         "workspaceId", "amountMicro", "type", "effectiveAt", "expiresAt", "reason", "idempotencyKey"
@@ -58,6 +62,8 @@ export class BackfillCreditBalanceIntoGrantsSlowInstanceCommand
         'Backfilled from billingCustomer.creditBalanceMicro',
         $1 || "billingCustomer"."workspaceId"
       FROM "core"."billingCustomer"
+      INNER JOIN "core"."workspace"
+        ON "workspace"."id" = "billingCustomer"."workspaceId"
       WHERE "billingCustomer"."creditBalanceMicro" > 0
       ON CONFLICT ("idempotencyKey") DO NOTHING`,
       [BACKFILL_IDEMPOTENCY_KEY_PREFIX],
