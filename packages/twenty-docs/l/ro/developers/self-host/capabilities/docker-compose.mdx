@@ -109,7 +109,7 @@ curl http://localhost:3000
 
 ### Expuneți Twenty pentru Acces Extern
 
-Implicit, Twenty rulează pe `localhost` la portul `3000`. Interfața de utilizator rezolvă API-ul din origin-ul propriu al browserului, astfel încât se încarcă de pe orice hostname care ajunge la container — dar setează în continuare `SERVER_URL` la URL-ul tău public: serverul îl folosește pentru linkuri generate (emailuri, callback-uri OAuth) și pentru a detecta HTTPS pentru cookie-uri securizate.
+Implicit, Twenty rulează pe `localhost` la portul `3000`. Interfața de utilizator accesează API-ul folosind originea proprie a browserului, astfel încât se poate încărca de pe orice nume de gazdă care ajunge la container — totuși setează `SERVER_URL` la URL-ul tău public: serverul îl folosește pentru linkuri generate (e-mailuri, callback-uri OAuth) și pentru a detecta utilizarea HTTPS, necesară pentru cookie-uri securizate.
 
 #### Înțelegerea `SERVER_URL`
 

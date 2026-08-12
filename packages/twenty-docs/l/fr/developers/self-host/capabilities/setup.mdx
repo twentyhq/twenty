@@ -393,7 +393,7 @@ Uniquement pertinent si le back-end ne sert pas l’interface front-end. Les dé
 n’ont besoin de rien ici.
 
 Déclarez toutes les origines de navigateur qui communiquent avec l’API, séparées par des virgules. `SERVER_URL`
-et `FRONTEND_URL` sont déjà approuvées. Le serveur consigne un avertissement lorsque un navigateur
+et `FRONTEND_URL` sont déjà approuvées. Le serveur consigne un avertissement lorsqu’un navigateur
 l’appelle depuis une origine non déclarée.
 
 ```bash
@@ -407,7 +407,7 @@ réponse avec des identifiants provenant d’une origine non déclarée, de sort
 
 Si les deux hôtes se trouvent sur des domaines enregistrables différents (et pas seulement sur des sous-domaines différents), définissez également `AUTH_COOKIE_SAME_SITE=none`, ce qui nécessite HTTPS.
 
-Avec le mode multi-workspace activé, ne répertoriez pas ici chaque sous-domaine de workspace.
+Avec le mode multi-espaces de travail activé, ne répertoriez pas ici chaque sous-domaine d’espace de travail.
 Au lieu de cela, acheminez les chemins d’API (`/graphql`, `/metadata`, `/rest`, `/auth/`,
-`/client-config`, `/file`) vers le back-end sur chaque nom d’hôte de workspace, afin que chaque
-workspace reste en same-origin — c’est ainsi que Twenty Cloud fonctionne.
+`/client-config`, `/file`) vers le back-end sur chaque nom d’hôte d’espace de travail, afin que chaque
+espace de travail reste de même origine — c’est ainsi que fonctionne Twenty Cloud.
