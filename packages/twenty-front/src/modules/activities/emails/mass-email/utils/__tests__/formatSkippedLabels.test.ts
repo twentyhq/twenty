@@ -6,7 +6,9 @@ describe('formatSkippedLabels', () => {
   });
 
   it('should list every label when exactly at the display limit', () => {
-    expect(formatSkippedLabels(['A', 'B', 'C', 'D', 'E'])).toBe('A, B, C, D, E');
+    expect(formatSkippedLabels(['A', 'B', 'C', 'D', 'E'])).toBe(
+      'A, B, C, D, E',
+    );
   });
 
   it('should collapse the tail into a count instead of dropping it', () => {
