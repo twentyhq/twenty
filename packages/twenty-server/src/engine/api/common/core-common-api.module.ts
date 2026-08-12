@@ -8,6 +8,7 @@ import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-neste
 import { CommonQueryRunners } from 'src/engine/api/common/common-query-runners/common-query-runners';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { GroupByWithRecordsService } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.service';
+import { GroupByWithRecordsV2Service } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records-v2.service';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { WorkspaceQueryHookModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.module';
 import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
@@ -57,6 +58,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ...CommonQueryRunners,
     CommonResultGettersService,
     GroupByWithRecordsService,
+    GroupByWithRecordsV2Service,
   ],
   exports: [...CommonQueryRunners, GroupByArgProcessorService],
 })
