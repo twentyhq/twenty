@@ -140,6 +140,9 @@ import { AddMessageChannelDisplayNameFastInstanceCommand } from './2-25/2-25-ins
 import { AddAppTokenSsoExchangeIndexFastInstanceCommand } from './2-25/2-25-instance-command-fast-1785143586000-add-app-token-sso-exchange-index';
 import { AddMessageCampaignWidgetTypeFastInstanceCommand } from './2-25/2-25-instance-command-fast-1785229950000-add-message-campaign-widget-type';
 import { AddIsHiddenToAgentMessageFastInstanceCommand } from './2-25/2-25-instance-command-fast-1785230296000-add-is-hidden-to-agent-message';
+import { CreateBillingCreditGrantTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-fast-1786532184000-create-billing-credit-grant-table';
+import { BackfillCreditBalanceIntoGrantsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-slow-1786532184001-backfill-credit-balance-into-grants';
+import { AddPreviousPeriodStartToBillingSubscriptionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-fast-1786532184002-add-previous-period-start-to-billing-subscription';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -282,4 +285,7 @@ export const INSTANCE_COMMANDS = [
   AddListWidgetViewTypeFastInstanceCommand,
   AddIsSystemSideEffectToViewFieldGroupFastInstanceCommand,
   AddFrontComponentSharedDependenciesToApplicationFastInstanceCommand,
+  CreateBillingCreditGrantTableFastInstanceCommand,
+  BackfillCreditBalanceIntoGrantsSlowInstanceCommand,
+  AddPreviousPeriodStartToBillingSubscriptionFastInstanceCommand,
 ];

@@ -36,6 +36,7 @@ import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/se
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
+import { resolveBillingPeriodBoundaryUpdate } from 'src/engine/core-modules/billing/utils/resolve-billing-period-boundary-update.util';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -330,12 +331,35 @@ export class BillingSubscriptionService {
       },
     );
 
-    await this.billingSubscriptionRepository.upsert(
-      workspaceId,
+    const incomingSubscription =
       transformStripeSubscriptionEventToDatabaseSubscription(
         workspaceId,
         subscription,
-      ),
+      );
+
+    const storedSubscription = await this.billingSubscriptionRepository.findOne(
+      workspaceId,
+      {
+        where: {
+          stripeSubscriptionId: incomingSubscription.stripeSubscriptionId,
+        },
+        select: {
+          id: true,
+          currentPeriodStart: true,
+          currentPeriodEnd: true,
+        },
+      },
+    );
+
+    await this.billingSubscriptionRepository.upsert(
+      workspaceId,
+      {
+        ...incomingSubscription,
+        ...resolveBillingPeriodBoundaryUpdate({
+          incomingPeriodStart: incomingSubscription.currentPeriodStart,
+          storedSubscription,
+        }),
+      },
       {
         conflictPaths: ['stripeSubscriptionId'],
         skipUpdateIfNoValuesChanged: true,
