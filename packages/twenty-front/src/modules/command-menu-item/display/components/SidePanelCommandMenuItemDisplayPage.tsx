@@ -82,10 +82,11 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     ? pinnedCommandMenuItems.slice(visiblePinnedCommandMenuItemCount)
     : pinnedCommandMenuItems;
 
-  const pinnedItemsToFilter =
-    sidePanelSearch.length > 0
-      ? pinnedCommandMenuItems
-      : pinnedOverflowCommandMenuItems;
+  const isSearchActive = sidePanelSearch.trim().length > 0;
+
+  const pinnedItemsToFilter = isSearchActive
+    ? pinnedCommandMenuItems
+    : pinnedOverflowCommandMenuItems;
 
   const matchingPinnedItems =
     filterCommandMenuItemsWithSidePanelSearch(pinnedItemsToFilter);
@@ -93,16 +94,26 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     unpinnedCommandMenuItems,
   );
 
-  const noResults = !matchingPinnedItems.length && !matchingOtherItems.length;
+  const hasNoMatchingItems =
+    !matchingPinnedItems.length && !matchingOtherItems.length;
+
+  const shouldDisplayFallbackItems =
+    hasNoMatchingItems && fallbackCommandMenuItems.length > 0;
+
+  const shouldDisplayNoResults =
+    isSearchActive && hasNoMatchingItems && !shouldDisplayFallbackItems;
 
   const selectableItemIds = [
     ...matchingPinnedItems,
     ...matchingOtherItems,
-    ...(noResults ? fallbackCommandMenuItems : []),
+    ...(shouldDisplayFallbackItems ? fallbackCommandMenuItems : []),
   ].map((item) => item.id);
 
   return (
-    <SidePanelList selectableItemIds={selectableItemIds} noResults={noResults}>
+    <SidePanelList
+      selectableItemIds={selectableItemIds}
+      noResults={shouldDisplayNoResults}
+    >
       {matchingPinnedItems.length > 0 && (
         <SidePanelGroup heading={t`Pinned`}>
           {matchingPinnedItems.map((item) => (
@@ -117,7 +128,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
           ))}
         </SidePanelGroup>
       )}
-      {noResults && fallbackCommandMenuItems.length > 0 && (
+      {shouldDisplayFallbackItems && (
         <SidePanelGroup heading={t`Fallback`}>
           {fallbackCommandMenuItems.map((item) => (
             <CommandMenuItemRenderer item={item} key={item.id} />
