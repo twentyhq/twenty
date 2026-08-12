@@ -315,32 +315,12 @@ export class BillingCreditService {
           adjustmentKey,
         )));
 
-    if (rebuildCounter) {
-      await this.billingUsageCacheService.invalidateAvailableCredits(
-        workspaceId,
-        periodStart,
-      );
-    } else if (availableDeltaMicro !== 0) {
-      // Adjusting the warm counter instead of flushing it avoids recomputing
-      // from ClickHouse while its async inserts for recent usage are still
-      // landing, which would credit the workspace for usage it already spent.
-      const cachedAvailableCredits =
-        await this.billingUsageCacheService.getAvailableCredits(
-          workspaceId,
-          periodStart,
-        );
-
-      // Nothing to do when the counter is cold. A reader can only warm it while
-      // holding this same lock, so it cannot be mid-computation now, and the
-      // next one to take the lock reads a ledger that already has this write.
-      if (isDefined(cachedAvailableCredits)) {
-        await this.billingUsageCacheService.adjustAvailableCredits(
-          workspaceId,
-          periodStart,
-          availableDeltaMicro,
-        );
-      }
-    }
+    const counterAfterWriteMicro = await this.applyCounterWrite({
+      workspaceId,
+      periodStart,
+      availableDeltaMicro,
+      shouldRebuild: rebuildCounter,
+    });
 
     if (isDefined(adjustmentKey)) {
       await this.billingUsageCacheService.markCounterAdjustmentApplied(
@@ -352,16 +332,76 @@ export class BillingCreditService {
 
     // The banner may only come down when this write actually put something
     // spendable in front of the workspace: the caller says whether it could,
-    // the counter says whether it did, and the ledger says whether any of it
-    // survives. A replay that finds the counter already moved did nothing, and
-    // its grants may well have been spent since, so it leaves the banner alone
-    // while a replay that rebuilt the counter is the repair that lifts it.
+    // the counter says whether it did, and what is left decides. A replay that
+    // finds the counter already moved did nothing, and its grants may well
+    // have been spent since, so it leaves the banner alone, while a replay
+    // that rebuilt the counter is the repair that lifts it.
+    //
+    // With no counter to speak for the workspace the ledger stands in, which
+    // ignores usage. Erring towards lifting the banner is deliberate there:
+    // the counter is cold exactly after a period transition or a cache flush,
+    // which is when grants land, and leaving it up would hide credits someone
+    // deliberately gave for the rest of the period.
+    const spendableAfterWriteMicro =
+      counterAfterWriteMicro ?? activeCreditsMicro;
+
     return this.clearCapAndSubscriptionCache(workspaceId, {
       shouldClearCap:
         addsCredits &&
-        activeCreditsMicro > 0 &&
+        spendableAfterWriteMicro > 0 &&
         (rebuildCounter || availableDeltaMicro > 0),
     });
+  }
+
+  // Returns what the counter holds afterwards, or null when there is no warm
+  // counter to speak for the workspace.
+  private async applyCounterWrite({
+    workspaceId,
+    periodStart,
+    availableDeltaMicro,
+    shouldRebuild,
+  }: {
+    workspaceId: string;
+    periodStart: Date;
+    availableDeltaMicro: number;
+    shouldRebuild: boolean;
+  }): Promise<number | null> {
+    if (shouldRebuild) {
+      await this.billingUsageCacheService.invalidateAvailableCredits(
+        workspaceId,
+        periodStart,
+      );
+
+      return null;
+    }
+
+    if (availableDeltaMicro === 0) {
+      return null;
+    }
+
+    // Adjusting the warm counter instead of flushing it avoids recomputing
+    // from ClickHouse while its async inserts for recent usage are still
+    // landing, which would credit the workspace for usage it already spent.
+    const cachedAvailableCredits =
+      await this.billingUsageCacheService.getAvailableCredits(
+        workspaceId,
+        periodStart,
+      );
+
+    // Nothing to do when the counter is cold. A reader can only warm it while
+    // holding this same lock, so it cannot be mid-computation now, and the
+    // next one to take the lock reads a ledger that already has this write.
+    if (!isDefined(cachedAvailableCredits)) {
+      return null;
+    }
+
+    await this.billingUsageCacheService.adjustAvailableCredits(
+      workspaceId,
+      periodStart,
+      availableDeltaMicro,
+    );
+
+    return cachedAvailableCredits + availableDeltaMicro;
   }
 
   private async clearCapAndSubscriptionCache(

@@ -272,6 +272,21 @@ describe('BillingCreditService', () => {
       );
     });
 
+    // An execution can overrun the balance it checked, leaving the counter
+    // below zero, and a grant smaller than the overrun does not make the
+    // workspace spendable again.
+    it('leaves the cap in place when the grant does not bring the counter above zero', async () => {
+      billingUsageCacheService.getAvailableCredits.mockResolvedValue(
+        -3_000_000,
+      );
+
+      await service.grantCredits(params);
+
+      expect(
+        billingUsageCapService.clearHasReachedCapForWorkspace,
+      ).not.toHaveBeenCalled();
+    });
+
     it('adjusts the warm usage counter instead of flushing it', async () => {
       billingUsageCacheService.getAvailableCredits.mockResolvedValue(500_000);
 
