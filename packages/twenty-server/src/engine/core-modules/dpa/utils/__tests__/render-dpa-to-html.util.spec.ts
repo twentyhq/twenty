@@ -12,13 +12,16 @@ const buildResolvedWithConditionalBlock = (
 ): ResolvedDpa => ({
   region: sccSectionActive ? DpaRegion.US : DpaRegion.EU,
   templateVersion: 'test',
-  lastUpdatedLabel: 'June 2026',
+  lastUpdatedLabel: 'August 2026',
   title: 'Test DPA',
   sccSectionActive,
   values: {
-    PROCESSOR_ENTITY: 'Twenty.com SAS',
+    PROCESSOR_ENTITY: 'Twenty.com PBC',
     PROCESSOR_LEGAL_FORM: 'x',
     PROCESSOR_ADDRESS: 'x',
+    EU_AFFILIATE_ENTITY: 'Twenty.com SAS',
+    EU_AFFILIATE_LEGAL_FORM: 'x',
+    EU_AFFILIATE_ADDRESS: 'x',
     HOSTING_REGION: 'x',
     GOVERNING_LAW: 'x',
     DPO_NAME_AND_CONTACT: 'x',
@@ -41,7 +44,7 @@ describe('renderDpaToHtml', () => {
     const html = renderDpaToHtml(resolveDpa(baseContext));
 
     expect(html).toContain('Twenty Data Processing Agreement (DPA)');
-    expect(html).toContain('Last Updated: June 2026');
+    expect(html).toContain('Last Updated: August 2026');
   });
 
   it('contains no unresolved {{ }} merge fields in the output', () => {
@@ -74,7 +77,7 @@ describe('renderDpaToHtml', () => {
     expect(html).toContain('&lt;script&gt;');
   });
 
-  it('renders the executed signatory and Processor entity in signed mode', () => {
+  it('renders the executed signatory and both Twenty entities in signed mode', () => {
     const html = renderDpaToHtml(
       resolveDpa({
         region: DpaRegion.EU,
@@ -87,6 +90,7 @@ describe('renderDpaToHtml', () => {
 
     expect(html).toContain('Acme GmbH');
     expect(html).toContain('Jane Doe');
+    expect(html).toContain('Twenty.com PBC');
     expect(html).toContain('Twenty.com SAS');
   });
 
