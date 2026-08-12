@@ -379,6 +379,14 @@ export abstract class CommonBaseQueryRunnerService<
       return repository;
     }
 
+    // Rollout observability: lets us confirm which operations actually run on
+    // v2 in prod, where reads are parity-identical to v1 output.
+    this.metricsService.incrementCounterBy({
+      key: MetricsKeys.OrmV2ReadPathUsed,
+      amount: 1,
+      attributes: { operation: this.operationName },
+    });
+
     return this.workspaceDataSourceV2Service
       .getDataSource({ useReplica: this.isReadOnly })
       .getRepository(flatObjectMetadata.nameSingular, rolePermissionConfig);
