@@ -141,20 +141,20 @@ export class OnboardingEmailDigestService {
             { shouldBypassPermissionChecks: true },
           );
 
-        const messageChannelMessageAssociations =
-          await messageChannelMessageAssociationRepository.find({
-            select: ['messageId'],
-            where: { messageChannelId: In(messageChannelIds) },
-            order: { createdAt: 'DESC' },
-            take: ONBOARDING_EMAIL_DIGEST_MAX_MESSAGES,
-          });
+        const associationRows = await messageChannelMessageAssociationRepository
+          .createQueryBuilder('association')
+          .select('association.messageId', 'messageId')
+          .innerJoin('association.message', 'message')
+          .where('association.messageChannelId IN (:...messageChannelIds)', {
+            messageChannelIds,
+          })
+          .andWhere('message.isDraft = :isDraft', { isDraft: false })
+          .orderBy('association.createdAt', 'DESC')
+          .limit(ONBOARDING_EMAIL_DIGEST_MAX_MESSAGES)
+          .getRawMany<{ messageId: string }>();
 
         const messageIds = [
-          ...new Set(
-            messageChannelMessageAssociations.map(
-              (association) => association.messageId,
-            ),
-          ),
+          ...new Set(associationRows.map((row) => row.messageId)),
         ];
 
         if (messageIds.length === 0) {
@@ -175,13 +175,11 @@ export class OnboardingEmailDigestService {
 
         const messages = await messageRepository.find({
           select: ['id', 'subject', 'receivedAt'],
-          where: { id: In(messageIds), isDraft: false },
+          where: { id: In(messageIds) },
           order: { receivedAt: 'DESC' },
         });
 
-        const nonDraftMessageIds = messages.map((message) => message.id);
-
-        if (nonDraftMessageIds.length === 0) {
+        if (messages.length === 0) {
           return {
             importedMessageCount: 0,
             topContacts: [],
@@ -203,7 +201,7 @@ export class OnboardingEmailDigestService {
           .addSelect('MAX(participant.displayName)', 'displayName')
           .addSelect('COUNT(*)', 'messageCount')
           .where('participant.messageId IN (:...messageIds)', {
-            messageIds: nonDraftMessageIds,
+            messageIds: messages.map((message) => message.id),
           })
           .andWhere('participant.workspaceMemberId IS NULL')
           .andWhere('participant.handle IS NOT NULL')
