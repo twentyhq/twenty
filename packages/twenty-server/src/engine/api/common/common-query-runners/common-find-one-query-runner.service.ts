@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
-import { ObjectRecord } from 'twenty-shared/types';
+import { FeatureFlagKey, ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
@@ -48,9 +48,18 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
       flatFieldMetadataMaps,
       flatObjectMetadata,
       commonQueryParser,
+      featureFlagsMap,
     } = queryRunnerContext;
 
-    const queryBuilder = repository.createQueryBuilder(
+    const readRepository = featureFlagsMap[
+      FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED
+    ]
+      ? this.workspaceDataSourceV2Service
+          .getDataSource({ useReplica: true })
+          .getRepository(flatObjectMetadata.nameSingular, rolePermissionConfig)
+      : repository;
+
+    const queryBuilder = readRepository.createQueryBuilder(
       flatObjectMetadata.nameSingular,
     );
 
