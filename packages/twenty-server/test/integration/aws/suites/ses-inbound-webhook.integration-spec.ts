@@ -45,7 +45,7 @@ const inboundNotification = ({
 const postSesInboundWebhook = (payload: Record<string, string>) =>
   request(`http://localhost:${APP_PORT}`)
     .post(SES_INBOUND_WEBHOOK_PATH)
-    .set('Content-Type', 'text/plain')
+    .set('Content-Type', 'application/json')
     .send(JSON.stringify(payload));
 
 describe('SES inbound webhook (integration)', () => {
@@ -178,7 +178,7 @@ describe('SES inbound webhook (integration)', () => {
   it('rejects an inbound body that is not valid JSON', async () => {
     const response = await request(`http://localhost:${APP_PORT}`)
       .post(SES_INBOUND_WEBHOOK_PATH)
-      .set('Content-Type', 'text/plain')
+      .set('Content-Type', 'application/json')
       .send('not-json');
 
     expect(response.status).toBe(400);
