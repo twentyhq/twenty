@@ -225,10 +225,6 @@ export class WorkflowValidationWorkspaceService {
     return issues;
   }
 
-  // A CODE/LOGIC_FUNCTION step exposes an output schema either through a
-  // user-declared sample (expectedOutputSchema) or through a schema computed
-  // after a draft/test run (outputSchema). The LINK placeholder is not usable.
-
   private async validateLogicFunctionStep({
     step,
     workspaceId,

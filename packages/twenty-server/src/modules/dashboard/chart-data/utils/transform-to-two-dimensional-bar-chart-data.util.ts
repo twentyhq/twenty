@@ -118,7 +118,7 @@ export const transformToTwoDimensionalBarChartData = ({
     datum[point.yFormatted] = point.aggregateValue;
   }
 
-  let unsortedData = Array.from(dataMap.values());
+  const unsortedData = Array.from(dataMap.values());
 
   const sortedData = sortChartDataIfNeeded({
     data: unsortedData,

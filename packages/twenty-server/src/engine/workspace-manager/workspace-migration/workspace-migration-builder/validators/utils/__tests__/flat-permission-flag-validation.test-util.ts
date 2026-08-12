@@ -84,8 +84,6 @@ export const buildUpdateArgs = ({
   isCallerStandardApp = false,
 }: {
   universalIdentifier: string;
-  // Loosely typed so tests can exercise the runtime guards against
-  // manifest-provided values the compiler would otherwise reject
   flatEntityUpdate: Partial<Record<keyof UniversalFlatPermissionFlag, unknown>>;
   existingFlags?: UniversalFlatPermissionFlag[];
   isCallerStandardApp?: boolean;

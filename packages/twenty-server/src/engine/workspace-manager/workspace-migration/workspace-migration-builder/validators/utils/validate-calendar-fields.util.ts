@@ -35,9 +35,6 @@ export const validateCalendarFields = ({
     });
   }
 
-  // Widget calendars only allow non-month layouts when the day/week
-  // calendar feature is enabled; while it is off the month grid stays a
-  // data invariant rather than a UI-only convention.
   if (
     flatView.type === ViewType.CALENDAR_WIDGET &&
     !isCalendarWeekViewEnabled &&

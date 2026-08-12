@@ -133,10 +133,13 @@ describe('validateFlatPermissionFlagCreation', () => {
     const result = validateFlatPermissionFlagCreation(
       buildCreationArgs({
         flatEntityToValidate: flag,
-        existingFlags: [],
+        existingFlags: [flag],
       }),
     );
 
-    expect(result.errors).toEqual([]);
+    expect(result.errors.map((error) => error.code)).toEqual([
+      PermissionFlagExceptionCode.PERMISSION_FLAG_ALREADY_EXISTS,
+    ]);
+    expect(result.errors[0].message).toContain('universal identifier');
   });
 });

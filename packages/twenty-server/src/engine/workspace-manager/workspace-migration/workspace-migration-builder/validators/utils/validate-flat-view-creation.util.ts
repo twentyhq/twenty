@@ -58,8 +58,6 @@ export const validateFlatViewCreation = ({
     });
   }
 
-  // Every ViewKey value is reserved for an engine-owned singleton view per
-  // object (INDEX table view, FIELDS_WIDGET record-page view).
   const reservedViewKey = flatViewToValidate.key;
 
   if (isDefined(reservedViewKey)) {
