@@ -1,11 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-export type SlackUserLink = {
-  id: string;
-  workspaceMemberId: string | undefined;
-  source: string | undefined;
-};
+import { type SlackUserLink } from 'src/logic-functions/types/slack-user-link.type';
 
 export const findSlackUserLink = async (
   client: CoreApiClient,

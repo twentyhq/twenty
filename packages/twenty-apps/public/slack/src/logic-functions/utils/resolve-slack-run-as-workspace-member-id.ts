@@ -60,10 +60,8 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
       : undefined;
   }
 
-  // A stored email match is never trusted as-is: link records are ordinary
-  // records, so the match is recomputed from the live Slack profile on every
-  // run and a stale or tampered link cannot borrow permissions the email no
-  // longer proves.
+  // link records are ordinary records, so a stored email match is recomputed
+  // from the live Slack profile on every run rather than trusted as stored
   const linkableEmail = await resolveLinkableEmail({ slackClient, identity });
 
   if (!isNonEmptyString(linkableEmail)) {
@@ -80,8 +78,8 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
   }
 
   if (!isDefined(existingLink)) {
-    // Two concurrent first-mentions race on the unique index; the loser still
-    // acts on its own recomputed match, which both derived the same way.
+    // concurrent first-mentions race on the unique index; the loser still acts
+    // on its own recomputed match, which both derived the same way
     await createSlackUserLink(client, {
       slackTeamId,
       slackUserId,

@@ -22,7 +22,7 @@ export const findWorkspaceMemberIdByEmail = async (
           first: CANDIDATES_PER_PAGE,
           ...(isDefined(after) ? { after } : {}),
         },
-        edges: { cursor: true, node: { id: true, userEmail: true } },
+        edges: { node: { id: true, userEmail: true } },
         pageInfo: { hasNextPage: true, endCursor: true },
       },
     });
