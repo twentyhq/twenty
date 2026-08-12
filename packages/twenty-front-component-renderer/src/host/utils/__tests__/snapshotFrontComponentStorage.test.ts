@@ -1,4 +1,4 @@
-import { buildFrontComponentStorageKeyPrefix } from '../buildFrontComponentStorageKeyPrefix';
+import { buildFrontComponentStorageNamespacePrefix } from '../buildFrontComponentStorageNamespacePrefix';
 import { setFrontComponentStorageItem } from '../setFrontComponentStorageItem';
 import { snapshotFrontComponentStorage } from '../snapshotFrontComponentStorage';
 
@@ -23,56 +23,68 @@ describe('snapshotFrontComponentStorage', () => {
     window.sessionStorage.clear();
   });
 
-  it('should snapshot only the entries of the namespace and area', () => {
+  it('should snapshot only the entries of the namespace and storage type', () => {
     setFrontComponentStorageItem({
       ...NAMESPACE,
-      area: 'local',
+      storageType: 'localStorage',
       key: 'theme',
       serializedValue: '"dark"',
     });
 
     setFrontComponentStorageItem({
       ...OTHER_APPLICATION_NAMESPACE,
-      area: 'local',
+      storageType: 'localStorage',
       key: 'theme',
       serializedValue: '"light"',
     });
 
     setFrontComponentStorageItem({
       ...OTHER_USER_NAMESPACE,
-      area: 'local',
+      storageType: 'localStorage',
       key: 'theme',
       serializedValue: '"system"',
     });
 
     setFrontComponentStorageItem({
       ...NAMESPACE,
-      area: 'session',
+      storageType: 'sessionStorage',
       key: 'visits',
       serializedValue: '2',
     });
 
     window.localStorage.setItem('unrelatedTwentyKey', 'value');
 
-    const keyPrefix = buildFrontComponentStorageKeyPrefix(NAMESPACE);
+    const namespacePrefix =
+      buildFrontComponentStorageNamespacePrefix(NAMESPACE);
 
-    expect(window.localStorage.getItem(`${keyPrefix}theme`)).toBe('"dark"');
-    expect(window.sessionStorage.getItem(`${keyPrefix}visits`)).toBe('2');
+    expect(window.localStorage.getItem(`${namespacePrefix}theme`)).toBe(
+      '"dark"',
+    );
+    expect(window.sessionStorage.getItem(`${namespacePrefix}visits`)).toBe('2');
 
     expect(
-      snapshotFrontComponentStorage({ ...NAMESPACE, area: 'local' }),
+      snapshotFrontComponentStorage({
+        ...NAMESPACE,
+        storageType: 'localStorage',
+      }),
     ).toEqual({ theme: '"dark"' });
     expect(
-      snapshotFrontComponentStorage({ ...NAMESPACE, area: 'session' }),
+      snapshotFrontComponentStorage({
+        ...NAMESPACE,
+        storageType: 'sessionStorage',
+      }),
     ).toEqual({ visits: '2' });
     expect(
       snapshotFrontComponentStorage({
         ...OTHER_APPLICATION_NAMESPACE,
-        area: 'local',
+        storageType: 'localStorage',
       }),
     ).toEqual({ theme: '"light"' });
     expect(
-      snapshotFrontComponentStorage({ ...OTHER_USER_NAMESPACE, area: 'local' }),
+      snapshotFrontComponentStorage({
+        ...OTHER_USER_NAMESPACE,
+        storageType: 'localStorage',
+      }),
     ).toEqual({ theme: '"system"' });
   });
 });

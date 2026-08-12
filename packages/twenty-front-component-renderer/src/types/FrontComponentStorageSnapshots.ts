@@ -1,6 +1,6 @@
-import { type FrontComponentStorageArea } from 'twenty-sdk/front-component';
+import { type FrontComponentStorageType } from 'twenty-sdk/front-component';
 
 export type FrontComponentStorageSnapshots = Record<
-  FrontComponentStorageArea,
+  FrontComponentStorageType,
   Record<string, string>
 >;

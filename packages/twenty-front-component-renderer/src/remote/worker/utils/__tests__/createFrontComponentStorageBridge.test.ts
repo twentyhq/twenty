@@ -14,7 +14,7 @@ const createConnectedBridge = () => {
   return {
     hostCommunicationApi,
     bridge: createFrontComponentStorageBridge({
-      area: 'local',
+      storageType: 'localStorage',
       getHostCommunicationApi: () => hostCommunicationApi,
     }),
   };
@@ -56,20 +56,20 @@ describe('createFrontComponentStorageBridge', () => {
     expect(bridge.getKeyAtIndex(0)).toBeNull();
   });
 
-  it('should apply writes locally and persist them with the area', () => {
+  it('should apply writes locally and persist them with the storage type', () => {
     const { bridge, hostCommunicationApi } = createConnectedBridge();
 
     bridge.setItem('theme', '"dark"');
 
     expect(bridge.getItem('theme')).toBe('"dark"');
     expect(hostCommunicationApi.storageSet).toHaveBeenCalledWith({
-      area: 'local',
+      storageType: 'localStorage',
       key: 'theme',
       serializedValue: '"dark"',
     });
   });
 
-  it('should persist deletions and clears with the area', () => {
+  it('should persist deletions and clears with the storage type', () => {
     const { bridge, hostCommunicationApi } = createConnectedBridge();
 
     bridge.seed({ theme: '"dark"', draft: '"hello"' });
@@ -78,7 +78,7 @@ describe('createFrontComponentStorageBridge', () => {
 
     expect(bridge.getItem('theme')).toBeNull();
     expect(hostCommunicationApi.storageDelete).toHaveBeenCalledWith({
-      area: 'local',
+      storageType: 'localStorage',
       key: 'theme',
     });
 
@@ -86,7 +86,7 @@ describe('createFrontComponentStorageBridge', () => {
 
     expect(bridge.getLength()).toBe(0);
     expect(hostCommunicationApi.storageClear).toHaveBeenCalledWith({
-      area: 'local',
+      storageType: 'localStorage',
     });
   });
 
@@ -94,7 +94,7 @@ describe('createFrontComponentStorageBridge', () => {
     const hostCommunicationApi: FrontComponentHostCommunicationApiStore = {};
 
     const bridge = createFrontComponentStorageBridge({
-      area: 'local',
+      storageType: 'localStorage',
       getHostCommunicationApi: () => hostCommunicationApi,
     });
 
@@ -108,7 +108,7 @@ describe('createFrontComponentStorageBridge', () => {
     bridge.flushPendingPersistOperations();
 
     expect(storageSet).toHaveBeenCalledWith({
-      area: 'local',
+      storageType: 'localStorage',
       key: 'theme',
       serializedValue: '"dark"',
     });
@@ -137,7 +137,7 @@ describe('createFrontComponentStorageBridge', () => {
     );
 
     const bridge = createFrontComponentStorageBridge({
-      area: 'local',
+      storageType: 'localStorage',
       getHostCommunicationApi: () => hostCommunicationApi,
     });
 

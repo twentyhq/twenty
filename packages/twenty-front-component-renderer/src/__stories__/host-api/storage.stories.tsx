@@ -2,7 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
-import { buildFrontComponentStorageKeyPrefix } from '@/host/utils/buildFrontComponentStorageKeyPrefix';
+import { buildFrontComponentStorageNamespacePrefix } from '@/host/utils/buildFrontComponentStorageNamespacePrefix';
 import { clearFrontComponentStorage } from '@/host/utils/clearFrontComponentStorage';
 import { deleteFrontComponentStorageItem } from '@/host/utils/deleteFrontComponentStorageItem';
 import { setFrontComponentStorageItem } from '@/host/utils/setFrontComponentStorageItem';
@@ -42,7 +42,7 @@ const roundTripStory = runFrontComponentStory({
 
     await expectFrontComponentMounted(canvas);
 
-    const keyPrefix = buildFrontComponentStorageKeyPrefix(
+    const namespacePrefix = buildFrontComponentStorageNamespacePrefix(
       PERSISTED_STORAGE_NAMESPACE,
     );
 
@@ -61,9 +61,15 @@ const roundTripStory = runFrontComponentStory({
 
     await waitFor(
       () => {
-        expect(window.localStorage.getItem(`${keyPrefix}greeting`)).toBeNull();
-        expect(window.localStorage.getItem(`${keyPrefix}theme`)).toBe('dark');
-        expect(window.sessionStorage.getItem(`${keyPrefix}visits`)).toBe('2');
+        expect(
+          window.localStorage.getItem(`${namespacePrefix}greeting`),
+        ).toBeNull();
+        expect(window.localStorage.getItem(`${namespacePrefix}theme`)).toBe(
+          'dark',
+        );
+        expect(window.sessionStorage.getItem(`${namespacePrefix}visits`)).toBe(
+          '2',
+        );
       },
       { timeout: HOST_API_TIMEOUT },
     );
@@ -71,9 +77,9 @@ const roundTripStory = runFrontComponentStory({
 });
 
 const clearPersistedStorageNamespace = () => {
-  for (const area of ['local', 'session'] as const) {
+  for (const storageType of ['localStorage', 'sessionStorage'] as const) {
     clearFrontComponentStorage({
-      area,
+      storageType,
       ...PERSISTED_STORAGE_NAMESPACE,
     });
   }
@@ -91,25 +97,25 @@ export const StorageRoundTrip: Story = {
     storageNamespace: PERSISTED_STORAGE_NAMESPACE,
     frontComponentHostCommunicationApi: {
       ...hostApiMocks,
-      storageSet: async ({ area, key, serializedValue }) => {
+      storageSet: async ({ storageType, key, serializedValue }) => {
         setFrontComponentStorageItem({
           ...PERSISTED_STORAGE_NAMESPACE,
-          area,
+          storageType,
           key,
           serializedValue,
         });
       },
-      storageDelete: async ({ area, key }) => {
+      storageDelete: async ({ storageType, key }) => {
         deleteFrontComponentStorageItem({
           ...PERSISTED_STORAGE_NAMESPACE,
-          area,
+          storageType,
           key,
         });
       },
-      storageClear: async ({ area }) => {
+      storageClear: async ({ storageType }) => {
         clearFrontComponentStorage({
           ...PERSISTED_STORAGE_NAMESPACE,
-          area,
+          storageType,
         });
       },
     },

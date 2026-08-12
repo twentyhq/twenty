@@ -1,14 +1,13 @@
 import { isString } from '@sniptt/guards';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
-import { buildFrontComponentStorageKeyPrefix } from '@/host/utils/buildFrontComponentStorageKeyPrefix';
-import { getBrowserStorageForArea } from '@/host/utils/getBrowserStorageForArea';
-import { getBrowserStorageKeysWithPrefix } from '@/host/utils/getBrowserStorageKeysWithPrefix';
+import { buildFrontComponentStorageNamespacePrefix } from '@/host/utils/buildFrontComponentStorageNamespacePrefix';
+import { getNamespacedStorageKeys } from '@/host/utils/getNamespacedStorageKeys';
 import { type FrontComponentStorageScope } from '@/types/FrontComponentStorageScope';
 import { getFrontComponentStorageViolationMessage } from '@/utils/getFrontComponentStorageViolationMessage';
 
 export const setFrontComponentStorageItem = ({
-  area,
+  storageType,
   key,
   serializedValue,
   ...namespace
@@ -23,20 +22,21 @@ export const setFrontComponentStorageItem = ({
     );
   }
 
-  const browserStorage = getBrowserStorageForArea(area);
-  const keyPrefix = buildFrontComponentStorageKeyPrefix(namespace);
-  const namespacedKey = `${keyPrefix}${key}`;
+  const storage = window[storageType];
+  const namespacePrefix = buildFrontComponentStorageNamespacePrefix(namespace);
+  const namespacedKey = `${namespacePrefix}${key}`;
 
   let otherEntriesTotalLength = 0;
 
-  for (const existingNamespacedKey of getBrowserStorageKeysWithPrefix(
-    browserStorage,
-    keyPrefix,
-  )) {
+  for (const existingNamespacedKey of getNamespacedStorageKeys({
+    storage,
+    namespacePrefix,
+  })) {
     if (existingNamespacedKey !== namespacedKey) {
-      const existingKeyLength = existingNamespacedKey.length - keyPrefix.length;
+      const existingKeyLength =
+        existingNamespacedKey.length - namespacePrefix.length;
       const existingValueLength =
-        browserStorage.getItem(existingNamespacedKey)?.length ?? 0;
+        storage.getItem(existingNamespacedKey)?.length ?? 0;
 
       otherEntriesTotalLength += existingKeyLength + existingValueLength;
     }
@@ -55,5 +55,5 @@ export const setFrontComponentStorageItem = ({
     );
   }
 
-  browserStorage.setItem(namespacedKey, serializedValue);
+  storage.setItem(namespacedKey, serializedValue);
 };

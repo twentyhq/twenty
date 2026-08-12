@@ -1,6 +1,6 @@
 import { type FrontComponentStorageNamespace } from '@/types/FrontComponentStorageNamespace';
 
-export const buildFrontComponentStorageKeyPrefix = ({
+export const buildFrontComponentStorageNamespacePrefix = ({
   applicationId,
   userId,
 }: FrontComponentStorageNamespace): string =>

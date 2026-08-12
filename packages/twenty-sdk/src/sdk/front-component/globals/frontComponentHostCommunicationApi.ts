@@ -6,7 +6,7 @@ import {
 } from 'twenty-shared/types';
 import { type getAppPath } from 'twenty-shared/utils';
 
-import { type FrontComponentStorageArea } from '../types/FrontComponentStorageArea';
+import { type FrontComponentStorageType } from '../types/FrontComponentStorageType';
 
 export type NavigateFunction = <T extends AppPath>(
   to: T,
@@ -107,18 +107,18 @@ export type OpenCommandConfirmationModalHostFunction = (
 ) => Promise<void>;
 
 export type StorageSetFunction = (params: {
-  area: FrontComponentStorageArea;
+  storageType: FrontComponentStorageType;
   key: string;
   serializedValue: string;
 }) => Promise<void>;
 
 export type StorageDeleteFunction = (params: {
-  area: FrontComponentStorageArea;
+  storageType: FrontComponentStorageType;
   key: string;
 }) => Promise<void>;
 
 export type StorageClearFunction = (params: {
-  area: FrontComponentStorageArea;
+  storageType: FrontComponentStorageType;
 }) => Promise<void>;
 
 export type FrontComponentHostCommunicationApiStore = {

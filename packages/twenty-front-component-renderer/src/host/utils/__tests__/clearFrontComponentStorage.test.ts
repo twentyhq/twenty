@@ -26,47 +26,53 @@ describe('clearFrontComponentStorage', () => {
   it('should clear only within the namespace', () => {
     setFrontComponentStorageItem({
       ...NAMESPACE,
-      area: 'local',
+      storageType: 'localStorage',
       key: 'theme',
       serializedValue: '"dark"',
     });
 
     setFrontComponentStorageItem({
       ...NAMESPACE,
-      area: 'local',
+      storageType: 'localStorage',
       key: 'locale',
       serializedValue: '"en"',
     });
 
     setFrontComponentStorageItem({
       ...OTHER_APPLICATION_NAMESPACE,
-      area: 'local',
+      storageType: 'localStorage',
       key: 'theme',
       serializedValue: '"light"',
     });
 
     setFrontComponentStorageItem({
       ...OTHER_USER_NAMESPACE,
-      area: 'local',
+      storageType: 'localStorage',
       key: 'theme',
       serializedValue: '"system"',
     });
 
     window.localStorage.setItem('unrelatedTwentyKey', 'value');
 
-    clearFrontComponentStorage({ ...NAMESPACE, area: 'local' });
+    clearFrontComponentStorage({ ...NAMESPACE, storageType: 'localStorage' });
 
     expect(
-      snapshotFrontComponentStorage({ ...NAMESPACE, area: 'local' }),
+      snapshotFrontComponentStorage({
+        ...NAMESPACE,
+        storageType: 'localStorage',
+      }),
     ).toEqual({});
     expect(
       snapshotFrontComponentStorage({
         ...OTHER_APPLICATION_NAMESPACE,
-        area: 'local',
+        storageType: 'localStorage',
       }),
     ).toEqual({ theme: '"light"' });
     expect(
-      snapshotFrontComponentStorage({ ...OTHER_USER_NAMESPACE, area: 'local' }),
+      snapshotFrontComponentStorage({
+        ...OTHER_USER_NAMESPACE,
+        storageType: 'localStorage',
+      }),
     ).toEqual({ theme: '"system"' });
     expect(window.localStorage.getItem('unrelatedTwentyKey')).toBe('value');
   });

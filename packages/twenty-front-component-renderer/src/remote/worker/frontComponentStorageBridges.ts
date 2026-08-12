@@ -1,21 +1,21 @@
-import { type FrontComponentStorageArea } from 'twenty-sdk/front-component';
+import { type FrontComponentStorageType } from 'twenty-sdk/front-component';
 
 import { frontComponentHostCommunicationApi } from '@/constants/frontComponentHostCommunicationApi';
 import { createFrontComponentStorageBridge } from '@/remote/worker/utils/createFrontComponentStorageBridge';
-import { type FrontComponentStorageWorkerBridge } from '@/types/FrontComponentStorageWorkerBridge';
+import { type FrontComponentStorageBridge } from '@/types/FrontComponentStorageBridge';
 
 const getHostCommunicationApi = () => frontComponentHostCommunicationApi;
 
 export const frontComponentStorageBridges: Record<
-  FrontComponentStorageArea,
-  FrontComponentStorageWorkerBridge
+  FrontComponentStorageType,
+  FrontComponentStorageBridge
 > = {
-  local: createFrontComponentStorageBridge({
-    area: 'local',
+  localStorage: createFrontComponentStorageBridge({
+    storageType: 'localStorage',
     getHostCommunicationApi,
   }),
-  session: createFrontComponentStorageBridge({
-    area: 'session',
+  sessionStorage: createFrontComponentStorageBridge({
+    storageType: 'sessionStorage',
     getHostCommunicationApi,
   }),
 };

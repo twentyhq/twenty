@@ -25,7 +25,7 @@ export type {
   TranslationValues,
 } from './translations/message';
 export type { FrontComponentExecutionContext } from './types/FrontComponentExecutionContext';
-export type { FrontComponentStorageArea } from './types/FrontComponentStorageArea';
+export type { FrontComponentStorageType } from './types/FrontComponentStorageType';
 export { getFrontComponentCommandErrorDedupeKey } from './utils/getFrontComponentCommandErrorDedupeKey';
 export type {
   CloseSidePanelFunction,

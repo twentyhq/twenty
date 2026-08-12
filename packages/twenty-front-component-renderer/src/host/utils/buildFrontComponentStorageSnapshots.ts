@@ -1,4 +1,4 @@
-import { type FrontComponentStorageArea } from 'twenty-sdk/front-component';
+import { type FrontComponentStorageType } from 'twenty-sdk/front-component';
 
 import { snapshotFrontComponentStorage } from '@/host/utils/snapshotFrontComponentStorage';
 import { type FrontComponentStorageNamespace } from '@/types/FrontComponentStorageNamespace';
@@ -7,20 +7,23 @@ import { type FrontComponentStorageSnapshots } from '@/types/FrontComponentStora
 const STORAGE_SNAPSHOT_FAILURE_WARNING =
   'The front component storage could not be read from this device';
 
-const STORAGE_AREAS: FrontComponentStorageArea[] = ['local', 'session'];
+const STORAGE_TYPES: FrontComponentStorageType[] = [
+  'localStorage',
+  'sessionStorage',
+];
 
 export const buildFrontComponentStorageSnapshots = (
   namespace: FrontComponentStorageNamespace,
 ): FrontComponentStorageSnapshots => {
   const snapshots: FrontComponentStorageSnapshots = {
-    local: {},
-    session: {},
+    localStorage: {},
+    sessionStorage: {},
   };
 
-  for (const area of STORAGE_AREAS) {
+  for (const storageType of STORAGE_TYPES) {
     try {
-      snapshots[area] = snapshotFrontComponentStorage({
-        area,
+      snapshots[storageType] = snapshotFrontComponentStorage({
+        storageType,
         ...namespace,
       });
     } catch {

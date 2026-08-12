@@ -1,20 +1,20 @@
 import { isDefined } from 'twenty-shared/utils';
-import { type FrontComponentStorageArea } from 'twenty-sdk/front-component';
+import { type FrontComponentStorageType } from 'twenty-sdk/front-component';
 
 import { type FrontComponentHostCommunicationApiStore } from '@/types/FrontComponentHostCommunicationApiStore';
-import { type FrontComponentStorageWorkerBridge } from '@/types/FrontComponentStorageWorkerBridge';
+import { type FrontComponentStorageBridge } from '@/types/FrontComponentStorageBridge';
 import { getFrontComponentStorageViolationMessage } from '@/utils/getFrontComponentStorageViolationMessage';
 
 const STORAGE_PERSISTENCE_FAILURE_WARNING =
   'A front component storage write could not be persisted';
 
 export const createFrontComponentStorageBridge = ({
-  area,
+  storageType,
   getHostCommunicationApi,
 }: {
-  area: FrontComponentStorageArea;
+  storageType: FrontComponentStorageType;
   getHostCommunicationApi: () => FrontComponentHostCommunicationApiStore;
-}): FrontComponentStorageWorkerBridge => {
+}): FrontComponentStorageBridge => {
   const entries = new Map<string, string>();
   const pendingPersistOperations: (() => void)[] = [];
 
@@ -84,7 +84,11 @@ export const createFrontComponentStorageBridge = ({
       cachedKeys = null;
 
       persist((hostCommunicationApi) =>
-        hostCommunicationApi.storageSet?.({ area, key, serializedValue }),
+        hostCommunicationApi.storageSet?.({
+          storageType,
+          key,
+          serializedValue,
+        }),
       );
     },
 
@@ -93,7 +97,7 @@ export const createFrontComponentStorageBridge = ({
       cachedKeys = null;
 
       persist((hostCommunicationApi) =>
-        hostCommunicationApi.storageDelete?.({ area, key }),
+        hostCommunicationApi.storageDelete?.({ storageType, key }),
       );
     },
 
@@ -102,7 +106,7 @@ export const createFrontComponentStorageBridge = ({
       cachedKeys = null;
 
       persist((hostCommunicationApi) =>
-        hostCommunicationApi.storageClear?.({ area }),
+        hostCommunicationApi.storageClear?.({ storageType }),
       );
     },
 

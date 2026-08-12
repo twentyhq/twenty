@@ -1,13 +1,12 @@
-import { buildFrontComponentStorageKeyPrefix } from '@/host/utils/buildFrontComponentStorageKeyPrefix';
-import { getBrowserStorageForArea } from '@/host/utils/getBrowserStorageForArea';
+import { buildFrontComponentStorageNamespacePrefix } from '@/host/utils/buildFrontComponentStorageNamespacePrefix';
 import { type FrontComponentStorageScope } from '@/types/FrontComponentStorageScope';
 
 export const deleteFrontComponentStorageItem = ({
-  area,
+  storageType,
   key,
   ...namespace
 }: FrontComponentStorageScope & { key: string }): void => {
-  getBrowserStorageForArea(area).removeItem(
-    `${buildFrontComponentStorageKeyPrefix(namespace)}${key}`,
+  window[storageType].removeItem(
+    `${buildFrontComponentStorageNamespacePrefix(namespace)}${key}`,
   );
 };

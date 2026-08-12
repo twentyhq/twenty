@@ -21,38 +21,41 @@ describe('deleteFrontComponentStorageItem', () => {
   it('should delete only the namespaced entry', () => {
     setFrontComponentStorageItem({
       ...NAMESPACE,
-      area: 'local',
+      storageType: 'localStorage',
       key: 'theme',
       serializedValue: '"dark"',
     });
 
     setFrontComponentStorageItem({
       ...NAMESPACE,
-      area: 'local',
+      storageType: 'localStorage',
       key: 'locale',
       serializedValue: '"en"',
     });
 
     setFrontComponentStorageItem({
       ...OTHER_APPLICATION_NAMESPACE,
-      area: 'local',
+      storageType: 'localStorage',
       key: 'theme',
       serializedValue: '"light"',
     });
 
     deleteFrontComponentStorageItem({
       ...NAMESPACE,
-      area: 'local',
+      storageType: 'localStorage',
       key: 'theme',
     });
 
     expect(
-      snapshotFrontComponentStorage({ ...NAMESPACE, area: 'local' }),
+      snapshotFrontComponentStorage({
+        ...NAMESPACE,
+        storageType: 'localStorage',
+      }),
     ).toEqual({ locale: '"en"' });
     expect(
       snapshotFrontComponentStorage({
         ...OTHER_APPLICATION_NAMESPACE,
-        area: 'local',
+        storageType: 'localStorage',
       }),
     ).toEqual({ theme: '"light"' });
   });

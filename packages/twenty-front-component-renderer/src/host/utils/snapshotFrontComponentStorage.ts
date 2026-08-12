@@ -1,20 +1,19 @@
-import { buildFrontComponentStorageKeyPrefix } from '@/host/utils/buildFrontComponentStorageKeyPrefix';
-import { getBrowserStorageForArea } from '@/host/utils/getBrowserStorageForArea';
-import { getBrowserStorageKeysWithPrefix } from '@/host/utils/getBrowserStorageKeysWithPrefix';
+import { buildFrontComponentStorageNamespacePrefix } from '@/host/utils/buildFrontComponentStorageNamespacePrefix';
+import { getNamespacedStorageKeys } from '@/host/utils/getNamespacedStorageKeys';
 import { type FrontComponentStorageScope } from '@/types/FrontComponentStorageScope';
 
 export const snapshotFrontComponentStorage = ({
-  area,
+  storageType,
   ...namespace
 }: FrontComponentStorageScope): Record<string, string> => {
-  const browserStorage = getBrowserStorageForArea(area);
-  const keyPrefix = buildFrontComponentStorageKeyPrefix(namespace);
+  const storage = window[storageType];
+  const namespacePrefix = buildFrontComponentStorageNamespacePrefix(namespace);
 
   return Object.fromEntries(
-    getBrowserStorageKeysWithPrefix(browserStorage, keyPrefix).map(
+    getNamespacedStorageKeys({ storage, namespacePrefix }).map(
       (namespacedKey) => [
-        namespacedKey.slice(keyPrefix.length),
-        browserStorage.getItem(namespacedKey) ?? '',
+        namespacedKey.slice(namespacePrefix.length),
+        storage.getItem(namespacedKey) ?? '',
       ],
     ),
   );

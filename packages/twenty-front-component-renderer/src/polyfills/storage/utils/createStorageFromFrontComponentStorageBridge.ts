@@ -1,7 +1,7 @@
-import { type FrontComponentStorageWorkerBridge } from '@/types/FrontComponentStorageWorkerBridge';
+import { type FrontComponentStorageBridge } from '@/types/FrontComponentStorageBridge';
 
-export const createStorageFromStorageBridge = (
-  bridge: FrontComponentStorageWorkerBridge,
+export const createStorageFromFrontComponentStorageBridge = (
+  bridge: FrontComponentStorageBridge,
 ): Storage => ({
   get length() {
     return bridge.getLength();

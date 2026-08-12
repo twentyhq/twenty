@@ -43,8 +43,12 @@ export const renderFrontComponent = async ({
   const storageSnapshots = renderContext.storageSnapshots;
 
   if (isDefined(storageSnapshots)) {
-    frontComponentStorageBridges.local.seed(storageSnapshots.local);
-    frontComponentStorageBridges.session.seed(storageSnapshots.session);
+    frontComponentStorageBridges.localStorage.seed(
+      storageSnapshots.localStorage,
+    );
+    frontComponentStorageBridges.sessionStorage.seed(
+      storageSnapshots.sessionStorage,
+    );
   }
 
   const componentModule = await loadFrontComponentModule({

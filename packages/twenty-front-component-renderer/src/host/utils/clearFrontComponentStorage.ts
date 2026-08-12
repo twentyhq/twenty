@@ -1,18 +1,17 @@
-import { buildFrontComponentStorageKeyPrefix } from '@/host/utils/buildFrontComponentStorageKeyPrefix';
-import { getBrowserStorageForArea } from '@/host/utils/getBrowserStorageForArea';
-import { getBrowserStorageKeysWithPrefix } from '@/host/utils/getBrowserStorageKeysWithPrefix';
+import { buildFrontComponentStorageNamespacePrefix } from '@/host/utils/buildFrontComponentStorageNamespacePrefix';
+import { getNamespacedStorageKeys } from '@/host/utils/getNamespacedStorageKeys';
 import { type FrontComponentStorageScope } from '@/types/FrontComponentStorageScope';
 
 export const clearFrontComponentStorage = ({
-  area,
+  storageType,
   ...namespace
 }: FrontComponentStorageScope): void => {
-  const browserStorage = getBrowserStorageForArea(area);
+  const storage = window[storageType];
 
-  for (const namespacedKey of getBrowserStorageKeysWithPrefix(
-    browserStorage,
-    buildFrontComponentStorageKeyPrefix(namespace),
-  )) {
-    browserStorage.removeItem(namespacedKey);
+  for (const namespacedKey of getNamespacedStorageKeys({
+    storage,
+    namespacePrefix: buildFrontComponentStorageNamespacePrefix(namespace),
+  })) {
+    storage.removeItem(namespacedKey);
   }
 };

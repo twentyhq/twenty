@@ -936,14 +936,14 @@ describe('useFrontComponentExecutionContext', () => {
   });
 
   describe('storage', () => {
-    it('should namespace writes by application, user and area', async () => {
+    it('should namespace writes by application, user and storage type', async () => {
       const { result } = renderUseFrontComponentExecutionContext({
         frontComponentId: FRONT_COMPONENT_ID,
       });
 
       await act(async () => {
         await result.current.frontComponentHostCommunicationApi.storageSet({
-          area: 'local',
+          storageType: 'localStorage',
           key: 'theme',
           serializedValue: '"dark"',
         });
@@ -952,7 +952,7 @@ describe('useFrontComponentExecutionContext', () => {
       expect(mockStorageSet).toHaveBeenCalledWith({
         applicationId: APPLICATION_ID,
         userId: 'user-123',
-        area: 'local',
+        storageType: 'localStorage',
         key: 'theme',
         serializedValue: '"dark"',
       });
@@ -982,24 +982,24 @@ describe('useFrontComponentExecutionContext', () => {
 
       await act(async () => {
         await result.current.frontComponentHostCommunicationApi.storageDelete({
-          area: 'local',
+          storageType: 'localStorage',
           key: 'theme',
         });
         await result.current.frontComponentHostCommunicationApi.storageClear({
-          area: 'session',
+          storageType: 'sessionStorage',
         });
       });
 
       expect(mockStorageDelete).toHaveBeenCalledWith({
         applicationId: APPLICATION_ID,
         userId: 'user-123',
-        area: 'local',
+        storageType: 'localStorage',
         key: 'theme',
       });
       expect(mockStorageClear).toHaveBeenCalledWith({
         applicationId: APPLICATION_ID,
         userId: 'user-123',
-        area: 'session',
+        storageType: 'sessionStorage',
       });
     });
 
@@ -1014,7 +1014,7 @@ describe('useFrontComponentExecutionContext', () => {
 
       await expect(
         result.current.frontComponentHostCommunicationApi.storageSet({
-          area: 'local',
+          storageType: 'localStorage',
           key: 'theme',
           serializedValue: '"dark"',
         }),

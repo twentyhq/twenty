@@ -17,7 +17,7 @@ describe('setFrontComponentStorageItem', () => {
     expect(() =>
       setFrontComponentStorageItem({
         ...NAMESPACE,
-        area: 'local',
+        storageType: 'localStorage',
         key: 'draft',
         serializedValue: ['value'] as unknown as string,
       }),
@@ -26,14 +26,17 @@ describe('setFrontComponentStorageItem', () => {
     expect(() =>
       setFrontComponentStorageItem({
         ...NAMESPACE,
-        area: 'local',
+        storageType: 'localStorage',
         key: ['draft'] as unknown as string,
         serializedValue: 'value',
       }),
     ).toThrow('Storage keys and values must be strings');
 
     expect(
-      snapshotFrontComponentStorage({ ...NAMESPACE, area: 'local' }),
+      snapshotFrontComponentStorage({
+        ...NAMESPACE,
+        storageType: 'localStorage',
+      }),
     ).toEqual({});
   });
 
@@ -41,7 +44,7 @@ describe('setFrontComponentStorageItem', () => {
     expect(() =>
       setFrontComponentStorageItem({
         ...NAMESPACE,
-        area: 'local',
+        storageType: 'localStorage',
         key: 'draft',
         serializedValue: 'v'.repeat(
           FRONT_COMPONENT_STORAGE_MAX_VALUE_LENGTH + 1,
@@ -54,7 +57,10 @@ describe('setFrontComponentStorageItem', () => {
     );
 
     expect(
-      snapshotFrontComponentStorage({ ...NAMESPACE, area: 'local' }),
+      snapshotFrontComponentStorage({
+        ...NAMESPACE,
+        storageType: 'localStorage',
+      }),
     ).toEqual({});
   });
 });

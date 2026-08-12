@@ -1,4 +1,4 @@
-export type FrontComponentStorageWorkerBridge = {
+export type FrontComponentStorageBridge = {
   getItem: (key: string) => string | null;
   getKeyAtIndex: (index: number) => string | null;
   getLength: () => number;

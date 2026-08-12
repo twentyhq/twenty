@@ -390,32 +390,32 @@ export const useFrontComponentExecutionContext = ({
   };
 
   const storageSet: FrontComponentHostCommunicationApi['storageSet'] = async ({
-    area,
+    storageType,
     key,
     serializedValue,
   }) => {
     setFrontComponentStorageItem({
       ...requireStorageNamespace(),
-      area,
+      storageType,
       key,
       serializedValue,
     });
   };
 
   const storageDelete: FrontComponentHostCommunicationApi['storageDelete'] =
-    async ({ area, key }) => {
+    async ({ storageType, key }) => {
       deleteFrontComponentStorageItem({
         ...requireStorageNamespace(),
-        area,
+        storageType,
         key,
       });
     };
 
   const storageClear: FrontComponentHostCommunicationApi['storageClear'] =
-    async ({ area }) => {
+    async ({ storageType }) => {
       clearFrontComponentStorage({
         ...requireStorageNamespace(),
-        area,
+        storageType,
       });
     };
 
