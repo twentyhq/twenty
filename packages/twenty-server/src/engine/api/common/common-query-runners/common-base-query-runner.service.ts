@@ -379,9 +379,28 @@ export abstract class CommonBaseQueryRunnerService<
       return repository;
     }
 
+    this.metricsService.incrementCounterBy({
+      key: MetricsKeys.OrmV2ReadPathUsed,
+      amount: 1,
+      attributes: { operation: this.operationName },
+    });
+
     return this.workspaceDataSourceV2Service
       .getDataSource({ useReplica: this.isReadOnly })
       .getRepository(flatObjectMetadata.nameSingular, rolePermissionConfig);
+  }
+
+  protected getNestedRelationsReadPathOptions({
+    featureFlagsMap,
+  }: Pick<CommonExtendedQueryRunnerContext, 'featureFlagsMap'>): {
+    isOrmV2ReadPathEnabled: boolean;
+    useReplica: boolean;
+  } {
+    return {
+      isOrmV2ReadPathEnabled:
+        featureFlagsMap[FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED],
+      useReplica: this.isReadOnly,
+    };
   }
 
   private async throttleQueryExecution(authContext: WorkspaceAuthContext) {

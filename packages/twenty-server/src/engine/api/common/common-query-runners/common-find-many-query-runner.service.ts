@@ -241,6 +241,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
         workspaceDataSource,
         rolePermissionConfig,
         selectedFields: args.selectedFieldsResult.select,
+        ...this.getNestedRelationsReadPathOptions(queryRunnerContext),
       });
     }
 

@@ -4,10 +4,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommonArgsProcessors } from 'src/engine/api/common/common-args-processors/common-args-processors';
 import { GroupByArgProcessorService } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/group-by-arg-processor.service';
 import { ProcessNestedRelationsV2Helper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations-v2.helper';
+import { ProcessNestedRelationsOrmV2Helper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations-orm-v2.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
 import { CommonQueryRunners } from 'src/engine/api/common/common-query-runners/common-query-runners';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { GroupByWithRecordsService } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.service';
+import { GroupByWithRecordsV2Service } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records-v2.service';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { WorkspaceQueryHookModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.module';
 import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
@@ -52,11 +54,13 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   providers: [
     ProcessNestedRelationsHelper,
     ProcessNestedRelationsV2Helper,
+    ProcessNestedRelationsOrmV2Helper,
     ...CommonArgsProcessors,
     ProcessAggregateHelper,
     ...CommonQueryRunners,
     CommonResultGettersService,
     GroupByWithRecordsService,
+    GroupByWithRecordsV2Service,
   ],
   exports: [...CommonQueryRunners, GroupByArgProcessorService],
 })
