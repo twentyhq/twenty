@@ -123,11 +123,13 @@ subquery with the v2 builder and runs the composed outer query through
   through v1.
 - `find` / `findOne` / `findBy` and the rest of the repository surface used by
   `src/modules`.
-- Transactions, DDL, aggregate group-by.
-- One cast remains where `CommonFindManyQueryRunnerService` hands the v2 builder to the
-  shared parsers, because they are typed against the TypeORM class rather than an
-  interface. Giving the parsers a structural `SelectQueryBuilderLike` type removes it and
-  is the next cleanup.
+- Transactions and DDL.
+- Ordering group-by "with records" by a to-many relation: v2 refuses to-many joins, so
+  it surfaces the standard "unsupported" user error rather than the row-multiplying join
+  v1 would emit.
+- The read runners hand the v2 builder to the shared parsers with a cast, because they
+  are typed against the TypeORM class rather than an interface. Giving the parsers a
+  structural `SelectQueryBuilderLike` type removes it and is the next cleanup.
 
 ## Verifying a change
 

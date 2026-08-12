@@ -18,6 +18,11 @@ import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-s
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { addRelationJoinAliasToQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/add-relation-join-alias.util';
 import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
+import {
+  RECORDS_PER_GROUP_LIMIT,
+  RELATIONS_PER_RECORD_LIMIT,
+  SUB_QUERY_PREFIX,
+} from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.constants';
 import { getGroupLimit } from 'src/engine/api/graphql/graphql-query-runner/group-by/utils/get-group-limit.util';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -25,10 +30,6 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-
-const RECORDS_PER_GROUP_LIMIT = 10;
-const RELATIONS_PER_RECORD_LIMIT = 5;
-const SUB_QUERY_PREFIX = 'sub_query_';
 
 @Injectable()
 export class GroupByWithRecordsService {
