@@ -12,6 +12,7 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { getIconColorForObjectType } from '@/object-metadata/utils/getIconColorForObjectType';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
+import { isFieldMetadataItemLabelIdentifierFormulaEnabled } from '@/object-metadata/utils/isFieldMetadataItemLabelIdentifierFormulaEnabled';
 import { viewableRecordIdState } from '@/object-record/record-side-panel/states/viewableRecordIdState';
 import { useOpenNewRecordTitleCell } from '@/object-record/record-title-cell/hooks/useOpenNewRecordTitleCell';
 import { newRecordTitleCellToOpenState } from '@/object-record/record-title-cell/states/newRecordTitleCellToOpenState';
@@ -80,7 +81,13 @@ export const useOpenRecordInSidePanel = () => {
           ? getLabelIdentifierFieldMetadataItem(objectMetadataItemForRecordPage)
           : undefined;
 
-        if (isNewRecord && isDefined(labelIdentifierField)) {
+        if (
+          isNewRecord &&
+          isDefined(labelIdentifierField) &&
+          !isFieldMetadataItemLabelIdentifierFormulaEnabled(
+            labelIdentifierField,
+          )
+        ) {
           store.set(newRecordTitleCellToOpenState.atom, {
             recordId,
             fieldName: labelIdentifierField.name,
@@ -233,7 +240,12 @@ export const useOpenRecordInSidePanel = () => {
         const labelIdentifierField =
           getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 
-        if (isDefined(labelIdentifierField)) {
+        if (
+          isDefined(labelIdentifierField) &&
+          !isFieldMetadataItemLabelIdentifierFormulaEnabled(
+            labelIdentifierField,
+          )
+        ) {
           openNewRecordTitleCell({
             recordId,
             fieldName: labelIdentifierField.name,

@@ -23,8 +23,10 @@ import {
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { RecordLabelFormulaService } from 'src/engine/core-modules/record-label-formula/services/record-label-formula.service';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 
@@ -34,6 +36,12 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
   ObjectRecord[]
 > {
   protected readonly operationName = CommonQueryNames.UPDATE_MANY;
+
+  constructor(
+    private readonly recordLabelFormulaService: RecordLabelFormulaService,
+  ) {
+    super();
+  }
 
   async run(
     args: CommonExtendedInput<UpdateManyQueryArgs>,
@@ -72,6 +80,36 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       .execute();
 
     const updatedRecords = updatedObjectRecords.generatedMaps as ObjectRecord[];
+
+    const recomputedLabels =
+      await this.recordLabelFormulaService.recomputeAffectedRecordLabels({
+        flatFieldMetadataMaps,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        recordIds: updatedRecords.map((record) => record.id),
+        workspaceDataSource,
+      });
+    const labelIdentifierFieldMetadataId =
+      flatObjectMetadata.labelIdentifierFieldMetadataId;
+    const labelIdentifierFieldMetadata =
+      typeof labelIdentifierFieldMetadataId === 'string'
+        ? findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: labelIdentifierFieldMetadataId,
+            flatEntityMaps: flatFieldMetadataMaps,
+          })
+        : undefined;
+
+    if (labelIdentifierFieldMetadata !== undefined) {
+      const labelIdentifierFieldName = labelIdentifierFieldMetadata.name;
+
+      updatedRecords.forEach((record) => {
+        const recomputedLabel = recomputedLabels.get(record.id);
+
+        if (isDefined(recomputedLabel)) {
+          record[labelIdentifierFieldName] = recomputedLabel;
+        }
+      });
+    }
 
     if (isDefined(args.selectedFieldsResult.relations)) {
       await this.processNestedRelationsHelper.processNestedRelations({

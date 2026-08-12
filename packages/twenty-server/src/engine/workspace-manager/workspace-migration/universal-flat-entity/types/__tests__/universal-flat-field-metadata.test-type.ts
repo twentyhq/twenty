@@ -128,6 +128,14 @@ type SettingsExpectedResult =
     }
   | {
       displayedMaxRows?: number | undefined;
+      labelIdentifierFormula?:
+        | {
+            template: string;
+            fieldReferences: {
+              fieldMetadataUniversalIdentifiers: string[];
+            }[];
+          }
+        | undefined;
       __JsonbPropertyBrand__?: undefined;
     }
   | null;

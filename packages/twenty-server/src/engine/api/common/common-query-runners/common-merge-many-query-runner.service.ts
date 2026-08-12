@@ -47,6 +47,7 @@ import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspa
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { PersonRecordMergeEntity } from 'src/engine/core-modules/person-duplicate-review/entities/person-record-merge.entity';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { RecordLabelFormulaService } from 'src/engine/core-modules/record-label-formula/services/record-label-formula.service';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -64,6 +65,12 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
   ObjectRecord
 > {
   private readonly logger = new Logger(CommonMergeManyQueryRunnerService.name);
+
+  constructor(
+    private readonly recordLabelFormulaService: RecordLabelFormulaService,
+  ) {
+    super();
+  }
 
   protected readonly operationName = CommonQueryNames.MERGE_MANY;
 
@@ -129,6 +136,28 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         sourcePersonIds: idsToDelete,
         targetPersonId: priorityRecord.id,
       });
+    }
+
+    const recomputedLabels =
+      await this.recordLabelFormulaService.recomputeAffectedRecordLabels({
+        flatFieldMetadataMaps: queryRunnerContext.flatFieldMetadataMaps,
+        flatObjectMetadata,
+        flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
+        recordIds: [priorityRecord.id, ...idsToDelete],
+        workspaceDataSource: queryRunnerContext.workspaceDataSource,
+      });
+    const labelIdentifierFieldMetadata = isDefined(
+      flatObjectMetadata.labelIdentifierFieldMetadataId,
+    )
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: flatObjectMetadata.labelIdentifierFieldMetadataId,
+          flatEntityMaps: queryRunnerContext.flatFieldMetadataMaps,
+        })
+      : undefined;
+    const recomputedLabel = recomputedLabels.get(priorityRecord.id);
+
+    if (isDefined(labelIdentifierFieldMetadata) && isDefined(recomputedLabel)) {
+      updatedRecord[labelIdentifierFieldMetadata.name] = recomputedLabel;
     }
 
     await this.processNestedRelations({

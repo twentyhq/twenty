@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { RecordLabelFormulaService } from 'src/engine/core-modules/record-label-formula/services/record-label-formula.service';
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import {
   CommonQueryRunnerException,
@@ -33,6 +34,12 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
   DeleteManyQueryArgs,
   ObjectRecord[]
 > {
+  constructor(
+    private readonly recordLabelFormulaService: RecordLabelFormulaService,
+  ) {
+    super();
+  }
+
   protected readonly operationName = CommonQueryNames.DELETE_MANY;
 
   async run(
@@ -71,6 +78,14 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
       .execute();
 
     const deletedRecords = deletedObjectRecords.generatedMaps as ObjectRecord[];
+
+    await this.recordLabelFormulaService.recomputeAffectedRecordLabels({
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      recordIds: deletedRecords.map((record) => record.id),
+      workspaceDataSource,
+    });
 
     if (isDefined(args.selectedFieldsResult.relations)) {
       await this.processNestedRelationsHelper.processNestedRelations({

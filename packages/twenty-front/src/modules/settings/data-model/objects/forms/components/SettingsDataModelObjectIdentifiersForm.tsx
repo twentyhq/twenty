@@ -1,11 +1,13 @@
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
+import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdateOneFieldMetadataItem';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getActiveFieldMetadataItems } from '@/object-metadata/utils/getActiveFieldMetadataItems';
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
+import { SettingsDataModelObjectLabelFormulaForm } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectLabelFormulaForm';
 import { Select } from '@/ui/input/components/Select';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -14,7 +16,12 @@ import { t } from '@lingui/core/macro';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import {
+  type FieldMetadataSettingsMapping,
+  FieldMetadataType,
+} from 'twenty-shared/types';
+import {
   isImageIdentifierFieldMetadataType,
+  isDefined,
   isLabelIdentifierFieldMetadataTypes,
   isSearchableFieldType,
 } from 'twenty-shared/utils';
@@ -47,6 +54,12 @@ const StyledContainer = styled.div`
   gap: ${themeCssVariables.spacing[4]};
 `;
 
+const StyledFormContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[4]};
+`;
+
 export const SettingsDataModelObjectIdentifiersForm = ({
   objectMetadataItem,
 }: SettingsDataModelObjectIdentifiersFormProps) => {
@@ -64,6 +77,41 @@ export const SettingsDataModelObjectIdentifiersForm = ({
     resolver: zodResolver(settingsDataModelObjectIdentifiersFormSchema),
   });
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
+  const { updateOneFieldMetadataItem } = useUpdateOneFieldMetadataItem();
+
+  const clearCurrentRecordLabelFormula = async (): Promise<boolean> => {
+    const currentLabelIdentifierFieldMetadataItem =
+      objectMetadataItem.fields.find(
+        ({ id }) => id === objectMetadataItem.labelIdentifierFieldMetadataId,
+      );
+
+    if (
+      !isDefined(currentLabelIdentifierFieldMetadataItem) ||
+      currentLabelIdentifierFieldMetadataItem.type !== FieldMetadataType.TEXT
+    ) {
+      return true;
+    }
+
+    const currentSettings = currentLabelIdentifierFieldMetadataItem.settings as
+      | FieldMetadataSettingsMapping[FieldMetadataType.TEXT]
+      | null;
+
+    if (!isDefined(currentSettings?.labelIdentifierFormula)) {
+      return true;
+    }
+
+    const { labelIdentifierFormula: _labelIdentifierFormula, ...nextSettings } =
+      currentSettings;
+    const result = await updateOneFieldMetadataItem({
+      objectMetadataId: objectMetadataItem.id,
+      fieldMetadataIdToUpdate: currentLabelIdentifierFieldMetadataItem.id,
+      updatePayload: {
+        settings: Object.keys(nextSettings).length > 0 ? nextSettings : null,
+      },
+    });
+
+    return result.status === 'successful';
+  };
 
   const handleSave = async (
     formValues: SettingsDataModelObjectIdentifiersFormValues,
@@ -128,57 +176,74 @@ export const SettingsDataModelObjectIdentifiersForm = ({
   const navigate = useNavigate();
 
   return (
-    <StyledContainer>
-      {[
-        {
-          label: t`Record label`,
-          fieldName: LABEL_IDENTIFIER_FIELD_METADATA_ID,
-          options: labelIdentifierFieldOptions,
-          defaultValue: objectMetadataItem.labelIdentifierFieldMetadataId,
-          disabled: !isCustomObject || readonly,
-        },
-        {
-          label: t`Record image`,
-          fieldName: IMAGE_IDENTIFIER_FIELD_METADATA_ID,
-          options: imageIdentifierFieldOptions,
-          defaultValue: objectMetadataItem.imageIdentifierFieldMetadataId,
-          disabled: readonly,
-        },
-      ].map(({ fieldName, label, options, defaultValue, disabled }) => (
-        <Controller
-          key={fieldName}
-          name={fieldName}
-          control={formConfig.control}
-          defaultValue={defaultValue}
-          render={({ field: { onChange, value } }) => (
-            <Select
-              label={label}
-              fullWidth
-              dropdownId={`${fieldName}-select`}
-              emptyOption={emptyOption}
-              options={options}
-              value={value}
-              withSearchInput={label === t`Record label`}
-              disabled={disabled}
-              callToActionButton={
-                label === t`Record label`
-                  ? {
-                      text: 'Create Text Field',
-                      Icon: IconPlus,
-                      onClick: () => {
-                        navigate('./new-field/select');
-                      },
-                    }
-                  : undefined
-              }
-              onChange={(newValue) => {
-                onChange(newValue);
-                formConfig.handleSubmit(handleSave)();
-              }}
-            />
-          )}
+    <StyledFormContainer>
+      <StyledContainer>
+        {[
+          {
+            label: t`Record label`,
+            fieldName: LABEL_IDENTIFIER_FIELD_METADATA_ID,
+            options: labelIdentifierFieldOptions,
+            defaultValue: objectMetadataItem.labelIdentifierFieldMetadataId,
+            disabled: !isCustomObject || readonly,
+          },
+          {
+            label: t`Record image`,
+            fieldName: IMAGE_IDENTIFIER_FIELD_METADATA_ID,
+            options: imageIdentifierFieldOptions,
+            defaultValue: objectMetadataItem.imageIdentifierFieldMetadataId,
+            disabled: readonly,
+          },
+        ].map(({ fieldName, label, options, defaultValue, disabled }) => (
+          <Controller
+            key={fieldName}
+            name={fieldName}
+            control={formConfig.control}
+            defaultValue={defaultValue}
+            render={({ field: { onChange, value } }) => (
+              <Select
+                label={label}
+                fullWidth
+                dropdownId={`${fieldName}-select`}
+                emptyOption={emptyOption}
+                options={options}
+                value={value}
+                withSearchInput={label === t`Record label`}
+                disabled={disabled}
+                callToActionButton={
+                  label === t`Record label`
+                    ? {
+                        text: 'Create Text Field',
+                        Icon: IconPlus,
+                        onClick: () => {
+                          navigate('./new-field/select');
+                        },
+                      }
+                    : undefined
+                }
+                onChange={async (newValue) => {
+                  if (
+                    fieldName === LABEL_IDENTIFIER_FIELD_METADATA_ID &&
+                    newValue !==
+                      objectMetadataItem.labelIdentifierFieldMetadataId &&
+                    !(await clearCurrentRecordLabelFormula())
+                  ) {
+                    return;
+                  }
+
+                  onChange(newValue);
+                  formConfig.handleSubmit(handleSave)();
+                }}
+              />
+            )}
+          />
+        ))}
+      </StyledContainer>
+      {isCustomObject && (
+        <SettingsDataModelObjectLabelFormulaForm
+          objectMetadataItem={objectMetadataItem}
+          readonly={readonly}
         />
-      ))}
-    </StyledContainer>
+      )}
+    </StyledFormContainer>
   );
 };

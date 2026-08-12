@@ -87,6 +87,38 @@ describe('isRecordFieldReadOnly', () => {
     expect(result).toBe(false);
   });
 
+  it('should return true when the field is computed by a record label formula', () => {
+    const result = isRecordFieldReadOnly({
+      ...mockParams,
+      fieldMetadataItem: {
+        id: 'field-123',
+        isUIEditable: true,
+      },
+      fieldDefinition: {
+        type: FieldMetadataType.TEXT,
+        iconName: 'IconAbc',
+        fieldMetadataId: 'field-123',
+        label: 'Name',
+        metadata: {
+          fieldName: 'name',
+          placeHolder: 'Name',
+          settings: {
+            labelIdentifierFormula: {
+              template: '{0}',
+              fieldReferences: [
+                {
+                  fieldMetadataUniversalIdentifiers: ['source-field'],
+                },
+              ],
+            },
+          },
+        },
+      },
+    });
+
+    expect(result).toBe(true);
+  });
+
   it('should return true when field is from the standard application on a system object', () => {
     const result = isRecordFieldReadOnly({
       ...mockParams,
