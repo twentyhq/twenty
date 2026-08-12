@@ -36,8 +36,6 @@ const buildTableShape = (columnNames: string[]): WorkspaceTableShape => ({
   ),
   columnNames,
   relationShapeByFieldName: {},
-  fieldIdByName: {},
-  fieldIdByJoinColumnName: {},
   hasDeletedAtColumn: columnNames.includes('deletedAt'),
 });
 

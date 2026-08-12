@@ -1,22 +1,46 @@
 import { createHash } from 'crypto';
 
-import { type Pool, type PoolClient } from 'pg';
+import { Logger } from '@nestjs/common';
+
+import { type Pool } from 'pg';
 
 import { type CompiledStatement } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
 import { type QueryExecutorV2 } from 'src/engine/twenty-orm-v2/executor/types/query-executor-v2.type';
 
-const MAX_PREPARED_STATEMENT_SHAPES = 1000;
+const MAX_PREPARED_STATEMENT_SHAPES_PER_WORKSPACE = 500;
 
-const statementNameByText = new Map<string, string>();
+const logger = new Logger('PreparedStatementExecutor');
 
-const buildStatementName = (text: string): string | undefined => {
+// Statement text embeds the workspace schema, so shapes never cross tenants. The budget is
+// scoped the same way, otherwise one workspace exhausts a shared budget and every other
+// tenant silently falls back to unnamed statements.
+const statementNamesByWorkspaceId = new Map<string, Map<string, string>>();
+
+const saturatedWorkspaceIds = new Set<string>();
+
+const buildStatementName = (
+  workspaceId: string,
+  text: string,
+): string | undefined => {
+  const statementNameByText =
+    statementNamesByWorkspaceId.get(workspaceId) ?? new Map<string, string>();
+
+  statementNamesByWorkspaceId.set(workspaceId, statementNameByText);
+
   const existingName = statementNameByText.get(text);
 
   if (existingName !== undefined) {
     return existingName;
   }
 
-  if (statementNameByText.size >= MAX_PREPARED_STATEMENT_SHAPES) {
+  if (statementNameByText.size >= MAX_PREPARED_STATEMENT_SHAPES_PER_WORKSPACE) {
+    if (!saturatedWorkspaceIds.has(workspaceId)) {
+      saturatedWorkspaceIds.add(workspaceId);
+      logger.warn(
+        `Workspace ${workspaceId} reached ${MAX_PREPARED_STATEMENT_SHAPES_PER_WORKSPACE} prepared statement shapes; further shapes run unnamed`,
+      );
+    }
+
     return undefined;
   }
 
@@ -29,21 +53,19 @@ const buildStatementName = (text: string): string | undefined => {
 
 export class PreparedStatementExecutor implements QueryExecutorV2 {
   private readonly pool: Pool;
-  private readonly client?: PoolClient;
+  private readonly workspaceId: string;
 
-  constructor({ pool, client }: { pool: Pool; client?: PoolClient }) {
+  constructor({ pool, workspaceId }: { pool: Pool; workspaceId: string }) {
     this.pool = pool;
-    this.client = client;
+    this.workspaceId = workspaceId;
   }
 
   async execute(
     statement: CompiledStatement,
   ): Promise<Record<string, unknown>[]> {
-    const queryable = this.client ?? this.pool;
+    const statementName = buildStatementName(this.workspaceId, statement.text);
 
-    const statementName = buildStatementName(statement.text);
-
-    const result = await queryable.query({
+    const result = await this.pool.query({
       ...(statementName === undefined ? {} : { name: statementName }),
       text: statement.text,
       values: statement.values,

@@ -22,7 +22,7 @@ import { collectReferencedColumnNames } from 'src/engine/twenty-orm-v2/sql/utils
 import { compileNamedParameters } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
 import {
   buildColumnNameByResultAlias,
-  buildCountStatement,
+  buildPaginationParameters,
   buildProjection,
   buildSelectStatement,
   buildWhereExpression,
@@ -63,7 +63,6 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
   private limitValue?: number;
   private offsetValue?: number;
   private includeDeleted = false;
-  private groupByExpressions: string[] = [];
   private explicitSelection?: string[];
   private readonly aliasesWithRowLevelPermissionApplied = new Set<string>();
 
@@ -104,7 +103,6 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     cloned.limitValue = this.limitValue;
     cloned.offsetValue = this.offsetValue;
     cloned.includeDeleted = this.includeDeleted;
-    cloned.groupByExpressions = [...this.groupByExpressions];
     cloned.explicitSelection =
       this.explicitSelection === undefined
         ? undefined
@@ -209,18 +207,6 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     return this.appendOrderBy(orderByOrExpression, direction, nulls);
   }
 
-  groupBy(expression: string): this {
-    this.groupByExpressions = [this.normaliseColumnExpression(expression)];
-
-    return this;
-  }
-
-  addGroupBy(expression: string): this {
-    this.groupByExpressions.push(this.normaliseColumnExpression(expression));
-
-    return this;
-  }
-
   leftJoin(relationPath: string, alias: string, condition?: string): this {
     const [parentAlias, relationFieldName] = relationPath.split('.');
 
@@ -245,24 +231,23 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       );
     }
 
-    if (!isDefined(relationShape.joinColumnName)) {
-      throw new TwentyOrmV2Exception(
-        `Only to-one relations can be joined; "${relationFieldName}" is to-many and must be loaded as a separate query`,
-        TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
-      );
-    }
-
     const targetTableShape = this.context.tableShapeByObjectMetadataId(
       relationShape.targetObjectMetadataId,
     );
 
+    const joinColumnName = relationShape.joinColumnName;
+
+    // A to-many join has no renderable condition, but it is still recorded so the shared
+    // to-one guard rejects it with the same error the TypeORM path produces. Reaching SQL
+    // generation with one of these means the guard was bypassed, which throws there.
     this.joinClauses.push({
       alias,
       targetTableShape,
       relationType: relationShape.relationType,
-      condition:
-        condition ??
-        `${this.quoteColumn(parentAlias, relationShape.joinColumnName)} = ${this.quoteColumn(alias, 'id')}`,
+      condition: isDefined(joinColumnName)
+        ? (condition ??
+          `${this.quoteColumn(parentAlias, joinColumnName)} = ${this.quoteColumn(alias, 'id')}`)
+        : undefined,
       additionalOnConditions: [],
     });
 
@@ -273,14 +258,6 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     this.includeDeleted = true;
 
     return this;
-  }
-
-  take(count: number): this {
-    return this.limit(count);
-  }
-
-  skip(count: number): this {
-    return this.offset(count);
   }
 
   limit(count: number): this {
@@ -353,10 +330,6 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     return this.context.formatResult<T>(entity);
   }
 
-  async getRawMany<T extends Record<string, unknown>>(): Promise<T[]> {
-    return (await this.executeSelect()) as T[];
-  }
-
   async getRawOne<T extends Record<string, unknown>>(): Promise<T | undefined> {
     const previousLimit = this.limitValue;
 
@@ -369,25 +342,6 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     } finally {
       this.limitValue = previousLimit;
     }
-  }
-
-  async getCount(): Promise<number> {
-    const countBuilder = this.clone();
-
-    countBuilder.findOptions = {};
-    countBuilder.extraSelectClauses.length = 0;
-    countBuilder.orderByClauses = [];
-    countBuilder.limitValue = undefined;
-    countBuilder.offsetValue = undefined;
-
-    this.context.onBeforeExecute(countBuilder);
-
-    const sql = buildCountStatement(countBuilder.toSelectStatementState());
-
-    const compiled = compileNamedParameters(sql, countBuilder.parameters);
-    const rows = await this.context.executor.execute(compiled);
-
-    return Number(rows[0]?.count ?? 0);
   }
 
   addJoinCondition(alias: string, condition: string): this {
@@ -503,9 +457,11 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     sql: string;
     parameters: Record<string, unknown>;
   } {
+    const state = this.toSelectStatementState();
+
     return {
-      sql: buildSelectStatement(this.toSelectStatementState()),
-      parameters: this.parameters,
+      sql: buildSelectStatement(state),
+      parameters: { ...this.parameters, ...buildPaginationParameters(state) },
     };
   }
 
@@ -547,7 +503,6 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       joinClauses: this.joinClauses,
       whereClauses: this.whereClauses,
       orderByClauses: this.orderByClauses,
-      groupByExpressions: this.groupByExpressions,
       includeDeleted: this.includeDeleted,
       limitValue: this.limitValue,
       offsetValue: this.offsetValue,

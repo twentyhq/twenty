@@ -38,12 +38,8 @@ export const buildWorkspaceTableShape = ({
 
   const columnShapeByColumnName: Record<string, WorkspaceColumnShape> = {};
   const relationShapeByFieldName: Record<string, WorkspaceRelationShape> = {};
-  const fieldIdByName: Record<string, string> = {};
-  const fieldIdByJoinColumnName: Record<string, string> = {};
 
   for (const flatFieldMetadata of flatFieldMetadatas) {
-    fieldIdByName[flatFieldMetadata.name] = flatFieldMetadata.id;
-
     if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
       const relationType = flatFieldMetadata.settings?.relationType;
 
@@ -70,7 +66,6 @@ export const buildWorkspaceTableShape = ({
       };
 
       if (isDefined(joinColumnName)) {
-        fieldIdByJoinColumnName[joinColumnName] = flatFieldMetadata.id;
         columnShapeByColumnName[joinColumnName] = {
           columnName: joinColumnName,
           fieldMetadataId: flatFieldMetadata.id,
@@ -128,8 +123,6 @@ export const buildWorkspaceTableShape = ({
     columnShapeByColumnName,
     columnNames: Object.keys(columnShapeByColumnName),
     relationShapeByFieldName,
-    fieldIdByName,
-    fieldIdByJoinColumnName,
     hasDeletedAtColumn: isDefined(columnShapeByColumnName['deletedAt']),
   };
 };

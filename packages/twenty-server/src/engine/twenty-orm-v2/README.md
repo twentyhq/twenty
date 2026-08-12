@@ -66,16 +66,19 @@ because the permission check runs downstream of a builder it did not drive. v2 b
 query, so `getSelectedColumnNames()` returns the columns directly and
 `validateOperationIsPermittedOrThrow` is called with them.
 
-**`take()` is a plain LIMIT.** v1's `take` triggers TypeORM's two-phase `distinctAlias`
-query as soon as any join is present, which strips ORDER BY and LIMIT from the inner scan.
-Only a to-many join can duplicate root rows, and v2 refuses to join to-many at all
-(relations are separate queries), so a plain LIMIT is correct.
+**Pagination is a plain parameterised LIMIT.** v1's `take` triggers TypeORM's two-phase
+`distinctAlias` query as soon as any join is present, which strips ORDER BY and LIMIT from
+the inner scan. Only a to-many join can duplicate root rows, and v2 refuses to render a
+to-many join at all (relations are separate queries), so a plain LIMIT is correct. Page
+size and offset bind as parameters rather than inlining, so paging through a table reuses
+one statement shape instead of minting one per page.
 
 **Prepared statements.** Query text is generated from metadata and repeats across
 requests, so statements carry a name and Postgres parses and plans each once per
-connection. Names are bounded at 1000 distinct SQL shapes, because a connection retains
-every prepared statement for its lifetime; past that cap statements are sent unnamed and
-simply lose the plan reuse.
+connection. Statement text embeds the workspace schema, so the budget is scoped per
+workspace at 500 shapes: a shared budget would let one busy tenant push every other tenant
+onto unnamed statements. A workspace that saturates logs once, then loses plan reuse for
+further shapes.
 
 ## What is the same, deliberately
 
@@ -91,9 +94,11 @@ simply lose the plan reuse.
 
 `createQueryBuilder`, `clone`, `where` / `andWhere` / `orWhere` (strings and bracket
 factories), `setParameters`, `setFindOptions({ select })`, `addSelect`, `orderBy` /
-`addOrderBy`, `groupBy` / `addGroupBy`, `leftJoin` on to-one relations, `withDeleted`,
-`take` / `skip` / `limit` / `offset`, `getMany`, `getOne`, `getRawMany`, `getRawOne`,
-`getCount`, `getQuery`, `getQueryAndParameters`.
+`addOrderBy`, `leftJoin` on to-one relations, `withDeleted`, `limit` / `offset`,
+`getMany`, `getOne`, `getRawOne`, `getQuery`, `getQueryAndParameters`.
+
+The surface stops there on purpose: anything findMany cannot reach (`getCount`,
+`getRawMany`, `groupBy`, `take` / `skip`) is left to v1 until a runner needs it.
 
 Wired into `CommonFindManyQueryRunnerService` only. Other runners keep `repository`.
 

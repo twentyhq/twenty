@@ -233,9 +233,8 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       Object.keys(args.selectedFieldsResult.aggregate ?? {}).length > 0;
 
     const parentObjectRecordsAggregatedValues = hasAggregatedFields
-      ? ((await aggregateQueryBuilder.getRawOne<Record<string, number>>()) ??
-        {})
-      : {};
+      ? await aggregateQueryBuilder.getRawOne<Record<string, number>>()
+      : undefined;
 
     if (isDefined(args.selectedFieldsResult.relations)) {
       await this.processNestedRelationsHelper.processNestedRelations({
@@ -260,7 +259,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     return {
       records: objectRecords,
       aggregatedValues: parentObjectRecordsAggregatedValues,
-      totalCount: parentObjectRecordsAggregatedValues.totalCount ?? 0,
+      totalCount: parentObjectRecordsAggregatedValues?.totalCount,
       pageInfo,
       selectedFieldsResult: args.selectedFieldsResult,
     };

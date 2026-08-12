@@ -132,12 +132,6 @@ describe('buildWorkspaceTableShape', () => {
     ).toBeUndefined();
   });
 
-  it('should map the foreign key column back to its relation field', () => {
-    expect(tableShape.fieldIdByJoinColumnName['companyId']).toBe(
-      'field-company',
-    );
-  });
-
   it('should detect the soft-delete column', () => {
     expect(tableShape.hasDeletedAtColumn).toBe(true);
   });

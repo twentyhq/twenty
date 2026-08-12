@@ -20,6 +20,9 @@ import { PermissionsException } from 'src/engine/metadata-modules/permissions/pe
 import { permissionGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util';
 import { TwentyORMException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { twentyORMGraphqlApiExceptionHandler } from 'src/engine/twenty-orm/utils/twenty-orm-graphql-api-exception-handler.util';
+import { TwentyOrmV2Exception } from 'src/engine/twenty-orm-v2/exceptions/twenty-orm-v2.exception';
+import { isTwentyOrmV2UserInputError } from 'src/engine/twenty-orm-v2/utils/twenty-orm-v2-to-user-input-error.util';
+import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { WorkflowQueryValidationException } from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
 import { workflowQueryValidationGraphqlApiExceptionHandler } from 'src/modules/workflow/common/utils/workflow-query-validation-graphql-api-exception-handler.util';
 
@@ -41,6 +44,11 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
       return graphqlQueryRunnerExceptionHandler(error);
     case error instanceof TwentyORMException:
       return twentyORMGraphqlApiExceptionHandler(error);
+    case error instanceof TwentyOrmV2Exception &&
+      isTwentyOrmV2UserInputError(error):
+      throw new UserInputError(error.message, {
+        userFriendlyMessage: error.userFriendlyMessage,
+      });
     case error instanceof CommonQueryRunnerException:
       return commonQueryRunnerToGraphqlApiExceptionHandler(error);
     case error instanceof AuthException:

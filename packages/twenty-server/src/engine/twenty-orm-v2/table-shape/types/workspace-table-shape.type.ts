@@ -27,7 +27,5 @@ export type WorkspaceTableShape = {
   columnShapeByColumnName: Record<string, WorkspaceColumnShape>;
   columnNames: string[];
   relationShapeByFieldName: Record<string, WorkspaceRelationShape>;
-  fieldIdByName: Record<string, string>;
-  fieldIdByJoinColumnName: Record<string, string>;
   hasDeletedAtColumn: boolean;
 };

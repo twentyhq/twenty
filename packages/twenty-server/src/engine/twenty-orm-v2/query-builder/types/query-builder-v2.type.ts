@@ -1,3 +1,5 @@
+import { InstanceChecker } from 'typeorm';
+
 export type WhereFactoryLike = {
   whereFactory: (queryBuilder: WhereExpressionLike) => void;
 };
@@ -24,12 +26,8 @@ export const isWhereFactoryLike = (
   condition !== null &&
   typeof (condition as WhereFactoryLike).whereFactory === 'function';
 
-const NOT_BRACKETS_INSTANCE_SYMBOL = Symbol.for('NotBrackets');
-
 export const isNegatedWhereFactoryLike = (condition: unknown): boolean =>
-  isWhereFactoryLike(condition) &&
-  (condition as { '@instanceof'?: symbol })['@instanceof'] ===
-    NOT_BRACKETS_INSTANCE_SYMBOL;
+  isWhereFactoryLike(condition) && InstanceChecker.isNotBrackets(condition);
 
 export type OrderByDirectionLike = 'ASC' | 'DESC';
 export type OrderByNullsLike = 'NULLS FIRST' | 'NULLS LAST';

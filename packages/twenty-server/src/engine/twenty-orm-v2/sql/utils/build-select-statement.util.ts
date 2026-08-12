@@ -20,7 +20,7 @@ export type JoinClause = {
   alias: string;
   targetTableShape: WorkspaceTableShape;
   relationType: RelationType;
-  condition: string;
+  condition?: string;
   additionalOnConditions: string[];
 };
 
@@ -44,7 +44,6 @@ export type SelectStatementState = {
   joinClauses: JoinClause[];
   whereClauses: WhereClause[];
   orderByClauses: OrderByClause[];
-  groupByExpressions: string[];
   includeDeleted: boolean;
   limitValue?: number;
   offsetValue?: number;
@@ -148,6 +147,13 @@ export const buildFromClause = (state: SelectStatementState): string =>
 export const buildJoinClause = (state: SelectStatementState): string =>
   state.joinClauses
     .map((joinClause) => {
+      if (!isDefined(joinClause.condition)) {
+        throw new TwentyOrmV2Exception(
+          `Only to-one relations can be joined; "${joinClause.alias}" is to-many and must be loaded as a separate query`,
+          TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
+        );
+      }
+
       const onConditions = [
         joinClause.condition,
         ...joinClause.additionalOnConditions,
@@ -187,6 +193,22 @@ export const buildOrderByClause = (state: SelectStatementState): string => {
     .join(', ')}`;
 };
 
+// Inlining page size and offset would mint a new prepared statement shape per page, so
+// they bind as parameters under reserved names the shared parsers cannot produce.
+export const LIMIT_PARAMETER_NAME = 'ormV2Limit';
+export const OFFSET_PARAMETER_NAME = 'ormV2Offset';
+
+export const buildPaginationParameters = (
+  state: SelectStatementState,
+): Record<string, number> => ({
+  ...(isDefined(state.limitValue)
+    ? { [LIMIT_PARAMETER_NAME]: Number(state.limitValue) }
+    : {}),
+  ...(isDefined(state.offsetValue)
+    ? { [OFFSET_PARAMETER_NAME]: Number(state.offsetValue) }
+    : {}),
+});
+
 export const buildSelectStatement = (state: SelectStatementState): string => {
   const whereExpression = buildWhereExpression(state);
 
@@ -195,25 +217,9 @@ export const buildSelectStatement = (state: SelectStatementState): string => {
     buildFromClause(state),
     buildJoinClause(state),
     whereExpression.length > 0 ? `WHERE ${whereExpression}` : '',
-    state.groupByExpressions.length > 0
-      ? `GROUP BY ${state.groupByExpressions.join(', ')}`
-      : '',
     buildOrderByClause(state),
-    isDefined(state.limitValue) ? `LIMIT ${Number(state.limitValue)}` : '',
-    isDefined(state.offsetValue) ? `OFFSET ${Number(state.offsetValue)}` : '',
-  ]
-    .filter((part) => part.length > 0)
-    .join(' ');
-};
-
-export const buildCountStatement = (state: SelectStatementState): string => {
-  const whereExpression = buildWhereExpression(state);
-
-  return [
-    `SELECT COUNT(DISTINCT ${quoteColumn(state.alias, 'id')}) AS "count"`,
-    buildFromClause(state),
-    buildJoinClause(state),
-    whereExpression.length > 0 ? `WHERE ${whereExpression}` : '',
+    isDefined(state.limitValue) ? `LIMIT :${LIMIT_PARAMETER_NAME}` : '',
+    isDefined(state.offsetValue) ? `OFFSET :${OFFSET_PARAMETER_NAME}` : '',
   ]
     .filter((part) => part.length > 0)
     .join(' ');

@@ -74,7 +74,10 @@ export class WorkspaceDataSourceV2 {
       flatObjectMetadata,
       internalContext: this.internalContext,
       authContext: this.authContext,
-      executor: new PreparedStatementExecutor({ pool: this.pool }),
+      executor: new PreparedStatementExecutor({
+        pool: this.pool,
+        workspaceId: this.internalContext.workspaceId,
+      }),
       objectRecordsPermissions,
       shouldBypassPermissionChecks,
       tableShapeByObjectMetadataId: (targetObjectMetadataId) =>

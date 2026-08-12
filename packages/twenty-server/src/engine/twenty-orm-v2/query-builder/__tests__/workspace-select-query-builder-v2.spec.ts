@@ -34,8 +34,6 @@ const companyTableShape: WorkspaceTableShape = {
   },
   columnNames: ['id', 'name', 'deletedAt'],
   relationShapeByFieldName: {},
-  fieldIdByName: {},
-  fieldIdByJoinColumnName: {},
   hasDeletedAtColumn: true,
 };
 
@@ -75,8 +73,6 @@ const personTableShape: WorkspaceTableShape = {
       targetFieldMetadataId: 'field-company',
     },
   },
-  fieldIdByName: {},
-  fieldIdByJoinColumnName: {},
   hasDeletedAtColumn: true,
 };
 
@@ -161,25 +157,52 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
     );
   });
 
-  it('should refuse to join a to-many relation', () => {
+  it('should report a to-many join to the shared guard rather than rendering it', () => {
     const { queryBuilder } = buildQueryBuilder();
 
-    expect(() => queryBuilder.leftJoin('person.people', 'people')).toThrow(
-      TwentyOrmV2Exception,
-    );
+    queryBuilder.setFindOptions({ select: { id: true } });
+    queryBuilder.leftJoin('person.people', 'people');
+
+    expect(queryBuilder.expressionMap.joinAttributes).toEqual([
+      {
+        alias: { name: 'people' },
+        relation: { isOneToMany: true, isManyToMany: false },
+      },
+    ]);
+    expect(() => queryBuilder.getQuery()).toThrow(TwentyOrmV2Exception);
   });
 
-  it('should emit a plain LIMIT for take, with no distinct sub-select', () => {
+  it('should emit a plain parameterised LIMIT, with no distinct sub-select', () => {
     const { queryBuilder } = buildQueryBuilder();
 
     queryBuilder.setFindOptions({ select: { id: true } });
     queryBuilder.leftJoin('person.company', 'company');
-    queryBuilder.take(31);
+    queryBuilder.limit(31);
 
-    const sql = queryBuilder.getQuery();
+    const [text, values] = queryBuilder.getQueryAndParameters();
 
-    expect(sql).toContain('LIMIT 31');
-    expect(sql).not.toContain('DISTINCT');
+    expect(text).toContain('LIMIT $');
+    expect(text).not.toContain('DISTINCT');
+    expect(values).toContain(31);
+  });
+
+  it('should reuse one statement shape across page sizes and offsets', () => {
+    const buildPaginatedQuery = (limit: number, offset: number) => {
+      const { queryBuilder } = buildQueryBuilder();
+
+      queryBuilder.setFindOptions({ select: { id: true } });
+      queryBuilder.limit(limit);
+      queryBuilder.offset(offset);
+
+      return queryBuilder.getQueryAndParameters();
+    };
+
+    const [firstText, firstValues] = buildPaginatedQuery(30, 0);
+    const [secondText, secondValues] = buildPaginatedQuery(60, 120);
+
+    expect(firstText).toBe(secondText);
+    expect(firstValues).toEqual([30, 0]);
+    expect(secondValues).toEqual([60, 120]);
   });
 
   it('should render order by with direction and nulls handling', () => {
@@ -383,10 +406,10 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
     });
 
     failingBuilder.setFindOptions({ select: { id: true } });
-    failingBuilder.take(25);
+    failingBuilder.limit(25);
 
     await expect(failingBuilder.getOne()).rejects.toThrow('connection lost');
-    expect(failingBuilder.getQuery()).toContain('LIMIT 25');
+    expect(failingBuilder.getQueryAndParameters()[1]).toEqual([25]);
   });
 
   it('should not attribute a joined column to the main alias', () => {
