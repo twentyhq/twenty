@@ -134,10 +134,6 @@ export class BillingWebhookInvoiceService {
     invoicePeriodEnd: Date;
     isFirstPeriodAfterTrial: boolean;
   }): Promise<void> {
-    // billingSubscription outlives hard-deleted workspaces, and a credit grant
-    // has a foreign key to workspace, so carrying one forward for a workspace
-    // that is gone fails the insert and the webhook with it. Soft-deleted ones
-    // still have their row and can still be restored, so they carry forward.
     const workspaceExists = await this.workspaceRepository.exists({
       where: { id: subscription.workspaceId },
       withDeleted: true,
