@@ -20,6 +20,7 @@ import { objectFilterDropdownIsSelectingRelationTargetFieldComponentState } from
 import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
 import { isCompositeFilterableFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFilterableFieldType';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
+import { isOneToManyRelationField } from '@/object-metadata/utils/isOneToManyRelationField';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -123,9 +124,9 @@ export const AdvancedFilterFieldSelectMenu = ({
       selectedFieldMetadataItem.type,
     );
 
-    const isRelationTraversalField = isManyToOneRelationField(
-      selectedFieldMetadataItem,
-    );
+    const isRelationTraversalField =
+      isManyToOneRelationField(selectedFieldMetadataItem) ||
+      isOneToManyRelationField(selectedFieldMetadataItem);
 
     const compositeSubMenuFieldType =
       !isRelationTraversalField && isCompositeFilterableFieldType(filterType)

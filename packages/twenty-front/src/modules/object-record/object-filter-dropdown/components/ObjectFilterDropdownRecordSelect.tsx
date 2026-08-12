@@ -78,6 +78,11 @@ const ObjectFilterDropdownRecordSelectContent = ({
     currentRecordFiltersComponentState,
   );
 
+  const relationTargetFieldMetadataIdUsedInDropdown =
+    useAtomComponentStateValue(
+      relationTargetFieldMetadataIdUsedInDropdownComponentState,
+    );
+
   const { isCurrentWorkspaceMemberSelected } = jsonRelationFilterValueSchema
     .catch({
       isCurrentWorkspaceMemberSelected: false,
@@ -97,6 +102,8 @@ const ObjectFilterDropdownRecordSelectContent = ({
     currentRecordFilters.find(
       (filter) =>
         filter.fieldMetadataId === fieldMetadataItemUsedInFilterDropdown?.id &&
+        (filter.relationTargetFieldMetadataId ?? null) ===
+          relationTargetFieldMetadataIdUsedInDropdown &&
         !isDefined(filter.recordFilterGroupId),
     );
 

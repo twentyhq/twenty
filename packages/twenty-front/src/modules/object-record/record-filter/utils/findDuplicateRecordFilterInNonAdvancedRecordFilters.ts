@@ -6,10 +6,12 @@ export const findDuplicateRecordFilterInNonAdvancedRecordFilters = ({
   recordFilters,
   fieldMetadataItemId,
   subFieldName,
+  relationTargetFieldMetadataId,
 }: {
   recordFilters: RecordFilter[];
   fieldMetadataItemId: string;
   subFieldName?: string | null | undefined;
+  relationTargetFieldMetadataId?: string | null | undefined;
 }): RecordFilter | undefined => {
   const duplicateFilterInCurrentRecordFilters = recordFilters
     .filter((recordFilter) => !isDefined(recordFilter.recordFilterGroupId))
@@ -22,6 +24,10 @@ export const findDuplicateRecordFilterInNonAdvancedRecordFilters = ({
         compareStrictlyExceptForNullAndUndefined(
           recordFilter.subFieldName,
           subFieldName,
+        ) &&
+        compareStrictlyExceptForNullAndUndefined(
+          recordFilter.relationTargetFieldMetadataId,
+          relationTargetFieldMetadataId,
         ),
     );
 

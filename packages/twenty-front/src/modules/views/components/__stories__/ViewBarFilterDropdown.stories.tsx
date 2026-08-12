@@ -198,6 +198,18 @@ export const Number: Story = {
   },
 };
 
+export const OneToManyRelation: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(await canvas.findByText('Filter'));
+    await userEvent.click(await canvas.findByText('People'));
+
+    expect((await canvas.findAllByText('Name')).length).toBeGreaterThan(0);
+    expect(await canvas.findByText('City')).toBeVisible();
+  },
+};
+
 const MOCK_ROOT_FILTER_GROUP_ID = 'test-root-filter-group-id';
 
 export const AdvancedFilterCountBadge: Story = {

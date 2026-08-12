@@ -4,6 +4,7 @@ import { Provider as JotaiProvider } from 'jotai';
 
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
+import { relationTargetFieldMetadataIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/relationTargetFieldMetadataIdUsedInDropdownComponentState';
 import { useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown } from '@/views/hooks/useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown';
 
 import {
@@ -36,6 +37,8 @@ jest.mock('@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack', () => ({
 }));
 
 const peopleObjectMetadataItemMock = getMockObjectMetadataItemOrThrow('person');
+const companyObjectMetadataItemMock =
+  getMockObjectMetadataItemOrThrow('company');
 const personCityFieldMetadataItemMock =
   peopleObjectMetadataItemMock.fields.find((field) => field.name === 'city');
 const personCompanyFieldMetadataItemMock =
@@ -44,6 +47,8 @@ const personCreatedAtFieldMetadataItemMock =
   peopleObjectMetadataItemMock.fields.find(
     (field) => field.name === 'createdAt',
   );
+const companyNameFieldMetadataItemMock =
+  companyObjectMetadataItemMock.fields.find((field) => field.name === 'name');
 
 const wrapper = ({ children }: { children: React.ReactNode }) => {
   setTestObjectMetadataItemsInMetadataStore(
@@ -182,6 +187,62 @@ describe('useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown', () =
         enableGlobalHotkeysConflictingWithKeyboard: false,
       },
     });
+  });
+
+  it('should initialize a simple filter on a relation target field', () => {
+    const { result } = renderHook(
+      () => {
+        const { initializeFilterOnFieldMetataItemFromViewBarFilterDropdown } =
+          useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown();
+        const relationTargetFieldMetadataIdUsedInDropdown =
+          useAtomComponentStateValue(
+            relationTargetFieldMetadataIdUsedInDropdownComponentState,
+          );
+        const objectFilterDropdownCurrentRecordFilter =
+          useAtomComponentStateValue(
+            objectFilterDropdownCurrentRecordFilterComponentState,
+          );
+        const currentRecordFilters = useAtomComponentStateValue(
+          currentRecordFiltersComponentState,
+          'test',
+        );
+
+        return {
+          initializeFilterOnFieldMetataItemFromViewBarFilterDropdown,
+          relationTargetFieldMetadataIdUsedInDropdown,
+          objectFilterDropdownCurrentRecordFilter,
+          currentRecordFilters,
+        };
+      },
+      { wrapper },
+    );
+
+    if (
+      !personCompanyFieldMetadataItemMock ||
+      !companyNameFieldMetadataItemMock
+    ) {
+      throw new Error('Missing relation traversal fields in metadata mock');
+    }
+
+    act(() => {
+      result.current.initializeFilterOnFieldMetataItemFromViewBarFilterDropdown(
+        personCompanyFieldMetadataItemMock,
+        companyNameFieldMetadataItemMock,
+      );
+    });
+
+    expect(result.current.relationTargetFieldMetadataIdUsedInDropdown).toBe(
+      companyNameFieldMetadataItemMock.id,
+    );
+    expect(
+      result.current.objectFilterDropdownCurrentRecordFilter,
+    ).toMatchObject({
+      fieldMetadataId: personCompanyFieldMetadataItemMock.id,
+      relationTargetFieldMetadataId: companyNameFieldMetadataItemMock.id,
+      type: 'TEXT',
+      label: `${personCompanyFieldMetadataItemMock.label} → ${companyNameFieldMetadataItemMock.label}`,
+    });
+    expect(result.current.currentRecordFilters).toHaveLength(0);
   });
 
   it('should initialize filter with a duplicate field on city', () => {

@@ -86,8 +86,18 @@ export class RelationFieldMetadataGqlInputTypeGenerator {
     typeOptions: { settings?: FlatFieldMetadata['settings'] };
     context: SchemaGenerationContext;
   }) {
-    if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY)
-      return {};
+    if (fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY) {
+      if (fieldMetadata.type !== FieldMetadataType.RELATION) {
+        return {};
+      }
+
+      return this.getTargetRelationInputField({
+        fieldMetadata,
+        context,
+        kind: GqlInputTypeDefinitionKind.Filter,
+        descriptionPrefix: 'Filter on fields of any related',
+      });
+    }
 
     const { joinColumnName } = extractGraphQLRelationFieldNames(fieldMetadata);
 

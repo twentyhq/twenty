@@ -2,7 +2,7 @@ import {
   createWhereExpressionRecorder,
   type RecordedWhereCall,
 } from 'test/utils/create-where-expression-recorder.util';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { type ObjectLiteral } from 'typeorm';
 
 import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
@@ -313,6 +313,139 @@ describe('GraphqlQueryFilterConditionParser', () => {
 
     it('emits nothing for an empty filter', () => {
       expect(recordFilterEntries({})).toEqual([]);
+    });
+
+    it('uses a correlated exists subquery for a one-to-many relation', () => {
+      const sourceRelationField = createFlatFieldMetadata({
+        id: 'fellowships-field-id',
+        name: 'fellowships',
+        type: FieldMetadataType.RELATION,
+        objectMetadataId: 'person-object-id',
+        universalIdentifier: 'fellowships-field-universal-id',
+        relationTargetObjectMetadataId: 'fellowship-object-id',
+        relationTargetFieldMetadataId: 'person-field-id',
+        settings: { relationType: RelationType.ONE_TO_MANY },
+      });
+      const targetRelationField = createFlatFieldMetadata({
+        id: 'person-field-id',
+        name: 'person',
+        type: FieldMetadataType.RELATION,
+        objectMetadataId: 'fellowship-object-id',
+        universalIdentifier: 'person-field-universal-id',
+        relationTargetObjectMetadataId: 'person-object-id',
+        relationTargetFieldMetadataId: 'fellowships-field-id',
+        settings: { relationType: RelationType.MANY_TO_ONE },
+      });
+      const cohortField = createFlatFieldMetadata({
+        id: 'cohort-field-id',
+        name: 'cohort',
+        type: FieldMetadataType.TEXT,
+        objectMetadataId: 'fellowship-object-id',
+        universalIdentifier: 'cohort-field-universal-id',
+      });
+      const personObjectMetadata = {
+        id: 'person-object-id',
+        nameSingular: 'person',
+        namePlural: 'people',
+        fieldIds: [sourceRelationField.id],
+        universalIdentifier: 'person-object-universal-id',
+      } as FlatObjectMetadata;
+      const fellowshipObjectMetadata = {
+        id: 'fellowship-object-id',
+        nameSingular: 'fellowship',
+        namePlural: 'fellowships',
+        fieldIds: [targetRelationField.id, cohortField.id],
+        universalIdentifier: 'fellowship-object-universal-id',
+      } as FlatObjectMetadata;
+      const relationFieldMaps = {
+        byUniversalIdentifier: Object.fromEntries(
+          [sourceRelationField, targetRelationField, cohortField].map(
+            (field) => [field.universalIdentifier, field],
+          ),
+        ),
+        universalIdentifierById: Object.fromEntries(
+          [sourceRelationField, targetRelationField, cohortField].map(
+            (field) => [field.id, field.universalIdentifier],
+          ),
+        ),
+        universalIdentifiersByApplicationId: {},
+      } as FlatEntityMaps<FlatFieldMetadata>;
+      const objectMetadataMaps = {
+        byUniversalIdentifier: {
+          [personObjectMetadata.universalIdentifier]: personObjectMetadata,
+          [fellowshipObjectMetadata.universalIdentifier]:
+            fellowshipObjectMetadata,
+        },
+        universalIdentifierById: {
+          [personObjectMetadata.id]: personObjectMetadata.universalIdentifier,
+          [fellowshipObjectMetadata.id]:
+            fellowshipObjectMetadata.universalIdentifier,
+        },
+        universalIdentifiersByApplicationId: {},
+      } as FlatEntityMaps<FlatObjectMetadata>;
+
+      const subQueryWhereCalls: string[] = [];
+      const subQuery = {
+        select: jest.fn().mockReturnThis(),
+        from: jest.fn().mockReturnThis(),
+        where: jest.fn(),
+        andWhere: jest.fn(),
+        getQuery: jest.fn(() => '(SELECT 1 FROM fellowship)'),
+        getParameters: jest.fn(() => ({})),
+      };
+
+      subQuery.where.mockImplementation((sql: string) => {
+        subQueryWhereCalls.push(sql);
+        return subQuery;
+      });
+      subQuery.andWhere.mockImplementation((sql: string) => {
+        subQueryWhereCalls.push(sql);
+        return subQuery;
+      });
+      const queryBuilder = {
+        objectRecordsPermissions: {},
+        shouldBypassPermissionChecks: true,
+        expressionMap: {
+          findAliasByName: jest.fn(() => ({
+            metadata: {
+              findRelationWithPropertyPath: jest.fn(() => ({
+                inverseEntityMetadata: { target: 'fellowship' },
+              })),
+            },
+          })),
+        },
+        subQuery: jest.fn(() => subQuery),
+      } as unknown as WorkspaceSelectQueryBuilder<ObjectLiteral>;
+      const recorder = createWhereExpressionRecorder();
+      const parser = new GraphqlQueryFilterConditionParser(
+        personObjectMetadata,
+        relationFieldMaps,
+        objectMetadataMaps,
+      );
+
+      parser.applyFilterEntriesToWhereBrackets(
+        recorder.whereExpression,
+        queryBuilder,
+        'person',
+        { fellowships: { cohort: { eq: 'Brains' } } },
+      );
+
+      expect(queryBuilder.subQuery).toHaveBeenCalledTimes(1);
+      expect(subQuery.from).toHaveBeenCalledWith(
+        'fellowship',
+        'person_fellowships_exists_0',
+      );
+      expect(subQueryWhereCalls).toEqual([
+        expect.stringContaining('"person_fellowships_exists_0"."cohort"'),
+        '"person_fellowships_exists_0"."personId" = "person"."id"',
+      ]);
+      expect(recorder.calls[0]).toEqual({
+        method: 'where',
+        node: expect.objectContaining({
+          kind: 'sql',
+          sql: 'EXISTS (SELECT 1 FROM fellowship)',
+        }),
+      });
     });
   });
 });

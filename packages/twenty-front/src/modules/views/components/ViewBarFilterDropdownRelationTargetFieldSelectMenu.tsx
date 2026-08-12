@@ -2,10 +2,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { isOneToManyRelationField } from '@/object-metadata/utils/isOneToManyRelationField';
-import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
-import { useApplyAdvancedFilterRelationTargetField } from '@/object-record/advanced-filter/hooks/useApplyAdvancedFilterRelationTargetField';
-import { useApplyAdvancedFilterSourceField } from '@/object-record/advanced-filter/hooks/useApplyAdvancedFilterSourceField';
-import { usePushFocusForLeafFieldValuePicker } from '@/object-record/advanced-filter/hooks/usePushFocusForLeafFieldValuePicker';
+import { FILTER_FIELD_LIST_ID } from '@/object-record/object-filter-dropdown/constants/FilterFieldListId';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownIsSelectingRelationTargetFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingRelationTargetFieldComponentState';
 import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
@@ -21,73 +18,48 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
+import { useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown } from '@/views/hooks/useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown';
 import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 
-const RELATION_RECORD_SELECTABLE_ITEM_ID = 'relation-record-select';
+const RELATION_RECORD_SELECTABLE_ITEM_ID = 'view-bar-relation-record-select';
 
-type AdvancedFilterRelationTargetFieldSelectMenuProps = {
-  recordFilterId: string;
-};
-
-export const AdvancedFilterRelationTargetFieldSelectMenu = ({
-  recordFilterId,
-}: AdvancedFilterRelationTargetFieldSelectMenuProps) => {
-  const { getIcon } = useIcons();
-
+export const ViewBarFilterDropdownRelationTargetFieldSelectMenu = () => {
   const sourceFieldMetadataItem = useAtomComponentSelectorValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
-
   const setObjectFilterDropdownIsSelectingRelationTargetField =
     useSetAtomComponentState(
       objectFilterDropdownIsSelectingRelationTargetFieldComponentState,
     );
-
-  const { closeAdvancedFilterFieldSelectDropdown } =
-    useAdvancedFilterFieldSelectDropdown(recordFilterId);
-
-  const { applyAdvancedFilterRelationTargetField } =
-    useApplyAdvancedFilterRelationTargetField();
-
-  const { applyAdvancedFilterSourceField } =
-    useApplyAdvancedFilterSourceField();
-
-  const { pushFocusForLeafFieldValuePicker } =
-    usePushFocusForLeafFieldValuePicker();
-
-  const { advancedFilterFieldSelectDropdownId } =
-    useAdvancedFilterFieldSelectDropdown(recordFilterId);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    advancedFilterFieldSelectDropdownId,
+    FILTER_FIELD_LIST_ID,
   );
+  const { getIcon } = useIcons();
+  const { initializeFilterOnFieldMetataItemFromViewBarFilterDropdown } =
+    useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown();
 
   const isTraversableRelation =
     isDefined(sourceFieldMetadataItem) &&
     (isManyToOneRelationField(sourceFieldMetadataItem) ||
       isOneToManyRelationField(sourceFieldMetadataItem));
-
   const targetObjectMetadataId = isTraversableRelation
     ? sourceFieldMetadataItem.relation.targetObjectMetadata.id
     : null;
-
   const targetObjectNameSingular = isTraversableRelation
     ? sourceFieldMetadataItem.relation.targetObjectMetadata.nameSingular
     : CoreObjectNameSingular.WorkspaceMember;
-
   const { objectMetadataItem: targetObjectMetadataItem } =
     useObjectMetadataItem({
       objectNameSingular: targetObjectNameSingular,
     });
-
   const { filterableFieldMetadataItems } = useFilterableFieldMetadataItems(
     targetObjectMetadataId ?? '',
   );
-
   const relationTargetFields = filterableFieldMetadataItems.filter(
     (field) =>
       field.type !== FieldMetadataType.RELATION &&
@@ -98,33 +70,19 @@ export const AdvancedFilterRelationTargetFieldSelectMenu = ({
     return null;
   }
 
-  const handleSubMenuBack = () => {
-    setObjectFilterDropdownIsSelectingRelationTargetField(false);
-  };
-
-  const handleSelectTargetField = (
-    relationTargetFieldMetadataItem: FieldMetadataItem,
-  ) => {
-    applyAdvancedFilterRelationTargetField({
-      sourceFieldMetadataItem,
-      relationTargetFieldMetadataItem,
-      recordFilterId,
-    });
-
-    pushFocusForLeafFieldValuePicker(relationTargetFieldMetadataItem);
-
-    setObjectFilterDropdownIsSelectingRelationTargetField(false);
-    closeAdvancedFilterFieldSelectDropdown();
-  };
-
   const handleSelectRelationRecord = () => {
-    applyAdvancedFilterSourceField({
+    initializeFilterOnFieldMetataItemFromViewBarFilterDropdown(
       sourceFieldMetadataItem,
-      recordFilterId,
-    });
-
+    );
     setObjectFilterDropdownIsSelectingRelationTargetField(false);
-    closeAdvancedFilterFieldSelectDropdown();
+  };
+
+  const handleSelectTargetField = (targetField: FieldMetadataItem) => {
+    initializeFilterOnFieldMetataItemFromViewBarFilterDropdown(
+      sourceFieldMetadataItem,
+      targetField,
+    );
+    setObjectFilterDropdownIsSelectingRelationTargetField(false);
   };
 
   const selectableItemIdArray = [
@@ -137,7 +95,9 @@ export const AdvancedFilterRelationTargetFieldSelectMenu = ({
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
-            onClick={handleSubMenuBack}
+            onClick={() =>
+              setObjectFilterDropdownIsSelectingRelationTargetField(false)
+            }
             Icon={IconChevronLeft}
           />
         }
@@ -146,9 +106,9 @@ export const AdvancedFilterRelationTargetFieldSelectMenu = ({
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         <SelectableList
-          focusId={advancedFilterFieldSelectDropdownId}
+          focusId={ViewBarFilterDropdownIds.MAIN}
           selectableItemIdArray={selectableItemIdArray}
-          selectableListInstanceId={advancedFilterFieldSelectDropdownId}
+          selectableListInstanceId={FILTER_FIELD_LIST_ID}
         >
           <SelectableListItem
             itemId={RELATION_RECORD_SELECTABLE_ITEM_ID}
@@ -156,28 +116,21 @@ export const AdvancedFilterRelationTargetFieldSelectMenu = ({
           >
             <MenuItem
               focused={selectedItemId === RELATION_RECORD_SELECTABLE_ITEM_ID}
-              testId="select-filter-relation-record"
               onClick={handleSelectRelationRecord}
               text={targetObjectMetadataItem.labelSingular}
               LeftIcon={getIcon(targetObjectMetadataItem.icon)}
             />
           </SelectableListItem>
           <DropdownMenuSeparator />
-          {relationTargetFields.map((targetField, index) => (
+          {relationTargetFields.map((targetField) => (
             <SelectableListItem
               itemId={targetField.id}
-              key={`select-filter-relation-${index}`}
-              onEnter={() => {
-                handleSelectTargetField(targetField);
-              }}
+              key={targetField.id}
+              onEnter={() => handleSelectTargetField(targetField)}
             >
               <MenuItem
                 focused={selectedItemId === targetField.id}
-                key={`select-filter-relation-${index}`}
-                testId={`select-filter-relation-${index}`}
-                onClick={() => {
-                  handleSelectTargetField(targetField);
-                }}
+                onClick={() => handleSelectTargetField(targetField)}
                 text={targetField.label}
                 LeftIcon={getIcon(targetField.icon)}
               />

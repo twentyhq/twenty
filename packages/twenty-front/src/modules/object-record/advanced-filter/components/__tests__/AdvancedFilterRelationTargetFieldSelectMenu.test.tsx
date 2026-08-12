@@ -2,6 +2,7 @@ import { fireEvent, render, waitFor } from '@testing-library/react';
 import { useEffect, useState } from 'react';
 
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
+import { isOneToManyRelationField } from '@/object-metadata/utils/isOneToManyRelationField';
 import { AdvancedFilterRelationTargetFieldSelectMenu } from '@/object-record/advanced-filter/components/AdvancedFilterRelationTargetFieldSelectMenu';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
@@ -29,7 +30,15 @@ const nonWorkspaceMemberRelationField = opportunity.fields.find(
     field.relation.targetObjectMetadata.nameSingular !== 'workspaceMember',
 );
 
-if (!workspaceMemberRelationField || !nonWorkspaceMemberRelationField) {
+const oneToManyRelationField = opportunity.fields.find((field) =>
+  isOneToManyRelationField(field),
+);
+
+if (
+  !workspaceMemberRelationField ||
+  !nonWorkspaceMemberRelationField ||
+  !oneToManyRelationField
+) {
   throw new Error('Missing expected relation fields in opportunity mock');
 }
 
@@ -98,16 +107,20 @@ describe('AdvancedFilterRelationTargetFieldSelectMenu', () => {
     });
   });
 
-  it('does not show the "filter by record" entry for a non-workspaceMember relation', async () => {
-    const { findByText, queryByTestId } = renderSubMenu(
-      nonWorkspaceMemberRelationField.id,
-    );
+  it('shows the "filter by record" entry for any relation target', async () => {
+    const { getByTestId } = renderSubMenu(nonWorkspaceMemberRelationField.id);
 
-    await findByText(nonWorkspaceMemberRelationField.label);
+    await waitFor(() => {
+      expect(getByTestId('select-filter-relation-record')).toBeInTheDocument();
+    });
+  });
 
-    expect(
-      queryByTestId('select-filter-relation-record'),
-    ).not.toBeInTheDocument();
+  it('shows relation target choices for a one-to-many source field', async () => {
+    const { getByTestId } = renderSubMenu(oneToManyRelationField.id);
+
+    await waitFor(() => {
+      expect(getByTestId('select-filter-relation-record')).toBeInTheDocument();
+    });
   });
 
   it('creates a direct RELATION filter (relationTargetFieldMetadataId null) when the record entry is selected', async () => {

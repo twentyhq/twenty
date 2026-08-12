@@ -391,6 +391,65 @@ describe('FilterArgProcessorService', () => {
       expect(result).toEqual({ target: { name: { eq: 'Airbnb' } } });
     });
 
+    it('should accept a one-to-many relation traversal onto a scalar target field', () => {
+      const {
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+        sourceObjectMetadata,
+      } = createRelationFixture();
+      const relationField = flatFieldMetadataMaps.byUniversalIdentifier[
+        'relation-field-uid'
+      ] as FlatFieldMetadata<FieldMetadataType.RELATION> | undefined;
+
+      if (!relationField?.settings) {
+        throw new Error('Expected relation settings in test fixture');
+      }
+
+      relationField.settings = {
+        ...relationField.settings,
+        relationType: RelationType.ONE_TO_MANY,
+      };
+
+      const filter = { target: { name: { eq: 'Brains' } } };
+      const result = filterArgProcessorService.process({
+        filter,
+        flatObjectMetadata: sourceObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      });
+
+      expect(result).toEqual(filter);
+    });
+
+    it('should reject a scalar operator directly on a one-to-many relation', () => {
+      const {
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+        sourceObjectMetadata,
+      } = createRelationFixture();
+      const relationField = flatFieldMetadataMaps.byUniversalIdentifier[
+        'relation-field-uid'
+      ] as FlatFieldMetadata<FieldMetadataType.RELATION> | undefined;
+
+      if (!relationField?.settings) {
+        throw new Error('Expected relation settings in test fixture');
+      }
+
+      relationField.settings = {
+        ...relationField.settings,
+        relationType: RelationType.ONE_TO_MANY,
+      };
+
+      expect(() =>
+        filterArgProcessorService.process({
+          filter: { target: null },
+          flatObjectMetadata: sourceObjectMetadata,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+        }),
+      ).toThrow(/without a related-record filter/);
+    });
+
     it('should accept a relation traversal onto a composite sub-field without tripping the depth cap', () => {
       // Composite sub-field navigation is not a relation hop, so it must
       // not count against MAX_RELATION_FILTER_DEPTH = 1.
