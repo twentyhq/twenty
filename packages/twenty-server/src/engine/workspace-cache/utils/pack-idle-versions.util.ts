@@ -7,11 +7,6 @@ export type PackIdleVersionsResult = {
   pending: number;
 };
 
-// Packs idle live versions oldest-first until the run's ponderation budget is spent.
-// Ponderation is a static per-provider weight standing in for packing cost (roughly the
-// payload size), so a run's event-loop cost is bounded without measuring wall-clock time.
-// A provider whose single-version ponderation exceeds the whole budget is never packed
-// inline; its idle versions are left to eviction (and Redis rehydration) instead.
 export const packIdleVersions = <T>({
   localCache,
   minIdleMs,

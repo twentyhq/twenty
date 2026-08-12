@@ -54,9 +54,6 @@ const MIN_EVICT_KEYS = 100;
 const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000; // 30 minutes idle
 const LOCAL_CACHE_SWEEP_INTERVAL_MS = 60 * 1000;
 const PACKING_INTERVAL_MS = 500;
-// Ponderation spent per packing run. Providers weigh in via @WorkspaceCache
-// packingPonderation (~payload size); one weighing more than the whole budget is
-// never packed inline and is left to eviction + Redis rehydration instead.
 const PACKING_PONDERATION_BUDGET = 8;
 const DEFAULT_PACKING_PONDERATION = 1;
 const MIN_IDLE_BEFORE_PACKING_MS = 60 * 1000;
@@ -144,9 +141,13 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         }
 
         if (isDefined(options?.packingPonderation)) {
+          const ponderation = options.packingPonderation;
+
           this.packingPonderationByKey.set(
             workspaceCacheKeyName,
-            options.packingPonderation,
+            Number.isFinite(ponderation) && ponderation >= 1
+              ? Math.floor(ponderation)
+              : DEFAULT_PACKING_PONDERATION,
           );
         }
       }

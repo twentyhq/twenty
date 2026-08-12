@@ -195,8 +195,6 @@ describe('packIdleVersions', () => {
         ponderationBySuffix[localKey.split(':')[1]] ?? 1,
     });
 
-    // med (2) is packed, heavy (3) does not fit the remaining budget and is
-    // skipped, light (1) behind it still fits and is packed.
     expect(result.packed).toBe(2);
     expect(result.pending).toBe(1);
     expect(stateOf(localCache, `${FIELD_METADATA}:ws-med`)).toBe('packed');
