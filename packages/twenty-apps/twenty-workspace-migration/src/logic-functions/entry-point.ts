@@ -273,8 +273,8 @@ const handler = async () => {
   const systemTargetObjects = mapEntities(extractedTargetWorkspaceObjects.filter(n => n.applicationId === sourceCustomAppUUID));
   // we don't want app-based objects or fields
   const customSourceObjects = mapEntities(extractedSourceWorkspaceObjects.filter(n => !n.isSystem && n.applicationId === targetStandardAppUUID));
-  const customTargetObjects = mapEntities(extractedTargetWorkspaceObjects.filter(n => n.applicationId === targetCustomAppUUID));
-  const objectsToCreate: ObjectType[] = []; // custom
+  // when workspace is created, there are no custom objects hence no customTargetObjects variable
+  const objectsToCreate: CreateOneObjectType[] = []; // custom
   const objectsToUpdate: Map<string, UpdateOneObjectType> = new Map(); // standard, keyed by target object id
   const fieldsToCreate: { field: FieldsListType; targetObjectId: string }[] = [];
   const fieldsToUpdate: Map<string, UpdateOneFieldType> = new Map(); // standard, keyed by target field id
@@ -316,8 +316,9 @@ const handler = async () => {
       continue;
     }
 
+    const isJunctionObject = object.fieldsList.find(field => field.id === object.labelIdentifierFieldMetadataId)?.name === 'id';
     // fair assumption that target workspace has no custom objects at the time (other than those installed by apps)
-    objectsToCreate.push(object);
+    objectsToCreate.push({...object, skipNameField: isJunctionObject});
   }
 
   // Stage 3 & 4: recreate objects and fields, respecting relation dependencies

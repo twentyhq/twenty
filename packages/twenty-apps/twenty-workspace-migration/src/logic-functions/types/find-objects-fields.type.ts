@@ -112,6 +112,55 @@ type SettingsForFieldMetadataType<T extends FieldMetadataType> =
     ? FieldMetadataSettingsMapping[T]
     : null;
 
+export type TagColor =
+  | "red"
+  | "ruby"
+  | "crimson"
+  | "tomato"
+  | "orange"
+  | "amber"
+  | "yellow"
+  | "lime"
+  | "grass"
+  | "green"
+  | "jade"
+  | "mint"
+  | "turquoise"
+  | "cyan"
+  | "sky"
+  | "blue"
+  | "iris"
+  | "violet"
+  | "purple"
+  | "plum"
+  | "pink"
+  | "bronze"
+  | "gold"
+  | "brown"
+  | "gray";
+
+export type FieldMetadataDefaultOption = {
+  id?: string;
+  position: number;
+  label: string;
+  value: string;
+};
+
+export type FieldMetadataComplexOption = FieldMetadataDefaultOption & {
+  color: TagColor;
+};
+
+export type FieldMetadataOptionsMapping = {
+  [FieldMetadataType.RATING]: FieldMetadataDefaultOption[];
+  [FieldMetadataType.SELECT]: FieldMetadataComplexOption[];
+  [FieldMetadataType.MULTI_SELECT]: FieldMetadataComplexOption[];
+};
+
+type OptionsForFieldMetadataType<T extends FieldMetadataType> =
+  T extends keyof FieldMetadataOptionsMapping
+    ? FieldMetadataOptionsMapping[T]
+    : null;
+
 type FieldsListBaseType = {
   applicationId: string;
   defaultValue: string | null;
@@ -130,18 +179,17 @@ type FieldsListBaseType = {
   morphRelations?: {} // TODO
   name: string;
   objectMetadataId: string;
-  options?: any;
-  relation?: {
+  relation: {
     type: RelationType;
     targetObjectMetadata: { universalIdentifier: string };
   } | null;
   universalIdentifier: string;
 };
 
-// Discriminated union: narrowing on `type` narrows `settings` to that type's shape.
 export type FieldsListType = {
   [T in FieldMetadataType]: FieldsListBaseType & {
     type: T;
     settings: SettingsForFieldMetadataType<T>;
+    options: OptionsForFieldMetadataType<T>;
   };
 }[FieldMetadataType];
