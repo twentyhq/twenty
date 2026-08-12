@@ -61,9 +61,6 @@ describe('getClientConfig', () => {
 
     const result = await getClientConfig();
 
-    // No credentials and no custom headers: the request must stay a simple
-    // uncredentialed GET so split-origin deployments can boot (see
-    // getClientConfig).
     expect(fetch).toHaveBeenCalledWith(
       `${REACT_APP_SERVER_BASE_URL}/client-config`,
     );

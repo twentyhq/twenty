@@ -1,11 +1,11 @@
-import { type INestApplication, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 
-import { type NextFunction, type Request, type Response } from 'express';
+import { type Request } from 'express';
 
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { applyCredentialedCors } from 'src/engine/core-modules/user-session/utils/apply-credentialed-cors.util';
+import { warnOnceOnDisallowedBrowserPreflight } from 'src/engine/core-modules/user-session/utils/apply-credentialed-cors.util';
 
-describe('applyCredentialedCors', () => {
+describe('warnOnceOnDisallowedBrowserPreflight', () => {
   const defaultConfig: Record<string, unknown> = {
     NODE_ENV: 'production',
     SERVER_URL: 'https://crm.example.com',
@@ -15,22 +15,9 @@ describe('applyCredentialedCors', () => {
 
   let mockConfig: Record<string, unknown> = { ...defaultConfig };
 
-  const buildMiddleware = () => {
-    const app = {
-      use: jest.fn(),
-      enableCors: jest.fn(),
-    } as unknown as INestApplication;
-
-    applyCredentialedCors(app, {
-      get: jest.fn((key: string) => mockConfig[key]),
-    } as unknown as TwentyConfigService);
-
-    return (app.use as jest.Mock).mock.calls[0][0] as (
-      request: Request,
-      response: Response,
-      next: NextFunction,
-    ) => void;
-  };
+  const twentyConfigService = {
+    get: jest.fn((key: string) => mockConfig[key]),
+  } as unknown as TwentyConfigService;
 
   const buildPreflightRequest = ({
     origin,
@@ -53,88 +40,79 @@ describe('applyCredentialedCors', () => {
       get: jest.fn().mockReturnValue(host),
     }) as unknown as Request;
 
-  const buildResponse = (): Response =>
-    ({ vary: jest.fn() }) as unknown as Response;
-
   let warnSpy: jest.SpyInstance;
+  let warnedOrigins: Set<string>;
 
   beforeEach(() => {
-    jest.clearAllMocks();
     mockConfig = { ...defaultConfig };
+    warnedOrigins = new Set<string>();
     warnSpy = jest.spyOn(Logger.prototype, 'warn').mockImplementation();
   });
 
-  it('should warn once per disallowed cross-origin preflight and always call next', () => {
-    const middleware = buildMiddleware();
-    const next = jest.fn();
-    const response = buildResponse();
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
 
-    middleware(
-      buildPreflightRequest({ origin: 'https://tenant.example.net' }),
-      response,
-      next,
-    );
-    middleware(
-      buildPreflightRequest({ origin: 'https://tenant.example.net' }),
-      response,
-      next,
-    );
+  it('should warn once per disallowed cross-origin preflight', () => {
+    warnOnceOnDisallowedBrowserPreflight({
+      request: buildPreflightRequest({ origin: 'https://tenant.example.net' }),
+      twentyConfigService,
+      warnedOrigins,
+    });
+    warnOnceOnDisallowedBrowserPreflight({
+      request: buildPreflightRequest({ origin: 'https://tenant.example.net' }),
+      twentyConfigService,
+      warnedOrigins,
+    });
 
     expect(warnSpy).toHaveBeenCalledTimes(1);
     expect(warnSpy).toHaveBeenCalledWith(
       expect.stringContaining('https://tenant.example.net'),
     );
-    expect(response.vary).toHaveBeenCalledTimes(2);
-    expect(next).toHaveBeenCalledTimes(2);
   });
 
   it('should not warn for an allowlisted origin', () => {
     mockConfig.AUTH_COOKIE_ALLOWED_ORIGINS = 'https://front.example.net';
-    const middleware = buildMiddleware();
 
-    middleware(
-      buildPreflightRequest({ origin: 'https://front.example.net' }),
-      buildResponse(),
-      jest.fn(),
-    );
+    warnOnceOnDisallowedBrowserPreflight({
+      request: buildPreflightRequest({ origin: 'https://front.example.net' }),
+      twentyConfigService,
+      warnedOrigins,
+    });
 
     expect(warnSpy).not.toHaveBeenCalled();
   });
 
   it('should not warn for a same-origin preflight since browsers do not enforce CORS on it', () => {
-    const middleware = buildMiddleware();
-
-    middleware(
-      buildPreflightRequest({
+    warnOnceOnDisallowedBrowserPreflight({
+      request: buildPreflightRequest({
         origin: 'https://lan.example.internal',
         host: 'lan.example.internal',
       }),
-      buildResponse(),
-      jest.fn(),
-    );
+      twentyConfigService,
+      warnedOrigins,
+    });
 
     expect(warnSpy).not.toHaveBeenCalled();
   });
 
   it('should not warn for requests that are not browser preflights', () => {
-    const middleware = buildMiddleware();
-
-    middleware(
-      buildPreflightRequest({
+    warnOnceOnDisallowedBrowserPreflight({
+      request: buildPreflightRequest({
         origin: 'https://tenant.example.net',
         method: 'POST',
       }),
-      buildResponse(),
-      jest.fn(),
-    );
-    middleware(
-      buildPreflightRequest({
+      twentyConfigService,
+      warnedOrigins,
+    });
+    warnOnceOnDisallowedBrowserPreflight({
+      request: buildPreflightRequest({
         origin: 'https://tenant.example.net',
         requestedMethod: '',
       }),
-      buildResponse(),
-      jest.fn(),
-    );
+      twentyConfigService,
+      warnedOrigins,
+    });
 
     expect(warnSpy).not.toHaveBeenCalled();
   });

@@ -24,7 +24,7 @@ const toComparableOrigin = (value: string): string | undefined => {
 // own console, leaving nothing server-side for the operator to act on
 // (#24037). Warn once per origin on cross-origin browser preflights that will
 // be answered with the wildcard.
-const warnOnceOnDisallowedBrowserPreflight = ({
+export const warnOnceOnDisallowedBrowserPreflight = ({
   request,
   twentyConfigService,
   warnedOrigins,
