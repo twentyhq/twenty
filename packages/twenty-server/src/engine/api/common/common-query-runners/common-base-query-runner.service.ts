@@ -363,16 +363,18 @@ export abstract class CommonBaseQueryRunnerService<
   // useReplica follows isReadOnly so the v2 datasource matches the v1 one the
   // base context already picked (replica for read-only runners, primary
   // otherwise), keeping the root read and nested-relation loading consistent.
-  protected getReadRepository(
-    queryRunnerContext: CommonExtendedQueryRunnerContext,
-  ): WorkspaceRepository<ObjectLiteral> | WorkspaceRepositoryV2 {
-    const {
-      repository,
-      rolePermissionConfig,
-      flatObjectMetadata,
-      featureFlagsMap,
-    } = queryRunnerContext;
-
+  protected getReadRepository({
+    repository,
+    rolePermissionConfig,
+    flatObjectMetadata,
+    featureFlagsMap,
+  }: Pick<
+    CommonExtendedQueryRunnerContext,
+    | 'repository'
+    | 'rolePermissionConfig'
+    | 'flatObjectMetadata'
+    | 'featureFlagsMap'
+  >): WorkspaceRepository<ObjectLiteral> | WorkspaceRepositoryV2 {
     if (!featureFlagsMap[FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED]) {
       return repository;
     }
