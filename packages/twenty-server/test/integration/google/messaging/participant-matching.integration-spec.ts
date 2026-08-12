@@ -7,6 +7,7 @@ import {
   MessageChannelContactAutoCreationPolicy,
 } from 'twenty-shared/types';
 
+import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
@@ -85,6 +86,13 @@ describe('Participant matching on person creation (integration)', () => {
         isContactAutoCreationEnabled: false,
         contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy.NONE,
       },
+    );
+
+    await getCoreRepository<CalendarChannelEntity>(
+      CalendarChannelEntity,
+    ).update(
+      { id: channel.calendarChannelId },
+      { isContactAutoCreationEnabled: false },
     );
 
     await runMessageChannelSync(channel.channelId);

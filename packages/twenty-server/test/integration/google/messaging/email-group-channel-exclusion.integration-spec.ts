@@ -47,9 +47,12 @@ describe('Email group channel sync exclusion (integration)', () => {
 
     const emailChannel = await readChannel(channel.channelId);
 
+    // Cloned rather than built field by field: the channel has several non-null
+    // columns with database defaults that an explicit insert has to restate.
+    const { id: _id, ...emailChannelColumns } = emailChannel;
+
     const emailGroupChannel = await messageChannelRepository.save({
-      workspaceId: emailChannel.workspaceId,
-      connectedAccountId: emailChannel.connectedAccountId,
+      ...emailChannelColumns,
       handle: `group-${randomUUID()}@apple.dev`,
       type: MessageChannelType.EMAIL_GROUP,
       isSyncEnabled: true,
