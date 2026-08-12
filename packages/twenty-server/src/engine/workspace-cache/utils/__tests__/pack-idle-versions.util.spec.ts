@@ -172,10 +172,11 @@ describe('packIdleVersions', () => {
       [`${FIELD_METADATA}:ws-c`, liveEntry(IDLE - 1_000)],
     ]);
 
-    const result = run(localCache, 4, { ponderationOf: () => 3 });
+    const result = run(localCache, 4, { ponderationOf: () => 2 });
 
-    expect(result.packed).toBe(1);
-    expect(result.pending).toBe(2);
+    expect(result.packed).toBe(2);
+    expect(result.pending).toBe(1);
+    expect(stateOf(localCache, `${FIELD_METADATA}:ws-c`)).toBe('live');
   });
 
   it('should skip a candidate that does not fit and pack a lighter one behind it', () => {
