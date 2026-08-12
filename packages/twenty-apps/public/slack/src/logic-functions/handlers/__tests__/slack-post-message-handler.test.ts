@@ -72,7 +72,9 @@ describe('slackPostMessageHandler', () => {
     });
 
     expect(postMessageMock).toHaveBeenCalledTimes(1);
-    expect(postMessageMock).toHaveBeenCalledWith({
+    // Strict, so that unfurl fields sent as undefined rather than left out
+    // fail here instead of reaching Slack as the string "undefined".
+    expect(postMessageMock.mock.calls[0][0]).toStrictEqual({
       channel: CHANNEL_ID,
       thread_ts: undefined,
       text: 'hello',
