@@ -93,16 +93,18 @@ findMany round trip.
 
 ## Covered so far
 
-`createQueryBuilder`, `clone`, `where` / `andWhere` / `orWhere` (strings and bracket
-factories), `setParameters`, `setFindOptions({ select })`, `addSelect`, `orderBy` /
-`addOrderBy`, `leftJoin` on to-one relations, `withDeleted`, `limit` / `offset`,
-`getMany`, `getOne`, `getRawOne`, `getQuery`, `getQueryAndParameters`.
+`createQueryBuilder`, `clone`, `where` / `andWhere` / `orWhere` (strings, bracket
+factories, and object literals like `{ id: In([...]) }` — `in` and equality only),
+`setParameters`, `setFindOptions({ select })`, `addSelect`, `orderBy` / `addOrderBy`,
+`leftJoin` on to-one relations, `withDeleted`, `limit` / `offset`, `take` / `skip`
+(aliases of `limit` / `offset` — safe because v2 never joins to-many),
+`getMany`, `getOne`, `getRawOne`, `getCount`, `getQuery`, `getQueryAndParameters`.
 
-The surface stops there on purpose: anything findMany cannot reach (`getCount`,
-`getRawMany`, `groupBy`, `take` / `skip`) is left to v1 until a runner needs it.
+The surface stops there on purpose: anything the wired runners cannot reach
+(`getRawMany`, `groupBy`) is left to v1 until a runner needs it.
 
-Wired into `CommonFindManyQueryRunnerService` and `CommonFindOneQueryRunnerService`.
-Other runners keep `repository`.
+Wired into `CommonFindManyQueryRunnerService`, `CommonFindOneQueryRunnerService` and
+`CommonFindDuplicatesQueryRunnerService`. Other runners keep `repository`.
 
 ## Not covered yet
 

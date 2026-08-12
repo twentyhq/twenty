@@ -1,4 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
+import { In, LessThan } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { type CompiledStatement } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
@@ -542,5 +543,90 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
     expect(executedStatements).toHaveLength(1);
     expect(executedStatements[0].text).toContain('$1');
     expect(executedStatements[0].values).toEqual(['Ada']);
+  });
+
+  it('should map take and skip to LIMIT and OFFSET parameters', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder
+      .setFindOptions({ select: { id: true } })
+      .take(31)
+      .skip(60);
+
+    const [text, values] = queryBuilder.getQueryAndParameters();
+
+    expect(text).toContain('LIMIT $1');
+    expect(text).toContain('OFFSET $2');
+    expect(values).toEqual([31, 60]);
+  });
+
+  it('should build a COUNT statement that ignores projection, order and pagination', async () => {
+    const { queryBuilder, executedStatements } = buildQueryBuilder({
+      rows: [{ count: '7' }],
+    });
+
+    queryBuilder
+      .setFindOptions({ select: { id: true } })
+      .orderBy('"person"."id"', 'ASC')
+      .take(10);
+
+    const count = await queryBuilder.getCount();
+
+    expect(count).toBe(7);
+    expect(executedStatements[0].text).toBe(
+      'SELECT COUNT(1) AS "count" ' +
+        `FROM "${SCHEMA_NAME}"."person" AS "person" ` +
+        'WHERE "person"."deletedAt" IS NULL',
+    );
+  });
+
+  it('should render an object-literal where with In as a bound IN clause', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder
+      .setFindOptions({ select: { id: true } })
+      .where({ id: In(['a', 'b']) });
+
+    const [text, values] = queryBuilder.getQueryAndParameters();
+
+    expect(text).toContain('"person"."id" IN ($1, $2)');
+    expect(values).toEqual(['a', 'b']);
+  });
+
+  it('should allocate unique parameter names across object-literal where clauses', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder
+      .setFindOptions({ select: { id: true } })
+      .where({ id: In(['a']) })
+      .andWhere({ companyId: In(['b']) });
+
+    const [, values] = queryBuilder.getQueryAndParameters();
+
+    expect(values).toEqual(['a', 'b']);
+  });
+
+  it('should reject an object-literal where on an unknown column', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    expect(() => queryBuilder.where({ missing: In(['x']) })).toThrow(
+      TwentyOrmV2Exception,
+    );
+  });
+
+  it('should reject a non-in operator in an object-literal where', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    expect(() => queryBuilder.where({ id: LessThan('x') })).toThrow(
+      TwentyOrmV2Exception,
+    );
+  });
+
+  it('should reject a plain value in an object-literal where', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    expect(() => queryBuilder.where({ companyId: 'company-1' })).toThrow(
+      TwentyOrmV2Exception,
+    );
   });
 });
