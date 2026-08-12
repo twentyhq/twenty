@@ -6,11 +6,11 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/data-display';
-import { Button } from 'twenty-ui/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { type ThemeColor } from 'twenty-ui/theme';
 
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { SettingsAdminWorkspaceCreditGrantRowDropdownMenu } from '@/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantRowDropdownMenu';
 import { CREDIT_GRANT_TYPE_COLORS } from '@/settings/admin-panel/constants/CreditGrantTypeColors';
 import { CREDIT_GRANT_TYPE_LABELS } from '@/settings/admin-panel/constants/CreditGrantTypeLabels';
 import { REVOKE_WORKSPACE_CREDIT_GRANT } from '@/settings/admin-panel/graphql/mutations/revokeWorkspaceCreditGrant';
@@ -33,7 +33,7 @@ type SettingsAdminWorkspaceCreditGrantsTableProps = {
   onGrantCreditsClick: () => void;
 };
 
-const CREDIT_GRANTS_GRID_AUTO_COLUMNS = '1fr 1fr 1fr 1fr 2fr 88px';
+const CREDIT_GRANTS_GRID_AUTO_COLUMNS = '1fr 1fr 1fr 1fr 2fr 36px';
 const REVOKE_CREDIT_GRANT_MODAL_ID = 'revoke-credit-grant-modal';
 const EM_DASH = '—';
 
@@ -139,6 +139,7 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
           },
           {
             label: t`Reason`,
+            overflow: 'hidden',
             Cell: ({ item }) => (
               <OverflowingTextWithTooltip text={item.reason ?? EM_DASH} />
             ),
@@ -146,16 +147,13 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
           {
             label: '',
             align: 'right',
-            Cell: ({ item }) => (
-              <Button
-                title={t`Revoke`}
-                size="small"
-                variant="secondary"
-                accent="danger"
-                disabled={!item.isActive || isRevoking}
-                onClick={() => handleRevokeClick(item)}
-              />
-            ),
+            Cell: ({ item }) =>
+              item.isActive ? (
+                <SettingsAdminWorkspaceCreditGrantRowDropdownMenu
+                  creditGrantId={item.id}
+                  onRevoke={() => handleRevokeClick(item)}
+                />
+              ) : null,
           },
         ]}
         gridAutoColumns={CREDIT_GRANTS_GRID_AUTO_COLUMNS}
