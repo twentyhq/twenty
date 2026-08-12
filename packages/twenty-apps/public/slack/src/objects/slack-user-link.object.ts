@@ -59,9 +59,6 @@ export default defineObject({
       label: 'Source',
       description: 'How the link was created',
       icon: 'IconLink',
-      // AUTO is the fail-safe default: a record created without an explicit
-      // source lands in the re-verified bucket instead of being trusted as a
-      // deliberate manual link
       defaultValue: `'${SLACK_USER_LINK_SOURCE.AUTO}'`,
       options: [
         {

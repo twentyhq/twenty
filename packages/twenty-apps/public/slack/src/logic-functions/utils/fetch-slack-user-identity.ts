@@ -53,8 +53,6 @@ export const fetchSlackUserIdentity = async ({
       user.deleted !== true &&
       user.is_restricted !== true &&
       user.is_ultra_restricted !== true &&
-      // absent counts as unconfirmed: this gates a permission grant, so an
-      // unknown confirmation state must fail closed
       user.is_email_confirmed === true,
   };
 };

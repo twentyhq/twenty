@@ -11,11 +11,6 @@ import { resolveSlackRunAsWorkspaceMemberId } from 'src/logic-functions/utils/re
 
 const APPLICATION_ACTOR_SOURCE = 'APPLICATION';
 
-// Run-as is only earned by a message the member directed at the assistant: a
-// DM, a message carrying the bot mention, or a follow-up in a thread where
-// this same member already mentioned the bot. The last leg is deliberately
-// personal: an earlier assistant reply to someone else must not turn another
-// member's casual thread post into a request on their permissions.
 const isMessageAddressedToBot = ({
   requestMessage,
   threadMessages,

@@ -30,8 +30,6 @@ const buildPermissionSection = ({
     return `You are answering with the app's own role, not the requester's. ${missingToolMeaning}`;
   }
 
-  // only the member id goes here: a Slack display name is user-set free text
-  // and must not sit in an instruction position
   return [
     `You are acting as workspace member ${runAsWorkspaceMemberId}, with that member's own permissions. When the request says me, my or mine, it means that member, and you can use their id directly.`,
     missingToolMeaning,
