@@ -49,8 +49,10 @@ export class CreateCalendarChannelService {
           id: newCalendarChannelId,
           connectedAccountId,
           handle,
-          visibility:
-            calendarVisibility || CalendarChannelVisibility.SHARE_EVERYTHING,
+          // Same reasoning as `create-message-channel.service.ts`: the connection paths
+          // that don't ask the user for a visibility should not default to sharing every
+          // event title and description with the whole workspace.
+          visibility: calendarVisibility || CalendarChannelVisibility.METADATA,
           syncStatus: skipMessageChannelConfiguration
             ? CalendarChannelSyncStatus.ONGOING
             : CalendarChannelSyncStatus.NOT_SYNCED,
