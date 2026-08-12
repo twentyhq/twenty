@@ -1,5 +1,5 @@
 import { ToolCategory } from 'twenty-shared/ai';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
   EXECUTE_TOOL_TOOL_NAME,
@@ -34,11 +34,6 @@ const getCategoryLabel = (category: ToolCategory): string => {
   }
 };
 
-type ObjectNameParts = {
-  singular?: string;
-  plural?: string;
-};
-
 const buildDatabaseCrudCatalogSection = (
   tools: ToolIndexEntry[],
   preloadedSet: Set<string>,
@@ -48,7 +43,6 @@ const buildDatabaseCrudCatalogSection = (
   const seenOps = new Set<string>();
 
   const objectToolsMap = new Map<string, string[]>();
-  const objectNamePartsMap = new Map<string, ObjectNameParts>();
   const standaloneTools: ToolIndexEntry[] = [];
 
   for (const tool of tools) {
@@ -57,19 +51,6 @@ const buildDatabaseCrudCatalogSection = (
 
       ops.push(tool.operation);
       objectToolsMap.set(tool.objectName, ops);
-
-      const nameParts = objectNamePartsMap.get(tool.objectName) ?? {};
-      // Tool names are snake_case while objectName is camelCase, so the name
-      // part is read back off a real tool name rather than derived again here.
-      const namePart = tool.name.slice(tool.operation.length + 1);
-
-      if (tool.operation.endsWith('_one')) {
-        nameParts.singular = namePart;
-      } else {
-        nameParts.plural = namePart;
-      }
-
-      objectNamePartsMap.set(tool.objectName, nameParts);
 
       if (!seenOps.has(tool.operation)) {
         seenOps.add(tool.operation);
@@ -88,33 +69,10 @@ const buildDatabaseCrudCatalogSection = (
     lines.push(`Operations per object:`);
     lines.push(...operationOrder.map((op) => `- \`${op}_{object}\``));
 
-    lines.push(
-      `\nObjects (${objectNames.length}), each as \`objectName\` → \`singular\` / \`plural\` tool name part:`,
-    );
-    lines.push(
-      ...objectNames.map((name) => {
-        const { singular, plural } = objectNamePartsMap.get(name) ?? {};
-        const nameParts = [singular, plural]
-          .filter(isDefined)
-          .map((namePart) => `\`${namePart}\``)
-          .join(' / ');
+    lines.push(`\nObjects (${objectNames.length}):`);
+    lines.push(...objectNames.map((name) => `- \`${name}\``));
 
-        return `- \`${name}\` → ${nameParts}`;
-      }),
-    );
-
-    // A multi-word object shows the model that tool names are snake_case,
-    // which an example like find_one_company hides.
-    const exampleObjectName =
-      objectNames.find((name) =>
-        (objectNamePartsMap.get(name)?.singular ?? '').includes('_'),
-      ) ?? objectNames[0];
-
-    const findManyExample =
-      tools.find(
-        (t) =>
-          t.operation === 'find_many' && t.objectName === exampleObjectName,
-      ) ?? tools.find((t) => t.operation === 'find_many');
+    const findManyExample = tools.find((t) => t.operation === 'find_many');
     const findOneExample = tools.find(
       (t) =>
         t.operation === 'find_one' &&
@@ -126,7 +84,7 @@ const buildDatabaseCrudCatalogSection = (
         : '';
 
     lines.push(
-      `\nTool name = operation + the name part shown above, never the camelCase objectName. *_many_* and group_by operations use the plural part, *_one_* operations use the singular part.${examplePart}`,
+      `\nTool name = operation + object name. *_many_* operations use the plural form, *_one_* use the singular form.${examplePart}`,
     );
   }
 
