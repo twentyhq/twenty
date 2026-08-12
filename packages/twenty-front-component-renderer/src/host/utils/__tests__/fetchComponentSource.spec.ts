@@ -15,6 +15,17 @@ const FINGERPRINTED_URL = buildFingerprintedUrl(
   computeSha256Hex(COMPONENT_SOURCE),
 );
 const BARE_URL = 'https://api.twenty.com/rest/front-components/component-id';
+
+const SHARED_DEPENDENCIES_SOURCE =
+  'export const __shared_dependencies_react__ = {};';
+
+const buildFingerprintedSharedDependenciesUrl = (checksum: string): string =>
+  `https://api.twenty.com/rest/front-component-shared-dependencies/application-id/${checksum}.js`;
+
+const FINGERPRINTED_SHARED_DEPENDENCIES_URL =
+  buildFingerprintedSharedDependenciesUrl(
+    computeSha256Hex(SHARED_DEPENDENCIES_SOURCE),
+  );
 const LEGACY_MD5_URL = buildFingerprintedUrl(
   createHash('md5').update(COMPONENT_SOURCE).digest('hex'),
 );
@@ -245,6 +256,43 @@ describe('fetchComponentSource', () => {
 
     expect(source).toBe(COMPONENT_SOURCE);
     expect(cache.put).not.toHaveBeenCalled();
+  });
+
+  it('evicts the previous shared dependencies bundle of the same application only', async () => {
+    const cache = new FakeCache();
+
+    const staleSharedDependenciesUrl = buildFingerprintedSharedDependenciesUrl(
+      computeSha256Hex('previous shared dependencies build'),
+    );
+    const otherApplicationSharedDependenciesUrl =
+      'https://api.twenty.com/rest/front-component-shared-dependencies/other-application-id/0000000000000000000000000000000000000000000000000000000000000000.js';
+
+    await cache.put(staleSharedDependenciesUrl, {
+      text: async () => 'previous shared dependencies build',
+    });
+    await cache.put(otherApplicationSharedDependenciesUrl, {
+      text: async () => 'other application shared dependencies',
+    });
+    cache.put.mockClear();
+
+    setupCaches(cache);
+
+    const fetchMock = jest.fn(async () =>
+      createFakeJsResponse(SHARED_DEPENDENCIES_SOURCE),
+    );
+
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+    await fetchComponentSource({ url: FINGERPRINTED_SHARED_DEPENDENCIES_URL });
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(cache.delete).toHaveBeenCalledWith({
+      url: staleSharedDependenciesUrl,
+    });
+    expect(cache.delete).not.toHaveBeenCalledWith({
+      url: otherApplicationSharedDependenciesUrl,
+    });
   });
 
   it('never touches the cache for a non-fingerprinted URL', async () => {

@@ -16,6 +16,7 @@ import { type FrontComponentThread } from '@/types/FrontComponentThread';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
 import { buildAuthorizationHeadersFromAccessToken } from '@/utils/buildAuthorizationHeadersFromAccessToken';
 import { containsSdkClientImportSpecifier } from '@/utils/containsSdkClientImportSpecifier';
+import { containsSharedDependenciesImportSpecifier } from '@/utils/containsSharedDependenciesImportSpecifier';
 
 type FrontComponentWorkerEffectProps = {
   componentUrl: string;
@@ -23,6 +24,7 @@ type FrontComponentWorkerEffectProps = {
   apiUrl?: string;
   functionsBaseUrl?: string;
   sdkClientUrls?: SdkClientUrls;
+  sharedDependenciesUrl?: string;
   applicationVariables?: Record<string, string>;
   geometryTracker: GeometryTracker;
   setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
@@ -36,6 +38,7 @@ export const FrontComponentWorkerEffect = ({
   apiUrl,
   functionsBaseUrl,
   sdkClientUrls,
+  sharedDependenciesUrl,
   applicationVariables,
   geometryTracker,
   setReceiver,
@@ -63,6 +66,7 @@ export const FrontComponentWorkerEffect = ({
       apiUrl,
       functionsBaseUrl,
       sdkClientUrls,
+      sharedDependenciesUrl,
     });
 
     const hostFetch = createHostFetchEnforcingPolicy(hostFetchPolicy);
@@ -100,14 +104,22 @@ export const FrontComponentWorkerEffect = ({
           return;
         }
 
-        const sdkClientSources =
+        const [sdkClientSources, sharedDependenciesSource] = await Promise.all([
           isDefined(sdkClientUrls) &&
           containsSdkClientImportSpecifier(componentSource)
-            ? await fetchSdkClientSources({
+            ? fetchSdkClientSources({
                 sdkClientUrls,
                 headers: authorizationHeaders,
               })
-            : undefined;
+            : undefined,
+          isDefined(sharedDependenciesUrl) &&
+          containsSharedDependenciesImportSpecifier(componentSource)
+            ? fetchComponentSource({
+                url: sharedDependenciesUrl,
+                headers: authorizationHeaders,
+              })
+            : undefined,
+        ]);
 
         if (isCancelled) {
           return;
@@ -120,6 +132,7 @@ export const FrontComponentWorkerEffect = ({
           apiUrl,
           functionsBaseUrl,
           sdkClientSources,
+          sharedDependenciesSource,
           hostFetchOrigins: hostFetchPolicy.allowedOrigins,
           applicationVariables,
           initialViewportGeometry: geometryTracker.getViewportGeometry(),
@@ -150,6 +163,7 @@ export const FrontComponentWorkerEffect = ({
     apiUrl,
     functionsBaseUrl,
     sdkClientUrls,
+    sharedDependenciesUrl,
     applicationVariables,
     geometryTracker,
     setError,
