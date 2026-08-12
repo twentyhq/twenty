@@ -95,13 +95,6 @@ export const computeRecordPageStackReownUpdates = ({
     twentyStandardApplicationUniversalIdentifier,
   });
 
-  // No selected view (ambiguous or none) skips the WHOLE stack, not just the
-  // view: re-owning the layout and widgets without a connected system view
-  // would leave a half-derived stack the backfill never repairs (it does not
-  // touch widgets of an existing layout) and the field handlers would noop on
-  // forever. Untouched, the stack degrades to a user custom layout, which
-  // the frontend prefers anyway, and the backfill provisions a coherent
-  // derived stack beside it.
   if (systemFieldsViewSelection.status !== 'selected') {
     return reownUpdates;
   }
@@ -241,10 +234,6 @@ export const computeRecordPageStackReownUpdates = ({
   return reownUpdates;
 };
 
-// One system FIELDS_WIDGET view per object, resolved by identifier or
-// unforgeable ownership, never by walk order; indistinguishable candidates
-// (pre-2-15 custom rows are stuck unflagged) refuse selection rather than
-// score.
 const selectSystemFieldsView = ({
   workspaceId,
   logger,
@@ -326,7 +315,10 @@ const selectSystemFieldsView = ({
     candidates.find(({ fieldsView }) => fieldsView.flatView.isSystemSideEffect);
 
   if (isDefined(selectedCandidate)) {
-    return { status: 'selected', viewId: selectedCandidate.fieldsView.flatView.id };
+    return {
+      status: 'selected',
+      viewId: selectedCandidate.fieldsView.flatView.id,
+    };
   }
 
   if (candidates.length > 1) {
