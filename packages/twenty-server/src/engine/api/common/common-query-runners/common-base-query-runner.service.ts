@@ -1,6 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { type PermissionFlagType } from 'twenty-shared/constants';
+import { FeatureFlagKey } from 'twenty-shared/types';
+import { type ObjectLiteral } from 'typeorm';
 
 import { QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-field-value';
 
@@ -54,9 +56,11 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
+import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm-v2/repository/workspace-repository-v2';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -353,6 +357,29 @@ export abstract class CommonBaseQueryRunnerService<
       repository,
       featureFlagsMap: context.featureFlagsMap,
     };
+  }
+
+  // Behind IS_ORM_V2_READ_PATH_ENABLED, reads go through the ORM v2 repository.
+  // useReplica follows isReadOnly so the v2 datasource matches the v1 one the
+  // base context already picked (replica for read-only runners, primary
+  // otherwise), keeping the root read and nested-relation loading consistent.
+  protected getReadRepository(
+    queryRunnerContext: CommonExtendedQueryRunnerContext,
+  ): WorkspaceRepository<ObjectLiteral> | WorkspaceRepositoryV2 {
+    const {
+      repository,
+      rolePermissionConfig,
+      flatObjectMetadata,
+      featureFlagsMap,
+    } = queryRunnerContext;
+
+    if (!featureFlagsMap[FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED]) {
+      return repository;
+    }
+
+    return this.workspaceDataSourceV2Service
+      .getDataSource({ useReplica: this.isReadOnly })
+      .getRepository(flatObjectMetadata.nameSingular, rolePermissionConfig);
   }
 
   private async throttleQueryExecution(authContext: WorkspaceAuthContext) {
