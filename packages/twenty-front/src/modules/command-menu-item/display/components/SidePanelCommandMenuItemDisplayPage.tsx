@@ -11,7 +11,7 @@ import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
-import { isNumber } from '@sniptt/guards';
+import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { useContext, useMemo } from 'react';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
@@ -82,7 +82,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     ? pinnedCommandMenuItems.slice(visiblePinnedCommandMenuItemCount)
     : pinnedCommandMenuItems;
 
-  const isSearchActive = sidePanelSearch.trim().length > 0;
+  const isSearchActive = isNonEmptyString(sidePanelSearch.trim());
 
   const pinnedItemsToFilter = isSearchActive
     ? pinnedCommandMenuItems

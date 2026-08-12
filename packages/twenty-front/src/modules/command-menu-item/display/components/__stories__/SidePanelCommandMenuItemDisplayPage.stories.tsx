@@ -156,6 +156,25 @@ export const EmptySearchWithAllPinnedItemsInHeader: Story = {
   },
 };
 
+export const WhitespaceOnlySearchWithAllPinnedItemsInHeader: Story = {
+  decorators: [
+    createDecorator({
+      commandMenuItems: [...PINNED_ITEMS, FALLBACK_ITEM],
+      sidePanelSearch: '   ',
+      pinnedItemsContainerWidth: 1000,
+    }),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Search records')).toBeVisible();
+    await waitFor(() => {
+      expect(canvas.queryByText('No results found')).not.toBeInTheDocument();
+    });
+    expect(canvas.queryByText('Delete')).not.toBeInTheDocument();
+  },
+};
+
 export const EmptySearchWithOverflowingPinnedItems: Story = {
   decorators: [
     createDecorator({
