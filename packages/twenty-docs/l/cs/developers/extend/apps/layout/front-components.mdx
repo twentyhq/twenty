@@ -601,6 +601,43 @@ export default defineFrontComponent({
 
 Podrobnosti viz [sekci veřejných souborů](/l/cs/developers/extend/apps/config/public-assets).
 
+## Sdílení závislostí mezi front komponentami
+
+Ve výchozím nastavení si každá front komponenta přibalí vlastní kopii knihoven, které importuje, takže aplikace s pěti komponentami dodává React pětkrát. Deklarujte sdílené závislosti v `package.json` vaší aplikace, aby se tyto knihovny sestavily jen jednou a každá komponenta aplikace je načítala z jednoho společného souboru v mezipaměti:
+
+```json package.json
+{
+  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+}
+```
+
+Každá komponenta pak importuje své závislosti úplně stejně jako dříve — ve vašem komponentním kódu se nic nemění:
+
+```tsx src/front-components/counter.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'counter',
+  component: Counter,
+});
+```
+
+Několik věcí, které je dobré vědět:
+
+* **Jeden sdílený balík závislostí na aplikaci.** Balík je sestaven z vlastních závislostí vaší aplikace, takže máte plnou kontrolu nad verzemi, které dodáváte.
+* **Uveďte přesné specifikátory, které importujete.** `twenty-ui/input` a `twenty-ui/display` jsou dvě položky; samotný název balíčku nepokrývá jeho podcesty. Uvedení `react` automaticky pokrývá `react/jsx-runtime`.
+* **Sdílejte `react-dom/client` spolu s `react`.** Každá komponenta renderuje přes `createRoot`, takže pokud ho vynecháte, každá komponenta si stále přibalí vlastní React DOM.
+* **Balík je cachovaný.** Je poskytován pod URL s hashovaným obsahem s dlouhodobou neměnnou mezipamětí, takže se stáhne jednou a znovu používá ve všech komponentách aplikace, dokud se některá z jeho závislostí nezmění.
+* **Komponenty, které neimportují žádný ze sdílených balíčků, ho nikdy nestáhnou.**
+
 ## Stylování
 
 Frontendové komponenty podporují více přístupů ke stylování. Můžete použít:

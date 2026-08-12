@@ -8,7 +8,7 @@ Das SDK stellt programmgesteuerte APIs bereit, mit denen Sie Ihre App aus Testco
 
 ## Verwendung von npm-Paketen
 
-Sie können in Ihrer App beliebige npm-Pakete installieren und verwenden. Sowohl Logikfunktionen als auch Frontend-Komponenten werden mit [esbuild](https://esbuild.github.io/) gebündelt, das alle Abhängigkeiten in die Ausgabe einbettet — zur Laufzeit sind keine `node_modules` erforderlich.
+Sie können in Ihrer App beliebige npm-Pakete installieren und verwenden. Sowohl Logikfunktionen als auch Frontend-Komponenten werden mit [esbuild](https://esbuild.github.io/) gebündelt, das deren Abhängigkeiten in die Ausgabe einbettet — zur Laufzeit sind keine `node_modules` erforderlich.
 
 ### Ein Paket installieren
 
@@ -56,13 +56,15 @@ export default defineFrontComponent({
 
 ### Wie das Bundling funktioniert
 
-Der Build-Schritt verwendet esbuild, um pro Logikfunktion und pro Frontend-Komponente eine einzelne, in sich geschlossene Datei zu erzeugen. Alle importierten Pakete werden in das Bundle eingebettet.
+Der Build-Schritt verwendet esbuild, um pro Logikfunktion und pro Frontend-Komponente eine einzelne, in sich geschlossene Datei zu erzeugen. Importierte Pakete werden in das Bundle eingebettet, mit Ausnahme der unten aufgeführten.
 
 **Logikfunktionen** laufen in einer Node.js-Umgebung. Eingebaute Node.js-Module (`fs`, `path`, `crypto`, `http` usw.) stehen zur Verfügung und müssen nicht installiert werden.
 
 **Frontend-Komponenten** laufen in einem Web Worker. Eingebaute Node.js-Module sind **nicht** verfügbar — nur npm-Pakete, die in einer Browserumgebung funktionieren. Beachte, dass die Sandbox nur ein *teilweises* DOM implementiert, sodass ein Paket sauber gebaut werden kann und trotzdem zur Laufzeit fehlschlägt; siehe [Aktuelle Einschränkungen](/l/de/developers/extend/apps/layout/front-components#current-limitations).
 
 In beiden Umgebungen stehen `twenty-client-sdk/core` und `twenty-client-sdk/metadata` als vorab bereitgestellte Module zur Verfügung — sie werden nicht gebündelt, sondern zur Laufzeit vom Server aufgelöst.
+
+Frontend-Komponenten können Abhängigkeiten auch über ein [Bundle für gemeinsame Abhängigkeiten](/l/de/developers/extend/apps/layout/front-components#sharing-dependencies-across-front-components) teilen. Pakete, die im Feld `frontComponentSharedDependencies` der package.json der App aufgeführt sind, werden einmal in eine separate Datei gebaut und zur Laufzeit daraus geladen, anstatt in jede Komponente eingebettet zu werden. Dadurch enthält eine Komponente, die nur gemeinsame Pakete importiert, fast keinen eigenen Abhängigkeitscode.
 
 ## Einrichtung
 

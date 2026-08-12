@@ -49,6 +49,7 @@ export const APPLICATION_FRAGMENT = gql`
       universalIdentifier
       isHeadless
       usesSdkClient
+      frontComponentSharedDependenciesChecksum
       createdAt
       updatedAt
     }

@@ -146,23 +146,26 @@ Comme pour les champs système scalaires, l’id résolu fonctionne partout où 
   un serveur Twenty en version 2.26 ou ultérieure.
 </Note>
 
-Le serveur provisionne également une **vue système** sur chaque objet : la vue principale en liste (`All {objectLabelPlural}`, indexée par `ViewKey.INDEX`), avec une colonne par champ affichable. Comme pour les champs de relation système, leurs identifiants sont dérivés **sans nom**, de sorte que renommer un objet ou un champ ne les modifie jamais.
+Le serveur provisionne également une **vue système** sur chaque objet : la vue principale en liste (`All {objectLabelPlural}`, indexée sur `ViewKey.INDEX` (dérivée de `SYSTEM_VIEW_KEYS.INDEX`)), avec une colonne par champ affichable. Comme pour les champs de relation système, leurs identifiants sont dérivés **sans nom**, de sorte que renommer un objet ou un champ ne les modifie jamais.
 
 Utilisez `getSystemViewUniversalIdentifier` pour la résoudre :
 
 ```ts
-import { getSystemViewUniversalIdentifier, ViewKey } from 'twenty-sdk/define';
+import {
+  getSystemViewUniversalIdentifier,
+  SYSTEM_VIEW_KEYS,
+} from 'twenty-sdk/define';
 
 const rocketIndexViewId = getSystemViewUniversalIdentifier({
   objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
-  viewKey: ViewKey.INDEX,
+  viewKey: SYSTEM_VIEW_KEYS.INDEX,
 });
 ```
 
 * `objectMetadataApplicationUniversalIdentifier` correspond à l’application propriétaire de l’**objet**, ce qui sert d’espace de noms pour la vue.
 * `objectUniversalIdentifier` est l’objet que la vue répertorie.
-* `viewKey` est la clé de vue système, actuellement `ViewKey.INDEX`.
+* `viewKey` est le discriminateur de vue système : `SYSTEM_VIEW_KEYS.INDEX` pour la vue principale en liste, `SYSTEM_VIEW_KEYS.FIELDS_WIDGET` pour la vue du widget de champs de la page d’enregistrement. Il sert de clé pour la dérivation ; seul `INDEX` est également stocké sur la ligne de la vue.
 
 L’identifiant résolu fonctionne partout où un `viewUniversalIdentifier` est attendu, par exemple pour une entrée de barre latérale [`NavigationMenuItemType.VIEW`](/l/fr/developers/extend/apps/layout/navigation-menu-items). Pour simplement ouvrir la liste principale d’un objet, privilégiez `NavigationMenuItemType.OBJECT` avec `targetObjectUniversalIdentifier` : cela ne nécessite aucune dérivation.
 

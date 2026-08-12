@@ -7,12 +7,12 @@ export type LocalCacheStats = {
   versionsTotal: number;
   versionsByCount: Record<string, number>;
   entriesByKeyName: Record<string, number>;
-  hotVersionsByKeyName: Record<string, number>;
-  coldVersionsByKeyName: Record<string, number>;
-  coldBytesByKeyName: Record<string, number>;
-  hotVersionsTotal: number;
-  coldVersionsTotal: number;
-  coldBytesTotal: number;
+  liveVersionsByKeyName: Record<string, number>;
+  packedVersionsByKeyName: Record<string, number>;
+  packedBytesByKeyName: Record<string, number>;
+  liveVersionsTotal: number;
+  packedVersionsTotal: number;
+  packedBytesTotal: number;
 };
 
 type StatsInput = ReadonlyMap<
@@ -32,22 +32,22 @@ export const computeLocalCacheStats = (
     '5+': 0,
   };
   const entriesByKeyName: Record<string, number> = {};
-  const hotVersionsByKeyName: Record<string, number> = {};
-  const coldVersionsByKeyName: Record<string, number> = {};
-  const coldBytesByKeyName: Record<string, number> = {};
+  const liveVersionsByKeyName: Record<string, number> = {};
+  const packedVersionsByKeyName: Record<string, number> = {};
+  const packedBytesByKeyName: Record<string, number> = {};
   let versionsTotal = 0;
-  let hotVersionsTotal = 0;
-  let coldVersionsTotal = 0;
-  let coldBytesTotal = 0;
+  let liveVersionsTotal = 0;
+  let packedVersionsTotal = 0;
+  let packedBytesTotal = 0;
 
   for (const [key, entry] of localCache) {
     workspaceIds.add(key.slice(key.lastIndexOf(':') + 1));
     const keyName = getKeyNameFromLocalCacheKey(key);
 
     entriesByKeyName[keyName] = (entriesByKeyName[keyName] ?? 0) + 1;
-    hotVersionsByKeyName[keyName] ??= 0;
-    coldVersionsByKeyName[keyName] ??= 0;
-    coldBytesByKeyName[keyName] ??= 0;
+    liveVersionsByKeyName[keyName] ??= 0;
+    packedVersionsByKeyName[keyName] ??= 0;
+    packedBytesByKeyName[keyName] ??= 0;
 
     const versionCount = entry.versions.size;
 
@@ -57,16 +57,16 @@ export const computeLocalCacheStats = (
     versionsByCount[bucket] = (versionsByCount[bucket] ?? 0) + 1;
 
     for (const version of entry.versions.values()) {
-      if (version.state === 'cold') {
-        coldVersionsByKeyName[keyName] += 1;
-        coldVersionsTotal += 1;
-        coldBytesByKeyName[keyName] += version.blob.byteLength;
-        coldBytesTotal += version.blob.byteLength;
+      if (version.state === 'packed') {
+        packedVersionsByKeyName[keyName] += 1;
+        packedVersionsTotal += 1;
+        packedBytesByKeyName[keyName] += version.blob.byteLength;
+        packedBytesTotal += version.blob.byteLength;
         continue;
       }
 
-      hotVersionsByKeyName[keyName] += 1;
-      hotVersionsTotal += 1;
+      liveVersionsByKeyName[keyName] += 1;
+      liveVersionsTotal += 1;
     }
   }
 
@@ -76,11 +76,11 @@ export const computeLocalCacheStats = (
     versionsTotal,
     versionsByCount,
     entriesByKeyName,
-    hotVersionsByKeyName,
-    coldVersionsByKeyName,
-    coldBytesByKeyName,
-    hotVersionsTotal,
-    coldVersionsTotal,
-    coldBytesTotal,
+    liveVersionsByKeyName,
+    packedVersionsByKeyName,
+    packedBytesByKeyName,
+    liveVersionsTotal,
+    packedVersionsTotal,
+    packedBytesTotal,
   };
 };
