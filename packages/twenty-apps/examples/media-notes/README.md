@@ -13,10 +13,11 @@ The test drives the full flow against a local Twenty instance with Chromium's
 fake media devices (no real microphone or camera needed):
 
 ```sh
-# from the repo root: server on :3000, front on :3001, app deployed + installed
+# from the repo root: server on :3000, front on :3001, app published + installed
 npx nx start:ci twenty-server &
 npx nx start twenty-front &
-node packages/twenty-sdk/dist/cli.cjs deploy && node packages/twenty-sdk/dist/cli.cjs install
+npx nx build twenty-sdk
+node packages/twenty-sdk/dist/cli.cjs app:publish --private && node packages/twenty-sdk/dist/cli.cjs app:install
 
 # then, from this directory
 npx playwright test --project=chromium

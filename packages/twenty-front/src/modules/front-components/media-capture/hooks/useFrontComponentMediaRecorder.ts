@@ -56,6 +56,8 @@ export const useFrontComponentMediaRecorder = ({
   // the first one with the microphone still live.
   // oxlint-disable-next-line twenty/no-state-useref
   const isStartingRecordingRef = useRef(false);
+  // oxlint-disable-next-line twenty/no-state-useref
+  const isDisposedRef = useRef(false);
 
   const stopMediaStream = () => {
     mediaStreamRef.current?.getTracks().forEach((track) => track.stop());
@@ -90,7 +92,14 @@ export const useFrontComponentMediaRecorder = ({
   }, [recordedBlobUrl]);
 
   useEffect(() => {
-    return releaseRecorderResources;
+    // Reset on setup so StrictMode's simulated unmount cannot permanently
+    // mark the hook disposed in development.
+    isDisposedRef.current = false;
+
+    return () => {
+      isDisposedRef.current = true;
+      releaseRecorderResources();
+    };
     // Cleanup only touches refs, so mount-scoped registration is safe.
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -114,9 +123,10 @@ export const useFrontComponentMediaRecorder = ({
         mediaType === 'audio' ? { audio: true } : { audio: true, video: true },
       );
 
-      // The capture may have been cancelled while the permission prompt was
-      // open; adopting the stream now would leave the device recording.
-      if (isCaptureSettled()) {
+      // The capture may have been cancelled — or the modal unmounted by an
+      // external close — while the permission prompt was open; adopting the
+      // stream now would leave the device recording.
+      if (isDisposedRef.current || isCaptureSettled()) {
         mediaStream.getTracks().forEach((track) => track.stop());
 
         return { outcome: 'abandoned' };

@@ -23,7 +23,10 @@ jobs:
         packages/twenty-sdk/**
         packages/twenty-front/src/modules/front-components/**
         packages/twenty-front-component-renderer/**
+        packages/twenty-shared/**
+        packages/twenty-server/src/engine/core-modules/file/**
         !packages/twenty-sdk/package.json
+        !packages/twenty-shared/package.json
 
   example-app-media-notes:
     needs: changed-files-check
@@ -95,13 +98,13 @@ jobs:
           }
           EOF
 
-      - name: Deploy media-notes app
+      - name: Publish media-notes app
         working-directory: packages/twenty-apps/examples/media-notes
-        run: node ${{ github.workspace }}/packages/twenty-sdk/dist/cli.cjs deploy --remote target
+        run: node ${{ github.workspace }}/packages/twenty-sdk/dist/cli.cjs app:publish --private --remote target
 
       - name: Install media-notes app
         working-directory: packages/twenty-apps/examples/media-notes
-        run: node ${{ github.workspace }}/packages/twenty-sdk/dist/cli.cjs install --remote target
+        run: node ${{ github.workspace }}/packages/twenty-sdk/dist/cli.cjs app:install --remote target
 
       - name: Start front
         run: |
