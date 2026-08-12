@@ -2,12 +2,13 @@ import {
   SYSTEM_VIEW_KEYS,
   getSystemPageLayoutTabUniversalIdentifier,
   getSystemPageLayoutWidgetUniversalIdentifier,
+  getSystemViewFieldGroupUniversalIdentifier,
   getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
-  getSystemViewFieldGroupUniversalIdentifier,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
+import { PRE_2_31_RECORD_PAGE_UNIVERSAL_IDENTIFIER_BY_DERIVED } from 'src/database/commands/upgrade-version-command/2-10/utils/remap-record-page-universal-identifiers-to-pre-2-31.util';
 import {
   type RecordPageReownUpdate,
   type RecordPageReownUpdates,
@@ -20,6 +21,11 @@ import { createEmptyRecordPageReownUpdates } from 'src/database/commands/upgrade
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 
 type ReownLogger = { warn: (message: string) => void };
+
+type SystemFieldsViewSelection =
+  | { status: 'selected'; viewId: string }
+  | { status: 'none' }
+  | { status: 'ambiguous' };
 
 type RecordPageStackMaps = Pick<
   AllFlatEntityMaps,
@@ -79,6 +85,21 @@ export const computeRecordPageStackReownUpdates = ({
     flatPageLayoutTabMaps,
     flatPageLayoutWidgetMaps,
   });
+
+  const systemFieldsViewSelection = selectSystemFieldsView({
+    workspaceId,
+    logger,
+    stackTree,
+    flatObjectMetadata,
+    engineOwnedApplicationUniversalIdentifiers,
+    twentyStandardApplicationUniversalIdentifier,
+  });
+
+  if (systemFieldsViewSelection.status !== 'selected') {
+    return reownUpdates;
+  }
+
+  const systemFieldsViewId = systemFieldsViewSelection.viewId;
 
   pushReownUpdate({
     workspaceId,
@@ -184,6 +205,11 @@ export const computeRecordPageStackReownUpdates = ({
 
       if (
         !isDefined(fieldsView) ||
+        // Only the selected system view is re-owned: any other FIELDS widget
+        // view (e.g. user-added through layout customization) would derive
+        // the same object-based identifier and self-collide at apply time,
+        // and is user-space anyway.
+        fieldsView.flatView.id !== systemFieldsViewId ||
         processedViewIds.has(fieldsView.flatView.id)
       ) {
         continue;
@@ -206,6 +232,114 @@ export const computeRecordPageStackReownUpdates = ({
   }
 
   return reownUpdates;
+};
+
+const selectSystemFieldsView = ({
+  workspaceId,
+  logger,
+  stackTree,
+  flatObjectMetadata,
+  engineOwnedApplicationUniversalIdentifiers,
+  twentyStandardApplicationUniversalIdentifier,
+}: {
+  workspaceId: string;
+  logger: ReownLogger;
+  stackTree: ReturnType<typeof collectRecordPageStackTree>;
+  flatObjectMetadata: ComputeRecordPageStackReownUpdatesArgs['flatObjectMetadata'];
+  engineOwnedApplicationUniversalIdentifiers: Set<string>;
+  twentyStandardApplicationUniversalIdentifier: string;
+}): SystemFieldsViewSelection => {
+  const derivedViewUniversalIdentifier = getSystemViewUniversalIdentifier({
+    objectMetadataApplicationUniversalIdentifier:
+      flatObjectMetadata.applicationUniversalIdentifier,
+    objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
+    viewKey: SYSTEM_VIEW_KEYS.FIELDS_WIDGET,
+  });
+  const pre231ViewUniversalIdentifier =
+    PRE_2_31_RECORD_PAGE_UNIVERSAL_IDENTIFIER_BY_DERIVED[
+      derivedViewUniversalIdentifier
+    ];
+
+  const candidates: {
+    fieldsView: RecordPageStackFieldsViewNode;
+    widgetApplicationUniversalIdentifier: string;
+  }[] = [];
+  const seenCandidateViewIds = new Set<string>();
+
+  for (const { flatPageLayoutTab, widgets } of stackTree.tabs) {
+    if (
+      !engineOwnedApplicationUniversalIdentifiers.has(
+        flatPageLayoutTab.applicationUniversalIdentifier,
+      )
+    ) {
+      continue;
+    }
+
+    for (const { flatPageLayoutWidget, fieldsView } of widgets) {
+      if (
+        !engineOwnedApplicationUniversalIdentifiers.has(
+          flatPageLayoutWidget.applicationUniversalIdentifier,
+        ) ||
+        !isDefined(fieldsView) ||
+        seenCandidateViewIds.has(fieldsView.flatView.id)
+      ) {
+        continue;
+      }
+      seenCandidateViewIds.add(fieldsView.flatView.id);
+
+      candidates.push({
+        fieldsView,
+        widgetApplicationUniversalIdentifier:
+          flatPageLayoutWidget.applicationUniversalIdentifier,
+      });
+    }
+  }
+
+  const selectedCandidate =
+    candidates.find(
+      ({ fieldsView }) =>
+        isDefined(pre231ViewUniversalIdentifier) &&
+        fieldsView.flatView.universalIdentifier ===
+          pre231ViewUniversalIdentifier,
+    ) ??
+    candidates.find(
+      ({ fieldsView }) =>
+        fieldsView.flatView.universalIdentifier ===
+        derivedViewUniversalIdentifier,
+    ) ??
+    candidates.find(
+      ({ widgetApplicationUniversalIdentifier }) =>
+        widgetApplicationUniversalIdentifier ===
+        twentyStandardApplicationUniversalIdentifier,
+    ) ??
+    candidates.find(({ fieldsView }) => fieldsView.flatView.isSystemSideEffect);
+
+  if (isDefined(selectedCandidate)) {
+    return {
+      status: 'selected',
+      viewId: selectedCandidate.fieldsView.flatView.id,
+    };
+  }
+
+  if (candidates.length > 1) {
+    logger.warn(
+      `Ambiguous FIELDS widget views for object ${flatObjectMetadata.universalIdentifier} in workspace ${workspaceId}, skipping the whole stack re-own (candidates: ${candidates
+        .map(({ fieldsView }) => fieldsView.flatView.id)
+        .join(', ')})`,
+    );
+
+    return { status: 'ambiguous' };
+  }
+
+  if (candidates.length === 1) {
+    return { status: 'selected', viewId: candidates[0].fieldsView.flatView.id };
+  }
+
+  logger.warn(
+    `No resolvable system FIELDS widget view for object ${flatObjectMetadata.universalIdentifier} in workspace ${workspaceId}, skipping the whole stack re-own`,
+  );
+
+  return { status: 'none' };
 };
 
 const computeRecordPageViewReownUpdates = ({
@@ -242,8 +376,9 @@ const computeRecordPageViewReownUpdates = ({
     viewKey: SYSTEM_VIEW_KEYS.FIELDS_WIDGET,
   });
 
-  // The view identifier derives from the object alone, so a second view
-  // reached through another FIELDS widget of the same stack cannot take it.
+  // Only the selected system view reaches this point, so a holder here is a
+  // row outside the walk (e.g. a soft-deleted view still occupying the
+  // identifier in the non-partial unique index).
   const derivedViewIdentifierHolder =
     flatViewMaps.byUniversalIdentifier[derivedViewUniversalIdentifier];
 

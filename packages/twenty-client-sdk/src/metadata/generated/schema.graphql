@@ -1454,6 +1454,11 @@ type BillingSubscriptionItem {
   billingProduct: BillingProductDTO!
 }
 
+type BillingCustomer {
+  id: UUID!
+  hasPaymentMethod: Boolean
+}
+
 type BillingSubscription {
   id: UUID!
   status: SubscriptionStatus!
@@ -1474,11 +1479,6 @@ enum SubscriptionStatus {
   Paused
   Trialing
   Unpaid
-}
-
-type BillingCustomer {
-  id: UUID!
-  hasPaymentMethod: Boolean
 }
 
 type LogicFunctionExecutionResult {
@@ -1740,6 +1740,7 @@ enum FeatureFlagKey {
   IS_WORKFLOW_VERSION_IN_CORE_ENABLED
   IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED
   IS_NATIVE_CALL_RECORDING_TABS_ENABLED
+  IS_ORM_V2_READ_PATH_ENABLED
 }
 
 type WorkspaceUrls {

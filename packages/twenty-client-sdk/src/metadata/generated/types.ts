@@ -48,7 +48,7 @@ export default {
         129,
         130,
         132,
-        140,
+        141,
         143,
         151,
         154,
@@ -1621,16 +1621,16 @@ export default {
                 170
             ],
             "billingSubscriptions": [
-                139
+                140
             ],
             "installedApplications": [
                 47
             ],
             "currentBillingSubscription": [
-                139
+                140
             ],
             "billingCustomer": [
-                141
+                139
             ],
             "billingEntitlements": [
                 239
@@ -2845,12 +2845,23 @@ export default {
                 1
             ]
         },
+        "BillingCustomer": {
+            "id": [
+                3
+            ],
+            "hasPaymentMethod": [
+                8
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "BillingSubscription": {
             "id": [
                 3
             ],
             "status": [
-                140
+                141
             ],
             "interval": [
                 132
@@ -2875,17 +2886,6 @@ export default {
             ]
         },
         "SubscriptionStatus": {},
-        "BillingCustomer": {
-            "id": [
-                3
-            ],
-            "hasPaymentMethod": [
-                8
-            ],
-            "__typename": [
-                1
-            ]
-        },
         "LogicFunctionExecutionResult": {
             "data": [
                 9
@@ -3196,7 +3196,7 @@ export default {
         },
         "BillingEndTrialPeriod": {
             "status": [
-                140
+                141
             ],
             "hasPaymentMethod": [
                 8
@@ -3205,10 +3205,10 @@ export default {
                 1
             ],
             "currentBillingSubscription": [
-                139
+                140
             ],
             "billingSubscriptions": [
-                139
+                140
             ],
             "__typename": [
                 1
@@ -3281,10 +3281,10 @@ export default {
         },
         "BillingUpdate": {
             "currentBillingSubscription": [
-                139
+                140
             ],
             "billingSubscriptions": [
-                139
+                140
             ],
             "__typename": [
                 1

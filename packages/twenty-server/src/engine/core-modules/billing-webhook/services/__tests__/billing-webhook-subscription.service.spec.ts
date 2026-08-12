@@ -12,6 +12,7 @@ import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billi
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
@@ -93,6 +94,8 @@ describe('BillingWebhookSubscriptionService', () => {
         id: 'billing-subscription-id',
         stripeSubscriptionId:
           mockStripeSubscriptionUpdatedEventWithoutUpdatedItem.data.object.id,
+        currentPeriodStart: new Date('2026-01-01T00:00:00.000Z'),
+        previousPeriodStart: null,
       }),
     };
 
@@ -127,6 +130,12 @@ describe('BillingWebhookSubscriptionService', () => {
         {
           provide: StripeSubscriptionScheduleService,
           useValue: stripeSubscriptionScheduleService,
+        },
+        {
+          provide: BillingCreditService,
+          useValue: {
+            reconcileMirroredBalance: jest.fn().mockResolvedValue(undefined),
+          },
         },
         {
           provide: BillingUsageCacheService,

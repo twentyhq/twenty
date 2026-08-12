@@ -1117,6 +1117,7 @@ msgstr "Ativando..."
 
 #. js-lingui-id: F6pfE9
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -2167,6 +2168,12 @@ msgstr "Amazon Q Developer CLI"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Amber"
 msgstr "Âmbar"
+
+#. js-lingui-id: hehnjM
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
+msgid "Amount"
+msgstr ""
 
 #. js-lingui-id: s46CyD
 #: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
@@ -3502,6 +3509,7 @@ msgstr "Não consegue escanear? Copie o"
 #. js-lingui-id: dEgA5A
 #: src/modules/applications/components/AuthorizeActionButtons.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/billing/components/AddCreditCardModal.tsx
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
@@ -4301,6 +4309,11 @@ msgstr "Empresas"
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCardHeaderActions.tsx
 msgid "Compare plans"
 msgstr "Comparar planos"
+
+#. js-lingui-id: amPBVF
+#: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
+msgid "Compensation"
+msgstr ""
 
 #. js-lingui-id: j1828V
 #: src/modules/settings/unsubscribers/utils/getMessageSuppressionReasonBadge.ts
@@ -5320,6 +5333,11 @@ msgstr "Consumo de créditos no período atual"
 msgid "Credit consumption over time."
 msgstr "Consumo de créditos ao longo do tempo."
 
+#. js-lingui-id: zH6NZT
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
+msgid "Credit grant revoked."
+msgstr ""
+
 #. js-lingui-id: CYpB9A
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Credit pack switching has been cancelled."
@@ -5357,6 +5375,11 @@ msgstr "créditos"
 msgid "Credits"
 msgstr "Créditos"
 
+#. js-lingui-id: AaNZqp
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
+msgid "Credits are added on top of the plan allowance and expire at the end of the current billing period. Unused granted credits carry over in full."
+msgstr ""
+
 #. js-lingui-id: 0o2LpE
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Credits are used by workflows, AI chats, agents, and approved apps"
@@ -5371,6 +5394,11 @@ msgstr "créditos disponíveis (incluindo {rolloverCreditsDisplay} de rollover)"
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "credits available during the trial period"
 msgstr "créditos disponíveis durante o período de teste"
+
+#. js-lingui-id: MnLFOj
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
+msgid "Credits handed out on top of the plan allowance"
+msgstr ""
 
 #. js-lingui-id: iSuLEw
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
@@ -8140,12 +8168,14 @@ msgid "Expiration Date"
 msgstr "Data de Expiração"
 
 #. js-lingui-id: M1RnFv
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/developers/utils/formatExpiration.ts
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Expired"
 msgstr "Expirado"
 
 #. js-lingui-id: KnN1Tu
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "Expires"
 msgstr "Expira"
@@ -9293,6 +9323,11 @@ msgstr "Ir para as Configurações"
 msgid "Gold"
 msgstr "Dourado"
 
+#. js-lingui-id: +g90tY
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
+msgid "Goodwill gesture after the March incident"
+msgstr ""
+
 #. js-lingui-id: eoe8BR
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -9314,6 +9349,11 @@ msgstr "Conta Google, Microsoft ou CalDAV na qual criar o evento. Deixe em branc
 msgid "Goose"
 msgstr "Goose"
 
+#. js-lingui-id: nE5VAt
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
+msgid "Grant"
+msgstr ""
+
 #. js-lingui-id: P1Rw/Z
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "Grant access"
@@ -9329,10 +9369,26 @@ msgstr "Conceda acesso ao seu espaço de trabalho para que possamos solucionar p
 msgid "Grant admin panel access"
 msgstr "Conceder acesso ao painel de administração"
 
+#. js-lingui-id: 5O8DG6
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
+msgid "Grant credits"
+msgstr ""
+
 #. js-lingui-id: FdPN4f
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "Grant full access"
 msgstr "Conceder acesso completo"
+
+#. js-lingui-id: Tbxf45
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
+msgid "Granted {parsedAmount} credits to this workspace."
+msgstr ""
+
+#. js-lingui-id: fqtGOd
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
+msgid "Granted credits"
+msgstr ""
 
 #. js-lingui-id: WUgtid
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
@@ -13871,6 +13927,11 @@ msgstr ""
 msgid "Onboarding Packs"
 msgstr "Pacotes de Onboarding"
 
+#. js-lingui-id: wxvgdv
+#: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
+msgid "Onboarding reward"
+msgstr ""
+
 #. js-lingui-id: qaG+Ug
 #: src/modules/side-panel/pages/page-layout/components/ChartFiltersDeletedFieldsWarning.tsx
 msgid "One or more filters reference deactivated or deleted fields and will be automatically removed on save."
@@ -15176,6 +15237,8 @@ msgid "Read/Edit/Delete permissions"
 msgstr "Permissões de leitura/edição/remoção"
 
 #. js-lingui-id: VJScHU
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterMenuContent.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
@@ -15913,6 +15976,8 @@ msgid "reverse alphabetical"
 msgstr "alfabética inversa"
 
 #. js-lingui-id: GXsAby
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantRowDropdownMenu.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminRevokeSigningKeyConfirmationModal.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 msgid "Revoke"
@@ -15928,12 +15993,18 @@ msgstr "Revogar acesso"
 msgid "Revoke admin panel access"
 msgstr "Revogar acesso ao painel de administração"
 
+#. js-lingui-id: CCR+qC
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
+msgid "Revoke credit grant"
+msgstr ""
+
 #. js-lingui-id: rJrWw4
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminRevokeSigningKeyConfirmationModal.tsx
 msgid "Revoke signing key"
 msgstr "Revogar chave de assinatura"
 
 #. js-lingui-id: xGiT1z
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 msgid "Revoked"
@@ -16020,6 +16091,11 @@ msgstr "funções"
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Roles"
 msgstr "Funções"
+
+#. js-lingui-id: Q6o/eX
+#: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
+msgid "Rollover"
+msgstr ""
 
 #. js-lingui-id: ufKFGo
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -16132,6 +16208,11 @@ msgstr "Executando..."
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Russian"
 msgstr "Russo"
+
+#. js-lingui-id: mUv9U4
+#: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
+msgid "Sales"
+msgstr ""
 
 #. js-lingui-id: QeF0zb
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
@@ -17756,6 +17837,7 @@ msgstr "Estado"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
@@ -18887,6 +18969,12 @@ msgstr "Isso nunca deveria acontecer"
 msgid "This subdomain is reserved"
 msgstr "Este subdomínio está reservado"
 
+#. js-lingui-id: ddMLFL
+#. placeholder {0}: formatCredits(grantPendingRevocation.amount)
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
+msgid "This takes {0} credits back off this workspace straight away. Revoking cannot be undone."
+msgstr ""
+
 #. js-lingui-id: MMGDfe
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This value will be saved to the database."
@@ -19473,6 +19561,8 @@ msgid "Two-factor authentication setup completed successfully!"
 msgstr "Configuração de autenticação em duas etapas concluída com sucesso!"
 
 #. js-lingui-id: +zy2Nq
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
