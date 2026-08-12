@@ -194,19 +194,26 @@ describe('fetchSlackAssistantRecordCard', () => {
     expect(queryMock).not.toHaveBeenCalled();
   });
 
-  it('should skip objects that have no card definition', async () => {
+  it('should card an object with no definition from the link alone', async () => {
     const card = await fetchSlackAssistantRecordCard({
       client,
       responseText: buildResponseText('workspaceMember', 'w-1'),
       workspaceBaseUrl: WORKSPACE_BASE_URL,
     });
 
-    expect(card).toBeUndefined();
+    expect(card).toEqual({
+      recordName: 'ACME',
+      objectLabel: 'Workspace member',
+      recordUrl: `${WORKSPACE_BASE_URL}/object/workspaceMember/w-1`,
+      details: [],
+    });
     expect(queryMock).not.toHaveBeenCalled();
   });
 
-  it('should fall back to no card when the record cannot be read', async () => {
-    queryMock.mockRejectedValue(new Error('forbidden'));
+  it('should show the record name only when the app role cannot read the object', async () => {
+    queryMock.mockRejectedValue(
+      new Error('Entity performing the request does not have permission'),
+    );
 
     const card = await fetchSlackAssistantRecordCard({
       client,
@@ -214,7 +221,39 @@ describe('fetchSlackAssistantRecordCard', () => {
       workspaceBaseUrl: WORKSPACE_BASE_URL,
     });
 
-    expect(card).toBeUndefined();
+    expect(card).toEqual({
+      recordName: 'ACME',
+      objectLabel: 'Company',
+      recordUrl: `${WORKSPACE_BASE_URL}/object/company/c-1`,
+      details: [],
+    });
+  });
+
+  it('should not retry a narrower selection when the role reads nothing', async () => {
+    queryMock.mockRejectedValue(
+      new Error('Entity performing the request does not have permission'),
+    );
+
+    await fetchSlackAssistantRecordCard({
+      client,
+      responseText: buildResponseText('company', 'c-1'),
+      workspaceBaseUrl: WORKSPACE_BASE_URL,
+    });
+
+    expect(queryMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('should show the record name only when the record cannot be read at all', async () => {
+    queryMock.mockRejectedValue(new Error('upstream timeout'));
+
+    const card = await fetchSlackAssistantRecordCard({
+      client,
+      responseText: buildResponseText('company', 'c-1'),
+      workspaceBaseUrl: WORKSPACE_BASE_URL,
+    });
+
+    expect(queryMock).toHaveBeenCalledTimes(2);
+    expect(card?.details).toEqual([]);
   });
 
   it('should fall back to no card when the record no longer exists', async () => {

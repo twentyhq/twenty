@@ -5,11 +5,30 @@ import { SLACK_RECORD_CARD_MAX_DETAILS } from 'src/logic-functions/constants/sla
 import { type SlackRecordCard } from 'src/logic-functions/types/slack-record-card.type';
 import { type SlackRecordLink } from 'src/logic-functions/types/slack-record-link.type';
 import { type SlackRecordNode } from 'src/logic-functions/types/slack-record-node.type';
+import { buildSlackRecordCardFromLink } from 'src/logic-functions/utils/build-slack-record-card-from-link';
+import { isCoreApiPermissionError } from 'src/logic-functions/utils/is-core-api-permission-error';
 
 type SlackRecordQueryResult = Record<
   string,
   { edges?: { node?: SlackRecordNode }[] } | undefined
 >;
+
+const logEnrichmentFailure = (
+  recordLink: SlackRecordLink,
+  error: unknown,
+): void => {
+  if (isCoreApiPermissionError(error)) {
+    console.log(
+      `[slack] the app role cannot read ${recordLink.objectNameSingular}, so its card shows the record name only. Grant read access on the CRM objects to the app role to fill in field values.`,
+    );
+
+    return;
+  }
+
+  console.warn(
+    `[slack] could not read the card fields of ${recordLink.objectNameSingular} ${recordLink.recordId}, showing the record name only: ${error instanceof Error ? error.message : String(error)}`,
+  );
+};
 
 export const fetchSlackRecordCard = async (
   client: CoreApiClient,
@@ -19,11 +38,7 @@ export const fetchSlackRecordCard = async (
     SLACK_RECORD_CARD_DEFINITIONS[recordLink.objectNameSingular];
 
   if (definition === undefined) {
-    console.warn(
-      `[slack] no record card is defined for ${recordLink.objectNameSingular}, posting the answer without one`,
-    );
-
-    return undefined;
+    return buildSlackRecordCardFromLink({ recordLink });
   }
 
   const fetchNode = async (
@@ -43,9 +58,10 @@ export const fetchSlackRecordCard = async (
     try {
       return await fetchNode(definition.nodeSelection);
     } catch (error) {
-      console.warn(
-        `[slack] could not read every card field of ${recordLink.objectNameSingular} ${recordLink.recordId}, retrying with its name only: ${error instanceof Error ? error.message : String(error)}`,
-      );
+      // A narrower selection cannot recover a role that reads nothing.
+      if (isCoreApiPermissionError(error)) {
+        throw error;
+      }
 
       return await fetchNode(definition.nameOnlyNodeSelection);
     }
@@ -71,10 +87,11 @@ export const fetchSlackRecordCard = async (
         .slice(0, SLACK_RECORD_CARD_MAX_DETAILS),
     };
   } catch (error) {
-    console.warn(
-      `[slack] failed to load the record card for ${recordLink.objectNameSingular}: ${error instanceof Error ? error.message : String(error)}`,
-    );
+    logEnrichmentFailure(recordLink, error);
 
-    return undefined;
+    return buildSlackRecordCardFromLink({
+      recordLink,
+      objectLabel: definition.objectLabel,
+    });
   }
 };
