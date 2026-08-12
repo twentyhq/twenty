@@ -236,9 +236,10 @@ export class WorkspaceUpdateQueryBuilder<
         await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
       }
 
-      // Re-running the criteria would match rows inserted concurrently instead
-      // of the rows that were updated, so select the after state by id.
-      eventSelectQueryBuilder.whereInIds(
+      // Restrict the after-select to the rows captured before the update:
+      // re-running the criteria alone would match rows inserted concurrently
+      // (e.g. by event listeners) and crash event formatting.
+      eventSelectQueryBuilder.andWhereInIds(
         before.map((beforeRecord) => beforeRecord.id),
       );
 
