@@ -85,7 +85,9 @@ const workerExports: WorkerExports = {
     );
 
     for (const storageBridge of Object.values(frontComponentStorageBridges)) {
-      storageBridge.flushPendingPersistOperations();
+      storageBridge.connectHostCommunicationApi(
+        frontComponentHostCommunicationApi,
+      );
     }
   },
   updateContext: async (context) => {

@@ -1,3 +1,5 @@
+import { type FrontComponentHostCommunicationApiStore } from '@/types/FrontComponentHostCommunicationApiStore';
+
 export type FrontComponentStorageBridge = {
   getItem: (key: string) => string | null;
   getKeyAtIndex: (index: number) => string | null;
@@ -6,5 +8,7 @@ export type FrontComponentStorageBridge = {
   removeItem: (key: string) => void;
   clear: () => void;
   seed: (seededEntries: Record<string, string>) => void;
-  flushPendingPersistOperations: () => void;
+  connectHostCommunicationApi: (
+    hostCommunicationApi: FrontComponentHostCommunicationApiStore,
+  ) => void;
 };

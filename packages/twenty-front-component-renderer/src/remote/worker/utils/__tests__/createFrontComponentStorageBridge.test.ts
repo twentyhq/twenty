@@ -1,5 +1,4 @@
 import { FRONT_COMPONENT_STORAGE_MAX_KEY_LENGTH } from '@/constants/FrontComponentStorageMaxKeyLength';
-import { type FrontComponentHostCommunicationApiStore } from '@/types/FrontComponentHostCommunicationApiStore';
 import { createFrontComponentStorageBridge } from '../createFrontComponentStorageBridge';
 
 const createHostCommunicationApiStub = () => ({
@@ -11,13 +10,13 @@ const createHostCommunicationApiStub = () => ({
 const createConnectedBridge = () => {
   const hostCommunicationApi = createHostCommunicationApiStub();
 
-  return {
-    hostCommunicationApi,
-    bridge: createFrontComponentStorageBridge({
-      storageType: 'localStorage',
-      getHostCommunicationApi: () => hostCommunicationApi,
-    }),
-  };
+  const bridge = createFrontComponentStorageBridge({
+    storageType: 'localStorage',
+  });
+
+  bridge.connectHostCommunicationApi(hostCommunicationApi);
+
+  return { hostCommunicationApi, bridge };
 };
 
 const flushPendingPromises = () =>
@@ -90,24 +89,20 @@ describe('createFrontComponentStorageBridge', () => {
     });
   });
 
-  it('should queue writes until the host communication api is available', () => {
-    const hostCommunicationApi: FrontComponentHostCommunicationApiStore = {};
-
+  it('should queue writes until the host communication api is connected', () => {
     const bridge = createFrontComponentStorageBridge({
       storageType: 'localStorage',
-      getHostCommunicationApi: () => hostCommunicationApi,
     });
 
     bridge.setItem('theme', '"dark"');
 
     expect(bridge.getItem('theme')).toBe('"dark"');
 
-    const storageSet = jest.fn(async () => {});
-    hostCommunicationApi.storageSet = storageSet;
+    const hostCommunicationApi = createHostCommunicationApiStub();
 
-    bridge.flushPendingPersistOperations();
+    bridge.connectHostCommunicationApi(hostCommunicationApi);
 
-    expect(storageSet).toHaveBeenCalledWith({
+    expect(hostCommunicationApi.storageSet).toHaveBeenCalledWith({
       storageType: 'localStorage',
       key: 'theme',
       serializedValue: '"dark"',
@@ -138,8 +133,9 @@ describe('createFrontComponentStorageBridge', () => {
 
     const bridge = createFrontComponentStorageBridge({
       storageType: 'localStorage',
-      getHostCommunicationApi: () => hostCommunicationApi,
     });
+
+    bridge.connectHostCommunicationApi(hostCommunicationApi);
 
     bridge.setItem('theme', '"dark"');
 

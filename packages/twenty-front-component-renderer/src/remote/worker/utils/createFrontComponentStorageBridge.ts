@@ -10,14 +10,14 @@ const STORAGE_PERSISTENCE_FAILURE_WARNING =
 
 export const createFrontComponentStorageBridge = ({
   storageType,
-  getHostCommunicationApi,
 }: {
   storageType: FrontComponentStorageType;
-  getHostCommunicationApi: () => FrontComponentHostCommunicationApiStore;
 }): FrontComponentStorageBridge => {
   const entries = new Map<string, string>();
   const pendingPersistOperations: (() => void)[] = [];
 
+  let hostCommunicationApi: FrontComponentHostCommunicationApiStore | null =
+    null;
   let cachedKeys: string[] | null = null;
 
   const getKeys = (): string[] => {
@@ -26,21 +26,32 @@ export const createFrontComponentStorageBridge = ({
     return cachedKeys;
   };
 
-  const persist = (
-    runPersist: (
-      hostCommunicationApi: FrontComponentHostCommunicationApiStore,
+  const runPersist = (
+    persistOperation: (
+      connectedHostCommunicationApi: FrontComponentHostCommunicationApiStore,
     ) => Promise<void> | undefined,
   ): void => {
-    const executePersist = (): Promise<void> | undefined =>
-      runPersist(getHostCommunicationApi())?.catch(() => {
-        console.warn(STORAGE_PERSISTENCE_FAILURE_WARNING);
-      });
-
-    const persistResult = executePersist();
-
-    if (!isDefined(persistResult)) {
-      pendingPersistOperations.push(executePersist);
+    if (!isDefined(hostCommunicationApi)) {
+      return;
     }
+
+    persistOperation(hostCommunicationApi)?.catch(() => {
+      console.warn(STORAGE_PERSISTENCE_FAILURE_WARNING);
+    });
+  };
+
+  const persist = (
+    persistOperation: (
+      connectedHostCommunicationApi: FrontComponentHostCommunicationApiStore,
+    ) => Promise<void> | undefined,
+  ): void => {
+    if (isDefined(hostCommunicationApi)) {
+      runPersist(persistOperation);
+
+      return;
+    }
+
+    pendingPersistOperations.push(() => runPersist(persistOperation));
   };
 
   const getOtherEntriesTotalLength = (excludedKey: string): number => {
@@ -83,8 +94,8 @@ export const createFrontComponentStorageBridge = ({
       entries.set(key, serializedValue);
       cachedKeys = null;
 
-      persist((hostCommunicationApi) =>
-        hostCommunicationApi.storageSet?.({
+      persist((connectedHostCommunicationApi) =>
+        connectedHostCommunicationApi.storageSet?.({
           storageType,
           key,
           serializedValue,
@@ -96,8 +107,8 @@ export const createFrontComponentStorageBridge = ({
       entries.delete(key);
       cachedKeys = null;
 
-      persist((hostCommunicationApi) =>
-        hostCommunicationApi.storageDelete?.({ storageType, key }),
+      persist((connectedHostCommunicationApi) =>
+        connectedHostCommunicationApi.storageDelete?.({ storageType, key }),
       );
     },
 
@@ -105,15 +116,15 @@ export const createFrontComponentStorageBridge = ({
       entries.clear();
       cachedKeys = null;
 
-      persist((hostCommunicationApi) =>
-        hostCommunicationApi.storageClear?.({ storageType }),
+      persist((connectedHostCommunicationApi) =>
+        connectedHostCommunicationApi.storageClear?.({ storageType }),
       );
     },
 
-    flushPendingPersistOperations: () => {
-      const operationsToFlush = pendingPersistOperations.splice(0);
+    connectHostCommunicationApi: (nextHostCommunicationApi) => {
+      hostCommunicationApi = nextHostCommunicationApi;
 
-      for (const operation of operationsToFlush) {
+      for (const operation of pendingPersistOperations.splice(0)) {
         operation();
       }
     },
