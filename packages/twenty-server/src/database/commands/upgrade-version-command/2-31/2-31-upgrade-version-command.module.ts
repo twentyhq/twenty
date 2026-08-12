@@ -7,6 +7,7 @@ import { ReconcileStandardRecordPageCommand } from 'src/database/commands/upgrad
 import { ReconcileWorkspaceCustomRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-workspace-command-1786437481500-reconcile-workspace-custom-record-page.command';
 import { BackfillRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-workspace-command-1786437482000-backfill-record-page.command';
 import { TrimMessageCampaignRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-workspace-command-1786456707000-trim-message-campaign-record-page.command';
+import { RestoreStandardDefaultRelationFieldsCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-workspace-command-1786457000000-restore-standard-default-relation-fields.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -28,6 +29,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ReconcileWorkspaceCustomRecordPageCommand,
     BackfillRecordPageCommand,
     TrimMessageCampaignRecordPageCommand,
+    RestoreStandardDefaultRelationFieldsCommand,
   ],
 })
 export class V2_31_UpgradeVersionCommandModule {}
