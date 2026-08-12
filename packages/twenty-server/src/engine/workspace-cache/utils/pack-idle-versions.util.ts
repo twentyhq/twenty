@@ -10,13 +10,13 @@ export type PackIdleVersionsResult = {
 export const packIdleVersions = <T>({
   localCache,
   minIdleMs,
-  maxVersionsPerSlice,
+  maxVersionsPerRun,
   pack,
   nowEpochMs = () => Date.now(),
 }: {
   localCache: ReadonlyMap<string, WorkspaceLocalCacheEntry<T>>;
   minIdleMs: number;
-  maxVersionsPerSlice: number;
+  maxVersionsPerRun: number;
   pack: (params: { localKey: string; data: T }) => Buffer | undefined;
   nowEpochMs?: () => number;
 }): PackIdleVersionsResult => {
@@ -36,7 +36,7 @@ export const packIdleVersions = <T>({
 
   let packed = 0;
 
-  for (const { localKey, hash } of candidates.slice(0, maxVersionsPerSlice)) {
+  for (const { localKey, hash } of candidates.slice(0, maxVersionsPerRun)) {
     const entry = localCache.get(localKey);
     const version = entry?.versions.get(hash);
 
@@ -60,6 +60,6 @@ export const packIdleVersions = <T>({
 
   return {
     packed,
-    remaining: Math.max(candidates.length - maxVersionsPerSlice, 0),
+    remaining: Math.max(candidates.length - maxVersionsPerRun, 0),
   };
 };

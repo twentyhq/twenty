@@ -52,8 +52,8 @@ const MAX_LOCAL_CACHE_ENTRIES = 6_000;
 const MIN_EVICT_KEYS = 100;
 const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000; // 30 minutes idle
 const LOCAL_CACHE_SWEEP_INTERVAL_MS = 60 * 1000;
-const PACKING_INTERVAL_MS = 1000;
-const MAX_VERSIONS_PER_PACKING_SLICE = 2;
+const PACKING_INTERVAL_MS = 500;
+const MAX_VERSIONS_PER_PACKING_RUN = 2;
 const MIN_IDLE_BEFORE_PACKING_MS = 60 * 1000;
 // Per-provider entry caps, keyed by local cache key prefix (ORM graphs are ~5 MB each).
 const MAX_LOCAL_ENTRIES_BY_KEY_NAME = new Map<string, number>([
@@ -158,7 +158,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     this.sweepTimer.unref();
 
     this.packingTimer = setInterval(
-      () => this.packIdleVersionsSlice(),
+      () => this.runPacking(),
       PACKING_INTERVAL_MS,
     );
     this.packingTimer.unref();
@@ -687,13 +687,13 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  private packIdleVersionsSlice(): void {
+  private runPacking(): void {
     const startedAt = performance.now();
 
     const { packed, remaining } = packIdleVersions({
       localCache: this.localCache,
       minIdleMs: MIN_IDLE_BEFORE_PACKING_MS,
-      maxVersionsPerSlice: MAX_VERSIONS_PER_PACKING_SLICE,
+      maxVersionsPerRun: MAX_VERSIONS_PER_PACKING_RUN,
       pack: ({ localKey, data }) => {
         const separatorIndex = localKey.lastIndexOf(':');
         const keyName = localKey.slice(
@@ -714,7 +714,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       },
     });
 
-    this.cacheMetricsService.recordPackingSlice({
+    this.cacheMetricsService.recordPackingRun({
       durationSeconds: (performance.now() - startedAt) / 1000,
       packed,
       remaining,

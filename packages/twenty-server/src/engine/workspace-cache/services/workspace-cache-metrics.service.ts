@@ -72,9 +72,9 @@ export class WorkspaceCacheMetricsService {
       },
     );
     this.packingDurationHistogram = meter.createHistogram(
-      'twenty_workspace_cache_packing_slice_duration_seconds',
+      'twenty_workspace_cache_packing_run_duration_seconds',
       {
-        description: 'Event loop time consumed by one packing slice',
+        description: 'Event loop time consumed by one packing run',
         unit: 's',
         advice: { explicitBucketBoundaries: CACHE_DURATION_BUCKETS_SECONDS },
       },
@@ -113,7 +113,7 @@ export class WorkspaceCacheMetricsService {
     this.redisWriteDurationHistogram.record(seconds);
   }
 
-  recordPackingSlice({
+  recordPackingRun({
     durationSeconds,
     packed,
     remaining,
@@ -368,7 +368,7 @@ export class WorkspaceCacheMetricsService {
       metricName: 'twenty_workspace_cache_packing_backlog',
       options: {
         description:
-          'Versions still awaiting packing when the last packing slice ran out of budget',
+          'Versions left over when the last packing run hit its per-run cap',
       },
       callback: async () => this.packingBacklog,
     });

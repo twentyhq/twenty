@@ -27,13 +27,13 @@ const pack = () => Buffer.from('packed');
 
 const run = (
   localCache: Map<string, WorkspaceLocalCacheEntry<string>>,
-  maxVersionsPerSlice: number,
+  maxVersionsPerRun: number,
   packOverride?: () => Buffer | undefined,
 ) =>
   packIdleVersions({
     localCache,
     minIdleMs: IDLE_MS,
-    maxVersionsPerSlice,
+    maxVersionsPerRun,
     pack: packOverride ?? pack,
     nowEpochMs: () => NOW_EPOCH_MS,
   });
@@ -58,7 +58,7 @@ describe('packIdleVersions', () => {
     expect(stateOf(localCache, `${FIELD_METADATA}:ws-a`)).toBe('live');
   });
 
-  it('should pack no more than the slice allows, coldest first', () => {
+  it('should pack no more than one run allows, coldest first', () => {
     const localCache = new Map([
       [`${FIELD_METADATA}:ws-coldest`, liveEntry(IDLE - 2_000)],
       [`${FIELD_METADATA}:ws-colder`, liveEntry(IDLE - 1_000)],
@@ -74,7 +74,7 @@ describe('packIdleVersions', () => {
     expect(stateOf(localCache, `${ORM}:ws-warm`)).toBe('live');
   });
 
-  it('should converge across successive slices', () => {
+  it('should converge across successive runs', () => {
     const localCache = new Map(
       Array.from({ length: 5 }, (_, index) => [
         `${FIELD_METADATA}:ws-${index}`,
@@ -82,14 +82,14 @@ describe('packIdleVersions', () => {
       ]),
     );
     let remaining = Number.POSITIVE_INFINITY;
-    let slices = 0;
+    let runs = 0;
 
-    while (remaining > 0 && slices < 10) {
+    while (remaining > 0 && runs < 10) {
       remaining = run(localCache, 2).remaining;
-      slices += 1;
+      runs += 1;
     }
 
-    expect(slices).toBe(3);
+    expect(runs).toBe(3);
     expect(
       [...localCache.values()].every(
         (entry) => entry.versions.get('hash-1')?.state === 'packed',
