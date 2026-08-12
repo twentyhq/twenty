@@ -390,6 +390,19 @@ export abstract class CommonBaseQueryRunnerService<
       .getRepository(flatObjectMetadata.nameSingular, rolePermissionConfig);
   }
 
+  protected getNestedRelationsReadPathOptions({
+    featureFlagsMap,
+  }: Pick<CommonExtendedQueryRunnerContext, 'featureFlagsMap'>): {
+    isOrmV2ReadPathEnabled: boolean;
+    useReplica: boolean;
+  } {
+    return {
+      isOrmV2ReadPathEnabled:
+        featureFlagsMap[FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED],
+      useReplica: this.isReadOnly,
+    };
+  }
+
   private async throttleQueryExecution(authContext: WorkspaceAuthContext) {
     await this.throttleApiKeyQueryExecution(authContext);
     await this.throttleApplicationQueryExecution(authContext);

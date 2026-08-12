@@ -106,6 +106,12 @@ Wired into `CommonFindManyQueryRunnerService`, `CommonFindOneQueryRunnerService`
 `CommonFindDuplicatesQueryRunnerService` and `CommonGroupByQueryRunnerService`. Other
 runners keep `repository`.
 
+Nested relation loading also routes through v2 under the flag:
+`ProcessNestedRelationsOrmV2Helper` loads relations and relation aggregates on v2
+repositories, and composes the per-parent-limit `CROSS JOIN LATERAL` as raw SQL run
+through `repository.executeRaw`. The shared `ProcessNestedRelationsHelper` flag-branches
+to it, so a flagged read now reads root rows and their relations through v2.
+
 group-by "with records" is the one path that is not a transparent swap: it wraps a
 builder subquery in a table-less `FROM (subquery)` JSON_AGG query, which the
 table-shape builder cannot represent. `GroupByWithRecordsV2Service` builds the inner
@@ -118,9 +124,6 @@ subquery with the v2 builder and runs the composed outer query through
   where `EntityMetadata` is genuinely used (column list, `RETURNING` mapping, `updatedAt`
   maintenance). Removing it from reads shrinks what the metadata cache is used for; it
   does not delete the cache.
-- Relation loading. `ProcessNestedRelationsV2Helper` still runs on v1 repositories, so a
-  flagged findMany selecting relations reads its root rows through v2 and its relations
-  through v1.
 - `find` / `findOne` / `findBy` and the rest of the repository surface used by
   `src/modules`.
 - Transactions and DDL.
