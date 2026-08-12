@@ -16,8 +16,6 @@ import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/bi
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
-// Shared with the backfill instance command so the two are safe in either
-// order: whichever runs first claims the key, the other is a no-op.
 const LEGACY_BALANCE_IDEMPOTENCY_KEY_PREFIX = 'backfill-credit-balance:';
 
 export type CreateBillingCreditGrantParams = {
@@ -40,8 +38,6 @@ const getPostgresErrorCode = (error: unknown): string | undefined => {
   return typeof error.code === 'string' ? error.code : undefined;
 };
 
-// TypeORM wraps the driver error, and which of the two carries the code
-// depends on how the query was issued.
 const isUniqueViolation = (error: unknown): boolean => {
   if (getPostgresErrorCode(error) === POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION) {
     return true;
@@ -61,9 +57,6 @@ const isUniqueViolation = (error: unknown): boolean => {
   );
 };
 
-// Owns the billingCreditGrant table. Deliberately free of side effects so that
-// read paths (available credits) can depend on it without pulling in the cache
-// and subscription services that BillingCreditService needs.
 @Injectable()
 export class BillingCreditGrantService {
   constructor(
@@ -73,8 +66,6 @@ export class BillingCreditGrantService {
     private readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
   ) {}
 
-  // Returns null when idempotencyKey has already been used, so callers can tell
-  // a fresh grant from a replayed one.
   async createGrant(
     params: CreateBillingCreditGrantParams,
   ): Promise<BillingCreditGrantEntity | null> {
@@ -150,8 +141,6 @@ export class BillingCreditGrantService {
 
     const total = Number(result?.total ?? 0);
 
-    // Rounding a balance would hand out or withhold credits that were never
-    // granted, so refuse rather than serve a number we cannot represent.
     if (!Number.isSafeInteger(total)) {
       throw new BillingException(
         `Credit balance for workspace ${workspaceId} is not a safe integer (${total})`,
@@ -162,10 +151,6 @@ export class BillingCreditGrantService {
     return total;
   }
 
-  // Moves a not-yet-backfilled balance into the ledger before anything writes
-  // to it. Without this the first grant recomputes the mirror column from a
-  // ledger that does not hold the legacy balance yet, erasing it.
-  // Remove along with creditBalanceMicro.
   async materializeLegacyBalance({
     workspaceId,
     effectiveAt,
@@ -196,10 +181,6 @@ export class BillingCreditGrantService {
     });
   }
 
-  // What a workspace can actually spend, which is the ledger except in the
-  // window between this release deploying and its backfill running: until a
-  // workspace has any grant at all, its balance still only exists in the
-  // mirror column. Remove along with creditBalanceMicro.
   async getSpendableCreditsMicro(workspaceId: string): Promise<number> {
     if (await this.hasAnyGrant(workspaceId)) {
       return this.getActiveCreditsMicro(workspaceId);
@@ -208,7 +189,6 @@ export class BillingCreditGrantService {
     return this.getMirroredBalanceMicro(workspaceId);
   }
 
-  // Grants that were spendable at any point during the given period.
   async findGrantsLiveDuringPeriod({
     workspaceId,
     periodStart,
@@ -228,11 +208,6 @@ export class BillingCreditGrantService {
     });
   }
 
-  // The previous transition pulled every grant it closed back to the instant
-  // the period ended, so the ledger records where the closing period started.
-  // Calendar arithmetic cannot recover it once the subscription has moved on:
-  // a month-end anchor clamps, and subtracting a month from February 28 gives
-  // January 28 rather than the January 31 the period actually started on.
   async findPeriodStartBefore({
     workspaceId,
     boundary,
@@ -249,11 +224,6 @@ export class BillingCreditGrantService {
     return row?.expiresAt ?? null;
   }
 
-  // Enforces the one-grant-per-period invariant at the point where periods
-  // actually roll: whatever a writer guessed for expiresAt, a grant never
-  // outlives the period it was carried forward from. Matched by predicate
-  // rather than by id so a grant created while the transition runs is covered
-  // too.
   async closeGrantsAtPeriodEnd({
     workspaceId,
     periodEnd,
@@ -278,8 +248,6 @@ export class BillingCreditGrantService {
     });
   }
 
-  // wasRevokedNow tells a retried revocation apart from the one that actually
-  // took the credits away, so callers only adjust balances once.
   async revokeGrant({
     workspaceId,
     grantId,
@@ -315,8 +283,6 @@ export class BillingCreditGrantService {
       { where: { id: grantId } },
     );
 
-    // Two concurrent revocations both read an unrevoked grant; only the one
-    // whose UPDATE matched may move the balance.
     return {
       grant: revokedGrant,
       wasRevokedNow: isDefined(affected) && affected > 0,
@@ -334,9 +300,6 @@ export class BillingCreditGrantService {
     return grant ?? null;
   }
 
-  // Whether the ledger has taken over from billingCustomer.creditBalanceMicro
-  // for this workspace. Public so the mirror write can refuse to overwrite a
-  // balance the backfill has not reached yet.
   async hasAnyGrant(workspaceId: string): Promise<boolean> {
     return this.billingCreditGrantRepository.exists(workspaceId, { where: {} });
   }

@@ -20,7 +20,6 @@ export class GrantWorkspaceCreditsInput {
   @IsUUID()
   workspaceId: string;
 
-  // In display credits ($1 = 1 credit), converted to micro-credits server side.
   @Field(() => Float)
   @IsPositive()
   amount: number;
@@ -35,8 +34,6 @@ export class GrantWorkspaceCreditsInput {
   @MaxLength(500)
   reason?: string;
 
-  // Identifies one intended grant, so a retried mutation returns the grant the
-  // first attempt wrote instead of handing out the credits a second time.
   @Field(() => UUIDScalarType)
   @IsNotEmpty()
   @IsUUID()

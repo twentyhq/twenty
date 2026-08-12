@@ -36,7 +36,6 @@ export class BillingWebhookInvoiceService {
   constructor(
     @InjectRepository(BillingSubscriptionItemEntity)
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItemEntity>,
-    // Stripe webhook: workspace discovered from BillingCustomer by stripeCustomerId.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingCustomerEntity)
     private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
@@ -144,8 +143,6 @@ export class BillingWebhookInvoiceService {
       return;
     }
 
-    // Only needed while subscriptions that predate previousPeriodStart are
-    // still transitioning for the first time.
     const ledgerPeriodStart =
       await this.billingCreditGrantService.findPeriodStartBefore({
         workspaceId: subscription.workspaceId,
@@ -169,9 +166,6 @@ export class BillingWebhookInvoiceService {
       ledgerPeriodStart,
     });
 
-    // Credits earned during the trial follow the workspace into its first paid
-    // period, so the trial closes like any other period. Its allowance comes
-    // from config rather than the price, which only applies once paid.
     const closingAllowanceMicro = isFirstPeriodAfterTrial
       ? this.billingUsageService.getTrialResourceUsageCap(subscription)
       : params.tierQuantity;
@@ -203,9 +197,6 @@ export class BillingWebhookInvoiceService {
       );
     }
 
-    // Paying a past-due invoice won't reactivate the subscription if Stripe
-    // already generated a draft for the next period. Finalize it so Stripe
-    // can collect payment and resume the subscription.
     await this.finalizePastDueDraftInvoicesAfterPaidInvoice(
       stripeSubscriptionId,
       paidInvoicePeriodEnd,

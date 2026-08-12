@@ -40,7 +40,6 @@ export class BillingCustomerEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: false, unique: true })
   stripeCustomerId: string;
 
-  // Null means unknown (customer created before the flag existed and not synced yet).
   @Field(() => Boolean, { nullable: true })
   @Column({ nullable: true, type: 'boolean' })
   hasPaymentMethod: boolean | null;

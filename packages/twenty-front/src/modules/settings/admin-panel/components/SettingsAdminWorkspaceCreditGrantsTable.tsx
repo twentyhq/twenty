@@ -33,10 +33,6 @@ type SettingsAdminWorkspaceCreditGrantsTableProps = {
   onGrantCreditsClick: () => void;
 };
 
-// Every row is its own grid, so a fr track is sized by that row's own content
-// and a wide tag pushes the columns after it out of line with the rows above.
-// Fixed widths for all but the reason, which takes what is left because its
-// cell hides the overflow.
 const CREDIT_GRANTS_GRID_AUTO_COLUMNS = '88px 152px 96px 112px 1fr 36px';
 const REVOKE_CREDIT_GRANT_MODAL_ID = 'revoke-credit-grant-modal';
 const EM_DASH = '—';
@@ -87,9 +83,6 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
   };
 
   const handleRevoke = async (creditGrantId: string) => {
-    // The refetch that clears the row lands well after the mutation resolves,
-    // so without this the button stays live and a second click revokes an
-    // already revoked grant.
     setIsRevoking(true);
 
     try {

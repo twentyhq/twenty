@@ -17,8 +17,6 @@ import {
 
 import type Stripe from 'stripe';
 
-// Serialized types for JSONB storage - uses Stripe's enum types but normalizes expandable fields
-// These avoid TypeORM's DeepPartialEntity issues with Stripe's expandable object types (e.g. Stripe.Account)
 export type AutomaticTaxJson = {
   disabled_reason: Stripe.Subscription.AutomaticTax['disabled_reason'];
   enabled: boolean;
@@ -132,12 +130,6 @@ export class BillingSubscriptionEntity extends WorkspaceRelatedEntity {
   })
   currentPeriodStart: Date;
 
-  // Where the period before the current one began. Stripe only ever reports the
-  // current window, so once currentPeriodStart advances the previous boundary
-  // is unrecoverable: calendar arithmetic clamps month-end anchors, and the
-  // ledger only shows it when the last transition happened to close a grant.
-  // Written whenever the period moves, and read by the rollover to bound the
-  // usage it settles.
   @Column({ nullable: true, type: 'timestamptz' })
   previousPeriodStart: Date | null;
 

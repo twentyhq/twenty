@@ -68,9 +68,6 @@ export class AdminPanelBillingService {
     clientOperationId: string;
     grantedByUserId: string;
   }): Promise<AdminPanelWorkspaceCreditGrantDTO> {
-    // Enforced server side because the mutation is reachable directly, not only
-    // through the admin panel's picker. See ADMIN_GRANTABLE_CREDIT_GRANT_TYPES
-    // for why these two are excluded.
     if (!ADMIN_GRANTABLE_CREDIT_GRANT_TYPES.includes(type)) {
       throw new BillingException(
         `Cannot grant credits of type ${type} by hand`,
@@ -86,8 +83,6 @@ export class AdminPanelBillingService {
       'BILLING_MAX_ADMIN_CREDIT_GRANT_MICRO',
     );
 
-    // The field is micro-denominated, so a slipped decimal is four orders of
-    // magnitude. Bound what a single grant can hand out.
     if (amountMicro > maxAmountMicro) {
       throw new BillingException(
         `Cannot grant ${toDisplayCredits(amountMicro)} credits at once, the maximum is ${toDisplayCredits(maxAmountMicro)}`,
@@ -110,10 +105,6 @@ export class AdminPanelBillingService {
       return this.toCreditGrantDTO(grant);
     }
 
-    // A null grant is either a replay of this same operation, which must answer
-    // with the grant the first attempt wrote rather than hand out the credits
-    // again, or an instance without billing. The ledger table only exists in
-    // the first case, so it is only queried there.
     const replayedGrant = this.twentyConfigService.get('IS_BILLING_ENABLED')
       ? await this.billingCreditGrantService.findGrantByIdempotencyKey(
           workspaceId,
@@ -193,8 +184,6 @@ export class AdminPanelBillingService {
       this.getWorkspaceCreditGrants(workspaceId),
     ]);
 
-    // A workspace can hold granted credits before it has a customer or a
-    // subscription, and the admin panel still has to show and manage them.
     if (!customer && !subscription && creditGrants.length === 0) {
       return null;
     }
@@ -319,7 +308,5 @@ export class AdminPanelBillingService {
   }
 }
 
-// Namespaced so an operation id can never collide with the carry-forward or
-// backfill keys, which live in the same unique index.
 const buildAdminGrantIdempotencyKey = (clientOperationId: string): string =>
   `admin-grant:${clientOperationId}`;

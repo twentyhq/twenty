@@ -173,9 +173,6 @@ describe('Admin credit grant and revoke (integration)', () => {
     );
   });
 
-  // The panel only offers the three operator types, but the mutation is
-  // reachable directly and these two are written by the period transition and
-  // the onboarding jobs.
   it.each([
     BillingCreditGrantType.ROLLOVER,
     BillingCreditGrantType.ONBOARDING_REWARD,
@@ -207,9 +204,6 @@ describe('Admin credit grant and revoke (integration)', () => {
     expect(await listCreditGrants(workspaceId)).toHaveLength(0);
   });
 
-  // The admin panel keeps one operation id per open modal, so an Apollo retry
-  // or a resubmit after a lost response must answer with the grant the first
-  // attempt wrote rather than crediting the workspace a second time.
   it('answers a retried grant with the original instead of granting twice', async () => {
     const clientOperationId = randomUUID();
     const variables = {

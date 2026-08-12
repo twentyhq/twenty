@@ -3,11 +3,6 @@ import { type BillingUsageCacheService } from 'src/engine/core-modules/billing/s
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-// The dev seeder gives every workspace a billingCustomer and an active
-// billingSubscription, but no subscription item, and no period. Rollover needs
-// the whole chain — subscription -> item -> product -> price with a
-// credit_amount — so these helpers finish the fixture and put the period where
-// the test wants it.
 export const TEST_STRIPE_CUSTOMER_ID = 'cus_default0';
 export const TEST_STRIPE_SUBSCRIPTION_ID = 'sub_default0';
 
@@ -30,8 +25,6 @@ export type CreditGrantRow = {
 const query = async <T>(sql: string, params: unknown[] = []): Promise<T[]> =>
   global.testDataSource.query(sql, params);
 
-// The billing seeds insert with orIgnore, so the customer and subscription
-// land on exactly one workspace and which one is not worth hardcoding.
 export const getSeededBillingWorkspaceId = async (): Promise<string> => {
   const [row] = await query<{ workspaceId: string }>(
     `SELECT "workspaceId" FROM core."billingSubscription" WHERE "stripeSubscriptionId" = $1`,
@@ -191,9 +184,6 @@ export const resetBillingCreditState = async (
   const cache = getBillingUsageCacheService();
 
   await cache.flushAvailableCredits(workspaceId);
-  // Adjustment markers outlive a counter flush by design, so a transition in
-  // one test would otherwise make the next one read its first delivery as a
-  // replay that had already moved the counter.
   await cache.flushCounterAdjustmentMarkers(workspaceId);
 };
 

@@ -40,9 +40,6 @@ export class BillingUsageCapService {
     );
   }
 
-  // Lifting the cap must never fail the operation that granted the credits, so
-  // unlike setSubscriptionItemHasReachedCap this tolerates a workspace with no
-  // resource credit item.
   async clearHasReachedCapForWorkspace(workspaceId: string): Promise<void> {
     const billingSubscriptionItems =
       await this.findResourceCreditSubscriptionItems(workspaceId);

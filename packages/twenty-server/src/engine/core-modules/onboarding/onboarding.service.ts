@@ -81,10 +81,6 @@ export class OnboardingService {
     user: UserEntity;
     workspaceId: string;
   }): Promise<OnboardingStatus | null> {
-    // We always read the workspace directly from the database here (bypassing
-    // the per-instance core entity cache) so that onboardingStatus reflects the
-    // freshest activationStatus right after activateWorkspace, even when a
-    // sibling server instance still has a stale cached workspace.
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
     });
@@ -546,8 +542,6 @@ export class OnboardingService {
           throw new Error('Transaction entity manager has no query runner');
         }
 
-        // Claiming the offer is the single-winner gate: a concurrent enrichment
-        // loses the insert and must not resurrect a step the user already skipped.
         const hasClaimedBookCallOffer =
           await this.userVarsService.setIfNotExists(
             {

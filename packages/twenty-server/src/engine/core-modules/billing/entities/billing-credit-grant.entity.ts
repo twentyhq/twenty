@@ -39,10 +39,6 @@ export class BillingCreditGrantEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: false, type: 'timestamptz' })
   effectiveAt: Date;
 
-  // Always the end of the billing period the grant belongs to. The available
-  // credit count is cached in Redis until period end and never recomputed
-  // mid-period, so an expiry inside a period would go unnoticed by the only
-  // code path that gates usage.
   @Column({ nullable: false, type: 'timestamptz' })
   expiresAt: Date;
 
@@ -62,7 +58,6 @@ export class BillingCreditGrantEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true, type: 'varchar' })
   idempotencyKey: string | null;
 
-  // Set when this grant carries forward the unspent part of another one.
   @Column({ nullable: true, type: 'uuid' })
   sourceGrantId: string | null;
 

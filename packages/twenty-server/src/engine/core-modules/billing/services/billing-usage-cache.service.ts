@@ -26,8 +26,6 @@ export class BillingUsageCacheService {
     );
   }
 
-  // Callers must hold buildBillingCreditStateLockKey: that is what stops a
-  // value computed before a grant landed from being installed after it.
   async warmAvailableCredits(
     workspaceId: string,
     periodStart: Date | string,
@@ -64,7 +62,6 @@ export class BillingUsageCacheService {
     );
   }
 
-  // Signed: usage moves it down, a grant moves it up.
   async adjustAvailableCredits(
     workspaceId: string,
     periodStart: Date | string,

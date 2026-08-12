@@ -59,8 +59,6 @@ export class BillingSubscriptionService {
     private readonly billingEntitlementRepository: WorkspaceScopedRepository<BillingEntitlementEntity>,
     @InjectWorkspaceScopedRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepository: WorkspaceScopedRepository<BillingSubscriptionEntity>,
-    // Stripe webhooks resolve by stripeCustomerId before any workspaceId
-    // is known. Used only when the criteria has no workspaceId.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepositoryUnscoped: Repository<BillingSubscriptionEntity>,
@@ -389,7 +387,6 @@ export class BillingSubscriptionService {
         workspaceId,
       );
 
-    // V2 subscriptions have no quantityless metered item; skip the stale-item cleanup in that case
     const meterBillingSubscriptionItem = billingSubscriptionItems.find(
       (item) => !isDefined(item.quantity),
     );

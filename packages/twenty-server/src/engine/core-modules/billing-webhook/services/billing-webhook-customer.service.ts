@@ -72,9 +72,6 @@ export class BillingWebhookCustomerService {
       },
     );
 
-    // Credits granted before this row existed, an onboarding reward at signup
-    // above all, mirrored onto nothing. This is the earliest point the row is
-    // known to exist, so put the ledger balance on it here.
     await this.billingCreditService.reconcileMirroredBalance(workspaceId);
   }
 

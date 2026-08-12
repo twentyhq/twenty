@@ -568,10 +568,6 @@ export class ConfigVariables {
       'Deployment region that determines the DPA hosting location shown to customers. The Processor entity (Twenty.com PBC) and governing law (Delaware, USA) are the same for all regions. EU (default) = Frankfurt, Germany; US = United States. Must match where Customer Personal Data actually lives.',
     type: ConfigVariableType.ENUM,
     options: Object.values(DpaRegion),
-    // Deployment-fixed: must mirror where data actually lives. Allowing a
-    // runtime DB/admin override could advertise a hosting location that does
-    // not match where data resides, so this is only configurable via
-    // environment variable.
     isEnvOnly: true,
   })
   @IsOptional()
@@ -709,7 +705,6 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   LOGIC_FUNCTION_EXEC_THROTTLE_LIMIT = 1000;
 
-  // milliseconds
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
     description: 'Time-to-live for logic function execution throttle',
@@ -1391,7 +1386,6 @@ export class ConfigVariables {
     options: Object.values(NodeEnvironment),
     isEnvOnly: true,
   })
-  // @CastToUpperSnakeCase()
   NODE_ENV: NodeEnvironment = NodeEnvironment.PRODUCTION;
 
   @ConfigVariablesMetadata({

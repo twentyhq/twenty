@@ -53,7 +53,6 @@ export class BillingWebhookSubscriptionService {
     private readonly stripeCustomerService: StripeCustomerService,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly messageQueueService: MessageQueueService,
-    // Stripe webhook upserts conflict-resolve globally on stripeSubscriptionId.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
@@ -116,8 +115,6 @@ export class BillingWebhookSubscriptionService {
       },
     );
 
-    // Credits can be granted before this row exists, and those writes mirrored
-    // onto nothing. The row is here now, so put the ledger balance on it.
     await this.billingCreditService.reconcileMirroredBalance(workspaceId);
 
     const liveCustomerSubscriptions =

@@ -50,9 +50,6 @@ type ResolvedAvailableCredits = {
   isCounterWarm: boolean;
 };
 
-// This gate runs before every credit-consuming execution, so it waits far less
-// than a writer does and falls back to computing unlocked rather than failing
-// the execution outright.
 const AVAILABLE_CREDITS_WARM_UP_LOCK_OPTIONS = {
   ms: 50,
   maxRetries: 20,
@@ -260,10 +257,6 @@ export class BillingUsageService {
         currentPeriodEnd,
       });
 
-    // A counter held stale by a recent grant must not be created from a value
-    // that may predate it: incrementing an absent key would install
-    // -usedCredits as the whole balance. Compute this turn locally instead and
-    // let the next read rebuild once the marker lapses.
     const decrementedAvailableCredits = isCounterWarm
       ? await this.billingUsageCacheService.adjustAvailableCredits(
           workspaceId,
@@ -285,12 +278,6 @@ export class BillingUsageService {
     return decrementedAvailableCredits;
   }
 
-  // Warming is a read of the ledger followed by a write of what it implies, so
-  // a grant landing in between would be counted from the ledger here and then
-  // added to the counter again by the grant itself. Taking the writers' lock on
-  // the cold path closes that; a hit returns before the lock, keeping the warm
-  // path, which is the overwhelming majority of calls, free of Redis round
-  // trips.
   private async readWarmAvailableCredits(
     params: AvailableCreditsParams,
   ): Promise<ResolvedAvailableCredits | undefined> {
@@ -317,8 +304,6 @@ export class BillingUsageService {
     try {
       return await this.cacheLockService.withLock(
         async () =>
-          // Another reader may have warmed it while this one waited, so a burst
-          // of cold reads pays for ClickHouse once rather than once each.
           (await this.readWarmAvailableCredits(params)) ??
           (await this.computeAndWarmAvailableCredits(params)),
         buildBillingCreditStateLockKey(params.workspaceId),
@@ -332,10 +317,6 @@ export class BillingUsageService {
         throw error;
       }
 
-      // Failing the execution because a grant is being written would be worse
-      // than answering from a value this call computed itself. Deliberately
-      // does not warm: holding the lock is what makes installing a computed
-      // value safe, so the counter stays cold until an uncontended read.
       this.logger.warn(
         `Computing available credits for workspace ${params.workspaceId} without the credit state lock: ${error.message}`,
       );
@@ -411,11 +392,6 @@ export class BillingUsageService {
     }
   }
 
-  // Returns null when usage could not be read. ClickHouseService.select
-  // swallows query errors and returns [], but a bare sum() aggregate always
-  // yields exactly one row, so an empty result means the read failed rather
-  // than "nothing was used". Callers that hand out credits must not confuse
-  // the two.
   private async sumCreditsUsedMicroOrNull(
     condition: string,
     params: Record<string, unknown>,
@@ -438,10 +414,6 @@ export class BillingUsageService {
     return Number.isFinite(total) ? total : 0;
   }
 
-  // Sums by event timestamp rather than by the stamped periodStart dimension.
-  // At a period transition the subscription's currentPeriodStart has already
-  // moved on, so an equality match on periodStart would read the new period
-  // and report a period that has barely started as unused.
   async getCreditsUsedBetweenOrNull({
     workspaceId,
     from,
@@ -461,7 +433,6 @@ export class BillingUsageService {
     );
   }
 
-  // Fails open: an unreadable usage total must never block a paying workspace.
   async getCurrentPeriodCreditsUsed(
     workspaceId: string,
     periodStart: Date,

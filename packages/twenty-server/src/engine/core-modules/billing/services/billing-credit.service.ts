@@ -21,9 +21,6 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-// Used when a workspace has no subscription yet, which happens for rewards
-// granted during signup. The next period transition re-emits the unspent part
-// aligned on the real billing period.
 const PROVISIONAL_GRANT_VALIDITY_IN_DAYS = 31;
 
 export type GrantCreditsParams = {
@@ -63,10 +60,6 @@ export class BillingCreditService {
 
     const { workspaceId } = params;
 
-    // Writing the row and moving the counter are two steps, and a reader that
-    // computes availability between them counts the grant from the ledger and
-    // then has it added a second time. Locking keeps the pair indivisible for
-    // anything else touching this workspace's credit state.
     return this.cacheLockService.withLock(
       () => this.writeGrantAndRefreshState(params),
       buildBillingCreditStateLockKey(workspaceId),
@@ -78,12 +71,6 @@ export class BillingCreditService {
   ): Promise<BillingCreditGrantEntity | null> {
     const { workspaceId, amountMicro } = params;
 
-    // Read once for the whole write: the validity window and the state refresh
-    // both need it, and both run inside the lock. Reading it here rather than
-    // before the lock is what keeps a grant that waited behind a period
-    // transition from carrying the period the wait started in, which would
-    // land it already expired while its amount still went onto the counter for
-    // the period that had meanwhile opened.
     const subscription =
       await this.billingSubscriptionService.getCurrentBillingSubscription({
         workspaceId,
@@ -106,22 +93,11 @@ export class BillingCreditService {
       expiresAt,
     });
 
-    // A replay only means the ledger row exists, not that the projections
-    // built from it do: the first attempt can have inserted the row and then
-    // failed on the refresh, and onboarding callers swallow that error. Repair
-    // rather than return, with no counter delta since the original attempt may
-    // already have applied it.
     if (!isDefined(grant)) {
       this.logger.log(
         `Replayed credit grant for workspace ${workspaceId} (idempotency key ${params.idempotencyKey}), repairing derived state`,
       );
 
-      // Rebuilding from the ledger can overstate the balance by whatever
-      // usage ClickHouse has not ingested yet, and that value then stands for
-      // the period. Accepted here because the alternative is a grant that
-      // stays invisible for the whole period, and erring high is the direction
-      // the grant intended. The cap is left to be derived from the rebuilt
-      // balance, since the replayed grant may since have been revoked.
       await this.refreshWorkspaceCreditState({
         workspaceId,
         availableDeltaMicro: 0,
@@ -181,15 +157,6 @@ export class BillingCreditService {
 
     const adjustmentKey = buildRevocationAdjustmentKey(grantId);
 
-    // A retried revocation must not take the same credits off the usage
-    // counter twice, which would block a workspace that still has credits.
-    // Whether the attempt that did revoke got as far as the counter is
-    // recorded under adjustmentKey, so the refresh can tell the two apart:
-    // already applied means repair the rest and leave the counter alone, never
-    // applied means rebuild from the ledger. Guessing either way is wrong,
-    // since always rebuilding freezes ClickHouse lag in as extra credit on
-    // every double click and never rebuilding leaves revoked credits spendable
-    // until the period ends.
     if (!wasRevokedNow) {
       await this.refreshWorkspaceCreditState({
         workspaceId,
@@ -202,11 +169,6 @@ export class BillingCreditService {
       return grant;
     }
 
-    // Only credits the counter actually holds may come off it. The mutation
-    // accepts any grant id, and a grant can expire between the admin panel
-    // rendering and the revoke landing, so subtracting unconditionally would
-    // take away credits that were never counted and block usage until the
-    // period ends.
     const revokedAtMs = (grant.revokedAt ?? new Date()).getTime();
     const wasActiveWhenRevoked =
       grant.effectiveAt.getTime() <= revokedAtMs &&
@@ -222,10 +184,6 @@ export class BillingCreditService {
     return grant;
   }
 
-  // The mirror column only exists once a workspace has a billingCustomer row,
-  // so a grant written before that (an onboarding reward at signup) mirrors
-  // onto nothing. Called when the row appears, so rolling this release back
-  // does not lose those credits. Remove along with creditBalanceMicro.
   async reconcileMirroredBalance(workspaceId: string): Promise<void> {
     if (!this.billingService.isBillingEnabled()) {
       return;
@@ -241,10 +199,6 @@ export class BillingCreditService {
     const activeCreditsMicro =
       await this.billingCreditGrantService.getActiveCreditsMicro(workspaceId);
 
-    // Until the backfill reaches a workspace the column is still the only copy
-    // of its balance, and an empty ledger sums to zero. Callers materialize the
-    // legacy balance before writing, but the guard belongs here too rather than
-    // resting on an ordering contract between services.
     if (
       activeCreditsMicro === 0 &&
       !(await this.billingCreditGrantService.hasAnyGrant(workspaceId))
@@ -261,12 +215,6 @@ export class BillingCreditService {
     return activeCreditsMicro;
   }
 
-  // Keeps everything that reads a credit balance consistent with the ledger:
-  // the mirror column, the Redis counter that gates usage, the flag that drives
-  // the "no more credits" banner, and the cached subscription the front reads.
-  // Public so a caller writing several grants at once pays for this once; such
-  // a caller must hold buildBillingCreditStateLockKey for its own ledger writes
-  // and this refresh together, which is why this does not take the lock itself.
   async refreshWorkspaceCreditState({
     workspaceId,
     availableDeltaMicro,
@@ -277,16 +225,9 @@ export class BillingCreditService {
   }: {
     workspaceId: string;
     availableDeltaMicro: number;
-    // Whether the write that led here could have made credits spendable. Only
-    // the caller knows: a replay of either a grant or a revocation carries a
-    // delta of zero, and the sign cannot tell them apart.
     addsCredits: boolean;
-    // A replay cannot know how far the original attempt got, so the counter is
-    // recomputed from the ledger unless adjustmentKey says it already moved.
     isReplay?: boolean;
-    // Names a one-off adjustment so a retry can see it already landed.
     adjustmentKey?: string;
-    // Saves a re-read for a caller that already has it in hand.
     subscription?: BillingSubscriptionEntity;
   }): Promise<void> {
     const activeCreditsMicro = await this.syncMirrorBalance(workspaceId);
@@ -301,10 +242,6 @@ export class BillingCreditService {
       return;
     }
 
-    // Deliberately not getBillingSubscriptionPeriod, which reports the trial
-    // window while trialing: every usage path keys this counter off
-    // currentPeriodStart, so taking the period from anywhere else would move a
-    // key the gate never reads.
     const periodStart = subscription.currentPeriodStart;
 
     const rebuildCounter =
@@ -330,18 +267,6 @@ export class BillingCreditService {
       );
     }
 
-    // The banner may only come down when this write actually put something
-    // spendable in front of the workspace: the caller says whether it could,
-    // the counter says whether it did, and what is left decides. A replay that
-    // finds the counter already moved did nothing, and its grants may well
-    // have been spent since, so it leaves the banner alone, while a replay
-    // that rebuilt the counter is the repair that lifts it.
-    //
-    // With no counter to speak for the workspace the ledger stands in, which
-    // ignores usage. Erring towards lifting the banner is deliberate there:
-    // the counter is cold exactly after a period transition or a cache flush,
-    // which is when grants land, and leaving it up would hide credits someone
-    // deliberately gave for the rest of the period.
     const spendableAfterWriteMicro =
       counterAfterWriteMicro ?? activeCreditsMicro;
 
@@ -353,8 +278,6 @@ export class BillingCreditService {
     });
   }
 
-  // Returns what the counter holds afterwards, or null when there is no warm
-  // counter to speak for the workspace.
   private async applyCounterWrite({
     workspaceId,
     periodStart,
@@ -379,18 +302,12 @@ export class BillingCreditService {
       return null;
     }
 
-    // Adjusting the warm counter instead of flushing it avoids recomputing
-    // from ClickHouse while its async inserts for recent usage are still
-    // landing, which would credit the workspace for usage it already spent.
     const cachedAvailableCredits =
       await this.billingUsageCacheService.getAvailableCredits(
         workspaceId,
         periodStart,
       );
 
-    // Nothing to do when the counter is cold. A reader can only warm it while
-    // holding this same lock, so it cannot be mid-computation now, and the
-    // next one to take the lock reads a ledger that already has this write.
     if (!isDefined(cachedAvailableCredits)) {
       return null;
     }
@@ -420,8 +337,6 @@ export class BillingCreditService {
   }
 }
 
-// Scopes the completion marker to one revocation, so retrying it is the only
-// thing that can see it.
 const buildRevocationAdjustmentKey = (grantId: string): string =>
   `revoke:${grantId}`;
 
@@ -435,9 +350,6 @@ const resolveGrantValidity = (
     return { effectiveAt, expiresAt: params.expiresAt };
   }
 
-  // A lapsed subscription still carries the period that just ended, and that is
-  // exactly the workspace someone is most likely to be granting credits to.
-  // Falling back keeps the grant from expiring on creation.
   const currentPeriodEnd = isDefined(subscription)
     ? getBillingSubscriptionPeriod(subscription).periodEnd
     : null;

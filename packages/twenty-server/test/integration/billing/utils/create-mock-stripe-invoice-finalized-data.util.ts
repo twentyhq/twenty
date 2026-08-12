@@ -1,6 +1,3 @@
-// Typed to what the handler actually reads rather than to Stripe.Invoice: the
-// payload crosses the wire as JSON, so the runtime shape is what matters, and
-// a full Stripe.Invoice fixture would be a few hundred lines of noise.
 export type MockStripeInvoiceFinalizedData = {
   object: {
     id: string;
@@ -39,8 +36,6 @@ export const createMockStripeInvoiceFinalizedData = ({
     object: 'invoice',
     billing_reason: billingReason,
     customer: stripeCustomerId,
-    // The invoice for a subscription_cycle bills the period it opens, so its
-    // period_start is the instant the previous period closed.
     period_start: toUnixSeconds(periodStart),
     period_end: toUnixSeconds(periodEnd),
     parent: {

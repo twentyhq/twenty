@@ -28,9 +28,6 @@ type CreditBucket = {
 const isCappedType = (type: BillingCreditGrantType): boolean =>
   CAPPED_BILLING_CREDIT_GRANT_TYPES.includes(type);
 
-// Capped credits are spent first so that deliberately granted credits
-// (compensation, partnership, onboarding rewards) survive the period and carry
-// over at their full value instead of being clipped by the rollover cap.
 const compareSpendingOrder = (a: CreditBucket, b: CreditBucket): number => {
   const [isACapped, isBCapped] = [isCappedType(a.type), isCappedType(b.type)];
 
@@ -44,10 +41,6 @@ const compareSpendingOrder = (a: CreditBucket, b: CreditBucket): number => {
     return byCreatedAt;
   }
 
-  // Grants written in the same transaction share a timestamp, and the order
-  // decides which grant id ends up on which carry-forward row. That id is part
-  // of the replay key, so without a stable tie-break a redelivery could write
-  // a second set of rows for the same credits.
   return (a.grantId ?? '').localeCompare(b.grantId ?? '');
 };
 
