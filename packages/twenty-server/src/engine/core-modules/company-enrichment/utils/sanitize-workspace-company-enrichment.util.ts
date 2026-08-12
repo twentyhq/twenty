@@ -12,10 +12,10 @@ const CONTROL_CHARACTERS_EXCEPT_LINE_BREAKS_PATTERN =
   /[\u0000-\u0009\u000b-\u001f\u007f\u0080-\u009f]+/g;
 
 const sanitizeSingleLineText = (value: unknown): string | null =>
-  sanitizePromptContextLine(
+  sanitizePromptContextLine({
     value,
-    WORKSPACE_COMPANY_ENRICHMENT_FIELD_MAX_LENGTH,
-  );
+    maxLength: WORKSPACE_COMPANY_ENRICHMENT_FIELD_MAX_LENGTH,
+  });
 
 const sanitizeSummaryText = (value: unknown): string | null => {
   if (!isNonEmptyString(value)) {

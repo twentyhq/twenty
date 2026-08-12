@@ -13,7 +13,7 @@ export const sanitizePromptContextLineArray = ({
 }): string[] =>
   Array.isArray(value)
     ? value
-        .map((item) => sanitizePromptContextLine(item, maxLength))
+        .map((item) => sanitizePromptContextLine({ value: item, maxLength }))
         .filter(isNonEmptyString)
         .slice(0, maxItems)
     : [];

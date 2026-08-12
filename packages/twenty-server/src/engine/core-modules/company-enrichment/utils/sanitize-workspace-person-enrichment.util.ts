@@ -8,10 +8,10 @@ import { sanitizePromptContextLineArray } from 'src/utils/sanitize-prompt-contex
 import { sanitizePromptContextLine } from 'src/utils/sanitize-prompt-context-line.util';
 
 const sanitizeSingleLineText = (value: unknown): string | null =>
-  sanitizePromptContextLine(
+  sanitizePromptContextLine({
     value,
-    WORKSPACE_PERSON_ENRICHMENT_FIELD_MAX_LENGTH,
-  );
+    maxLength: WORKSPACE_PERSON_ENRICHMENT_FIELD_MAX_LENGTH,
+  });
 
 export const sanitizeWorkspacePersonEnrichment = (
   value: unknown,
