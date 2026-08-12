@@ -9,7 +9,7 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 //   npx nx run twenty-server:database:migrate:generate --name create-billing-credit-grant-table --type fast
 // which also reported pre-existing drift on other billing tables, left alone
 // here on purpose.
-@RegisteredInstanceCommand('2.31.0', 1786458027000)
+@RegisteredInstanceCommand('2.31.0', 1786532184000)
 export class CreateBillingCreditGrantTableFastInstanceCommand
   implements FastInstanceCommand
 {

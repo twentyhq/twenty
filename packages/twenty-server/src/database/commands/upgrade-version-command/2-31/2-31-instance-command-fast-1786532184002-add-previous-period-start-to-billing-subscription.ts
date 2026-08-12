@@ -7,7 +7,7 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 // reports. Left null on existing rows: the rollover falls back to the ledger
 // and then to calendar arithmetic until each subscription's next transition
 // fills it in.
-@RegisteredInstanceCommand('2.31.0', 1786458027002)
+@RegisteredInstanceCommand('2.31.0', 1786532184002)
 export class AddPreviousPeriodStartToBillingSubscriptionFastInstanceCommand
   implements FastInstanceCommand
 {

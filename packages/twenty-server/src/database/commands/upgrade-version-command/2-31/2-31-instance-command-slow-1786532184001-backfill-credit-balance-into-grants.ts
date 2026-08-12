@@ -12,7 +12,7 @@ const BACKFILL_IDEMPOTENCY_KEY_PREFIX = 'backfill-credit-balance:';
 //
 // The column keeps being written as a mirror of the ledger until it is dropped
 // in a later release, so this stays reversible.
-@RegisteredInstanceCommand('2.31.0', 1786458027001, { type: 'slow' })
+@RegisteredInstanceCommand('2.31.0', 1786532184001, { type: 'slow' })
 export class BackfillCreditBalanceIntoGrantsSlowInstanceCommand
   implements SlowInstanceCommand
 {
