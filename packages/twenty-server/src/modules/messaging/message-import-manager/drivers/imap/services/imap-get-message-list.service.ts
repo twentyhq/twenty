@@ -58,9 +58,23 @@ export class ImapGetMessageListService {
       const results: GetMessageListsResponse = [];
 
       for (const folder of foldersToProcess) {
-        const response = await this.getMessageList(client, folder);
+        try {
+          const response = await this.getMessageList(client, folder);
 
-        results.push({ ...response, folderId: folder.id });
+          results.push({ ...response, folderId: folder.id });
+        } catch (error) {
+          this.logger.warn(
+            `Connected account ${connectedAccount.id}: Error syncing folder ${folder.id}: ${error.message}. Continuing with other folders.`,
+          );
+
+          results.push({
+            messageExternalIds: [],
+            messageExternalIdsToDelete: [],
+            nextSyncCursor: folder.syncCursor ?? '',
+            previousSyncCursor: folder.syncCursor,
+            folderId: folder.id,
+          });
+        }
       }
 
       return results;
@@ -104,9 +118,10 @@ export class ImapGetMessageListService {
 
     const previousCursor = parseSyncCursor(folder.syncCursor);
 
-    const lock = await client.getMailboxLock(folderPath);
+    let lock: Awaited<ReturnType<ImapFlow['getMailboxLock']>> | undefined;
 
     try {
+      lock = await client.getMailboxLock(folderPath);
       const mailbox = client.mailbox;
 
       if (!mailbox || typeof mailbox === 'boolean') {
@@ -142,14 +157,8 @@ export class ImapGetMessageListService {
         previousSyncCursor: folder.syncCursor,
         folderId: folder.id,
       };
-    } catch (error) {
-      this.logger.error(
-        `Error syncing folder ${folder.name}: ${error.message}`,
-      );
-      this.errorHandler.handleError(error);
-      throw error;
     } finally {
-      lock.release();
+      lock?.release();
     }
   }
 
@@ -209,7 +218,7 @@ export class ImapGetMessageListService {
 
       return previousCursor.highestUid >= maxUid;
     } catch (error) {
-      this.logger.warn(
+      this.logger.debug(
         `Failed to get status for folder ${folderPath}: ${error.message}`,
       );
 

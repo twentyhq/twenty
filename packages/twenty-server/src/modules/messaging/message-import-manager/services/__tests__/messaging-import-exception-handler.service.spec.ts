@@ -10,6 +10,10 @@ import {
 } from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import {
+  MessageImportDriverException,
+  MessageImportDriverExceptionCode,
+} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import {
   MessageImportExceptionHandlerService,
   MessageImportSyncStep,
 } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
@@ -130,6 +134,24 @@ describe('MessageImportExceptionHandlerService — refresh code dispatch', () =>
     expect(
       messageChannelSyncStatusService.markAsMessagesListFetchPending,
     ).toHaveBeenCalled();
+  });
+
+  it('should reset the message list cursor on NO_NEXT_SYNC_CURSOR without capturing an exception', async () => {
+    await service.handleDriverException(
+      new MessageImportDriverException(
+        'No messages found for next sync cursor',
+        MessageImportDriverExceptionCode.NO_NEXT_SYNC_CURSOR,
+      ),
+      MessageImportSyncStep.MESSAGE_LIST_FETCH,
+      messageChannel,
+      workspaceId,
+    );
+
+    expect(
+      messageChannelSyncStatusService.resetAndMarkAsMessagesListFetchPending,
+    ).toHaveBeenCalledWith([messageChannel.id], workspaceId);
+    expect(messageChannelSyncStatusService.markAsFailed).not.toHaveBeenCalled();
+    expect(exceptionHandlerService.captureExceptions).not.toHaveBeenCalled();
   });
 
   it('should mark FAILED_UNKNOWN on ACCESS_TOKEN_NOT_FOUND (matches pre-refactor fall-through)', async () => {

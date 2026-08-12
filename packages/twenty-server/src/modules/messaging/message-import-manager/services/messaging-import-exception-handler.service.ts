@@ -106,6 +106,7 @@ export class MessageImportExceptionHandlerService {
             workspaceId,
           );
           break;
+        case MessageImportDriverExceptionCode.NO_NEXT_SYNC_CURSOR:
         case MessageImportDriverExceptionCode.SYNC_CURSOR_ERROR:
           await this.handleSyncCursorErrorException(
             messageChannel,

@@ -96,6 +96,7 @@ describe('ImapGetMessageListService', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+    mockImapClient.getMailboxLock.mockResolvedValue({ release: jest.fn() });
   });
 
   describe('folder filtering based on import policy', () => {
@@ -206,6 +207,49 @@ describe('ImapGetMessageListService', () => {
       });
 
       expect(result).toHaveLength(2);
+    });
+
+    it('should continue processing folders when a mailbox is unavailable', async () => {
+      const unavailableFolder = createMockFolder({
+        name: 'Unavailable',
+        externalId: 'Unavailable:1',
+        isSynced: true,
+      });
+      const availableFolder = createMockFolder({
+        name: 'INBOX',
+        externalId: 'INBOX:1',
+        isSynced: true,
+      });
+      const unavailableMailboxError = new Error('Mailbox does not exist');
+
+      mockImapClient.getMailboxLock.mockImplementation(
+        async (folderPath: string) => {
+          if (folderPath === 'Unavailable') {
+            throw unavailableMailboxError;
+          }
+
+          return { release: jest.fn() };
+        },
+      );
+
+      const result = await service.getMessageLists({
+        connectedAccount: mockConnectedAccount,
+        messageChannel: {
+          syncCursor: '',
+          id: 'channel-1',
+          messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
+        },
+        messageFolders: [unavailableFolder, availableFolder],
+      });
+
+      expect(result).toHaveLength(2);
+      expect(result[0]).toMatchObject({
+        folderId: unavailableFolder.id,
+        messageExternalIds: [],
+        nextSyncCursor: '',
+        previousSyncCursor: null,
+      });
+      expect(result[1].folderId).toBe(availableFolder.id);
     });
 
     it('should always close the IMAP client regardless of policy', async () => {
