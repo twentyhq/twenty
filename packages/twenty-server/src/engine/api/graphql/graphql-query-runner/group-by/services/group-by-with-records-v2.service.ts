@@ -49,6 +49,7 @@ export class GroupByWithRecordsV2Service {
     orderByForRecords,
     groupLimit,
     offsetForRecords,
+    nestedRelationsReadPathOptions,
   }: {
     queryBuilderWithGroupBy: WorkspaceSelectQueryBuilderV2;
     queryBuilderWithFiltersAndWithoutGroupBy: WorkspaceSelectQueryBuilderV2;
@@ -59,6 +60,10 @@ export class GroupByWithRecordsV2Service {
     orderByForRecords: ObjectRecordOrderBy;
     groupLimit?: number;
     offsetForRecords?: number;
+    nestedRelationsReadPathOptions: {
+      isOrmV2ReadPathEnabled: boolean;
+      useReplica: boolean;
+    };
   }): Promise<CommonGroupByOutputItem[]> {
     const effectiveGroupLimit = getGroupLimit(groupLimit);
 
@@ -124,8 +129,7 @@ export class GroupByWithRecordsV2Service {
         workspaceDataSource,
         rolePermissionConfig,
         selectedFields: selectedFieldsResult.select,
-        isOrmV2ReadPathEnabled: true,
-        useReplica: true,
+        ...nestedRelationsReadPathOptions,
       });
     }
 

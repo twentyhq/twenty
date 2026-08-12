@@ -17,7 +17,6 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
-import { type RecordQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/types/record-query-builder.type';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
 import { type AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
@@ -194,7 +193,7 @@ export class ProcessNestedRelationsOrmV2Helper {
       );
     }
 
-    const relationType = sourceFieldMetadata.settings?.relationType;
+    const relationType = sourceFieldMetadata.settings.relationType;
     const { targetRelationName, targetObjectMetadata, targetRelation } =
       this.getTargetObjectMetadata({
         flatObjectMetadataMaps,
@@ -426,7 +425,7 @@ export class ProcessNestedRelationsOrmV2Helper {
 
       ProcessAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder({
         selectedAggregatedFields: aggregateForRelation,
-        queryBuilder: aggregateQueryBuilder as unknown as RecordQueryBuilder,
+        queryBuilder: aggregateQueryBuilder,
         objectMetadataNameSingular: targetObjectNameSingular,
       });
 

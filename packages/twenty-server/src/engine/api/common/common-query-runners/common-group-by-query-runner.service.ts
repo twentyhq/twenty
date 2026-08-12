@@ -172,6 +172,8 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
           orderByForRecords: args.orderByForRecords ?? [],
           groupLimit: args.limit,
           offsetForRecords: args.offsetForRecords,
+          nestedRelationsReadPathOptions:
+            this.getNestedRelationsReadPathOptions(queryRunnerContext),
         });
       }
 
