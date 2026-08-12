@@ -1,12 +1,12 @@
 import { FieldMetadataType, ViewFilterOperand } from 'twenty-shared/types';
 
 import { ViewFilterExceptionCode } from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
-import { getIncompatibleOperandError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-incompatible-operand-error.util';
+import { getIncompatibleViewFilterOperandError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-incompatible-view-filter-operand-error.util';
 
-describe('getIncompatibleOperandError', () => {
+describe('getIncompatibleViewFilterOperandError', () => {
   it('should return undefined when the operand is supported by the field type', () => {
     expect(
-      getIncompatibleOperandError({
+      getIncompatibleViewFilterOperandError({
         operand: ViewFilterOperand.CONTAINS,
         fieldType: FieldMetadataType.TEXT,
         subFieldName: null,
@@ -16,7 +16,7 @@ describe('getIncompatibleOperandError', () => {
   });
 
   it('should return an error when the operand is not supported by the field type', () => {
-    const error = getIncompatibleOperandError({
+    const error = getIncompatibleViewFilterOperandError({
       operand: ViewFilterOperand.IS_IN_PAST,
       fieldType: FieldMetadataType.TEXT,
       subFieldName: null,
@@ -28,7 +28,7 @@ describe('getIncompatibleOperandError', () => {
   });
 
   it('should list the supported operands in the error message', () => {
-    const error = getIncompatibleOperandError({
+    const error = getIncompatibleViewFilterOperandError({
       operand: ViewFilterOperand.IS_IN_PAST,
       fieldType: FieldMetadataType.TEXT,
       subFieldName: null,
@@ -39,7 +39,7 @@ describe('getIncompatibleOperandError', () => {
   });
 
   it('should resolve the effective field type through the relation target', () => {
-    const error = getIncompatibleOperandError({
+    const error = getIncompatibleViewFilterOperandError({
       operand: ViewFilterOperand.IS_IN_PAST,
       fieldType: FieldMetadataType.RELATION,
       subFieldName: null,

@@ -23,7 +23,7 @@ import { getAggregateOperationLabel } from 'src/modules/dashboard/chart-data/uti
 import { getSelectOptions } from 'src/modules/dashboard/chart-data/utils/get-select-options.util';
 import { processTwoDimensionalResults } from 'src/modules/dashboard/chart-data/utils/process-two-dimensional-results.util';
 import { sortChartDataIfNeeded } from 'src/modules/dashboard/chart-data/utils/sort-chart-data-if-needed.util';
-import { sortSecondaryAxisKeys } from 'src/modules/dashboard/chart-data/utils/sort-secondary-axis-keys.util';
+import { sortBarChartSecondaryAxisKeys } from 'src/modules/dashboard/chart-data/utils/sort-bar-chart-secondary-axis-keys.util';
 
 export const transformToTwoDimensionalBarChartData = ({
   filteredRawResults,
@@ -149,7 +149,7 @@ export const transformToTwoDimensionalBarChartData = ({
 
   const keys = Array.from(allSecondaryValues);
 
-  const sortedKeys = sortSecondaryAxisKeys({
+  const sortedKeys = sortBarChartSecondaryAxisKeys({
     keys,
     data: limitedData,
     configuration,

@@ -6,7 +6,7 @@ import { getInvalidSelectFilterOptionValues } from 'src/engine/metadata-modules/
 import { ViewFilterExceptionCode } from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
 import { type ViewFilterValue } from 'src/engine/metadata-modules/view-filter/types/view-filter-value.type';
 
-export const getInvalidSelectOptionError = ({
+export const getInvalidViewFilterSelectOptionError = ({
   referencedFieldMetadata,
   operand,
   value,

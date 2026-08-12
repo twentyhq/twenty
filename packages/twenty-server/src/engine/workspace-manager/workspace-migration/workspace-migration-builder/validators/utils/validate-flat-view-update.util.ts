@@ -9,8 +9,8 @@ import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-m
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
-import { validateCalendarFields } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-calendar-fields.util';
-import { isAllowedKanbanMainGroupByField } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-allowed-kanban-main-group-by-field.util';
+import { validateFlatViewCalendarFields } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util';
+import { isAllowedFlatViewKanbanMainGroupByField } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-allowed-flat-view-kanban-main-group-by-field.util';
 
 export const validateFlatViewUpdate = ({
   universalIdentifier,
@@ -102,7 +102,7 @@ export const validateFlatViewUpdate = ({
         userFriendlyMessage: msg`Kanban main group by field metadata not found`,
       });
     } else if (
-      !isAllowedKanbanMainGroupByField({
+      !isAllowedFlatViewKanbanMainGroupByField({
         mainGroupByFieldMetadata,
       })
     ) {
@@ -135,7 +135,7 @@ export const validateFlatViewUpdate = ({
         userFriendlyMessage: msg`Kanban main group by field metadata not found`,
       });
     } else if (
-      !isAllowedKanbanMainGroupByField({
+      !isAllowedFlatViewKanbanMainGroupByField({
         mainGroupByFieldMetadata,
       })
     ) {
@@ -148,7 +148,7 @@ export const validateFlatViewUpdate = ({
   }
 
   validationResult.errors.push(
-    ...validateCalendarFields({
+    ...validateFlatViewCalendarFields({
       flatView: updatedFlatView,
       flatFieldMetadataMaps,
       isCalendarWeekViewEnabled:

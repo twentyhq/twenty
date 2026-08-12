@@ -4,7 +4,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { type RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
-import { sortSecondaryAxisKeys } from 'src/modules/dashboard/chart-data/utils/sort-secondary-axis-keys.util';
+import { sortBarChartSecondaryAxisKeys } from 'src/modules/dashboard/chart-data/utils/sort-bar-chart-secondary-axis-keys.util';
 
 const buildConfiguration = (
   configuration: Partial<BarChartConfigurationDTO>,
@@ -16,11 +16,11 @@ const textGroupByField = {
 
 const emptyLookup = new Map<string, RawDimensionValue>();
 
-describe('sortSecondaryAxisKeys', () => {
+describe('sortBarChartSecondaryAxisKeys', () => {
   it('should return the keys untouched when no order by is configured', () => {
     const keys = ['b', 'a', 'c'];
 
-    const result = sortSecondaryAxisKeys({
+    const result = sortBarChartSecondaryAxisKeys({
       keys,
       data: [],
       configuration: buildConfiguration({}),
@@ -33,7 +33,7 @@ describe('sortSecondaryAxisKeys', () => {
   });
 
   it('should sort keys alphabetically ascending', () => {
-    const result = sortSecondaryAxisKeys({
+    const result = sortBarChartSecondaryAxisKeys({
       keys: ['charlie', 'alpha', 'bravo'],
       data: [],
       configuration: buildConfiguration({
@@ -48,7 +48,7 @@ describe('sortSecondaryAxisKeys', () => {
   });
 
   it('should sort keys alphabetically descending', () => {
-    const result = sortSecondaryAxisKeys({
+    const result = sortBarChartSecondaryAxisKeys({
       keys: ['charlie', 'alpha', 'bravo'],
       data: [],
       configuration: buildConfiguration({
@@ -63,7 +63,7 @@ describe('sortSecondaryAxisKeys', () => {
   });
 
   it('should sort by the summed value across every data row', () => {
-    const result = sortSecondaryAxisKeys({
+    const result = sortBarChartSecondaryAxisKeys({
       keys: ['low', 'high'],
       data: [
         { low: 1, high: 10 },
@@ -81,7 +81,7 @@ describe('sortSecondaryAxisKeys', () => {
   });
 
   it('should ignore non numeric cells when summing values', () => {
-    const result = sortSecondaryAxisKeys({
+    const result = sortBarChartSecondaryAxisKeys({
       keys: ['a', 'b'],
       data: [
         { a: 5, b: 'not-a-number' },
@@ -99,7 +99,7 @@ describe('sortSecondaryAxisKeys', () => {
   });
 
   it('should treat a key absent from the data as zero', () => {
-    const result = sortSecondaryAxisKeys({
+    const result = sortBarChartSecondaryAxisKeys({
       keys: ['present', 'absent'],
       data: [{ present: 3 }],
       configuration: buildConfiguration({

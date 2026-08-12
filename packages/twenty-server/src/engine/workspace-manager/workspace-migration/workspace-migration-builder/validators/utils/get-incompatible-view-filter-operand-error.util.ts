@@ -8,7 +8,7 @@ import {
 import { getEffectiveFilterFieldType } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-effective-filter-field-type.util';
 import { ViewFilterExceptionCode } from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
 
-export const getIncompatibleOperandError = ({
+export const getIncompatibleViewFilterOperandError = ({
   operand,
   fieldType,
   subFieldName,

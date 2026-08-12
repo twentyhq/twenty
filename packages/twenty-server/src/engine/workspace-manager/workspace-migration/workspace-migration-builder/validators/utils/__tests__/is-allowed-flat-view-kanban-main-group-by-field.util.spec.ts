@@ -1,16 +1,16 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
-import { isAllowedKanbanMainGroupByField } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-allowed-kanban-main-group-by-field.util';
+import { isAllowedFlatViewKanbanMainGroupByField } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/is-allowed-flat-view-kanban-main-group-by-field.util';
 
 const buildField = (
   field: Partial<UniversalFlatFieldMetadata>,
 ): UniversalFlatFieldMetadata => field as UniversalFlatFieldMetadata;
 
-describe('isAllowedKanbanMainGroupByField', () => {
+describe('isAllowedFlatViewKanbanMainGroupByField', () => {
   it('should allow a SELECT field', () => {
     expect(
-      isAllowedKanbanMainGroupByField({
+      isAllowedFlatViewKanbanMainGroupByField({
         mainGroupByFieldMetadata: buildField({
           type: FieldMetadataType.SELECT,
         }),
@@ -20,7 +20,7 @@ describe('isAllowedKanbanMainGroupByField', () => {
 
   it('should allow a MANY_TO_ONE relation field', () => {
     expect(
-      isAllowedKanbanMainGroupByField({
+      isAllowedFlatViewKanbanMainGroupByField({
         mainGroupByFieldMetadata: buildField({
           type: FieldMetadataType.RELATION,
           universalSettings: { relationType: RelationType.MANY_TO_ONE },
@@ -31,7 +31,7 @@ describe('isAllowedKanbanMainGroupByField', () => {
 
   it('should reject a ONE_TO_MANY relation field', () => {
     expect(
-      isAllowedKanbanMainGroupByField({
+      isAllowedFlatViewKanbanMainGroupByField({
         mainGroupByFieldMetadata: buildField({
           type: FieldMetadataType.RELATION,
           universalSettings: { relationType: RelationType.ONE_TO_MANY },
@@ -42,7 +42,7 @@ describe('isAllowedKanbanMainGroupByField', () => {
 
   it('should reject a relation field with no relation type set', () => {
     expect(
-      isAllowedKanbanMainGroupByField({
+      isAllowedFlatViewKanbanMainGroupByField({
         mainGroupByFieldMetadata: buildField({
           type: FieldMetadataType.RELATION,
           universalSettings: {},
@@ -53,7 +53,7 @@ describe('isAllowedKanbanMainGroupByField', () => {
 
   it('should reject a plain scalar field', () => {
     expect(
-      isAllowedKanbanMainGroupByField({
+      isAllowedFlatViewKanbanMainGroupByField({
         mainGroupByFieldMetadata: buildField({ type: FieldMetadataType.TEXT }),
       }),
     ).toBe(false);
@@ -61,7 +61,7 @@ describe('isAllowedKanbanMainGroupByField', () => {
 
   it('should reject a MULTI_SELECT field', () => {
     expect(
-      isAllowedKanbanMainGroupByField({
+      isAllowedFlatViewKanbanMainGroupByField({
         mainGroupByFieldMetadata: buildField({
           type: FieldMetadataType.MULTI_SELECT,
         }),

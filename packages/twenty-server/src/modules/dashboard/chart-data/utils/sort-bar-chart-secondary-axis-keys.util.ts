@@ -7,7 +7,7 @@ import { FieldMetadataOption } from 'src/modules/dashboard/chart-data/types/fiel
 import { RawDimensionValue } from 'src/modules/dashboard/chart-data/types/raw-dimension-value.type';
 import { sortSecondaryAxisData } from 'src/modules/dashboard/chart-data/utils/sort-secondary-axis-data.util';
 
-export const sortSecondaryAxisKeys = ({
+export const sortBarChartSecondaryAxisKeys = ({
   keys,
   data,
   configuration,

@@ -24,18 +24,18 @@ import {
   type WorkflowLogicFunctionAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
-import { hasStepLevelOutputSchema } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/has-step-level-output-schema.util';
-import { buildMissingOutputSchemaIssue } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/build-missing-output-schema-issue.util';
-import { validateTriggerTypeRequirements } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-trigger-type-requirements.util';
-import { validateRuntimeOutputStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-runtime-output-step.util';
-import { validateStepsHaveVariableReferences } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-steps-have-variable-references.util';
-import { validateIteratorStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-iterator-step.util';
-import { validateAiAgentStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-ai-agent-step.util';
-import { validateLogicFunctionOutputSchemaMismatch } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-logic-function-output-schema-mismatch.util';
-import { RECORD_CRUD_ACTION_TYPES } from 'src/modules/workflow/workflow-builder/workflow-validation/constants/record-crud-action-types.constant';
+import { hasWorkflowStepLevelOutputSchema } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/has-workflow-step-level-output-schema.util';
+import { buildMissingWorkflowOutputSchemaIssue } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/build-missing-workflow-output-schema-issue.util';
+import { validateWorkflowTriggerTypeRequirements } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-trigger-type-requirements.util';
+import { validateWorkflowRuntimeOutputStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-runtime-output-step.util';
+import { validateWorkflowStepsHaveVariableReferences } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-steps-have-variable-references.util';
+import { validateWorkflowIteratorStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-iterator-step.util';
+import { validateWorkflowAiAgentStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-ai-agent-step.util';
+import { validateWorkflowLogicFunctionOutputSchemaMismatch } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-logic-function-output-schema-mismatch.util';
+import { WORKFLOW_RECORD_CRUD_ACTION_TYPES } from 'src/modules/workflow/workflow-builder/workflow-validation/constants/workflow-record-crud-action-types.constant';
 
 const OBJECT_TARGETING_ACTION_TYPES = new Set<WorkflowActionType>([
-  ...RECORD_CRUD_ACTION_TYPES,
+  ...WORKFLOW_RECORD_CRUD_ACTION_TYPES,
   WorkflowActionType.PICK_RECORD,
 ]);
 
@@ -91,7 +91,8 @@ export class WorkflowValidationWorkspaceService {
       steps: enrichedSteps,
     });
 
-    const triggerIssues = validateTriggerTypeRequirements(enrichedTrigger);
+    const triggerIssues =
+      validateWorkflowTriggerTypeRequirements(enrichedTrigger);
 
     const semanticIssues = await this.validateStepTypeRequirements({
       workspaceId,
@@ -104,7 +105,7 @@ export class WorkflowValidationWorkspaceService {
       steps: enrichedSteps ?? [],
     });
 
-    const variableReferenceIssues = validateStepsHaveVariableReferences(
+    const variableReferenceIssues = validateWorkflowStepsHaveVariableReferences(
       enrichedSteps ?? [],
     );
 
@@ -205,11 +206,11 @@ export class WorkflowValidationWorkspaceService {
     for (const step of steps) {
       switch (step.type) {
         case WorkflowActionType.AI_AGENT:
-          issues.push(...validateAiAgentStep(step));
+          issues.push(...validateWorkflowAiAgentStep(step));
           break;
         case WorkflowActionType.CODE:
         case WorkflowActionType.HTTP_REQUEST:
-          issues.push(...validateRuntimeOutputStep(step));
+          issues.push(...validateWorkflowRuntimeOutputStep(step));
           break;
         case WorkflowActionType.LOGIC_FUNCTION:
           issues.push(
@@ -217,7 +218,9 @@ export class WorkflowValidationWorkspaceService {
           );
           break;
         case WorkflowActionType.ITERATOR:
-          issues.push(...validateIteratorStep({ step, steps, trigger }));
+          issues.push(
+            ...validateWorkflowIteratorStep({ step, steps, trigger }),
+          );
           break;
       }
     }
@@ -241,13 +244,13 @@ export class WorkflowValidationWorkspaceService {
       });
 
     issues.push(
-      ...validateLogicFunctionOutputSchemaMismatch({
+      ...validateWorkflowLogicFunctionOutputSchemaMismatch({
         step,
         declaredOutputSchema,
       }),
     );
 
-    if (hasStepLevelOutputSchema(step)) {
+    if (hasWorkflowStepLevelOutputSchema(step)) {
       return issues;
     }
 
@@ -256,7 +259,7 @@ export class WorkflowValidationWorkspaceService {
     }
 
     issues.push(
-      buildMissingOutputSchemaIssue({ id: step.id, name: step.name }),
+      buildMissingWorkflowOutputSchemaIssue({ id: step.id, name: step.name }),
     );
 
     return issues;

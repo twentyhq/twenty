@@ -1,7 +1,7 @@
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { validateStepsHaveVariableReferences } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-steps-have-variable-references.util';
+import { validateWorkflowStepsHaveVariableReferences } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-steps-have-variable-references.util';
 
 const buildStep = ({
   id = 'step-1',
@@ -21,13 +21,13 @@ const buildStep = ({
     settings: { input },
   }) as WorkflowAction;
 
-describe('validateStepsHaveVariableReferences', () => {
+describe('validateWorkflowStepsHaveVariableReferences', () => {
   it('should return no issue for an empty step list', () => {
-    expect(validateStepsHaveVariableReferences([])).toEqual([]);
+    expect(validateWorkflowStepsHaveVariableReferences([])).toEqual([]);
   });
 
   it('should warn when a variable-consuming step references no variable', () => {
-    const issues = validateStepsHaveVariableReferences([
+    const issues = validateWorkflowStepsHaveVariableReferences([
       buildStep({
         type: WorkflowActionType.CODE,
         input: { value: 'static' },
@@ -41,7 +41,7 @@ describe('validateStepsHaveVariableReferences', () => {
   });
 
   it('should not warn when the step references a variable', () => {
-    const issues = validateStepsHaveVariableReferences([
+    const issues = validateWorkflowStepsHaveVariableReferences([
       buildStep({
         type: WorkflowActionType.CODE,
         input: { value: '{{step-0.output}}' },
@@ -52,7 +52,7 @@ describe('validateStepsHaveVariableReferences', () => {
   });
 
   it('should ignore action types that do not consume variables', () => {
-    const issues = validateStepsHaveVariableReferences([
+    const issues = validateWorkflowStepsHaveVariableReferences([
       buildStep({
         type: WorkflowActionType.FILTER,
         input: { value: 'static' },
@@ -63,7 +63,7 @@ describe('validateStepsHaveVariableReferences', () => {
   });
 
   it('should fall back to the step id when the step has no name', () => {
-    const issues = validateStepsHaveVariableReferences([
+    const issues = validateWorkflowStepsHaveVariableReferences([
       {
         id: 'unnamed-step',
         type: WorkflowActionType.CODE,
@@ -75,7 +75,7 @@ describe('validateStepsHaveVariableReferences', () => {
   });
 
   it('should report one issue per offending step', () => {
-    const issues = validateStepsHaveVariableReferences([
+    const issues = validateWorkflowStepsHaveVariableReferences([
       buildStep({ id: 'a', type: WorkflowActionType.CODE, input: {} }),
       buildStep({ id: 'b', type: WorkflowActionType.HTTP_REQUEST, input: {} }),
       buildStep({
@@ -89,7 +89,7 @@ describe('validateStepsHaveVariableReferences', () => {
   });
 
   it('should not throw when settings have no input', () => {
-    const issues = validateStepsHaveVariableReferences([
+    const issues = validateWorkflowStepsHaveVariableReferences([
       {
         id: 'a',
         type: WorkflowActionType.CODE,

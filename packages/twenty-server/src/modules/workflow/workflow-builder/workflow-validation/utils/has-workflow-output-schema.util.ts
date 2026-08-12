@@ -1,6 +1,6 @@
 import { isObject } from '@sniptt/guards';
 
-export const hasOutputSchema = (
+export const hasWorkflowOutputSchema = (
   settings:
     | { outputSchema?: unknown; expectedOutputSchema?: unknown }
     | null

@@ -15,7 +15,7 @@ import {
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
-export const validateIteratorStep = ({
+export const validateWorkflowIteratorStep = ({
   step,
   steps,
   trigger,

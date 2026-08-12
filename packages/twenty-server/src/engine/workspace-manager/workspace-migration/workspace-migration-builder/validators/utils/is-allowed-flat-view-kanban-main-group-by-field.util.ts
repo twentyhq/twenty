@@ -3,7 +3,7 @@ import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
-export const isAllowedKanbanMainGroupByField = ({
+export const isAllowedFlatViewKanbanMainGroupByField = ({
   mainGroupByFieldMetadata,
 }: {
   mainGroupByFieldMetadata: UniversalFlatFieldMetadata;

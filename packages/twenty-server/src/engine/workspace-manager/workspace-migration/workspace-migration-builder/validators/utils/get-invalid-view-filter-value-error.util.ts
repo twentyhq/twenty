@@ -7,7 +7,7 @@ import { getEffectiveFilterFieldType } from 'src/engine/metadata-modules/flat-fi
 import { ViewFilterExceptionCode } from 'src/engine/metadata-modules/view-filter/exceptions/view-filter.exception';
 import { type ViewFilterValue } from 'src/engine/metadata-modules/view-filter/types/view-filter-value.type';
 
-export const getInvalidValueError = ({
+export const getInvalidViewFilterValueError = ({
   operand,
   fieldType,
   subFieldName,

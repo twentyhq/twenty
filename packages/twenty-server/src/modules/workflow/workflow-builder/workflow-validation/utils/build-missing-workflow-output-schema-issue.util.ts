@@ -1,6 +1,6 @@
 import { type WorkflowValidationIssue } from 'twenty-shared/workflow';
 
-export const buildMissingOutputSchemaIssue = ({
+export const buildMissingWorkflowOutputSchemaIssue = ({
   id,
   name,
 }: {

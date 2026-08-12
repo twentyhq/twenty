@@ -4,7 +4,7 @@ import { type WorkflowValidationIssue } from 'twenty-shared/workflow';
 
 import { type WorkflowAiAgentAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
-export const validateAiAgentStep = (
+export const validateWorkflowAiAgentStep = (
   step: WorkflowAiAgentAction,
 ): WorkflowValidationIssue[] => {
   const issues: WorkflowValidationIssue[] = [];
@@ -19,10 +19,10 @@ export const validateAiAgentStep = (
   }
 
   const outputSchema = step.settings?.outputSchema;
-  const hasOutputSchema =
+  const hasWorkflowOutputSchema =
     isDefined(outputSchema) && Object.keys(outputSchema).length > 0;
 
-  if (!hasOutputSchema) {
+  if (!hasWorkflowOutputSchema) {
     issues.push({
       severity: 'warning',
       code: 'AI_AGENT_MISSING_OUTPUT_VARIABLE',

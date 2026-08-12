@@ -4,15 +4,15 @@ import {
 } from 'twenty-shared/workflow';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { VARIABLE_CONSUMING_ACTION_TYPES } from 'src/modules/workflow/workflow-builder/workflow-validation/constants/variable-consuming-action-types.constant';
+import { WORKFLOW_VARIABLE_CONSUMING_ACTION_TYPES } from 'src/modules/workflow/workflow-builder/workflow-validation/constants/workflow-variable-consuming-action-types.constant';
 
-export const validateStepsHaveVariableReferences = (
+export const validateWorkflowStepsHaveVariableReferences = (
   steps: WorkflowAction[],
 ): WorkflowValidationIssue[] => {
   const issues: WorkflowValidationIssue[] = [];
 
   for (const step of steps) {
-    if (!VARIABLE_CONSUMING_ACTION_TYPES.has(step.type)) {
+    if (!WORKFLOW_VARIABLE_CONSUMING_ACTION_TYPES.has(step.type)) {
       continue;
     }
 

@@ -1,6 +1,6 @@
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
-export const RECORD_CRUD_ACTION_TYPES = new Set<WorkflowActionType>([
+export const WORKFLOW_RECORD_CRUD_ACTION_TYPES = new Set<WorkflowActionType>([
   WorkflowActionType.CREATE_RECORD,
   WorkflowActionType.UPDATE_RECORD,
   WorkflowActionType.DELETE_RECORD,

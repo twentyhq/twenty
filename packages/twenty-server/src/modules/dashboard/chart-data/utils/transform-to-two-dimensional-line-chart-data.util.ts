@@ -22,7 +22,7 @@ import { getAggregateOperationLabel } from 'src/modules/dashboard/chart-data/uti
 import { getSelectOptions } from 'src/modules/dashboard/chart-data/utils/get-select-options.util';
 import { processTwoDimensionalResults } from 'src/modules/dashboard/chart-data/utils/process-two-dimensional-results.util';
 import { sortChartDataIfNeeded } from 'src/modules/dashboard/chart-data/utils/sort-chart-data-if-needed.util';
-import { sortSecondaryAxisSeriesIds } from 'src/modules/dashboard/chart-data/utils/sort-secondary-axis-series-ids.util';
+import { sortLineChartSecondaryAxisSeriesIds } from 'src/modules/dashboard/chart-data/utils/sort-line-chart-secondary-axis-series-ids.util';
 
 export const transformToTwoDimensionalLineChartData = ({
   filteredRawResults,
@@ -153,7 +153,7 @@ export const transformToTwoDimensionalLineChartData = ({
 
   const seriesIds = Array.from(allSeriesIds);
 
-  const sortedSeriesIds = sortSecondaryAxisSeriesIds({
+  const sortedSeriesIds = sortLineChartSecondaryAxisSeriesIds({
     seriesIds,
     seriesMap,
     configuration,

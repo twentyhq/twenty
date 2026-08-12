@@ -9,9 +9,9 @@ import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
-import { getInvalidSelectOptionError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-select-option-error.util';
-import { getInvalidValueError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-value-error.util';
-import { getIncompatibleOperandError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-incompatible-operand-error.util';
+import { getInvalidViewFilterSelectOptionError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-select-option-error.util';
+import { getInvalidViewFilterValueError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-value-error.util';
+import { getIncompatibleViewFilterOperandError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-incompatible-view-filter-operand-error.util';
 
 export const validateFlatViewFilterCreation = ({
   flatEntityToValidate: flatViewFilterToValidate,
@@ -87,7 +87,7 @@ export const validateFlatViewFilterCreation = ({
       relationTargetFieldType = relationTargetFieldMetadata?.type;
     }
 
-    const incompatibleOperandError = getIncompatibleOperandError({
+    const incompatibleOperandError = getIncompatibleViewFilterOperandError({
       operand: flatViewFilterToValidate.operand,
       fieldType: referencedFieldMetadata.type,
       subFieldName: flatViewFilterToValidate.subFieldName,
@@ -98,7 +98,7 @@ export const validateFlatViewFilterCreation = ({
       validationResult.errors.push(incompatibleOperandError);
     }
 
-    const invalidValueError = getInvalidValueError({
+    const invalidValueError = getInvalidViewFilterValueError({
       operand: flatViewFilterToValidate.operand,
       fieldType: referencedFieldMetadata.type,
       subFieldName: flatViewFilterToValidate.subFieldName,
@@ -120,7 +120,7 @@ export const validateFlatViewFilterCreation = ({
         FieldMetadataType.MULTI_SELECT,
       )
     ) {
-      const invalidSelectOptionError = getInvalidSelectOptionError({
+      const invalidSelectOptionError = getInvalidViewFilterSelectOptionError({
         referencedFieldMetadata,
         operand: flatViewFilterToValidate.operand,
         value: flatViewFilterToValidate.value,
