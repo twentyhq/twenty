@@ -104,7 +104,10 @@ describe('Blocklist cleanup (integration)', () => {
     ).toEqual([blockedEventTitle, keptEventTitle].sort());
   }, 60000);
 
-  it('deletes the blocked handle messages and calendar events, and keeps the others', async () => {
+  // Blocking a handle deletes their messages but deliberately leaves calendar
+  // events alone: an event the blocked handle merely attended is still the
+  // workspace's own meeting, so it is not swept up with them.
+  it('deletes the blocked handle messages and keeps every calendar event', async () => {
     const response = await makeGraphqlAPIRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'blocklist',
@@ -129,6 +132,6 @@ describe('Blocklist cleanup (integration)', () => {
         blockedEventTitle,
         keptEventTitle,
       ]),
-    ).toEqual([keptEventTitle]);
+    ).toEqual([blockedEventTitle, keptEventTitle].sort());
   }, 120000);
 });
