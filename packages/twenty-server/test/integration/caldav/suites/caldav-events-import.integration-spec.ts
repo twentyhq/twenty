@@ -1,5 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
+import { CalendarChannelSyncStatus } from 'twenty-shared/types';
+
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 
 import { deleteConnectedAccount } from 'test/integration/metadata/suites/connected-account/utils/delete-connected-account.util';
@@ -16,6 +18,12 @@ import {
 
 const HANDLE = `caldav-events-import-${randomUUID()}@acme.test`;
 const COLLECTION = 'personal';
+
+// A sync token the server no longer recognises, which drives the fallback from
+// an incremental sync-collection report to a full re-sync.
+const STALE_SYNC_CURSOR = JSON.stringify({
+  syncTokens: { 'http://caldav.invalid/collection/': 'stale-sync-token' },
+});
 
 const icalEvent = ({ uid, summary }: { uid: string; summary: string }) =>
   [
@@ -46,6 +54,21 @@ describe('CalDAV calendar events import (integration)', () => {
       headers: { 'Content-Type': 'text/calendar; charset=utf-8' },
       body: icalEvent({ uid, summary }),
     });
+
+  const deleteEvent = async (uid: string) =>
+    fetch(`${collectionUrl()}${uid}.ics`, { method: 'DELETE' });
+
+  const readSyncCursor = async () =>
+    (
+      await getCoreRepository<CalendarChannelEntity>(
+        CalendarChannelEntity,
+      ).findOneByOrFail({ id: calendarChannelId })
+    ).syncCursor;
+
+  const syncCalendarChannel = async () => {
+    await runCalendarChannelListFetch(calendarChannelId);
+    await runCalendarChannelEventsImport(calendarChannelId);
+  };
 
   beforeAll(async () => {
     // The CalDAV driver wraps its fetch in the SSRF guard, which rejects the
@@ -113,8 +136,70 @@ describe('CalDAV calendar events import (integration)', () => {
 
     await putEvent({ uid: `caldav-event-${randomUUID()}`, summary });
 
-    await runCalendarChannelListFetch(calendarChannelId);
-    await runCalendarChannelEventsImport(calendarChannelId);
+    await syncCalendarChannel();
+
+    expect(await findImportedCalendarEventTitles([summary])).toEqual([summary]);
+  }, 300000);
+
+  it('advances the sync token and imports an event added afterwards', async () => {
+    const firstSummary = `CalDAV event ${randomUUID()}`;
+    const secondSummary = `CalDAV event ${randomUUID()}`;
+
+    await putEvent({
+      uid: `caldav-event-${randomUUID()}`,
+      summary: firstSummary,
+    });
+    await syncCalendarChannel();
+
+    const cursorAfterFirstSync = await readSyncCursor();
+
+    await putEvent({
+      uid: `caldav-event-${randomUUID()}`,
+      summary: secondSummary,
+    });
+    await syncCalendarChannel();
+
+    expect(await readSyncCursor()).not.toBe(cursorAfterFirstSync);
+    expect(
+      await findImportedCalendarEventTitles([firstSummary, secondSummary]),
+    ).toEqual([firstSummary, secondSummary].sort());
+  }, 300000);
+
+  it('keeps the channel active when the collection has not changed', async () => {
+    await syncCalendarChannel();
+
+    const channel = await getCoreRepository<CalendarChannelEntity>(
+      CalendarChannelEntity,
+    ).findOneByOrFail({ id: calendarChannelId });
+
+    expect(channel.syncStatus).toBe(CalendarChannelSyncStatus.ACTIVE);
+  }, 300000);
+
+  it('removes an event deleted from the CalDAV collection', async () => {
+    const summary = `CalDAV event ${randomUUID()}`;
+    const uid = `caldav-event-${randomUUID()}`;
+
+    await putEvent({ uid, summary });
+    await syncCalendarChannel();
+
+    expect(await findImportedCalendarEventTitles([summary])).toEqual([summary]);
+
+    await deleteEvent(uid);
+    await syncCalendarChannel();
+
+    expect(await findImportedCalendarEventTitles([summary])).toEqual([]);
+  }, 300000);
+
+  it('recovers with a full re-sync when the stored sync token is rejected', async () => {
+    const summary = `CalDAV event ${randomUUID()}`;
+
+    await putEvent({ uid: `caldav-event-${randomUUID()}`, summary });
+
+    await getCoreRepository<CalendarChannelEntity>(
+      CalendarChannelEntity,
+    ).update({ id: calendarChannelId }, { syncCursor: STALE_SYNC_CURSOR });
+
+    await syncCalendarChannel();
 
     expect(await findImportedCalendarEventTitles([summary])).toEqual([summary]);
   }, 300000);
