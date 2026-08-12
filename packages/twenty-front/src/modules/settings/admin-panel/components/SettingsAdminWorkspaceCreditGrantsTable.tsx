@@ -1,32 +1,25 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { msg } from '@lingui/core/macro';
 import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/data-display';
-import { IconTrash } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/input';
-import { Card } from 'twenty-ui/surfaces';
+import { Button } from 'twenty-ui/input';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { type ThemeColor } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { CREDIT_GRANT_TYPE_COLORS } from '@/settings/admin-panel/constants/CreditGrantTypeColors';
 import { CREDIT_GRANT_TYPE_LABELS } from '@/settings/admin-panel/constants/CreditGrantTypeLabels';
 import { REVOKE_WORKSPACE_CREDIT_GRANT } from '@/settings/admin-panel/graphql/mutations/revokeWorkspaceCreditGrant';
 import { GET_WORKSPACE_BILLING_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/getWorkspaceBillingAdminPanel';
+import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { Table } from '@/ui/layout/table/components/Table';
-import { TableBody } from '@/ui/layout/table/components/TableBody';
-import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { beautifyExactDate } from '~/utils/date-utils';
 import { type WorkspaceBillingAdminPanelQuery } from '~/generated-admin/graphql';
 
@@ -37,19 +30,12 @@ type CreditGrant = NonNullable<
 type SettingsAdminWorkspaceCreditGrantsTableProps = {
   workspaceId: string;
   creditGrants: CreditGrant[];
+  onGrantCreditsClick: () => void;
 };
 
-const GRID_AUTO_COLUMNS = '1fr 1.4fr 1fr 1.6fr 2fr 32px';
+const CREDIT_GRANTS_GRID_AUTO_COLUMNS = '1fr 1fr 1fr 1fr 2fr 88px';
 const REVOKE_CREDIT_GRANT_MODAL_ID = 'revoke-credit-grant-modal';
-
-const StyledEmptyState = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  padding: ${themeCssVariables.spacing[3]};
-`;
-
-const StyledReason = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-`;
+const EM_DASH = '—';
 
 const getStatus = (
   creditGrant: CreditGrant,
@@ -68,6 +54,7 @@ const getStatus = (
 export const SettingsAdminWorkspaceCreditGrantsTable = ({
   workspaceId,
   creditGrants,
+  onGrantCreditsClick,
 }: SettingsAdminWorkspaceCreditGrantsTableProps) => {
   const { t } = useLingui();
   const { formatNumber } = useNumberFormat();
@@ -86,6 +73,9 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
       refetchQueries: [GET_WORKSPACE_BILLING_ADMIN_PANEL],
     },
   );
+
+  const formatCredits = (credits: number): string =>
+    formatNumber(credits, { decimals: 2 });
 
   const handleRevokeClick = (creditGrant: CreditGrant) => {
     setGrantPendingRevocation(creditGrant);
@@ -114,79 +104,71 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
     }
   };
 
-  if (creditGrants.length === 0) {
-    return (
-      <Card rounded>
-        <StyledEmptyState>
-          {t`No credits have been granted to this workspace.`}
-        </StyledEmptyState>
-      </Card>
-    );
-  }
-
   return (
-    <Card rounded>
-      <Table>
-        <TableRow gridAutoColumns={GRID_AUTO_COLUMNS}>
-          <TableHeader>{t`Amount`}</TableHeader>
-          <TableHeader>{t`Type`}</TableHeader>
-          <TableHeader>{t`Status`}</TableHeader>
-          <TableHeader>{t`Expires`}</TableHeader>
-          <TableHeader>{t`Reason`}</TableHeader>
-          <TableHeader></TableHeader>
-        </TableRow>
-        <TableBody>
-          {creditGrants.map((creditGrant) => {
-            const status = getStatus(creditGrant);
+    <>
+      <SettingsTableListSection<CreditGrant>
+        title={t`Granted credits`}
+        description={t`Credits handed out on top of the plan allowance`}
+        items={creditGrants}
+        columns={[
+          {
+            label: t`Amount`,
+            align: 'right',
+            Cell: ({ item }) => <>{formatCredits(item.amount)}</>,
+          },
+          {
+            label: t`Type`,
+            Cell: ({ item }) => (
+              <Tag
+                color={CREDIT_GRANT_TYPE_COLORS[item.type]}
+                text={t(CREDIT_GRANT_TYPE_LABELS[item.type])}
+              />
+            ),
+          },
+          {
+            label: t`Status`,
+            Cell: ({ item }) => {
+              const status = getStatus(item);
 
-            return (
-              <TableRow
-                key={creditGrant.id}
-                gridAutoColumns={GRID_AUTO_COLUMNS}
-              >
-                <TableCell>
-                  {formatNumber(creditGrant.amount, { decimals: 2 })}
-                </TableCell>
-                <TableCell>
-                  <Tag
-                    color={CREDIT_GRANT_TYPE_COLORS[creditGrant.type]}
-                    text={t(CREDIT_GRANT_TYPE_LABELS[creditGrant.type])}
-                  />
-                </TableCell>
-                <TableCell>
-                  <Tag color={status.color} text={t(status.label)} />
-                </TableCell>
-                <TableCell>
-                  {beautifyExactDate(creditGrant.expiresAt)}
-                </TableCell>
-                <TableCell>
-                  <StyledReason>{creditGrant.reason ?? '—'}</StyledReason>
-                </TableCell>
-                <TableCell>
-                  {creditGrant.isActive && (
-                    <IconButton
-                      Icon={IconTrash}
-                      size="small"
-                      accent="danger"
-                      disabled={isRevoking}
-                      onClick={() => handleRevokeClick(creditGrant)}
-                    />
-                  )}
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
+              return <Tag color={status.color} text={t(status.label)} />;
+            },
+          },
+          {
+            label: t`Expires`,
+            Cell: ({ item }) => <>{beautifyExactDate(item.expiresAt)}</>,
+          },
+          {
+            label: t`Reason`,
+            Cell: ({ item }) => (
+              <OverflowingTextWithTooltip text={item.reason ?? EM_DASH} />
+            ),
+          },
+          {
+            label: '',
+            align: 'right',
+            Cell: ({ item }) => (
+              <Button
+                title={t`Revoke`}
+                size="small"
+                variant="secondary"
+                accent="danger"
+                disabled={!item.isActive || isRevoking}
+                onClick={() => handleRevokeClick(item)}
+              />
+            ),
+          },
+        ]}
+        gridAutoColumns={CREDIT_GRANTS_GRID_AUTO_COLUMNS}
+        footerButtonLabel={t`Grant credits`}
+        onFooterButtonClick={onGrantCreditsClick}
+      />
 
       <ConfirmationModal
         modalInstanceId={REVOKE_CREDIT_GRANT_MODAL_ID}
         title={t`Revoke credit grant`}
         subtitle={
           isDefined(grantPendingRevocation)
-            ? t`This takes ${formatNumber(grantPendingRevocation.amount, {
-                decimals: 2,
-              })} credits back off this workspace straight away. Revoking cannot be undone.`
+            ? t`This takes ${formatCredits(grantPendingRevocation.amount)} credits back off this workspace straight away. Revoking cannot be undone.`
             : ''
         }
         confirmButtonText={t`Revoke`}
@@ -198,6 +180,6 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
         }}
         onClose={() => setGrantPendingRevocation(null)}
       />
-    </Card>
+    </>
   );
 };

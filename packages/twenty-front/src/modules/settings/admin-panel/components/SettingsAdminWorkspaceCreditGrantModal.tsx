@@ -4,10 +4,10 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { v4 } from 'uuid';
-import { IconX } from 'twenty-ui/icon';
-import { Button, IconButton } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
+import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/typography';
+import { H1Title, H1TitleFontColor } from 'twenty-ui/typography';
 
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { CREDIT_GRANT_TYPE_LABELS } from '@/settings/admin-panel/constants/CreditGrantTypeLabels';
@@ -26,24 +26,28 @@ type SettingsAdminWorkspaceCreditGrantModalProps = {
   workspaceId: string;
 };
 
-const StyledContent = styled.div`
+const StyledCenteredTitle = styled.div`
+  text-align: center;
+`;
+
+const StyledSectionContainer = styled.div`
+  margin-bottom: ${themeCssVariables.spacing[6]};
+`;
+
+const StyledFields = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
-  padding: ${themeCssVariables.spacing[6]};
 `;
 
-const StyledHeader = styled.div`
-  align-items: flex-start;
+const StyledModalActions = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-  justify-content: space-between;
-`;
+  margin-top: ${themeCssVariables.spacing[6]};
 
-const StyledFooter = styled.div`
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  justify-content: flex-end;
+  > div {
+    flex: 1;
+  }
 `;
 
 export const SettingsAdminWorkspaceCreditGrantModal = ({
@@ -131,21 +135,33 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
   return (
     <ModalStatefulWrapper
       modalInstanceId={modalInstanceId}
-      size="medium"
-      padding="none"
-      isClosable
       onClose={handleClose}
+      isClosable
+      size="medium"
+      padding="large"
+      overlay="dark"
+      width="360px"
+      dataGloballyPreventClickOutside
       renderInDocumentBody
+      smallBorderRadius
+      autoHeight
     >
-      <StyledContent>
-        <StyledHeader>
-          <H2Title
-            title={t`Grant credits`}
-            description={t`Credits are added on top of the plan allowance and expire at the end of the current billing period. Unused granted credits carry over in full.`}
-          />
-          <IconButton Icon={IconX} onClick={handleClose} size="small" />
-        </StyledHeader>
+      <StyledCenteredTitle>
+        <H1Title
+          title={t`Grant credits`}
+          fontColor={H1TitleFontColor.Primary}
+        />
+      </StyledCenteredTitle>
+      <StyledSectionContainer>
+        <Section
+          alignment={SectionAlignment.Center}
+          fontColor={SectionFontColor.Primary}
+        >
+          {t`Credits are added on top of the plan allowance and expire at the end of the current billing period. Unused granted credits carry over in full.`}
+        </Section>
+      </StyledSectionContainer>
 
+      <StyledFields>
         <SettingsTextInput
           instanceId={`${modalInstanceId}-amount`}
           label={t`Amount`}
@@ -180,17 +196,26 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
           maxLength={500}
           fullWidth
         />
+      </StyledFields>
 
-        <StyledFooter>
-          <Button title={t`Cancel`} variant="secondary" onClick={handleClose} />
-          <Button
-            title={t`Grant`}
-            accent="blue"
-            disabled={!isAmountValid || loading}
-            onClick={handleSubmit}
-          />
-        </StyledFooter>
-      </StyledContent>
+      <StyledModalActions>
+        <Button
+          onClick={handleClose}
+          variant="secondary"
+          title={t`Cancel`}
+          fullWidth
+          justify="center"
+        />
+        <Button
+          onClick={handleSubmit}
+          variant="primary"
+          accent="blue"
+          title={t`Grant`}
+          disabled={!isAmountValid || loading}
+          fullWidth
+          justify="center"
+        />
+      </StyledModalActions>
     </ModalStatefulWrapper>
   );
 };

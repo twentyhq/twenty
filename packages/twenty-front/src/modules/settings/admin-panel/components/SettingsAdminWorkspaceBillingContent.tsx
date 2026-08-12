@@ -13,12 +13,10 @@ import {
   IconCreditCard,
   IconExternalLink,
   IconId,
-  IconPlus,
   IconStatusChange,
   IconTag,
   IconUsers,
 } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
 import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import { type ThemeColor } from 'twenty-ui/theme';
@@ -72,13 +70,6 @@ const StyledExternalLink = styled.a`
 
 const StyledMono = styled.span`
   font-family: ${themeCssVariables.code.font.family};
-`;
-
-const StyledSectionHeader = styled.div`
-  align-items: flex-start;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  justify-content: space-between;
 `;
 
 const StyledItemValue = styled.div`
@@ -437,25 +428,11 @@ export const SettingsAdminWorkspaceBillingContent = ({
         )}
       </Section>
 
-      <Section>
-        <StyledSectionHeader>
-          <H2Title
-            title={t`Granted credits`}
-            description={t`Credits handed out on top of the plan allowance`}
-          />
-          <Button
-            Icon={IconPlus}
-            title={t`Grant credits`}
-            variant="secondary"
-            size="small"
-            onClick={() => openModal(GRANT_CREDITS_MODAL_ID)}
-          />
-        </StyledSectionHeader>
-        <SettingsAdminWorkspaceCreditGrantsTable
-          workspaceId={workspaceId}
-          creditGrants={creditGrants}
-        />
-      </Section>
+      <SettingsAdminWorkspaceCreditGrantsTable
+        workspaceId={workspaceId}
+        creditGrants={creditGrants}
+        onGrantCreditsClick={() => openModal(GRANT_CREDITS_MODAL_ID)}
+      />
 
       <SettingsAdminWorkspaceCreditGrantModal
         modalInstanceId={GRANT_CREDITS_MODAL_ID}
