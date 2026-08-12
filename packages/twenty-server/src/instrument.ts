@@ -12,6 +12,8 @@ import {
 import * as Sentry from '@sentry/node';
 import { nodeProfilingIntegration } from '@sentry/profiling-node';
 
+import { isNonEmptyString } from 'twenty-shared/utils';
+
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
@@ -31,7 +33,7 @@ const parseSampleRate = ({
   value: string | undefined;
   fallback: number;
 }) => {
-  if (value === undefined || value.trim() === '') {
+  if (!isNonEmptyString(value?.trim())) {
     return fallback;
   }
 
