@@ -211,7 +211,7 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
     expect(system).not.toContain('create_one_workflow');
   });
 
-  it('intersects the agent role with the run-as role on the lazy path used by runAgent', async () => {
+  it('scopes the lazy path used by runAgent to the run-as role alone', async () => {
     roleTargetRepository.findOne.mockResolvedValueOnce({ roleId: agentRoleId });
     toolRegistry.buildToolIndex.mockResolvedValueOnce([]);
 
@@ -229,7 +229,7 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
       agentRoleId,
       expect.objectContaining({
         rolePermissionConfig: {
-          intersectionOf: [agentRoleId, 'run-as-role-id'],
+          intersectionOf: ['run-as-role-id'],
         },
       }),
     );

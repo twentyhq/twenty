@@ -130,4 +130,29 @@ describe('AgentActorContextService', () => {
       workspaceMemberId,
     });
   });
+
+  it('keeps the acting application on the context as provenance, never as a permission input', async () => {
+    const viaApplication = {
+      id: 'app-1',
+      defaultRoleId: 'app-role-1',
+    } as unknown as Parameters<
+      typeof service.buildRunAsWorkspaceMemberContext
+    >[0]['viaApplication'];
+
+    const result = await service.buildRunAsWorkspaceMemberContext({
+      ...runAsArgs,
+      viaApplication,
+    });
+
+    expect(result.authContext.viaApplication).toBe(viaApplication);
+    // the application field would intersect the member's permissions with the
+    // application default role, so run-as must never populate it
+    expect(result.authContext.application).toBeUndefined();
+  });
+
+  it('leaves the provenance field absent when no application is given', async () => {
+    const result = await service.buildRunAsWorkspaceMemberContext(runAsArgs);
+
+    expect('viaApplication' in result.authContext).toBe(false);
+  });
 });

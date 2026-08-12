@@ -4,6 +4,7 @@ import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
 import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -126,9 +127,11 @@ export class AgentActorContextService {
   async buildRunAsWorkspaceMemberContext({
     workspaceMemberId,
     workspaceId,
+    viaApplication,
   }: {
     workspaceMemberId: string;
     workspaceId: string;
+    viaApplication?: FlatApplication;
   }): Promise<RunAsWorkspaceMemberContext> {
     const workspaceMember = await this.userWorkspaceService.getWorkspaceMember({
       workspaceMemberId,
@@ -168,12 +171,17 @@ export class AgentActorContextService {
         workspaceMemberId: workspaceMember.id,
         source: FieldActorSource.AGENT,
       }),
+      // viaApplication keeps the acting application on the swapped context for
+      // provenance and future install-time grants; it is not the `application`
+      // field on purpose, which would intersect the member's permissions with
+      // the application's default role
       authContext: buildUserAuthContext({
         workspace: fromWorkspaceEntityToFlat(userWorkspace.workspace),
         userWorkspaceId: userWorkspace.id,
         user: fromUserEntityToFlat(userWorkspace.user),
         workspaceMemberId: workspaceMember.id,
         workspaceMember,
+        viaApplication,
       }),
       roleId,
     };

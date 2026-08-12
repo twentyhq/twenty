@@ -181,6 +181,7 @@ describe('AgentRunService', () => {
     ).toHaveBeenCalledWith({
       workspaceMemberId: 'workspace-member-1',
       workspaceId: workspace.id,
+      viaApplication: { id: 'app-1' },
     });
     expect(agentAsyncExecutorService.executeAgent).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -327,6 +328,7 @@ describe('AgentRunService', () => {
     ).toHaveBeenCalledWith({
       workspaceMemberId: 'someone-elses-member-id',
       workspaceId: workspace.id,
+      viaApplication: { id: 'app-1' },
     });
   });
 
@@ -372,6 +374,7 @@ describe('AgentRunService', () => {
     ).toHaveBeenCalledWith({
       workspaceMemberId: 'workspace-member-1',
       workspaceId: workspace.id,
+      viaApplication: { id: 'app-1' },
     });
   });
 
