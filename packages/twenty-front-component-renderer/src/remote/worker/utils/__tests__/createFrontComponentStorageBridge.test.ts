@@ -114,7 +114,7 @@ describe('createFrontComponentStorageBridge', () => {
     });
   });
 
-  it('should reject a write that breaks the limits', () => {
+  it('should reject an oversized key without caching or persisting it', () => {
     const { bridge, hostCommunicationApi } = createConnectedBridge();
 
     const oversizedKey = 'k'.repeat(FRONT_COMPONENT_STORAGE_MAX_KEY_LENGTH + 1);
