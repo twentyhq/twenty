@@ -7,4 +7,6 @@ export const MEDIA_NOTES_TEST_IDS = {
   capturedAudio: 'media-notes-captured-audio',
   capturedVideo: 'media-notes-captured-video',
   savedRecord: 'media-notes-saved-record',
+  attachError: 'media-notes-attach-error',
+  retryAttachButton: 'media-notes-retry-attach',
 };

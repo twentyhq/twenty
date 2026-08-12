@@ -4,6 +4,7 @@ import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
   type CaptureMediaResult,
+  type CapturedMediaFile,
   recordAudio,
   recordVideo,
 } from 'twenty-sdk/front-component';
@@ -26,35 +27,70 @@ const buttonStyle: React.CSSProperties = {
   padding: '8px 12px',
 };
 
-// An app declares its fields by universalIdentifier; the per-instance
-// fieldMetadataId that captureMedia needs is resolved at runtime. The
-// metadata API cannot filter on universalIdentifier, so scan the object list.
-const fetchRecordingFieldMetadataId = async (): Promise<string | null> => {
+const OBJECTS_PAGE_SIZE = 100;
+
+type ObjectsPage = {
+  fields: { id: string; universalIdentifier: string | null }[];
+  nextCursor: string | null;
+};
+
+const fetchObjectsPage = async (after: string | null): Promise<ObjectsPage> => {
   const result = await new MetadataApiClient().query({
     objects: {
-      __args: { paging: { first: 200 } },
+      __args: {
+        paging: { first: OBJECTS_PAGE_SIZE, ...(after ? { after } : {}) },
+        filter: {},
+      },
+      pageInfo: { hasNextPage: true, endCursor: true },
       edges: {
-        node: {
-          fieldsList: { id: true, universalIdentifier: true },
-        },
+        node: { fieldsList: { id: true, universalIdentifier: true } },
       },
     },
   });
 
-  const fields = (result.objects?.edges ?? []).flatMap(
-    (edge) => edge.node?.fieldsList ?? [],
-  );
+  const pageInfo = result.objects.pageInfo;
 
-  return (
-    fields.find(
+  return {
+    fields: result.objects.edges.flatMap((edge) => edge.node.fieldsList ?? []),
+    nextCursor:
+      pageInfo.hasNextPage === true ? (pageInfo.endCursor ?? null) : null,
+  };
+};
+
+// An app declares its fields by universalIdentifier; the per-instance
+// fieldMetadataId that captureMedia needs is resolved at runtime. The
+// metadata API cannot filter on universalIdentifier, so page through the
+// object list until the field turns up.
+const fetchRecordingFieldMetadataId = async (): Promise<string | null> => {
+  let cursor: string | null = null;
+
+  for (;;) {
+    const page: ObjectsPage = await fetchObjectsPage(cursor);
+
+    const recordingField = page.fields.find(
       (field) =>
         field.universalIdentifier === RECORDING_FIELD_UNIVERSAL_IDENTIFIER,
-    )?.id ?? null
-  );
+    );
+
+    if (recordingField) {
+      return recordingField.id;
+    }
+
+    if (page.nextCursor === null) {
+      return null;
+    }
+
+    cursor = page.nextCursor;
+  }
 };
 
 const describeResult = (result: CaptureMediaResult): string =>
   result.status === 'failed' ? `failed:${result.reason}` : result.status;
+
+type PendingAttach = {
+  mediaType: 'audio' | 'video';
+  file: CapturedMediaFile;
+};
 
 const MediaNotes = () => {
   const [recordingFieldMetadataId, setRecordingFieldMetadataId] = useState<
@@ -64,12 +100,44 @@ const MediaNotes = () => {
     null,
   );
   const [savedRecordId, setSavedRecordId] = useState<string | null>(null);
+  // Set only when attaching failed, so it doubles as the retry payload.
+  const [failedAttach, setFailedAttach] = useState<PendingAttach | null>(null);
 
   useEffect(() => {
     fetchRecordingFieldMetadataId()
       .then(setRecordingFieldMetadataId)
       .catch(() => setRecordingFieldMetadataId(null));
   }, []);
+
+  // Attaching the uploaded file to a record is what makes it permanent: until
+  // then it is a temporary file owned by the FILES field, so a failure here
+  // has to be recoverable rather than silent.
+  const attachToNewMediaNote = async (pendingAttach: PendingAttach) => {
+    setFailedAttach(null);
+
+    try {
+      const created = await new CoreApiClient().mutation({
+        createMediaNote: {
+          __args: {
+            data: {
+              title: `${pendingAttach.mediaType} note`,
+              recording: [
+                {
+                  fileId: pendingAttach.file.fileId,
+                  label: pendingAttach.file.path,
+                },
+              ],
+            },
+          },
+          id: true,
+        },
+      });
+
+      setSavedRecordId(created.createMediaNote?.id ?? null);
+    } catch {
+      setFailedAttach(pendingAttach);
+    }
+  };
 
   const handleCapture = async (mediaType: 'audio' | 'video') => {
     if (recordingFieldMetadataId === null) {
@@ -78,6 +146,7 @@ const MediaNotes = () => {
 
     setCaptureResult(null);
     setSavedRecordId(null);
+    setFailedAttach(null);
 
     const params = {
       fieldMetadataId: recordingFieldMetadataId,
@@ -95,23 +164,7 @@ const MediaNotes = () => {
       return;
     }
 
-    // Attaching the uploaded file to a record is what makes it permanent:
-    // until then it is a temporary file owned by the FILES field.
-    const created = await new CoreApiClient().mutation({
-      createMediaNote: {
-        __args: {
-          data: {
-            title: `${mediaType} note`,
-            recording: [
-              { fileId: result.file.fileId, label: result.file.path },
-            ],
-          },
-        },
-        id: true,
-      },
-    });
-
-    setSavedRecordId(created.createMediaNote?.id ?? null);
+    await attachToNewMediaNote({ mediaType, file: result.file });
   };
 
   return (
@@ -121,8 +174,8 @@ const MediaNotes = () => {
     >
       <h3 style={{ fontSize: '15px', margin: '0 0 12px' }}>Media notes</h3>
       <p style={{ color: '#555', fontSize: '13px', margin: '0 0 16px' }}>
-        Record a note with your microphone or camera. The recording is stored
-        in Twenty and attached to a Media note record.
+        Record a note with your microphone or camera. The recording is stored in
+        Twenty and attached to a Media note record.
       </p>
 
       <div style={{ marginBottom: '16px' }}>
@@ -189,6 +242,24 @@ const MediaNotes = () => {
             >
               Attached to media note {savedRecordId}
             </p>
+          )}
+          {failedAttach !== null && (
+            <div
+              data-testid={MEDIA_NOTES_TEST_IDS.attachError}
+              style={{ color: '#b42318', margin: '8px 0 0' }}
+            >
+              <p style={{ margin: '0 0 8px' }}>
+                The recording was uploaded but could not be attached to a media
+                note. It stays temporary until it is attached.
+              </p>
+              <button
+                data-testid={MEDIA_NOTES_TEST_IDS.retryAttachButton}
+                style={buttonStyle}
+                onClick={() => attachToNewMediaNote(failedAttach)}
+              >
+                Retry attaching
+              </button>
+            </div>
           )}
         </div>
       )}

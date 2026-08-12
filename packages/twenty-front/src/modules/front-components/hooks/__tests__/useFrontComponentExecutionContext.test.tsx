@@ -12,8 +12,15 @@ import { useFrontComponentExecutionContext } from '@/front-components/hooks/useF
 jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
   useObjectMetadataItems: () => ({
     objectMetadataItems: [
-      { nameSingular: 'workflow', openRecordIn: 'RECORD_PAGE' },
-      { nameSingular: 'lead', openRecordIn: 'USER_CHOICE' },
+      { nameSingular: 'workflow', openRecordIn: 'RECORD_PAGE', fields: [] },
+      {
+        nameSingular: 'lead',
+        openRecordIn: 'USER_CHOICE',
+        fields: [
+          { id: '20202020-1111-4444-8888-000000000001', type: 'FILES' },
+          { id: '20202020-1111-4444-8888-000000000002', type: 'TEXT' },
+        ],
+      },
     ],
   }),
 }));
@@ -1014,6 +1021,39 @@ describe('useFrontComponentExecutionContext', () => {
           maxDurationSeconds: undefined,
         }),
       );
+    });
+
+    it('should fail without opening the capture flow when the target is not a FILES field', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      const captureResult = await act(async () => {
+        return await result.current.frontComponentHostCommunicationApi.captureMedia(
+          {
+            mediaType: 'audio',
+            fieldMetadataId: '20202020-1111-4444-8888-000000000002',
+          },
+        );
+      });
+
+      expect(captureResult).toEqual({ status: 'failed', reason: 'unknown' });
+      expect(mockRequestMediaCapture).not.toHaveBeenCalled();
+    });
+
+    it('should fail without opening the capture flow when the field does not exist', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      const captureResult = await act(async () => {
+        return await result.current.frontComponentHostCommunicationApi.captureMedia(
+          { mediaType: 'audio', fieldMetadataId: 'not-a-known-field' },
+        );
+      });
+
+      expect(captureResult).toEqual({ status: 'failed', reason: 'unknown' });
+      expect(mockRequestMediaCapture).not.toHaveBeenCalled();
     });
 
     it('should fail without opening the capture flow when fieldMetadataId is not a string', async () => {

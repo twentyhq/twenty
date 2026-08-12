@@ -10,6 +10,7 @@ import {
 } from 'twenty-front-component-renderer';
 import {
   AppPath,
+  FieldMetadataType,
   ObjectOpenRecordIn,
   OpenRecordIn,
   SidePanelPages,
@@ -374,6 +375,21 @@ export const useFrontComponentExecutionContext = ({
         (params.mediaType !== 'audio' && params.mediaType !== 'video') ||
         !isNonEmptyString(params.fieldMetadataId)
       ) {
+        return { status: 'failed', reason: 'unknown' };
+      }
+
+      // A non-FILES target would upload fine and then fail at attach time,
+      // stranding the file; reject it before recording anything.
+      const isFilesFieldTarget = objectMetadataItems.some(
+        (objectMetadataItem) =>
+          objectMetadataItem.fields.some(
+            (field) =>
+              field.id === params.fieldMetadataId &&
+              field.type === FieldMetadataType.FILES,
+          ),
+      );
+
+      if (!isFilesFieldTarget) {
         return { status: 'failed', reason: 'unknown' };
       }
 
