@@ -8430,11 +8430,6 @@ msgstr "此角色无法编辑。"
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "此角色无法修改，因为它是系统角色。只有自定义角色可以编辑。"
 
-#. js-lingui-id: nzveUr
-#: src/engine/metadata-modules/object-permission/field-permission/__tests__/field-permissions.service.spec.ts
-msgid "This role cannot be modified."
-msgstr "此角色无法修改。"
-
 #. js-lingui-id: DEJJoY
 #: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts
 msgid "This server key is already claimed by another workspace."

@@ -8436,11 +8436,6 @@ msgstr "Denna roll kan inte redigeras."
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "Den här rollen kan inte ändras eftersom det är en systemroll. Endast anpassade roller kan redigeras."
 
-#. js-lingui-id: nzveUr
-#: src/engine/metadata-modules/object-permission/field-permission/__tests__/field-permissions.service.spec.ts
-msgid "This role cannot be modified."
-msgstr "Denna roll kan inte ändras."
-
 #. js-lingui-id: DEJJoY
 #: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts
 msgid "This server key is already claimed by another workspace."
