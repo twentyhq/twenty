@@ -3832,6 +3832,11 @@ msgstr "Nieprawidłowy filtr: operator \"{operator}\" wymaga tablicy"
 msgid "Invalid filter: \"isEmptyArray\" operator requires a boolean"
 msgstr "Nieprawidłowy filtr: operator \"isEmptyArray\" wymaga wartości logicznej"
 
+#. js-lingui-id: kymlZR
+#: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
+msgid "Invalid filter: choose a field on a related record for \"{key}\""
+msgstr ""
+
 #. js-lingui-id: Np9Fvw
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util.ts
 msgid "Invalid filter: exactly one operator per field is required"
@@ -6568,6 +6573,9 @@ msgid "Relation field target metadata not found"
 msgstr "Nie znaleziono metadanych celu pola relacyjnego"
 
 #. js-lingui-id: HmNKeM
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 #: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 #: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 msgid "Relation filter is misconfigured"

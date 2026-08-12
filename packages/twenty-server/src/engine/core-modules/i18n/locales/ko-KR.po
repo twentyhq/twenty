@@ -3832,6 +3832,11 @@ msgstr "잘못된 필터: \"{operator}\" 연산자에는 배열이 필요합니�
 msgid "Invalid filter: \"isEmptyArray\" operator requires a boolean"
 msgstr "잘못된 필터: \"isEmptyArray\" 연산자에는 불리언 값이 필요합니다."
 
+#. js-lingui-id: kymlZR
+#: src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service.ts
+msgid "Invalid filter: choose a field on a related record for \"{key}\""
+msgstr ""
+
 #. js-lingui-id: Np9Fvw
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util.ts
 msgid "Invalid filter: exactly one operator per field is required"
@@ -6568,6 +6573,9 @@ msgid "Relation field target metadata not found"
 msgstr "관계 필드 대상 메타데이터를 찾을 수 없습니다."
 
 #. js-lingui-id: HmNKeM
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
+#: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 #: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 #: src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-field.parser.ts
 msgid "Relation filter is misconfigured"
