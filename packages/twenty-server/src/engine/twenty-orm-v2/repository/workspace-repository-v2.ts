@@ -10,6 +10,7 @@ import { resolveRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/uti
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { type QueryExecutorV2 } from 'src/engine/twenty-orm-v2/executor/types/query-executor-v2.type';
 import { WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-select-query-builder-v2';
+import { compileNamedParameters } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm-v2/table-shape/types/workspace-table-shape.type';
 
 type WorkspaceRepositoryV2Options = {
@@ -36,6 +37,15 @@ export class WorkspaceRepositoryV2 {
   constructor(options: WorkspaceRepositoryV2Options) {
     this.options = options;
     this.objectRecordsPermissions = options.objectRecordsPermissions;
+  }
+
+  async executeRaw<T extends Record<string, unknown>>(
+    sql: string,
+    parameters: Record<string, unknown>,
+  ): Promise<T[]> {
+    const compiled = compileNamedParameters(sql, parameters);
+
+    return this.options.executor.execute(compiled) as Promise<T[]>;
   }
 
   createQueryBuilder(alias?: string): WorkspaceSelectQueryBuilderV2 {

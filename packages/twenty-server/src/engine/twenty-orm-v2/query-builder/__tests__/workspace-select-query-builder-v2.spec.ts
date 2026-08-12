@@ -629,4 +629,60 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
       TwentyOrmV2Exception,
     );
   });
+
+  it('should emit a GROUP BY with aggregate and grouped columns', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder
+      .select([])
+      .addSelect('COUNT(*)', 'totalCount')
+      .addSelect('"person"."companyId"', 'companyId')
+      .groupBy('"person"."companyId"');
+
+    expect(queryBuilder.getQuery()).toBe(
+      'SELECT COUNT(*) AS "totalCount", "person"."companyId" AS "companyId" ' +
+        `FROM "${SCHEMA_NAME}"."person" AS "person" ` +
+        'WHERE "person"."deletedAt" IS NULL ' +
+        'GROUP BY "person"."companyId"',
+    );
+  });
+
+  it('should append additional GROUP BY expressions with addGroupBy', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder
+      .select([])
+      .addSelect('COUNT(*)', 'totalCount')
+      .groupBy('"person"."companyId"')
+      .addGroupBy('"person"."nameFirstName"');
+
+    expect(queryBuilder.getQuery()).toContain(
+      'GROUP BY "person"."companyId", "person"."nameFirstName"',
+    );
+  });
+
+  it('should return every raw row from getRawMany', async () => {
+    const { queryBuilder, executedStatements } = buildQueryBuilder({
+      rows: [
+        { companyId: 'c1', totalCount: '3' },
+        { companyId: 'c2', totalCount: '1' },
+      ],
+    });
+
+    queryBuilder
+      .select([])
+      .addSelect('COUNT(*)', 'totalCount')
+      .addSelect('"person"."companyId"', 'companyId')
+      .groupBy('"person"."companyId"');
+
+    const rows = await queryBuilder.getRawMany();
+
+    expect(rows).toEqual([
+      { companyId: 'c1', totalCount: '3' },
+      { companyId: 'c2', totalCount: '1' },
+    ]);
+    expect(executedStatements[0].text).toContain(
+      'GROUP BY "person"."companyId"',
+    );
+  });
 });
