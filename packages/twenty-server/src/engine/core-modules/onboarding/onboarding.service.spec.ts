@@ -957,7 +957,7 @@ describe('OnboardingService', () => {
       expect(lockThenReadCallOrder[1]).toBe('readHistory');
     });
 
-    it('should re-arm the workspace-scoped flag when going back to invite team', async () => {
+    it('should re-arm the invite-team flag for the navigating user only when going back to invite team', async () => {
       jest
         .spyOn(userVarsService, 'get')
         .mockResolvedValueOnce([OnboardingStatus.INVITE_TEAM])
@@ -977,6 +977,7 @@ describe('OnboardingService', () => {
 
       expect(userVarsService.set).toHaveBeenCalledWith(
         {
+          userId,
           workspaceId,
           key: OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING,
           value: true,

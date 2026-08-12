@@ -188,12 +188,15 @@ export class OnboardingService {
   }
 
   async isOnboardingInviteTeamPending({
+    userId,
     workspaceId,
   }: {
+    userId?: string;
     workspaceId: string;
   }): Promise<boolean> {
     return (
       (await this.userVarsService.get({
+        userId,
         workspaceId,
         key: OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING,
       })) === true
@@ -407,8 +410,11 @@ export class OnboardingService {
           queryRunner,
         );
       case OnboardingStatus.INVITE_TEAM:
+        // User-scoped on purpose: the workspace-scoped flag would pull every
+        // other member of the workspace back to the invite screen.
         return this.setOnboardingInviteTeamPending(
           {
+            userId,
             workspaceId,
             value: true,
           },
@@ -808,9 +814,11 @@ export class OnboardingService {
 
   async setOnboardingInviteTeamPending(
     {
+      userId,
       workspaceId,
       value,
     }: {
+      userId?: string;
       workspaceId: string;
       value: boolean;
     },
@@ -819,6 +827,7 @@ export class OnboardingService {
     if (!value) {
       await this.userVarsService.delete(
         {
+          userId,
           workspaceId,
           key: OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING,
         },
@@ -830,6 +839,7 @@ export class OnboardingService {
 
     await this.userVarsService.set(
       {
+        userId,
         workspaceId,
         key: OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING,
         value: true,

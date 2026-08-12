@@ -300,6 +300,7 @@ export class WorkspaceInvitationService {
       this.twentyConfigService.get('IS_BILLING_ENABLED') &&
       (isOnboardingInviteRewardOverride ??
         (await this.onboardingService.isOnboardingInviteTeamPending({
+          userId: sender.userId,
           workspaceId: workspace.id,
         })));
 

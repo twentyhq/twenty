@@ -371,7 +371,10 @@ describe('WorkspaceInvitationService', () => {
       );
       expect(
         onboardingService.isOnboardingInviteTeamPending,
-      ).toHaveBeenCalledWith({ workspaceId: workspace.id });
+      ).toHaveBeenCalledWith({
+        userId: sender.userId,
+        workspaceId: workspace.id,
+      });
     });
 
     it('should downgrade to a regular invitation when billing is disabled', async () => {
