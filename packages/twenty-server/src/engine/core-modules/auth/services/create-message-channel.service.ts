@@ -54,12 +54,6 @@ export class CreateMessageChannelService {
           connectedAccountId,
           type: MessageChannelType.EMAIL,
           handle,
-          // Default to the most private option. Callers that let the user pick a
-          // visibility pass it explicitly; the ones that don't (Settings > Accounts
-          // "Connect with Google/Microsoft", and the IMAP/SMTP/CalDAV flow) would
-          // otherwise share every message body with the whole workspace without the
-          // account owner ever being asked. The owner is exempt from the restriction
-          // and still sees their own messages in full.
           visibility: messageVisibility || MessageChannelVisibility.METADATA,
           syncStatus: skipMessageChannelConfiguration
             ? MessageChannelSyncStatus.ONGOING

@@ -41,6 +41,7 @@ export type MessageChannelDto = Pick<
   | 'syncStageStartedAt'
   | 'throttleFailureCount'
   | 'throttleRetryAfter'
+  | 'visibility'
 >;
 
 export type CalendarChannelDto = Pick<
@@ -52,6 +53,7 @@ export type CalendarChannelDto = Pick<
   | 'syncStage'
   | 'syncStageStartedAt'
   | 'throttleFailureCount'
+  | 'visibility'
 >;
 
 export type ConnectedAccountDto = Pick<
@@ -80,6 +82,7 @@ const MESSAGE_CHANNEL_FIELDS = gql`
     syncStageStartedAt
     throttleFailureCount
     throttleRetryAfter
+    visibility
   }
 `;
 
@@ -161,6 +164,7 @@ export const queryCalendarChannels = async (
           syncStage
           syncStageStartedAt
           throttleFailureCount
+          visibility
         }
       }
     `,
