@@ -159,7 +159,12 @@ describe('IMAP/SMTP outbound messaging (integration)', () => {
       { workspaceId: SEED_APPLE_WORKSPACE_ID },
     );
 
-    expect(draftResult.success).toBe(true);
+    expect(draftResult).toMatchObject({
+      success: true,
+      result: {
+        bccRecipients: [HANDLE],
+      },
+    });
 
     const client = new ImapFlow({
       host: greenmail.host,
@@ -205,7 +210,6 @@ describe('IMAP/SMTP outbound messaging (integration)', () => {
           subject,
           to: [{ address: HANDLE }],
           cc: [{ address: HANDLE }],
-          bcc: [{ address: HANDLE }],
         });
         expect(draft.flags).toContain('\\Draft');
       } finally {
