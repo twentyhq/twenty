@@ -10,6 +10,7 @@ import { FilterIs } from 'src/engine/api/graphql/workspace-schema-builder/graphq
 
 export const createGqlEnumFilterType = (
   enumType: GraphQLEnumType,
+  withComparisonOperators = false,
 ): GraphQLInputType => {
   return new GraphQLInputObjectType({
     name: `${enumType.name}Filter`,
@@ -20,11 +21,16 @@ export const createGqlEnumFilterType = (
       containsAny: { type: new GraphQLList(enumType) },
       is: { type: FilterIs },
       isEmptyArray: { type: GraphQLBoolean },
-      // Enum columns compare by definition order (= option position)
-      gt: { type: enumType },
-      gte: { type: enumType },
-      lt: { type: enumType },
-      lte: { type: enumType },
+      // Scalar enum columns compare by definition order (= option position);
+      // array enum columns (MULTI_SELECT) do not support scalar comparisons
+      ...(withComparisonOperators
+        ? {
+            gt: { type: enumType },
+            gte: { type: enumType },
+            lt: { type: enumType },
+            lte: { type: enumType },
+          }
+        : {}),
     }),
   });
 };

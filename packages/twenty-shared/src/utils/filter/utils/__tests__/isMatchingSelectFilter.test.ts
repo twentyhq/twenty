@@ -26,7 +26,7 @@ describe('isMatchingSelectFilter', () => {
       expect(
         isMatchingSelectFilter({
           selectFilter: { is: 'NULL' },
-          value: null as any,
+          value: null,
         }),
       ).toBe(true);
     });
@@ -121,7 +121,7 @@ describe('isMatchingSelectFilter', () => {
       expect(
         isMatchingSelectFilter({
           selectFilter: { gt: 'NEW' },
-          value: null as any,
+          value: null,
           orderedOptionValues,
         }),
       ).toBe(false);

@@ -8,12 +8,12 @@ export const isMatchingSelectFilter = ({
   orderedOptionValues,
 }: {
   selectFilter: SelectFilter;
-  value: string;
+  value: string | null;
   orderedOptionValues?: string[];
 }) => {
   switch (true) {
     case selectFilter.in !== undefined: {
-      return selectFilter.in.includes(value);
+      return value !== null && selectFilter.in.includes(value);
     }
     case selectFilter.is !== undefined: {
       if (selectFilter.is === 'NULL') {

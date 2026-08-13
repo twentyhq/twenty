@@ -304,16 +304,17 @@ export const isRecordMatchingFilter = ({
       );
     }
 
-    const orderedOptionValues = [...(objectMetadataField.options ?? [])]
-      .sort((optionA, optionB) => optionA.position - optionB.position)
-      .map((option) => option.value);
+    const getOrderedOptionValues = () =>
+      [...(objectMetadataField.options ?? [])]
+        .sort((optionA, optionB) => optionA.position - optionB.position)
+        .map((option) => option.value);
 
     switch (objectMetadataField.type) {
       case FieldMetadataType.RATING:
         return isMatchingRatingFilter({
           ratingFilter: filterValue as RatingFilter,
           value: record[filterKey],
-          orderedOptionValues,
+          orderedOptionValues: getOrderedOptionValues(),
         });
       case FieldMetadataType.TEXT: {
         return isMatchingStringFilter({
@@ -331,7 +332,7 @@ export const isRecordMatchingFilter = ({
         return isMatchingSelectFilter({
           selectFilter: filterValue as SelectFilter,
           value: record[filterKey],
-          orderedOptionValues,
+          orderedOptionValues: getOrderedOptionValues(),
         });
       case FieldMetadataType.MULTI_SELECT:
         return isMatchingMultiSelectFilter({
