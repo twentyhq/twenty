@@ -5,8 +5,8 @@ export const computeComponentSourceChecksum = async ({
 }: {
   source: string;
 }): Promise<string | undefined> => {
-  // Guards stay inside the try block: in Firefox, accessing `caches` or
-  // `crypto` in an opaque-origin context throws instead of being undefined.
+  // Guards stay inside the try block: in Firefox, accessing `crypto`
+  // in an opaque-origin context throws instead of being undefined.
   try {
     if (typeof crypto === 'undefined' || !isDefined(crypto.subtle)) {
       return undefined;
