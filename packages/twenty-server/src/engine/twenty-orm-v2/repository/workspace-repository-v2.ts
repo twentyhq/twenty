@@ -135,16 +135,8 @@ export class WorkspaceRepositoryV2 {
   }
 
   private createPermissionBypassingQueryBuilder(): WorkspaceSelectQueryBuilderV2 {
-    return new WorkspaceSelectQueryBuilderV2(
+    return this.buildBypassingEventSelectQueryBuilder(
       this.options.tableShape.nameSingular,
-      {
-        tableShape: this.options.tableShape,
-        executor: this.options.executor,
-        objectRecordsPermissions: this.options.objectRecordsPermissions,
-        tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
-        onBeforeExecute: () => undefined,
-        formatResult: (records) => this.formatResult(records),
-      },
     );
   }
 
