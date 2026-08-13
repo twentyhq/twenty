@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   SLACK_EVENTS_ENQUEUE_UNIVERSAL_IDENTIFIER,
-  SLACK_INSTALL_REVOKED_UNIVERSAL_IDENTIFIER,
+  SLACK_INSTALL_REVOKED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { slackEventsResolverHandler } from 'src/logic-functions/slack-events-resolver';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
@@ -74,7 +74,7 @@ describe('slackEventsResolverHandler', () => {
     expect(result).toEqual({
       workspaceId: 'workspace-1',
       targetLogicFunctionUniversalIdentifier:
-        SLACK_INSTALL_REVOKED_UNIVERSAL_IDENTIFIER,
+        SLACK_INSTALL_REVOKED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
       payload: body,
     });
   });
@@ -92,7 +92,7 @@ describe('slackEventsResolverHandler', () => {
 
     expect(result).toMatchObject({
       targetLogicFunctionUniversalIdentifier:
-        SLACK_INSTALL_REVOKED_UNIVERSAL_IDENTIFIER,
+        SLACK_INSTALL_REVOKED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
     });
   });
 

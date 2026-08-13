@@ -7,7 +7,7 @@ import {
   SLACK_EVENTS_ENQUEUE_UNIVERSAL_IDENTIFIER,
   SLACK_EVENTS_ROUTE_UNIVERSAL_IDENTIFIER,
   SLACK_HOME_OPENED_UNIVERSAL_IDENTIFIER,
-  SLACK_INSTALL_REVOKED_UNIVERSAL_IDENTIFIER,
+  SLACK_INSTALL_REVOKED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 import { findClaimedWorkspaceId } from 'src/logic-functions/utils/find-claimed-workspace-id';
@@ -64,7 +64,7 @@ export const slackEventsResolverHandler = async (
 
   if (
     targetLogicFunctionUniversalIdentifier ===
-    SLACK_INSTALL_REVOKED_UNIVERSAL_IDENTIFIER
+    SLACK_INSTALL_REVOKED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER
   ) {
     if (!isNonEmptyString(body.team_id)) {
       throw new Error(
@@ -107,7 +107,7 @@ const resolveTargetLogicFunctionUniversalIdentifier = (
       return SLACK_HOME_OPENED_UNIVERSAL_IDENTIFIER;
     case 'app_uninstalled':
     case 'tokens_revoked':
-      return SLACK_INSTALL_REVOKED_UNIVERSAL_IDENTIFIER;
+      return SLACK_INSTALL_REVOKED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER;
     default:
       return SLACK_EVENTS_ENQUEUE_UNIVERSAL_IDENTIFIER;
   }
