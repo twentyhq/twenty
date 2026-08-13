@@ -11,6 +11,7 @@ import {
   type WhereClause,
 } from 'src/engine/twenty-orm-v2/sql/utils/build-select-statement.util';
 import { compileNamedParameters } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
+import { serializeJsonbWriteValue } from 'src/engine/twenty-orm-v2/sql/utils/serialize-jsonb-write-value.util';
 import {
   buildMutationStatement,
   type MutationKind,
@@ -168,7 +169,10 @@ export class WorkspaceMutationQueryBuilderV2 {
         parameterName = `ormV2Set_${mutationSetParameterSequence++}`;
       }
 
-      parameters[parameterName] = value;
+      parameters[parameterName] = serializeJsonbWriteValue(
+        this.tableShape.columnShapeByColumnName[columnName],
+        value,
+      );
       setClauses.push({ columnName, valueExpression: `:${parameterName}` });
     }
 
