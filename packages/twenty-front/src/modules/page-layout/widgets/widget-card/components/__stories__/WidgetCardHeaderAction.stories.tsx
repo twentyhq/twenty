@@ -1,47 +1,60 @@
 import { WidgetCardHeaderAction } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderAction';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import { expect, fn, within } from 'storybook/test';
 import { IconArrowUpRight, IconCopy } from 'twenty-ui/icon';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const meta: Meta<typeof WidgetCardHeaderAction> = {
   title: 'Modules/PageLayout/Widgets/WidgetCardHeaderAction',
   component: WidgetCardHeaderAction,
-  decorators: [MemoryRouterDecorator, ComponentDecorator],
+  decorators: [MemoryRouterDecorator],
 };
 
 export default meta;
 type Story = StoryObj<typeof WidgetCardHeaderAction>;
 
-export const WithOnClick: Story = {
+export const Catalog: CatalogStory<Story, typeof WidgetCardHeaderAction> = {
+  decorators: [CatalogDecorator],
   args: {
     headerAction: {
+      actionType: 'button',
       Icon: IconCopy,
       label: 'Copy transcript',
-      onClick: () => {},
+      onClick: fn(),
+    },
+  },
+  parameters: {
+    catalog: {
+      dimensions: [
+        {
+          name: 'action type',
+          values: ['Button', 'Link'],
+          props: (actionType: string) => ({
+            headerAction:
+              actionType === 'Link'
+                ? {
+                    actionType: 'link',
+                    Icon: IconArrowUpRight,
+                    label: 'See all',
+                    to: '/objects/callRecordings',
+                  }
+                : {
+                    actionType: 'button',
+                    Icon: IconCopy,
+                    label: 'Copy transcript',
+                    onClick: fn(),
+                  },
+          }),
+        },
+      ],
     },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await canvas.findByRole('button', { name: 'Copy transcript' });
-    expect(canvas.queryByRole('link')).not.toBeInTheDocument();
-  },
-};
-
-export const WithLink: Story = {
-  args: {
-    headerAction: {
-      Icon: IconArrowUpRight,
-      label: 'See all',
-      to: '/objects/callRecordings',
-    },
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const link = await canvas.findByRole('link');
+    const link = await canvas.findByRole('link', { name: 'See all' });
     expect(link).toHaveAttribute('href', '/objects/callRecordings');
   },
 };

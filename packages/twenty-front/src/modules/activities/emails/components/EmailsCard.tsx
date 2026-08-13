@@ -11,14 +11,13 @@ import { getTimelineThreadsFromObjectRecord } from '@/activities/emails/graphql/
 import { useComposeEmailForTargetRecord } from '@/activities/emails/hooks/useComposeEmailForTargetRecord';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
 import { useSubscribeTimelineToParticipantChanges } from '@/activities/hooks/useSubscribeTimelineToParticipantChanges';
-import { usePublishWidgetHeaderInfo } from '@/page-layout/widgets/hooks/usePublishWidgetHeaderInfo';
+import { WidgetHeaderInfoEffect } from '@/page-layout/widgets/components/WidgetHeaderInfoEffect';
+import { type WidgetHeaderAction } from '@/page-layout/widgets/types/WidgetHeaderInfo';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { t } from '@lingui/core/macro';
-import { useMemo } from 'react';
 import { IconPlus } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { isDefined } from 'twenty-shared/utils';
 import {
   type TimelineThread,
   type TimelineThreadsWithTotal,
@@ -59,20 +58,20 @@ export const EmailsCard = () => {
   const { totalNumberOfThreads, timelineThreads } =
     data?.getTimelineThreadsFromObjectRecord ?? {};
 
-  const composeAction = useMemo(
-    () => ({
-      Icon: IconPlus,
-      label: t`Compose`,
-      onClick: openComposer,
-      disabled: composerLoading,
-    }),
-    [openComposer, composerLoading],
-  );
+  const composeAction: WidgetHeaderAction = {
+    actionType: 'button',
+    Icon: IconPlus,
+    label: t`Compose`,
+    onClick: openComposer,
+    disabled: composerLoading,
+  };
 
-  usePublishWidgetHeaderInfo({
-    count: totalNumberOfThreads,
-    actions: isDefined(composeAction) ? [composeAction] : undefined,
-  });
+  const widgetHeaderInfoEffect = (
+    <WidgetHeaderInfoEffect
+      count={totalNumberOfThreads}
+      actions={[composeAction]}
+    />
+  );
 
   const hasMoreTimelineThreads =
     timelineThreads && totalNumberOfThreads
@@ -86,32 +85,43 @@ export const EmailsCard = () => {
   };
 
   if (firstQueryLoading) {
-    return <SkeletonLoader />;
+    return (
+      <>
+        {widgetHeaderInfoEffect}
+        <SkeletonLoader />
+      </>
+    );
   }
 
   if (!firstQueryLoading && !timelineThreads?.length) {
     return (
-      <StyledContainer>
-        <EmptyInboxPlaceholder />
-      </StyledContainer>
+      <>
+        {widgetHeaderInfoEffect}
+        <StyledContainer>
+          <EmptyInboxPlaceholder />
+        </StyledContainer>
+      </>
     );
   }
 
   return (
-    <StyledContainer>
-      <Section>
-        {!firstQueryLoading && (
-          <ActivityList>
-            {timelineThreads?.map((thread: TimelineThread) => (
-              <EmailThreadPreview key={thread.id} thread={thread} />
-            ))}
-          </ActivityList>
-        )}
-        <CustomResolverFetchMoreLoader
-          loading={isFetchingMore || firstQueryLoading}
-          onLastRowVisible={handleLastRowVisible}
-        />
-      </Section>
-    </StyledContainer>
+    <>
+      {widgetHeaderInfoEffect}
+      <StyledContainer>
+        <Section>
+          {!firstQueryLoading && (
+            <ActivityList>
+              {timelineThreads?.map((thread: TimelineThread) => (
+                <EmailThreadPreview key={thread.id} thread={thread} />
+              ))}
+            </ActivityList>
+          )}
+          <CustomResolverFetchMoreLoader
+            loading={isFetchingMore || firstQueryLoading}
+            onLastRowVisible={handleLastRowVisible}
+          />
+        </Section>
+      </StyledContainer>
+    </>
   );
 };

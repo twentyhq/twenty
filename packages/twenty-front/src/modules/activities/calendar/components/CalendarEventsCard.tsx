@@ -12,7 +12,7 @@ import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomRes
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
 import { useSubscribeTimelineToParticipantChanges } from '@/activities/hooks/useSubscribeTimelineToParticipantChanges';
-import { usePublishWidgetHeaderInfo } from '@/page-layout/widgets/hooks/usePublishWidgetHeaderInfo';
+import { WidgetHeaderInfoEffect } from '@/page-layout/widgets/components/WidgetHeaderInfoEffect';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { H3Title } from 'twenty-ui/typography';
 import {
@@ -70,7 +70,9 @@ export const CalendarEventsCard = () => {
   const { timelineCalendarEvents, totalNumberOfCalendarEvents } =
     data?.getTimelineCalendarEventsFromObjectRecord ?? {};
 
-  usePublishWidgetHeaderInfo({ count: totalNumberOfCalendarEvents });
+  const widgetHeaderInfoEffect = (
+    <WidgetHeaderInfoEffect count={totalNumberOfCalendarEvents} />
+  );
 
   const {
     calendarEventsByDayTime,
@@ -93,63 +95,74 @@ export const CalendarEventsCard = () => {
   const objectName = targetRecord.targetObjectNameSingular;
 
   if (firstQueryLoading) {
-    return <SkeletonLoader />;
+    return (
+      <>
+        {widgetHeaderInfoEffect}
+        <SkeletonLoader />
+      </>
+    );
   }
 
   if (!firstQueryLoading && !timelineCalendarEvents?.length) {
     // TODO: change animated placeholder
     return (
-      <AnimatedPlaceholderEmptyContainer>
-        <AnimatedPlaceholder type="noMatchRecord" />
-        <AnimatedPlaceholderEmptyTextContainer>
-          <AnimatedPlaceholderEmptyTitle>
-            {t`No Events`}
-          </AnimatedPlaceholderEmptyTitle>
-          <AnimatedPlaceholderEmptySubTitle>
-            {t`No events have been scheduled with this ${objectName} yet.`}
-          </AnimatedPlaceholderEmptySubTitle>
-        </AnimatedPlaceholderEmptyTextContainer>
-      </AnimatedPlaceholderEmptyContainer>
+      <>
+        {widgetHeaderInfoEffect}
+        <AnimatedPlaceholderEmptyContainer>
+          <AnimatedPlaceholder type="noMatchRecord" />
+          <AnimatedPlaceholderEmptyTextContainer>
+            <AnimatedPlaceholderEmptyTitle>
+              {t`No Events`}
+            </AnimatedPlaceholderEmptyTitle>
+            <AnimatedPlaceholderEmptySubTitle>
+              {t`No events have been scheduled with this ${objectName} yet.`}
+            </AnimatedPlaceholderEmptySubTitle>
+          </AnimatedPlaceholderEmptyTextContainer>
+        </AnimatedPlaceholderEmptyContainer>
+      </>
     );
   }
 
   return (
-    <CalendarContext.Provider
-      value={{
-        calendarEventsByDayTime,
-      }}
-    >
-      <StyledContainer>
-        {monthTimes.map((monthTime) => {
-          const monthDayTimes = daysByMonthTime[monthTime] || [];
-          const year = getYear(monthTime);
-          const lastMonthTimeOfYear = monthTimesByYear[year]?.[0];
-          const isLastMonthOfYear = lastMonthTimeOfYear === monthTime;
-          const monthLabel = format(monthTime, 'MMMM', {
-            locale: localeCatalog,
-          });
+    <>
+      {widgetHeaderInfoEffect}
+      <CalendarContext.Provider
+        value={{
+          calendarEventsByDayTime,
+        }}
+      >
+        <StyledContainer>
+          {monthTimes.map((monthTime) => {
+            const monthDayTimes = daysByMonthTime[monthTime] || [];
+            const year = getYear(monthTime);
+            const lastMonthTimeOfYear = monthTimesByYear[year]?.[0];
+            const isLastMonthOfYear = lastMonthTimeOfYear === monthTime;
+            const monthLabel = format(monthTime, 'MMMM', {
+              locale: localeCatalog,
+            });
 
-          return (
-            <Section key={monthTime}>
-              <StyledTitleContainer>
-                <H3Title
-                  title={
-                    <>
-                      {monthLabel}
-                      {isLastMonthOfYear && <StyledYear> {year}</StyledYear>}
-                    </>
-                  }
-                />
-              </StyledTitleContainer>
-              <CalendarMonthCard dayTimes={monthDayTimes} />
-            </Section>
-          );
-        })}
-        <CustomResolverFetchMoreLoader
-          loading={isFetchingMore || firstQueryLoading}
-          onLastRowVisible={handleLastRowVisible}
-        />
-      </StyledContainer>
-    </CalendarContext.Provider>
+            return (
+              <Section key={monthTime}>
+                <StyledTitleContainer>
+                  <H3Title
+                    title={
+                      <>
+                        {monthLabel}
+                        {isLastMonthOfYear && <StyledYear> {year}</StyledYear>}
+                      </>
+                    }
+                  />
+                </StyledTitleContainer>
+                <CalendarMonthCard dayTimes={monthDayTimes} />
+              </Section>
+            );
+          })}
+          <CustomResolverFetchMoreLoader
+            loading={isFetchingMore || firstQueryLoading}
+            onLastRowVisible={handleLastRowVisible}
+          />
+        </StyledContainer>
+      </CalendarContext.Provider>
+    </>
   );
 };

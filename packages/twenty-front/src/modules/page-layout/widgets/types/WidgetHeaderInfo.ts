@@ -1,15 +1,27 @@
 import { type IconComponent } from 'twenty-ui/icon';
 
-export type WidgetHeaderAction = {
-  Icon: IconComponent;
-  label: string;
-  onClick?: () => void;
-  to?: string;
-  disabled?: boolean;
-};
+export type WidgetHeaderAction =
+  | {
+      actionType: 'button';
+      Icon: IconComponent;
+      label: string;
+      onClick: () => void;
+      disabled?: boolean;
+    }
+  | {
+      actionType: 'link';
+      Icon: IconComponent;
+      label: string;
+      to: string;
+      disabled?: boolean;
+    };
 
-// An action with `to` renders as a link, otherwise as a button.
+export type NonEmptyWidgetHeaderActions = [
+  WidgetHeaderAction,
+  ...WidgetHeaderAction[],
+];
+
 export type WidgetHeaderInfo = {
   count?: number;
-  actions?: WidgetHeaderAction[];
+  actions?: NonEmptyWidgetHeaderActions;
 };

@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { type ChangeEvent, useMemo, useRef, useState } from 'react';
+import { type ChangeEvent, useRef, useState } from 'react';
 
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { AttachmentList } from '@/activities/files/components/AttachmentList';
@@ -8,7 +8,8 @@ import { useAttachments } from '@/activities/files/hooks/useAttachments';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import { usePublishWidgetHeaderInfo } from '@/page-layout/widgets/hooks/usePublishWidgetHeaderInfo';
+import { WidgetHeaderInfoEffect } from '@/page-layout/widgets/components/WidgetHeaderInfoEffect';
+import { type WidgetHeaderAction } from '@/page-layout/widgets/types/WidgetHeaderInfo';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -68,7 +69,7 @@ export const FilesCard = () => {
   };
 
   const handleUploadFileClick = () => {
-    inputFileRef?.current?.click?.();
+    inputFileRef.current?.click();
   };
 
   const isAttachmentsEmpty = attachments.length === 0;
@@ -89,80 +90,88 @@ export const FilesCard = () => {
 
   const canUploadFiles = hasObjectUpdatePermissions && hasUploadPermission;
 
-  const addFileAction = useMemo(
-    () =>
-      canUploadFiles
-        ? {
-            Icon: IconPlus,
-            label: t`Add file`,
-            onClick: () => inputFileRef?.current?.click?.(),
-          }
-        : undefined,
-    [canUploadFiles, t],
+  const addFileAction: WidgetHeaderAction = {
+    actionType: 'button',
+    Icon: IconPlus,
+    label: t`Add file`,
+    onClick: handleUploadFileClick,
+  };
+
+  const widgetHeaderInfoEffect = (
+    <WidgetHeaderInfoEffect
+      count={totalCountAttachments}
+      actions={canUploadFiles ? [addFileAction] : undefined}
+    />
   );
 
-  usePublishWidgetHeaderInfo({
-    count: totalCountAttachments,
-    actions: isDefined(addFileAction) ? [addFileAction] : undefined,
-  });
-
   if (loading && isAttachmentsEmpty) {
-    return <SkeletonLoader />;
+    return (
+      <>
+        {widgetHeaderInfoEffect}
+        <SkeletonLoader />
+      </>
+    );
   }
 
   if (isAttachmentsEmpty) {
     return (
-      <StyledDropZoneContainer
-        onDragEnter={() => canUploadFiles && setIsDraggingFile(true)}
-      >
-        {isDraggingFile && canUploadFiles ? (
-          <DropZone
-            setIsDraggingFile={setIsDraggingFile}
-            onUploadFiles={onUploadFiles}
-          />
-        ) : (
-          <AnimatedPlaceholderEmptyContainer>
-            <AnimatedPlaceholder type="noFile" />
-            <AnimatedPlaceholderEmptyTextContainer>
-              <AnimatedPlaceholderEmptyTitle>
-                <Trans>No Files</Trans>
-              </AnimatedPlaceholderEmptyTitle>
-              <AnimatedPlaceholderEmptySubTitle>
-                <Trans>There are no associated files with this record.</Trans>
-              </AnimatedPlaceholderEmptySubTitle>
-            </AnimatedPlaceholderEmptyTextContainer>
-            <StyledFileInput
-              ref={inputFileRef}
-              onChange={handleFileChange}
-              type="file"
-              multiple
+      <>
+        {widgetHeaderInfoEffect}
+        <StyledDropZoneContainer
+          onDragEnter={() => canUploadFiles && setIsDraggingFile(true)}
+        >
+          {isDraggingFile && canUploadFiles ? (
+            <DropZone
+              setIsDraggingFile={setIsDraggingFile}
+              onUploadFiles={onUploadFiles}
             />
-            {canUploadFiles && (
-              <Button
-                Icon={IconPlus}
-                title={t`Add file`}
-                variant="secondary"
-                onClick={handleUploadFileClick}
+          ) : (
+            <AnimatedPlaceholderEmptyContainer>
+              <AnimatedPlaceholder type="noFile" />
+              <AnimatedPlaceholderEmptyTextContainer>
+                <AnimatedPlaceholderEmptyTitle>
+                  <Trans>No Files</Trans>
+                </AnimatedPlaceholderEmptyTitle>
+                <AnimatedPlaceholderEmptySubTitle>
+                  <Trans>There are no associated files with this record.</Trans>
+                </AnimatedPlaceholderEmptySubTitle>
+              </AnimatedPlaceholderEmptyTextContainer>
+              <StyledFileInput
+                ref={inputFileRef}
+                onChange={handleFileChange}
+                type="file"
+                multiple
               />
-            )}
-          </AnimatedPlaceholderEmptyContainer>
-        )}
-      </StyledDropZoneContainer>
+              {canUploadFiles && (
+                <Button
+                  Icon={IconPlus}
+                  title={t`Add file`}
+                  variant="secondary"
+                  onClick={handleUploadFileClick}
+                />
+              )}
+            </AnimatedPlaceholderEmptyContainer>
+          )}
+        </StyledDropZoneContainer>
+      </>
     );
   }
 
   return (
-    <StyledAttachmentsContainer>
-      <StyledFileInput
-        ref={inputFileRef}
-        onChange={handleFileChange}
-        type="file"
-        multiple
-      />
-      <AttachmentList
-        targetableObject={targetRecord}
-        attachments={attachments ?? []}
-      />
-    </StyledAttachmentsContainer>
+    <>
+      {widgetHeaderInfoEffect}
+      <StyledAttachmentsContainer>
+        <StyledFileInput
+          ref={inputFileRef}
+          onChange={handleFileChange}
+          type="file"
+          multiple
+        />
+        <AttachmentList
+          targetableObject={targetRecord}
+          attachments={attachments}
+        />
+      </StyledAttachmentsContainer>
+    </>
   );
 };

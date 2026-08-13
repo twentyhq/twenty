@@ -7,12 +7,12 @@ import { type ActivityTargetableObject } from '@/activities/types/ActivityTarget
 import { type Task } from '@/activities/types/Task';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import { usePublishWidgetHeaderInfo } from '@/page-layout/widgets/hooks/usePublishWidgetHeaderInfo';
+import { WidgetHeaderInfoEffect } from '@/page-layout/widgets/components/WidgetHeaderInfoEffect';
+import { type WidgetHeaderAction } from '@/page-layout/widgets/types/WidgetHeaderInfo';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import groupBy from 'lodash.groupby';
-import { useMemo } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
@@ -24,7 +24,6 @@ import {
   AnimatedPlaceholderEmptyTitle,
 } from 'twenty-ui/feedback';
 import { TaskList } from './TaskList';
-import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -56,23 +55,23 @@ export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
     activityObjectNameSingular: CoreObjectNameSingular.Task,
   });
 
-  const newTaskAction = useMemo(
-    () =>
-      hasObjectUpdatePermissions
-        ? {
-            Icon: IconPlus,
-            label: t`New task`,
-            onClick: () =>
-              openCreateActivity({ targetableObjects: [targetableObject] }),
-          }
-        : undefined,
-    [hasObjectUpdatePermissions, openCreateActivity, targetableObject],
-  );
+  const handleNewTaskClick = () => {
+    openCreateActivity({ targetableObjects: [targetableObject] });
+  };
 
-  usePublishWidgetHeaderInfo({
-    count: totalCountTasks,
-    actions: isDefined(newTaskAction) ? [newTaskAction] : undefined,
-  });
+  const newTaskAction: WidgetHeaderAction = {
+    actionType: 'button',
+    Icon: IconPlus,
+    label: t`New task`,
+    onClick: handleNewTaskClick,
+  };
+
+  const widgetHeaderInfoEffect = (
+    <WidgetHeaderInfoEffect
+      count={totalCountTasks}
+      actions={hasObjectUpdatePermissions ? [newTaskAction] : undefined}
+    />
+  );
 
   const activeTabId = useAtomComponentStateValue(activeTabIdComponentState);
 
@@ -85,34 +84,38 @@ export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
     (activeTabId === 'done' && tasks?.length === 0);
 
   if (isLoading && isTasksEmpty) {
-    return <SkeletonLoader />;
+    return (
+      <>
+        {widgetHeaderInfoEffect}
+        <SkeletonLoader />
+      </>
+    );
   }
 
   if (isTasksEmpty) {
     return (
-      <AnimatedPlaceholderEmptyContainer>
-        <AnimatedPlaceholder type="noTask" />
-        <AnimatedPlaceholderEmptyTextContainer>
-          <AnimatedPlaceholderEmptyTitle>
-            {t`Mission accomplished!`}
-          </AnimatedPlaceholderEmptyTitle>
-          <AnimatedPlaceholderEmptySubTitle>
-            {t`All tasks addressed. Maintain the momentum.`}
-          </AnimatedPlaceholderEmptySubTitle>
-        </AnimatedPlaceholderEmptyTextContainer>
-        {hasObjectUpdatePermissions && (
-          <Button
-            Icon={IconPlus}
-            title={t`New task`}
-            variant="secondary"
-            onClick={() =>
-              openCreateActivity({
-                targetableObjects: [targetableObject],
-              })
-            }
-          />
-        )}
-      </AnimatedPlaceholderEmptyContainer>
+      <>
+        {widgetHeaderInfoEffect}
+        <AnimatedPlaceholderEmptyContainer>
+          <AnimatedPlaceholder type="noTask" />
+          <AnimatedPlaceholderEmptyTextContainer>
+            <AnimatedPlaceholderEmptyTitle>
+              {t`Mission accomplished!`}
+            </AnimatedPlaceholderEmptyTitle>
+            <AnimatedPlaceholderEmptySubTitle>
+              {t`All tasks addressed. Maintain the momentum.`}
+            </AnimatedPlaceholderEmptySubTitle>
+          </AnimatedPlaceholderEmptyTextContainer>
+          {hasObjectUpdatePermissions && (
+            <Button
+              Icon={IconPlus}
+              title={t`New task`}
+              variant="secondary"
+              onClick={handleNewTaskClick}
+            />
+          )}
+        </AnimatedPlaceholderEmptyContainer>
+      </>
     );
   }
 
@@ -121,10 +124,15 @@ export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
   ).sort(([statusA], [statusB]) => statusB.localeCompare(statusA));
 
   return (
-    <StyledContainer>
-      {sortedTasksByStatus.map(([status, tasksByStatus]: [string, Task[]]) => (
-        <TaskList key={status} title={status} tasks={tasksByStatus} />
-      ))}
-    </StyledContainer>
+    <>
+      {widgetHeaderInfoEffect}
+      <StyledContainer>
+        {sortedTasksByStatus.map(
+          ([status, tasksByStatus]: [string, Task[]]) => (
+            <TaskList key={status} title={status} tasks={tasksByStatus} />
+          ),
+        )}
+      </StyledContainer>
+    </>
   );
 };
