@@ -24,6 +24,7 @@ export type MicrosoftMock = {
   folders: MockEntityStore<MailFolder>;
   subscriptions: MicrosoftSubscriptionStore;
   createdMessages: Array<Record<string, unknown>>;
+  patchedMessages: Array<Record<string, unknown>>;
   sentMessageIds: string[];
   createdCalendarEvents: Event[];
   serveCalendarEvents: (
@@ -62,6 +63,7 @@ export const setupMicrosoftMock = ({
 
   const subscriptionStore = createMicrosoftSubscriptionStore();
   const createdMessages: Array<Record<string, unknown>> = [];
+  const patchedMessages: Array<Record<string, unknown>> = [];
   const sentMessageIds: string[] = [];
   const createdCalendarEvents: Event[] = [];
 
@@ -106,7 +108,7 @@ export const setupMicrosoftMock = ({
     http.patch('*/me/messages/:messageId', async ({ request }) => {
       const message = (await request.json()) as Record<string, unknown>;
 
-      createdMessages.push(message);
+      patchedMessages.push(message);
 
       return HttpResponse.json({
         internetMessageId: '<microsoft-reply-message@example.com>',
@@ -135,6 +137,7 @@ export const setupMicrosoftMock = ({
     folders: folderStore,
     subscriptions: subscriptionStore,
     createdMessages,
+    patchedMessages,
     sentMessageIds,
     createdCalendarEvents,
     serveCalendarEvents: (

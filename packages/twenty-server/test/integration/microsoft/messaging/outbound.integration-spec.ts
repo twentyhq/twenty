@@ -36,6 +36,7 @@ describe('Microsoft outbound messaging and calendar creation (integration)', () 
 
   beforeEach(() => {
     microsoft.createdMessages.length = 0;
+    microsoft.patchedMessages.length = 0;
     microsoft.sentMessageIds.length = 0;
     microsoft.createdCalendarEvents.length = 0;
   });
@@ -58,7 +59,7 @@ describe('Microsoft outbound messaging and calendar creation (integration)', () 
     });
 
     expect(result).toMatchObject({ success: true });
-    expect(microsoft.createdMessages).toEqual([
+    expect(microsoft.patchedMessages).toEqual([
       expect.objectContaining({
         subject,
         toRecipients: [{ emailAddress: { address: RECIPIENTS.to } }],
