@@ -107,7 +107,7 @@ export type FieldMetadataSettingsMapping = {
   [FieldMetadataType.FILES]: FilesFieldSettings;
 };
 
-type SettingsForFieldMetadataType<T extends FieldMetadataType> =
+export type SettingsForFieldMetadataType<T extends FieldMetadataType> =
   T extends keyof FieldMetadataSettingsMapping
     ? FieldMetadataSettingsMapping[T]
     : null;
@@ -156,14 +156,99 @@ export type FieldMetadataOptionsMapping = {
   [FieldMetadataType.MULTI_SELECT]: FieldMetadataComplexOption[];
 };
 
-type OptionsForFieldMetadataType<T extends FieldMetadataType> =
+export type OptionsForFieldMetadataType<T extends FieldMetadataType> =
   T extends keyof FieldMetadataOptionsMapping
     ? FieldMetadataOptionsMapping[T]
     : null;
 
+export type FieldMetadataDefaultValueCurrency = {
+  amountMicros: string | null;
+  currencyCode: string | null;
+};
+
+export type FieldMetadataDefaultValueFullName = {
+  firstName: string | null;
+  lastName: string | null;
+};
+
+export type FieldMetadataDefaultValueAddress = {
+  addressStreet1: string | null;
+  addressStreet2: string | null;
+  addressCity: string | null;
+  addressPostcode: string | null;
+  addressState: string | null;
+  addressCountry: string | null;
+  addressLat: number | null;
+  addressLng: number | null;
+};
+
+export type FieldMetadataDefaultValueLink = {
+  label: string;
+  url: string;
+};
+
+export type FieldMetadataDefaultValueLinks = {
+  primaryLinkLabel: string | null;
+  primaryLinkUrl: string | null;
+  secondaryLinks: FieldMetadataDefaultValueLink[] | null;
+};
+
+export type FieldMetadataDefaultValueEmails = {
+  primaryEmail: string | null;
+  additionalEmails: string[] | null;
+};
+
+export type FieldMetadataDefaultValuePhones = {
+  primaryPhoneNumber: string | null;
+  primaryPhoneCountryCode: string | null;
+  primaryPhoneCallingCode: string | null;
+  additionalPhones: string[] | null;
+};
+
+export type FieldMetadataDefaultValueRichText = {
+  blocknote: string | null;
+  markdown: string | null;
+};
+
+export type FieldMetadataDefaultValueActor = {
+  source: string;
+  workspaceMemberId?: string | null;
+  name: string;
+};
+
+// Ground truth: packages/twenty-shared/src/types/FieldMetadataDefaultValue.ts
+// Types not listed here (RELATION, MORPH_RELATION, FILES, TS_VECTOR) don't support a default value.
+export type FieldMetadataDefaultValueMapping = {
+  [FieldMetadataType.UUID]: string | null;
+  [FieldMetadataType.TEXT]: string | null;
+  [FieldMetadataType.PHONES]: FieldMetadataDefaultValuePhones | null;
+  [FieldMetadataType.EMAILS]: FieldMetadataDefaultValueEmails | null;
+  [FieldMetadataType.DATE_TIME]: string | null;
+  [FieldMetadataType.DATE]: string | null;
+  [FieldMetadataType.BOOLEAN]: boolean | null;
+  [FieldMetadataType.NUMBER]: number | null;
+  [FieldMetadataType.POSITION]: number | null;
+  [FieldMetadataType.NUMERIC]: string | null;
+  [FieldMetadataType.LINKS]: FieldMetadataDefaultValueLinks | null;
+  [FieldMetadataType.CURRENCY]: FieldMetadataDefaultValueCurrency | null;
+  [FieldMetadataType.FULL_NAME]: FieldMetadataDefaultValueFullName | null;
+  [FieldMetadataType.ADDRESS]: FieldMetadataDefaultValueAddress | null;
+  [FieldMetadataType.RATING]: string | null;
+  [FieldMetadataType.SELECT]: string | null;
+  [FieldMetadataType.MULTI_SELECT]: string[] | null;
+  [FieldMetadataType.RAW_JSON]: object | null;
+  [FieldMetadataType.RICH_TEXT]: FieldMetadataDefaultValueRichText | null;
+  [FieldMetadataType.ACTOR]: FieldMetadataDefaultValueActor | null;
+  [FieldMetadataType.ARRAY]: string[] | null;
+};
+
+export type DefaultValueForFieldMetadataType<T extends FieldMetadataType> =
+  T extends keyof FieldMetadataDefaultValueMapping
+    ? FieldMetadataDefaultValueMapping[T]
+    : null;
+
 type FieldsListBaseType = {
   applicationId: string;
-  defaultValue: string | null;
   description: string;
   icon: string;
   id: string;
@@ -189,6 +274,7 @@ type FieldsListBaseType = {
 export type FieldsListType = {
   [T in FieldMetadataType]: FieldsListBaseType & {
     type: T;
+    defaultValue: DefaultValueForFieldMetadataType<T>;
     settings: SettingsForFieldMetadataType<T>;
     options: OptionsForFieldMetadataType<T>;
   };

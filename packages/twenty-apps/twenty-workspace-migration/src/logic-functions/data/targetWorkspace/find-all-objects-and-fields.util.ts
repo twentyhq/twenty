@@ -41,8 +41,12 @@ const QUERY = `query findObjectsAndFields {
           options
           relation {
             type
+            targetFieldMetadata {
+              label
+              icon
+            }
             targetObjectMetadata {
-              universalIdentifier
+              nameSingular
             }
           }
           settings

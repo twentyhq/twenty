@@ -100,7 +100,7 @@ const buildFieldToCreate = (
     return undefined;
   }
 
-  let relationCreationPayload: RelationCreationPayload | undefined;
+  let relationCreationPayload: RelationCreationPayload | null = null;
 
   if (field.type === FieldMetadataType.RELATION) {
     if (field.relation?.type !== RelationType.MANY_TO_ONE) {
@@ -124,6 +124,9 @@ const buildFieldToCreate = (
     };
   }
 
+  // defaultValue/options/settings are read off the same source `field`, so they're
+  // already correlated with `type` at runtime - TS just can't prove that correlation
+  // across a discriminated union once the properties are read out individually.
   return {
     objectMetadataId: targetObjectId,
     type: field.type,
@@ -141,7 +144,8 @@ const buildFieldToCreate = (
     options: field.options,
     settings: field.settings,
     relationCreationPayload,
-  };
+    morphRelationsCreationPayload: null,
+  } as CreateOneFieldType;
 };
 
 // Remaps a record's MANY_TO_ONE foreign key ids from source-workspace record ids to
@@ -279,6 +283,9 @@ const handler = async () => {
   const fieldsToCreate: { field: FieldsListType; targetObjectId: string }[] = [];
   const fieldsToUpdate: Map<string, UpdateOneFieldType> = new Map(); // standard, keyed by target field id
 
+  // starting from recreating custom objects so that any relation from/to custom object to/from standard object can be easily introduced
+
+
   // compare standard objects and their fields
   for (const key of Array.from(systemSourceObjects.keys())) {
     const sourceObject = systemSourceObjects.get(key);
@@ -288,7 +295,7 @@ const handler = async () => {
     }
     const targetObject = systemTargetObjects.get(key);
     if (targetObject === undefined) {
-      continue; // should actually create?
+      continue; // not possible but it needs to be here
     }
     if (!areObjectsIdentical(sourceObject, targetObject)) {
       objectsToUpdate.set(targetObject.id, sourceObject);
@@ -297,11 +304,11 @@ const handler = async () => {
     const targetObjectFields = mapEntities(targetObject.fieldsList.filter(field => fieldsToOmit.includes(field.name) === false && [targetStandardAppUUID, targetCustomAppUUID].includes(field.applicationId)));
     for (const key of Array.from(sourceObjectFields.keys())) {
       const sourceObjectField = sourceObjectFields.get(key);
-      if (sourceObjectField === undefined) {
+      if (sourceObjectField === undefined || (sourceObjectField.type === 'RELATION' && sourceObjectField.relation?.type === 'ONE_TO_MANY')) {
         continue;
       }
       const targetObjectField = targetObjectFields.get(key);
-      if (targetObjectField === undefined) {
+      if (targetObjectField === undefined || (sourceObjectField.type === 'RELATION' && targetObjectField.relation?.type === 'ONE_TO_MANY')) {
         fieldsToCreate.push({ field: sourceObjectField, targetObjectId: targetObject.id });
       } else if (!areFieldsListsIdentical(sourceObjectField, targetObjectField)) {
         fieldsToUpdate.set(targetObjectField.id, sourceObjectField);
@@ -311,7 +318,6 @@ const handler = async () => {
 
   for (const key of Array.from(customSourceObjects.keys())) {
     const object = customSourceObjects.get(key);
-    // stupid guardrail against TS typechecker
     if (object === undefined) {
       continue;
     }
