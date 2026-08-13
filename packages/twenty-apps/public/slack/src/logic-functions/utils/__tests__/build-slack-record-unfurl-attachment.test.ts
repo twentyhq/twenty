@@ -1,0 +1,73 @@
+import { describe, expect, it } from 'vitest';
+
+import { buildSlackRecordUnfurlAttachment } from 'src/logic-functions/utils/build-slack-record-unfurl-attachment';
+
+describe('buildSlackRecordUnfurlAttachment', () => {
+  it('should build a title, fields and context blocks', () => {
+    const attachment = buildSlackRecordUnfurlAttachment({
+      linkUrl: 'https://acme.twenty.com/object/opportunity/id-1',
+      card: {
+        recordTitle: 'Big deal',
+        objectLabel: 'Opportunity',
+        fields: [
+          { label: 'Stage', value: 'Proposal' },
+          { label: 'Amount', value: '$10,000' },
+        ],
+      },
+    });
+
+    expect(attachment.blocks).toEqual([
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: '*<https://acme.twenty.com/object/opportunity/id-1|Big deal>*',
+        },
+      },
+      {
+        type: 'section',
+        fields: [
+          { type: 'mrkdwn', text: '*Stage*\nProposal' },
+          { type: 'mrkdwn', text: '*Amount*\n$10,000' },
+        ],
+      },
+      {
+        type: 'context',
+        elements: [{ type: 'mrkdwn', text: 'Opportunity in Twenty' }],
+      },
+    ]);
+  });
+
+  it('should omit the fields block when there are no fields', () => {
+    const attachment = buildSlackRecordUnfurlAttachment({
+      linkUrl: 'https://acme.twenty.com/object/note/id-1',
+      card: { recordTitle: 'A note', objectLabel: 'Note', fields: [] },
+    });
+
+    expect(attachment.blocks).toHaveLength(2);
+    expect(attachment.blocks?.[1]?.type).toBe('context');
+  });
+
+  it('should escape mrkdwn control characters in titles and values', () => {
+    const attachment = buildSlackRecordUnfurlAttachment({
+      linkUrl: 'https://acme.twenty.com/object/company/id-1',
+      card: {
+        recordTitle: 'Tom & Jerry <Corp>',
+        objectLabel: 'Company',
+        fields: [{ label: 'Domain', value: 'a<b>.com' }],
+      },
+    });
+
+    expect(attachment.blocks?.[0]).toEqual({
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: '*<https://acme.twenty.com/object/company/id-1|Tom &amp; Jerry &lt;Corp&gt;>*',
+      },
+    });
+    expect(attachment.blocks?.[1]).toEqual({
+      type: 'section',
+      fields: [{ type: 'mrkdwn', text: '*Domain*\na&lt;b&gt;.com' }],
+    });
+  });
+});

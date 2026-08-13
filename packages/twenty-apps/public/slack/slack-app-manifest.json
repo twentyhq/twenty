@@ -15,7 +15,8 @@
     },
     "agent_view": {
       "agent_description": "Ask about your CRM: look up people, companies and opportunities, create and update records, and capture notes and tasks."
-    }
+    },
+    "unfurl_domains": ["<YOUR_TWENTY_WORKSPACE_DOMAIN>"]
   },
   "oauth_config": {
     "redirect_urls": ["<YOUR_TWENTY_SERVER_URL>/auth/apps/callback"],
@@ -32,7 +33,9 @@
         "im:history",
         "users:read",
         "users:read.email",
-        "assistant:write"
+        "assistant:write",
+        "links:read",
+        "links:write"
       ]
     }
   },
@@ -42,6 +45,7 @@
       "bot_events": [
         "app_home_opened",
         "app_mention",
+        "link_shared",
         "member_joined_channel",
         "message.channels",
         "message.groups",

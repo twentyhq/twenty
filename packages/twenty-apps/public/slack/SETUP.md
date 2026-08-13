@@ -26,8 +26,10 @@ Two parts: a **Slack app** you create, and the **Twenty side** where you paste i
    | `users:read` | assistant: look up the requester's display name |
    | `users:read.email` | assistant: match Slack users to Twenty workspace members (requested up front, not used yet) |
    | `assistant:write` | agent surface: `assistant.threads.*` (statuses, titles, suggested prompts) |
+   | `links:read` | record link unfurls: receive `link_shared` events for your workspace domain |
+   | `links:write` | record link unfurls: attach record cards via `chat.unfurl` |
 
-   Adding or removing scopes later means existing installs must re-authorize: disconnect and **Add connection** again.
+   Adding or removing scopes later means existing installs must re-authorize: disconnect and **Add connection** again. In particular, installs created before the link unfurl scopes existed must reconnect to get record cards.
 
 3. **Redirect URL.** Set it to `<YOUR_TWENTY_SERVER_URL>/auth/apps/callback` — the origin your Twenty **server** uses for API routes, not the SPA. Local monorepo dev is usually `http://localhost:3000` (confirm the port `twenty-server` / `SERVER_URL` actually uses).
 
@@ -67,12 +69,15 @@ The assistant reuses the same Slack connection — no second bot identity.
    - `message.channels` — replies in public-channel threads, for un-mentioned follow-ups
    - `message.groups` — same, for private channels the bot is in
    - `member_joined_channel` — optional; lets the bot introduce itself when it is added to a channel
+   - `link_shared` — optional; expands Twenty record links pasted in Slack into record cards (see below)
 
    Invite the bot to any channel where it should follow threads. Slack may ask you to reinstall after changing subscriptions.
 
-3. **Reconnect** so the token picks up the assistant scopes.
+3. **Record link unfurls (optional).** To turn pasted Twenty record links (`…/object/<object>/<recordId>`) into compact record cards, subscribe to `link_shared` (previous step) and register your Twenty workspace domain under **Event Subscriptions → App unfurl domains** — the manifest's `<YOUR_TWENTY_WORKSPACE_DOMAIN>` placeholder, e.g. `acme.twenty.com` or your custom domain. The `links:read` and `links:write` scopes must be on the connection, so older installs need to disconnect and **Add connection** again.
 
-4. **Role.** The `slack-assistant` agent binds to the app's **Slack Assistant** role automatically on install and upgrade. Anyone who can message the bot acts with that role — Slack users are not mapped to individual Twenty members yet, so keep the role scoped to what you're comfortable exposing.
+4. **Reconnect** so the token picks up the assistant scopes.
+
+5. **Role.** The `slack-assistant` agent binds to the app's **Slack Assistant** role automatically on install and upgrade. Anyone who can message the bot acts with that role — Slack users are not mapped to individual Twenty members yet, so keep the role scoped to what you're comfortable exposing.
 
 ## Behaviour notes
 
@@ -81,6 +86,7 @@ The assistant reuses the same Slack connection — no second bot identity.
 - **Channel mentions.** The bot shows its thinking status in the mention's thread and posts its answer as a thread reply. The status is only visible with the thread open, so the channel itself stays quiet until the answer arrives.
 - **Thread memory.** After a successful reply the bot stays active in that thread, so follow-ups need no mention. Channel threads stay active for 24 hours after the last reply (each reply renews it); DM threads never expire.
 - **No silent dead-ends.** A mention or DM with no request text gets a short hint reply. The first follow-up in a thread whose 24-hour window has lapsed gets an ephemeral nudge (only that member sees it) to mention the bot again.
+- **Record link unfurls.** With `link_shared` subscribed and the workspace domain registered as an unfurl domain, pasting a record link shows a compact card: the record name plus a few key fields (for an opportunity: stage, amount, close date, company). People, companies, opportunities, notes and tasks are covered. Anyone in the channel sees the card, so it reads with the app's shared read-only role, not the poster's Twenty permissions. Links that don't resolve — deleted records, other objects, another workspace's URL — stay plain, with no error card. The assistant's own replies keep unfurls suppressed.
 - **Channel welcome.** With `member_joined_channel` subscribed, the bot posts a short introduction the first time it is added to a channel, with the details (what to ask it, what it reads, and the shared-role caveat from step 4 above) in a thread reply so the channel itself stays quiet. It fires once per channel for 30 days, and only for the bot's own join — humans joining afterwards trigger nothing. Skip the subscription if you would rather it arrived silently.
 - **One Slack workspace per Twenty workspace.** Connecting Slack claims that Slack team for the connecting Twenty workspace. On the same server, a second Twenty workspace connecting the same Slack team is rejected. Removing the connection releases the claim, so another Twenty workspace can then connect that Slack team. Uninstalling the app releases it too.
 

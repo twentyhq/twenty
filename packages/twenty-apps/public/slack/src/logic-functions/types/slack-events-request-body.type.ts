@@ -3,6 +3,11 @@ type SlackEventAuthorization = {
   is_bot?: boolean;
 };
 
+type SlackSharedLink = {
+  url?: string;
+  domain?: string;
+};
+
 type SlackInboundEvent = {
   type?: string;
   subtype?: string;
@@ -14,6 +19,10 @@ type SlackInboundEvent = {
   thread_ts?: string;
   channel?: string;
   tab?: string;
+  links?: SlackSharedLink[];
+  message_ts?: string;
+  source?: string;
+  unfurl_id?: string;
 };
 
 export type SlackEventsRequestBody = {
