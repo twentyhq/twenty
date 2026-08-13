@@ -62,6 +62,7 @@ describe('IMAP/SMTP outbound messaging (integration)', () => {
       password: PASSWORD,
     });
     await createMailbox({ greenmail, mailbox: 'Sent' });
+    await createMailbox({ greenmail, mailbox: 'Drafts' });
 
     const { data } = await saveImapSmtpCaldavAccount({
       input: {
