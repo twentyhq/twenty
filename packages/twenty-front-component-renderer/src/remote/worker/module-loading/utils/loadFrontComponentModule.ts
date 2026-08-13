@@ -1,10 +1,10 @@
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
-import { buildBlobUrlBySpecifier } from '@/remote/worker/utils/buildBlobUrlBySpecifier';
-import { createJavaScriptModuleBlobUrl } from '@/remote/worker/utils/createJavaScriptModuleBlobUrl';
-import { createSdkClientModuleBlobUrls } from '@/remote/worker/utils/createSdkClientModuleBlobUrls';
-import { revokeSdkClientModuleBlobUrls } from '@/remote/worker/utils/revokeSdkClientModuleBlobUrls';
-import { rewriteModuleImportsToBlobUrls } from '@/remote/worker/utils/rewriteModuleImportsToBlobUrls';
+import { buildBlobUrlBySpecifier } from '@/remote/worker/module-loading/utils/buildBlobUrlBySpecifier';
+import { createJavaScriptModuleBlobUrl } from '@/remote/worker/module-loading/utils/createJavaScriptModuleBlobUrl';
+import { createSdkClientModuleBlobUrls } from '@/remote/worker/module-loading/utils/createSdkClientModuleBlobUrls';
+import { revokeSdkClientModuleBlobUrls } from '@/remote/worker/module-loading/utils/revokeSdkClientModuleBlobUrls';
+import { rewriteModuleImportsToBlobUrls } from '@/remote/worker/module-loading/utils/rewriteModuleImportsToBlobUrls';
 import { type SdkClientSources } from '@/types/SdkClientSources';
 import { containsSharedDependenciesImportSpecifier } from '@/utils/module-imports/containsSharedDependenciesImportSpecifier';
 

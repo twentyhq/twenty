@@ -1,7 +1,5 @@
-import {
-  createOpenCommandConfirmationModalAdapter,
-  handleCommandConfirmationModalResult,
-} from '../createCommandConfirmationModalBridge';
+import { createOpenCommandConfirmationModalAdapter } from '../createOpenCommandConfirmationModalAdapter';
+import { handleCommandConfirmationModalResult } from '../handleCommandConfirmationModalResult';
 
 type OpenModalAdapter = ReturnType<
   typeof createOpenCommandConfirmationModalAdapter
@@ -9,7 +7,7 @@ type OpenModalAdapter = ReturnType<
 
 const modalParams = {} as Parameters<OpenModalAdapter>[0];
 
-describe('createCommandConfirmationModalBridge', () => {
+describe('handleCommandConfirmationModalResult', () => {
   afterEach(async () => {
     await handleCommandConfirmationModalResult('cancel');
   });
@@ -25,44 +23,6 @@ describe('createCommandConfirmationModalBridge', () => {
     await handleCommandConfirmationModalResult('confirm');
 
     await expect(confirmationResultPromise).resolves.toBe('confirm');
-  });
-
-  it('should reject with a coded error when a modal is already pending', async () => {
-    const openCommandConfirmationModal =
-      createOpenCommandConfirmationModalAdapter({
-        openCommandConfirmationModal: jest.fn(async () => {}),
-      });
-
-    const firstConfirmationResultPromise =
-      openCommandConfirmationModal(modalParams);
-
-    await expect(
-      openCommandConfirmationModal(modalParams),
-    ).rejects.toMatchObject({
-      code: 'FRONT_COMPONENT_CONFIRMATION_MODAL_ALREADY_PENDING',
-    });
-
-    await handleCommandConfirmationModalResult('cancel');
-    await expect(firstConfirmationResultPromise).resolves.toBe('cancel');
-  });
-
-  it('should reject and clear the pending state when the host call fails', async () => {
-    const openCommandConfirmationModal =
-      createOpenCommandConfirmationModalAdapter({
-        openCommandConfirmationModal: jest.fn(async () => {
-          throw new Error('host modal failed');
-        }),
-      });
-
-    await expect(openCommandConfirmationModal(modalParams)).rejects.toThrow(
-      'host modal failed',
-    );
-
-    const retriedConfirmationResultPromise =
-      openCommandConfirmationModal(modalParams);
-
-    await handleCommandConfirmationModalResult('confirm');
-    await expect(retriedConfirmationResultPromise).resolves.toBe('confirm');
   });
 
   it('should allow opening a new modal after the previous one resolved', async () => {

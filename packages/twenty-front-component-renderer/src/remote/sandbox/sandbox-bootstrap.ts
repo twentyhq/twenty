@@ -5,7 +5,7 @@ import { type FrontComponentSandboxMessage } from '@/remote/sandbox/types/FrontC
 import { createSandboxErrorMessageFromWorkerErrorEvent } from '@/remote/sandbox/utils/createSandboxErrorMessageFromWorkerErrorEvent';
 import { createWorkerSpawnErrorSandboxMessage } from '@/remote/sandbox/utils/createWorkerSpawnErrorSandboxMessage';
 import { parseFrontComponentSandboxMessage } from '@/remote/sandbox/utils/parseFrontComponentSandboxMessage';
-import { createFrontComponentRemoteWorker } from '@/remote/worker/utils/createFrontComponentRemoteWorker';
+import { createFrontComponentRemoteWorker } from '@/remote/worker/createFrontComponentRemoteWorker';
 
 let worker: Worker | null = null;
 

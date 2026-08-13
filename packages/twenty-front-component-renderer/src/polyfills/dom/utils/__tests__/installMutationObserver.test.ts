@@ -1,6 +1,6 @@
 import { HOOKS, type Hooks, Window } from '@remote-dom/polyfill';
 
-import { MUTATION_OBSERVER_HOOKS_UNAVAILABLE_ERROR } from '@/polyfills/dom/constants/MutationObserverHooksUnavailableError';
+import { MUTATION_OBSERVER_HOOKS_UNAVAILABLE_ERROR } from '@/polyfills/dom/errors/MutationObserverHooksUnavailableError';
 import { type WorkerMutationObserver } from '@/polyfills/dom/types/WorkerMutationObserver';
 import { type WorkerMutationObserverCallback } from '@/polyfills/dom/types/WorkerMutationObserverCallback';
 import { type WorkerMutationRecord } from '@/polyfills/dom/types/WorkerMutationRecord';

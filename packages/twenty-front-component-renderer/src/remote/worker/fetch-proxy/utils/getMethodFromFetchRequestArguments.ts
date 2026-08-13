@@ -1,4 +1,4 @@
-import { isRequestObject } from '@/remote/worker/utils/isRequestObject';
+import { isRequestObject } from '@/remote/worker/fetch-proxy/utils/isRequestObject';
 
 export const getMethodFromFetchRequestArguments = (
   input: RequestInfo | URL,

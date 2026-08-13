@@ -1,7 +1,7 @@
-import { buildHostFetchInputFromFetchRequestArguments } from '@/remote/worker/utils/buildHostFetchInputFromFetchRequestArguments';
-import { buildResponseFromHostFetchResult } from '@/remote/worker/utils/buildResponseFromHostFetchResult';
-import { getUrlFromFetchRequestInput } from '@/remote/worker/utils/getUrlFromFetchRequestInput';
-import { isUrlFromProxiedOrigin } from '@/remote/worker/utils/isUrlFromProxiedOrigin';
+import { buildHostFetchInputFromFetchRequestArguments } from '@/remote/worker/fetch-proxy/utils/buildHostFetchInputFromFetchRequestArguments';
+import { buildResponseFromHostFetchResult } from '@/remote/worker/fetch-proxy/utils/buildResponseFromHostFetchResult';
+import { getUrlFromFetchRequestInput } from '@/remote/worker/fetch-proxy/utils/getUrlFromFetchRequestInput';
+import { isUrlFromProxiedOrigin } from '@/remote/worker/fetch-proxy/utils/isUrlFromProxiedOrigin';
 import { type HostFetchFunction } from '@/types/HostFetchFunction';
 
 export const installHostFetchProxy = (

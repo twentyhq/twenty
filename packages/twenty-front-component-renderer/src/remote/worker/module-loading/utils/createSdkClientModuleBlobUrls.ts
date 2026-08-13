@@ -1,4 +1,4 @@
-import { createJavaScriptModuleBlobUrl } from '@/remote/worker/utils/createJavaScriptModuleBlobUrl';
+import { createJavaScriptModuleBlobUrl } from '@/remote/worker/module-loading/utils/createJavaScriptModuleBlobUrl';
 import { type SdkClientSources } from '@/types/SdkClientSources';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
 

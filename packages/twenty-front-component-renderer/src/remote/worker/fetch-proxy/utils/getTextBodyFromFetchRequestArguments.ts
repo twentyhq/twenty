@@ -1,8 +1,8 @@
 import { isNonEmptyString, isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { isRequestObject } from '@/remote/worker/utils/isRequestObject';
-import { isTextContentType } from '@/remote/worker/utils/isTextContentType';
+import { isRequestObject } from '@/remote/worker/fetch-proxy/utils/isRequestObject';
+import { isTextContentType } from '@/remote/worker/fetch-proxy/utils/isTextContentType';
 
 const getRequestInputBody = async (
   input: Request,

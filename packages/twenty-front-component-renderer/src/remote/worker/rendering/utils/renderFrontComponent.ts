@@ -1,12 +1,12 @@
 import { type RemoteConnection } from '@remote-dom/core/elements';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
-import { workerGeometryStore } from '@/polyfills/geometry/workerGeometryStore';
-import { frontComponentStorageBridges } from '@/polyfills/storage/frontComponentStorageBridges';
-import { attachRemoteRenderRootToWorkerDocument } from '@/remote/worker/utils/attachRemoteRenderRootToWorkerDocument';
-import { installHostFetchProxy } from '@/remote/worker/utils/installHostFetchProxy';
-import { loadFrontComponentModule } from '@/remote/worker/utils/loadFrontComponentModule';
-import { setWorkerEnvironmentVariablesFromRenderContext } from '@/remote/worker/utils/setWorkerEnvironmentVariablesFromRenderContext';
+import { workerGeometryStore } from '@/polyfills/geometry/states/workerGeometryStore';
+import { frontComponentStorageBridges } from '@/polyfills/storage/states/frontComponentStorageBridges';
+import { attachRemoteRenderRootToWorkerDocument } from '@/remote/worker/rendering/utils/attachRemoteRenderRootToWorkerDocument';
+import { installHostFetchProxy } from '@/remote/worker/fetch-proxy/utils/installHostFetchProxy';
+import { loadFrontComponentModule } from '@/remote/worker/module-loading/utils/loadFrontComponentModule';
+import { setWorkerEnvironmentVariablesFromRenderContext } from '@/remote/worker/environment/utils/setWorkerEnvironmentVariablesFromRenderContext';
 import { type HostFetchFunction } from '@/types/HostFetchFunction';
 import { type HostToWorkerRenderContext } from '@/types/HostToWorkerRenderContext';
 

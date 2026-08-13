@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { setWorkerEnvironmentVariables } from '@/remote/worker/utils/setWorkerEnvironmentVariables';
+import { setWorkerEnvironmentVariables } from '@/remote/worker/environment/utils/setWorkerEnvironmentVariables';
 import { type HostToWorkerRenderContext } from '@/types/HostToWorkerRenderContext';
 
 export const setWorkerEnvironmentVariablesFromRenderContext = (

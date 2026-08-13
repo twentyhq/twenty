@@ -129,8 +129,8 @@ export type {
   HtmlTextareaProperties,
   HtmlThProperties,
 } from './remote/generated/remote-elements';
-export { createFrontComponentRemoteWorker } from './remote/worker/utils/createFrontComponentRemoteWorker';
-export { installStyleBridge } from './polyfills/installStyleBridge';
+export { createFrontComponentRemoteWorker } from './remote/worker/createFrontComponentRemoteWorker';
+export { installStyleBridge } from './polyfills/style/installStyleBridge';
 export { exposeGlobals } from './utils/exposeGlobals';
 export type { FrontComponentExecutionContext } from 'twenty-sdk/front-component';
 export type { FrontComponentHostCommunicationApi } from './types/FrontComponentHostCommunicationApi';

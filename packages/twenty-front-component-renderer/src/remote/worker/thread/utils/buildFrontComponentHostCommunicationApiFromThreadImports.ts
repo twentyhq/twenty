@@ -1,4 +1,4 @@
-import { createOpenCommandConfirmationModalAdapter } from '@/remote/worker/utils/createCommandConfirmationModalBridge';
+import { createOpenCommandConfirmationModalAdapter } from '@/remote/worker/thread/utils/createOpenCommandConfirmationModalAdapter';
 import { type FrontComponentHostCommunicationApiStore } from '@/types/FrontComponentHostCommunicationApiStore';
 import { type FrontComponentHostThreadExports } from '@/types/FrontComponentHostThreadExports';
 

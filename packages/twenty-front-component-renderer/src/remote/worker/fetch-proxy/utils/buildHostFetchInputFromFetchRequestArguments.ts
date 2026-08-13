@@ -1,9 +1,9 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { getHeadersFromFetchRequestArguments } from '@/remote/worker/utils/getHeadersFromFetchRequestArguments';
-import { getMethodFromFetchRequestArguments } from '@/remote/worker/utils/getMethodFromFetchRequestArguments';
-import { getTextBodyFromFetchRequestArguments } from '@/remote/worker/utils/getTextBodyFromFetchRequestArguments';
-import { getUrlFromFetchRequestInput } from '@/remote/worker/utils/getUrlFromFetchRequestInput';
+import { getHeadersFromFetchRequestArguments } from '@/remote/worker/fetch-proxy/utils/getHeadersFromFetchRequestArguments';
+import { getMethodFromFetchRequestArguments } from '@/remote/worker/fetch-proxy/utils/getMethodFromFetchRequestArguments';
+import { getTextBodyFromFetchRequestArguments } from '@/remote/worker/fetch-proxy/utils/getTextBodyFromFetchRequestArguments';
+import { getUrlFromFetchRequestInput } from '@/remote/worker/fetch-proxy/utils/getUrlFromFetchRequestInput';
 import { type HostFetchInput } from '@/types/HostFetchInput';
 
 const URL_SEARCH_PARAMS_CONTENT_TYPE =

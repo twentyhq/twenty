@@ -1,6 +1,6 @@
 import { type FrontComponentHostThreadExports } from '@/types/FrontComponentHostThreadExports';
 import { buildFrontComponentHostCommunicationApiFromThreadImports } from '../buildFrontComponentHostCommunicationApiFromThreadImports';
-import { handleCommandConfirmationModalResult } from '../createCommandConfirmationModalBridge';
+import { handleCommandConfirmationModalResult } from '../handleCommandConfirmationModalResult';
 
 const createHostThreadImportsStub = () =>
   ({

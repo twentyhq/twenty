@@ -1,5 +1,5 @@
 import { ALLOWED_HTML_ELEMENTS } from '@/constants/AllowedHtmlElements';
-import { isAriaOrDataAttribute } from '@/remote/utils/isAriaOrDataAttribute';
+import { isAriaOrDataAttribute } from '@/remote/elements/utils/isAriaOrDataAttribute';
 
 const ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME: Record<string, string> = {
   className: 'className',

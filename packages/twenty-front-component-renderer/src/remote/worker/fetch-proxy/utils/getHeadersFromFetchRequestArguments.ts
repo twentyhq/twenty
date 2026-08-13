@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { isRequestObject } from '@/remote/worker/utils/isRequestObject';
+import { isRequestObject } from '@/remote/worker/fetch-proxy/utils/isRequestObject';
 
 const toHeaderRecord = (headers: HeadersInit): Record<string, string> => {
   const record: Record<string, string> = {};
