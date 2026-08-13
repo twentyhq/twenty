@@ -498,7 +498,7 @@ if (result.status === 'captured') {
   await new CoreApiClient().mutation({
     createMediaNote: {
       __args: {
-        data: { recording: [{ fileId: result.file.fileId, name: result.file.path }] },
+        data: { recording: [{ fileId: result.file.fileId, label: result.file.path }] },
       },
       id: true,
     },
