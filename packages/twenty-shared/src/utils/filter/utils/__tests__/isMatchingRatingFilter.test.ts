@@ -62,20 +62,20 @@ describe('isMatchingRatingFilter', () => {
   });
 
   describe('comparison operators', () => {
-    const orderedOptionValues = [
+    const options = [
       'RATING_1',
       'RATING_2',
       'RATING_3',
       'RATING_4',
       'RATING_5',
-    ];
+    ].map((value, position) => ({ value, position }));
 
     it('should compare by option position', () => {
       expect(
         isMatchingRatingFilter({
           ratingFilter: { gt: 'RATING_2' },
           value: 'RATING_4',
-          orderedOptionValues,
+          options,
         }),
       ).toBe(true);
 
@@ -83,7 +83,7 @@ describe('isMatchingRatingFilter', () => {
         isMatchingRatingFilter({
           ratingFilter: { lte: 'RATING_2' },
           value: 'RATING_4',
-          orderedOptionValues,
+          options,
         }),
       ).toBe(false);
     });
@@ -93,7 +93,7 @@ describe('isMatchingRatingFilter', () => {
         isMatchingRatingFilter({
           ratingFilter: { gt: 'RATING_2' },
           value: null,
-          orderedOptionValues,
+          options,
         }),
       ).toBe(false);
 

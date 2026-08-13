@@ -5,11 +5,11 @@ import { compareSelectOptionValues } from './compareSelectOptionValues';
 export const isMatchingSelectFilter = ({
   selectFilter,
   value,
-  orderedOptionValues,
+  options,
 }: {
   selectFilter: SelectFilter;
   value: string | null;
-  orderedOptionValues?: string[];
+  options?: { value: string; position: number }[] | null;
 }) => {
   switch (true) {
     case selectFilter.in !== undefined: {
@@ -32,7 +32,7 @@ export const isMatchingSelectFilter = ({
       const comparison = compareSelectOptionValues({
         value,
         comparisonValue: selectFilter.gt,
-        orderedOptionValues,
+        options,
       });
 
       return comparison !== null && comparison > 0;
@@ -41,7 +41,7 @@ export const isMatchingSelectFilter = ({
       const comparison = compareSelectOptionValues({
         value,
         comparisonValue: selectFilter.gte,
-        orderedOptionValues,
+        options,
       });
 
       return comparison !== null && comparison >= 0;
@@ -50,7 +50,7 @@ export const isMatchingSelectFilter = ({
       const comparison = compareSelectOptionValues({
         value,
         comparisonValue: selectFilter.lt,
-        orderedOptionValues,
+        options,
       });
 
       return comparison !== null && comparison < 0;
@@ -59,7 +59,7 @@ export const isMatchingSelectFilter = ({
       const comparison = compareSelectOptionValues({
         value,
         comparisonValue: selectFilter.lte,
-        orderedOptionValues,
+        options,
       });
 
       return comparison !== null && comparison <= 0;

@@ -82,20 +82,16 @@ describe('isMatchingSelectFilter', () => {
   });
 
   describe('comparison operators', () => {
-    const orderedOptionValues = [
-      'NEW',
-      'SCREENING',
-      'MEETING',
-      'PROPOSAL',
-      'CUSTOMER',
-    ];
+    const options = ['NEW', 'SCREENING', 'MEETING', 'PROPOSAL', 'CUSTOMER'].map(
+      (value, position) => ({ value, position }),
+    );
 
     it('should compare by option position, not lexically', () => {
       expect(
         isMatchingSelectFilter({
           selectFilter: { gt: 'NEW' },
           value: 'MEETING',
-          orderedOptionValues,
+          options,
         }),
       ).toBe(true);
 
@@ -103,7 +99,7 @@ describe('isMatchingSelectFilter', () => {
         isMatchingSelectFilter({
           selectFilter: { lt: 'MEETING' },
           value: 'CUSTOMER',
-          orderedOptionValues,
+          options,
         }),
       ).toBe(false);
     });
@@ -113,7 +109,7 @@ describe('isMatchingSelectFilter', () => {
         isMatchingSelectFilter({
           selectFilter: { gte: 'MEETING' },
           value: 'MEETING',
-          orderedOptionValues,
+          options,
         }),
       ).toBe(true);
 
@@ -121,7 +117,7 @@ describe('isMatchingSelectFilter', () => {
         isMatchingSelectFilter({
           selectFilter: { lte: 'MEETING' },
           value: 'PROPOSAL',
-          orderedOptionValues,
+          options,
         }),
       ).toBe(false);
     });
@@ -131,7 +127,7 @@ describe('isMatchingSelectFilter', () => {
         isMatchingSelectFilter({
           selectFilter: { gt: 'NEW' },
           value: null,
-          orderedOptionValues,
+          options,
         }),
       ).toBe(false);
     });
@@ -141,7 +137,7 @@ describe('isMatchingSelectFilter', () => {
         isMatchingSelectFilter({
           selectFilter: { gt: 'NEW' },
           value: 'DELETED_OPTION',
-          orderedOptionValues,
+          options,
         }),
       ).toBe(false);
 

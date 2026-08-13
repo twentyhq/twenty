@@ -8,7 +8,6 @@ import {
   isInputObjectType,
   isObjectType,
 } from 'graphql';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, pascalCase } from 'twenty-shared/utils';
 
 import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
@@ -144,10 +143,7 @@ export class ObjectMetadataFilterGqlInputTypeGenerator {
       throw new Error(message);
     }
 
-    const type = createGqlEnumFilterType(
-      enumType,
-      fieldMetadata.type !== FieldMetadataType.MULTI_SELECT,
-    );
+    const type = createGqlEnumFilterType(enumType, fieldMetadata.type);
 
     return {
       [fieldMetadata.name]: {

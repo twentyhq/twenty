@@ -3,19 +3,23 @@ import { isDefined } from '@/utils/validation/isDefined';
 // Select and rating columns are Postgres enums: the server compares them by
 // enum definition order, which is the option position, not lexical order.
 // Returns null when the comparison cannot be evaluated (null value, unknown
-// option, missing option list), mirroring SQL NULL comparison semantics.
+// option, missing options), mirroring SQL NULL comparison semantics.
 export const compareSelectOptionValues = ({
   value,
   comparisonValue,
-  orderedOptionValues,
+  options,
 }: {
   value: string | null | undefined;
   comparisonValue: string;
-  orderedOptionValues: string[] | undefined;
+  options: { value: string; position: number }[] | null | undefined;
 }): number | null => {
-  if (!isDefined(value) || !isDefined(orderedOptionValues)) {
+  if (!isDefined(value) || !isDefined(options)) {
     return null;
   }
+
+  const orderedOptionValues = [...options]
+    .sort((optionA, optionB) => optionA.position - optionB.position)
+    .map((option) => option.value);
 
   const valueIndex = orderedOptionValues.indexOf(value);
   const comparisonValueIndex = orderedOptionValues.indexOf(comparisonValue);

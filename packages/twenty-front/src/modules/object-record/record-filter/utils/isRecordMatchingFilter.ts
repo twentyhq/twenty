@@ -30,7 +30,6 @@ import {
 } from 'twenty-shared/types';
 import {
   computeRelationGqlFieldJoinColumnName,
-  getOrderedOptionValues,
   isDefined,
   isEmptyObject,
   isMatchingArrayFilter,
@@ -310,9 +309,7 @@ export const isRecordMatchingFilter = ({
         return isMatchingRatingFilter({
           ratingFilter: filterValue as RatingFilter,
           value: record[filterKey],
-          orderedOptionValues: getOrderedOptionValues(
-            objectMetadataField.options,
-          ),
+          options: objectMetadataField.options,
         });
       case FieldMetadataType.TEXT: {
         return isMatchingStringFilter({
@@ -330,9 +327,7 @@ export const isRecordMatchingFilter = ({
         return isMatchingSelectFilter({
           selectFilter: filterValue as SelectFilter,
           value: record[filterKey],
-          orderedOptionValues: getOrderedOptionValues(
-            objectMetadataField.options,
-          ),
+          options: objectMetadataField.options,
         });
       case FieldMetadataType.MULTI_SELECT:
         return isMatchingMultiSelectFilter({

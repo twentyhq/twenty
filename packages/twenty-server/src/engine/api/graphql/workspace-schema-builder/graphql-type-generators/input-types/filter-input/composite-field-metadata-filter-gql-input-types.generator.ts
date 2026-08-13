@@ -8,7 +8,7 @@ import {
   isObjectType,
 } from 'graphql';
 import { isDefined, pascalCase } from 'twenty-shared/utils';
-import { CompositeType, FieldMetadataType } from 'twenty-shared/types';
+import { CompositeType } from 'twenty-shared/types';
 
 import { GqlInputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/enums/gql-input-type-definition-kind.enum';
 import { TypeMapperService } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
@@ -82,10 +82,7 @@ export class CompositeFieldMetadataFilterGqlInputTypeGenerator {
           this.logger.error(message, { key });
           throw new Error(message);
         }
-        type = createGqlEnumFilterType(
-          enumType,
-          property.type !== FieldMetadataType.MULTI_SELECT,
-        );
+        type = createGqlEnumFilterType(enumType, property.type);
       } else {
         type = this.typeMapperService.mapToFilterType(
           property.type,
