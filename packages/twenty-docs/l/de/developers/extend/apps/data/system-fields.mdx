@@ -142,23 +142,26 @@ Wie bei skalaren Systemfeldern funktioniert die aufgelöste ID überall dort, wo
   `getSystemViewUniversalIdentifier` und `getSystemViewFieldUniversalIdentifier` sind ab Version 2.26 von `twenty-sdk` verfügbar und erfordern einen Twenty-Server in Version 2.26 oder höher.
 </Note>
 
-Der Server stellt außerdem für jedes Objekt eine **Systemansicht** bereit: die Hauptlistenansicht (`All {objectLabelPlural}`, mit dem Schlüssel `ViewKey.INDEX`), mit einer Spalte pro anzeigbarem Feld. Wie bei Systembeziehungsfeldern werden ihre Bezeichner **namensfrei** abgeleitet, sodass das Umbenennen eines Objekts oder eines Feldes sie nie ändert.
+Der Server stellt außerdem für jedes Objekt eine **Systemansicht** bereit: die Hauptlistenansicht (`All {objectLabelPlural}`, mit dem Schlüssel `ViewKey.INDEX` (abgeleitet mit `SYSTEM_VIEW_KEYS.INDEX`)), mit einer Spalte pro anzeigbarem Feld. Wie bei Systembeziehungsfeldern werden ihre Bezeichner **namensfrei** abgeleitet, sodass das Umbenennen eines Objekts oder eines Feldes sie nie ändert.
 
 Verwenden Sie `getSystemViewUniversalIdentifier`, um die Ansicht aufzulösen:
 
 ```ts
-import { getSystemViewUniversalIdentifier, ViewKey } from 'twenty-sdk/define';
+import {
+  getSystemViewUniversalIdentifier,
+  SYSTEM_VIEW_KEYS,
+} from 'twenty-sdk/define';
 
 const rocketIndexViewId = getSystemViewUniversalIdentifier({
   objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
-  viewKey: ViewKey.INDEX,
+  viewKey: SYSTEM_VIEW_KEYS.INDEX,
 });
 ```
 
 * `objectMetadataApplicationUniversalIdentifier` ist die Anwendung, der das **Objekt** gehört; sie bestimmt den Namensraum der Ansicht.
 * `objectUniversalIdentifier` ist das Objekt, das die Ansicht auflistet.
-* `viewKey` ist der Systemansichtsschlüssel, aktuell `ViewKey.INDEX`.
+* `viewKey` ist der Unterscheidungsschlüssel für Systemansichten: `SYSTEM_VIEW_KEYS.INDEX` für die Hauptlistenansicht, `SYSTEM_VIEW_KEYS.FIELDS_WIDGET` für die Felder-Widget-Ansicht auf der Datensatzseite. Er dient als Schlüssel für die Ableitung; nur `INDEX` wird auch in der Ansichtszeile gespeichert.
 
 Die aufgelöste ID funktioniert überall dort, wo ein `viewUniversalIdentifier` erwartet wird, etwa bei einem [`NavigationMenuItemType.VIEW`](/l/de/developers/extend/apps/layout/navigation-menu-items)-Eintrag in der Seitenleiste. Um einfach die Hauptliste eines Objekts zu öffnen, sollten Sie `NavigationMenuItemType.OBJECT` mit `targetObjectUniversalIdentifier` bevorzugen: Es benötigt keine Ableitung.
 

@@ -575,7 +575,23 @@ export class UserResolver {
     if (!workspace) return null;
 
     return this.onboardingService.getOnboardingStatus({
-      user,
+      userId: user.id,
+      workspaceId: workspace.id,
+    });
+  }
+
+  @ResolveField(() => OnboardingStatus, {
+    nullable: true,
+  })
+  async previousOnboardingStatus(
+    @Parent() user: UserEntity,
+    @AuthWorkspace({ allowUndefined: true })
+    workspace: WorkspaceEntity | undefined,
+  ): Promise<OnboardingStatus | null> {
+    if (!workspace) return null;
+
+    return this.onboardingService.getPreviousReversibleOnboardingStatus({
+      userId: user.id,
       workspaceId: workspace.id,
     });
   }

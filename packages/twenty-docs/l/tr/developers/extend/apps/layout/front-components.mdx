@@ -601,6 +601,43 @@ export default defineFrontComponent({
 
 Ayrıntılar için [genel varlıklar bölümüne](/l/tr/developers/extend/apps/config/public-assets) bakın.
 
+## Ön uç bileşenleri arasında bağımlılıkları paylaşma
+
+Varsayılan olarak, her ön uç bileşeni içe aktardığı her bir kitaplığın kendi kopyasını paketler; bu nedenle beş bileşenli bir uygulama React'i beş kez paketler. Bu kitaplıkları tek seferde derlemek ve uygulamanın her bileşeninin onları tek bir önbelleğe alınmış dosyadan yüklemesini sağlamak için, paylaşılan bağımlılıkları uygulamanızın `package.json` dosyasında belirtin:
+
+```json package.json
+{
+  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+}
+```
+
+Her bileşen daha sonra bağımlılıklarını önceden olduğu gibi içe aktarır — bileşen kodunuzda hiçbir şey değişmez:
+
+```tsx src/front-components/counter.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'counter',
+  component: Counter,
+});
+```
+
+Bilmeniz gereken birkaç nokta:
+
+* **Uygulama başına tek bir paylaşılan bağımlılık paketi.** Paket, uygulamanızın kendi bağımlılıklarından oluşturulur; böylece dağıttığınız sürümler üzerinde tam denetim sizde olur.
+* **İçe aktardığınız tam belirteçleri listeleyin.** `twenty-ui/input` ve `twenty-ui/display` iki ayrı girdidir; yalnızca bir paket adı alt yollarını kapsamaz. `react`i listelemek, otomatik olarak `react/jsx-runtime`ı da kapsar.
+* **`react` ile birlikte `react-dom/client`ı paylaşın.** Her bileşen `createRoot` üzerinden oluşturulur; bu yüzden bunu dışarıda bırakmak, her bileşenin yine de React DOM'u paketlemesi anlamına gelir.
+* **Paket önbelleğe alınır.** İçerik karma değerine sahip bir URL altında, uzun ömürlü, değişmez bir önbellekle sunulur; bu nedenle bir kez indirilir ve bağımlılıklarından biri değişene kadar uygulamanın tüm bileşenleri arasında yeniden kullanılır.
+* **Paylaşılan paketlerden hiçbirini içe aktarmayan bileşenler onu asla indirmez.**
+
 ## Stil
 
 Ön uç bileşenleri birden fazla biçimlendirme yaklaşımını destekler. Şunları kullanabilirsiniz:

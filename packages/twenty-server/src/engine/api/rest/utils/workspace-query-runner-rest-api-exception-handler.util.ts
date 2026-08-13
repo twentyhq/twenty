@@ -11,6 +11,8 @@ import {
   TwentyORMException,
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { TwentyOrmV2Exception } from 'src/engine/twenty-orm-v2/exceptions/twenty-orm-v2.exception';
+import { isTwentyOrmV2UserInputError } from 'src/engine/twenty-orm-v2/utils/twenty-orm-v2-to-user-input-error.util';
 
 interface QueryFailedErrorWithCode extends QueryFailedError {
   code: string;
@@ -28,6 +30,9 @@ export const workspaceQueryRunnerRestApiExceptionHandler = (
       return throttlerToRestApiExceptionHandler(error);
     case error instanceof TwentyORMException &&
       error.code === TwentyORMExceptionCode.INVALID_INPUT:
+      throw new BadRequestException(error.message);
+    case error instanceof TwentyOrmV2Exception &&
+      isTwentyOrmV2UserInputError(error):
       throw new BadRequestException(error.message);
     default:
       throw error;

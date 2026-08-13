@@ -136,6 +136,20 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   })
   sdkClientCoreChecksum: string | null;
 
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.31.0_AddFrontComponentSharedDependenciesToApplicationFastInstanceCommand_1786529082690',
+  })
+  frontComponentSharedDependenciesChecksum: string | null;
+
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.31.0_AddFrontComponentSharedDependenciesToApplicationFastInstanceCommand_1786529082690',
+  })
+  frontComponentSharedDependenciesBuiltPath: string | null;
+
   @Column({ nullable: true, type: 'uuid' })
   applicationRegistrationId: string | null;
 

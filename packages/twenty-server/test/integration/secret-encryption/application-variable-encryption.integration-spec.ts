@@ -17,7 +17,7 @@ import { type SecretEncryptionService } from 'src/engine/core-modules/secret-enc
 
 const V2_ENVELOPE_REGEX = /^enc:v2:[0-9a-f]{8}:[A-Za-z0-9+/=]+$/;
 const CONSTRAINT_NAME = 'CHK_applicationVariable_value_encrypted';
-const CONSTRAINT_EXPR = `"isSecret" = false OR "value" = '' OR "value" LIKE 'enc:v2:%'`;
+const CONSTRAINT_EXPR = `"value" LIKE 'enc:v2:%'`;
 
 const V2_VARIABLE_KEY = 'TEST_V2_SECRET';
 const V2_NON_SECRET_VARIABLE_KEY = 'TEST_V2_NON_SECRET';
@@ -253,8 +253,7 @@ describe('ApplicationVariable encryption (integration)', () => {
 
     afterAll(async () => {
       await dataSource.query(
-        `UPDATE core."applicationVariable"
-              SET "value" = ''
+        `DELETE FROM core."applicationVariable"
             WHERE "applicationId" = $1 AND "key" = $2`,
         [applicationId, LEGACY_VARIABLE_KEY],
       );

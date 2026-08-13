@@ -115,6 +115,9 @@ export class UserEntity {
   @Field(() => OnboardingStatus, { nullable: true })
   onboardingStatus: OnboardingStatus;
 
+  @Field(() => OnboardingStatus, { nullable: true })
+  previousOnboardingStatus: OnboardingStatus;
+
   @Field(() => WorkspaceEntity, { nullable: true })
   currentWorkspace?: Relation<WorkspaceEntity>;
 

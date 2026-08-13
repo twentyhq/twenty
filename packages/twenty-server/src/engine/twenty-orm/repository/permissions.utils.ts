@@ -8,8 +8,8 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryExpressionMap } from 'typeorm/query-builder/QueryExpressionMap';
 
-import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { extractColumnNamesFromAggregateExpression } from 'src/utils/extract-column-names-from-aggregate-expression.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -632,9 +632,7 @@ const getSelectedColumnsFromExpressionMapSelects = (
   return selects
     ?.map((select) => {
       const columnsFromAggregateExpression =
-        ProcessAggregateHelper.extractColumnNamesFromAggregateExpression(
-          select.selection,
-        );
+        extractColumnNamesFromAggregateExpression(select.selection);
 
       if (columnsFromAggregateExpression) {
         return columnsFromAggregateExpression;

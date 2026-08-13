@@ -601,6 +601,43 @@ export default defineFrontComponent({
 
 Vedi la [sezione sugli asset pubblici](/l/it/developers/extend/apps/config/public-assets) per i dettagli.
 
+## Condivisione delle dipendenze tra front component
+
+Per impostazione predefinita, ogni front component include nel bundle la propria copia delle librerie che importa, quindi un'app con cinque componenti distribuisce React cinque volte. Dichiara le dipendenze condivise nel `package.json` della tua app per creare il bundle di queste librerie una sola volta e fare in modo che ogni componente dell'app le carichi da un unico file in cache:
+
+```json package.json
+{
+  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+}
+```
+
+Ogni componente importa quindi le sue dipendenze esattamente come prima — non cambia nulla nel codice del tuo componente:
+
+```tsx src/front-components/counter.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'counter',
+  component: Counter,
+});
+```
+
+Alcune cose da sapere:
+
+* **Un solo bundle di dipendenze condivise per app.** Il bundle è costruito a partire dalle dipendenze della tua app, così mantieni il pieno controllo delle versioni che distribuisci.
+* **Elenca gli specificatori esatti che importi.** `twenty-ui/input` e `twenty-ui/display` sono due voci; il solo nome del pacchetto non copre i suoi sottopercorsi. L'elenco di `react` copre automaticamente `react/jsx-runtime`.
+* **Condividi `react-dom/client` insieme a `react`.** Ogni componente effettua il rendering tramite `createRoot`, quindi ometterlo significa che ogni componente include ancora nel bundle React DOM.
+* **Il bundle è in cache.** È servito tramite un URL con content-hash con una cache immutabile a lunga durata, quindi viene scaricato una sola volta e riutilizzato in tutti i componenti dell'app finché una delle sue dipendenze non cambia.
+* **I componenti che non importano nessuno dei pacchetti condivisi non lo scaricano mai.**
+
 ## Stile
 
 I componenti front-end supportano diversi approcci di styling. Puoi usare:

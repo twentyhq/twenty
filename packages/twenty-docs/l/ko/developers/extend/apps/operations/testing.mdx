@@ -8,7 +8,7 @@ SDK는 테스트 코드에서 앱을 빌드, 배포, 설치 및 제거할 수 �
 
 ## npm 패키지 사용
 
-앱에서 원하는 npm 패키지를 설치해 사용할 수 있습니다. 로직 함수와 프런트 컴포넌트는 모두 [esbuild](https://esbuild.github.io/)로 번들되며, 모든 의존성이 출력물에 인라인됩니다 — 런타임에는 `node_modules`가 필요하지 않습니다.
+앱에서 원하는 npm 패키지를 설치해 사용할 수 있습니다. 로직 함수와 프런트 컴포넌트는 모두 [esbuild](https://esbuild.github.io/)로 번들되며, 그 의존성은 출력물에 인라인되기 때문에 런타임에는 `node_modules`가 필요하지 않습니다.
 
 ### 패키지 설치
 
@@ -56,13 +56,15 @@ export default defineFrontComponent({
 
 ### 번들링 동작 방식
 
-빌드 단계에서는 esbuild를 사용하여 로직 함수와 프런트 컴포넌트마다 단일 자체 포함 파일을 생성합니다. 모든 임포트된 패키지는 번들에 인라인됩니다.
+빌드 단계에서는 esbuild를 사용하여 로직 함수와 프런트 컴포넌트마다 단일 자체 포함 파일을 생성합니다. 가져온 패키지는 아래에 나열된 항목을 제외하고 번들에 인라인됩니다.
 
 **로직 함수**는 Node.js 환경에서 실행됩니다. Node 기본 모듈(`fs`, `path`, `crypto`, `http` 등) 을(를) 사용할 수 있으며 설치할 필요가 없습니다.
 
 **프런트 컴포넌트**는 Web Worker에서 실행됩니다. Node 기본 모듈은 **사용할 수 없습니다** — 브라우저 환경에서 동작하는 npm 패키지만 사용할 수 있습니다. 샌드박스는 *부분적인* DOM만 구현하므로, 패키지가 빌드에는 성공하더라도 런타임에 실패할 수 있습니다. 자세한 내용은 [현재 제한 사항](/l/ko/developers/extend/apps/layout/front-components#current-limitations)을 참고하세요.
 
 두 환경 모두에서 `twenty-client-sdk/core`와 `twenty-client-sdk/metadata`가 사전 제공 모듈로 사용 가능합니다 — 이는 번들되지 않고 서버가 런타임에 해석합니다.
+
+프런트 컴포넌트는 또한 [공유 의존성 번들](/l/ko/developers/extend/apps/layout/front-components#sharing-dependencies-across-front-components)을 통해 의존성을 공유할 수 있습니다. 앱의 package.json에 있는 `frontComponentSharedDependencies` 필드에 나열된 패키지는 한 번만 별도의 파일로 빌드되어, 각 컴포넌트에 인라인되는 대신 런타임에 그 파일에서 로드됩니다. 따라서 공유 패키지만 가져오는 컴포넌트는 거의 자체 의존성 코드를 포함하지 않습니다.
 
 ## 설정
 

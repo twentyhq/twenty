@@ -109,7 +109,7 @@ curl http://localhost:3000
 
 ### Twentyを外部アクセスに公開
 
-デフォルトでは、Twentyはポート`3000`で`localhost`上で動作します。 外部ドメインまたはIPアドレス経由でアクセスするには、`.env`ファイルで`SERVER_URL`を構成する必要があります。 外部ドメインまたはIPアドレス経由でアクセスするには、`.env`ファイルで`SERVER_URL`を構成する必要があります。
+デフォルトでは、Twentyはポート`3000`で`localhost`上で動作します。 外部ドメインまたはIPアドレス経由でアクセスするには、`.env`ファイルで`SERVER_URL`を構成する必要があります。 UI はブラウザー自身のオリジンから API を解決するため、コンテナに到達できる任意のホスト名から読み込まれます。ただし、`SERVER_URL` には必ずパブリック URL を設定してください。サーバーは、生成されるリンク（メール、OAuth コールバック）や、安全な Cookie のための HTTPS 検出にそれを使用します。
 
 #### `SERVER_URL`の理解
 
@@ -229,7 +229,7 @@ crontab に追加 (`crontab -e`):
 1. アプリケーションを停止します:
 
 ```bash
-docker compose stop twenty-server twenty-front
+docker compose stop server worker
 ```
 
 2. データベースを復元します:

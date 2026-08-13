@@ -34,6 +34,8 @@ test('New workspace signup goes through every onboarding stage', async ({
     await page.waitForURL('**/workspace-activation', { timeout: 90000 });
   });
 
+  let hasSkippedSyncEmailStage = false;
+
   await test.step('Sync-email stage (skip when shown)', async () => {
     const syncEmailsHeading = page.getByText('Import your contacts');
     const installAppsHeading = page.getByText('Install your first apps');
@@ -44,11 +46,28 @@ test('New workspace signup goes through every onboarding stage', async ({
 
     if (await syncEmailsHeading.isVisible()) {
       await loginPage.clickSkipOnboardingStep();
+      hasSkippedSyncEmailStage = true;
     }
   });
 
   await test.step('Install-apps stage', async () => {
     await expect(page.getByText('Install your first apps')).toBeVisible();
+
+    if (hasSkippedSyncEmailStage) {
+      await test.step('Goes back to the skipped sync-email stage', async () => {
+        await page.getByRole('button', { name: 'Go back' }).click();
+        await expect(page.getByText('Import your contacts')).toBeVisible();
+
+        await page.reload();
+        await expect(page.getByText('Import your contacts')).toBeVisible({
+          timeout: 30000,
+        });
+
+        await loginPage.clickSkipOnboardingStep();
+        await expect(page.getByText('Install your first apps')).toBeVisible();
+      });
+    }
+
     await loginPage.clickSkipOnboardingStep();
   });
 

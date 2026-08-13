@@ -72,7 +72,7 @@ export enum MetricsKeys {
   AiChatTurnCompleted = 'ai-chat/turn-completed',
   AiChatTurnFailed = 'ai-chat/turn-failed',
   WorkspaceMetadataCacheLocalEviction = 'workspace-metadata-cache/local-eviction',
-  WorkspaceMetadataCacheDemoted = 'workspace-metadata-cache/demoted',
+  WorkspaceMetadataCachePacked = 'workspace-metadata-cache/packed',
   SdkClientGenerationSucceeded = 'sdk-client-generation/succeeded',
   SdkClientGenerationFailed = 'sdk-client-generation/failed',
   SdkClientGenerationDurationMs = 'sdk-client-generation/duration-ms',
@@ -91,4 +91,5 @@ export enum MetricsKeys {
   WorkspaceMigrationRunPhaseDurationMs = 'workspace-migration/run-phase-duration-ms',
   WorkspaceMigrationActionDurationMs = 'workspace-migration/action-duration-ms',
   WorkspaceMigrationActionCount = 'workspace-migration/action-count',
+  OrmV2ReadPathUsed = 'orm-v2/read-path-used',
 }

@@ -25,10 +25,12 @@ import { AppModule } from './app.module';
 import './instrument';
 
 import { settings } from './engine/constants/settings';
+import { enableValidationMetadataCache } from './utils/enable-validation-metadata-cache.util';
 import { generateFrontConfig } from './utils/generate-front-config';
 
 // Trigger
 const bootstrap = async () => {
+  enableValidationMetadataCache();
   setPgDateTypeParser();
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {

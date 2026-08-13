@@ -392,17 +392,22 @@ LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 Yalnızca arka ucun (back-end) ön ucu (front-end) sunmasına izin vermiyorsanız geçerlidir. Aynı kökene (same-origin) sahip dağıtımlar için burada hiçbir şeye gerek yoktur.
 
 API ile iletişim kuran her tarayıcı kökenini (origin) virgülle ayırarak belirtin. `SERVER_URL`
-ve `FRONTEND_URL` zaten güvenilirdir.
+ve `FRONTEND_URL` zaten güvenilirdir. Bir tarayıcı bildirilmeyen bir kökenden
+çağrı yaptığında sunucu bir uyarı kaydeder.
 
 ```bash
 AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com
 ```
 
 <Warning>
-Tanımlama bilgisi oturumlarına sahip bir sürüme yükseltme yapmak, bunun gerekli olmasına neden olur. Ön uç
-artık her istekte kimlik bilgileri gönderiyor ve tarayıcılar, bildirilmemiş bir kökenden gelen kimlik bilgileri içeren
-yanıtı reddediyor; bu nedenle uygulama, bunu ayarlayana kadar yüklenemez.
+Ön uç her istekte kimlik bilgileri gönderir ve tarayıcılar, bildirilmemiş bir kökenden gelen kimlik bilgileri içeren
+yanıtı reddeder, bu nedenle uygulama,
+bunu ayarlayana kadar yüklenemez.
 </Warning>
 
 İki ana makine farklı kayıt edilebilir etki alanlarındaysa (sadece farklı
 alt etki alanları değilse), ayrıca HTTPS gerektiren `AUTH_COOKIE_SAME_SITE=none` değişkenini de ayarlayın.
+
+Çoklu çalışma alanı etkinleştirildiğinde, burada her çalışma alanının alt alan adını listelemeyin.
+Bunun yerine, API yollarını (`/graphql`, `/metadata`, `/rest`, `/auth/`,
+`/client-config`, `/file`) her çalışma alanı ana makine adında arka uca yönlendirin; böylece her çalışma alanı aynı kökende kalır — Twenty Cloud tam olarak böyle çalışır.
