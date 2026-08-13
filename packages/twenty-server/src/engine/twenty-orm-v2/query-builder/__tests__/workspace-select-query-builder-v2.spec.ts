@@ -1,5 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { In, LessThan } from 'typeorm';
+import { Equal, In, LessThan } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { type CompiledStatement } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
@@ -622,12 +622,40 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
     );
   });
 
-  it('should reject a plain value in an object-literal where', () => {
+  it('should treat a plain value in an object-literal where as equality', () => {
     const { queryBuilder } = buildQueryBuilder();
 
-    expect(() => queryBuilder.where({ companyId: 'company-1' })).toThrow(
-      TwentyOrmV2Exception,
-    );
+    queryBuilder
+      .setFindOptions({ select: { id: true } })
+      .where({ companyId: 'company-1' });
+
+    const [text, values] = queryBuilder.getQueryAndParameters();
+
+    expect(text).toContain('("person"."companyId" = $1)');
+    expect(values).toEqual(['company-1']);
+  });
+
+  it('should treat the Equal operator in an object-literal where as equality', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder
+      .setFindOptions({ select: { id: true } })
+      .where({ companyId: Equal('company-1') });
+
+    const [text, values] = queryBuilder.getQueryAndParameters();
+
+    expect(text).toContain('("person"."companyId" = $1)');
+    expect(values).toEqual(['company-1']);
+  });
+
+  it('should treat a null value in an object-literal where as IS NULL', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder
+      .setFindOptions({ select: { id: true } })
+      .where({ companyId: null });
+
+    expect(queryBuilder.getQuery()).toContain('("person"."companyId" IS NULL)');
   });
 
   it('should emit a GROUP BY with aggregate and grouped columns', () => {

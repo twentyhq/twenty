@@ -180,17 +180,32 @@ permission over the inserted columns, and emits `CREATED` then `UPSERTED` from a
 all-columns re-select of the inserted ids — matching the v1 insert builder. Records that
 set a relation or files field, and the whole upsert path (`ON CONFLICT`), stay on v1.
 
+## Transactions and merge
+
+`WorkspaceDataSourceV2.transaction(work)` checks a client out of the pool, wraps `work` in
+`BEGIN` / `COMMIT` (rolling back and rethrowing on error), and hands `work` a scope whose
+`getRepository` returns repositories bound to that client through a `ClientQueryExecutor`,
+so every statement and event snapshot inside runs on the one connection.
+
+`mergeMany` routes through it: `executeMergeWithinTransactionV2` re-points the losing
+records' foreign keys to the survivor across each related object, hard-deletes the losers,
+and updates the survivor with the merged data — each step a `runMutation` on a
+transaction-scoped repository, so the same `UPDATED`/`DESTROYED`/`UPSERTED` events fire as
+v1. A merge whose merged data would set a relation-by-name or files field carves back to v1
+(`isMergeSupportedByOrmV2`); relation join columns are plain FK writes and stay on v2. Its
+object-literal `where` support grew to cover scalar equality, `Equal`, and `IS NULL`
+alongside `In`.
+
 ## Not covered yet
 
 - Upsert. `ON CONFLICT` and the conflict-target derivation (which reads composite unique
   indexes off the flat index maps) still go through v1.
-- Merge. It runs a multi-statement transaction, so it waits on v2 transactions.
 - Relation connect/disconnect and files-field input on writes, resolved by
-  `RelationNestedQueries` / `FilesFieldSync`. Update and create carve these back to v1 per
-  request; upsert stays on v1 entirely until this input machinery has a v2 form.
+  `RelationNestedQueries` / `FilesFieldSync`. Update, create and merge carve these back to
+  v1 per request; upsert stays on v1 entirely until this input machinery has a v2 form.
 - `find` / `findOne` / `findBy` and the rest of the repository surface used by
   `src/modules`.
-- Transactions and DDL.
+- DDL.
 - Ordering group-by "with records" by a to-many relation: v2 refuses to-many joins, so
   it surfaces the standard "unsupported" user error rather than the row-multiplying join
   v1 would emit.

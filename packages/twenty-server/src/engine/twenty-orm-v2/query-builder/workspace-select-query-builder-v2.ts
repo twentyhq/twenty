@@ -566,19 +566,36 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
         );
       }
 
-      if (!(value instanceof FindOperator) || value.type !== 'in') {
-        throw new TwentyOrmV2Exception(
-          `Object where only supports the "in" operator on "${columnName}"`,
-          TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
-        );
+      const quotedColumn = quoteColumn(this.alias, columnName);
+
+      if (value === null) {
+        conditions.push(`${quotedColumn} IS NULL`);
+        continue;
       }
 
       const parameterName = `ormV2ObjectWhere_${objectWhereParameterSequence++}`;
 
-      conditions.push(
-        `${quoteColumn(this.alias, columnName)} IN (:...${parameterName})`,
-      );
-      parameters[parameterName] = value.value;
+      if (value instanceof FindOperator) {
+        if (value.type === 'in') {
+          conditions.push(`${quotedColumn} IN (:...${parameterName})`);
+          parameters[parameterName] = value.value;
+          continue;
+        }
+
+        if (value.type === 'equal') {
+          conditions.push(`${quotedColumn} = :${parameterName}`);
+          parameters[parameterName] = value.value;
+          continue;
+        }
+
+        throw new TwentyOrmV2Exception(
+          `Object where supports only the "in" and "equal" operators on "${columnName}"`,
+          TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
+        );
+      }
+
+      conditions.push(`${quotedColumn} = :${parameterName}`);
+      parameters[parameterName] = value;
     }
 
     return { sql: conditions.join(' AND '), parameters };
