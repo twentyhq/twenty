@@ -4,6 +4,7 @@ import { Temporal } from 'temporal-polyfill';
 import {
   FieldActorSource,
   FieldMetadataType,
+  RelationType,
   ViewFilterOperand as RecordFilterOperand,
   type ActorFilter,
   type AddressFilter,
@@ -19,7 +20,6 @@ import {
   type RawJsonFilter,
   type RecordFilterValueDependencies,
   type RecordGqlOperationFilter,
-  type RelationType,
   type RelationFilter,
   type SelectFilter,
   type StringFilter,
@@ -72,11 +72,21 @@ type FieldSharedMorphRelation = {
   };
 };
 
+type FieldSharedRelation = {
+  type: RelationType;
+  targetObjectMetadata: {
+    id: string;
+    nameSingular: string;
+    namePlural: string;
+  };
+};
+
 export type FieldShared = {
   id: string;
   name: string;
   type: FieldMetadataType;
   label: string;
+  relation?: FieldSharedRelation | null;
   morphRelations?: FieldSharedMorphRelation[] | null;
 };
 
@@ -117,11 +127,17 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
       return;
     }
 
+    const isOneToManyRelation =
+      sourceFieldMetadataItem.relation?.type === RelationType.ONE_TO_MANY;
+    const positiveOperand = isOneToManyRelation
+      ? getPositiveOperandForOneToManyTraversal(recordFilter.operand)
+      : undefined;
     const innerFilter = buildDirectFieldGqlOperationFilter({
       recordFilter: {
         ...recordFilter,
         fieldMetadataId: targetFieldMetadataItem.id,
         relationTargetFieldMetadataId: null,
+        operand: positiveOperand ?? recordFilter.operand,
       },
       fieldMetadataItem: targetFieldMetadataItem,
       filterValueDependencies,
@@ -131,9 +147,24 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
       return;
     }
 
-    return {
+    const relationTraversalFilter = {
       [sourceFieldMetadataItem.name]: innerFilter,
     } as RecordGqlOperationFilter;
+
+    return isOneToManyRelation && isDefined(positiveOperand)
+      ? { not: relationTraversalFilter }
+      : relationTraversalFilter;
+  }
+
+  if (
+    sourceFieldMetadataItem.type === FieldMetadataType.RELATION &&
+    sourceFieldMetadataItem.relation?.type === RelationType.ONE_TO_MANY
+  ) {
+    return buildOneToManyDirectRelationGqlOperationFilter({
+      recordFilter,
+      fieldMetadataItem: sourceFieldMetadataItem,
+      filterValueDependencies,
+    });
   }
 
   return buildDirectFieldGqlOperationFilter({
@@ -141,6 +172,87 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
     fieldMetadataItem: sourceFieldMetadataItem,
     filterValueDependencies,
   });
+};
+
+const getPositiveOperandForOneToManyTraversal = (
+  operand: RecordFilterOperand,
+): RecordFilterOperand | undefined => {
+  switch (operand) {
+    case RecordFilterOperand.IS_NOT:
+      return RecordFilterOperand.IS;
+    case RecordFilterOperand.DOES_NOT_CONTAIN:
+      return RecordFilterOperand.CONTAINS;
+    case RecordFilterOperand.IS_NOT_EXACTLY:
+      return RecordFilterOperand.IS_EXACTLY;
+    default:
+      return undefined;
+  }
+};
+
+const buildOneToManyDirectRelationGqlOperationFilter = ({
+  recordFilter,
+  fieldMetadataItem,
+  filterValueDependencies,
+}: BuildDirectFieldGqlOperationFilterParams):
+  | RecordGqlOperationFilter
+  | undefined => {
+  const relatedRecordExistsFilter = {
+    [fieldMetadataItem.name]: {
+      id: { is: 'NOT_NULL' } as UUIDFilter,
+    },
+  } as RecordGqlOperationFilter;
+
+  if (recordFilter.operand === RecordFilterOperand.IS_NOT_EMPTY) {
+    return relatedRecordExistsFilter;
+  }
+
+  if (recordFilter.operand === RecordFilterOperand.IS_EMPTY) {
+    return { not: relatedRecordExistsFilter };
+  }
+
+  const {
+    isCurrentWorkspaceMemberSelected,
+    isCurrentRecordSelected,
+    selectedRecordIds,
+  } = jsonRelationFilterValueSchema
+    .catch({
+      isCurrentWorkspaceMemberSelected: false,
+      isCurrentRecordSelected: false,
+      selectedRecordIds: arrayOfUuidOrVariableSchema.parse(recordFilter.value),
+    })
+    .parse(recordFilter.value);
+
+  const recordIds = [
+    ...selectedRecordIds,
+    ...(isCurrentWorkspaceMemberSelected
+      ? [filterValueDependencies.currentWorkspaceMemberId]
+      : []),
+    ...(isCurrentRecordSelected
+      ? [filterValueDependencies.currentRecord?.id]
+      : []),
+  ].filter(isDefined);
+
+  if (recordIds.length === 0) {
+    return;
+  }
+
+  const matchingRelatedRecordFilter = {
+    [fieldMetadataItem.name]: {
+      id: { in: recordIds } as UUIDFilter,
+    },
+  } as RecordGqlOperationFilter;
+
+  switch (recordFilter.operand) {
+    case RecordFilterOperand.IS:
+      return matchingRelatedRecordFilter;
+    case RecordFilterOperand.IS_NOT:
+      return { not: matchingRelatedRecordFilter };
+    default:
+      throw new CustomError(
+        `Unknown operand ${recordFilter.operand} for one-to-many relation filter`,
+        'UNKNOWN_OPERAND_FOR_FILTER',
+      );
+  }
 };
 
 type BuildDirectFieldGqlOperationFilterParams = {

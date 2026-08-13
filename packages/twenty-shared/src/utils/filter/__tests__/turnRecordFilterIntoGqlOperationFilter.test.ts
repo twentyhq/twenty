@@ -57,6 +57,20 @@ const fields = [
     label: 'Account Owner',
   },
   {
+    id: 'f-one-to-many-relation',
+    name: 'fellowships',
+    type: FieldMetadataType.RELATION,
+    label: 'Fellowships',
+    relation: {
+      type: RelationType.ONE_TO_MANY,
+      targetObjectMetadata: {
+        id: 'fellowship-object-id',
+        nameSingular: 'fellowship',
+        namePlural: 'fellowships',
+      },
+    },
+  },
+  {
     id: 'f-morph-relation',
     name: 'target',
     type: FieldMetadataType.MORPH_RELATION,
@@ -1136,6 +1150,25 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
       expect(result).toEqual({ company: { name: { ilike: '%Acme%' } } });
     });
 
+    it('should preserve a negative target operand for a many-to-one relation', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: {
+          ...makeFilter(
+            'f-relation',
+            RecordFilterOperand.DOES_NOT_CONTAIN,
+            'Acme',
+          ),
+          relationTargetFieldMetadataId: 'f-text',
+        } as RecordFilter,
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        company: { not: { name: { ilike: '%Acme%' } } },
+      });
+    });
+
     // If the target field is no longer resolvable (e.g. it was
     // deleted from the workspace), dropping the filter is the safe path —
     // the alternative would silently interpret the text value as a UUID
@@ -1256,6 +1289,99 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
         company: {
           accountOwnerId: { in: ['11111111-1111-4111-8111-111111111111'] },
         },
+      });
+    });
+
+    it('should filter a one-to-many relation by a related record id', () => {
+      const relatedRecordId = '550e8400-e29b-41d4-a716-446655440000';
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-one-to-many-relation',
+          RecordFilterOperand.IS,
+          JSON.stringify([relatedRecordId]),
+          'RELATION',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        fellowships: { id: { in: [relatedRecordId] } },
+      });
+    });
+
+    it('should compile one-to-many IS_NOT as no matching related record', () => {
+      const relatedRecordId = '550e8400-e29b-41d4-a716-446655440000';
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-one-to-many-relation',
+          RecordFilterOperand.IS_NOT,
+          JSON.stringify([relatedRecordId]),
+          'RELATION',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        not: { fellowships: { id: { in: [relatedRecordId] } } },
+      });
+    });
+
+    it('should compile one-to-many emptiness as absence of related records', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-one-to-many-relation',
+          RecordFilterOperand.IS_EMPTY,
+          '',
+          'RELATION',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        not: { fellowships: { id: { is: 'NOT_NULL' } } },
+      });
+    });
+
+    it('should compile a positive one-to-many target condition as any matching record', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: {
+          ...makeFilter(
+            'f-one-to-many-relation',
+            RecordFilterOperand.IS,
+            '["ACTIVE"]',
+            'SELECT',
+          ),
+          relationTargetFieldMetadataId: 'f-select',
+        } as RecordFilter,
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        fellowships: { status: { in: ['ACTIVE'] } },
+      });
+    });
+
+    it('should compile a negative one-to-many target condition as no positive match', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: {
+          ...makeFilter(
+            'f-one-to-many-relation',
+            RecordFilterOperand.IS_NOT,
+            '["ACTIVE"]',
+            'SELECT',
+          ),
+          relationTargetFieldMetadataId: 'f-select',
+        } as RecordFilter,
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        not: { fellowships: { status: { in: ['ACTIVE'] } } },
       });
     });
   });

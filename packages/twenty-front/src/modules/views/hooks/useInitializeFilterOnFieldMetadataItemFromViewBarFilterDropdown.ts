@@ -5,6 +5,7 @@ import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
+import { relationTargetFieldMetadataIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/relationTargetFieldMetadataIdUsedInDropdownComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
@@ -51,6 +52,11 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
         objectFilterDropdownSearchInputComponentState,
       );
 
+    const relationTargetFieldMetadataIdUsedInDropdownCallbackState =
+      useAtomComponentStateCallbackState(
+        relationTargetFieldMetadataIdUsedInDropdownComponentState,
+      );
+
     const { upsertObjectFilterDropdownCurrentFilter } =
       useUpsertObjectFilterDropdownCurrentFilter();
 
@@ -61,24 +67,35 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
 
     const initializeFilterOnFieldMetataItemFromViewBarFilterDropdown =
       useCallback(
-        (fieldMetadataItem: FieldMetadataItem) => {
+        (
+          fieldMetadataItem: FieldMetadataItem,
+          relationTargetFieldMetadataItem?: FieldMetadataItem,
+        ) => {
           store.set(
             fieldMetadataItemUsedInDropdownCallbackState,
             fieldMetadataItem.id,
+          );
+          store.set(
+            relationTargetFieldMetadataIdUsedInDropdownCallbackState,
+            relationTargetFieldMetadataItem?.id ?? null,
           );
 
           const currentRecordFilters = store.get(
             currentRecordFiltersCallbackState,
           );
 
-          const filterType = getFilterTypeFromFieldType(fieldMetadataItem.type);
+          const effectiveFieldMetadataItem =
+            relationTargetFieldMetadataItem ?? fieldMetadataItem;
+          const filterType = getFilterTypeFromFieldType(
+            effectiveFieldMetadataItem.type,
+          );
 
           if (filterType === 'RELATION' || filterType === 'SELECT') {
             pushFocusItemToFocusStack({
               focusId: ViewBarFilterDropdownIds.MAIN,
               component: {
                 type: FocusComponentType.DROPDOWN,
-                instanceId: fieldMetadataItem.id,
+                instanceId: effectiveFieldMetadataItem.id,
               },
               globalHotkeysConfig: {
                 enableGlobalHotkeysConflictingWithKeyboard: false,
@@ -98,6 +115,8 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
             findDuplicateRecordFilterInNonAdvancedRecordFilters({
               recordFilters: currentRecordFilters,
               fieldMetadataItemId: fieldMetadataItem.id,
+              relationTargetFieldMetadataId:
+                relationTargetFieldMetadataItem?.id,
             });
 
           const filterIsAlreadyInCurrentRecordFilters = isDefined(
@@ -117,27 +136,37 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
           } else {
             store.set(selectedOperandInDropdownCallbackState, defaultOperand);
 
-            if (filterType === 'DATE' || filterType === 'DATE_TIME') {
+            if (
+              isDefined(relationTargetFieldMetadataItem) ||
+              filterType === 'DATE' ||
+              filterType === 'DATE_TIME'
+            ) {
               const { displayValue, value } = getInitialFilterValue(
                 filterType,
                 defaultOperand,
               );
 
-              const initialDateRecordFilter: RecordFilter = {
+              const initialRecordFilter: RecordFilter = {
                 id: v4(),
                 fieldMetadataId: fieldMetadataItem.id,
                 operand: defaultOperand,
                 displayValue,
-                label: fieldMetadataItem.label,
+                label: isDefined(relationTargetFieldMetadataItem)
+                  ? `${fieldMetadataItem.label} → ${relationTargetFieldMetadataItem.label}`
+                  : fieldMetadataItem.label,
                 type: filterType,
                 value,
+                relationTargetFieldMetadataId:
+                  relationTargetFieldMetadataItem?.id,
               };
 
-              upsertObjectFilterDropdownCurrentFilter(initialDateRecordFilter);
+              if (filterType === 'DATE' || filterType === 'DATE_TIME') {
+                upsertObjectFilterDropdownCurrentFilter(initialRecordFilter);
+              }
 
               store.set(
                 objectFilterDropdownCurrentRecordFilterCallbackState,
-                initialDateRecordFilter,
+                initialRecordFilter,
               );
             }
           }
@@ -148,6 +177,7 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
           currentRecordFiltersCallbackState,
           objectFilterDropdownFilterIsSelectedCallbackState,
           objectFilterDropdownSearchInputCallbackState,
+          relationTargetFieldMetadataIdUsedInDropdownCallbackState,
           pushFocusItemToFocusStack,
           objectFilterDropdownCurrentRecordFilterCallbackState,
           selectedOperandInDropdownCallbackState,

@@ -14,9 +14,12 @@ import { ObjectFilterDropdownTextInput } from '@/object-record/object-filter-dro
 import { NUMBER_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/NumberFilterTypes';
 import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/TextFilterTypes';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
+import { relationTargetFieldMetadataIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/relationTargetFieldMetadataIdUsedInDropdownComponentState';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
 
 type ObjectFilterDropdownFilterInputProps = {
@@ -35,6 +38,21 @@ export const ObjectFilterDropdownFilterInput = ({
   const selectedOperandInDropdown = useAtomComponentStateValue(
     selectedOperandInDropdownComponentState,
   );
+
+  const relationTargetFieldMetadataIdUsedInDropdown =
+    useAtomComponentStateValue(
+      relationTargetFieldMetadataIdUsedInDropdownComponentState,
+    );
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+  const relationTargetFieldMetadataItem = isDefined(
+    relationTargetFieldMetadataIdUsedInDropdown,
+  )
+    ? objectMetadataItems
+        .flatMap((objectMetadataItem) => objectMetadataItem.fields)
+        .find(
+          (field) => field.id === relationTargetFieldMetadataIdUsedInDropdown,
+        )
+    : null;
 
   const isOperandWithFilterValue =
     selectedOperandInDropdown &&
@@ -57,8 +75,10 @@ export const ObjectFilterDropdownFilterInput = ({
     return null;
   }
 
+  const effectiveFieldMetadataItem =
+    relationTargetFieldMetadataItem ?? fieldMetadataItemUsedInDropdown;
   const filterType = getFilterTypeFromFieldType(
-    fieldMetadataItemUsedInDropdown.type,
+    effectiveFieldMetadataItem.type,
   );
 
   const isOnlyOperand = !isOperandWithFilterValue;

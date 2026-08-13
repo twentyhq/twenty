@@ -4,7 +4,11 @@ import {
   type ObjectLiteral,
   type WhereExpressionBuilder,
 } from 'typeorm';
-import { compositeTypeDefinitions, RelationType } from 'twenty-shared/types';
+import {
+  compositeTypeDefinitions,
+  FieldMetadataType,
+  RelationType,
+} from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
 import { MAX_RELATION_FILTER_DEPTH } from 'src/engine/api/common/common-args-processors/filter-arg-processor/constants/max-relation-filter-depth.constant';
@@ -18,11 +22,13 @@ import { resolveFilterKeyFieldMetadata } from 'src/engine/api/graphql/graphql-qu
 import { assertArrayOperatorValueIsNonEmptyArray } from 'src/engine/api/graphql/graphql-query-runner/utils/assert-array-operator-value-is-non-empty-array.util';
 import { computeWhereConditionParts } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-where-condition-parts';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
+import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
@@ -31,6 +37,8 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
+import { renderRowLevelPermissionFilterToSql } from 'src/engine/twenty-orm/utils/render-row-level-permission-filter-to-sql.util';
+import { resolveRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/resolve-row-level-permission-record-filter.util';
 
 import { GraphqlQueryFilterConditionParser } from './graphql-query-filter-condition.parser';
 
@@ -100,7 +108,9 @@ export class GraphqlQueryFilterFieldParser {
     if (
       isReferencedByFieldName &&
       isMorphOrRelationFlatFieldMetadata(fieldMetadata) &&
-      fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE
+      (fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE ||
+        (isFlatFieldMetadataOfType(fieldMetadata, FieldMetadataType.RELATION) &&
+          fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY))
     ) {
       return this.parseRelationSubFilter(
         queryBuilder,
@@ -190,6 +200,21 @@ export class GraphqlQueryFilterFieldParser {
       );
     }
 
+    if (
+      isFlatFieldMetadataOfType(fieldMetadata, FieldMetadataType.RELATION) &&
+      fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY
+    ) {
+      return this.parseOneToManyRelationSubFilter(
+        queryBuilder,
+        outerQueryBuilder,
+        parentAlias,
+        fieldMetadata,
+        targetObjectMetadata,
+        filterValue,
+        isFirst,
+      );
+    }
+
     const joinAlias = fieldMetadata.name;
 
     addRelationJoinAliasToQueryBuilder({
@@ -218,6 +243,120 @@ export class GraphqlQueryFilterFieldParser {
       queryBuilder.where(subBrackets);
     } else {
       queryBuilder.andWhere(subBrackets);
+    }
+  }
+
+  private parseOneToManyRelationSubFilter(
+    queryBuilder: WhereExpressionBuilder,
+    outerQueryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>,
+    parentAlias: string,
+    fieldMetadata: FlatFieldMetadata<FieldMetadataType.RELATION>,
+    targetObjectMetadata: FlatObjectMetadata,
+    filterValue: Partial<ObjectRecordFilter>,
+    isFirst: boolean,
+  ): void {
+    if (!isDefined(fieldMetadata.relationTargetFieldMetadataId)) {
+      throw new GraphqlQueryRunnerException(
+        `Relation filter on "${fieldMetadata.name}" is missing a target field`,
+        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        { userFriendlyMessage: msg`Relation filter is misconfigured` },
+      );
+    }
+
+    const targetRelationFieldMetadata =
+      findFlatEntityByIdInFlatEntityMaps<FlatFieldMetadata>({
+        flatEntityId: fieldMetadata.relationTargetFieldMetadataId,
+        flatEntityMaps: this.flatFieldMetadataMaps,
+      });
+
+    if (
+      !isDefined(targetRelationFieldMetadata) ||
+      !isFlatFieldMetadataOfType(
+        targetRelationFieldMetadata,
+        FieldMetadataType.RELATION,
+      ) ||
+      targetRelationFieldMetadata.settings?.relationType !==
+        RelationType.MANY_TO_ONE
+    ) {
+      throw new GraphqlQueryRunnerException(
+        `Relation filter on "${fieldMetadata.name}" has an invalid target field`,
+        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        { userFriendlyMessage: msg`Relation filter is misconfigured` },
+      );
+    }
+
+    const parentEntityMetadata =
+      outerQueryBuilder.expressionMap.findAliasByName(parentAlias).metadata;
+    const typeormRelationMetadata =
+      parentEntityMetadata.findRelationWithPropertyPath(fieldMetadata.name);
+
+    if (!isDefined(typeormRelationMetadata)) {
+      throw new GraphqlQueryRunnerException(
+        `Relation metadata not found for "${parentAlias}.${fieldMetadata.name}"`,
+        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        { userFriendlyMessage: msg`Relation filter is misconfigured` },
+      );
+    }
+
+    const targetAlias = `${parentAlias}_${fieldMetadata.name}_exists_${this.depth}`;
+    const targetJoinColumnName = computeMorphOrRelationFieldJoinColumnName({
+      name: targetRelationFieldMetadata.name,
+    });
+    const subQuery = outerQueryBuilder
+      .subQuery()
+      .select('1')
+      .from(typeormRelationMetadata.inverseEntityMetadata.target, targetAlias);
+
+    const childConditionParser = new GraphqlQueryFilterConditionParser(
+      targetObjectMetadata,
+      this.flatFieldMetadataMaps,
+      this.flatObjectMetadataMaps,
+      this.depth + 1,
+    );
+
+    childConditionParser.applyFilterEntriesToWhereBrackets(
+      subQuery,
+      outerQueryBuilder,
+      targetAlias,
+      filterValue,
+    );
+
+    subQuery.andWhere(
+      `"${targetAlias}"."${targetJoinColumnName}" = "${parentAlias}"."id"`,
+    );
+
+    if (!outerQueryBuilder.shouldBypassPermissionChecks) {
+      const rowLevelPermissionFilter = resolveRowLevelPermissionRecordFilter({
+        internalContext: outerQueryBuilder.internalContext,
+        authContext: outerQueryBuilder.authContext,
+        objectMetadata: targetObjectMetadata,
+      });
+
+      if (isDefined(rowLevelPermissionFilter)) {
+        const renderedPermissionFilter = renderRowLevelPermissionFilterToSql({
+          recordFilter: rowLevelPermissionFilter,
+          tableAlias: targetAlias,
+          objectMetadata: targetObjectMetadata,
+          flatFieldMetadataMaps:
+            outerQueryBuilder.internalContext.flatFieldMetadataMaps,
+        });
+
+        if (isDefined(renderedPermissionFilter)) {
+          subQuery.andWhere(
+            renderedPermissionFilter.sql,
+            renderedPermissionFilter.parameters,
+          );
+        }
+      }
+    }
+
+    const existsCondition = `EXISTS ${subQuery.getQuery()}`;
+    const parameters = subQuery.getParameters();
+
+    if (isFirst) {
+      queryBuilder.where(existsCondition, parameters);
+    } else {
+      queryBuilder.andWhere(existsCondition, parameters);
     }
   }
 

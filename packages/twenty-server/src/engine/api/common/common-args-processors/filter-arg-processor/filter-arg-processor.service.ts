@@ -200,7 +200,13 @@ export class FilterArgProcessorService {
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
     depth: number,
   ): ObjectRecordFilter {
-    if (fieldMetadata.settings?.relationType !== RelationType.MANY_TO_ONE) {
+    const isManyToOneRelation =
+      fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE;
+    const isOneToManyRelation =
+      isFlatFieldMetadataOfType(fieldMetadata, FieldMetadataType.RELATION) &&
+      fieldMetadata.settings?.relationType === RelationType.ONE_TO_MANY;
+
+    if (!isManyToOneRelation && !isOneToManyRelation) {
       throw new CommonQueryRunnerException(
         `Cannot filter by relation field "${key}"`,
         CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
@@ -211,6 +217,16 @@ export class FilterArgProcessorService {
     }
 
     if (typeof filterValue !== 'object' || filterValue === null) {
+      if (isOneToManyRelation) {
+        throw new CommonQueryRunnerException(
+          `Cannot filter one-to-many relation field "${key}" without a related-record filter`,
+          CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
+          {
+            userFriendlyMessage: msg`Invalid filter: choose a field on a related record for "${key}"`,
+          },
+        );
+      }
+
       throwUseJoinColumnInstead(key);
     }
 
@@ -220,6 +236,14 @@ export class FilterArgProcessorService {
       !isDefined(flatObjectMetadataMaps) ||
       !isDefined(targetObjectMetadataId)
     ) {
+      if (isOneToManyRelation) {
+        throw new CommonQueryRunnerException(
+          `Cannot resolve the target object for one-to-many relation field "${key}"`,
+          CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
+          { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+        );
+      }
+
       throwUseJoinColumnInstead(key);
     }
 
@@ -230,6 +254,14 @@ export class FilterArgProcessorService {
       });
 
     if (!isDefined(targetObjectMetadata)) {
+      if (isOneToManyRelation) {
+        throw new CommonQueryRunnerException(
+          `Cannot resolve the target object for one-to-many relation field "${key}"`,
+          CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
+          { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+        );
+      }
+
       throwUseJoinColumnInstead(key);
     }
 
