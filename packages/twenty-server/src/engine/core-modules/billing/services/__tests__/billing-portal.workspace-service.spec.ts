@@ -3,10 +3,7 @@
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import {
-  BillingException,
-  BillingExceptionCode,
-} from 'src/engine/core-modules/billing/billing.exception';
+import { BillingExceptionCode } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
@@ -139,43 +136,24 @@ describe('BillingPortalWorkspaceService', () => {
       SubscriptionStatus.PastDue,
       SubscriptionStatus.Unpaid,
       SubscriptionStatus.Paused,
+      SubscriptionStatus.Incomplete,
+      SubscriptionStatus.IncompleteExpired,
     ])(
-      'should return the success url without creating a subscription when customer already has a %s subscription',
+      'should throw without creating a subscription when customer already has a %s subscription',
       async (status) => {
         billingCustomerRepository.findOne.mockResolvedValue(
           buildCustomer([status]),
         );
 
-        const result = await callCreateDirectSubscription();
-
-        expect(result).toBe('https://acme.twenty.com/success');
+        await expect(callCreateDirectSubscription()).rejects.toMatchObject({
+          message: 'Customer already has a non-canceled billing subscription',
+          code: BillingExceptionCode.BILLING_SUBSCRIPTION_ALREADY_EXISTS,
+        });
         expect(
           stripeCheckoutService.createDirectSubscription,
         ).not.toHaveBeenCalled();
         expect(
           billingSubscriptionService.syncSubscriptionToDatabase,
-        ).not.toHaveBeenCalled();
-      },
-    );
-
-    it.each([
-      SubscriptionStatus.Incomplete,
-      SubscriptionStatus.IncompleteExpired,
-    ])(
-      'should throw when customer only has an %s subscription',
-      async (status) => {
-        billingCustomerRepository.findOne.mockResolvedValue(
-          buildCustomer([status]),
-        );
-
-        await expect(callCreateDirectSubscription()).rejects.toThrow(
-          new BillingException(
-            'Customer already has a non-canceled billing subscription',
-            BillingExceptionCode.BILLING_SUBSCRIPTION_INVALID,
-          ),
-        );
-        expect(
-          stripeCheckoutService.createDirectSubscription,
         ).not.toHaveBeenCalled();
       },
     );
