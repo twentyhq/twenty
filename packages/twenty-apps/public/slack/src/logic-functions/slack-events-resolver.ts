@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { Response } from 'twenty-sdk/logic-function';
+import { isDefined } from 'twenty-sdk/utils';
 
 import {
   SLACK_CHANNEL_WELCOME_UNIVERSAL_IDENTIFIER,
@@ -74,7 +75,7 @@ export const slackEventsResolverHandler = async (
 
     const claimedWorkspaceId = await findClaimedWorkspaceId(body.team_id);
 
-    if (claimedWorkspaceId === null) {
+    if (!isDefined(claimedWorkspaceId)) {
       return new Response({
         ok: true,
         skipped: 'No workspace claims this Slack team',
