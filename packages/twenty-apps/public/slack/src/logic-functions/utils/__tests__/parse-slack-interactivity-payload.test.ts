@@ -29,4 +29,20 @@ describe('parseSlackInteractivityPayload', () => {
       parseSlackInteractivityPayload({ payload: 'not-json' }),
     ).toThrow('Slack interactivity payload is not valid JSON');
   });
+
+  it('should throw when the payload JSON has an unexpected shape', () => {
+    expect(() =>
+      parseSlackInteractivityPayload({ payload: '"a string"' }),
+    ).toThrow('Slack interactivity payload has an unexpected shape');
+    expect(() =>
+      parseSlackInteractivityPayload({
+        payload: JSON.stringify({ type: 'block_actions', actions: 'no' }),
+      }),
+    ).toThrow('Slack interactivity payload has an unexpected shape');
+    expect(() =>
+      parseSlackInteractivityPayload({
+        payload: JSON.stringify({ team: { id: 42 } }),
+      }),
+    ).toThrow('Slack interactivity payload has an unexpected shape');
+  });
 });

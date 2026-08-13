@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_ASSISTANT_FEEDBACK_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { SLACK_ASSISTANT_FEEDBACK_ACTION_ID } from 'src/logic-functions/constants/slack-assistant-feedback-action-id';
@@ -15,7 +16,7 @@ export const slackAssistantFeedbackHandler = async (
     (action) => action.action_id === SLACK_ASSISTANT_FEEDBACK_ACTION_ID,
   );
 
-  if (feedbackAction === undefined) {
+  if (!isDefined(feedbackAction)) {
     return { skipped: true, reason: 'No assistant feedback action in payload' };
   }
 
@@ -30,7 +31,7 @@ export const slackAssistantFeedbackHandler = async (
     feedbackAction.value,
   );
 
-  if (feedbackRating === undefined) {
+  if (!isDefined(feedbackRating)) {
     return {
       skipped: true,
       reason: `Unknown feedback button value: ${feedbackAction.value}`,

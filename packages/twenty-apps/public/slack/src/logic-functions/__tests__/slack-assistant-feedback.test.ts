@@ -49,6 +49,7 @@ describe('slackAssistantFeedbackHandler', () => {
   it('should store a positive rating on the request record', async () => {
     const result = await slackAssistantFeedbackHandler(buildPayload());
 
+    expect(updateSlackAssistantRequestFeedbackMock).toHaveBeenCalledTimes(1);
     expect(updateSlackAssistantRequestFeedbackMock).toHaveBeenCalledWith(
       expect.anything(),
       { id: REQUEST_ID, feedbackRating: 'POSITIVE' },
@@ -61,6 +62,7 @@ describe('slackAssistantFeedbackHandler', () => {
       buildPayload({ value: 'negative_feedback' }),
     );
 
+    expect(updateSlackAssistantRequestFeedbackMock).toHaveBeenCalledTimes(1);
     expect(updateSlackAssistantRequestFeedbackMock).toHaveBeenCalledWith(
       expect.anything(),
       { id: REQUEST_ID, feedbackRating: 'NEGATIVE' },
