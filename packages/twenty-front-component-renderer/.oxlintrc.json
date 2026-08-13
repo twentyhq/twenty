@@ -5,7 +5,13 @@
   "categories": {
     "correctness": "off"
   },
-  "ignorePatterns": ["node_modules", "dist"],
+  "ignorePatterns": [
+    "node_modules",
+    "dist",
+    "src/__stories__/example-sources-built",
+    "src/__stories__/example-sources-built-preact",
+    "src/remote/sandbox/generated"
+  ],
   "rules": {
     "func-style": ["error", "declaration", { "allowArrowFunctions": true }],
     "no-console": "off",
