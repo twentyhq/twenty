@@ -70,6 +70,15 @@ describe('isMatchingSelectFilter', () => {
         }),
       ).toBe(true);
     });
+
+    it('should not match a null value, mirroring SQL semantics', () => {
+      expect(
+        isMatchingSelectFilter({
+          selectFilter: { neq: 'ACTIVE' },
+          value: null,
+        }),
+      ).toBe(false);
+    });
   });
 
   describe('comparison operators', () => {

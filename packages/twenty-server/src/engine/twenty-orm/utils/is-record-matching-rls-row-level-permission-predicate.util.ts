@@ -30,6 +30,7 @@ import {
   type UUIDFilter,
 } from 'twenty-shared/types';
 import {
+  getOrderedOptionValues,
   isDefined,
   isEmptyObject,
   isMatchingArrayFilter,
@@ -195,19 +196,6 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
     flatFieldMetadataMaps,
   );
 
-  const getOrderedOptionValues = (
-    fieldMetadata: FlatFieldMetadata,
-  ): string[] => {
-    const options = (fieldMetadata.options ?? []) as {
-      value: string;
-      position: number;
-    }[];
-
-    return [...options]
-      .sort((optionA, optionB) => optionA.position - optionB.position)
-      .map((option) => option.value);
-  };
-
   return Object.entries(filter).every(([filterKey, filterValue]) => {
     if (!isDefined(filterValue)) {
       throw new Error(
@@ -251,7 +239,9 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
         return isMatchingRatingFilter({
           ratingFilter: filterValue as RatingFilter,
           value: recordFieldValue,
-          orderedOptionValues: getOrderedOptionValues(objectMetadataField),
+          orderedOptionValues: getOrderedOptionValues(
+            objectMetadataField.options,
+          ),
         });
       case FieldMetadataType.TEXT: {
         return isMatchingStringFilter({
@@ -269,7 +259,9 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
         return isMatchingSelectFilter({
           selectFilter: filterValue as SelectFilter,
           value: recordFieldValue,
-          orderedOptionValues: getOrderedOptionValues(objectMetadataField),
+          orderedOptionValues: getOrderedOptionValues(
+            objectMetadataField.options,
+          ),
         });
       case FieldMetadataType.MULTI_SELECT:
         return isMatchingMultiSelectFilter({

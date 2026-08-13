@@ -26,7 +26,7 @@ export const isMatchingSelectFilter = ({
       return value === selectFilter.eq;
     }
     case selectFilter.neq !== undefined: {
-      return value !== selectFilter.neq;
+      return value !== null && value !== selectFilter.neq;
     }
     case selectFilter.gt !== undefined: {
       const comparison = compareSelectOptionValues({
