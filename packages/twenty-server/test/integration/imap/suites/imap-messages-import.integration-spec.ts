@@ -45,6 +45,10 @@ describe('IMAP messages import (integration)', () => {
 
     greenmail = await startGreenmailContainer();
 
+    // The account save authenticates against IMAP straight away, and GreenMail
+    // only creates the user once mail has been delivered to it.
+    await deliverMessage(`IMAP mailbox seed ${randomUUID()}`);
+
     const { data } = await saveImapSmtpCaldavAccount({
       input: {
         handle: HANDLE,
