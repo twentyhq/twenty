@@ -46,6 +46,10 @@ type CalendarEventNode = {
 class FakeCoreApiClient {
   callRecordings: CallRecordingNode[];
   calendarEvents: CalendarEventNode[];
+  externalBotIdWriteFailure?: Error;
+  deleteCallRecordingBeforeExternalBotIdWriteFailure = false;
+  callRecordingReadFailureAfterExternalBotIdWriteFailure?: Error;
+  hasExternalBotIdWriteFailed = false;
 
   constructor({
     callRecordings = [],
@@ -60,6 +64,14 @@ class FakeCoreApiClient {
 
   async query(query: any): Promise<any> {
     if (query.callRecordings !== undefined) {
+      if (
+        this.hasExternalBotIdWriteFailed &&
+        this.callRecordingReadFailureAfterExternalBotIdWriteFailure !==
+          undefined
+      ) {
+        throw this.callRecordingReadFailureAfterExternalBotIdWriteFailure;
+      }
+
       const filter = query.callRecordings.__args.filter;
       const matches =
         filter.id?.in !== undefined
@@ -94,6 +106,22 @@ class FakeCoreApiClient {
   async mutation(mutation: any): Promise<any> {
     if (mutation.updateCallRecording !== undefined) {
       const { id, data } = mutation.updateCallRecording.__args;
+
+      if (
+        data.externalBotId !== undefined &&
+        this.externalBotIdWriteFailure !== undefined
+      ) {
+        this.hasExternalBotIdWriteFailed = true;
+
+        if (this.deleteCallRecordingBeforeExternalBotIdWriteFailure) {
+          this.callRecordings = this.callRecordings.filter(
+            (callRecording) => callRecording.id !== id,
+          );
+        }
+
+        throw this.externalBotIdWriteFailure;
+      }
+
       const callRecording = this.callRecordings.find(
         (candidate) => candidate.id === id,
       );
@@ -165,6 +193,13 @@ const stubRecallApi = ({
         });
       }
 
+      if (
+        method === 'DELETE' &&
+        requestUrl === `${RECALL_BASE_URL}/bot/recall-bot-1/`
+      ) {
+        return new Response(null, { status: 204 });
+      }
+
       throw new Error(`Unhandled fetch in test: ${method} ${requestUrl}`);
     },
   );
@@ -182,6 +217,11 @@ const listBotRequestUrls = (): string[] =>
 const createBotCalls = () =>
   fetchMock.mock.calls.filter(
     ([, requestInit]) => requestInit?.method === 'POST',
+  );
+
+const cancelBotCalls = () =>
+  fetchMock.mock.calls.filter(
+    ([, requestInit]) => requestInit?.method === 'DELETE',
   );
 
 describe('scheduleRecallBotsForPendingCallRecordings', () => {
@@ -243,6 +283,65 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     expect(client.callRecordings[0].externalBotId).toBe('recall-bot-1');
   });
 
+  it('cancels a created bot when its call recording was deleted before id write-back', async () => {
+    const client = new FakeCoreApiClient({
+      callRecordings: [buildPendingCallRecording()],
+      calendarEvents: [buildCalendarEvent()],
+    });
+    client.externalBotIdWriteFailure = new Error('call recording not found');
+    client.deleteCallRecordingBeforeExternalBotIdWriteFailure = true;
+
+    const result = await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(result.scheduledCallRecordingIds).toEqual([]);
+    expect(createBotCalls()).toHaveLength(1);
+    expect(cancelBotCalls()).toHaveLength(1);
+    expect(client.callRecordings).toEqual([]);
+  });
+
+  it('propagates an id write-back failure when the call recording still exists', async () => {
+    const client = new FakeCoreApiClient({
+      callRecordings: [buildPendingCallRecording()],
+      calendarEvents: [buildCalendarEvent()],
+    });
+    client.externalBotIdWriteFailure = new Error('database unavailable');
+
+    await expect(
+      scheduleRecallBotsForPendingCallRecordings({
+        client: client as unknown as CoreApiClient,
+        now: NOW,
+      }),
+    ).rejects.toThrow('database unavailable');
+
+    expect(createBotCalls()).toHaveLength(1);
+    expect(cancelBotCalls()).toHaveLength(0);
+    expect(client.callRecordings[0].externalBotId).toBeNull();
+  });
+
+  it('propagates an id write-back failure when the call recording cannot be re-read', async () => {
+    const client = new FakeCoreApiClient({
+      callRecordings: [buildPendingCallRecording()],
+      calendarEvents: [buildCalendarEvent()],
+    });
+    client.externalBotIdWriteFailure = new Error('write unavailable');
+    client.callRecordingReadFailureAfterExternalBotIdWriteFailure = new Error(
+      'read unavailable',
+    );
+
+    await expect(
+      scheduleRecallBotsForPendingCallRecordings({
+        client: client as unknown as CoreApiClient,
+        now: NOW,
+      }),
+    ).rejects.toThrow('write unavailable');
+
+    expect(createBotCalls()).toHaveLength(1);
+    expect(cancelBotCalls()).toHaveLength(0);
+  });
+
   it('attaches an existing bot claiming the recording instead of scheduling a duplicate', async () => {
     stubRecallApi({
       listedBots: [
@@ -276,9 +375,7 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     expect(lookupParameters.get('metadata__twentyWorkspaceId')).toBe(
       WORKSPACE_ID,
     );
-    expect(lookupParameters.has('metadata__twentyCallRecordingId')).toBe(
-      false,
-    );
+    expect(lookupParameters.has('metadata__twentyCallRecordingId')).toBe(false);
     expect(lookupParameters.has('join_at_after')).toBe(false);
     expect(lookupParameters.has('join_at_before')).toBe(false);
     expect(lookupParameters.getAll('status')).toEqual([

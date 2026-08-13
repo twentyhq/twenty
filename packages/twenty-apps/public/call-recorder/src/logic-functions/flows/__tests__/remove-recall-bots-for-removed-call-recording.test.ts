@@ -178,4 +178,56 @@ describe('removeRecallBotsForRemovedCallRecording', () => {
       `Failed to find Recall bots for removed CallRecording ${CALL_RECORDING_ID}`,
     );
   });
+
+  it('removes fetched bots before reporting a truncated exact lookup', async () => {
+    let listPageCount = 0;
+
+    fetchMock.mockImplementation(
+      async (requestUrl: string, requestInit?: RequestInit) => {
+        if (requestInit?.method === 'DELETE') {
+          return new Response(null, { status: 204 });
+        }
+
+        if (requestUrl.startsWith(`${BASE_URL}/bot/?`)) {
+          listPageCount += 1;
+
+          return new Response(
+            JSON.stringify({
+              next: `${BASE_URL}/bot/?cursor=page-${listPageCount + 1}`,
+              results:
+                listPageCount === 1
+                  ? [
+                      {
+                        id: 'recall-bot-fetched',
+                        metadata: {
+                          twentyWorkspaceId: WORKSPACE_ID,
+                          twentyCallRecordingId: CALL_RECORDING_ID,
+                        },
+                      },
+                    ]
+                  : [],
+            }),
+            { status: 200 },
+          );
+        }
+
+        throw new Error(`Unhandled fetch in test: ${requestUrl}`);
+      },
+    );
+
+    await expect(
+      removeRecallBotsForRemovedCallRecording({
+        callRecordingId: CALL_RECORDING_ID,
+        botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
+      }),
+    ).rejects.toThrow(
+      `Failed to find every Recall bot for removed CallRecording ${CALL_RECORDING_ID}`,
+    );
+
+    expect(listPageCount).toBe(10);
+    expect(fetchMock).toHaveBeenCalledWith(
+      `${BASE_URL}/bot/recall-bot-fetched/`,
+      expect.objectContaining({ method: 'DELETE' }),
+    );
+  });
 });

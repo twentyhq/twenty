@@ -3,17 +3,19 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 import { type MeetingRecording } from 'src/logic-functions/types/meeting-recording.type';
 import { buildRecallBotAutomaticVideoOutput } from 'src/logic-functions/domain/build-recall-bot-automatic-video-output.util';
 import { buildRecallRoutingMetadata } from 'src/logic-functions/domain/build-recall-routing-metadata.util';
 import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
+import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
+import { cancelOrEjectRecallBot } from 'src/logic-functions/recall-api/cancel-or-eject-recall-bot.util';
 import {
   computeRecallBotCreationIdempotencyKey,
   scheduleRecallBot,
 } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
-import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 
 // The sole place a Recall bot is created. Only the deterministic-create winner and the stale-state cron call it, so one writer per meeting POSTs exactly one bot.
 export const scheduleRecallBotForCallRecording = async (
@@ -101,10 +103,52 @@ export const scheduleRecallBotForCallRecording = async (
     return false;
   }
 
-  await updateCallRecording(client, {
-    id: callRecording.id,
-    data: { externalBotId: scheduleResult.externalBotId },
+  return saveExternalBotIdOrCancelBotAfterCallRecordingDeletion({
+    client,
+    callRecordingId: callRecording.id,
+    externalBotId: scheduleResult.externalBotId,
   });
+};
 
-  return true;
+const saveExternalBotIdOrCancelBotAfterCallRecordingDeletion = async ({
+  client,
+  callRecordingId,
+  externalBotId,
+}: {
+  client: CoreApiClient;
+  callRecordingId: string;
+  externalBotId: string;
+}): Promise<boolean> => {
+  try {
+    await updateCallRecording(client, {
+      id: callRecordingId,
+      data: { externalBotId },
+    });
+
+    return true;
+  } catch (writeBackError) {
+    let callRecordingAfterWriteBackFailure: CallRecordingRecord | undefined;
+
+    // Cancellation is safe only when the row is definitively gone. Otherwise,
+    // preserve the bot and let the idempotent scheduling recovery retry write-back.
+    try {
+      callRecordingAfterWriteBackFailure = (
+        await findCallRecordingsByIds(client, [callRecordingId])
+      )[0];
+    } catch {
+      throw writeBackError;
+    }
+
+    if (!isUndefined(callRecordingAfterWriteBackFailure)) {
+      throw writeBackError;
+    }
+
+    if (!(await cancelOrEjectRecallBot(externalBotId))) {
+      throw new Error(
+        `Failed to remove Recall bot ${externalBotId} after CallRecording ${callRecordingId} was deleted`,
+      );
+    }
+
+    return false;
+  }
 };

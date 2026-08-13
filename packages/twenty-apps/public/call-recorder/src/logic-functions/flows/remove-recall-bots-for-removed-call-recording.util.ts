@@ -57,12 +57,6 @@ export const removeRecallBotsForRemovedCallRecording = async ({
     );
   }
 
-  if (listResult.truncated) {
-    throw new Error(
-      `Failed to find every Recall bot for removed CallRecording ${callRecordingId}: result was truncated`,
-    );
-  }
-
   const matchingExternalBotIds = getUniqueSortedIds(
     listResult.bots
       .filter(
@@ -75,6 +69,12 @@ export const removeRecallBotsForRemovedCallRecording = async ({
 
   for (const matchingExternalBotId of matchingExternalBotIds) {
     await removeRecallBotOrThrow(matchingExternalBotId);
+  }
+
+  if (listResult.truncated) {
+    throw new Error(
+      `Failed to find every Recall bot for removed CallRecording ${callRecordingId}: result was truncated`,
+    );
   }
 
   return { removedExternalBotIds: matchingExternalBotIds };
