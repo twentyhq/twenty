@@ -47,6 +47,10 @@ import {
   collectForeignKeys,
   collectRecordIds,
 } from 'src/engine/twenty-orm-v2/repository/utils/attach-relations.util';
+import {
+  matchEntitiesForUpsert,
+  partitionEntitiesForSave,
+} from 'src/engine/twenty-orm-v2/repository/utils/resolve-save-and-upsert.util';
 import { WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-select-query-builder-v2';
 import { compileNamedParameters } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
 import { serializeJsonbWriteValue } from 'src/engine/twenty-orm-v2/sql/utils/serialize-jsonb-write-value.util';
@@ -487,6 +491,153 @@ export class WorkspaceRepositoryV2 {
     updateResult.generatedMaps = records;
 
     return updateResult;
+  }
+
+  async save(
+    entityOrEntities: Partial<ObjectRecord> | Partial<ObjectRecord>[],
+  ): Promise<ObjectRecord[]> {
+    const entities = Array.isArray(entityOrEntities)
+      ? entityOrEntities
+      : [entityOrEntities];
+
+    this.assertNoNestedRelationObjects(entities);
+
+    if (entities.length === 0) {
+      return [];
+    }
+
+    const idsToCheck = entities
+      .map((entity) => entity.id)
+      .filter(isNonEmptyString);
+
+    const existingIds =
+      idsToCheck.length > 0
+        ? new Set(
+            (await this.findBy({ id: In(idsToCheck) })).map(
+              (record) => record.id,
+            ),
+          )
+        : new Set<string>();
+
+    const { toUpdate, toInsert } = partitionEntitiesForSave(
+      entities,
+      existingIds,
+    );
+
+    const updatedIds = toUpdate
+      .map((entity) => entity.id)
+      .filter(isNonEmptyString);
+
+    if (updatedIds.length > 0) {
+      await this.runBatchUpdate({
+        inputs: toUpdate.flatMap((entity) =>
+          isNonEmptyString(entity.id) ? [{ id: entity.id, data: entity }] : [],
+        ),
+        columnsToReturn: ['id'],
+      });
+    }
+
+    const insertedIds =
+      toInsert.length > 0
+        ? (
+            await this.runInsert({
+              records: toInsert,
+              columnsToReturn: ['id'],
+            })
+          ).identifiers.map((identifier) => identifier.id)
+        : [];
+
+    const savedIds = [...updatedIds, ...insertedIds];
+
+    return savedIds.length > 0
+      ? this.find({ where: { id: In(savedIds) } })
+      : [];
+  }
+
+  async upsert(
+    entityOrEntities: Partial<ObjectRecord> | Partial<ObjectRecord>[],
+    conflictPathsOrOptions: string[] | { conflictPaths: string[] },
+  ): Promise<InsertResult> {
+    const entities = Array.isArray(entityOrEntities)
+      ? entityOrEntities
+      : [entityOrEntities];
+
+    this.assertNoNestedRelationObjects(entities);
+
+    const conflictPaths = Array.isArray(conflictPathsOrOptions)
+      ? conflictPathsOrOptions
+      : conflictPathsOrOptions.conflictPaths;
+
+    if (conflictPaths.length === 0) {
+      throw new TwentyOrmV2Exception(
+        'upsert requires at least one conflict path',
+        TwentyOrmV2ExceptionCode.INVALID_PARAMETER,
+      );
+    }
+
+    const conflictWhere = entities.map((entity) =>
+      Object.fromEntries(
+        conflictPaths.map((path) => [path, entity[path] ?? null]),
+      ),
+    );
+
+    const existingRecords =
+      entities.length > 0
+        ? await this.find({ where: conflictWhere, withDeleted: true })
+        : [];
+
+    const { toUpdate, toInsert } = matchEntitiesForUpsert(
+      entities,
+      existingRecords,
+      conflictPaths,
+    );
+
+    if (toUpdate.length > 0) {
+      await this.runBatchUpdate({
+        inputs: toUpdate.map((match) => ({
+          id: match.id,
+          data: match.entity,
+        })),
+        columnsToReturn: ['id'],
+      });
+    }
+
+    const insertOutcome =
+      toInsert.length > 0
+        ? await this.runInsert({ records: toInsert, columnsToReturn: ['id'] })
+        : { identifiers: [], generatedMaps: [], raw: [] };
+
+    const insertResult = new InsertResult();
+
+    insertResult.identifiers = [
+      ...toUpdate.map((match) => ({ id: match.id })),
+      ...insertOutcome.identifiers,
+    ];
+    insertResult.generatedMaps = insertOutcome.generatedMaps;
+    insertResult.raw = insertOutcome.raw;
+
+    return insertResult;
+  }
+
+  private assertNoNestedRelationObjects(
+    entities: Partial<ObjectRecord>[],
+  ): void {
+    for (const entity of entities) {
+      for (const key of Object.keys(entity)) {
+        const value = entity[key];
+
+        if (
+          isDefined(this.options.tableShape.relationShapeByFieldName[key]) &&
+          typeof value === 'object' &&
+          value !== null
+        ) {
+          throw new TwentyOrmV2Exception(
+            `Writing nested relation "${key}" through the ORM v2 repository is not supported yet`,
+            TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
+          );
+        }
+      }
+    }
   }
 
   async runInsert({
