@@ -4,7 +4,7 @@ import { FrontComponentRendererProvider } from '@/front-components/components/Fr
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 import { useOnApplicationSdkClientChecksumsUpdated } from '@/front-components/hooks/useOnApplicationSdkClientChecksumsUpdated';
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
-import { getFrontComponentUrl } from '@/front-components/utils/getFrontComponentUrl';
+import { getFingerprintedRestUrl } from '@/front-components/utils/getFingerprintedRestUrl';
 import { getSdkClientUrls } from '@/front-components/utils/getSdkClientUrls';
 import { useGetLogicFunctionHttpUrl } from '@/settings/logic-functions/hooks/useGetLogicFunctionHttpUrl';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -81,15 +81,24 @@ const FrontComponentRendererContent = ({
   const { enqueueErrorSnackBar } = useSnackBar();
   const { functionsBaseUrl } = useGetLogicFunctionHttpUrl();
 
-  const { id: frontComponentId, applicationId, usesSdkClient } = frontComponent;
+  const {
+    id: frontComponentId,
+    applicationId,
+    usesSdkClient,
+    frontComponentSharedDependenciesChecksum,
+  } = frontComponent;
 
-  const { executionContext, frontComponentHostCommunicationApi } =
-    useFrontComponentExecutionContext({
-      frontComponentId,
-      commandMenuItemId,
-      selectedRecordIds,
-      colorScheme,
-    });
+  const {
+    executionContext,
+    frontComponentHostCommunicationApi,
+    storageNamespace,
+  } = useFrontComponentExecutionContext({
+    frontComponentId,
+    applicationId,
+    commandMenuItemId,
+    selectedRecordIds,
+    colorScheme,
+  });
 
   const handleError = useCallback(
     (error?: Error) => {
@@ -125,8 +134,15 @@ const FrontComponentRendererContent = ({
     [applicationId, sdkClientChecksums],
   );
 
-  const componentUrl = getFrontComponentUrl({
-    frontComponentId,
+  const sharedDependenciesUrl = getFingerprintedRestUrl({
+    resource: 'front-component-shared-dependencies',
+    id: applicationId,
+    checksum: frontComponentSharedDependenciesChecksum ?? undefined,
+  });
+
+  const componentUrl = getFingerprintedRestUrl({
+    resource: 'front-components',
+    id: frontComponentId,
     checksum: frontComponent.builtComponentChecksum,
   });
 
@@ -153,11 +169,13 @@ const FrontComponentRendererContent = ({
             apiUrl={REACT_APP_SERVER_BASE_URL}
             functionsBaseUrl={functionsBaseUrl}
             sdkClientUrls={sdkClientUrls}
+            sharedDependenciesUrl={sharedDependenciesUrl}
             executionContext={executionContext}
             frontComponentHostCommunicationApi={
               frontComponentHostCommunicationApi
             }
             applicationVariables={applicationVariables}
+            storageNamespace={storageNamespace}
             onError={handleError}
             loadingFallback={loadingFallback}
           />

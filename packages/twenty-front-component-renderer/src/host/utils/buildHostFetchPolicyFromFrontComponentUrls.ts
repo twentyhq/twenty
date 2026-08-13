@@ -9,6 +9,7 @@ type BuildHostFetchPolicyInput = {
   apiUrl?: string;
   functionsBaseUrl?: string;
   sdkClientUrls?: SdkClientUrls;
+  sharedDependenciesUrl?: string;
 };
 
 export const buildHostFetchPolicyFromFrontComponentUrls = ({
@@ -16,17 +17,20 @@ export const buildHostFetchPolicyFromFrontComponentUrls = ({
   apiUrl,
   functionsBaseUrl,
   sdkClientUrls,
+  sharedDependenciesUrl,
 }: BuildHostFetchPolicyInput): HostFetchPolicy => {
   const allowedOrigins = getUniqueHttpOriginsFromUrls([
     apiUrl,
     functionsBaseUrl,
     componentUrl,
+    sharedDependenciesUrl,
   ]);
 
   const fileStorageRedirectableUrls = [
     componentUrl,
     sdkClientUrls?.core,
     sdkClientUrls?.metadata,
+    sharedDependenciesUrl,
   ].filter(isDefined);
 
   return { allowedOrigins, fileStorageRedirectableUrls };

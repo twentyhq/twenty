@@ -520,6 +520,39 @@ export default defineFrontComponent({
 });
 ```
 
+### Storage
+
+`localStorage` and `sessionStorage` work as they do in a normal page, with the standard synchronous API. Your keys are scoped to your app install and the signed-in user: no other app can read them, and another user signing into the same browser starts from an empty store. Values written to `localStorage` stay on the device across reloads; `sessionStorage` lasts for the browser session.
+
+```tsx src/front-components/note-draft.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const NoteDraft = () => {
+  const [draft, setDraft] = useState(() => localStorage.getItem('draft') ?? '');
+
+  const handleChange = (nextDraft: string) => {
+    setDraft(nextDraft);
+    localStorage.setItem('draft', nextDraft);
+  };
+
+  return (
+    <textarea value={draft} onChange={(event) => handleChange(event.target.value)} />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-def0-890123456789',
+  name: 'note-draft',
+  description: 'Keeps an unsaved note on this device',
+  component: NoteDraft,
+});
+```
+
+Twenty stores the values on your app's behalf, so a write is applied locally right away and saved in the background. Reads never wait on the host. Nothing is synced: the values do not follow the user to another browser or machine, so use a logic function's [key-value store](/developers/extend/apps/logic/key-value-store) for anything that must survive a device change.
+
+Writes are capped, and every limit counts characters rather than bytes: keys are at most 512 characters, a single value at most 262,144 characters, and each storage at most 1,048,576 characters per app and user. A write that breaks a limit throws a `QuotaExceededError`, like the browser API.
+
 ### Working with multiple records
 
 Use `useSelectedRecordIds()` to handle multiple selected records. This is useful for bulk operations:
@@ -600,6 +633,43 @@ export default defineFrontComponent({
 ```
 
 See the [public assets section](/developers/extend/apps/config/public-assets) for details.
+
+## Sharing dependencies across front components
+
+By default, every front component bundles its own copy of the libraries it imports, so an app with five components ships React five times. Declare shared dependencies in your app's `package.json` to build those libraries once and have every component of the app load them from a single cached file:
+
+```json package.json
+{
+  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+}
+```
+
+Each component then imports its dependencies exactly as before — nothing changes in your component code:
+
+```tsx src/front-components/counter.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'counter',
+  component: Counter,
+});
+```
+
+A few things to know:
+
+- **One shared dependencies bundle per app.** The bundle is built from your app's own dependencies, so you keep full control of the versions you ship.
+- **List the exact specifiers you import.** `twenty-ui/input` and `twenty-ui/display` are two entries; a package name alone does not cover its subpaths. Listing `react` automatically covers `react/jsx-runtime`.
+- **Share `react-dom/client` alongside `react`.** Every component renders through `createRoot`, so leaving it out means each component still bundles React DOM.
+- **The bundle is cached.** It is served under a content-hash URL with a long-lived immutable cache, so it is downloaded once and reused across all components of the app until one of its dependencies changes.
+- **Components that import none of the shared packages never download it.**
 
 ## Styling
 
@@ -755,7 +825,7 @@ Component CSS, whether from `import './styles.css'`, CSS-in-JS or a `<style>` el
 
 ### Storage and network
 
-`localStorage`, `sessionStorage`, IndexedDB, cookies, the Cache API and `BroadcastChannel` are all unavailable, since the component runs in a worker at an opaque origin. To persist state, call a [logic function](/developers/extend/apps/logic/logic-functions) and use its [key-value store](/developers/extend/apps/logic/key-value-store).
+`localStorage` and `sessionStorage` are provided by Twenty rather than the browser: the component runs in a worker at an opaque origin, so the host stores the values on your app's behalf. See [storage](#storage) for their scoping and limits. IndexedDB, cookies, the Cache API and `BroadcastChannel` remain unavailable. To persist state across devices, call a [logic function](/developers/extend/apps/logic/logic-functions) and use its [key-value store](/developers/extend/apps/logic/key-value-store).
 
 `fetch` works, with caveats:
 

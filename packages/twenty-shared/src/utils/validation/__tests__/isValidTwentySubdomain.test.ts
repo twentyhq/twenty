@@ -16,12 +16,10 @@ describe('isValidTwentySubdomain', () => {
       expect(isValidTwentySubdomain('a-b-c-d-e')).toBe(true);
     });
 
-    it('should accept short subdomains regardless of minimum length', () => {
-      // Minimum length is enforced by the caller, not by the pattern
+    it('should accept minimum length subdomains (1 character)', () => {
       expect(isValidTwentySubdomain('a')).toBe(true);
+      expect(isValidTwentySubdomain('1')).toBe(true);
       expect(isValidTwentySubdomain('ab')).toBe(true);
-      expect(isValidTwentySubdomain('abc')).toBe(true);
-      expect(isValidTwentySubdomain('a1b')).toBe(true);
       expect(isValidTwentySubdomain('a-b')).toBe(true);
     });
 

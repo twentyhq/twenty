@@ -221,7 +221,10 @@ export class CacheStorageService {
 
     do {
       const result = await redisClient.scan(cursor, {
-        MATCH: `${this.namespace}:${scanPattern}`,
+        // Through getKey, not the namespace alone: under NODE_ENV=test every
+        // key carries a further prefix, so a raw namespace match scans for
+        // keys that do not exist and the flush silently does nothing.
+        MATCH: this.getKey(scanPattern),
         COUNT: 100,
       });
 

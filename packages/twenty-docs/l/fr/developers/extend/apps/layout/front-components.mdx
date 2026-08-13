@@ -520,6 +520,39 @@ export default defineFrontComponent({
 });
 ```
 
+### Stockage
+
+`localStorage` et `sessionStorage` fonctionnent comme sur une page normale, avec l’API synchrone standard. Vos clés sont limitées à votre installation de l’application et à l’utilisateur connecté : aucune autre application ne peut les lire, et un autre utilisateur se connectant dans le même navigateur commence avec un stockage vide. Les valeurs écrites dans `localStorage` restent sur l’appareil entre les rechargements ; `sessionStorage` dure pendant la session du navigateur.
+
+```tsx src/front-components/note-draft.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const NoteDraft = () => {
+  const [draft, setDraft] = useState(() => localStorage.getItem('draft') ?? '');
+
+  const handleChange = (nextDraft: string) => {
+    setDraft(nextDraft);
+    localStorage.setItem('draft', nextDraft);
+  };
+
+  return (
+    <textarea value={draft} onChange={(event) => handleChange(event.target.value)} />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-def0-890123456789',
+  name: 'note-draft',
+  description: 'Keeps an unsaved note on this device',
+  component: NoteDraft,
+});
+```
+
+Twenty stocke les valeurs pour le compte de votre application, de sorte qu’une écriture est appliquée localement immédiatement et sauvegardée en arrière-plan. Les lectures ne bloquent jamais sur l’hôte. Rien n’est synchronisé : les valeurs ne suivent pas l’utilisateur vers un autre navigateur ou une autre machine. Utilisez donc le [magasin clé-valeur](/l/fr/developers/extend/apps/logic/key-value-store) d’une fonction logique pour tout ce qui doit survivre à un changement d’appareil.
+
+Les écritures sont plafonnées, et chaque limite compte les caractères plutôt que les octets : les clés comportent au maximum 512 caractères, une valeur unique au maximum 262 144 caractères, et chaque stockage au maximum 1 048 576 caractères par application et par utilisateur. Une écriture qui dépasse une limite lève une `QuotaExceededError`, comme avec l’API du navigateur.
+
 ### Travailler avec plusieurs enregistrements
 
 Utilisez `useSelectedRecordIds()` pour gérer plusieurs enregistrements sélectionnés. C'est utile pour les opérations groupées :
@@ -600,6 +633,43 @@ export default defineFrontComponent({
 ```
 
 Voir la [section sur les ressources publiques](/l/fr/developers/extend/apps/config/public-assets) pour plus de détails.
+
+## Partage des dépendances entre les composants frontaux
+
+Par défaut, chaque composant frontal contient sa propre copie des bibliothèques qu'il importe, donc une application avec cinq composants envoie React cinq fois. Déclarer les dépendances partagées dans le `package de votre application. son` pour construire ces bibliothèques une fois et que chaque composant de l'application les charge à partir d'un fichier mis en cache:
+
+```json package.json
+{
+  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+}
+```
+
+Chaque composant importe ensuite ses dépendances exactement comme avant, rien ne change dans le code de votre composant:
+
+```tsx src/front-components/counter.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'counter',
+  component: Counter,
+});
+```
+
+Quelques points à connaître :
+
+* **Un lot de dépendances partagées par application.** Le bundle est construit à partir des propres dépendances de votre application, de sorte que vous gardez le contrôle total des versions que vous envoyez.
+* **Lister les spécifications exactes que vous importez.** `vingt-ui/input` et `vingt-ui/display` sont deux entrées; un nom de paquet seul ne couvre pas ses sous-chemins. La liste `react` couvre automatiquement `react/jsx-runtime`.
+* **Partagez `react-dom/client` avec `react`.** Chaque composant est rendu via `createRoot`, donc le laisser dehors signifie que chaque composant contient toujours React DOM.
+* \*\*Le bundle est mis en cache. \* Il est servi sous une URL de hachage de contenu avec une cache immuable de longue durée, ainsi il est téléchargé une fois et réutilisé dans tous les composants de l'application jusqu'à ce que l'une de ses dépendances change.
+* **Les composants qui n'importent aucun des paquets partagés ne le téléchargent jamais.**
 
 ## Stylisation
 
@@ -755,7 +825,7 @@ Le CSS du composant, qu’il provienne de `import './styles.css'`, de CSS-in-JS 
 
 ### Stockage et réseau
 
-`localStorage`, `sessionStorage`, IndexedDB, les cookies, l’API Cache et `BroadcastChannel` ne sont pas disponibles, puisque le composant s’exécute dans un worker avec une origine opaque. Pour conserver l’état, appelez une [fonction logique](/l/fr/developers/extend/apps/logic/logic-functions) et utilisez son [magasin clé-valeur](/l/fr/developers/extend/apps/logic/key-value-store).
+`localStorage` et `sessionStorage` sont fournis par Twenty plutôt que par le navigateur : le composant s’exécute dans un worker avec une origine opaque, donc l’hôte stocke les valeurs pour le compte de votre application. Voir [stockage](#storage) pour leur portée et leurs limites. IndexedDB, les cookies, l’API Cache et `BroadcastChannel` restent indisponibles. Pour conserver l’état entre les appareils, appelez une [fonction logique](/l/fr/developers/extend/apps/logic/logic-functions) et utilisez son [magasin clé-valeur](/l/fr/developers/extend/apps/logic/key-value-store).
 
 `fetch` fonctionne, avec quelques réserves :
 

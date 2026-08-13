@@ -393,14 +393,22 @@ Nur relevant, wenn Sie das Frontend nicht vom Backend ausliefern lassen. Same-Or
 Bereitstellungen benötigen hier nichts.
 
 Geben Sie alle Browser-Ursprünge an, die mit der API kommunizieren, kommagetrennt. `SERVER_URL`
-und `FRONTEND_URL` sind bereits vertrauenswürdig.
+und `FRONTEND_URL` sind bereits vertrauenswürdig. Der Server protokolliert eine Warnung, wenn ein Browser
+diese aus nicht deklariertem Ursprung aufruft.
 
 ```bash
 AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com
 ```
 
 <Warning>
-Ein Upgrade auf eine Version mit Cookie-Sitzungen macht dies erforderlich. Das Frontend sendet nun bei jeder Anfrage Anmeldedaten, und Browser lehnen eine Antwort mit Anmeldedaten von einem nicht deklarierten Ursprung ab, sodass die App nicht geladen wird, bis Sie dies festgelegt haben.
+Das Frontend sendet Anmeldeinformationen auf jeder Anfrage, und Browser lehnen eine
+Anmeldebestätigung von nicht angemeldeter Herkunft ab, so dass die App nicht geladen werden kann, bis
+Sie dies gesetzt haben.
 </Warning>
 
 Wenn sich die beiden Hosts auf unterschiedlichen registrierbaren Domains befinden (nicht nur auf unterschiedlichen Subdomains), setzen Sie außerdem `AUTH_COOKIE_SAME_SITE=none`, was HTTPS erfordert.
+
+Wenn Multiworkspace aktiviert ist, listet hier nicht jede Workspace-Subdomain auf.
+Stattdessen Route API Pfade (`/graphql`, `/metadata`, `/rest`, `/auth/`,
+`/client-config`, `/file`) in das Backend jedes Hostnamens des Arbeitsbereichs, also bleibt jeder
+Arbeitsbereich gleich — so läuft 20 Cloud.

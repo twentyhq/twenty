@@ -150,5 +150,36 @@ export default defineApplicationRole({
   **Döngülerden kaçının:** Bir `*.updated` veritabanı olayı tetikleyicisinden `runAgent()` çağırırsanız ve ajan aynı kaydı güncelliyorsa, tetikleyiciyi, ajan tarafından asla yazılmayan bir alana (örneğin kaynak URL) göre `updatedFields` ile kapsamlandırın veya `runAgent()` çağırmadan önce herhangi bir hedef alanın hâlâ boş olup olmadığına göre koruma ekleyin.
 </Warning>
 
+### Bir çalışma alanı üyesi adına çalıştırma
+
+Çalıştırma bir kişi tarafından tetiklendiğinde — örneğin bir mesajı yanıtlayan bir sohbet
+botu — ajanın uygulama yerine o üye olarak davranması için `runAsWorkspaceMemberId` iletin:
+
+```ts src/logic-functions/answer-question.ts
+const { result } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  prompt: 'How many open opportunities do we have?',
+  runAsWorkspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
+});
+```
+
+Ardından çalıştırma, **hem** ajanın rolünün hem de üyenin rolünün izin verdiğiyle sınırlandırılır, oluşturduğu kayıtlar o üyeye atfedilir ve üyenin satır düzeyi izinleri uygulanır. Otonom çalıştırmalar (zamanlanmış işler, veritabanı olayı tetikleyicileri) için alanı atlayın: bunlar ajanın kendi rolünü korur.
+
+Çalıştırmayı tetikleyen kişiyi bir çalışma alanı üyesiyle eşleştirmekten uygulamanız sorumludur. Birini belirtmek bir uygulama erişim belirteci gerektirir ve bir belirtecin neyi
+belirtebileceği, bir kullanıcı içerip içermediğine bağlıdır:
+
+* **Kullanıcı ile ilişkili olmayan** bir belirteç herhangi bir üyeyi belirtebilir. Bir mantık fonksiyonu bunlardan biriyle çalışır ve `client_credentials` aracılığıyla ya da bir API
+  anahtarından oluşturulan belirteçler de aynı şekilde çalışır.
+* Bir ön bileşenin aldığı gibi, **bir kullanıcının adına düzenlenmiş** bir belirteç yalnızca o kullanıcının kendi üyesini
+  belirtebilir.
+
+Bunların dışındaki her şey — sıradan bir kullanıcı oturumu, bir uygulama belirteci olmayan bir API anahtarı — hiçbir şekilde
+bir üyeyi belirtemez.
+
+<Warning>
+  `runAgent()` çalışma alanı üyesi çözülemediğinde — bilinmeyen veya kaldırılmış bir üye ya da rolü olmayan bir üye — hata fırlatır. Bu, çağıranın istediğinden daha fazla erişim sağlayacağından asla
+  ajanın kendi rolüne geri dönmez.
+</Warning>
+
 </Accordion>
 </AccordionGroup>

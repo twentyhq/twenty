@@ -225,12 +225,6 @@ xdescribe('findMany morph relation records', () => {
     // const isManyToOne =
     //   contextPayload.relationType === RelationType.MANY_TO_ONE;
 
-    // if (isManyToOne) {
-    //   );
-    // } else {
-
-    // }
-
     await deleteOneFieldMetadata({
       input: { idToDelete: createdField.id },
     }).catch();

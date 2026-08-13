@@ -1,5 +1,6 @@
 import { useStore } from 'jotai';
 
+import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
@@ -27,6 +28,7 @@ export const useCreateAgentChatThread = () => {
   const setAgentChatDraftsByThreadId = useSetAtomState(
     agentChatDraftsByThreadIdState,
   );
+  const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl();
   const store = useStore();
   const { addToDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
@@ -76,6 +78,7 @@ export const useCreateAgentChatThread = () => {
       }
 
       setCurrentAiChatThread(newThreadId);
+      projectAiChatThreadToUrl(newThreadId);
       setAgentChatInput(tipTapDocumentToMarkdown(newDraft));
     },
     onError: () => {

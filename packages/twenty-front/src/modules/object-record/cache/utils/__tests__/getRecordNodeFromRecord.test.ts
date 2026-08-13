@@ -9,7 +9,6 @@ const peopleMock = [...mockedPersonRecords];
 
 describe('getRecordNodeFromRecord', () => {
   it('computes relation records cache references by default', () => {
-    // Given
     const objectMetadataItems: EnrichedObjectMetadataItem[] =
       getTestEnrichedObjectMetadataItemsMock();
     const objectMetadataItem:
@@ -31,7 +30,6 @@ describe('getRecordNodeFromRecord', () => {
     };
     const record = peopleMock[0];
 
-    // When
     const result = getRecordNodeFromRecord({
       objectMetadataItems,
       objectMetadataItem,
@@ -39,7 +37,6 @@ describe('getRecordNodeFromRecord', () => {
       record,
     });
 
-    // Then
     expect(result).toEqual({
       __typename: 'Person',
       company: {
@@ -54,7 +51,6 @@ describe('getRecordNodeFromRecord', () => {
   });
 
   it('does not compute relation records cache references when `computeReferences` is false', () => {
-    // Given
     const objectMetadataItems: EnrichedObjectMetadataItem[] =
       getTestEnrichedObjectMetadataItemsMock();
     const objectMetadataItem:
@@ -77,7 +73,6 @@ describe('getRecordNodeFromRecord', () => {
     const record = peopleMock[0];
     const computeReferences = false;
 
-    // When
     const result = getRecordNodeFromRecord({
       objectMetadataItems,
       objectMetadataItem,
@@ -86,7 +81,6 @@ describe('getRecordNodeFromRecord', () => {
       computeReferences,
     });
 
-    // Then
     expect(result).toEqual({
       __typename: 'Person',
       company: record.company,
@@ -99,7 +93,6 @@ describe('getRecordNodeFromRecord', () => {
   });
 
   it('skips a to-many relation whose value is null instead of crashing', () => {
-    // Given
     const objectMetadataItems: EnrichedObjectMetadataItem[] =
       getTestEnrichedObjectMetadataItemsMock();
     const objectMetadataItem = objectMetadataItems.find(

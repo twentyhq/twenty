@@ -5,8 +5,12 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useLingui } from '@lingui/react/macro';
 import { useRef } from 'react';
 import {
+  buildFrontComponentStorageNamespace,
+  clearFrontComponentStorage,
+  deleteFrontComponentStorageItem,
   type FrontComponentExecutionContext,
   type FrontComponentHostCommunicationApi,
+  setFrontComponentStorageItem,
 } from 'twenty-front-component-renderer';
 import {
   AppPath,
@@ -37,7 +41,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useStore } from 'jotai';
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, CustomError, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -49,17 +53,20 @@ const FRONT_COMPONENT_CLIPBOARD_PREVIEW_LENGTH = 30;
 
 export const useFrontComponentExecutionContext = ({
   frontComponentId,
+  applicationId,
   commandMenuItemId,
   selectedRecordIds,
   colorScheme,
 }: {
   frontComponentId: string;
+  applicationId: string;
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
   colorScheme: 'light' | 'dark';
 }): {
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
+  storageNamespace?: string;
 } => {
   const currentUser = useAtomStateValue(currentUserState);
   const navigateApp = useNavigateApp();
@@ -361,6 +368,56 @@ export const useFrontComponentExecutionContext = ({
       );
     };
 
+  const currentUserId = currentUser?.id;
+
+  const storageNamespace = isDefined(currentUserId)
+    ? buildFrontComponentStorageNamespace({
+        applicationId,
+        userId: currentUserId,
+      })
+    : undefined;
+
+  const requireStorageNamespace = (): string => {
+    if (!isDefined(storageNamespace)) {
+      throw new CustomError(
+        'Device storage requires a signed-in user',
+        'FRONT_COMPONENT_STORAGE_REQUIRES_SIGNED_IN_USER',
+      );
+    }
+
+    return storageNamespace;
+  };
+
+  const storageSet: FrontComponentHostCommunicationApi['storageSet'] = async ({
+    storageType,
+    key,
+    serializedValue,
+  }) => {
+    setFrontComponentStorageItem({
+      namespace: requireStorageNamespace(),
+      storageType,
+      key,
+      serializedValue,
+    });
+  };
+
+  const storageDelete: FrontComponentHostCommunicationApi['storageDelete'] =
+    async ({ storageType, key }) => {
+      deleteFrontComponentStorageItem({
+        namespace: requireStorageNamespace(),
+        storageType,
+        key,
+      });
+    };
+
+  const storageClear: FrontComponentHostCommunicationApi['storageClear'] =
+    async ({ storageType }) => {
+      clearFrontComponentStorage({
+        namespace: requireStorageNamespace(),
+        storageType,
+      });
+    };
+
   const frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
     {
       navigate,
@@ -372,10 +429,14 @@ export const useFrontComponentExecutionContext = ({
       closeSidePanel,
       updateProgress,
       copyToClipboard,
+      storageSet,
+      storageDelete,
+      storageClear,
     };
 
   return {
     executionContext,
     frontComponentHostCommunicationApi,
+    storageNamespace,
   };
 };

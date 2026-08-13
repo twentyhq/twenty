@@ -11,14 +11,11 @@ import {
   IsOptional,
   IsString,
   IsUrl,
-  Max,
-  Min,
   ValidateIf,
   type ValidationError,
   validateSync,
 } from 'class-validator';
 import {
-  DEFAULT_SUBDOMAIN_MIN_LENGTH,
   ENTERPRISE_INSTANCE_TYPE,
   type EnterpriseInstanceType,
 } from 'twenty-shared/constants';
@@ -568,12 +565,13 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
-      'Deployment region that determines the contracting DPA Processor entity, hosting region and governing law. EU (default) = Twenty.com SAS / Frankfurt / France; US = Twenty, Inc. / United States. Must match where Customer Personal Data actually lives.',
+      'Deployment region that determines the DPA hosting location shown to customers. The Processor entity (Twenty.com PBC) and governing law (Delaware, USA) are the same for all regions. EU (default) = Frankfurt, Germany; US = United States. Must match where Customer Personal Data actually lives.',
     type: ConfigVariableType.ENUM,
     options: Object.values(DpaRegion),
     // Deployment-fixed: must mirror where data actually lives. Allowing a
-    // runtime DB/admin override could produce a legally incorrect Processor
-    // entity, so this is only configurable via environment variable.
+    // runtime DB/admin override could advertise a hosting location that does
+    // not match where data resides, so this is only configurable via
+    // environment variable.
     isEnvOnly: true,
   })
   @IsOptional()
@@ -1023,6 +1021,27 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
     description:
+      'Cap on the credits available in a period, as a multiple of the plan allowance. 2 means a workspace can hold at most its allowance plus one full allowance rolled over',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  BILLING_ROLLOVER_TOTAL_CAP_MULTIPLIER = 2;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BILLING_CONFIG,
+    description:
+      'Largest credit amount a single admin panel grant can hand out (in microCredits)',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsInt()
+  @IsOptional()
+  BILLING_MAX_ADMIN_CREDIT_GRANT_MICRO = 1_000_000_000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BILLING_CONFIG,
+    description:
       'Free credits granted for completing the import-contacts onboarding step (in microCredits)',
     type: ConfigVariableType.NUMBER,
   })
@@ -1081,19 +1100,6 @@ export class ConfigVariables {
   })
   @ValidateIf((env) => env.IS_MULTIWORKSPACE_ENABLED)
   DEFAULT_SUBDOMAIN = 'app';
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVER_CONFIG,
-    description:
-      'Minimum number of characters allowed for a workspace subdomain (between 1 and 30)',
-    type: ConfigVariableType.NUMBER,
-  })
-  @CastToPositiveNumber()
-  @IsInt()
-  @Min(1)
-  @Max(30)
-  @IsOptional()
-  SUBDOMAIN_MIN_LENGTH = DEFAULT_SUBDOMAIN_MIN_LENGTH;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
@@ -1385,7 +1391,6 @@ export class ConfigVariables {
     options: Object.values(NodeEnvironment),
     isEnvOnly: true,
   })
-  // @CastToUpperSnakeCase()
   NODE_ENV: NodeEnvironment = NodeEnvironment.PRODUCTION;
 
   @ConfigVariablesMetadata({
@@ -1432,23 +1437,6 @@ export class ConfigVariables {
   @IsUrl({ require_tld: false, require_protocol: true })
   @IsOptional()
   SERVER_URL = 'http://localhost:3000';
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVER_CONFIG,
-    description:
-      'When enabled, the served frontend resolves the API base URL from ' +
-      "the browser's current origin (window.location) instead of the " +
-      'baked-in SERVER_URL. Useful for self-hosted deployments reachable ' +
-      'from multiple hostnames (Tailscale IP, LAN DNS, SSH tunnel, public ' +
-      'DNS), where pinning a single SERVER_URL would break every other ' +
-      'host with CORS or unreachable-host errors. Read at startup by ' +
-      'generate-front-config; SERVER_URL is still used for all server-side ' +
-      'URL generation.',
-    type: ConfigVariableType.BOOLEAN,
-    isEnvOnly: true,
-  })
-  @IsOptional()
-  FRONT_AUTO_BASE_URL = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,

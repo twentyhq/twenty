@@ -51,8 +51,17 @@ import { AddCacheTokensToAgentChatThreadFastInstanceCommand } from 'src/database
 import { AddLogoToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777539664664-add-logo-to-application';
 import { AllowServerScopedFileFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-20/2-20-instance-command-fast-1783499671541-allow-server-scoped-file';
 import { AddCalendarEndFieldMetadataIdToViewFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-22/2-22-instance-command-fast-1783956795000-add-calendar-end-field-metadata-id-to-view';
-import { AddSdkClientCoreChecksumToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-23/2-23-instance-command-fast-1784625638000-add-sdk-client-core-checksum-to-application';
 import { AddAutoUpgradeToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-23/2-23-instance-command-fast-1784297307235-add-auto-upgrade-to-application';
+import { AddSdkClientCoreChecksumToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-23/2-23-instance-command-fast-1784625638000-add-sdk-client-core-checksum-to-application';
+import { AddChannelWebhookSubscriptionExternalIdIndexesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-instance-command-fast-1785173910915-add-channel-webhook-subscription-external-id-indexes';
+import { AddConnectedAccountHandleProviderIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-26/2-26-instance-command-fast-1785420705255-add-connected-account-handle-provider-index';
+import { AddOpenRecordInToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-instance-command-fast-1785504900000-add-open-record-in-to-object-metadata';
+import { CreateUserSessionCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-instance-command-fast-1785518325511-create-user-session-core-table';
+import { CreateApplicationAuthorizationCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-instance-command-fast-1785681272278-create-application-authorization-core-table';
+import { AddOnDisconnectLogicFunctionToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-instance-command-fast-1785810340935-add-on-disconnect-logic-function-to-connection-provider';
+import { AddCallRecordingWidgetTypesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-29/2-29-instance-command-fast-1786009374684-add-call-recording-widget-types';
+import { AddIsSystemSideEffectToViewFieldGroupFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-fast-1786437480000-add-is-system-side-effect-to-view-field-group';
+import { AddFrontComponentSharedDependenciesToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-fast-1786529082690-add-front-component-shared-dependencies-to-application';
 import { AddSubFieldNameToViewSortEarlyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1747234200000-add-sub-field-name-to-view-sort';
 import { AddRelationTargetFieldMetadataIdToViewFilterEarlyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1747234300000-add-relation-target-field-metadata-id-to-view-filter';
 import { AddUpgradeMigrationWorkspaceIdIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777308014234-add-upgrade-migration-workspace-id-index';
@@ -63,6 +72,8 @@ import { TransformApplicationVariableToSyncableEntityFastInstanceCommand } from 
 import { AddToolAndWorkflowActionTriggerSettingsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1797000001000-add-tool-and-workflow-action-trigger-settings';
 import { BackfillApplicationVariableUniversalIdentifierSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-slow-1777966965588-backfill-application-variable-universal-identifier';
 import { MigrateToolTriggerSettingsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-slow-1797000002000-migrate-tool-trigger-settings';
+import { AddListViewTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-30/2-30-instance-command-fast-1785929606728-add-list-view-type';
+import { AddListWidgetViewTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-30/2-30-instance-command-fast-1786227282471-add-list-widget-view-type';
 import { AddRelationTargetFieldMetadataIdToViewFilterEarly2_4FastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1747234400000-add-relation-target-field-metadata-id-to-view-filter';
 import { AddMetadataToBillingPriceFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1777100000000-add-metadata-to-billing-price';
 import { AddEmailGroupChannelTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1778256809018-add-email-group-channel-type';
@@ -118,24 +129,24 @@ import { AddKanbanAndCalendarWidgetViewTypesFastInstanceCommand } from './2-23/2
 import { WidenViewCalendarIntegrityConstraintFastInstanceCommand } from './2-23/2-23-instance-command-fast-1784620626406-widen-view-calendar-integrity-constraint';
 import { AddApplicationIdToKeyValuePairFastInstanceCommand } from './2-23/2-23-instance-command-fast-1784659343818-add-application-id-to-key-value-pair';
 import { AddLogoFileIdToApplicationRegistration2_23FastInstanceCommand } from './2-23/2-23-instance-command-fast-1784823473532-add-logo-file-id-to-application-registration';
-import { AddMessageChannelDisplayNameFastInstanceCommand } from './2-25/2-25-instance-command-fast-1784904030252-add-message-channel-display-name';
-import { AddMessageCampaignWidgetTypeFastInstanceCommand } from './2-25/2-25-instance-command-fast-1785229950000-add-message-campaign-widget-type';
 import { BackfillCreatedWorkspaceActivationStatusSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784286705000-backfill-created-workspace-activation-status';
 import { UnlistUnclaimedNpmApplicationRegistrationsSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784322591746-unlist-unclaimed-npm-application-registrations';
 import { AddStatusesToBillingSubscriptionIndexSlowInstanceCommand } from './2-23/2-23-instance-command-slow-1784650048045-add-statuses-to-billing-subscription-index';
 import { AddOnConnectLogicFunctionToConnectionProviderFastInstanceCommand } from './2-24/2-24-instance-command-fast-1784712843602-add-on-connect-logic-function-to-connection-provider';
 import { RepairKeyValuePairApplicationIdFastInstanceCommand } from './2-24/2-24-instance-command-fast-1784897347051-repair-key-value-pair-application-id';
 import { AddAgentForeignKeyToRoleTargetFastInstanceCommand } from './2-25/2-25-instance-command-fast-1784820332810-add-agent-foreign-key-to-role-target';
-import { AddAppTokenSsoExchangeIndexFastInstanceCommand } from './2-25/2-25-instance-command-fast-1785143586000-add-app-token-sso-exchange-index';
 import { AddPageLayoutCascadeDeleteIndexesFastInstanceCommand } from './2-25/2-25-instance-command-fast-1784904030251-add-page-layout-cascade-delete-indexes';
-import { AddChannelWebhookSubscriptionExternalIdIndexesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-25/2-25-instance-command-fast-1785173910915-add-channel-webhook-subscription-external-id-indexes';
+import { AddMessageChannelDisplayNameFastInstanceCommand } from './2-25/2-25-instance-command-fast-1784904030252-add-message-channel-display-name';
+import { AddAppTokenSsoExchangeIndexFastInstanceCommand } from './2-25/2-25-instance-command-fast-1785143586000-add-app-token-sso-exchange-index';
+import { AddMessageCampaignWidgetTypeFastInstanceCommand } from './2-25/2-25-instance-command-fast-1785229950000-add-message-campaign-widget-type';
 import { AddIsHiddenToAgentMessageFastInstanceCommand } from './2-25/2-25-instance-command-fast-1785230296000-add-is-hidden-to-agent-message';
-import { AddOnDisconnectLogicFunctionToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-instance-command-fast-1785810340935-add-on-disconnect-logic-function-to-connection-provider';
-import { AddConnectedAccountHandleProviderIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-26/2-26-instance-command-fast-1785420705255-add-connected-account-handle-provider-index';
-import { AddOpenRecordInToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-instance-command-fast-1785504900000-add-open-record-in-to-object-metadata';
-import { CreateUserSessionCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-instance-command-fast-1785518325511-create-user-session-core-table';
-import { CreateApplicationAuthorizationCoreTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-27/2-27-instance-command-fast-1785681272278-create-application-authorization-core-table';
-import { AddCallRecordingWidgetTypesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-29/2-29-instance-command-fast-1786009374684-add-call-recording-widget-types';
+import { CreateBillingCreditGrantTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-fast-1786532184000-create-billing-credit-grant-table';
+import { BackfillCreditBalanceIntoGrantsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-slow-1786532184001-backfill-credit-balance-into-grants';
+import { AddPreviousPeriodStartToBillingSubscriptionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-fast-1786532184002-add-previous-period-start-to-billing-subscription';
+import { AddIsDeprecatedToApplicationVariablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-fast-1786533439000-add-is-deprecated-to-application-variables';
+import { EncryptEmptyApplicationVariablesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-slow-1786533438000-encrypt-empty-application-variables';
+import { AddUninstallLogicFunctionIdToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-32/2-32-instance-command-fast-1786623564993-add-uninstall-logic-function-id-to-application';
+import { BackfillUninstallLogicFunctionIdOnApplicationSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-32/2-32-instance-command-slow-1786623564994-backfill-uninstall-logic-function-id-on-application';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -273,5 +284,16 @@ export const INSTANCE_COMMANDS = [
   AddOpenRecordInToObjectMetadataFastInstanceCommand,
   CreateUserSessionCoreTableFastInstanceCommand,
   CreateApplicationAuthorizationCoreTableFastInstanceCommand,
+  AddListViewTypeFastInstanceCommand,
   AddCallRecordingWidgetTypesFastInstanceCommand,
+  AddListWidgetViewTypeFastInstanceCommand,
+  AddIsSystemSideEffectToViewFieldGroupFastInstanceCommand,
+  AddFrontComponentSharedDependenciesToApplicationFastInstanceCommand,
+  CreateBillingCreditGrantTableFastInstanceCommand,
+  BackfillCreditBalanceIntoGrantsSlowInstanceCommand,
+  AddPreviousPeriodStartToBillingSubscriptionFastInstanceCommand,
+  AddIsDeprecatedToApplicationVariablesFastInstanceCommand,
+  EncryptEmptyApplicationVariablesSlowInstanceCommand,
+  AddUninstallLogicFunctionIdToApplicationFastInstanceCommand,
+  BackfillUninstallLogicFunctionIdOnApplicationSlowInstanceCommand,
 ];

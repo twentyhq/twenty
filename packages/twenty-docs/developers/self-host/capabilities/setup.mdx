@@ -382,17 +382,23 @@ Only relevant if you do not let the back-end serve the front-end. Same-origin
 deployments need nothing here.
 
 Declare every browser origin that talks to the API, comma separated. `SERVER_URL`
-and `FRONTEND_URL` are already trusted.
+and `FRONTEND_URL` are already trusted. The server logs a warning when a browser
+calls it from an undeclared origin.
 
 ```bash
 AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com
 ```
 
 <Warning>
-Upgrading to a version with cookie sessions makes this required. The front-end
-now sends credentials on every request, and browsers reject a credentialed
-response from an undeclared origin, so the app fails to load until you set this.
+The front-end sends credentials on every request, and browsers reject a
+credentialed response from an undeclared origin, so the app fails to load until
+you set this.
 </Warning>
 
 If the two hosts are on different registrable domains (not just different
 subdomains), also set `AUTH_COOKIE_SAME_SITE=none`, which requires HTTPS.
+
+With multi-workspace enabled, do not list every workspace subdomain here.
+Instead, route API paths (`/graphql`, `/metadata`, `/rest`, `/auth/`,
+`/client-config`, `/file`) to the back-end on each workspace hostname, so every
+workspace stays same-origin — this is how Twenty Cloud runs.

@@ -49,8 +49,7 @@ export class CreateCalendarChannelService {
           id: newCalendarChannelId,
           connectedAccountId,
           handle,
-          visibility:
-            calendarVisibility || CalendarChannelVisibility.SHARE_EVERYTHING,
+          visibility: calendarVisibility || CalendarChannelVisibility.METADATA,
           syncStatus: skipMessageChannelConfiguration
             ? CalendarChannelSyncStatus.ONGOING
             : CalendarChannelSyncStatus.NOT_SYNCED,

@@ -146,23 +146,26 @@ Stejně jako u skalárních systémových polí funguje vyřešené ID všude ta
   verzi 2.26 nebo novější.
 </Note>
 
-Server také pro každý objekt zřizuje **systémové zobrazení**: hlavní zobrazení seznamu (`All {objectLabelPlural}`, s klíčem `ViewKey.INDEX`) s jedním sloupcem pro každé zobrazitelné pole. Stejně jako u systémových relačních polí jsou jejich identifikátory odvozovány **nezávisle na názvu**, takže přejmenování objektu nebo pole je nikdy nezmění.
+Server také pro každý objekt zřizuje **systémové zobrazení**: hlavní zobrazení seznamu (`All {objectLabelPlural}`, s klíčem `ViewKey.INDEX` (odvozeným pomocí `SYSTEM_VIEW_KEYS.INDEX`)), s jedním sloupcem pro každé zobrazitelné pole. Stejně jako u systémových relačních polí jsou jejich identifikátory odvozovány **nezávisle na názvu**, takže přejmenování objektu nebo pole je nikdy nezmění.
 
 Použijte `getSystemViewUniversalIdentifier` k vyřešení zobrazení:
 
 ```ts
-import { getSystemViewUniversalIdentifier, ViewKey } from 'twenty-sdk/define';
+import {
+  getSystemViewUniversalIdentifier,
+  SYSTEM_VIEW_KEYS,
+} from 'twenty-sdk/define';
 
 const rocketIndexViewId = getSystemViewUniversalIdentifier({
   objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
-  viewKey: ViewKey.INDEX,
+  viewKey: SYSTEM_VIEW_KEYS.INDEX,
 });
 ```
 
 * `objectMetadataApplicationUniversalIdentifier` je aplikace, která vlastní **objekt**, podle které je zobrazení namespacované.
 * `objectUniversalIdentifier` je objekt, který zobrazení vypisuje.
-* `viewKey` je klíč systémového zobrazení, aktuálně `ViewKey.INDEX`.
+* `viewKey` je diskriminátor systémového zobrazení: `SYSTEM_VIEW_KEYS.INDEX` pro hlavní zobrazení seznamu, `SYSTEM_VIEW_KEYS.FIELDS_WIDGET` pro zobrazení widgetu polí na stránce záznamu. Určuje klíč pro odvozování; pouze `INDEX` je také uložen v řádku zobrazení.
 
 Vyhodnocené ID funguje všude tam, kde se očekává `viewUniversalIdentifier`, například u položky postranního panelu [`NavigationMenuItemType.VIEW`](/l/cs/developers/extend/apps/layout/navigation-menu-items). Pro pouhé otevření hlavního seznamu objektu preferujte `NavigationMenuItemType.OBJECT` s `targetObjectUniversalIdentifier`: nevyžaduje žádné odvozování.
 

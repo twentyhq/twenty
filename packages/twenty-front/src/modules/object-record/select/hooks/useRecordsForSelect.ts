@@ -70,7 +70,6 @@ export const useRecordsForSelect = ({
         const [parentFieldName, subFieldName] = fieldName.split('.');
 
         if (isNonEmptyString(subFieldName)) {
-          // Composite field
           return {
             [parentFieldName]: {
               [subFieldName]: {

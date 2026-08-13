@@ -116,6 +116,13 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true, type: 'uuid' })
   settingsCustomTabFrontComponentId: string | null;
 
+  @Column({ nullable: true, type: 'uuid' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.32.0_AddUninstallLogicFunctionIdToApplicationFastInstanceCommand_1786623564993',
+  })
+  uninstallLogicFunctionId: string | null;
+
   @Column({ nullable: false, type: 'boolean', default: true })
   canBeUninstalled: boolean;
 
@@ -135,6 +142,20 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
       '2.23.0_AddSdkClientCoreChecksumToApplicationFastInstanceCommand_1784625638000',
   })
   sdkClientCoreChecksum: string | null;
+
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.31.0_AddFrontComponentSharedDependenciesToApplicationFastInstanceCommand_1786529082690',
+  })
+  frontComponentSharedDependenciesChecksum: string | null;
+
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.31.0_AddFrontComponentSharedDependenciesToApplicationFastInstanceCommand_1786529082690',
+  })
+  frontComponentSharedDependenciesBuiltPath: string | null;
 
   @Column({ nullable: true, type: 'uuid' })
   applicationRegistrationId: string | null;

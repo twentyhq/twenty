@@ -1,11 +1,8 @@
-import gql from 'graphql-tag';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
-import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type Manifest } from 'twenty-shared/application';
 import { v4 as uuidv4 } from 'uuid';
@@ -53,29 +50,6 @@ const buildManifestWithLogicFunction = ({
   };
 };
 
-const uploadInstalledManifestAndSyncApplication = async ({
-  applicationUniversalIdentifier,
-  manifest,
-}: {
-  applicationUniversalIdentifier: string;
-  manifest: Manifest;
-}) => {
-  jest.useRealTimers();
-
-  await uploadApplicationFile({
-    applicationUniversalIdentifier,
-    fileFolder: 'Source',
-    filePath: 'manifest.json',
-    fileBuffer: Buffer.from(JSON.stringify(manifest)),
-    filename: 'manifest.json',
-    expectToFail: false,
-  });
-
-  jest.useFakeTimers();
-
-  await syncApplication({ manifest, expectToFail: false });
-};
-
 describe('Uninstall application logic function hook', () => {
   let appId: string;
   let roleId: string;
@@ -118,14 +92,14 @@ describe('Uninstall application logic function hook', () => {
   });
 
   it('executes the uninstall hook before deleting the application', async () => {
-    await uploadInstalledManifestAndSyncApplication({
-      applicationUniversalIdentifier: appId,
+    await syncApplication({
       manifest: buildManifestWithLogicFunction({
         appId,
         roleId,
         logicFunctionId,
         withUninstallHook: true,
       }),
+      expectToFail: false,
     });
 
     const { data, errors } = await uninstallApplication({
@@ -145,15 +119,15 @@ describe('Uninstall application logic function hook', () => {
     );
   }, 60000);
 
-  it('executes the installed hook when the registration manifest is unavailable', async () => {
-    await uploadInstalledManifestAndSyncApplication({
-      applicationUniversalIdentifier: appId,
+  it('executes the hook when the registration manifest is unavailable', async () => {
+    await syncApplication({
       manifest: buildManifestWithLogicFunction({
         appId,
         roleId,
         logicFunctionId,
         withUninstallHook: true,
       }),
+      expectToFail: false,
     });
 
     await globalThis.testDataSource.query(
@@ -163,13 +137,13 @@ describe('Uninstall application logic function hook', () => {
       [appId],
     );
 
-    const uninstallApplicationResponse = await uninstallApplication({
+    const { data, errors } = await uninstallApplication({
       universalIdentifier: appId,
       expectToFail: false,
     });
 
-    expect(uninstallApplicationResponse.errors).toBeUndefined();
-    expect(uninstallApplicationResponse.data?.uninstallApplication).toBe(true);
+    expect(errors).toBeUndefined();
+    expect(data?.uninstallApplication).toBe(true);
     expect(executeSpy).toHaveBeenCalledTimes(1);
     expect(executeSpy).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -179,50 +153,32 @@ describe('Uninstall application logic function hook', () => {
     );
   }, 60000);
 
-  it('executes the hook declared by the installed manifest when the registration manifest advances', async () => {
-    const installedManifest = buildManifestWithLogicFunction({
-      appId,
-      roleId,
-      logicFunctionId,
-      withUninstallHook: true,
+  it('executes the hook resolved at sync time when the registration manifest advances', async () => {
+    await syncApplication({
+      manifest: buildManifestWithLogicFunction({
+        appId,
+        roleId,
+        logicFunctionId,
+        withUninstallHook: true,
+      }),
+      expectToFail: false,
     });
 
-    installedManifest.application.packageJsonChecksum = 'installed-checksum';
-
-    await uploadInstalledManifestAndSyncApplication({
-      applicationUniversalIdentifier: appId,
-      manifest: installedManifest,
-    });
-
-    const logicFunctionsResponse = await makeMetadataAPIRequest({
-      query: gql`
-        query FindManyLogicFunctions {
-          findManyLogicFunctions {
-            id
-            universalIdentifier
-          }
-        }
-      `,
-    });
-
-    const installedUninstallLogicFunction =
-      logicFunctionsResponse.body.data.findManyLogicFunctions.find(
-        (logicFunction: { universalIdentifier: string }) =>
-          logicFunction.universalIdentifier === logicFunctionId,
+    const installedUninstallLogicFunctions =
+      await globalThis.testDataSource.query(
+        `SELECT id FROM core."logicFunction"
+         WHERE "universalIdentifier" = $1 AND "deletedAt" IS NULL`,
+        [logicFunctionId],
       );
 
-    expect(installedUninstallLogicFunction).toBeDefined();
+    expect(installedUninstallLogicFunctions).toHaveLength(1);
 
-    const latestLogicFunctionId = uuidv4();
     const latestRegistrationManifest = buildManifestWithLogicFunction({
       appId,
       roleId,
-      logicFunctionId: latestLogicFunctionId,
+      logicFunctionId: uuidv4(),
       withUninstallHook: true,
     });
-
-    latestRegistrationManifest.application.packageJsonChecksum =
-      'latest-checksum';
 
     await globalThis.testDataSource.query(
       `UPDATE core."applicationRegistration"
@@ -241,21 +197,21 @@ describe('Uninstall application logic function hook', () => {
     expect(executeSpy).toHaveBeenCalledTimes(1);
     expect(executeSpy).toHaveBeenCalledWith(
       expect.objectContaining({
-        logicFunctionId: installedUninstallLogicFunction.id,
+        logicFunctionId: installedUninstallLogicFunctions[0].id,
         payload: { version: '1.0.0' },
       }),
     );
   }, 60000);
 
   it('does not execute any hook when the manifest declares no uninstall logic function', async () => {
-    await uploadInstalledManifestAndSyncApplication({
-      applicationUniversalIdentifier: appId,
+    await syncApplication({
       manifest: buildManifestWithLogicFunction({
         appId,
         roleId,
         logicFunctionId,
         withUninstallHook: false,
       }),
+      expectToFail: false,
     });
 
     const { data, errors } = await uninstallApplication({
@@ -282,14 +238,14 @@ describe('Uninstall application logic function hook', () => {
       },
     });
 
-    await uploadInstalledManifestAndSyncApplication({
-      applicationUniversalIdentifier: appId,
+    await syncApplication({
       manifest: buildManifestWithLogicFunction({
         appId,
         roleId,
         logicFunctionId,
         withUninstallHook: true,
       }),
+      expectToFail: false,
     });
 
     const { data, errors } = await uninstallApplication({
