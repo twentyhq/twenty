@@ -108,7 +108,6 @@ export class GlobalWorkspaceOrmManager {
       flatIndexMaps,
       featureFlagsMap,
       rolesPermissions: permissionsPerRoleId,
-      ORMEntityMetadatas: entityMetadatas,
       userWorkspaceRoleMap,
       apiKeyRoleMap,
       flatRowLevelPermissionPredicateMaps,
@@ -119,12 +118,23 @@ export class GlobalWorkspaceOrmManager {
       'flatIndexMaps',
       'featureFlagsMap',
       'rolesPermissions',
-      'ORMEntityMetadatas',
       'userWorkspaceRoleMap',
       'apiKeyRoleMap',
       'flatRowLevelPermissionPredicateMaps',
       'flatRowLevelPermissionPredicateGroupMaps',
     ]);
+
+    // The TypeORM EntityMetadata graph is only consumed by the v1 repository, so
+    // when the ORM v2 read path is enabled it is neither loaded nor unpacked.
+    const entityMetadatas = featureFlagsMap[
+      FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED
+    ]
+      ? []
+      : (
+          await this.workspaceCacheService.getOrRecompute(workspaceId, [
+            'ORMEntityMetadatas',
+          ])
+        ).ORMEntityMetadatas;
 
     const { idByNameSingular: objectIdByNameSingular } =
       buildObjectIdByNameMaps(flatObjectMetadataMaps);
