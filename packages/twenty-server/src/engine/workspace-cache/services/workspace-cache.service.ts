@@ -61,9 +61,12 @@ const PACKING_INTERVAL_MS = 500;
 const PACKING_PONDERATION_BUDGET = 64;
 const MIN_IDLE_BEFORE_PACKING_MS = 60 * 1000;
 // Per-provider entry caps, keyed by local cache key prefix (ORM graphs are ~5 MB each).
+// flatFieldMetadataMaps is sized above the distinct active workspaces per pod (~470 at peak) so
+// the cap stops forcing evictions: an eviction there costs a ~2s request-path recompute, and the
+// extra retained entries are mostly small packed blobs, not live graphs.
 const MAX_LOCAL_ENTRIES_BY_KEY_NAME = new Map<string, number>([
   ['ORMEntityMetadatas', 128],
-  ['flatFieldMetadataMaps', 256],
+  ['flatFieldMetadataMaps', 512],
 ]);
 type CacheDataType = WorkspaceCacheDataMap[WorkspaceCacheKeyName];
 type StoredCacheDataType = WorkspaceCacheStoredDataMap[WorkspaceCacheKeyName];
