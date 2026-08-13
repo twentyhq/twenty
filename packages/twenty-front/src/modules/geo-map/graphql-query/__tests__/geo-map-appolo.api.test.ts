@@ -45,6 +45,11 @@ describe('geo-map GraphQL queries', () => {
       const isFieldCityVar = variables.find(
         (v: any) => v.variable.name.value === 'isFieldCity',
       );
+
+      expect(addressVar.type.kind).toBe('NonNullType'); // Required
+      expect(tokenVar.type.kind).toBe('NonNullType'); // Required
+      expect(countryVar.type.kind).toBe('NamedType'); // Optional
+      expect(isFieldCityVar.type.kind).toBe('NamedType'); // Optional
     });
 
     it('should request the correct fields', () => {
@@ -116,6 +121,9 @@ describe('geo-map GraphQL queries', () => {
       const tokenVar = variables.find(
         (v: any) => v.variable.name.value === 'token',
       );
+
+      expect(placeIdVar.type.kind).toBe('NonNullType'); // Required
+      expect(tokenVar.type.kind).toBe('NonNullType'); // Required
     });
 
     it('should request the correct fields', () => {

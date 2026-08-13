@@ -1,4 +1,5 @@
-// Arrays concatenate rather than replace, and Date/RegExp are replaced rather than merged
+// Arrays concatenate rather than replace, Date/RegExp are replaced rather than merged, and in
+// target a null overwrites the source while an undefined is ignored
 export const deepMerge = <T extends object>(
   source: Required<T>,
   target: Required<T>,

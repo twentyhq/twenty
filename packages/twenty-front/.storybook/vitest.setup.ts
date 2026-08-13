@@ -26,4 +26,6 @@ import('@/object-record/record-field/ui/meta-types/input/components/RichTextFiel
 import('@/navigation-menu-item/display/sections/favorites/components/FavoritesSectionDispatcher');
 import('@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionDispatcher');
 
+// This is an important step to apply the right configuration when testing your stories.
+// More info at: https://storybook.js.org/docs/api/portable-stories/portable-stories-vitest#setprojectannotations
 setProjectAnnotations([projectAnnotations]);

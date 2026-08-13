@@ -52,7 +52,8 @@ export class TwoFactorAuthenticationService {
     });
   }
 
-  // Throws VERIFICATION_REQUIRED when 2FA is set up, PROVISION_REQUIRED when it is enforced but not set up
+  // Throws TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED when 2FA is set up, and
+  // TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED when it is enforced but not set up
   async validateTwoFactorAuthenticationRequirement(
     targetWorkspace: WorkspaceEntity,
     userTwoFactorAuthenticationMethods?: TwoFactorAuthenticationMethodEntity[],
