@@ -2,14 +2,14 @@ export { FrontComponentRenderer } from './host/components/FrontComponentRenderer
 export {
   FrontComponentInputFocusContext,
   type SetEditableFocused,
-} from './host/contexts/FrontComponentInputFocusContext';
+} from './host/caret/contexts/FrontComponentInputFocusContext';
 export { componentRegistry } from './host/generated/host-component-registry';
-export { FrontComponentConfirmationModalResultEffect } from './remote/components/FrontComponentConfirmationModalResultEffect';
-export { FrontComponentErrorEffect } from './remote/components/FrontComponentErrorEffect';
-export { FrontComponentInitializeHostCommunicationApiEffect } from './remote/components/FrontComponentInitializeHostCommunicationApiEffect';
-export { FrontComponentUpdateContextEffect } from './remote/components/FrontComponentUpdateContextEffect';
-export { FrontComponentUpdateHostCommunicationApiEffect } from './remote/components/FrontComponentUpdateHostCommunicationApiEffect';
-export { FrontComponentWorkerEffect } from './remote/components/FrontComponentWorkerEffect';
+export { FrontComponentConfirmationModalResultEffect } from './host/effect-components/FrontComponentConfirmationModalResultEffect';
+export { FrontComponentErrorEffect } from './host/effect-components/FrontComponentErrorEffect';
+export { FrontComponentInitializeHostCommunicationApiEffect } from './host/effect-components/FrontComponentInitializeHostCommunicationApiEffect';
+export { FrontComponentUpdateContextEffect } from './host/effect-components/FrontComponentUpdateContextEffect';
+export { FrontComponentUpdateHostCommunicationApiEffect } from './host/effect-components/FrontComponentUpdateHostCommunicationApiEffect';
+export { FrontComponentWorkerEffect } from './host/effect-components/FrontComponentWorkerEffect';
 export {
   HtmlA,
   HtmlArticle,
@@ -134,10 +134,10 @@ export { installStyleBridge } from './polyfills/installStyleBridge';
 export { exposeGlobals } from './utils/exposeGlobals';
 export type { FrontComponentExecutionContext } from 'twenty-sdk/front-component';
 export type { FrontComponentHostCommunicationApi } from './types/FrontComponentHostCommunicationApi';
-export { setFrontComponentStorageItem } from './host/utils/setFrontComponentStorageItem';
-export { deleteFrontComponentStorageItem } from './host/utils/deleteFrontComponentStorageItem';
-export { clearFrontComponentStorage } from './host/utils/clearFrontComponentStorage';
-export { buildFrontComponentStorageNamespace } from './host/utils/buildFrontComponentStorageNamespace';
+export { setFrontComponentStorageItem } from './host/storage/utils/setFrontComponentStorageItem';
+export { deleteFrontComponentStorageItem } from './host/storage/utils/deleteFrontComponentStorageItem';
+export { clearFrontComponentStorage } from './host/storage/utils/clearFrontComponentStorage';
+export { buildFrontComponentStorageNamespace } from './host/storage/utils/buildFrontComponentStorageNamespace';
 export type { ElementGeometrySnapshot } from './types/ElementGeometrySnapshot';
 export type { ViewportGeometrySnapshot } from './types/ViewportGeometrySnapshot';
 export type { GeometryUpdateBatch } from './types/GeometryUpdateBatch';

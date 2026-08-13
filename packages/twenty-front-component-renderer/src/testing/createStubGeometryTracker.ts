@@ -1,4 +1,4 @@
-import { type GeometryTracker } from '@/host/types/GeometryTracker';
+import { type GeometryTracker } from '@/host/geometry/types/GeometryTracker';
 import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot';
 
 export const createStubGeometryTracker = (): GeometryTracker => ({
