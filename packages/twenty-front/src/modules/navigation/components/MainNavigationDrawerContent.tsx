@@ -9,7 +9,6 @@ import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerT
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
-// Shared by the desktop drawer and the mobile home page so both stay identical.
 export const MainNavigationDrawerContent = () => {
   const navigationDrawerActiveTab = useAtomStateValue(
     navigationDrawerActiveTabState,

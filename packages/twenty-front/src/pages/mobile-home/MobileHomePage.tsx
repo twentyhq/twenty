@@ -6,7 +6,6 @@ import { styled } from '@linaria/react';
 import { Navigate } from 'react-router-dom';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-// Mirrors the drawer's own container so the page reads as the same surface.
 const StyledContainer = styled.div`
   box-sizing: border-box;
   display: flex;
