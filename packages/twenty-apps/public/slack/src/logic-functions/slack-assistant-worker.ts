@@ -25,7 +25,6 @@ import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slac
 import { fetchWorkspaceBaseUrl } from 'src/logic-functions/utils/fetch-workspace-base-url';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
-import { isSlackDirectMessageChannelId } from 'src/logic-functions/utils/is-slack-direct-message-channel-id';
 import { resolveSlackRunAsForRequest } from 'src/logic-functions/utils/resolve-slack-run-as-for-request';
 import { runSlackAssistantAgentWithStatus } from 'src/logic-functions/utils/run-slack-assistant-agent-with-status';
 import { setSlackAssistantThreadTitle } from 'src/logic-functions/utils/set-slack-assistant-thread-title';
@@ -64,8 +63,6 @@ export const slackAssistantWorkerHandler = async (
     status: SLACK_ASSISTANT_REQUEST_STATUS.PROCESSING,
   });
 
-  const isDirectMessage = isSlackDirectMessageChannelId(slackChannelId);
-
   const isThreadStartingMessage = !isNonEmptyString(
     record.slackThreadTimestamp,
   );
@@ -92,6 +89,7 @@ export const slackAssistantWorkerHandler = async (
         threadMessages,
         slackClient,
         assistantBotUserId,
+        isDirectMessage,
       },
       workspaceBaseUrl,
     ] = await Promise.all([

@@ -7,6 +7,7 @@ import { buildSlackConversationMessages } from 'src/logic-functions/utils/build-
 import { fetchSlackThreadMessages } from 'src/logic-functions/utils/fetch-slack-thread-messages';
 import { fetchSlackUserIdentity } from 'src/logic-functions/utils/fetch-slack-user-identity';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
+import { isSlackDirectMessageChannel } from 'src/logic-functions/utils/is-slack-direct-message-channel';
 import { resolveSlackBotUserIdOrThrow } from 'src/logic-functions/utils/resolve-slack-bot-user-id-or-throw';
 
 type SlackAssistantContext = {
@@ -17,6 +18,7 @@ type SlackAssistantContext = {
   threadMessages: SlackThreadMessage[];
   slackClient: WebClient | undefined;
   assistantBotUserId: string | undefined;
+  isDirectMessage: boolean;
 };
 
 const UNREACHABLE_SLACK_CONTEXT: SlackAssistantContext = {
@@ -27,6 +29,7 @@ const UNREACHABLE_SLACK_CONTEXT: SlackAssistantContext = {
   threadMessages: [],
   slackClient: undefined,
   assistantBotUserId: undefined,
+  isDirectMessage: false,
 };
 
 export const fetchSlackAssistantContext = async ({
@@ -58,7 +61,7 @@ export const fetchSlackAssistantContext = async ({
     },
   );
 
-  const [{ tailMessages, requestMessage }, requesterIdentity] =
+  const [{ tailMessages, requestMessage }, requesterIdentity, isDirectMessage] =
     await Promise.all([
       fetchSlackThreadMessages({
         client,
@@ -67,6 +70,7 @@ export const fetchSlackAssistantContext = async ({
         requestMessageTimestamp: slackMessageTimestamp,
       }),
       fetchSlackUserIdentity({ client, slackUserId }),
+      isSlackDirectMessageChannel({ client, slackChannelId }),
     ]);
 
   return {
@@ -81,5 +85,6 @@ export const fetchSlackAssistantContext = async ({
     threadMessages: tailMessages,
     slackClient: client,
     assistantBotUserId,
+    isDirectMessage,
   };
 };

@@ -23,6 +23,7 @@ Two parts: a **Slack app** you create, and the **Twenty side** where you paste i
    | `channels:history` | assistant: thread follow-ups in public channels |
    | `groups:history` | assistant: thread follow-ups in private channels |
    | `im:history` | assistant: direct messages |
+   | `im:read` | assistant: confirm with Slack that a conversation really is a direct message |
    | `users:read` | assistant: look up the requester's display name |
    | `users:read.email` | assistant: match a Slack account to a workspace member |
    | `assistant:write` | agent surface: `assistant.threads.*` (statuses, titles, suggested prompts) |
