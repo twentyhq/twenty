@@ -520,6 +520,39 @@ export default defineFrontComponent({
 });
 ```
 
+### Depolama
+
+`localStorage` ve `sessionStorage` normal bir sayfada olduğu gibi, standart senkron API ile çalışır. Anahtarlarınız, uygulama kurulumunuza ve oturum açmış kullanıcıya göre kapsamlandırılır: başka hiçbir uygulama bunları okuyamaz ve aynı tarayıcıda oturum açan başka bir kullanıcı, boş bir depoyla başlar. `localStorage`'a yazılan değerler, yeniden yüklemeler arasında cihazda kalır; `sessionStorage` ise tarayıcı oturumu süresince geçerlidir.
+
+```tsx src/front-components/note-draft.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const NoteDraft = () => {
+  const [draft, setDraft] = useState(() => localStorage.getItem('draft') ?? '');
+
+  const handleChange = (nextDraft: string) => {
+    setDraft(nextDraft);
+    localStorage.setItem('draft', nextDraft);
+  };
+
+  return (
+    <textarea value={draft} onChange={(event) => handleChange(event.target.value)} />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-def0-890123456789',
+  name: 'note-draft',
+  description: 'Keeps an unsaved note on this device',
+  component: NoteDraft,
+});
+```
+
+Twenty, değerleri uygulamanız adına depolar, böylece bir yazma işlemi yerelde anında uygulanır ve arka planda kaydedilir. Okumalar hiçbir zaman ana makine üzerinde beklemez. Hiçbir şey eşitlenmez: değerler kullanıcıyı başka bir tarayıcıya veya makineye takip etmez, bu yüzden cihaz değişikliğinden sonra da korunması gereken her şey için bir mantık fonksiyonunun [anahtar-değer deposunu](/l/tr/developers/extend/apps/logic/key-value-store) kullanın.
+
+Yazma işlemleri sınırlandırılmıştır ve her sınır bayt yerine karakterleri sayar: anahtarlar en fazla 512 karakter, tek bir değer en fazla 262.144 karakter ve her depolama alanı uygulama ve kullanıcı başına en fazla 1.048.576 karakter olabilir. Bir sınırı aşan yazma, tarayıcı API’sinde olduğu gibi bir `QuotaExceededError` fırlatır.
+
 ### Birden çok kayıtla çalışma
 
 Birden çok seçili kaydı yönetmek için `useSelectedRecordIds()` kullanın. Bu, toplu işlemler için kullanışlıdır:
@@ -792,7 +825,7 @@ Bileşen CSS’i, ister `import './styles.css'` ile, ister CSS-in-JS ile ya da b
 
 ### Depolama ve ağ
 
-`localStorage`, `sessionStorage`, IndexedDB, çerezler, Cache API ve `BroadcastChannel`’ın tümü kullanılamaz, çünkü bileşen opak bir origin’e sahip bir worker içinde çalışır. Durumu kalıcı hale getirmek için bir [mantık fonksiyonu](/l/tr/developers/extend/apps/logic/logic-functions) çağırın ve onun [anahtar-değer deposunu](/l/tr/developers/extend/apps/logic/key-value-store) kullanın.
+`localStorage` ve `sessionStorage` tarayıcı yerine Twenty tarafından sağlanır: bileşen, opak bir origin’de bir worker içinde çalışır, bu nedenle ana makine değerleri uygulamanız adına depolar. Kapsamları ve sınırları için [storage](#storage) bölümüne bakın. IndexedDB, çerezler, Cache API ve `BroadcastChannel` hâlâ kullanılamaz. Durumu cihazlar arasında kalıcı hale getirmek için bir [mantık fonksiyonu](/l/tr/developers/extend/apps/logic/logic-functions) çağırın ve onun [anahtar-değer deposunu](/l/tr/developers/extend/apps/logic/key-value-store) kullanın.
 
 `fetch` çalışır, bazı sınırlamalarla:
 

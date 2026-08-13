@@ -5,16 +5,16 @@ import {
   FLAT_FIELD_METADATA_SHORT_CODE_LOOKUP,
 } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-cache-codec.constant';
 import {
-  type EncodableFlatFieldMetadataMaps,
-  type EncodedFlatFieldMetadata,
-  type EncodedFlatFieldMetadataMaps,
-} from 'src/engine/metadata-modules/flat-field-metadata/types/encoded-flat-field-metadata-maps.type';
+  type CompactFlatFieldMetadata,
+  type CompactFlatFieldMetadataMaps,
+  type ExpandedFlatFieldMetadataMaps,
+} from 'src/engine/metadata-modules/flat-field-metadata/types/compact-flat-field-metadata-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
-const encodeFlatFieldMetadata = (
+const compactFlatFieldMetadata = (
   flatFieldMetadata: Partial<FlatFieldMetadata>,
-): EncodedFlatFieldMetadata => {
-  const encoded: Partial<
+): CompactFlatFieldMetadata => {
+  const compacted: Partial<
     Record<string, FlatFieldMetadata[keyof FlatFieldMetadata]>
   > = {};
 
@@ -27,16 +27,16 @@ const encodeFlatFieldMetadata = (
       continue;
     }
 
-    encoded[FLAT_FIELD_METADATA_SHORT_CODE_LOOKUP.get(key) ?? key] = value;
+    compacted[FLAT_FIELD_METADATA_SHORT_CODE_LOOKUP.get(key) ?? key] = value;
   }
 
-  return encoded;
+  return compacted;
 };
 
-export const encodeFlatFieldMetadataMapsForCache = (
-  flatEntityMaps: EncodableFlatFieldMetadataMaps,
-): EncodedFlatFieldMetadataMaps => {
-  const byUniversalIdentifier: Record<string, EncodedFlatFieldMetadata> = {};
+export const compactFlatFieldMetadataMaps = (
+  flatEntityMaps: ExpandedFlatFieldMetadataMaps,
+): CompactFlatFieldMetadataMaps => {
+  const byUniversalIdentifier: Record<string, CompactFlatFieldMetadata> = {};
 
   for (const [universalIdentifier, flatFieldMetadata] of Object.entries(
     flatEntityMaps.byUniversalIdentifier,
@@ -46,7 +46,7 @@ export const encodeFlatFieldMetadataMapsForCache = (
     }
 
     byUniversalIdentifier[universalIdentifier] =
-      encodeFlatFieldMetadata(flatFieldMetadata);
+      compactFlatFieldMetadata(flatFieldMetadata);
   }
 
   return {

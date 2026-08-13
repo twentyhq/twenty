@@ -3472,9 +3472,14 @@ msgid "Call recorder"
 msgstr "Call recorder"
 
 #. js-lingui-id: ahn0Ti
-#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
+#: src/modules/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetUnavailableDisplay.tsx
 msgid "Call recording is not available in this workspace."
 msgstr "Call recording is not available in this workspace."
+
+#. js-lingui-id: z9jSP/
+#: src/modules/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetUnavailableDisplay.tsx
+msgid "Call Recording Unavailable"
+msgstr "Call Recording Unavailable"
 
 #. js-lingui-id: +Kx1Id
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -12859,8 +12864,15 @@ msgstr "No billing data is available for this workspace."
 msgid "No body"
 msgstr "No body"
 
+#. js-lingui-id: O7I76L
+#: src/modules/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody.tsx
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
+msgid "No Call Recording"
+msgstr "No Call Recording"
+
 #. js-lingui-id: 8Qo8A6
-#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
+#: src/modules/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody.tsx
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
 msgid "No call recording exists for this calendar event yet."
 msgstr "No call recording exists for this calendar event yet."
 
@@ -13357,6 +13369,16 @@ msgstr "No server administrators found."
 msgid "No subject"
 msgstr "No subject"
 
+#. js-lingui-id: Y8HpZa
+#: src/modules/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody.tsx
+msgid "No Summary"
+msgstr "No Summary"
+
+#. js-lingui-id: cU6bd5
+#: src/modules/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody.tsx
+msgid "No summary has been generated for this call recording yet."
+msgstr "No summary has been generated for this call recording yet."
+
 #. js-lingui-id: RQ6tfU
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelSystemObjectPickerSubView.tsx
 msgid "No system objects available"
@@ -13382,8 +13404,13 @@ msgstr "No tools were called"
 msgid "No topic"
 msgstr "No topic"
 
+#. js-lingui-id: 3Y/oDZ
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
+msgid "No Transcript"
+msgstr "No Transcript"
+
 #. js-lingui-id: du4Icj
-#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
 msgid "No transcript is available for this recording."
 msgstr "No transcript is available for this recording."
 
@@ -14019,11 +14046,6 @@ msgstr "Only you will be able to see your emails and events"
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 msgid "Open"
 msgstr "Open"
-
-#. js-lingui-id: Z5AQOT
-#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
-msgid "Open a calendar event to view its transcript."
-msgstr "Open a calendar event to view its transcript."
 
 #. js-lingui-id: Kkq3xr
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -14876,6 +14898,11 @@ msgstr "Prefilling your <0>workspace data</0>..."
 msgid "Prefix"
 msgstr "Prefix"
 
+#. js-lingui-id: dVCM1s
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
+msgid "Preparing Transcript"
+msgstr "Preparing Transcript"
+
 #. js-lingui-id: NwnQoz
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Preset link"
@@ -14994,6 +15021,16 @@ msgstr "Pro plan"
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 msgid "Processing"
 msgstr "Processing"
+
+#. js-lingui-id: HvAaN4
+#: src/modules/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody.tsx
+msgid "Processing Failed"
+msgstr "Processing Failed"
+
+#. js-lingui-id: 9YrAC6
+#: src/modules/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody.tsx
+msgid "Processing Recording"
+msgstr "Processing Recording"
 
 #. js-lingui-id: k1ifdL
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -18540,6 +18577,16 @@ msgstr ""
 "\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
 
+#. js-lingui-id: VsxjzF
+#: src/modules/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody.tsx
+msgid "The call recording could not be processed."
+msgstr "The call recording could not be processed."
+
+#. js-lingui-id: +AFHx6
+#: src/modules/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody.tsx
+msgid "The call recording is still being processed…"
+msgstr "The call recording is still being processed…"
+
 #. js-lingui-id: /kfzmx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "The Data Processing Agreement could not be loaded. Please try again."
@@ -18653,14 +18700,9 @@ msgid "The shared email you want to use."
 msgstr "The shared email you want to use."
 
 #. js-lingui-id: 9q0gnf
-#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
 msgid "The transcript could not be generated."
 msgstr "The transcript could not be generated."
-
-#. js-lingui-id: bkXHoz
-#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
-msgid "The transcript is empty."
-msgstr "The transcript is empty."
 
 #. js-lingui-id: qrhV2s
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
@@ -19358,8 +19400,13 @@ msgstr "Total time"
 msgid "Track AI consumption across your workspace."
 msgstr "Track AI consumption across your workspace."
 
+#. js-lingui-id: U2CSqa
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
+msgid "Transcript Failed"
+msgstr "Transcript Failed"
+
 #. js-lingui-id: zDTPYv
-#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
 msgid "Transcript is being prepared…"
 msgstr "Transcript is being prepared…"
 
@@ -19893,11 +19940,6 @@ msgstr "Unordered list with bullets"
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Unpaid"
 msgstr "Unpaid"
-
-#. js-lingui-id: fkuUW0
-#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
-msgid "Unrecognized transcript format."
-msgstr "Unrecognized transcript format."
 
 #. js-lingui-id: SMaFdc
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
