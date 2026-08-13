@@ -411,7 +411,6 @@ describe('group-by resolver (integration)', () => {
         expect(groups).toBeDefined();
         expect(groups.length).toBe(4);
 
-        // Group starting week of monday dec 30th, 2024
         const mondayDec30thGroup = groups.find((group: any) =>
           group.groupByDimensionValues[0].startsWith('2024-12-30'),
         );
@@ -420,7 +419,6 @@ describe('group-by resolver (integration)', () => {
         expect(mondayDec30thGroup.edges[0].node.id).toBe(idJan2);
         expect(mondayDec30thGroup.totalCount).toBe(1);
 
-        // Group starting week of monday jan 6th, 2025
         const mondayJan6thGroup = groups.find((group: any) =>
           group.groupByDimensionValues[0].startsWith('2025-01-06'),
         );
@@ -429,7 +427,6 @@ describe('group-by resolver (integration)', () => {
         expect(mondayJan6thGroup.edges[0].node.id).toBe(idJan8);
         expect(mondayJan6thGroup.totalCount).toBe(1);
 
-        // Group starting week of monday feb 24th, 2025
         const mondayFeb24thGroup = groups.find((group: any) =>
           group.groupByDimensionValues[0].startsWith('2025-02-24'),
         );
@@ -496,7 +493,6 @@ describe('group-by resolver (integration)', () => {
         expect(groups).toBeDefined();
         expect(groups.length).toBe(4);
 
-        // Group starting week of sunday dec 29th, 2024
         const sundayDec29thGroup = groups.find((group: any) =>
           group.groupByDimensionValues[0].startsWith('2024-12-29'),
         );
@@ -507,7 +503,6 @@ describe('group-by resolver (integration)', () => {
           sundayDec29thGroup.edges.find((edge: any) => edge.node.id === idJan2),
         ).toBeDefined();
 
-        // Group starting week of sunday jan 5th, 2025
         const sundayJan5thGroup = groups.find((group: any) =>
           group.groupByDimensionValues[0].startsWith('2025-01-05'),
         );
@@ -518,7 +513,6 @@ describe('group-by resolver (integration)', () => {
           sundayJan5thGroup.edges.find((edge: any) => edge.node.id === idJan8),
         ).toBeDefined();
 
-        // Group starting week of sunday feb 23rd, 2025
         const sundayFeb23rdGroup = groups.find((group: any) =>
           group.groupByDimensionValues[0].startsWith('2025-02-23'),
         );
@@ -585,7 +579,6 @@ describe('group-by resolver (integration)', () => {
         expect(groups).toBeDefined();
         expect(groups.length).toBe(3);
 
-        // Group starting week of saturday dec 28th, 2024
         const saturdayDec28thGroup = groups.find((group: any) =>
           group.groupByDimensionValues[0].startsWith('2024-12-28'),
         );
@@ -598,7 +591,6 @@ describe('group-by resolver (integration)', () => {
           ),
         ).toBeDefined();
 
-        // Group starting week of saturday jan 4th, 2025
         const saturdayJan4thGroup = groups.find((group: any) =>
           group.groupByDimensionValues[0].startsWith('2025-01-04'),
         );
@@ -856,7 +848,6 @@ describe('group-by resolver (integration)', () => {
         }),
       );
 
-      // create a view with a filter: city eq cityToKeep
       const { data: createViewData } = await createOneView({
         input: {
           name: 'People View City Keep',
@@ -911,7 +902,6 @@ describe('group-by resolver (integration)', () => {
           expect.objectContaining({ groupByDimensionValues: [cityToKeep] }),
         ]),
       );
-      // Ensure excluded city is not present
       expect(groups).toEqual(
         expect.not.arrayContaining([
           expect.objectContaining({ groupByDimensionValues: [cityToExclude] }),
@@ -945,7 +935,6 @@ describe('group-by resolver (integration)', () => {
         }),
       );
 
-      // create a view with any field filter
       const { data: createViewData } = await createOneView({
         input: {
           name: 'People View City Keep',
@@ -977,7 +966,6 @@ describe('group-by resolver (integration)', () => {
           expect.objectContaining({ groupByDimensionValues: [cityA] }),
         ]),
       );
-      // Ensure excluded city is not present
       expect(groups).toEqual(
         expect.not.arrayContaining([
           expect.objectContaining({ groupByDimensionValues: [cityB] }),
@@ -1010,7 +998,6 @@ describe('group-by resolver (integration)', () => {
       };
 
       beforeAll(async () => {
-        // Create companies with different createdAt dates for grouping
         await makeGraphqlAPIRequest(
           createOneOperationFactory({
             objectMetadataSingularName: 'company',
@@ -1041,7 +1028,6 @@ describe('group-by resolver (integration)', () => {
           }),
         );
 
-        // Create people linked to companies
         await makeGraphqlAPIRequest(
           createOneOperationFactory({
             objectMetadataSingularName: 'person',
@@ -1319,7 +1305,6 @@ describe('group-by resolver (integration)', () => {
 
         listingObjectMetadataId = createListingObjectData.createOneObject.id;
 
-        // Create relation from person to listing
         const personlistingRelation = await createRelationBetweenObjects({
           objectMetadataId: personObject.id,
           targetObjectMetadataId: listingObjectMetadataId,
@@ -1330,7 +1315,6 @@ describe('group-by resolver (integration)', () => {
 
         personlistingRelationFieldId = personlistingRelation.id;
 
-        // Create companies
         await makeGraphqlAPIRequest(
           createOneOperationFactory({
             objectMetadataSingularName: 'company',
@@ -1353,7 +1337,6 @@ describe('group-by resolver (integration)', () => {
           }),
         );
 
-        // Create listings
         await makeGraphqlAPIRequest(
           createOneOperationFactory({
             objectMetadataSingularName: 'listing',
@@ -1376,7 +1359,6 @@ describe('group-by resolver (integration)', () => {
           }),
         );
 
-        // Create people linked to companies and listings
         await makeGraphqlAPIRequest(
           createOneOperationFactory({
             objectMetadataSingularName: 'person',
@@ -1551,7 +1533,6 @@ describe('group-by resolver (integration)', () => {
       };
 
       beforeAll(async () => {
-        // Create rockets with different names
         await makeGraphqlAPIRequest(
           createOneOperationFactory({
             objectMetadataSingularName: 'rocket',
@@ -1574,7 +1555,6 @@ describe('group-by resolver (integration)', () => {
           }),
         );
 
-        // Create pets linked to rockets via morph relation
         await makeGraphqlAPIRequest(
           createOneOperationFactory({
             objectMetadataSingularName: 'pet',
@@ -1682,7 +1662,6 @@ describe('group-by resolver (integration)', () => {
       let originalMemberRoleId: string;
 
       beforeAll(async () => {
-        // Get the original Member role ID for restoration later
         const getRolesQuery = {
           query: `
             query GetRoles {
@@ -1724,7 +1703,6 @@ describe('group-by resolver (integration)', () => {
         petObjectId = petObject.id;
         rocketObjectId = rocketObject.id;
 
-        // Create a custom role with pet read permission but no rocket read permission
         const createRoleOperation = {
           query: gql`
             mutation CreateOneRole {
@@ -1751,7 +1729,6 @@ describe('group-by resolver (integration)', () => {
 
         customRoleId = createRoleResponse.body.data.createOneRole.id;
 
-        // Set object permissions: allow reading pets but not rockets
         const upsertObjectPermissionsOperation = {
           query: gql`
             mutation UpsertObjectPermissions(
@@ -1798,7 +1775,6 @@ describe('group-by resolver (integration)', () => {
           workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
         });
 
-        // Create a rocket
         await makeGraphqlAPIRequest(
           createOneOperationFactory({
             objectMetadataSingularName: 'rocket',
@@ -1810,7 +1786,6 @@ describe('group-by resolver (integration)', () => {
           }),
         );
 
-        // Create a pet linked to the rocket
         await makeGraphqlAPIRequest(
           createOneOperationFactory({
             objectMetadataSingularName: 'pet',

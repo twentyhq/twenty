@@ -99,7 +99,6 @@ export class CoreEntityCacheService implements OnModuleInit {
         const localEntry = this.localCache.get(localKey);
         const now = Date.now();
 
-        // Stage 1: Check local TTL
         if (
           isDefined(localEntry) &&
           now - localEntry.lastHashCheckedAt < LOCAL_TTL_MS
@@ -113,7 +112,6 @@ export class CoreEntityCacheService implements OnModuleInit {
           }
         }
 
-        // Stage 2: Validate against Redis hash
         const hashKey = `${localKey}:hash`;
         const redisHash = await this.cacheStorage.get<string>(hashKey);
 
@@ -132,7 +130,6 @@ export class CoreEntityCacheService implements OnModuleInit {
           }
         }
 
-        // Stage 3: Fetch from Redis
         const [redisData, redisDataHash] = await this.cacheStorage.mget<
           CacheableValue | string
         >([`${localKey}:data`, hashKey]);

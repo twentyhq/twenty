@@ -20,6 +20,8 @@ import {
   isObjectWhereLike,
   isWhereFactoryLike,
 } from 'src/engine/twenty-orm-v2/query-builder/types/query-builder-v2.type';
+import { WorkspaceMutationQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-mutation-query-builder-v2';
+import { type MutationKind } from 'src/engine/twenty-orm-v2/sql/utils/build-mutation-statement.util';
 import { buildOrderByClauses } from 'src/engine/twenty-orm-v2/sql/utils/build-order-by-clauses.util';
 import { collectReferencedColumnNames } from 'src/engine/twenty-orm-v2/sql/utils/collect-referenced-column-names.util';
 import { compileNamedParameters } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
@@ -132,6 +134,13 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     this.aliasesWithRowLevelPermissionApplied.delete(this.alias);
 
     return this.appendWhere('and', condition, parameters);
+  }
+
+  copyWhereFrom(source: WorkspaceSelectQueryBuilderV2): this {
+    this.whereClauses.push(...source.whereClauses);
+    this.parameters = { ...this.parameters, ...source.parameters };
+
+    return this;
   }
 
   andWhere(
@@ -446,6 +455,45 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
 
   getSelectedColumnNames(): string[] {
     return this.getReferencedColumnNamesByAlias()[this.alias] ?? [];
+  }
+
+  update(): WorkspaceMutationQueryBuilderV2 {
+    return this.toMutationQueryBuilder('update');
+  }
+
+  delete(): WorkspaceMutationQueryBuilderV2 {
+    return this.toMutationQueryBuilder('delete');
+  }
+
+  softDelete(): WorkspaceMutationQueryBuilderV2 {
+    return this.toMutationQueryBuilder('soft-delete');
+  }
+
+  restore(): WorkspaceMutationQueryBuilderV2 {
+    return this.toMutationQueryBuilder('restore');
+  }
+
+  private toMutationQueryBuilder(
+    kind: MutationKind,
+  ): WorkspaceMutationQueryBuilderV2 {
+    if (this.joinClauses.length > 0) {
+      throw new TwentyOrmV2Exception(
+        `A mutation cannot carry a relation join; rewrite the filter as an "id IN (subquery)" predicate first`,
+        TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
+      );
+    }
+
+    return new WorkspaceMutationQueryBuilderV2({
+      alias: this.alias,
+      kind,
+      context: {
+        tableShape: this.tableShape,
+        executor: this.context.executor,
+        formatResult: this.context.formatResult,
+      },
+      whereClauses: this.whereClauses,
+      parameters: this.parameters,
+    });
   }
 
   private appendWhere(

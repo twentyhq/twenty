@@ -649,7 +649,6 @@ export class GraphqlQueryOrderGroupByParser {
       };
     }
 
-    // Handle regular nested fields
     if (
       typeof nestedFieldOrderByValue === 'string' &&
       Object.values(OrderByDirection).includes(

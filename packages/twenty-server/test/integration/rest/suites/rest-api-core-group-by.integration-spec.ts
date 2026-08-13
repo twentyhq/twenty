@@ -238,7 +238,6 @@ describe('REST API Core Group By endpoint', () => {
   });
 
   it('groups by stage and closeDate with records and filters', async () => {
-    // Test with filter to only include NEW stage opportunities
     const groupByQuery = JSON.stringify([
       {
         closeDate: {

@@ -282,7 +282,6 @@ export const convertGraphQLErrorToBaseGraphQLError = (
         break;
       default:
         if (httpStatus >= 400 && httpStatus < 500) {
-          // Other 4xx errors
           errorCode = ErrorCode.BAD_USER_INPUT;
         } else {
           errorCode = ErrorCode.INTERNAL_SERVER_ERROR;

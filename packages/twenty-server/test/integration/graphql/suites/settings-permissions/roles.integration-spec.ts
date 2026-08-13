@@ -263,7 +263,6 @@ describe('roles permissions', () => {
           );
         });
 
-      // Clean
       const rollbackRoleUpdateQuery = {
         query: `
           mutation UpdateWorkspaceMemberRole {
@@ -327,7 +326,6 @@ describe('roles permissions', () => {
 
       const createdRoleId = result.body.data.createOneRole.id;
 
-      // Clean
       const deleteOneRoleQuery = deleteOneRoleOperationFactory(createdRoleId);
 
       await client

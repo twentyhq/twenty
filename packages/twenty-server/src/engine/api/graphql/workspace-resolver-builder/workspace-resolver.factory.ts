@@ -89,7 +89,6 @@ export class WorkspaceResolverFactory {
     for (const flatObjectMetadata of Object.values(
       flatObjectMetadataMaps.byUniversalIdentifier,
     ).filter(isDefined)) {
-      // Generate query resolvers
       for (const methodName of workspaceResolverBuilderMethods.queries) {
         const resolverName = getResolverName(flatObjectMetadata, methodName);
         const resolverFactory = factories.get(methodName);

@@ -105,7 +105,6 @@ describe('Field update permissions restrictions', () => {
   };
 
   beforeAll(async () => {
-    // Get the original Member role ID for restoration later
     const getRolesQuery = {
       query: `
         query GetRoles {
@@ -125,7 +124,6 @@ describe('Field update permissions restrictions', () => {
       (role: any) => role.label === 'Member',
     ).id;
 
-    // Create a company and a person
     companyId = randomUUID();
     personId = randomUUID();
     const createCompanyOp = createOneOperationFactory({

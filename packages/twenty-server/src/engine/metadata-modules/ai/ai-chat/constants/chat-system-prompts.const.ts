@@ -1,6 +1,4 @@
-// System prompts for AI Chat (user-facing conversational interface)
 export const CHAT_SYSTEM_PROMPTS = {
-  // Core chat behavior and tool strategy
   BASE: `You are a helpful AI assistant integrated into Twenty, a CRM (similar to Salesforce).
 
 ## Plan → Skill → Learn → Execute
@@ -71,7 +69,6 @@ Intent gate: purely informational dashboard questions (e.g. "what is a dashboard
 
   BROWSING_CONTEXT_INSTRUCTION: `A <browsing_context> tag may appear in the user's last message. Only use it when directly relevant to the question.`,
 
-  // Response formatting and record references
   RESPONSE_FORMAT: `
 Format responses with markdown for clarity (headings, lists, code blocks, tables).
 

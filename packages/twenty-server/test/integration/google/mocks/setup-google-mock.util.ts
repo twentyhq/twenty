@@ -33,8 +33,32 @@ export type GoogleMock = {
   ) => void;
   rateLimitMessageList: (retryAfterIso: string) => void;
   rateLimitCalendarEventList: () => void;
+  failMessageList: (failure: GoogleApiFailure) => void;
+  failCalendarEventList: (failure: GoogleApiFailure) => void;
   declineTokenRefresh: () => void;
 };
+
+export type GoogleApiFailure = {
+  status: number;
+  reason: string;
+  message: string;
+};
+
+const googleApiErrorResponse = ({
+  status,
+  reason,
+  message,
+}: GoogleApiFailure) =>
+  HttpResponse.json(
+    {
+      error: {
+        code: status,
+        message,
+        errors: [{ reason, message }],
+      },
+    },
+    { status },
+  );
 
 export const setupGoogleMock = ({
   handle,
@@ -104,6 +128,24 @@ export const setupGoogleMock = ({
             },
             { status: 429 },
           ),
+        ),
+      ),
+    // A channel carrying a sync cursor fetches through the history endpoint
+    // rather than the message list, so both have to fail for the failure to
+    // surface regardless of which path the channel takes.
+    failMessageList: (failure) =>
+      httpMock.use(
+        http.get('*/gmail/v1/users/me/messages', () =>
+          googleApiErrorResponse(failure),
+        ),
+        http.get('*/gmail/v1/users/me/history', () =>
+          googleApiErrorResponse(failure),
+        ),
+      ),
+    failCalendarEventList: (failure) =>
+      httpMock.use(
+        http.get(GOOGLE_CALENDAR_EVENTS_URL, () =>
+          googleApiErrorResponse(failure),
         ),
       ),
     declineTokenRefresh: () =>

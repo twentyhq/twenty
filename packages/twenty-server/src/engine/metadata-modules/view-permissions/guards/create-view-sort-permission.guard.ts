@@ -17,14 +17,12 @@ export class CreateViewSortPermissionGuard implements CanActivate {
 
     let viewId: string | null = null;
 
-    // For GraphQL: extract from args.input
     const args = gqlContext.getArgs();
 
     if (typeof args?.input?.viewId === 'string') {
       viewId = args.input.viewId;
     }
 
-    // For REST: extract from request body
     if (!viewId && typeof request.body?.viewId === 'string') {
       viewId = request.body.viewId;
     }

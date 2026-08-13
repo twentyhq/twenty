@@ -1391,7 +1391,6 @@ export class ConfigVariables {
     options: Object.values(NodeEnvironment),
     isEnvOnly: true,
   })
-  // @CastToUpperSnakeCase()
   NODE_ENV: NodeEnvironment = NodeEnvironment.PRODUCTION;
 
   @ConfigVariablesMetadata({

@@ -26,7 +26,6 @@ export const normalizeLocale = (value: string | null): AppLocale => {
     return SOURCE_LOCALE;
   }
 
-  // Direct match in our supported locales
   if (value in APP_LOCALES) {
     return value as AppLocale;
   }

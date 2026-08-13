@@ -64,11 +64,9 @@ const MIGRATED_REST_METHODS = [
     GlobalWorkspaceDataSourceModule,
     ClickHouseModule,
     CoreEngineModule,
-    // Modules module, contains all business logic modules
     ModulesModule,
     // Needed for the user workspace middleware
     WorkspaceCacheStorageModule,
-    // Api modules
     CoreGraphQLApiModule,
     MetadataGraphQLApiModule,
     AdminPanelGraphQLApiModule,
@@ -78,7 +76,6 @@ const MIGRATED_REST_METHODS = [
     JwtModule,
     UserSessionModule,
     WorkspaceMetadataVersionModule,
-    // I18n module for translations
     I18nModule,
     ...AppModule.getConditionalModules(),
   ],
@@ -93,8 +90,6 @@ export class AppModule {
   private static getConditionalModules(): DynamicModule[] {
     const modules: DynamicModule[] = [];
     const frontPath = join(__dirname, 'front');
-
-    // NestJS DevTools - can be useful for debugging and profiling
 
     if (existsSync(frontPath)) {
       modules.push(

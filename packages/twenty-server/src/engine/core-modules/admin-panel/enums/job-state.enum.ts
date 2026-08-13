@@ -17,7 +17,6 @@ registerEnumType(JobStateEnum, {
   description: 'Job state in the queue',
 });
 
-// Mapping from GraphQL enum to BullMQ state values
 export const jobStateEnumToBullMQ: Record<JobStateEnum, BullMQJobState> = {
   [JobStateEnum.COMPLETED]: 'completed',
   [JobStateEnum.FAILED]: 'failed',
@@ -28,7 +27,6 @@ export const jobStateEnumToBullMQ: Record<JobStateEnum, BullMQJobState> = {
   [JobStateEnum.WAITING_CHILDREN]: 'waiting-children',
 };
 
-// Mapping from BullMQ state values to GraphQL enum
 export const bullMQToJobStateEnum: Record<BullMQJobState, JobStateEnum> = {
   completed: JobStateEnum.COMPLETED,
   failed: JobStateEnum.FAILED,

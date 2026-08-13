@@ -22,7 +22,6 @@ describe('Granular settings permissions', () => {
   const createdObjectMetadataIds: string[] = [];
 
   beforeAll(async () => {
-    // Get the original Member role ID for restoration later
     const memberRole = await findOneRoleByLabel({ label: 'Member' });
 
     originalMemberRoleId = memberRole.id;
@@ -56,7 +55,6 @@ describe('Granular settings permissions', () => {
 
     customRoleId = createRoleResponse.body.data.createOneRole.id;
 
-    // Assign specific setting permissions to the custom role
     const upsertSettingPermissionsQuery = {
       query: `
         mutation UpsertPermissionFlags {
@@ -77,7 +75,6 @@ describe('Granular settings permissions', () => {
       .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send(upsertSettingPermissionsQuery);
 
-    // Assign the custom role to JONY (who uses APPLE_JONY_MEMBER_ACCESS_TOKEN)
     await updateWorkspaceMemberRole({
       input: {
         roleId: customRoleId,
@@ -88,7 +85,6 @@ describe('Granular settings permissions', () => {
   });
 
   afterAll(async () => {
-    // Restore JONY's original Member role
     await updateWorkspaceMemberRole({
       input: {
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
@@ -152,7 +148,6 @@ describe('Granular settings permissions', () => {
 
   describe('Workspace Permissions', () => {
     it('should allow access to workspace operations when user has WORKSPACE setting permission', async () => {
-      // Test updating workspace settings (requires WORKSPACE permission)
       const updateWorkspaceQuery = {
         query: `
           mutation UpdateWorkspace {
@@ -178,7 +173,6 @@ describe('Granular settings permissions', () => {
         'Updated Test Workspace',
       );
 
-      // Restore original workspace name
       const restoreWorkspaceQuery = {
         query: `
           mutation UpdateWorkspace {
@@ -201,7 +195,6 @@ describe('Granular settings permissions', () => {
 
   describe('Workflows Permissions', () => {
     it('should allow access to workflows operations when user has WORKFLOWS setting permission', async () => {
-      // Test creating a workflow (requires WORKFLOWS permission)
       const createWorkflowQuery = {
         query: `
           mutation CreateWorkflow {
@@ -242,7 +235,6 @@ describe('Granular settings permissions', () => {
 
   describe('Denied Permissions', () => {
     it('should deny access to roles operations when user does not have ROLES setting permission', async () => {
-      // Test creating a role (requires ROLES permission, which our custom role doesn't have)
       const createRoleQuery = {
         query: `
           mutation CreateOneRole {
@@ -270,7 +262,6 @@ describe('Granular settings permissions', () => {
     });
 
     it('should deny access to workspace members operations when user does not have WORKSPACE_MEMBERS setting permission', async () => {
-      // Test inviting a workspace member (requires WORKSPACE_MEMBERS permission)
       const inviteWorkspaceMemberQuery = {
         query: `
           mutation SendWorkspaceInvitation {
@@ -327,7 +318,6 @@ describe('Granular settings permissions', () => {
     });
 
     it('should deny access to API keys operations when user does not have API_KEYS_AND_WEBHOOKS setting permission', async () => {
-      // Test creating an API key (requires API_KEYS_AND_WEBHOOKS permission)
       const createApiKeyQuery = {
         query: `
           mutation GenerateApiKeyToken {
@@ -355,7 +345,6 @@ describe('Granular settings permissions', () => {
 
   describe('Permission Inheritance', () => {
     it('should verify that canUpdateAllSettings=false is properly overridden by specific setting permissions', async () => {
-      // Verify the role configuration using the new integration test utilities
       const { data, errors } = await findRoles({
         gqlFields: `
           id
@@ -388,7 +377,6 @@ describe('Granular settings permissions', () => {
 
   describe('Dynamic Permission Updates', () => {
     it('should allow adding new setting permissions to existing role', async () => {
-      // Add SECURITY permission to the custom role
       const upsertSecurityPermissionQuery = {
         query: `
           mutation UpsertPermissionFlags {
@@ -413,7 +401,6 @@ describe('Granular settings permissions', () => {
       expect(response.body.errors).toBeUndefined();
       expect(response.body.data.upsertPermissionFlags).toHaveLength(3);
 
-      // Verify the permission was added using the new integration test utilities
       const { data, errors } = await findRoles({
         gqlFields: `
           id
@@ -440,7 +427,6 @@ describe('Granular settings permissions', () => {
     });
 
     it('should allow removing setting permissions from existing role', async () => {
-      // Remove SECURITY permission, keep only DATA_MODEL and WORKSPACE
       const upsertReducedPermissionsQuery = {
         query: `
           mutation UpsertPermissionFlags {
@@ -465,7 +451,6 @@ describe('Granular settings permissions', () => {
       expect(response.body.errors).toBeUndefined();
       expect(response.body.data.upsertPermissionFlags).toHaveLength(2);
 
-      // Verify SECURITY permission was removed using the new integration test utilities
       const { data, errors } = await findRoles({
         gqlFields: `
           id

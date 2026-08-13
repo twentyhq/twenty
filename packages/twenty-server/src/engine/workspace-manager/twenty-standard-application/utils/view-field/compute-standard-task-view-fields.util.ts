@@ -346,7 +346,6 @@ export const computeStandardTaskViewFields = (
         },
       },
     ),
-    // System group
     taskRecordPageFieldsCreatedAt: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'task',

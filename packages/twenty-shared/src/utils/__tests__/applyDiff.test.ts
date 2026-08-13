@@ -368,18 +368,15 @@ describe('applyDiff', () => {
       const obj = { safe: 'value' };
 
       const unicodeBypassAttempts = [
-        // __proto__ with Unicode escapes
         '__\u0070roto__', // \u0070 = 'p'
         '__\u{70}roto__', // ES6 syntax
         '__pr\u006fto__', // \u006f = 'o'
         '__proto\u005f\u005f', // \u005f = '_'
 
-        // constructor with Unicode escapes
         'construc\u0074or', // \u0074 = 't'
         'constr\u0075ctor', // \u0075 = 'u'
         '\u0063onstructor', // \u0063 = 'c'
 
-        // prototype with Unicode escapes
         'proto\u0074ype', // \u0074 = 't'
         'prototy\u0070e', // \u0070 = 'p'
         '\u0070rototype', // \u0070 = 'p'
@@ -422,17 +419,14 @@ describe('applyDiff', () => {
       };
 
       const diffs: Difference[] = [
-        // Try to remove forbidden keys (these should be silently skipped)
         { type: 'REMOVE', path: ['__proto__'], oldValue: 'anything' },
         { type: 'REMOVE', path: ['constructor'], oldValue: 'anything' },
         { type: 'REMOVE', path: ['prototype'], oldValue: 'anything' },
-        // Remove a normal property (this should work)
         { type: 'REMOVE', path: ['safe'], oldValue: 'value' },
       ];
 
       const result = applyDiff(obj, diffs);
 
-      // Only the safe property should be removed, normalProp should remain
       expect(result).toEqual({
         normalProp: 'normal',
       });
@@ -518,7 +512,6 @@ describe('applyDiff', () => {
       };
 
       const diffs: Difference[] = [
-        // Update trigger settings
         {
           type: 'CHANGE',
           path: ['trigger', 'settings', 'table'],
@@ -526,14 +519,12 @@ describe('applyDiff', () => {
           value: 'contacts',
         },
         { type: 'REMOVE', path: ['steps', 0], oldValue: '1' },
-        // Update remaining step
         {
           type: 'CHANGE',
           path: ['steps', 1, 'settings', 'to'],
           oldValue: 'test@example.com',
           value: 'new@example.com',
         },
-        // Add new step
         {
           type: 'CREATE',
           path: ['steps', 2],
@@ -581,14 +572,12 @@ describe('applyDiff', () => {
         { type: 'REMOVE', path: ['items', 1], oldValue: 'Item 2' },
         { type: 'REMOVE', path: ['items', 3], oldValue: 'Item 4' },
         { type: 'REMOVE', path: ['items', 3], oldValue: 'Item 4' },
-        // Update remaining item
         {
           type: 'CHANGE',
           path: ['items', 0, 'name'],
           oldValue: 'Item 1',
           value: 'Updated Item 1',
         },
-        // Add new item
         {
           type: 'CREATE',
           path: ['items', 5],
