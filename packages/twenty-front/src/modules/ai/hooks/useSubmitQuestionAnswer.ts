@@ -1,5 +1,6 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useApolloClient } from '@apollo/client/react';
+import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { type AskQuestionAnswer } from 'twenty-shared/ai';
@@ -22,7 +23,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 export const useSubmitQuestionAnswer = () => {
   const apolloClient = useApolloClient();
   const store = useStore();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueErrorSnackBar, enqueueInfoSnackBar } = useSnackBar();
   const { modelIdForRequest } = useAgentChatModelId();
 
   const submitAnswer = useCallback(
@@ -46,6 +47,10 @@ export const useSubmitQuestionAnswer = () => {
       );
 
       if (isNonEmptyArray(agentChatSelectedFiles)) {
+        enqueueInfoSnackBar({
+          message: t`Wait for files to finish uploading before answering.`,
+        });
+
         return;
       }
 
@@ -106,7 +111,13 @@ export const useSubmitQuestionAnswer = () => {
         });
       }
     },
-    [apolloClient, store, enqueueErrorSnackBar, modelIdForRequest],
+    [
+      apolloClient,
+      store,
+      enqueueErrorSnackBar,
+      enqueueInfoSnackBar,
+      modelIdForRequest,
+    ],
   );
 
   return { submitAnswer };
