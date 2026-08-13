@@ -14,6 +14,7 @@ import {
   IconHome,
   IconSettings,
 } from 'twenty-ui/icon';
+import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
@@ -101,17 +102,52 @@ export const MobileHomeTabsRow = () => {
     },
   ];
 
+  // Only the selected tab is in the tab order, so the arrow, Home and End keys
+  // are the only way to reach the others from the keyboard.
+  const getTabIndexForKey = (key: string, currentIndex: number) => {
+    if (key === 'ArrowRight') {
+      return (currentIndex + 1) % tabs.length;
+    }
+    if (key === 'ArrowLeft') {
+      return (currentIndex - 1 + tabs.length) % tabs.length;
+    }
+    if (key === 'Home') {
+      return 0;
+    }
+    if (key === 'End') {
+      return tabs.length - 1;
+    }
+    return null;
+  };
+
   const handleTabKeyDown =
-    (tab: NavigationDrawerActiveTab) => (event: React.KeyboardEvent) => {
+    (currentIndex: number) => (event: React.KeyboardEvent<HTMLDivElement>) => {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
-        setNavigationDrawerActiveTab(tab);
+        setNavigationDrawerActiveTab(tabs[currentIndex].tab);
+        return;
+      }
+
+      const nextIndex = getTabIndexForKey(event.key, currentIndex);
+
+      if (!isDefined(nextIndex)) {
+        return;
+      }
+
+      event.preventDefault();
+      setNavigationDrawerActiveTab(tabs[nextIndex].tab);
+
+      const nextTabElement =
+        event.currentTarget.parentElement?.children[nextIndex];
+
+      if (nextTabElement instanceof HTMLElement) {
+        nextTabElement.focus();
       }
     };
 
   return (
     <StyledPill role="tablist" aria-label={t`Navigation tabs`}>
-      {tabs.map(({ tab, label, Icon }) => {
+      {tabs.map(({ tab, label, Icon }, index) => {
         const isActive = navigationDrawerActiveTab === tab;
 
         return (
@@ -123,7 +159,7 @@ export const MobileHomeTabsRow = () => {
             aria-label={label}
             tabIndex={isActive ? 0 : -1}
             onClick={() => setNavigationDrawerActiveTab(tab)}
-            onKeyDown={handleTabKeyDown(tab)}
+            onKeyDown={handleTabKeyDown(index)}
           >
             <StyledTabIcon>
               <Icon
