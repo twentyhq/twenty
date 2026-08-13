@@ -520,6 +520,39 @@ export default defineFrontComponent({
 });
 ```
 
+### Úložiště
+
+`localStorage` a `sessionStorage` fungují stejně jako na běžné stránce, se standardním synchronním API. Vaše klíče jsou omezené na instalaci vaší aplikace a přihlášeného uživatele: žádná jiná aplikace je nemůže číst a jiný uživatel, který se přihlásí ve stejném prohlížeči, začne s prázdným úložištěm. Hodnoty zapsané do `localStorage` zůstávají v zařízení i po opětovném načtení; `sessionStorage` trvá po dobu relace prohlížeče.
+
+```tsx src/front-components/note-draft.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const NoteDraft = () => {
+  const [draft, setDraft] = useState(() => localStorage.getItem('draft') ?? '');
+
+  const handleChange = (nextDraft: string) => {
+    setDraft(nextDraft);
+    localStorage.setItem('draft', nextDraft);
+  };
+
+  return (
+    <textarea value={draft} onChange={(event) => handleChange(event.target.value)} />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-def0-890123456789',
+  name: 'note-draft',
+  description: 'Keeps an unsaved note on this device',
+  component: NoteDraft,
+});
+```
+
+Twenty ukládá hodnoty jménem vaší aplikace, takže zápis se provede lokálně okamžitě a na pozadí se uloží. Operace čtení nikdy nečekají na hostitele. Nic se nesynchronizuje: hodnoty uživatele se s ním nepřenášejí do jiného prohlížeče nebo počítače, takže pro cokoli, co musí přežít změnu zařízení, použijte [úložiště klíč–hodnota](/l/cs/developers/extend/apps/logic/key-value-store) logické funkce.
+
+Zápisy mají limity a všechny limity počítají znaky místo bajtů: klíče mohou mít nejvýše 512 znaků, jedna hodnota nejvýše 262 144 znaků a každé úložiště nejvýše 1 048 576 znaků na aplikaci a uživatele. Zápis, který překročí některý limit, vyvolá `QuotaExceededError`, podobně jako rozhraní API prohlížeče.
+
 ### Práce s více záznamy
 
 Použijte `useSelectedRecordIds()` pro zpracování více vybraných záznamů. To je užitečné pro hromadné operace:
@@ -792,7 +825,7 @@ Komponentové CSS, ať už z `import './styles.css'`, CSS-in-JS nebo z prvku `\<
 
 ### Úložiště a síť
 
-`localStorage`, `sessionStorage`, IndexedDB, cookies, Cache API a `BroadcastChannel` nejsou vůbec k dispozici, protože komponenta běží ve workeru na neprůhledném (opaque) původu. Pro uchování stavu zavolejte [logickou funkci](/l/cs/developers/extend/apps/logic/logic-functions) a použijte její [úložiště klíč–hodnota](/l/cs/developers/extend/apps/logic/key-value-store).
+`localStorage` a `sessionStorage` poskytuje Twenty, nikoli prohlížeč: komponenta běží ve workeru v neprůhledném původu, takže hostitel ukládá hodnoty jménem vaší aplikace. Jejich rozsah a limity najdete v části [úložiště](#storage). IndexedDB, cookies, Cache API a `BroadcastChannel` jsou nadále nedostupné. Pro uchování stavu mezi zařízeními zavolejte [logickou funkci](/l/cs/developers/extend/apps/logic/logic-functions) a použijte její [úložiště klíč–hodnota](/l/cs/developers/extend/apps/logic/key-value-store).
 
 `fetch` funguje, s výhradami:
 

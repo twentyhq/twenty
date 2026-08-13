@@ -520,6 +520,39 @@ export default defineFrontComponent({
 });
 ```
 
+### ストレージ
+
+`localStorage` と `sessionStorage` は、通常のページと同様に、標準的な同期 API として動作します。 キーはアプリのインストールとサインインしているユーザーにスコープされており、他のアプリがそれらを読み取ることはできません。また、同じブラウザに別のユーザーがサインインした場合は、空のストアから開始します。 `localStorage` に書き込まれた値は、リロードをまたいでもデバイス上に保持されます。一方、`sessionStorage` はブラウザセッションの間だけ有効です。
+
+```tsx src/front-components/note-draft.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const NoteDraft = () => {
+  const [draft, setDraft] = useState(() => localStorage.getItem('draft') ?? '');
+
+  const handleChange = (nextDraft: string) => {
+    setDraft(nextDraft);
+    localStorage.setItem('draft', nextDraft);
+  };
+
+  return (
+    <textarea value={draft} onChange={(event) => handleChange(event.target.value)} />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-def0-890123456789',
+  name: 'note-draft',
+  description: 'Keeps an unsaved note on this device',
+  component: NoteDraft,
+});
+```
+
+Twenty はアプリに代わって値を保存するため、書き込みはローカルに即座に反映され、その後バックグラウンドで保存されます。 読み取り処理がホストで待機することはありません。 何も同期されません。値は別のブラウザやマシンには引き継がれないため、デバイス変更後も保持する必要があるものには、ロジック関数の[key-value store](/l/ja/developers/extend/apps/logic/key-value-store)を使用してください。
+
+書き込みには上限があり、すべての制限はバイト数ではなく文字数でカウントされます。キーは最大 512 文字、1 つの値は最大 262,144 文字、各ストレージはアプリおよびユーザーごとに最大 1,048,576 文字です。 制限を超える書き込みは、ブラウザ API と同様に `QuotaExceededError` をスローします。
+
 ### 複数のレコードを扱う
 
 複数の選択されたレコードを処理するには `useSelectedRecordIds()` を使用してください。 これは一括操作に役立ちます:
@@ -792,7 +825,7 @@ Front components は現在も積極的に開発が進められています。 �
 
 ### ストレージとネットワーク
 
-`localStorage`、`sessionStorage`、IndexedDB、Cookie、Cache API、および `BroadcastChannel` はすべて利用できません。コンポーネントはオペークなオリジンの worker 内で実行されるためです。 状態を永続化するには、[ロジック関数](/l/ja/developers/extend/apps/logic/logic-functions)を呼び出し、その[キー・バリュー ストア](/l/ja/developers/extend/apps/logic/key-value-store)を使用してください。
+`localStorage` と `sessionStorage` はブラウザではなく Twenty によって提供されます。コンポーネントは不透明なオリジンのワーカー内で実行されるため、ホストがアプリに代わって値を保存します。 スコープと制限については、[storage](#storage) を参照してください。 IndexedDB、Cookie、Cache API、および `BroadcastChannel` は引き続き利用できません。 デバイス間で状態を永続化するには、[logic function](/l/ja/developers/extend/apps/logic/logic-functions)を呼び出し、その[key-value store](/l/ja/developers/extend/apps/logic/key-value-store)を使用してください。
 
 `fetch` は動作しますが、いくつか注意点があります。
 
