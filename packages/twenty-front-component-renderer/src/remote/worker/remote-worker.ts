@@ -17,6 +17,8 @@ import { installMutationObserver } from '@/polyfills/dom/utils/installMutationOb
 import { workerGeometryStore } from '@/polyfills/geometry/workerGeometryStore';
 import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
 import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/installWindowGeometryPolyfill';
+import { frontComponentStorageBridges } from '@/polyfills/storage/frontComponentStorageBridges';
+import { installStorageBridge } from '@/polyfills/storage/utils/installStorageBridge';
 import { exposeGlobals } from '@/remote/utils/exposeGlobals';
 import { installStylePropertyOnRemoteElements } from '@/remote/utils/installStylePropertyOnRemoteElements';
 import { patchRemoteElementAttributes } from '@/remote/utils/patchRemoteElementAttributes';
@@ -56,6 +58,11 @@ installWindowGeometryPolyfill({
   geometryStore: workerGeometryStore,
 });
 
+installStorageBridge({
+  globalScope: globalThis as unknown as Record<string, unknown>,
+  storageBridges: frontComponentStorageBridges,
+});
+
 exposeGlobals({
   __HTML_TAG_TO_CUSTOM_ELEMENT_TAG__: HTML_TAG_TO_CUSTOM_ELEMENT_TAG,
 });
@@ -81,6 +88,12 @@ const workerExports: WorkerExports = {
         hostThread.imports,
       ),
     );
+
+    for (const storageBridge of Object.values(frontComponentStorageBridges)) {
+      storageBridge.connectHostCommunicationApi(
+        frontComponentHostCommunicationApi,
+      );
+    }
   },
   updateContext: async (context) => {
     setFrontComponentExecutionContext(context);

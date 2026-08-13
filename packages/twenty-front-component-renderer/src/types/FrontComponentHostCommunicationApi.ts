@@ -6,6 +6,9 @@ import {
   type OpenCommandConfirmationModalHostFunction,
   type OpenSidePanelPageFunction,
   type RequestAccessTokenRefreshFunction,
+  type StorageClearFunction,
+  type StorageDeleteFunction,
+  type StorageSetFunction,
   type UnmountFrontComponentFunction,
   type UpdateProgressFunction,
 } from 'twenty-sdk/front-component';
@@ -20,4 +23,7 @@ export type FrontComponentHostCommunicationApi = {
   closeSidePanel: CloseSidePanelFunction;
   updateProgress: UpdateProgressFunction;
   copyToClipboard: CopyToClipboardFunction;
+  storageSet: StorageSetFunction;
+  storageDelete: StorageDeleteFunction;
+  storageClear: StorageClearFunction;
 };
