@@ -30,8 +30,10 @@ import {
   type InsertRowValue,
 } from 'src/engine/twenty-orm-v2/sql/utils/build-insert-statement.util';
 import { type MutationKind } from 'src/engine/twenty-orm-v2/sql/utils/build-mutation-statement.util';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import {
   applyFindOptionsToQueryBuilder,
+  type FindOptionsRelationsV2,
   type FindOptionsV2,
 } from 'src/engine/twenty-orm-v2/query-builder/utils/apply-find-options.util';
 import {
@@ -39,10 +41,19 @@ import {
   type MutationCriteria,
 } from 'src/engine/twenty-orm-v2/query-builder/utils/apply-mutation-criteria.util';
 import { type ObjectWhereLike } from 'src/engine/twenty-orm-v2/query-builder/types/query-builder-v2.type';
+import {
+  attachToManyRelationToRecords,
+  attachToOneRelationToRecords,
+  collectForeignKeys,
+  collectRecordIds,
+} from 'src/engine/twenty-orm-v2/repository/utils/attach-relations.util';
 import { WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-select-query-builder-v2';
 import { compileNamedParameters } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
 import { serializeJsonbWriteValue } from 'src/engine/twenty-orm-v2/sql/utils/serialize-jsonb-write-value.util';
-import { type WorkspaceTableShape } from 'src/engine/twenty-orm-v2/table-shape/types/workspace-table-shape.type';
+import {
+  type WorkspaceRelationShape,
+  type WorkspaceTableShape,
+} from 'src/engine/twenty-orm-v2/table-shape/types/workspace-table-shape.type';
 
 const MUTATION_EVENT_ACTIONS_BY_KIND: Record<
   MutationKind,
@@ -68,6 +79,9 @@ type WorkspaceRepositoryV2Options = {
   flatObjectMetadataByObjectMetadataId: (
     objectMetadataId: string,
   ) => FlatObjectMetadata;
+  getRepositoryForObjectMetadataId: (
+    objectMetadataId: string,
+  ) => WorkspaceRepositoryV2;
 };
 
 export class WorkspaceRepositoryV2 {
@@ -131,10 +145,16 @@ export class WorkspaceRepositoryV2 {
   }
 
   async find(options?: FindOptionsV2): Promise<ObjectRecord[]> {
-    return applyFindOptionsToQueryBuilder(
+    const records = await applyFindOptionsToQueryBuilder(
       this.createQueryBuilder(),
       options,
     ).getMany<ObjectRecord>();
+
+    if (isDefined(options?.relations)) {
+      await this.loadRelations(records, options.relations);
+    }
+
+    return records;
   }
 
   async findBy(
@@ -144,10 +164,16 @@ export class WorkspaceRepositoryV2 {
   }
 
   async findOne(options?: FindOptionsV2): Promise<ObjectRecord | null> {
-    return applyFindOptionsToQueryBuilder(
+    const record = await applyFindOptionsToQueryBuilder(
       this.createQueryBuilder(),
       options,
     ).getOne<ObjectRecord>();
+
+    if (isDefined(record) && isDefined(options?.relations)) {
+      await this.loadRelations([record], options.relations);
+    }
+
+    return record;
   }
 
   async findOneBy(
@@ -192,6 +218,159 @@ export class WorkspaceRepositoryV2 {
 
   async existsBy(where: ObjectWhereLike | ObjectWhereLike[]): Promise<boolean> {
     return this.exists({ where });
+  }
+
+  private async loadRelations(
+    records: ObjectRecord[],
+    relations: FindOptionsRelationsV2,
+  ): Promise<void> {
+    if (records.length === 0) {
+      return;
+    }
+
+    for (const [fieldName, nested] of Object.entries(relations)) {
+      if (nested === false) {
+        continue;
+      }
+
+      const relationShape =
+        this.options.tableShape.relationShapeByFieldName[fieldName];
+
+      if (!isDefined(relationShape)) {
+        throw new TwentyOrmV2Exception(
+          `Relation "${fieldName}" does not exist on "${this.options.tableShape.nameSingular}"`,
+          TwentyOrmV2ExceptionCode.UNKNOWN_RELATION,
+        );
+      }
+
+      const nestedRelations =
+        typeof nested === 'object'
+          ? (nested as FindOptionsRelationsV2)
+          : undefined;
+      const targetRepository = this.options.getRepositoryForObjectMetadataId(
+        relationShape.targetObjectMetadataId,
+      );
+
+      if (relationShape.relationType === RelationType.MANY_TO_ONE) {
+        await this.attachToOneRelation({
+          records,
+          fieldName,
+          joinColumnName: relationShape.joinColumnName,
+          targetRepository,
+          nestedRelations,
+        });
+      } else if (relationShape.relationType === RelationType.ONE_TO_MANY) {
+        await this.attachToManyRelation({
+          records,
+          fieldName,
+          relationShape,
+          targetRepository,
+          nestedRelations,
+        });
+      } else {
+        throw new TwentyOrmV2Exception(
+          `Loading "${relationShape.relationType}" relations through find is not supported yet`,
+          TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
+        );
+      }
+    }
+  }
+
+  private async attachToOneRelation({
+    records,
+    fieldName,
+    joinColumnName,
+    targetRepository,
+    nestedRelations,
+  }: {
+    records: ObjectRecord[];
+    fieldName: string;
+    joinColumnName?: string;
+    targetRepository: WorkspaceRepositoryV2;
+    nestedRelations?: FindOptionsRelationsV2;
+  }): Promise<void> {
+    if (!isDefined(joinColumnName)) {
+      throw new TwentyOrmV2Exception(
+        `Relation "${fieldName}" has no join column to resolve`,
+        TwentyOrmV2ExceptionCode.UNKNOWN_RELATION,
+      );
+    }
+
+    const foreignKeys = collectForeignKeys(records, joinColumnName);
+
+    const targets =
+      foreignKeys.length > 0
+        ? await targetRepository.find({
+            where: { id: In(foreignKeys) },
+            withDeleted: true,
+            relations: nestedRelations,
+          })
+        : [];
+
+    attachToOneRelationToRecords({
+      records,
+      fieldName,
+      joinColumnName,
+      targets,
+    });
+  }
+
+  private async attachToManyRelation({
+    records,
+    fieldName,
+    relationShape,
+    targetRepository,
+    nestedRelations,
+  }: {
+    records: ObjectRecord[];
+    fieldName: string;
+    relationShape: WorkspaceRelationShape;
+    targetRepository: WorkspaceRepositoryV2;
+    nestedRelations?: FindOptionsRelationsV2;
+  }): Promise<void> {
+    const inverseForeignKeyColumnName =
+      this.resolveInverseForeignKeyColumnName(relationShape);
+
+    const parentIds = collectRecordIds(records);
+
+    const children =
+      parentIds.length > 0
+        ? await targetRepository.find({
+            where: { [inverseForeignKeyColumnName]: In(parentIds) },
+            relations: nestedRelations,
+          })
+        : [];
+
+    attachToManyRelationToRecords({
+      records,
+      fieldName,
+      inverseForeignKeyColumnName,
+      children,
+    });
+  }
+
+  private resolveInverseForeignKeyColumnName(
+    relationShape: WorkspaceRelationShape,
+  ): string {
+    const targetTableShape = this.options.tableShapeByObjectMetadataId(
+      relationShape.targetObjectMetadataId,
+    );
+
+    const inverseRelationShape = Object.values(
+      targetTableShape.relationShapeByFieldName,
+    ).find(
+      (candidate) =>
+        candidate.fieldMetadataId === relationShape.targetFieldMetadataId,
+    );
+
+    if (!isDefined(inverseRelationShape?.joinColumnName)) {
+      throw new TwentyOrmV2Exception(
+        `Could not resolve the inverse foreign key for a to-many relation on "${this.options.tableShape.nameSingular}"`,
+        TwentyOrmV2ExceptionCode.UNKNOWN_RELATION,
+      );
+    }
+
+    return inverseRelationShape.joinColumnName;
   }
 
   async insert(

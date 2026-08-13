@@ -1,15 +1,13 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  TwentyOrmV2Exception,
-  TwentyOrmV2ExceptionCode,
-} from 'src/engine/twenty-orm-v2/exceptions/twenty-orm-v2.exception';
 import { type WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-select-query-builder-v2';
 import {
   type FindOptionsSelectLike,
   type ObjectWhereLike,
   type OrderByConditionLike,
 } from 'src/engine/twenty-orm-v2/query-builder/types/query-builder-v2.type';
+
+export type FindOptionsRelationsV2 = Record<string, boolean | object>;
 
 export type FindOptionsV2 = {
   where?: ObjectWhereLike | ObjectWhereLike[];
@@ -18,7 +16,7 @@ export type FindOptionsV2 = {
   take?: number;
   skip?: number;
   withDeleted?: boolean;
-  relations?: unknown;
+  relations?: FindOptionsRelationsV2;
 };
 
 // A `where` array is an OR of AND-groups, matching TypeORM's find semantics.
@@ -45,13 +43,8 @@ export const applyFindOptionsToQueryBuilder = (
     return queryBuilder;
   }
 
-  if (isDefined(options.relations)) {
-    throw new TwentyOrmV2Exception(
-      'Loading relations through the ORM v2 find methods is not supported yet',
-      TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
-    );
-  }
-
+  // `relations` are loaded by the repository after the base rows are fetched,
+  // never rendered into this base query.
   if (options.withDeleted === true) {
     queryBuilder.withDeleted();
   }

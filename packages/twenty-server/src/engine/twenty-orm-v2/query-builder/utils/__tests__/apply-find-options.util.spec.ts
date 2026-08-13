@@ -1,7 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { In } from 'typeorm';
 
-import { TwentyOrmV2Exception } from 'src/engine/twenty-orm-v2/exceptions/twenty-orm-v2.exception';
 import { applyFindOptionsToQueryBuilder } from 'src/engine/twenty-orm-v2/query-builder/utils/apply-find-options.util';
 import { WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-select-query-builder-v2';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm-v2/table-shape/types/workspace-table-shape.type';
@@ -123,11 +122,13 @@ describe('applyFindOptionsToQueryBuilder', () => {
     );
   });
 
-  it('throws when relations are requested', () => {
-    expect(() =>
-      applyFindOptionsToQueryBuilder(buildQueryBuilder(), {
-        relations: { company: true },
-      }),
-    ).toThrow(TwentyOrmV2Exception);
+  it('ignores relations in the base query (the repository loads them separately)', () => {
+    const queryBuilder = applyFindOptionsToQueryBuilder(buildQueryBuilder(), {
+      where: { id: 'x' },
+      relations: { company: true },
+    });
+
+    expect(queryBuilder.getQuery()).not.toContain('JOIN');
+    expect(queryBuilder.getQuery()).toContain('"person"."id" =');
   });
 });
