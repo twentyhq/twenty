@@ -8408,6 +8408,7 @@ msgid "Failed to merge records. Please try again."
 msgstr "레코드 병합에 실패했습니다. 다시 시도해 주세요."
 
 #. js-lingui-id: DvNGzq
+#: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarMonthDndKit.ts
 #: src/modules/object-record/record-calendar/week/components/RecordCalendarWeekDragDropContext.tsx
 msgid "Failed to move record"
 msgstr ""
