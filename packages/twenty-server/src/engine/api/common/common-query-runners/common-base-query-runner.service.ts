@@ -22,7 +22,7 @@ import {
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { buildMutationQueryBuilder } from 'src/engine/api/common/common-query-runners/utils/build-mutation-query-builder.util';
 import { buildMutationQueryBuilderV2 } from 'src/engine/api/common/common-query-runners/utils/build-mutation-query-builder-v2.util';
-import { updateDataIsSupportedByOrmV2 } from 'src/engine/api/common/common-query-runners/utils/update-data-is-supported-by-orm-v2.util';
+import { writeDataIsSupportedByOrmV2 } from 'src/engine/api/common/common-query-runners/utils/write-data-is-supported-by-orm-v2.util';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
@@ -441,7 +441,7 @@ export abstract class CommonBaseQueryRunnerService<
     const ormV2CanHandle =
       featureFlagsMap[FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED] &&
       (kind !== 'update' ||
-        updateDataIsSupportedByOrmV2({
+        writeDataIsSupportedByOrmV2({
           data: data ?? {},
           flatObjectMetadata,
           flatFieldMetadataMaps,

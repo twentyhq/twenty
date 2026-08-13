@@ -1,6 +1,6 @@
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 
-import { updateDataIsSupportedByOrmV2 } from 'src/engine/api/common/common-query-runners/utils/update-data-is-supported-by-orm-v2.util';
+import { writeDataIsSupportedByOrmV2 } from 'src/engine/api/common/common-query-runners/utils/write-data-is-supported-by-orm-v2.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 
@@ -41,13 +41,13 @@ beforeEach(() => {
 });
 
 const callWith = (data: Partial<ObjectRecord>) =>
-  updateDataIsSupportedByOrmV2({
+  writeDataIsSupportedByOrmV2({
     data,
     flatObjectMetadata: {} as never,
     flatFieldMetadataMaps: {} as never,
   });
 
-describe('updateDataIsSupportedByOrmV2', () => {
+describe('writeDataIsSupportedByOrmV2', () => {
   it('should return true for empty data', () => {
     expect(callWith({})).toBe(true);
   });

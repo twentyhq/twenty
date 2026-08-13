@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
-import { ObjectRecord } from 'twenty-shared/types';
+import { FeatureFlagKey, ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, In, InsertResult, ObjectLiteral } from 'typeorm';
 
@@ -25,6 +25,7 @@ import {
   CommonQueryNames,
   CreateManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
+import { writeDataIsSupportedByOrmV2 } from 'src/engine/api/common/common-query-runners/utils/write-data-is-supported-by-orm-v2.util';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type NestedRelationsReadPathOptions } from 'src/engine/api/common/types/nested-relations-read-path-options.type';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
@@ -96,6 +97,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatIndexMaps,
       args,
       workspaceId: authContext.workspace.id,
+      queryRunnerContext,
     });
 
     const upsertedRecords = await this.fetchUpsertedRecords({
@@ -213,6 +215,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     flatIndexMaps,
     args,
     workspaceId,
+    queryRunnerContext,
   }: {
     repository: WorkspaceRepository<ObjectLiteral>;
     flatObjectMetadata: FlatObjectMetadata;
@@ -221,6 +224,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
     args: CommonExtendedInput<CreateManyQueryArgs>;
     workspaceId: string;
+    queryRunnerContext: CommonExtendedQueryRunnerContext;
   }): Promise<InsertResult> {
     const { selectedFieldsResult } = args;
 
@@ -232,6 +236,25 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       });
+
+      const ormV2CanHandle =
+        queryRunnerContext.featureFlagsMap[
+          FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED
+        ] &&
+        args.data.every((record) =>
+          writeDataIsSupportedByOrmV2({
+            data: record,
+            flatObjectMetadata,
+            flatFieldMetadataMaps,
+          }),
+        );
+
+      if (ormV2CanHandle) {
+        return this.getWriteRepository(queryRunnerContext).runInsert({
+          records: args.data,
+          columnsToReturn: selectedColumns,
+        });
+      }
 
       return await repository.insert(args.data, undefined, selectedColumns);
     }

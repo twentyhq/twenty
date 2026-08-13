@@ -145,7 +145,7 @@ Update flattens its input with the shared `formatData` (composite fields to colu
 validates the field-level write permission over the resulting column set. It carves back
 to v1 for one case: data that sets a relation (`{connect}` / `{disconnect}`) or a files
 field, because that input is resolved by `RelationNestedQueries` / `FilesFieldSync`, which
-are coupled to the TypeORM builder and not yet reproduced here. `updateDataIsSupportedByOrmV2`
+are coupled to the TypeORM builder and not yet reproduced here. `writeDataIsSupportedByOrmV2`
 makes that call; both branches match their v1 counterpart byte for byte.
 
 Deliberate choices, the SQL ones asserted by exact-SQL unit tests:
@@ -169,15 +169,25 @@ Deliberate choices, the SQL ones asserted by exact-SQL unit tests:
   user-input error the read path already produces (v2 refuses to render a to-many join),
   rather than the row-multiplying join v1 would emit.
 
-Insert and upsert still keep `repository` (v1), as does update with relation/files input.
+## Writes: create (non-upsert insert) routes through v2
+
+`createMany` (and `createOne`) route their non-upsert insert through
+`WorkspaceRepositoryV2.runInsert` under the same carve-out: a create whose records only set
+scalar and composite fields flattens through `formatData`, inserts with
+`buildInsertStatement` (a multi-row `INSERT ... VALUES ... RETURNING`, `DEFAULT` for the
+columns a given row omits so Postgres column defaults apply), validates the insert
+permission over the inserted columns, and emits `CREATED` then `UPSERTED` from an
+all-columns re-select of the inserted ids — matching the v1 insert builder. Records that
+set a relation or files field, and the whole upsert path (`ON CONFLICT`), stay on v1.
 
 ## Not covered yet
 
-- Insert and upsert. `INSERT` and `ON CONFLICT` still go through v1, which is where the
-  column defaults and conflict-target derivation live.
+- Upsert. `ON CONFLICT` and the conflict-target derivation (which reads composite unique
+  indexes off the flat index maps) still go through v1.
+- Merge. It runs a multi-statement transaction, so it waits on v2 transactions.
 - Relation connect/disconnect and files-field input on writes, resolved by
-  `RelationNestedQueries` / `FilesFieldSync`. Update carves these back to v1; create and
-  upsert stay on v1 entirely until this input machinery has a v2 form.
+  `RelationNestedQueries` / `FilesFieldSync`. Update and create carve these back to v1 per
+  request; upsert stays on v1 entirely until this input machinery has a v2 form.
 - `find` / `findOne` / `findBy` and the rest of the repository surface used by
   `src/modules`.
 - Transactions and DDL.

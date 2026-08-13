@@ -7,7 +7,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-export const updateDataIsSupportedByOrmV2 = ({
+export const writeDataIsSupportedByOrmV2 = ({
   data,
   flatObjectMetadata,
   flatFieldMetadataMaps,

@@ -5,6 +5,7 @@ import {
   type ObjectsPermissions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { In } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -21,6 +22,10 @@ import {
   TwentyOrmV2ExceptionCode,
 } from 'src/engine/twenty-orm-v2/exceptions/twenty-orm-v2.exception';
 import { type QueryExecutorV2 } from 'src/engine/twenty-orm-v2/executor/types/query-executor-v2.type';
+import {
+  buildInsertStatement,
+  type InsertRowValue,
+} from 'src/engine/twenty-orm-v2/sql/utils/build-insert-statement.util';
 import { type MutationKind } from 'src/engine/twenty-orm-v2/sql/utils/build-mutation-statement.util';
 import { WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-select-query-builder-v2';
 import { compileNamedParameters } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
@@ -98,6 +103,155 @@ export class WorkspaceRepositoryV2 {
     queryBuilder: WorkspaceSelectQueryBuilderV2,
   ): void {
     this.applyRowLevelPermissionPredicates(queryBuilder);
+  }
+
+  async runInsert({
+    records,
+    columnsToReturn,
+  }: {
+    records: Partial<ObjectRecord>[];
+    columnsToReturn: string[];
+  }): Promise<{
+    identifiers: { id: string }[];
+    generatedMaps: ObjectRecord[];
+    raw: ObjectRecord[];
+  }> {
+    const { columnNames, rows, parameters, insertedColumns } =
+      this.buildInsertRows(records);
+
+    this.validateWriteIsPermitted({
+      operationType: 'insert',
+      columnsToReturn,
+      updatedColumns: insertedColumns,
+    });
+
+    const sql = buildInsertStatement({
+      tableShape: this.options.tableShape,
+      columnNames,
+      rows,
+      returningColumns: columnsToReturn,
+    });
+
+    const rawRows = await this.executeRaw<ObjectRecord>(sql, parameters);
+
+    const generatedMaps = this.formatResult<ObjectRecord[]>(rawRows);
+    const insertedIds = rawRows
+      .map((row) => row.id)
+      .filter((id): id is string => typeof id === 'string');
+
+    await this.emitCreateEvents(insertedIds);
+
+    return {
+      identifiers: insertedIds.map((id) => ({ id })),
+      generatedMaps,
+      raw: rawRows,
+    };
+  }
+
+  private buildInsertRows(records: Partial<ObjectRecord>[]): {
+    columnNames: string[];
+    rows: InsertRowValue[][];
+    parameters: Record<string, unknown>;
+    insertedColumns: string[];
+  } {
+    const formattedRecords = records.map((record) =>
+      formatData(
+        record,
+        this.options.flatObjectMetadata,
+        this.options.internalContext.flatFieldMetadataMaps,
+      ),
+    );
+
+    const columnNameSet = new Set<string>();
+
+    for (const record of formattedRecords) {
+      for (const columnName of Object.keys(record)) {
+        if (
+          !isDefined(
+            this.options.tableShape.columnShapeByColumnName[columnName],
+          )
+        ) {
+          throw new TwentyOrmV2Exception(
+            `Column "${columnName}" does not exist on "${this.options.tableShape.nameSingular}"`,
+            TwentyOrmV2ExceptionCode.UNKNOWN_COLUMN,
+          );
+        }
+        columnNameSet.add(columnName);
+      }
+    }
+
+    const columnNames = [...columnNameSet];
+    const parameters: Record<string, unknown> = {};
+    let parameterSequence = 0;
+
+    const rows = formattedRecords.map((record) => {
+      const valueByColumnName: Record<string, unknown> = { ...record };
+
+      return columnNames.map((columnName): InsertRowValue => {
+        if (!(columnName in valueByColumnName)) {
+          return { kind: 'default' };
+        }
+
+        const parameterName = `ormV2Insert_${parameterSequence++}`;
+
+        parameters[parameterName] = valueByColumnName[columnName];
+
+        return { kind: 'parameter', parameterName };
+      });
+    });
+
+    return { columnNames, rows, parameters, insertedColumns: columnNames };
+  }
+
+  private async emitCreateEvents(insertedIds: string[]): Promise<void> {
+    if (insertedIds.length === 0) {
+      return;
+    }
+
+    const recordsAfter = await this.buildIdsEventSnapshotQueryBuilder(
+      insertedIds,
+    ).getMany<ObjectRecord>({ noFormatting: true });
+
+    const formattedAfter = this.formatResult<ObjectRecord[]>(recordsAfter);
+
+    for (const action of [
+      DatabaseEventAction.CREATED,
+      DatabaseEventAction.UPSERTED,
+    ]) {
+      const event = formatTwentyOrmEventToDatabaseBatchEvent({
+        action,
+        objectMetadataItem: this.options.flatObjectMetadata,
+        flatFieldMetadataMaps:
+          this.options.internalContext.flatFieldMetadataMaps,
+        workspaceId: this.options.internalContext.workspaceId,
+        recordsAfter: formattedAfter,
+        authContext: this.options.authContext,
+      });
+
+      if (isDefined(event)) {
+        this.options.internalContext.eventEmitterService.emitDatabaseBatchEvent(
+          event,
+        );
+      }
+    }
+  }
+
+  private buildIdsEventSnapshotQueryBuilder(
+    ids: string[],
+  ): WorkspaceSelectQueryBuilderV2 {
+    return new WorkspaceSelectQueryBuilderV2(
+      this.options.tableShape.nameSingular,
+      {
+        tableShape: this.options.tableShape,
+        executor: this.options.executor,
+        objectRecordsPermissions: this.options.objectRecordsPermissions,
+        tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
+        onBeforeExecute: () => undefined,
+        formatResult: (records) => this.formatResult(records),
+      },
+    )
+      .where({ id: In(ids) })
+      .withDeleted();
   }
 
   async runMutation({
@@ -225,7 +379,7 @@ export class WorkspaceRepositoryV2 {
     columnsToReturn,
     updatedColumns,
   }: {
-    operationType: MutationKind;
+    operationType: MutationKind | 'insert';
     columnsToReturn: string[];
     updatedColumns: string[];
   }): void {
