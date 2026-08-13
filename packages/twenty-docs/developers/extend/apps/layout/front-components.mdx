@@ -806,7 +806,7 @@ A `ref` gives you a sandbox element, not an `HTMLElement`.
 |----------------|--------------|-------------|
 | `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Throws | Controlled components; read values from `event.target` |
 | `element.classList.add(...)` | Throws (`classList` is `undefined`) | Build the `className` string yourself |
-| `document.createTreeWalker()` | Throws | `querySelector()` / `querySelectorAll()`, `getElementById()` and `getElementsByClassName()`, which all work |
+| `document.createTreeWalker()` | Throws | `querySelector()` / `querySelectorAll()` and `getElementById()` work; `getElementsByClassName()` works too, but returns a static collection, not a live `HTMLCollection` |
 | `document.activeElement` | Always `undefined` | Track focus with `onFocus` / `onBlur` |
 | `<canvas>` | Renders nothing, no error | SVG, or draw offscreen and show an `<img src={dataUrl}>` |
 | `createPortal(node, document.body)` | Renders nothing, while `isConnected` reports success | Overlays inline with `position: absolute`, or pass the library your own container element |
