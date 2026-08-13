@@ -24,6 +24,7 @@ import {
   AnimatedPlaceholderEmptyTitle,
 } from 'twenty-ui/feedback';
 import { TaskList } from './TaskList';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -70,7 +71,7 @@ export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
 
   usePublishWidgetHeaderInfo({
     count: totalCountTasks,
-    primaryAction: newTaskAction,
+    actions: isDefined(newTaskAction) ? [newTaskAction] : undefined,
   });
 
   const activeTabId = useAtomComponentStateValue(activeTabIdComponentState);

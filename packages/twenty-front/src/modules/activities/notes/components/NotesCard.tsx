@@ -13,6 +13,7 @@ import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
+import { isDefined } from 'twenty-shared/utils';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -71,7 +72,7 @@ export const NotesCard = () => {
 
   usePublishWidgetHeaderInfo({
     count: totalCountNotes,
-    primaryAction: newNoteAction,
+    actions: isDefined(newNoteAction) ? [newNoteAction] : undefined,
   });
 
   if (loading && isNotesEmpty) {

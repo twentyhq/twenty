@@ -1,17 +1,15 @@
 import { type IconComponent } from 'twenty-ui/icon';
 
-export type WidgetHeaderPrimaryAction = {
+export type WidgetHeaderAction = {
   Icon: IconComponent;
   label: string;
-  onClick: () => void;
+  onClick?: () => void;
+  to?: string;
   disabled?: boolean;
 };
 
-// Header information a widget's content publishes to the widget chrome: a
-// count rendered in grey next to the title and an optional primary action
-// rendered on the right. Published at runtime so any widget, including
-// third-party ones, can contribute without new widget-type branches.
+// An action with `to` renders as a link, otherwise as a button.
 export type WidgetHeaderInfo = {
   count?: number;
-  primaryAction?: WidgetHeaderPrimaryAction;
+  actions?: WidgetHeaderAction[];
 };

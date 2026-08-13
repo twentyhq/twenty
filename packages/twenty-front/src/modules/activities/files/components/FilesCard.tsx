@@ -103,7 +103,7 @@ export const FilesCard = () => {
 
   usePublishWidgetHeaderInfo({
     count: totalCountAttachments,
-    primaryAction: addFileAction,
+    actions: isDefined(addFileAction) ? [addFileAction] : undefined,
   });
 
   if (loading && isAttachmentsEmpty) {

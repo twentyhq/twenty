@@ -18,6 +18,7 @@ import { useMemo } from 'react';
 import { IconPlus } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { isDefined } from 'twenty-shared/utils';
 import {
   type TimelineThread,
   type TimelineThreadsWithTotal,
@@ -70,7 +71,7 @@ export const EmailsCard = () => {
 
   usePublishWidgetHeaderInfo({
     count: totalNumberOfThreads,
-    primaryAction: composeAction,
+    actions: isDefined(composeAction) ? [composeAction] : undefined,
   });
 
   const hasMoreTimelineThreads =

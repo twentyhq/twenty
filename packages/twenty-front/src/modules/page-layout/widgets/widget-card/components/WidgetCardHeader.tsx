@@ -4,12 +4,13 @@ import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/sta
 import { widgetHeaderInfoComponentFamilyState } from '@/page-layout/widgets/states/widgetHeaderInfoComponentFamilyState';
 import { type WidgetAction } from '@/page-layout/widgets/types/WidgetAction';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { WidgetCardHeaderAction } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderAction';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ReactNode, useContext } from 'react';
 import { IconTrash } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { IconButton, LightIconButton } from 'twenty-ui/input';
+import { IconButton } from 'twenty-ui/input';
 
 import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
 import { WidgetGrip } from '@/page-layout/widgets/widget-card/components/WidgetGrip';
@@ -111,7 +112,7 @@ export const WidgetCardHeader = ({
   );
 
   const count = widgetHeaderInfo?.count;
-  const primaryAction = widgetHeaderInfo?.primaryAction;
+  const headerActions = widgetHeaderInfo?.actions;
 
   return (
     <StyledWidgetCardHeader variant={variant} className={className}>
@@ -128,17 +129,14 @@ export const WidgetCardHeader = ({
         {isDefined(count) && <StyledCount>{formatNumber(count)}</StyledCount>}
       </StyledTitleContainer>
       <StyledRightContainer>
-        {!isInEditMode && isDefined(primaryAction) && (
-          <LightIconButton
-            Icon={primaryAction.Icon}
-            aria-label={primaryAction.label}
-            title={primaryAction.label}
-            accent="tertiary"
-            size="small"
-            onClick={primaryAction.onClick}
-            disabled={primaryAction.disabled}
-          />
-        )}
+        {!isInEditMode &&
+          isNonEmptyArray(headerActions) &&
+          headerActions.map((headerAction) => (
+            <WidgetCardHeaderAction
+              key={headerAction.label}
+              headerAction={headerAction}
+            />
+          ))}
         {isNonEmptyArray(actions) && (
           <StyledActionsContainer>
             {actions.map((action) => (

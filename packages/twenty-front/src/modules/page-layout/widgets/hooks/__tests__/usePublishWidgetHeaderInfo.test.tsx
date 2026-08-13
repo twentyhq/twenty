@@ -4,11 +4,13 @@ import {
 } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
 import { usePublishWidgetHeaderInfo } from '@/page-layout/widgets/hooks/usePublishWidgetHeaderInfo';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
+import { widgetHasHeaderInfoComponentFamilySelector } from '@/page-layout/widgets/states/selectors/widgetHasHeaderInfoComponentFamilySelector';
 import { widgetHeaderInfoComponentFamilyState } from '@/page-layout/widgets/states/widgetHeaderInfoComponentFamilyState';
+import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { renderHook } from '@testing-library/react';
 import { createStore } from 'jotai';
 import { type ReactNode } from 'react';
-import { IconPlus } from 'twenty-ui/icon';
+import { IconArrowUpRight, IconPlus } from 'twenty-ui/icon';
 
 const WIDGET_ID = 'widget-under-test';
 
@@ -36,7 +38,7 @@ const getPublishedHeaderInfo = (store: ReturnType<typeof createStore>) =>
   );
 
 describe('usePublishWidgetHeaderInfo', () => {
-  it('publishes count and primary action to the widget header info state', () => {
+  it('publishes count and actions to the widget header info state', () => {
     const store = createStore();
     const onClick = jest.fn();
 
@@ -44,7 +46,10 @@ describe('usePublishWidgetHeaderInfo', () => {
       () =>
         usePublishWidgetHeaderInfo({
           count: 12,
-          primaryAction: { Icon: IconPlus, label: 'Compose', onClick },
+          actions: [
+            { Icon: IconPlus, label: 'Compose', onClick },
+            { Icon: IconArrowUpRight, label: 'See all', to: '/objects/tasks' },
+          ],
         }),
       { wrapper: getWrapper(store) },
     );
@@ -52,7 +57,11 @@ describe('usePublishWidgetHeaderInfo', () => {
     const publishedHeaderInfo = getPublishedHeaderInfo(store);
 
     expect(publishedHeaderInfo?.count).toBe(12);
-    expect(publishedHeaderInfo?.primaryAction?.label).toBe('Compose');
+    expect(publishedHeaderInfo?.actions?.map(({ label }) => label)).toEqual([
+      'Compose',
+      'See all',
+    ]);
+    expect(publishedHeaderInfo?.actions?.[1]?.to).toBe('/objects/tasks');
   });
 
   it('clears the published header info on unmount', () => {
@@ -76,20 +85,21 @@ describe('usePublishWidgetHeaderInfo', () => {
     ).not.toThrow();
   });
 
-  it('keeps the published state referentially stable across re-renders with inline actions', () => {
+  it('does not republish equivalent actions', () => {
     const store = createStore();
+    const onClick = jest.fn();
 
     const { rerender } = renderHook(
-      // a fresh object and a fresh closure on every render, like a
-      // non-memoizing caller would pass
       () =>
         usePublishWidgetHeaderInfo({
           count: 5,
-          primaryAction: {
-            Icon: IconPlus,
-            label: 'New task',
-            onClick: () => undefined,
-          },
+          actions: [
+            {
+              Icon: IconPlus,
+              label: 'New task',
+              onClick,
+            },
+          ],
         }),
       { wrapper: getWrapper(store) },
     );
@@ -102,7 +112,7 @@ describe('usePublishWidgetHeaderInfo', () => {
     expect(secondPublished).toBe(firstPublished);
   });
 
-  it('calls the latest onClick through the stable wrapper', () => {
+  it('publishes the latest onClick', () => {
     const store = createStore();
     const firstOnClick = jest.fn();
     const secondOnClick = jest.fn();
@@ -110,16 +120,53 @@ describe('usePublishWidgetHeaderInfo', () => {
     const { rerender } = renderHook(
       ({ onClick }: { onClick: () => void }) =>
         usePublishWidgetHeaderInfo({
-          primaryAction: { Icon: IconPlus, label: 'Compose', onClick },
+          actions: [{ Icon: IconPlus, label: 'Compose', onClick }],
         }),
       { wrapper: getWrapper(store), initialProps: { onClick: firstOnClick } },
     );
 
     rerender({ onClick: secondOnClick });
 
-    getPublishedHeaderInfo(store)?.primaryAction?.onClick();
+    expect(getPublishedHeaderInfo(store)?.actions?.[0]?.onClick).toBe(
+      secondOnClick,
+    );
+
+    getPublishedHeaderInfo(store)?.actions?.[0]?.onClick?.();
 
     expect(firstOnClick).not.toHaveBeenCalled();
     expect(secondOnClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not rerender the publisher when the header stays non-empty', () => {
+    const store = createStore();
+    let publisherRenderCount = 0;
+    let latestOnClick = () => undefined;
+
+    const { result } = renderHook(
+      () => {
+        publisherRenderCount++;
+        latestOnClick = () => undefined;
+
+        const hasWidgetHeaderInfo = useAtomComponentFamilySelectorValue(
+          widgetHasHeaderInfoComponentFamilySelector,
+          WIDGET_ID,
+        );
+
+        usePublishWidgetHeaderInfo({
+          actions: [
+            { Icon: IconPlus, label: 'Compose', onClick: latestOnClick },
+          ],
+        });
+
+        return hasWidgetHeaderInfo;
+      },
+      { wrapper: getWrapper(store) },
+    );
+
+    expect(result.current).toBe(true);
+    expect(publisherRenderCount).toBe(2);
+    expect(getPublishedHeaderInfo(store)?.actions?.[0]?.onClick).toBe(
+      latestOnClick,
+    );
   });
 });
