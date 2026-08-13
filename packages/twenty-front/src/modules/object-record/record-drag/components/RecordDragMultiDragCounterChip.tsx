@@ -10,7 +10,7 @@ const StyledNotificationCounterContainer = styled.div`
   z-index: 1000;
 `;
 
-export const RecordBoardCardMultiDragCounterChip = () => {
+export const RecordDragMultiDragCounterChip = () => {
   const originalDragSelection = useAtomComponentStateValue(
     originalDragSelectionComponentState,
   );

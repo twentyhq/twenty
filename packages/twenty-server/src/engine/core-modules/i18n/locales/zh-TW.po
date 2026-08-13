@@ -8491,6 +8491,11 @@ msgstr "此版本不高於目前已部署的版本。請在 package.json 中提�
 msgid "This version of the application is already installed in this workspace."
 msgstr "此應用程式的這個版本已安裝於此工作區。"
 
+#. js-lingui-id: o/Kt/Y
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This workspace already has a subscription."
+msgstr ""
+
 #. js-lingui-id: IdEnkZ
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This workspace's upgrade state could not be determined. Please try again once the workspace has finished upgrading."

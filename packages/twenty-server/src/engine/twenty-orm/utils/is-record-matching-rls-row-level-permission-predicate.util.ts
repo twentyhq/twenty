@@ -238,6 +238,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
         return isMatchingRatingFilter({
           ratingFilter: filterValue as RatingFilter,
           value: recordFieldValue,
+          options: objectMetadataField.options,
         });
       case FieldMetadataType.TEXT: {
         return isMatchingStringFilter({
@@ -255,6 +256,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
         return isMatchingSelectFilter({
           selectFilter: filterValue as SelectFilter,
           value: recordFieldValue,
+          options: objectMetadataField.options,
         });
       case FieldMetadataType.MULTI_SELECT:
         return isMatchingMultiSelectFilter({
