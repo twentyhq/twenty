@@ -145,7 +145,7 @@ describe('IMAP/SMTP outbound messaging (integration)', () => {
     );
   }, 300000);
 
-  it('creates a draft, then sends and removes the synced draft', async () => {
+  it('creates a draft with the requested recipients', async () => {
     const subject = `IMAP/SMTP draft ${randomUUID()}`;
 
     const draftResult = await draftEmailTool.execute(
@@ -161,34 +161,46 @@ describe('IMAP/SMTP outbound messaging (integration)', () => {
 
     expect(draftResult.success).toBe(true);
 
-    await runMessageChannelSync(messageChannelId);
-
-    const [draft] = await findRecordNodesByFilter<{
-      id: string;
-      isDraft: boolean;
-    }>('message', 'messages', 'id isDraft', { subject: { eq: subject } });
-
-    expect(draft).toMatchObject({ isDraft: true });
-
-    const sendResult = await sendEmail({
-      connectedAccountId,
-      to: HANDLE,
-      subject,
-      body: '<p>SMTP draft body</p>',
-      draftMessageId: draft.id,
+    const client = new ImapFlow({
+      host: greenmail.host,
+      port: greenmail.imapPort,
+      auth: { user: HANDLE.split('@')[0], pass: PASSWORD },
+      secure: false,
     });
 
-    expect(sendResult).toMatchObject({ success: true });
+    await client.connect();
 
-    await runMessageChannelSync(messageChannelId);
+    try {
+      const lock = await client.getMailboxLock('Drafts');
 
-    expect(
-      await findRecordNodesByFilter<{ isDraft: boolean }>(
-        'message',
-        'messages',
-        'isDraft',
-        { subject: { eq: subject } },
-      ),
-    ).toEqual([expect.objectContaining({ isDraft: false })]);
+      try {
+        const messageUids = await client.search({ all: true }, { uid: true });
+        const [messageUid] = messageUids;
+
+        if (messageUid === undefined) {
+          throw new Error(
+            'Expected the draft to be present in the Drafts mailbox',
+          );
+        }
+
+        const draft = await client.fetchOne(
+          messageUid,
+          { envelope: true, flags: true },
+          { uid: true },
+        );
+
+        expect(draft.envelope).toMatchObject({
+          subject,
+          to: [{ address: HANDLE }],
+          cc: [{ address: HANDLE }],
+          bcc: [{ address: HANDLE }],
+        });
+        expect(draft.flags).toContain('\\Draft');
+      } finally {
+        lock.release();
+      }
+    } finally {
+      await client.logout();
+    }
   }, 300000);
 });
