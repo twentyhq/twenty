@@ -40,7 +40,6 @@ export const describeCronExpression = (
       mergedOptions,
     );
 
-    // Smart logic for time descriptions
     if (parts.minutes.includes('/') && parts.hours.includes('-')) {
       // Special case: minute intervals with hour ranges (e.g., "*/15 9-17")
       if (isDefined(minutesDescription) && minutesDescription !== '') {

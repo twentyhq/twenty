@@ -33,7 +33,6 @@ export const getMonthsDescription = (
     return '';
   }
 
-  // Every month
   if (months === '*') {
     return '';
   }
@@ -111,7 +110,6 @@ export const getMonthsDescription = (
     return t`only in ${remainingMonths} and ${lastMonth ?? ''}`;
   }
 
-  // Single month value
   const monthNum = parseInt(months, 10);
   if (!isNaN(monthNum)) {
     const monthName = getMonthName(

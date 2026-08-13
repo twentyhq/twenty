@@ -229,7 +229,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
           keysNeedingDataFromRedis,
         );
 
-        // Stage 4: Recompute remaining
         const keysToRecompute = [...keysNeedingRecompute, ...missingInRedis];
         const recomputedEntries = await this.recomputeDataFromProvider(
           workspaceId,

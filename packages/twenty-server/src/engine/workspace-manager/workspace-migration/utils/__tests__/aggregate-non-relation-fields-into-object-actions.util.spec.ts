@@ -57,7 +57,6 @@ describe('aggregateNonRelationFieldsIntoObjectActions', () => {
       orchestratorActionsReport: input,
     });
 
-    // Field should be merged into object action
     expect(result.objectMetadata.create).toMatchObject([
       {
         universalFlatFieldMetadatas: [
@@ -69,7 +68,6 @@ describe('aggregateNonRelationFieldsIntoObjectActions', () => {
       },
     ]);
 
-    // No remaining field actions
     expect(result.fieldMetadata.create).toHaveLength(0);
   });
 
@@ -124,12 +122,10 @@ describe('aggregateNonRelationFieldsIntoObjectActions', () => {
       orchestratorActionsReport: input,
     });
 
-    // Object action should have no fields merged
     expect(result.objectMetadata.create).toMatchObject([
       { universalFlatFieldMetadatas: [] },
     ]);
 
-    // Relation field should remain in field actions
     expect(result.fieldMetadata.create).toMatchObject([
       {
         flatEntity: { universalIdentifier: relationFieldUniversalId },
@@ -174,7 +170,6 @@ describe('aggregateNonRelationFieldsIntoObjectActions', () => {
       orchestratorActionsReport: input,
     });
 
-    // No object actions
     expect(result.objectMetadata.create).toHaveLength(0);
 
     // Field should remain in field actions (no matching object to merge into)
@@ -259,7 +254,6 @@ describe('aggregateNonRelationFieldsIntoObjectActions', () => {
       },
     ]);
 
-    // Relation field should remain in field actions
     expect(result.fieldMetadata.create).toMatchObject([
       {
         flatEntity: { universalIdentifier: relationFieldUniversalId },

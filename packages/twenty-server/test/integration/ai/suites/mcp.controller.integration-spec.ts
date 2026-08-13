@@ -276,7 +276,6 @@ describe('MCP Controller (integration)', () => {
       // Should have at least a progress notification and the final response
       expect(events.length).toBeGreaterThanOrEqual(2);
 
-      // First event should be a progress notification
       const progressEvent = events[0];
 
       expect(progressEvent).toMatchObject({
@@ -297,7 +296,6 @@ describe('MCP Controller (integration)', () => {
         jsonrpc: '2.0',
       });
 
-      // Should have either result.content or error
       const hasResultContent = !!(lastEvent as any)?.result?.content;
       const hasError = !!(lastEvent as any)?.error;
 

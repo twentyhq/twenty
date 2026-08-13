@@ -21,7 +21,6 @@ export const main = async (params: { items: Array<{ category: string; name: stri
   };
 };`;
 
-// Test function that throws an error
 const ERROR_FUNCTION_CODE = `export const main = async (params: { shouldFail: boolean }): Promise<object> => {
   if (params.shouldFail) {
     throw new Error('Intentional test error');
@@ -118,7 +117,6 @@ describe('Logic Function Execution', () => {
       expectToFail: false,
     });
 
-    // Execute the function with items to group
     const { data: executeData } = await executeLogicFunction({
       input: {
         id: functionId,
@@ -235,7 +233,6 @@ describe('Logic Function Execution', () => {
   });
 
   it('should handle errors thrown by logic functions', async () => {
-    // Create the function with error-throwing code
     const { data: createData } = await createOneLogicFunction({
       input: {
         name: 'Error Test Function',

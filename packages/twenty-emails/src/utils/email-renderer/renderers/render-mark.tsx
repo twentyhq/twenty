@@ -36,7 +36,6 @@ export const renderMark = (node: JSONContent): ReactNode => {
     );
   });
 
-  // Apply marks from innermost to outermost
   return marks.reduce((children: ReactNode, mark: TipTapMark) => {
     if (!isEmailDocumentMarkType(mark.type)) {
       // Fallback for unknown mark types - skip unknown marks

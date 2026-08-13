@@ -7,7 +7,6 @@ export const getRequest = (context: ExecutionContext) => {
   if (context.getType() === 'http') {
     request = context.switchToHttp().getRequest();
   } else if (context.getType<GqlContextType>() === 'graphql') {
-    // if context is a graphql request
     const graphQLContext = GqlExecutionContext.create(context);
 
     const { req, connection } = graphQLContext.getContext();
@@ -17,7 +16,6 @@ export const getRequest = (context: ExecutionContext) => {
         ? connection.context
         : req;
   } else if (context.getType() === 'rpc') {
-    // if context is a rpc request
     throw new Error('Not implemented');
   }
 

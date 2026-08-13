@@ -128,7 +128,6 @@ export class TimelineActivitySeederService {
     schemaName: string;
     workspaceId: string;
   }) {
-    // Get workspace-specific participant data
     const calendarEventParticipants =
       getCalendarEventParticipantDataSeeds(workspaceId);
     const messageParticipants = getMessageParticipantDataSeeds(workspaceId);

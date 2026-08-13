@@ -1,4 +1,3 @@
-// hook-registry.service.ts
 import { Injectable } from '@nestjs/common';
 import { type Module } from '@nestjs/core/injector/module';
 

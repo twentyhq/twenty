@@ -26,7 +26,6 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
   CreateStandardFieldArgs<'noteTarget', FieldMetadataType>,
   'context'
 >): Record<AllStandardObjectFieldName<'noteTarget'>, FlatFieldMetadata> => ({
-  // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,

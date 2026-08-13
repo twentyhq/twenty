@@ -12,7 +12,6 @@ describe('SlashCommand', () => {
   let editor: Editor;
 
   beforeEach(() => {
-    // Initialize i18n for tests
     i18n.load('en', {});
     i18n.activate('en');
 
@@ -38,7 +37,6 @@ describe('SlashCommand', () => {
       editor.commands.setContent('<p></p>');
       editor.commands.focus();
 
-      // Type the slash character
       editor.commands.insertContent('/');
 
       // The suggestion plugin should be active
@@ -50,10 +48,8 @@ describe('SlashCommand', () => {
       editor.commands.setContent('<p></p>');
       editor.commands.focus();
 
-      // Type slash and partial command
       editor.commands.insertContent('/head');
 
-      // Content should include the typed text
       expect(editor.getText()).toContain('head');
     });
   });
@@ -63,7 +59,6 @@ describe('SlashCommand', () => {
       editor.commands.setContent('<p>Test</p>');
       editor.commands.focus();
 
-      // Simulate selecting heading 1 command
       editor.chain().focus().setHeading({ level: 1 }).run();
 
       expect(editor.isActive('heading', { level: 1 })).toBe(true);

@@ -53,7 +53,6 @@ const gaxiosErrorMocks = {
     response: undefined,
   },
 
-  // Timeout Error
   timeout: {
     code: 'ETIMEDOUT',
     name: 'GaxiosError',

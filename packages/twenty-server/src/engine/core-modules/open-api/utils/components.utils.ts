@@ -47,7 +47,6 @@ const getSchemaComponentsExample = (
   flatFieldMetadatas: FlatFieldMetadata[],
 ): OpenApiExample => {
   return flatFieldMetadatas.reduce((node, field) => {
-    // If field is required
     if (!field.isNullable && field.defaultValue === null) {
       return {
         ...node,

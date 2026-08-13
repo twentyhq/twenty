@@ -12,7 +12,6 @@ const getDayName = (
   dayOfWeekStartIndexZero: boolean,
   localeCatalog?: Locale,
 ): string => {
-  // Handle both 0 and 7 as Sunday
   const normalizedDay = dayNum === 7 ? 0 : dayNum;
 
   // Create a date for the given day (using a Sunday as base: 2024-01-07)
@@ -37,7 +36,6 @@ export const getDayOfWeekDescription = (
     return '';
   }
 
-  // Every day of week
   if (dayOfWeek === '*') {
     return '';
   }
@@ -113,7 +111,6 @@ export const getDayOfWeekDescription = (
       localeCatalog,
     );
 
-    // Special case for weekdays
     if (start === '1' && end === '5' && dayOfWeekStartIndexZero) {
       return t`on weekdays`;
     }
@@ -147,7 +144,6 @@ export const getDayOfWeekDescription = (
     return t`only on ${remainingDays} and ${lastDay ?? ''}`;
   }
 
-  // Single day value
   const dayNum = parseInt(dayOfWeek, 10);
   if (!isNaN(dayNum)) {
     const dayName = getDayName(dayNum, dayOfWeekStartIndexZero, localeCatalog);

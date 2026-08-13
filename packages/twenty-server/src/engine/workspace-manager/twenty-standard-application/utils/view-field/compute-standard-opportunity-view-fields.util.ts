@@ -258,7 +258,6 @@ export const computeStandardOpportunityViewFields = (
           viewFieldGroupName: 'deal',
         },
       }),
-    // Relations group
     opportunityRecordPageFieldsCompany: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'opportunity',
@@ -299,7 +298,6 @@ export const computeStandardOpportunityViewFields = (
         viewFieldGroupName: 'relations',
       },
     }),
-    // System group
     opportunityRecordPageFieldsCreatedAt: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'opportunity',

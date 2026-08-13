@@ -298,7 +298,6 @@ describe('French locale tests', () => {
   });
 
   afterAll(() => {
-    // Restore English for other tests
     i18n.load('en', enMessages);
     i18n.activate('en');
   });

@@ -68,7 +68,6 @@ const MIGRATED_REST_METHODS = [
     ModulesModule,
     // Needed for the user workspace middleware
     WorkspaceCacheStorageModule,
-    // Api modules
     CoreGraphQLApiModule,
     MetadataGraphQLApiModule,
     AdminPanelGraphQLApiModule,
@@ -78,7 +77,6 @@ const MIGRATED_REST_METHODS = [
     JwtModule,
     UserSessionModule,
     WorkspaceMetadataVersionModule,
-    // I18n module for translations
     I18nModule,
     ...AppModule.getConditionalModules(),
   ],

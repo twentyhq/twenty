@@ -92,7 +92,6 @@ export const useSetRecordGroups = () => {
         return;
       }
 
-      // Set the record group ids
       store.set(
         recordGroupIdsComponentState.atomFamily({
           instanceId: recordIndexId,

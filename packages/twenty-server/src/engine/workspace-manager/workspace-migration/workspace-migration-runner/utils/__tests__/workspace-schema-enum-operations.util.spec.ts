@@ -48,7 +48,6 @@ describe('WorkspaceSchemaEnumOperations', () => {
         },
       ];
 
-      // Simulate failure on second enum
       (mockSchemaManagerService.enumManager.createEnum as jest.Mock)
         .mockResolvedValueOnce(undefined)
         .mockRejectedValueOnce(new Error('Enum collision'))

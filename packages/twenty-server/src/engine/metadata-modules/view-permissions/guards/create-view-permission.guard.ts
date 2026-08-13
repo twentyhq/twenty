@@ -19,14 +19,12 @@ export class CreateViewPermissionGuard implements CanActivate {
 
     let visibility: ViewVisibility = ViewVisibility.WORKSPACE;
 
-    // For GraphQL: extract from args.input
     const args = gqlContext.getArgs();
 
     if (args?.input?.visibility) {
       visibility = args.input.visibility as ViewVisibility;
     }
 
-    // For REST: extract from request body
     if (!args?.input && request.body?.visibility) {
       visibility = request.body.visibility as ViewVisibility;
     }

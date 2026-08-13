@@ -124,7 +124,6 @@ describe('upsertFieldsWidget', () => {
     });
 
     it('should hard-delete groups not included in the input', async () => {
-      // First, create a group via upsert
       const groupToDeleteId = uuidv4();
       const groupToKeepId = uuidv4();
 
@@ -165,7 +164,6 @@ describe('upsertFieldsWidget', () => {
         },
       });
 
-      // Now upsert again without the first group
       await upsertFieldsWidget({
         expectToFail: false,
         input: {
@@ -281,7 +279,6 @@ describe('upsertFieldsWidget', () => {
     });
 
     it('should hard-delete all existing groups when using flat fields', async () => {
-      // First create a group via upsert
       const groupId = uuidv4();
       const targetField = testSetup.viewFields[0];
 
@@ -319,7 +316,6 @@ describe('upsertFieldsWidget', () => {
 
       expect(groupBefore).toBeDefined();
 
-      // Now upsert with flat fields
       await upsertFieldsWidget({
         expectToFail: false,
         input: {

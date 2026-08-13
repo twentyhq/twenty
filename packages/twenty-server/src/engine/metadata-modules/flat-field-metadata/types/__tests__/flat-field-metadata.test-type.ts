@@ -22,7 +22,6 @@ type DatePropertiesCastToString = {
   updatedAt: string;
 };
 
-// OneToMany relations become ...Ids arrays
 type OneToManyRelationIdArrays = {
   viewFieldIds: string[];
   viewFilterIds: string[];
@@ -42,7 +41,6 @@ type RelationIdAssertions = [
     >
   >,
 
-  // Relation types have defined relation IDs
   Expect<
     HasAllProperties<
       FlatFieldMetadata<FieldMetadataType.RELATION>,
@@ -75,7 +73,6 @@ type FlatTransformationAssertions = [
 type AbstractFlatFieldMetadata = FlatFieldMetadata<FieldMetadataType>;
 
 const _assertion: Record<string, AbstractFlatFieldMetadata> = {
-  // Primitive types
   uuid: {} as FlatFieldMetadata<FieldMetadataType.UUID>,
   text: {} as FlatFieldMetadata<FieldMetadataType.TEXT>,
   number: {} as FlatFieldMetadata<FieldMetadataType.NUMBER>,
@@ -86,7 +83,6 @@ const _assertion: Record<string, AbstractFlatFieldMetadata> = {
   date: {} as FlatFieldMetadata<FieldMetadataType.DATE>,
   dateTime: {} as FlatFieldMetadata<FieldMetadataType.DATE_TIME>,
 
-  // Complex types
   currency: {} as FlatFieldMetadata<FieldMetadataType.CURRENCY>,
   fullName: {} as FlatFieldMetadata<FieldMetadataType.FULL_NAME>,
   address: {} as FlatFieldMetadata<FieldMetadataType.ADDRESS>,
@@ -95,7 +91,6 @@ const _assertion: Record<string, AbstractFlatFieldMetadata> = {
   phones: {} as FlatFieldMetadata<FieldMetadataType.PHONES>,
   actor: {} as FlatFieldMetadata<FieldMetadataType.ACTOR>,
 
-  // Select types
   rating: {} as FlatFieldMetadata<FieldMetadataType.RATING>,
   select: {} as FlatFieldMetadata<FieldMetadataType.SELECT>,
   multiSelect: {} as FlatFieldMetadata<FieldMetadataType.MULTI_SELECT>,
@@ -107,7 +102,6 @@ const _assertion: Record<string, AbstractFlatFieldMetadata> = {
   relation: {} as FlatFieldMetadata<FieldMetadataType.RELATION>,
   morphRelation: {} as FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>,
 
-  // Special types
   files: {} as FlatFieldMetadata<FieldMetadataType.FILES>,
   tsVector: {} as FlatFieldMetadata<FieldMetadataType.TS_VECTOR>,
 };

@@ -198,7 +198,6 @@ const getRecordSeedsBatches = (
       pgColumns: MESSAGE_THREAD_DATA_SEED_COLUMNS,
       recordSeeds: MESSAGE_THREAD_DATA_SEEDS,
     },
-    // Junction tables
     {
       tableName: '_employmentHistory',
       pgColumns: EMPLOYMENT_HISTORY_DATA_SEED_COLUMNS,
