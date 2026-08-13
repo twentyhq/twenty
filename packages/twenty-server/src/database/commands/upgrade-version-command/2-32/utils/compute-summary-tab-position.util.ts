@@ -2,7 +2,7 @@ import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metada
 import { isDefined } from 'twenty-shared/utils';
 
 import { computeCallRecordingTabPosition } from 'src/database/commands/upgrade-version-command/2-31/utils/compute-call-recording-tab-position.util';
-import { TAB_POSITION_GAP } from 'src/database/commands/upgrade-version-command/2-31/utils/tab-position-gap.constant';
+import { TAB_POSITION_GAP } from 'src/database/commands/upgrade-version-command/2-32/utils/tab-position-gap.constant';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 
 const CALL_RECORDING_TAB_UNIVERSAL_IDENTIFIER =

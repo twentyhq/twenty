@@ -1,6 +1,6 @@
 import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 
-import { computeSummaryTabPosition } from 'src/database/commands/upgrade-version-command/2-31/utils/compute-summary-tab-position.util';
+import { computeSummaryTabPosition } from 'src/database/commands/upgrade-version-command/2-32/utils/compute-summary-tab-position.util';
 
 const HOME_TAB_UNIVERSAL_IDENTIFIER =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs.home

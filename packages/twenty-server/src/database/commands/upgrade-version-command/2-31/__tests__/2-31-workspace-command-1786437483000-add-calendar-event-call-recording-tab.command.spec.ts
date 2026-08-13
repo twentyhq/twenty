@@ -38,8 +38,10 @@ const TRANSCRIPT_WIDGET_UNIVERSAL_IDENTIFIER =
     .callRecording.widgets.transcript.universalIdentifier;
 
 const buildByUniversalIdentifierMap = <
-  TFlatEntity extends { universalIdentifier: string },
->(flatEntities: TFlatEntity[]) => ({
+  T extends { universalIdentifier: string },
+>(
+  flatEntities: T[],
+) => ({
   byUniversalIdentifier: Object.fromEntries(
     flatEntities.map((flatEntity) => [
       flatEntity.universalIdentifier,
