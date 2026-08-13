@@ -806,22 +806,22 @@ Takže recharts `ResponsiveContainer`, Floating UI / Popper, virtualizace seznam
 | `element.classList.add(...)`                                                                                | Vyvolá výjimku (`classList` je `undefined`)         | Sestavte si řetězec `className` sami                                                                    |
 | `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | Vyvolá výjimku                                      | `querySelector()` / `querySelectorAll()`, které fungují                                                 |
 | `document.activeElement`                                                                                    | Vždy `undefined`                                    | Sledujte fokus pomocí `onFocus` / `onBlur`                                                              |
-| `\<canvas>`                                                                                | Nerenderuje nic, žádná chyba                        | SVG, nebo kreslete offscreen a zobrazte `<img src={dataUrl}>`                                           |
+| `canvas`                                                                                                    | Nerenderuje nic, žádná chyba                        | SVG, nebo kreslit mimo obrazovku a výsledek zobrazit v prvku `img`                                      |
 | `createPortal(node, document.body)`                                                                         | Nerenderuje nic, zatímco `isConnected` hlásí úspěch | Překryvné prvky inline pomocí `position: absolute`, nebo knihovně předávejte vlastní kontejnerový prvek |
 
 Kvůli této mezeře v portálu popovery Radix, Headless UI, MUI a react-select ve výchozím stavu nic nevyrenderují. Většina z nich přijímá prop pro kontejner; nasměrujte ho na prvek, který jste vyrenderovali.
 
 ### Události
 
-Události myši, ukazatele, dotyku, tažení, klávesnice, fokusu, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` a `animationend`/`transitionend` přecházejí do hostitele, plus několik specifických pro prvek: `load`/`error` na `<img>`, schránka a kompozice na `<input>`/`\<textarea>`, média na `\<video>`/`\<audio>`, `toggle` na `\<details>`/`\<dialog>`. Cokoli dalšího (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, zachycení ukazatele (pointer capture), `onLoad` na `<img>`) je bez varování zahazováno.
+Události myši, ukazatele, dotyku, přetažení, klávesnice, fokusu, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` a `animationend`/`transitionend` se předávají hostiteli, a navíc několik dalších podle typu prvku: `load`/`error` na `img`, schránka a skládání (composition) na `input`/`textarea`, média na `video`/`audio`, `toggle` na `details`/`dialog`. Cokoli dalšího (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, zachycení ukazatele (pointer capture), `onLoad` na `img`) je bez varování zahazováno.
 
 `document.addEventListener()` a `window.addEventListener()` se zaregistrují bez chyby, ale nikdy se nespustí, což je důvod, proč se přetažení zastaví, jakmile ukazatel opustí prvek, na kterém začalo. Ani `event.preventDefault()` se nepřenáší; odeslání formuláře, `dragover`/`drop` a kliknutí na odkazy jsou už za vás ošetřené.
 
 ### Atributy a stylování
 
-Každý prvek předává své vlastní vlastnosti do hostitelského DOMu (`href` na `\<a>`, `src`/`alt` na `<img>`, `value`/`placeholder`/`disabled` na `<input>` atd.) plus společnou sadu na každém prvku: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` a jakýkoli atribut `aria-*` / `data-*` (s pomlčkou, takže `ariaLabel` je zahozena). Cokoli mimo tento rozsah je tiše zahazováno, takže vlastní stav vyjádřete jako `data-*`.
+Každý prvek předává své vlastní vlastnosti do hostitelského DOM (`href` na `a`, `src`/`alt` na `img`, `value`/`placeholder`/`disabled` na `input` atd.), a navíc má každý prvek společnou sadu: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` a jakýkoli atribut `aria-*` / `data-*` (s pomlčkou; `ariaLabel` je proto ignorována). Cokoli mimo tento rozsah je tiše zahazováno, takže vlastní stav vyjádřete jako `data-*`.
 
-Komponentové CSS, ať už z `import './styles.css'`, CSS-in-JS nebo z prvku `\<style>`, je do `\<head>` hostitelské stránky vkládáno **bez ohraničení (unscoped)**. Třídy se tak střetávají s vlastními třídami Twenty (přidávejte jim předpony a nikdy nepište holé `div { ... }` selektory) a `@media` se vztahuje k oknu prohlížeče, nikoli k vašemu widgetu (použijte `@container` s vlastním `container-type`). Inline propy `style` nejsou ovlivněny.
+Komponentové CSS, ať už z `import './styles.css'`, CSS-in-JS nebo z prvku `style`, je do `head` hostitelské stránky vkládáno **bez ohraničení (unscoped)**. Třídy se tak střetávají s vlastními třídami Twenty (přidávejte jim předpony a nikdy nepište holé `div { ... }` selektory) a `@media` se vztahuje k oknu prohlížeče, nikoli k vašemu widgetu (použijte `@container` s vlastním `container-type`). Inline propy `style` nejsou ovlivněny.
 
 ### Úložiště a síť
 
@@ -835,7 +835,7 @@ Komponentové CSS, ať už z `import './styles.css'`, CSS-in-JS nebo z prvku `\<
 
 ### Další omezení
 
-* **Obsah souborů.** `<input type="file">` poskytuje vašemu handleru pouze metadata souboru, nikoli samotné bajty, takže `FileReader` a nahrávání zatím nejsou možná.
+* **Obsah souborů.** `input` typu `file` poskytuje vašemu handleru pouze metadata souboru, nikoli samotné bajty, takže `FileReader` a nahrávání zatím nejsou možná.
 * **Payloady drag-and-drop.** Události tažení se spouštějí, ale `event.dataTransfer` je `undefined`.
 * **Vestavěné moduly Node.** `fs`, `path` a `node:crypto` způsobí chybu při sestavení, takže tuto práci přesuňte do [logické funkce](/l/cs/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` a `URL` jsou k dispozici.
-* **`\<iframe>`** je vždy znovu zasandboxováno bez `allow-same-origin`, takže vložený obsah spoléhající se na vlastní relaci se vykreslí jako odhlášený. Nemá ani `onLoad`.
+* **`iframe`** je vždy znovu zasandboxováno bez `allow-same-origin`, takže vložený obsah spoléhající se na vlastní relaci se vykreslí jako odhlášený. Nemá ani `onLoad`.

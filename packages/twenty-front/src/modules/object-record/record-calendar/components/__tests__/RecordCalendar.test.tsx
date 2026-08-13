@@ -43,7 +43,7 @@ jest.mock(
   '@/object-record/record-calendar/states/selectors/useRecordCalendarSelection',
   () => ({
     useRecordCalendarSelection: jest.fn(() => ({
-      resetRecordSelection: jest.fn(),
+      resetRecordCalendarSelection: jest.fn(),
     })),
   }),
 );

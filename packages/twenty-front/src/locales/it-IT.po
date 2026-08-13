@@ -8408,6 +8408,7 @@ msgid "Failed to merge records. Please try again."
 msgstr "Impossibile unire i record. Per favore riprova."
 
 #. js-lingui-id: DvNGzq
+#: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarMonthDndKit.ts
 #: src/modules/object-record/record-calendar/week/components/RecordCalendarWeekDragDropContext.tsx
 msgid "Failed to move record"
 msgstr ""

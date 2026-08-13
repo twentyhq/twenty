@@ -806,22 +806,22 @@ Front 컴포넌트는 활발히 개발 중입니다. 렌더링, 스타일링 및
 | `element.classList.add(...)`                                                                                | 예외 발생(`classList`는 `undefined`임)          | `className` 문자열을 직접 구성하세요.                                          |
 | `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | 예외 발생                                     | 정상 동작하는 `querySelector()` / `querySelectorAll()`을 사용                |
 | `document.activeElement`                                                                                    | 항상 `undefined`                            | `onFocus` / `onBlur`로 포커스를 추적하세요.                                   |
-| `\<canvas>`                                                                                | 아무것도 렌더링되지 않으며, 오류도 없습니다.                 | SVG를 사용하거나, 오프스크린에서 그린 뒤 `<img src={dataUrl}>`로 표시하세요.              |
+| `canvas`                                                                                                    | 아무것도 렌더링되지 않으며, 오류도 없습니다.                 | SVG 또는 오프스크린에서 그린 뒤 결과를 `img` 요소에 표시                                |
 | `createPortal(node, document.body)`                                                                         | `isConnected`는 성공으로 보고하지만 아무것도 렌더링되지 않습니다 | `position: absolute`로 인라인 오버레이를 사용하거나 라이브러리에 직접 렌더링한 컨테이너 요소를 전달하세요 |
 
 이 포털 간극 때문에 Radix, Headless UI, MUI, react-select의 팝오버는 기본적으로 아무것도 렌더링하지 않습니다. 대부분 컨테이너 prop을 받으므로, 직접 렌더링한 요소를 가리키도록 설정하세요.
 
 ### 이벤트
 
-마우스, 포인터, 터치, 드래그, 키보드, 포커스, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` 그리고 `animationend`/`transitionend` 이벤트는 호스트로 전달되며, 여기에 요소별로 몇 가지가 더해집니다: `<img>`의 `load`/`error`, `<input>`/`\<textarea>`의 클립보드 및 조합(composition), `\<video>`/`\<audio>`의 미디어, `\<details>`/`\<dialog>`의 `toggle` 등입니다. 그 밖의 것들(`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, 포인터 캡처, `<img>`의 `onLoad` 등)은 경고 없이 모두 무시됩니다.
+마우스, 포인터, 터치, 드래그, 키보드, 포커스, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` 그리고 `animationend`/`transitionend` 이벤트는 호스트로 전달되며, 여기에 요소별로 몇 가지가 더해집니다: `img`의 `load`/`error`, `input`/`textarea`의 클립보드 및 조합(composition), `video`/`audio`의 미디어, `details`/`dialog`의 `toggle` 등입니다. 그 밖의 것들(`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, 포인터 캡처, `img`의 `onLoad` 등)은 경고 없이 모두 무시됩니다.
 
 `document.addEventListener()`와 `window.addEventListener()`는 오류 없이 등록되지만 절대 실행되지 않으며, 이 때문에 드래그는 시작한 요소를 벗어나는 순간 중지됩니다. `event.preventDefault()` 역시 전달되지 않습니다. 폼 제출, `dragover`/`drop` 및 링크 클릭은 이미 보호되어 있습니다.
 
 ### 속성과 스타일링
 
-각 요소는 자신의 속성을 호스트 DOM으로 전달합니다(`href`는 `\<a>`, `src`/`alt`는 `<img>`, `value`/`placeholder`/`disabled`는 `<input>` 등). 또한 모든 요소에 공통으로 `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable`, 그리고 하이픈이 포함된 모든 `aria-*` / `data-*` 속성(따라서 `ariaLabel`은 무시됨)을 전달합니다. 그 외의 속성은 조용히 폐기되므로, 사용자 정의 상태는 `data-*`로 표현하세요.
+각 요소는 자신의 속성을 호스트 DOM으로 전달합니다(`a`의 `href`, `img`의 `src`/`alt`, `input`의 `value`/`placeholder`/`disabled` 등). 또한 모든 요소에 공통으로 `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable`, 그리고 하이픈이 포함된 모든 `aria-*` / `data-*` 속성(따라서 `ariaLabel`은 무시됨)을 전달합니다. 그 외의 속성은 조용히 폐기되므로, 사용자 정의 상태는 `data-*`로 표현하세요.
 
-컴포넌트 CSS는 `import './styles.css'`, CSS-in-JS 또는 `\<style>` 요소에서 오든, 호스트 페이지의 `\<head>`에 **범위 없이(unscoped)** 주입됩니다. 따라서 클래스 이름이 Twenty 자체 것과 충돌합니다(접두사를 붙이고, `div { ... }` 선택자를 직접 작성하지 마세요). 그리고 `@media`는 위젯이 아니라 브라우저 창을 기준으로 매칭됩니다(직접 지정한 `container-type`과 함께 `@container`를 사용하세요). 인라인 `style` prop은 영향을 받지 않습니다.
+컴포넌트 CSS는 `import './styles.css'`, CSS-in-JS 또는 `style` 요소에서 오든, 호스트 페이지의 `head`에 **범위 없이(unscoped)** 주입됩니다. 따라서 클래스 이름이 Twenty 자체 것과 충돌합니다(접두사를 붙이고, `div { ... }` 선택자를 직접 작성하지 마세요). 그리고 `@media`는 위젯이 아니라 브라우저 창을 기준으로 매칭됩니다(직접 지정한 `container-type`과 함께 `@container`를 사용하세요). 인라인 `style` prop은 영향을 받지 않습니다.
 
 ### 스토리지와 네트워크
 
@@ -835,7 +835,7 @@ Front 컴포넌트는 활발히 개발 중입니다. 렌더링, 스타일링 및
 
 ### 기타 제약 사항
 
-* **파일 내용.** `<input type="file">`은 핸들러에 바이트가 아닌 파일 메타데이터만 제공하므로, 현재는 `FileReader` 사용과 업로드가 불가능합니다.
+* **파일 내용.** `file` 타입의 `input`은 핸들러에 바이트가 아닌 파일 메타데이터만 제공하므로, 현재는 `FileReader` 사용과 업로드가 불가능합니다.
 * **드래그 앤 드롭 페이로드.** 드래그 이벤트는 발생하지만, `event.dataTransfer`는 `undefined`입니다.
 * **Node 내장 모듈.** `fs`, `path` 및 `node:crypto`는 빌드에 실패하므로, 해당 작업은 [logic function](/l/ko/developers/extend/apps/logic/logic-functions)으로 옮기세요. Web Crypto, `fetch`, `TextEncoder` 및 `URL`은 사용할 수 있습니다.
-* \*\*`\<iframe>`\*\*은 항상 `allow-same-origin` 없이 다시 샌드박싱되므로, 자체 세션에 의존하는 임베드는 로그아웃된 상태로 렌더링됩니다. 또한 `onLoad`도 지원되지 않습니다.
+* \*\*`iframe`\*\*은 항상 `allow-same-origin` 없이 다시 샌드박싱되므로, 자체 세션에 의존하는 임베드는 로그아웃된 상태로 렌더링됩니다. 또한 `onLoad`도 지원되지 않습니다.
