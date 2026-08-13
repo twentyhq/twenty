@@ -196,13 +196,22 @@ v1. A merge whose merged data would set a relation-by-name or files field carves
 object-literal `where` support grew to cover scalar equality, `Equal`, and `IS NULL`
 alongside `In`.
 
+## Upsert
+
+`createMany` with `upsert: true` reads the existing records by their conflict fields,
+splits the input into inserts and updates, then inserts the new records and updates the
+matched ones. The insert half routes through `runInsert` on v2 (same `CREATED` / `UPSERTED`
+events as the non-upsert create); the batch update of matched records stays on v1, because
+its single batch event over N per-id updates has no v2 form yet. The read-then-split and
+conflict-target derivation are unchanged.
+
 ## Not covered yet
 
-- Upsert. `ON CONFLICT` and the conflict-target derivation (which reads composite unique
-  indexes off the flat index maps) still go through v1.
+- The upsert batch update of already-matched records (v1's `updateMany` with per-id
+  inputs). A v2 batch-update path that emits one batch event over N updates would move it.
 - Relation connect/disconnect and files-field input on writes, resolved by
-  `RelationNestedQueries` / `FilesFieldSync`. Update, create and merge carve these back to
-  v1 per request; upsert stays on v1 entirely until this input machinery has a v2 form.
+  `RelationNestedQueries` / `FilesFieldSync`. Update, create, upsert and merge carve these
+  back to v1 per request until this input machinery has a v2 form.
 - `find` / `findOne` / `findBy` and the rest of the repository surface used by
   `src/modules`.
 - DDL.

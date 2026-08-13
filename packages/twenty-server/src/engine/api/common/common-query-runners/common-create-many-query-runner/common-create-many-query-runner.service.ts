@@ -268,6 +268,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       args,
       selectedFieldsResult,
       workspaceId,
+      queryRunnerContext,
     });
   }
 
@@ -280,6 +281,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     args,
     selectedFieldsResult,
     workspaceId,
+    queryRunnerContext,
   }: {
     repository: WorkspaceRepository<ObjectLiteral>;
     flatObjectMetadata: FlatObjectMetadata;
@@ -289,6 +291,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     args: CreateManyQueryArgs;
     selectedFieldsResult: CommonSelectedFieldsResult;
     workspaceId: string;
+    queryRunnerContext: CommonExtendedQueryRunnerContext;
   }): Promise<InsertResult> {
     const conflictingFieldGroups = getConflictingFields(
       flatObjectMetadata,
@@ -346,6 +349,9 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       repository,
       result,
       columnsToReturn,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      queryRunnerContext,
     });
 
     return result;
@@ -479,23 +485,44 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     repository,
     result,
     columnsToReturn,
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+    queryRunnerContext,
   }: {
     recordsToInsert: Partial<ObjectRecord>[];
     repository: WorkspaceRepository<ObjectLiteral>;
     result: InsertResult;
     columnsToReturn: string[];
+    flatObjectMetadata: FlatObjectMetadata;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    queryRunnerContext: CommonExtendedQueryRunnerContext;
   }): Promise<void> {
-    if (recordsToInsert.length > 0) {
-      const insertResult = await repository.insert(
-        recordsToInsert,
-        undefined,
-        columnsToReturn,
+    if (recordsToInsert.length === 0) {
+      return;
+    }
+
+    const ormV2CanHandle =
+      queryRunnerContext.featureFlagsMap[
+        FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED
+      ] &&
+      recordsToInsert.every((record) =>
+        writeDataIsSupportedByOrmV2({
+          data: record,
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+        }),
       );
 
-      result.identifiers.push(...insertResult.identifiers);
-      result.generatedMaps.push(...insertResult.generatedMaps);
-      result.raw.push(...insertResult.raw);
-    }
+    const insertResult = ormV2CanHandle
+      ? await this.getWriteRepository(queryRunnerContext).runInsert({
+          records: recordsToInsert,
+          columnsToReturn,
+        })
+      : await repository.insert(recordsToInsert, undefined, columnsToReturn);
+
+    result.identifiers.push(...insertResult.identifiers);
+    result.generatedMaps.push(...insertResult.generatedMaps);
+    result.raw.push(...insertResult.raw);
   }
 
   private async fetchUpsertedRecords({
