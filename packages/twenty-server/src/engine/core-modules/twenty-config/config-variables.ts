@@ -1219,6 +1219,24 @@ export class ConfigVariables {
   EVENT_SINKS: string[] = ['clickhouse'];
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Holostaff workspace id for the optional in-product copilot. Leave empty (default) to keep the copilot fully off: its code is never loaded.',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  HOLOSTAFF_TENANT_ID: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Holostaff source id (the journey map behind the copilot). Both ids are shown on your Holostaff journey map.',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  HOLOSTAFF_SOURCE_ID: string;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SUPPORT_CHAT_CONFIG,
     description: 'Driver used for support chat integration',
     type: ConfigVariableType.ENUM,

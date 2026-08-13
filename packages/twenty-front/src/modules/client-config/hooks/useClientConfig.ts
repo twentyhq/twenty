@@ -30,6 +30,7 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
+import { holostaffConfigState } from '@/client-config/states/holostaffConfigState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { type ClientConfig } from '@/client-config/types/ClientConfig';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
@@ -70,6 +71,7 @@ export const useClientConfig = (): UseClientConfigResult => {
 
   const setBilling = useSetAtomState(billingState);
   const setSupportChat = useSetAtomState(supportChatState);
+  const setHolostaffConfig = useSetAtomState(holostaffConfigState);
 
   const setSentryConfig = useSetAtomState(sentryConfigState);
   const [clientConfigApiStatus, setClientConfigApiStatus] = useAtomState(
@@ -190,6 +192,10 @@ export const useClientConfig = (): UseClientConfigResult => {
       setIsEmailVerificationRequired(clientConfig.isEmailVerificationRequired);
       setBilling(clientConfig.billing);
       setSupportChat(clientConfig.support);
+      setHolostaffConfig({
+        tenantId: clientConfig.holostaff?.tenantId ?? null,
+        sourceId: clientConfig.holostaff?.sourceId ?? null,
+      });
 
       setSentryConfig({
         dsn: clientConfig?.sentry?.dsn,
@@ -296,6 +302,7 @@ export const useClientConfig = (): UseClientConfigResult => {
     setIsMicrosoftMessagingEnabled,
     setSentryConfig,
     setSupportChat,
+    setHolostaffConfig,
     setAllowRequestsToTwentyIcons,
   ]);
 

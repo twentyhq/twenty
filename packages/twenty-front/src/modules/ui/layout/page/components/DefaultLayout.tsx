@@ -1,3 +1,4 @@
+import { HolostaffCopilotEffect } from '@/holostaff/components/HolostaffCopilotEffect';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';
 import { AppPageErrorFallback } from '@/error-handler/components/AppPageErrorFallback';
@@ -78,6 +79,7 @@ export const DefaultLayout = () => {
 
   return (
     <>
+      <HolostaffCopilotEffect />
       <FileUploadProvider>
         <StyledLayout>
           <AppErrorBoundary FallbackComponent={AppFullScreenErrorFallback}>

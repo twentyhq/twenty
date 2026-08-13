@@ -74,6 +74,10 @@ describe('ClientConfigController', () => {
           supportDriver: SupportDriver.NONE,
           supportFrontChatId: undefined,
         },
+        holostaff: {
+          tenantId: undefined,
+          sourceId: undefined,
+        },
         sentry: {
           environment: 'development',
           release: '1.0.0',

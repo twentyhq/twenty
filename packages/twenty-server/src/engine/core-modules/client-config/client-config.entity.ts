@@ -182,6 +182,15 @@ export class Support {
 }
 
 @ObjectType()
+export class Holostaff {
+  @Field(() => String, { nullable: true })
+  tenantId?: string;
+
+  @Field(() => String, { nullable: true })
+  sourceId?: string;
+}
+
+@ObjectType()
 export class Sentry {
   @Field(() => String, { nullable: true })
   environment?: string;
@@ -291,6 +300,7 @@ export class ClientConfig {
 
   @Field(() => Support)
   support: Support;
+  holostaff: Holostaff;
 
   @Field(() => Boolean)
   isAttachmentPreviewEnabled: boolean;

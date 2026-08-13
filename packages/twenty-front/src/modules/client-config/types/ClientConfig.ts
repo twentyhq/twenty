@@ -49,6 +49,7 @@ export type ClientConfig = {
   support: Support;
   isTwoFactorAuthenticationEnabled: boolean;
   allowRequestsToTwentyIcons: boolean;
+  holostaff?: { tenantId: string | null; sourceId: string | null };
   maintenance?: ClientConfigMaintenanceMode;
   enterpriseInstanceType?: EnterpriseInstanceType;
 };

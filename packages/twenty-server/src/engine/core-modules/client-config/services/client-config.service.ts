@@ -216,6 +216,10 @@ export class ClientConfigService {
           'SUPPORT_FRONT_CHAT_ID',
         ),
       },
+      holostaff: {
+        tenantId: this.twentyConfigService.get('HOLOSTAFF_TENANT_ID'),
+        sourceId: this.twentyConfigService.get('HOLOSTAFF_SOURCE_ID'),
+      },
       sentry: {
         environment: this.twentyConfigService.get('SENTRY_ENVIRONMENT'),
         release: this.twentyConfigService.get('APP_VERSION'),
