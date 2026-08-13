@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { MUTATION_OBSERVER_HOOKS_UNAVAILABLE_ERROR } from '@/polyfills/dom/errors/MutationObserverHooksUnavailableError';
+import { MUTATION_OBSERVER_HOOKS_UNAVAILABLE_ERROR } from '@/polyfills/dom/constants/MutationObserverHooksUnavailableError';
 import { createMutationObserverClass } from '@/polyfills/dom/utils/createMutationObserverClass';
 import { createMutationObserverRegistry } from '@/polyfills/dom/utils/createMutationObserverRegistry';
 import { installMutationRecordHooks } from '@/polyfills/dom/utils/installMutationRecordHooks';
