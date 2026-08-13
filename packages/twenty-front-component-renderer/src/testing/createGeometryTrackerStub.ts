@@ -1,7 +1,7 @@
 import { type GeometryTracker } from '@/host/geometry/types/GeometryTracker';
 import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot';
 
-export const createStubGeometryTracker = (): GeometryTracker => ({
+export const createGeometryTrackerStub = (): GeometryTracker => ({
   registerNode: jest.fn(),
   unregisterNode: jest.fn(),
   observe: jest.fn(),

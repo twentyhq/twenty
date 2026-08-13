@@ -3,7 +3,7 @@ import '@/testing/setupServerRenderingGlobals';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 
-import { createStubGeometryTracker } from '@/testing/createStubGeometryTracker';
+import { createGeometryTrackerStub } from '@/testing/createGeometryTrackerStub';
 import { FrontComponentGeometryTrackerContext } from '@/host/geometry/contexts/FrontComponentGeometryTrackerContext';
 import { type GeometryTracker } from '@/host/geometry/types/GeometryTracker';
 import { useGeometryNodeRef } from '../useGeometryNodeRef';
@@ -43,7 +43,7 @@ describe('useGeometryNodeRef', () => {
   });
 
   it('should re-register the mounted element when the remote id changes', () => {
-    const tracker = createStubGeometryTracker();
+    const tracker = createGeometryTrackerStub();
 
     act(() => {
       root.render(renderWithTracker(tracker, 'first-id'));

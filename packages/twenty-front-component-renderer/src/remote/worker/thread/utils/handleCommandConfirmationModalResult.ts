@@ -1,15 +1,15 @@
 import { type CommandConfirmationModalResult } from 'twenty-sdk/front-component';
-import { pendingCommandConfirmationModalPromiseCallbacksState } from '@/remote/worker/thread/states/pendingCommandConfirmationModalPromiseCallbacksState';
+import { pendingCommandConfirmationModalPromiseCallbacks } from '@/remote/worker/thread/states/pendingCommandConfirmationModalPromiseCallbacks';
 
 export const handleCommandConfirmationModalResult = async (
   result: CommandConfirmationModalResult,
 ) => {
-  if (pendingCommandConfirmationModalPromiseCallbacksState.current === null) {
+  if (pendingCommandConfirmationModalPromiseCallbacks.current === null) {
     return;
   }
 
   const currentCommandConfirmationModalPromiseCallbacks =
-    pendingCommandConfirmationModalPromiseCallbacksState.current;
-  pendingCommandConfirmationModalPromiseCallbacksState.current = null;
+    pendingCommandConfirmationModalPromiseCallbacks.current;
+  pendingCommandConfirmationModalPromiseCallbacks.current = null;
   currentCommandConfirmationModalPromiseCallbacks.resolve(result);
 };

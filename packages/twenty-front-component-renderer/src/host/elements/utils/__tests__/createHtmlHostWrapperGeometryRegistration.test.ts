@@ -5,7 +5,7 @@ import { act, createElement, type ComponentType } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { jsx } from 'react/jsx-runtime';
 
-import { createStubGeometryTracker } from '@/testing/createStubGeometryTracker';
+import { createGeometryTrackerStub } from '@/testing/createGeometryTrackerStub';
 import { FrontComponentGeometryTrackerContext } from '@/host/geometry/contexts/FrontComponentGeometryTrackerContext';
 import { type GeometryTracker } from '@/host/geometry/types/GeometryTracker';
 import { createHtmlHostWrapper } from '../createHtmlHostWrapper';
@@ -28,7 +28,7 @@ describe('createHtmlHostWrapper geometry registration', () => {
     container = document.createElement('div');
     document.body.appendChild(container);
     root = createRoot(container);
-    geometryTracker = createStubGeometryTracker();
+    geometryTracker = createGeometryTrackerStub();
   });
 
   afterEach(() => {

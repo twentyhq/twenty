@@ -3,7 +3,7 @@ import '@/testing/setupServerRenderingGlobals';
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 
-import { createStubGeometryTracker } from '@/testing/createStubGeometryTracker';
+import { createGeometryTrackerStub } from '@/testing/createGeometryTrackerStub';
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
 import { FrontComponentGeometryTrackerEffect } from '../FrontComponentGeometryTrackerEffect';
 
@@ -31,7 +31,7 @@ describe('FrontComponentGeometryTrackerEffect', () => {
   });
 
   it('should arm the tracker on mount', () => {
-    const geometryTracker = createStubGeometryTracker();
+    const geometryTracker = createGeometryTrackerStub();
     const thread = createStubThread();
 
     act(() => {
@@ -47,7 +47,7 @@ describe('FrontComponentGeometryTrackerEffect', () => {
   });
 
   it('should forward a pushed batch to the worker thread', () => {
-    const geometryTracker = createStubGeometryTracker();
+    const geometryTracker = createGeometryTrackerStub();
     const thread = createStubThread();
 
     act(() => {
@@ -71,7 +71,7 @@ describe('FrontComponentGeometryTrackerEffect', () => {
   });
 
   it('should reset the tracker on unmount', () => {
-    const geometryTracker = createStubGeometryTracker();
+    const geometryTracker = createGeometryTrackerStub();
 
     act(() => {
       root.render(
@@ -90,7 +90,7 @@ describe('FrontComponentGeometryTrackerEffect', () => {
   });
 
   it('should re-arm when the thread identity changes', () => {
-    const geometryTracker = createStubGeometryTracker();
+    const geometryTracker = createGeometryTrackerStub();
 
     act(() => {
       root.render(

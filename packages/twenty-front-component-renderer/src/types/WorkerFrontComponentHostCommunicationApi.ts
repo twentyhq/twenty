@@ -13,7 +13,7 @@ import {
   type UpdateProgressFunction,
 } from 'twenty-sdk/front-component';
 
-export type FrontComponentHostCommunicationApiStore = {
+export type WorkerFrontComponentHostCommunicationApi = {
   navigate?: NavigateFunction;
   requestAccessTokenRefresh?: RequestAccessTokenRefreshFunction;
   openSidePanelPage?: OpenSidePanelPageFunction;

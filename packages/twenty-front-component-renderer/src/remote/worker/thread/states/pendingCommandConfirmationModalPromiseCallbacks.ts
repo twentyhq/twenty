@@ -1,5 +1,5 @@
 import { type CommandConfirmationModalPromiseCallbacks } from '@/remote/worker/thread/types/CommandConfirmationModalPromiseCallbacks';
 
-export const pendingCommandConfirmationModalPromiseCallbacksState: {
+export const pendingCommandConfirmationModalPromiseCallbacks: {
   current: CommandConfirmationModalPromiseCallbacks | null;
 } = { current: null };
