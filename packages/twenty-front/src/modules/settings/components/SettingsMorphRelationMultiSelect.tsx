@@ -156,7 +156,9 @@ export const SettingsMorphRelationMultiSelect = ({
       ? selectContainerRef.current?.clientWidth
       : dropdownWidth;
 
-  const selectableItemIdArray = filteredOptions.map((option) => option.label);
+  const selectableItemIdArray = filteredOptions.map(
+    (option) => option.objectMetadataId,
+  );
 
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
@@ -167,7 +169,7 @@ export const SettingsMorphRelationMultiSelect = ({
 
   const handleDropdownOpen = () => {
     if (selectedOptions.length > 0 && !searchInputValue) {
-      setSelectedItemId(selectedOptions[0].label);
+      setSelectedItemId(selectedOptions[0].objectMetadataId);
     }
   };
 
@@ -249,9 +251,7 @@ export const SettingsMorphRelationMultiSelect = ({
                     selectableItemIdArray={selectableItemIdArray}
                   >
                     {filteredOptions.map((option, optionIndex) => (
-                      <Fragment
-                        key={`${option.objectMetadataId}-${option.label}`}
-                      >
+                      <Fragment key={option.objectMetadataId}>
                         {optionIndex === advancedSectionStartIndex && (
                           <>
                             {optionIndex > 0 && <DropdownMenuSeparator />}
@@ -259,7 +259,7 @@ export const SettingsMorphRelationMultiSelect = ({
                           </>
                         )}
                         <SelectableListItem
-                          itemId={option.label}
+                          itemId={option.objectMetadataId}
                           onEnter={() => {
                             const newSelectedObjectMetadataIds =
                               addOrRemoveFromArray(
@@ -284,7 +284,9 @@ export const SettingsMorphRelationMultiSelect = ({
                                 selectedObjectMetadataId ===
                                 option.objectMetadataId,
                             )}
-                            isKeySelected={selectedItemId === option.label}
+                            isKeySelected={
+                              selectedItemId === option.objectMetadataId
+                            }
                             onSelectChange={() => {
                               const newSelectedObjectMetadataIds =
                                 addOrRemoveFromArray(
