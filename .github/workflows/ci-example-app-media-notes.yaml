@@ -78,8 +78,16 @@ jobs:
           npx --no-install tsc --noEmit -p tsconfig.json
           npx --no-install oxlint -c .oxlintrc.json .
 
-      - name: Setup server environment
-        run: npx nx reset:env:e2e-testing-server twenty-server
+      - name: Setup environment files
+        run: |
+          npx nx reset:env twenty-front
+          npx nx reset:env:e2e-testing-server twenty-server
+
+      - name: Build frontend
+        run: NODE_ENV=production npx nx build twenty-front
+
+      - name: Build server
+        run: npx nx build twenty-server
 
       - name: Create databases
         run: |
@@ -89,6 +97,15 @@ jobs:
       - name: Setup database
         run: npx nx run twenty-server:database:reset
 
+      # Cookie sessions are credentialed, so the front only authenticates from
+      # the API's own origin — workspace subdomains included, which the login
+      # flow lands on. Serving the build from the server keeps every request
+      # same-origin, the same way the twenty docker image ships the front.
+      - name: Serve the frontend from the server
+        run: cp -r packages/twenty-front/build packages/twenty-server/dist/front
+
+      # start:ci runs nest start; the watch-mode target would rimraf dist and
+      # delete the front we just copied.
       - name: Start server
         run: nohup npx nx start:ci twenty-server &
 
@@ -120,14 +137,6 @@ jobs:
         working-directory: packages/twenty-apps/examples/media-notes
         run: node ${{ github.workspace }}/packages/twenty-sdk/dist/cli.cjs app:install --remote target
 
-      - name: Start front
-        run: |
-          npx nx reset:env twenty-front
-          nohup npx nx start twenty-front &
-
-      - name: Wait for front to be ready
-        run: npx wait-on http://localhost:3001 --timeout 300000 --interval 2000
-
       - name: Install Playwright chromium
         run: npx playwright install --with-deps chromium
 
@@ -135,7 +144,7 @@ jobs:
         working-directory: packages/twenty-apps/examples/media-notes
         run: npx playwright test --project=setup --project=chromium
         env:
-          FRONT_BASE_URL: http://localhost:3001
+          FRONT_BASE_URL: http://localhost:3000
 
       - name: Upload screenshots
         if: always()
