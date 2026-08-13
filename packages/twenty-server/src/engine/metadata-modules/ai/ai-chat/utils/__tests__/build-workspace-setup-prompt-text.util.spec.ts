@@ -43,7 +43,7 @@ describe('buildWorkspaceSetupPromptText', () => {
     expect(result).toContain('what you already know about their company');
     expect(result).toContain('When their job title is in your user context');
     expect(result).toContain('when it is missing, do not guess it');
-    expect(result).toContain('what they want to use Twenty for');
+    expect(result).not.toContain('what they want to use Twenty for');
     expect(result).not.toContain('You do not know what this company does yet');
   });
 
@@ -55,6 +55,9 @@ describe('buildWorkspaceSetupPromptText', () => {
 
     expect(result).toContain('required ask_questions call');
     expect(result).toContain('A written question does not count');
+    expect(result).toContain(
+      'a heading with nothing under it is not an ending',
+    );
     expect(result).toContain('needs no skill and no learn_tools step');
     expect(result).toContain(
       'do not call load_skills, learn_tools, execute_tool, or web search',
@@ -95,10 +98,73 @@ describe('buildWorkspaceSetupPromptText', () => {
     });
 
     expect(result).toContain('You do not know what this company does yet');
-    expect(result).toContain(
-      'call ask_questions to learn what the business does',
-    );
+    expect(result).toContain('ask_questions to learn what the business does');
+    expect(result).toContain('when they start fresh');
     expect(result).not.toContain('tailored to their business');
+  });
+
+  it.each([
+    ['a full enrichment', companyEnrichment],
+    ['a null enrichment', null],
+  ])(
+    'should open with the migration-or-scratch question when %s is provided',
+    (_label, enrichment) => {
+      const result = buildWorkspaceSetupPromptText({
+        companyEnrichment: enrichment,
+        locale: 'en',
+      });
+
+      expect(result).toContain(
+        'moving over from another CRM or starting fresh',
+      );
+      expect(result).toContain('follow the migration path below');
+    },
+  );
+
+  it('should request the CRM export in plain text so the upload composer stays available', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain('end that reply without calling ask_questions');
+    expect(result).toContain('cannot take attachments');
+    expect(result).toContain('upload all their CSV exports at once');
+  });
+
+  it('should tolerate spreadsheets, propose right away, and fall back to scratch without an export', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain('spreadsheet their CRM produces');
+    expect(result).toContain('as separate files');
+    expect(result).toContain('read them right away');
+    expect(result).toContain('continue as if they had chosen to start fresh');
+  });
+
+  it('should inspect uploaded exports through code_interpreter before proposing the model', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain('code_interpreter');
+    expect(result).toContain('headers and a few sample rows');
+    expect(result).toContain('grounded in what they actually have');
+  });
+
+  it('should import migrated rows with the Bulk Import recipe right after the model is built', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain('data-manipulation');
+    expect(result).toContain('Bulk Import recipe');
+    expect(result).toContain('as soon as the model is built');
+    expect(result).toContain('so one approval covers both');
   });
 
   it.each([

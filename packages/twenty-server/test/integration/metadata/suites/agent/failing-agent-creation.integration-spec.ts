@@ -49,7 +49,6 @@ describe('Agent creation should fail', () => {
   });
 
   const failingAgentCreationTestCases: CreateOneAgentTestingContext = [
-    // Missing required properties tests
     {
       title: 'when label is missing',
       context: {
@@ -107,7 +106,6 @@ describe('Agent creation should fail', () => {
         },
       },
     },
-    // Name uniqueness test
     {
       title: 'when computed name already exists',
       context: {
@@ -118,7 +116,6 @@ describe('Agent creation should fail', () => {
         },
       },
     },
-    // Invalid response format tests
     {
       title: 'when responseFormat has invalid type',
       context: {

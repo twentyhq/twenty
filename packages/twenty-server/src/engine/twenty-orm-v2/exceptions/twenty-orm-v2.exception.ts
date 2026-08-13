@@ -10,6 +10,7 @@ export enum TwentyOrmV2ExceptionCode {
   UNKNOWN_RELATION = 'UNKNOWN_RELATION',
   UNSUPPORTED_OPERATION = 'UNSUPPORTED_OPERATION',
   MISSING_ALIAS = 'MISSING_ALIAS',
+  INVALID_QUERY = 'INVALID_QUERY',
 }
 
 export class TwentyOrmV2Exception extends CustomException<TwentyOrmV2ExceptionCode> {

@@ -323,7 +323,6 @@ describe('WorkspaceEntityManager', () => {
 
     setWorkspaceContext(mockWorkspaceContext);
 
-    // Mock TypeORM connection methods
     const mockWorkspaceDataSource = {
       getMetadata: jest.fn().mockReturnValue({
         name: 'test-entity',
@@ -386,7 +385,6 @@ describe('WorkspaceEntityManager', () => {
         return entityName;
       });
 
-    // Mock typeORM's EntityManager methods
     jest
       .spyOn(EntityManager.prototype, 'save')
       .mockImplementation(() => Promise.resolve({}));
@@ -415,7 +413,6 @@ describe('WorkspaceEntityManager', () => {
       .spyOn(PlainObjectToDatabaseEntityTransformer.prototype, 'transform')
       .mockImplementation(() => Promise.resolve({}));
 
-    // Mock metadata methods
     const mockMetadata = {
       hasAllPrimaryKeys: jest.fn().mockReturnValue(true),
       columns: [],
@@ -424,12 +421,10 @@ describe('WorkspaceEntityManager', () => {
       findColumnWithPropertyPath: jest.fn(),
     };
 
-    // Update mockWorkspaceDataSource to include metadata
     mockWorkspaceDataSource.getMetadata = jest
       .fn()
       .mockReturnValue(mockMetadata);
 
-    // Reset the mock before each test
     jest.clearAllMocks();
   });
 

@@ -68,7 +68,6 @@ export class OAuthRegistrationController {
       return rateLimitResult;
     }
 
-    // Validate redirect URIs
     for (const uri of body.redirect_uris) {
       const result = validateRedirectUri(uri);
 
@@ -105,7 +104,6 @@ export class OAuthRegistrationController {
       }
     }
 
-    // Validate response_types
     const responseTypes = body.response_types ?? ['code'];
 
     for (const responseType of responseTypes) {
@@ -138,7 +136,6 @@ export class OAuthRegistrationController {
       };
     }
 
-    // Parse and validate scopes — cap to allowed scopes
     const validScopes: readonly string[] = ALL_OAUTH_SCOPES;
     const requestedScopes = body.scope
       ? body.scope.split(' ').filter((s) => validScopes.includes(s))

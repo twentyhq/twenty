@@ -31,7 +31,6 @@ export const FormLinksFieldInput = ({
         primaryLinkUrl: defaultValue?.primaryLinkUrl ?? '',
         [field]: updatedLinksPart,
       };
-      // We need to validate the links and display an error message if the links are not valid
       onChange(updatedLinks);
     };
 

@@ -32,6 +32,7 @@ import {
   CommonQueryResult,
 } from 'src/engine/api/common/types/common-query-result.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import { type NestedRelationsReadPathOptions } from 'src/engine/api/common/types/nested-relations-read-path-options.type';
 import { OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS } from 'src/engine/api/graphql/graphql-query-runner/constants/objects-with-settings-permissions-requirements';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { WorkspacePreQueryHookPayload } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
@@ -388,6 +389,19 @@ export abstract class CommonBaseQueryRunnerService<
     return this.workspaceDataSourceV2Service
       .getDataSource({ useReplica: this.isReadOnly })
       .getRepository(flatObjectMetadata.nameSingular, rolePermissionConfig);
+  }
+
+  protected getNestedRelationsReadPathOptions({
+    featureFlagsMap,
+  }: Pick<
+    CommonExtendedQueryRunnerContext,
+    'featureFlagsMap'
+  >): NestedRelationsReadPathOptions {
+    return {
+      isOrmV2ReadPathEnabled:
+        featureFlagsMap[FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED],
+      useReplica: this.isReadOnly,
+    };
   }
 
   private async throttleQueryExecution(authContext: WorkspaceAuthContext) {
