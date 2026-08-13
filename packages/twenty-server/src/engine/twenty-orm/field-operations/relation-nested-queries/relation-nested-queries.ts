@@ -201,8 +201,9 @@ export class RelationNestedQueries {
           )
           .getRawMany();
       } else {
-        throw new Error(
+        throw new TwentyORMException(
           'A query builder or a connect query runner is required to resolve connect queries',
+          TwentyORMExceptionCode.INVALID_INPUT,
         );
       }
 

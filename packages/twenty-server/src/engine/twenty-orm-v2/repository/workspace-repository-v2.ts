@@ -155,7 +155,11 @@ export class WorkspaceRepositoryV2 {
     ).getMany<ObjectRecord>();
 
     if (isDefined(options?.relations)) {
-      await this.loadRelations(records, options.relations);
+      await this.loadRelations(
+        records,
+        options.relations,
+        options.withDeleted ?? false,
+      );
     }
 
     return records;
@@ -181,7 +185,11 @@ export class WorkspaceRepositoryV2 {
     ).getOne<ObjectRecord>();
 
     if (isDefined(record) && isDefined(options?.relations)) {
-      await this.loadRelations([record], options.relations);
+      await this.loadRelations(
+        [record],
+        options.relations,
+        options.withDeleted ?? false,
+      );
     }
 
     return record;
@@ -241,6 +249,7 @@ export class WorkspaceRepositoryV2 {
   private async loadRelations(
     records: ObjectRecord[],
     relations: FindOptionsRelationsV2,
+    withDeleted: boolean,
   ): Promise<void> {
     if (records.length === 0) {
       return;
@@ -261,10 +270,7 @@ export class WorkspaceRepositoryV2 {
         );
       }
 
-      const nestedRelations =
-        typeof nested === 'object'
-          ? (nested as FindOptionsRelationsV2)
-          : undefined;
+      const nestedRelations = typeof nested === 'object' ? nested : undefined;
       const targetRepository = this.options.getRepositoryForObjectMetadataId(
         relationShape.targetObjectMetadataId,
       );
@@ -284,6 +290,7 @@ export class WorkspaceRepositoryV2 {
           relationShape,
           targetRepository,
           nestedRelations,
+          withDeleted,
         });
       } else {
         throw new TwentyOrmV2Exception(
@@ -339,12 +346,14 @@ export class WorkspaceRepositoryV2 {
     relationShape,
     targetRepository,
     nestedRelations,
+    withDeleted,
   }: {
     records: ObjectRecord[];
     fieldName: string;
     relationShape: WorkspaceRelationShape;
     targetRepository: WorkspaceRepositoryV2;
     nestedRelations?: FindOptionsRelationsV2;
+    withDeleted: boolean;
   }): Promise<void> {
     const inverseForeignKeyColumnName =
       this.resolveInverseForeignKeyColumnName(relationShape);
@@ -356,6 +365,7 @@ export class WorkspaceRepositoryV2 {
         ? await targetRepository.find({
             where: { [inverseForeignKeyColumnName]: In(parentIds) },
             relations: nestedRelations,
+            withDeleted,
           })
         : [];
 
@@ -606,29 +616,35 @@ export class WorkspaceRepositoryV2 {
       conflictPaths,
     );
 
-    if (toUpdate.length > 0) {
-      await this.runBatchUpdate({
-        inputs: toUpdate.map((match) => ({
-          id: match.id,
-          data: match.entity,
-        })),
-        columnsToReturn: ['id'],
-      });
-    }
+    const emptyOutcome = { identifiers: [], generatedMaps: [], raw: [] };
+
+    const updateOutcome =
+      toUpdate.length > 0
+        ? await this.runBatchUpdate({
+            inputs: toUpdate.map((match) => ({
+              id: match.id,
+              data: match.entity,
+            })),
+            columnsToReturn: ['id'],
+          })
+        : emptyOutcome;
 
     const insertOutcome =
       toInsert.length > 0
         ? await this.runInsert({ records: toInsert, columnsToReturn: ['id'] })
-        : { identifiers: [], generatedMaps: [], raw: [] };
+        : emptyOutcome;
 
     const insertResult = new InsertResult();
 
     insertResult.identifiers = [
-      ...toUpdate.map((match) => ({ id: match.id })),
+      ...updateOutcome.identifiers,
       ...insertOutcome.identifiers,
     ];
-    insertResult.generatedMaps = insertOutcome.generatedMaps;
-    insertResult.raw = insertOutcome.raw;
+    insertResult.generatedMaps = [
+      ...updateOutcome.generatedMaps,
+      ...insertOutcome.generatedMaps,
+    ];
+    insertResult.raw = [...updateOutcome.raw, ...insertOutcome.raw];
 
     return insertResult;
   }

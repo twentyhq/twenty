@@ -7,7 +7,9 @@ import {
   type OrderByConditionLike,
 } from 'src/engine/twenty-orm-v2/query-builder/types/query-builder-v2.type';
 
-export type FindOptionsRelationsV2 = Record<string, boolean | object>;
+export type FindOptionsRelationsV2 = {
+  [relationFieldName: string]: boolean | FindOptionsRelationsV2;
+};
 
 export type FindOptionsSelectV2 = FindOptionsSelectLike | string[];
 
