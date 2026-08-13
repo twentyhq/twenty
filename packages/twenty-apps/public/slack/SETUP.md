@@ -71,6 +71,8 @@ The assistant reuses the same Slack connection — no second bot identity.
 
    Invite the bot to any channel where it should follow threads. Slack may ask you to reinstall after changing subscriptions.
 
+   Event subscriptions added in app upgrades must be added here by hand on existing installs — the Slack app only reads the manifest at creation. Upgrading from 0.3.0 adds `app_uninstalled` and `tokens_revoked`; without them the team claim of a Slack-side removal is never released. No new scopes are involved, so the connection itself needs no re-authorization.
+
 3. **Reconnect** so the token picks up the assistant scopes.
 
 4. **Role.** The `slack-assistant` agent binds to the app's **Slack Assistant** role automatically on install and upgrade. Anyone who can message the bot acts with that role — Slack users are not mapped to individual Twenty members yet, so keep the role scoped to what you're comfortable exposing.
