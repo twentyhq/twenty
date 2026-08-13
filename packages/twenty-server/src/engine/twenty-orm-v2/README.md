@@ -157,6 +157,9 @@ Deliberate choices, the SQL ones asserted by exact-SQL unit tests:
 - Hard delete snapshots its before-image with `getOne`, so a `DESTROYED` event carries at
   most one record. This matches the v1 delete builder rather than fixing it here; changing
   it would change flag-off behaviour too and belongs in a separate change to both paths.
+- A filter that traverses a to-many relation surfaces the same `UNSUPPORTED_OPERATION`
+  user-input error the read path already produces (v2 refuses to render a to-many join),
+  rather than the row-multiplying join v1 would emit.
 
 Update, insert and upsert still keep `repository` (v1).
 

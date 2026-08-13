@@ -98,7 +98,7 @@ export class WorkspaceRepositoryV2 {
       this.applyRowLevelPermissionPredicates(selectQueryBuilder);
     }
 
-    this.validateWriteIsPermitted(kind, columnsToReturn);
+    this.validateWriteIsPermitted({ operationType: kind, columnsToReturn });
 
     const eventSelectQueryBuilder =
       this.buildEventSnapshotQueryBuilder(selectQueryBuilder);
@@ -114,11 +114,11 @@ export class WorkspaceRepositoryV2 {
             noFormatting: true,
           });
 
-    const mutationResult = await this.morphAndExecute(
+    const mutationResult = await this.morphAndExecute({
       selectQueryBuilder,
       kind,
       columnsToReturn,
-    );
+    });
 
     const recordsAfter =
       kind === 'delete'
@@ -132,11 +132,15 @@ export class WorkspaceRepositoryV2 {
     return mutationResult.generatedMaps;
   }
 
-  private async morphAndExecute(
-    selectQueryBuilder: WorkspaceSelectQueryBuilderV2,
-    kind: MutationKind,
-    columnsToReturn: string[],
-  ): Promise<{ generatedMaps: ObjectRecord[] }> {
+  private async morphAndExecute({
+    selectQueryBuilder,
+    kind,
+    columnsToReturn,
+  }: {
+    selectQueryBuilder: WorkspaceSelectQueryBuilderV2;
+    kind: MutationKind;
+    columnsToReturn: string[];
+  }): Promise<{ generatedMaps: ObjectRecord[] }> {
     const mutationQueryBuilder =
       kind === 'soft-delete'
         ? selectQueryBuilder.softDelete()
@@ -165,10 +169,13 @@ export class WorkspaceRepositoryV2 {
     return eventSelectQueryBuilder.copyWhereFrom(source).withDeleted();
   }
 
-  private validateWriteIsPermitted(
-    operationType: MutationKind,
-    columnsToReturn: string[],
-  ): void {
+  private validateWriteIsPermitted({
+    operationType,
+    columnsToReturn,
+  }: {
+    operationType: MutationKind;
+    columnsToReturn: string[];
+  }): void {
     if (this.options.shouldBypassPermissionChecks) {
       return;
     }

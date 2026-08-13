@@ -396,9 +396,7 @@ export abstract class CommonBaseQueryRunnerService<
       .getRepository(flatObjectMetadata.nameSingular, rolePermissionConfig);
   }
 
-  // Behind IS_ORM_V2_READ_PATH_ENABLED, writes go through the ORM v2 repository. Unlike
-  // reads, writes always hit the primary, so useReplica is pinned false regardless of
-  // isReadOnly. The caller gates the flag; this is only reached on the v2 branch.
+  // Writes always hit the primary, so useReplica is pinned false regardless of isReadOnly.
   protected getWriteRepository({
     rolePermissionConfig,
     flatObjectMetadata,

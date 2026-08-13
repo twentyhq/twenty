@@ -1,7 +1,6 @@
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { type GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
-import { type RecordQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/types/record-query-builder.type';
 import { type WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-select-query-builder-v2';
 import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm-v2/repository/workspace-repository-v2';
 
@@ -23,11 +22,7 @@ export const buildMutationQueryBuilderV2 = ({
 } => {
   const filteredQueryBuilder = repository.createQueryBuilder(alias);
 
-  commonQueryParser.applyFilterToBuilder(
-    filteredQueryBuilder as unknown as RecordQueryBuilder,
-    alias,
-    filter,
-  );
+  commonQueryParser.applyFilterToBuilder(filteredQueryBuilder, alias, filter);
 
   const hasRelationTraversal =
     filteredQueryBuilder.expressionMap.joinAttributes.length > 0;
