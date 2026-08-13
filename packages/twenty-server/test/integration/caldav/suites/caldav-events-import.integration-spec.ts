@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { CalendarChannelSyncStatus } from 'twenty-shared/types';
 
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
@@ -24,9 +25,10 @@ const authorizationHeader = `Basic ${Buffer.from(`${HANDLE}:${PASSWORD}`).toStri
 
 // A sync token the server no longer recognises, which drives the fallback from
 // an incremental sync-collection report to a full re-sync.
-const STALE_SYNC_CURSOR = JSON.stringify({
-  syncTokens: { 'http://caldav.invalid/collection/': 'stale-sync-token' },
-});
+const buildStaleSyncCursor = (collectionUrl: string) =>
+  JSON.stringify({
+    syncTokens: { [collectionUrl]: 'stale-sync-token' },
+  });
 
 const icalEvent = ({ uid, summary }: { uid: string; summary: string }) =>
   [
@@ -136,7 +138,7 @@ describe('CalDAV calendar events import (integration)', () => {
       input: { key: 'OUTBOUND_HTTP_SAFE_MODE_ENABLED', value: true },
     }).catch(() => undefined);
 
-    if (connectedAccountId) {
+    if (isNonEmptyString(connectedAccountId)) {
       await deleteConnectedAccount({
         id: connectedAccountId,
         expectToFail: false,
@@ -212,7 +214,10 @@ describe('CalDAV calendar events import (integration)', () => {
 
     await getCoreRepository<CalendarChannelEntity>(
       CalendarChannelEntity,
-    ).update({ id: calendarChannelId }, { syncCursor: STALE_SYNC_CURSOR });
+    ).update(
+      { id: calendarChannelId },
+      { syncCursor: buildStaleSyncCursor(collectionUrl()) },
+    );
 
     await syncCalendarChannel();
 

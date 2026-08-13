@@ -1,25 +1,19 @@
 import { randomUUID } from 'node:crypto';
 
-import { EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/enums/email-connection-security.enum';
-import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { deleteConnectedAccount } from 'test/integration/metadata/suites/connected-account/utils/delete-connected-account.util';
-import { saveImapSmtpCaldavAccount } from 'test/integration/metadata/suites/connected-account/utils/save-imap-smtp-caldav-account.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
-import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
+import { connectGreenmailImapAccount } from 'test/integration/utils/connect-greenmail-imap-account.util';
 import { queryMessageFolders } from 'test/integration/utils/query-messaging.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
-import {
-  type GreenmailServer,
-  startGreenmailContainer,
-} from 'test/integration/utils/start-greenmail-container.util';
+import { type GreenmailServer } from 'test/integration/utils/start-greenmail-container.util';
 
 const PASSWORD = 'greenmail-password';
 
 // GreenMail registers a declared user under the local part of its address, so
 // that is the login, while the channel keeps the full address as its handle.
 const HANDLE = `imap-folder-discovery-${randomUUID()}@acme.test`;
-const MAILBOX_LOGIN = HANDLE.split('@')[0];
 
 describe('IMAP folder discovery (integration)', () => {
   let greenmail: GreenmailServer;
@@ -27,40 +21,11 @@ describe('IMAP folder discovery (integration)', () => {
   let messageChannelId: string;
 
   beforeAll(async () => {
-    // The IMAP driver routes through the SSRF guard, which rejects the
-    // container's private address before the connection is attempted.
-    await updateConfigVariable({
-      input: { key: 'OUTBOUND_HTTP_SAFE_MODE_ENABLED', value: false },
-    });
-
-    greenmail = await startGreenmailContainer({
-      username: HANDLE,
-      password: PASSWORD,
-    });
-
-    const { data } = await saveImapSmtpCaldavAccount({
-      input: {
+    ({ greenmail, connectedAccountId, messageChannelId } =
+      await connectGreenmailImapAccount({
         handle: HANDLE,
-        connectionParameters: {
-          IMAP: {
-            host: greenmail.host,
-            port: greenmail.imapPort,
-            username: MAILBOX_LOGIN,
-            password: PASSWORD,
-            connectionSecurity: EmailConnectionSecurity.NONE,
-          },
-        },
-      },
-      expectToFail: false,
-    });
-
-    connectedAccountId = data.connectedAccountId;
-
-    messageChannelId = (
-      await getCoreRepository<MessageChannelEntity>(
-        MessageChannelEntity,
-      ).findOneByOrFail({ connectedAccountId })
-    ).id;
+        password: PASSWORD,
+      }));
   }, 300000);
 
   afterAll(async () => {
@@ -68,7 +33,7 @@ describe('IMAP folder discovery (integration)', () => {
       input: { key: 'OUTBOUND_HTTP_SAFE_MODE_ENABLED', value: true },
     }).catch(() => undefined);
 
-    if (connectedAccountId) {
+    if (isNonEmptyString(connectedAccountId)) {
       await deleteConnectedAccount({
         id: connectedAccountId,
         expectToFail: false,
