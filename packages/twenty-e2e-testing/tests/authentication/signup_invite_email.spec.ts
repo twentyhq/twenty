@@ -25,15 +25,11 @@ test('Sign up with invite link via email', async ({
 
   await test.step('Go to invite link', async () => {
     await settingsPage.logout();
+    // Logging out replaces the document, which would interrupt the goto below.
+    await page.waitForURL('**/welcome');
 
-    // Logging out fires several redirects to /welcome over ~1s, and one landing
-    // mid-navigation interrupts the goto, so retry until the invite page sticks.
-    await expect(async () => {
-      await page.goto(inviteLink);
-      await expect(page.getByText(/Join .+ team/)).toBeVisible({
-        timeout: 5000,
-      });
-    }).toPass({ timeout: 60000 });
+    await page.goto(inviteLink);
+    await expect(page.getByText(/Join .+ team/)).toBeVisible();
   });
 
   await test.step('Create new account', async () => {

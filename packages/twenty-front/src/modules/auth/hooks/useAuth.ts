@@ -118,6 +118,12 @@ export const useAuth = () => {
   const navigate = useNavigate();
 
   const clearSession = useCallback(() => {
+    // Clearing the session below flips the still-mounted app to logged out, and
+    // the redirect effect would route it to the sign-in page client-side while
+    // the assign at the end is already replacing the document. The URL would
+    // then read as arrived while a full page load is still in flight, killing
+    // anything navigating in between. The assign is the only navigation here.
+    store.set(isAppEffectRedirectEnabledState.atom, false);
     sessionStorage.clear();
     store.set(tokenPairState.atom, null);
     store.set(isCookieAuthActiveState.atom, false);
