@@ -9,7 +9,8 @@ export const microsoftAuthHandlers = (handle: string): MswHandler[] => [
       access_token: 'mock-access-token',
       refresh_token: 'mock-refresh-token',
       expires_in: 3600,
-      scope: 'openid profile email offline_access',
+      scope:
+        'openid profile email offline_access Mail.Send Calendars.ReadWrite',
     }),
   ),
   http.get('https://graph.microsoft.com/v1.0/me', () =>
