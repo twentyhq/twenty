@@ -8,7 +8,13 @@ import { type SlackRecordUnfurlCard } from 'src/logic-functions/types/slack-reco
 const TITLE_MAX_LENGTH = 250;
 const FIELD_VALUE_MAX_LENGTH = 350;
 
-const truncateText = (text: string, maxLength: number): string =>
+const truncateText = ({
+  text,
+  maxLength,
+}: {
+  text: string;
+  maxLength: number;
+}): string =>
   text.length > maxLength ? `${text.slice(0, maxLength - 1)}…` : text;
 
 const escapeSlackMrkdwn = (text: string): string =>
@@ -27,7 +33,7 @@ export const buildSlackRecordUnfurlAttachment = ({
   card: SlackRecordUnfurlCard;
 }): MessageAttachment => {
   const recordTitle = escapeSlackMrkdwn(
-    truncateText(card.recordTitle, TITLE_MAX_LENGTH),
+    truncateText({ text: card.recordTitle, maxLength: TITLE_MAX_LENGTH }),
   );
 
   const blocks: KnownBlock[] = [
@@ -45,7 +51,7 @@ export const buildSlackRecordUnfurlAttachment = ({
       type: 'section',
       fields: card.fields.map((field) => ({
         type: 'mrkdwn' as const,
-        text: `*${escapeSlackMrkdwn(field.label)}*\n${escapeSlackMrkdwn(truncateText(field.value, FIELD_VALUE_MAX_LENGTH))}`,
+        text: `*${escapeSlackMrkdwn(field.label)}*\n${escapeSlackMrkdwn(truncateText({ text: field.value, maxLength: FIELD_VALUE_MAX_LENGTH }))}`,
       })),
     });
   }
