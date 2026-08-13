@@ -15,6 +15,7 @@ import {
   CalendarEventImportSyncStep,
 } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-event-import-exception-handler.service';
 import { CalendarGetCalendarEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
+import { getStaleEventExternalIds } from 'src/modules/calendar/calendar-event-import-manager/utils/get-stale-event-external-ids.util';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -74,33 +75,24 @@ export class CalendarFetchEventsService {
 
           let eventExternalIdsToDelete = calendarEventIdsToDelete;
 
-          // A full sync (no syncToken) only ever returns events that still
-          // exist: Google does not emit cancelled tombstones outside of an
-          // active incremental sync-token chain, so events deleted during a
-          // sync gap are silently absent rather than flagged. Reconcile by
-          // diffing what we already associated against what the full sync
-          // just returned - but only when the driver reports a complete
-          // result. A partial result (e.g. one CalDAV sub-calendar failing
-          // while others succeed) omits events it simply couldn't fetch,
-          // not events that were deleted, so reconciling against it would
-          // wrongly remove still-valid events.
           if (isFullSync && !isPartial) {
             const existingAssociations =
               await calendarChannelEventAssociationRepository.find({
                 where: { calendarChannelId: calendarChannel.id },
+                select: ['eventExternalId'],
               });
 
-            const fetchedExternalIds = new Set([
-              ...calendarEventIds,
-              ...calendarEventIdsToDelete,
-            ]);
-
-            const staleExternalIds = existingAssociations
-              .map((association) => association.eventExternalId)
-              .filter(isString)
-              .filter(
-                (eventExternalId) => !fetchedExternalIds.has(eventExternalId),
-              );
+            const staleExternalIds = getStaleEventExternalIds({
+              isFullSync,
+              isPartial: isPartial ?? false,
+              existingEventExternalIds: existingAssociations
+                .map((association) => association.eventExternalId)
+                .filter(isString),
+              fetchedEventExternalIds: [
+                ...calendarEventIds,
+                ...calendarEventIdsToDelete,
+              ],
+            });
 
             eventExternalIdsToDelete = [
               ...calendarEventIdsToDelete,

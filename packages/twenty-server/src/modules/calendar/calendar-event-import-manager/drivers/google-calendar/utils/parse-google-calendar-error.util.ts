@@ -44,6 +44,13 @@ export const parseGoogleCalendarError = (error: {
     );
   }
 
+  if (code === 410) {
+    return new CalendarEventImportDriverException(
+      message,
+      CalendarEventImportDriverExceptionCode.SYNC_CURSOR_ERROR,
+    );
+  }
+
   return new CalendarEventImportDriverException(
     message,
     CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR,

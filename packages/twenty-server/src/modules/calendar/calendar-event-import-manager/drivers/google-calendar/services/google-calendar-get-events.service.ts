@@ -9,10 +9,6 @@ import { parseGoogleCalendarError } from 'src/modules/calendar/calendar-event-im
 import { type GetCalendarEventsResponse } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
 import { GoogleOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/google/google-oauth2-client.provider';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import {
-  CalendarEventImportDriverException,
-  CalendarEventImportDriverExceptionCode,
-} from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
 
 @Injectable()
 export class GoogleCalendarGetEventsService {
@@ -61,11 +57,7 @@ export class GoogleCalendarGetEventsService {
 
       const { items } = googleCalendarEvents.data;
 
-      if (!items || items.length === 0) {
-        break;
-      }
-
-      for (const item of items) {
+      for (const item of items ?? []) {
         if (!isString(item.id)) {
           continue;
         }
@@ -77,6 +69,10 @@ export class GoogleCalendarGetEventsService {
         }
       }
 
+      // Only a missing nextPageToken ends the walk. An empty page is not a
+      // terminator: Google can return one alongside a continuation token, and
+      // stopping there would hand back a truncated list that the caller now
+      // treats as authoritative for deletion on a full sync.
       if (!nextPageToken) {
         hasMoreEvents = false;
       }
@@ -92,16 +88,20 @@ export class GoogleCalendarGetEventsService {
   private handleError(error: GaxiosError): never {
     // An expired or invalidated sync token is an expected, self-healing
     // condition rather than a failure, so it is logged at warn and never
-    // reaches the error-level logging below.
+    // reaches the error-level logging below. The mapping itself lives in
+    // parseGoogleCalendarError, mirroring the Microsoft driver.
     if (error.response?.status === 410) {
       this.logger.warn(
         'Google Calendar sync token is no longer valid (410), a full resync is required',
       );
 
-      throw new CalendarEventImportDriverException(
-        'Google Calendar sync token is no longer valid, a full resync is required',
-        CalendarEventImportDriverExceptionCode.SYNC_CURSOR_ERROR,
-      );
+      throw parseGoogleCalendarError({
+        code: 410,
+        reason: error.response?.data?.error?.errors?.[0]?.reason || '',
+        message:
+          error.response?.data?.error?.errors?.[0]?.message ||
+          'Sync token is no longer valid, a full sync is required.',
+      });
     }
 
     this.logger.error(
