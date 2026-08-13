@@ -23,6 +23,7 @@ import {
   type SAMLConfiguration,
   type SSOConfiguration,
 } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
+import { resolveIdTokenSignedResponseAlg } from 'src/engine/core-modules/sso/utils/resolve-id-token-signed-response-alg.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
@@ -194,11 +195,18 @@ export class SSOService {
       );
     }
 
+    const idTokenSignedResponseAlg = resolveIdTokenSignedResponseAlg(
+      issuer.metadata,
+    );
+
     return new issuer.Client({
       client_id: identityProvider.clientID,
       client_secret: identityProvider.clientSecret,
       redirect_uris: [this.buildCallbackUrl(identityProvider)],
       response_types: [OIDCResponseType.CODE],
+      ...(idTokenSignedResponseAlg && {
+        id_token_signed_response_alg: idTokenSignedResponseAlg,
+      }),
     });
   }
 
