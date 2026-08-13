@@ -72,6 +72,79 @@ describe('isMatchingSelectFilter', () => {
     });
   });
 
+  describe('comparison operators', () => {
+    const orderedOptionValues = [
+      'NEW',
+      'SCREENING',
+      'MEETING',
+      'PROPOSAL',
+      'CUSTOMER',
+    ];
+
+    it('should compare by option position, not lexically', () => {
+      expect(
+        isMatchingSelectFilter({
+          selectFilter: { gt: 'NEW' },
+          value: 'MEETING',
+          orderedOptionValues,
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingSelectFilter({
+          selectFilter: { lt: 'MEETING' },
+          value: 'CUSTOMER',
+          orderedOptionValues,
+        }),
+      ).toBe(false);
+    });
+
+    it('should handle gte and lte inclusively', () => {
+      expect(
+        isMatchingSelectFilter({
+          selectFilter: { gte: 'MEETING' },
+          value: 'MEETING',
+          orderedOptionValues,
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingSelectFilter({
+          selectFilter: { lte: 'MEETING' },
+          value: 'PROPOSAL',
+          orderedOptionValues,
+        }),
+      ).toBe(false);
+    });
+
+    it('should never match a null value', () => {
+      expect(
+        isMatchingSelectFilter({
+          selectFilter: { gt: 'NEW' },
+          value: null as any,
+          orderedOptionValues,
+        }),
+      ).toBe(false);
+    });
+
+    it('should never match when option values are unknown or missing', () => {
+      expect(
+        isMatchingSelectFilter({
+          selectFilter: { gt: 'NEW' },
+          value: 'DELETED_OPTION',
+          orderedOptionValues,
+        }),
+      ).toBe(false);
+
+      expect(
+        isMatchingSelectFilter({
+          selectFilter: { gt: 'NEW' },
+          value: 'MEETING',
+        }),
+      ).toBe(false);
+    });
+  });
+
   describe('default', () => {
     it('should throw for unexpected filter', () => {
       expect(() =>

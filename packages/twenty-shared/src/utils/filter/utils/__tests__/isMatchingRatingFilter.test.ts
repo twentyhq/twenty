@@ -61,6 +61,51 @@ describe('isMatchingRatingFilter', () => {
     });
   });
 
+  describe('comparison operators', () => {
+    const orderedOptionValues = [
+      'RATING_1',
+      'RATING_2',
+      'RATING_3',
+      'RATING_4',
+      'RATING_5',
+    ];
+
+    it('should compare by option position', () => {
+      expect(
+        isMatchingRatingFilter({
+          ratingFilter: { gt: 'RATING_2' },
+          value: 'RATING_4',
+          orderedOptionValues,
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingRatingFilter({
+          ratingFilter: { lte: 'RATING_2' },
+          value: 'RATING_4',
+          orderedOptionValues,
+        }),
+      ).toBe(false);
+    });
+
+    it('should never match a null value or missing option values', () => {
+      expect(
+        isMatchingRatingFilter({
+          ratingFilter: { gt: 'RATING_2' },
+          value: null,
+          orderedOptionValues,
+        }),
+      ).toBe(false);
+
+      expect(
+        isMatchingRatingFilter({
+          ratingFilter: { gt: 'RATING_2' },
+          value: 'RATING_4',
+        }),
+      ).toBe(false);
+    });
+  });
+
   describe('default', () => {
     it('should throw for unexpected filter', () => {
       expect(() =>

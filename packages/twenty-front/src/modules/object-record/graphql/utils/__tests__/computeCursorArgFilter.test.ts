@@ -226,7 +226,7 @@ describe('computeCursorArgFilter', () => {
   });
 
   describe('option-backed fields (select, rating)', () => {
-    it('should use an in list of options past the cursor for ascending forward pagination', () => {
+    it('should use gt for select cursors on ascending forward pagination', () => {
       const orderBy: RecordGqlOperationOrderBy = [{ stage: 'AscNullsFirst' }];
 
       const result = computeCursorArgFilter({
@@ -238,7 +238,7 @@ describe('computeCursorArgFilter', () => {
 
       expect(result).toEqual({
         or: [
-          { stage: { in: ['PROPOSAL', 'CUSTOMER'] } },
+          { stage: { gt: 'MEETING' } },
           {
             and: [{ stage: { eq: 'MEETING' } }, { id: { gt: 'record-1' } }],
           },
@@ -246,7 +246,7 @@ describe('computeCursorArgFilter', () => {
       });
     });
 
-    it('should use an in list of options before the cursor for ascending backward pagination', () => {
+    it('should use lt for select cursors on ascending backward pagination', () => {
       const orderBy: RecordGqlOperationOrderBy = [{ stage: 'AscNullsFirst' }];
 
       const result = computeCursorArgFilter({
@@ -258,53 +258,9 @@ describe('computeCursorArgFilter', () => {
 
       expect(result).toEqual({
         or: [
-          { stage: { in: ['NEW', 'SCREENING'] } },
+          { stage: { lt: 'MEETING' } },
           {
             and: [{ stage: { eq: 'MEETING' } }, { id: { lt: 'record-1' } }],
-          },
-        ],
-      });
-    });
-
-    it('should order options by position and not by declaration order', () => {
-      const shuffledStageField = {
-        ...stageField,
-        options: [...(stageField.options ?? [])].reverse(),
-      };
-
-      const orderBy: RecordGqlOperationOrderBy = [{ stage: 'AscNullsFirst' }];
-
-      const result = computeCursorArgFilter({
-        orderBy,
-        cursorRecordValues: { stage: 'MEETING', id: 'record-1' },
-        isForwardPagination: true,
-        fieldMetadataItems: [shuffledStageField],
-      });
-
-      expect(result).toEqual({
-        or: [
-          { stage: { in: ['PROPOSAL', 'CUSTOMER'] } },
-          {
-            and: [{ stage: { eq: 'MEETING' } }, { id: { gt: 'record-1' } }],
-          },
-        ],
-      });
-    });
-
-    it('should drop the comparison branch when the cursor is on the last option', () => {
-      const orderBy: RecordGqlOperationOrderBy = [{ stage: 'AscNullsFirst' }];
-
-      const result = computeCursorArgFilter({
-        orderBy,
-        cursorRecordValues: { stage: 'CUSTOMER', id: 'record-1' },
-        isForwardPagination: true,
-        fieldMetadataItems: [stageField],
-      });
-
-      expect(result).toEqual({
-        or: [
-          {
-            and: [{ stage: { eq: 'CUSTOMER' } }, { id: { gt: 'record-1' } }],
           },
         ],
       });
@@ -369,29 +325,7 @@ describe('computeCursorArgFilter', () => {
       });
     });
 
-    it('should drop the comparison branch when the cursor value is not a known option', () => {
-      const orderBy: RecordGqlOperationOrderBy = [{ stage: 'AscNullsFirst' }];
-
-      const result = computeCursorArgFilter({
-        orderBy,
-        cursorRecordValues: { stage: 'DELETED_OPTION', id: 'record-1' },
-        isForwardPagination: true,
-        fieldMetadataItems: [stageField],
-      });
-
-      expect(result).toEqual({
-        or: [
-          {
-            and: [
-              { stage: { eq: 'DELETED_OPTION' } },
-              { id: { gt: 'record-1' } },
-            ],
-          },
-        ],
-      });
-    });
-
-    it('should apply the in list to rating fields', () => {
+    it('should keep gt for rating cursors', () => {
       const ratingField = buildOptionBackedField({
         name: 'priority',
         type: FieldMetadataType.RATING,
@@ -417,7 +351,7 @@ describe('computeCursorArgFilter', () => {
 
       expect(result).toEqual({
         or: [
-          { priority: { in: ['RATING_1', 'RATING_2', 'RATING_3'] } },
+          { priority: { lt: 'RATING_4' } },
           {
             and: [{ priority: { eq: 'RATING_4' } }, { id: { gt: 'record-1' } }],
           },

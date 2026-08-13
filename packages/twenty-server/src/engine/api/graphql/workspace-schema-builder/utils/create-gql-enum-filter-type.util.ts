@@ -20,6 +20,11 @@ export const createGqlEnumFilterType = (
       containsAny: { type: new GraphQLList(enumType) },
       is: { type: FilterIs },
       isEmptyArray: { type: GraphQLBoolean },
+      // Enum columns compare by definition order (= option position)
+      gt: { type: enumType },
+      gte: { type: enumType },
+      lt: { type: enumType },
+      lte: { type: enumType },
     }),
   });
 };

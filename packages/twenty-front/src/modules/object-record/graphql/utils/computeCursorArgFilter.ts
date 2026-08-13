@@ -6,7 +6,6 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { buildOptionBackedCursorComparison } from '@/object-record/graphql/utils/buildOptionBackedCursorComparison';
 import {
   type CursorOrderByField,
   resolveCursorOrderByFields,
@@ -90,42 +89,24 @@ export const computeCursorArgFilter = ({
         : !isForwardPagination;
       const cursorValue = getCursorValue(cursorRecordValues, field);
 
-      const fieldMetadataItem = fieldMetadataItems.find(
-        (fieldMetadataItemToCheck) =>
-          fieldMetadataItemToCheck.name === field.fieldName,
-      );
+      const buildNullCursorComparison = (): RecordGqlOperationFilter | null => {
+        const shouldMatchNonNullValues = isForwardPagination
+          ? areNullsSortedFirst(field.direction)
+          : !areNullsSortedFirst(field.direction);
 
-      const buildOptionBackedComparison =
-        (): RecordGqlOperationFilter | null => {
-          if (!isDefined(fieldMetadataItem)) {
-            return null;
-          }
+        return shouldMatchNonNullValues
+          ? { [field.fieldName]: { is: 'NOT_NULL' } }
+          : null;
+      };
 
-          if (!isDefined(cursorValue)) {
-            const shouldMatchNonNullValues = isForwardPagination
-              ? areNullsSortedFirst(field.direction)
-              : !areNullsSortedFirst(field.direction);
-
-            return shouldMatchNonNullValues
-              ? { [field.fieldName]: { is: 'NOT_NULL' } }
-              : null;
-          }
-
-          return buildOptionBackedCursorComparison({
-            fieldName: field.fieldName,
-            fieldMetadataItem,
-            cursorValue,
-            shouldTakeGreaterValues,
-          });
-        };
-
-      const comparison = isOptionBackedField(field)
-        ? buildOptionBackedComparison()
-        : buildCursorWhereCondition(
-            field,
-            shouldTakeGreaterValues ? 'gt' : 'lt',
-            cursorValue,
-          );
+      const comparison =
+        isOptionBackedField(field) && !isDefined(cursorValue)
+          ? buildNullCursorComparison()
+          : buildCursorWhereCondition(
+              field,
+              shouldTakeGreaterValues ? 'gt' : 'lt',
+              cursorValue,
+            );
 
       if (!isDefined(comparison)) {
         return null;
