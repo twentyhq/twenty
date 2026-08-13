@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { UseFilters, UsePipes } from '@nestjs/common';
+import { Logger, UseFilters, UsePipes } from '@nestjs/common';
 import { Parent, ResolveField } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -20,6 +20,8 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 @UsePipes(ResolverValidationPipe)
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 export class BillingSubscriptionItemResolver {
+  private readonly logger = new Logger(BillingSubscriptionItemResolver.name);
+
   constructor(
     private readonly billingUsageService: BillingUsageService,
     // Field resolver: the workspace is discovered from the parent item's
@@ -44,23 +46,36 @@ export class BillingSubscriptionItemResolver {
       return false;
     }
 
-    const billingSubscription =
-      await this.billingSubscriptionRepository.findOne({
-        where: { id: billingSubscriptionItem.billingSubscriptionId },
-      });
+    // This field rides on the currentWorkspace query, which is app boot: a
+    // billing read failure (stale period right after a rollover, ClickHouse or
+    // Redis unavailable) must degrade to "no banner", never fail the query.
+    // Failing open matches the usage gate, whose availability checks also fail
+    // open so telemetry never blocks a paying customer.
+    try {
+      const billingSubscription =
+        await this.billingSubscriptionRepository.findOne({
+          where: { id: billingSubscriptionItem.billingSubscriptionId },
+        });
 
-    if (!isDefined(billingSubscription)) {
-      return false;
-    }
+      if (!isDefined(billingSubscription)) {
+        return false;
+      }
 
-    const creditAvailability =
-      await this.billingUsageService.getCreditAvailability(
-        billingSubscription.workspaceId,
+      const creditAvailability =
+        await this.billingUsageService.getCreditAvailability(
+          billingSubscription.workspaceId,
+        );
+
+      return (
+        !creditAvailability.hasAvailableCredits &&
+        creditAvailability.reason === 'no-credits'
+      );
+    } catch (error) {
+      this.logger.warn(
+        `Failed to derive hasReachedCurrentPeriodCap for billing subscription item ${billingSubscriptionItem.id}: ${error.message}`,
       );
 
-    return (
-      !creditAvailability.hasAvailableCredits &&
-      creditAvailability.reason === 'no-credits'
-    );
+      return false;
+    }
   }
 }
