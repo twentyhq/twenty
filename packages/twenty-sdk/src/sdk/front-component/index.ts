@@ -1,6 +1,5 @@
 export { Trans } from './components/Trans';
 export type { TransProps } from './components/Trans';
-export { captureMedia } from './functions/captureMedia';
 export { closeSidePanel } from './functions/closeSidePanel';
 export { copyToClipboard } from './functions/copyToClipboard';
 export { getApplicationVariable } from './functions/getApplicationVariable';
