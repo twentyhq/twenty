@@ -1,42 +1,5 @@
-import {
-  FieldMetadataType,
-  type RecordGqlOperationOrderBy,
-} from 'twenty-shared/types';
-
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { computeCursorArgFilter } from '@/object-record/graphql/utils/computeCursorArgFilter';
-
-const buildOptionBackedField = ({
-  name,
-  type,
-  optionValuesByPosition,
-}: {
-  name: string;
-  type: FieldMetadataType;
-  optionValuesByPosition: string[];
-}): Pick<FieldMetadataItem, 'name' | 'type' | 'options'> => ({
-  name,
-  type,
-  options: optionValuesByPosition.map((value, position) => ({
-    id: `${name}-option-${position}`,
-    label: value,
-    value,
-    position,
-    color: 'blue',
-  })),
-});
-
-const stageField = buildOptionBackedField({
-  name: 'stage',
-  type: FieldMetadataType.SELECT,
-  optionValuesByPosition: [
-    'NEW',
-    'SCREENING',
-    'MEETING',
-    'PROPOSAL',
-    'CUSTOMER',
-  ],
-});
+import { type RecordGqlOperationOrderBy } from 'twenty-shared/types';
 
 describe('computeCursorArgFilter', () => {
   it('should append an id tie-breaker when ordering does not include id', () => {
@@ -46,7 +9,6 @@ describe('computeCursorArgFilter', () => {
       orderBy,
       cursorRecordValues: { createdAt: '2024-01-01', id: 'record-1' },
       isForwardPagination: true,
-      fieldMetadataItems: [],
     });
 
     expect(result).toEqual({
@@ -69,7 +31,6 @@ describe('computeCursorArgFilter', () => {
       orderBy,
       cursorRecordValues: { id: 'record-1' },
       isForwardPagination: true,
-      fieldMetadataItems: [],
     });
 
     expect(result).toEqual({ or: [{ id: { gt: 'record-1' } }] });
@@ -82,7 +43,6 @@ describe('computeCursorArgFilter', () => {
       orderBy,
       cursorRecordValues: { id: 'record-1' },
       isForwardPagination: false,
-      fieldMetadataItems: [],
     });
 
     expect(result).toEqual({ or: [{ id: { lt: 'record-1' } }] });
@@ -95,7 +55,6 @@ describe('computeCursorArgFilter', () => {
       orderBy,
       cursorRecordValues: { id: 'record-1' },
       isForwardPagination: true,
-      fieldMetadataItems: [],
     });
 
     expect(result).toEqual({ or: [{ id: { lt: 'record-1' } }] });
@@ -108,7 +67,6 @@ describe('computeCursorArgFilter', () => {
       orderBy,
       cursorRecordValues: { id: 'record-1' },
       isForwardPagination: false,
-      fieldMetadataItems: [],
     });
 
     expect(result).toEqual({ or: [{ id: { gt: 'record-1' } }] });
@@ -123,7 +81,6 @@ describe('computeCursorArgFilter', () => {
       orderBy,
       cursorRecordValues: { name: { firstName: 'John' }, id: 'record-1' },
       isForwardPagination: true,
-      fieldMetadataItems: [],
     });
 
     expect(result).toEqual({
@@ -148,7 +105,6 @@ describe('computeCursorArgFilter', () => {
       orderBy,
       cursorRecordValues: { id: 'record-1' },
       isForwardPagination: true,
-      fieldMetadataItems: [],
     });
 
     expect(result).toEqual({
@@ -173,7 +129,6 @@ describe('computeCursorArgFilter', () => {
       orderBy,
       cursorRecordValues: { name: { firstName: 'John' }, id: 'record-1' },
       isForwardPagination: true,
-      fieldMetadataItems: [],
     });
 
     expect(result).toEqual({
@@ -199,7 +154,6 @@ describe('computeCursorArgFilter', () => {
       orderBy,
       cursorRecordValues: { score: 42, id: 'record-1' },
       isForwardPagination: true,
-      fieldMetadataItems: [],
     });
 
     expect(result).toEqual({
@@ -219,144 +173,8 @@ describe('computeCursorArgFilter', () => {
       orderBy,
       cursorRecordValues: { id: 'record-1' },
       isForwardPagination: true,
-      fieldMetadataItems: [],
     });
 
     expect(result).toEqual({ or: [{ id: { gt: 'record-1' } }] });
-  });
-
-  describe('option-backed fields (select, rating)', () => {
-    it('should use gt for select cursors on ascending forward pagination', () => {
-      const orderBy: RecordGqlOperationOrderBy = [{ stage: 'AscNullsFirst' }];
-
-      const result = computeCursorArgFilter({
-        orderBy,
-        cursorRecordValues: { stage: 'MEETING', id: 'record-1' },
-        isForwardPagination: true,
-        fieldMetadataItems: [stageField],
-      });
-
-      expect(result).toEqual({
-        or: [
-          { stage: { gt: 'MEETING' } },
-          {
-            and: [{ stage: { eq: 'MEETING' } }, { id: { gt: 'record-1' } }],
-          },
-        ],
-      });
-    });
-
-    it('should use lt for select cursors on ascending backward pagination', () => {
-      const orderBy: RecordGqlOperationOrderBy = [{ stage: 'AscNullsFirst' }];
-
-      const result = computeCursorArgFilter({
-        orderBy,
-        cursorRecordValues: { stage: 'MEETING', id: 'record-1' },
-        isForwardPagination: false,
-        fieldMetadataItems: [stageField],
-      });
-
-      expect(result).toEqual({
-        or: [
-          { stage: { lt: 'MEETING' } },
-          {
-            and: [{ stage: { eq: 'MEETING' } }, { id: { lt: 'record-1' } }],
-          },
-        ],
-      });
-    });
-
-    it('should match non-null values for a null cursor when nulls are sorted first and paginating forward', () => {
-      const orderBy: RecordGqlOperationOrderBy = [{ stage: 'AscNullsFirst' }];
-
-      const result = computeCursorArgFilter({
-        orderBy,
-        cursorRecordValues: { stage: null, id: 'record-1' },
-        isForwardPagination: true,
-        fieldMetadataItems: [stageField],
-      });
-
-      expect(result).toEqual({
-        or: [
-          { stage: { is: 'NOT_NULL' } },
-          {
-            and: [{ stage: { is: 'NULL' } }, { id: { gt: 'record-1' } }],
-          },
-        ],
-      });
-    });
-
-    it('should drop the comparison branch for a null cursor when nulls are sorted last and paginating forward', () => {
-      const orderBy: RecordGqlOperationOrderBy = [{ stage: 'AscNullsLast' }];
-
-      const result = computeCursorArgFilter({
-        orderBy,
-        cursorRecordValues: { stage: null, id: 'record-1' },
-        isForwardPagination: true,
-        fieldMetadataItems: [stageField],
-      });
-
-      expect(result).toEqual({
-        or: [
-          {
-            and: [{ stage: { is: 'NULL' } }, { id: { gt: 'record-1' } }],
-          },
-        ],
-      });
-    });
-
-    it('should match non-null values for a null cursor when nulls are sorted last and paginating backward', () => {
-      const orderBy: RecordGqlOperationOrderBy = [{ stage: 'AscNullsLast' }];
-
-      const result = computeCursorArgFilter({
-        orderBy,
-        cursorRecordValues: { stage: null, id: 'record-1' },
-        isForwardPagination: false,
-        fieldMetadataItems: [stageField],
-      });
-
-      expect(result).toEqual({
-        or: [
-          { stage: { is: 'NOT_NULL' } },
-          {
-            and: [{ stage: { is: 'NULL' } }, { id: { lt: 'record-1' } }],
-          },
-        ],
-      });
-    });
-
-    it('should keep gt for rating cursors', () => {
-      const ratingField = buildOptionBackedField({
-        name: 'priority',
-        type: FieldMetadataType.RATING,
-        optionValuesByPosition: [
-          'RATING_1',
-          'RATING_2',
-          'RATING_3',
-          'RATING_4',
-          'RATING_5',
-        ],
-      });
-
-      const orderBy: RecordGqlOperationOrderBy = [
-        { priority: 'DescNullsLast' },
-      ];
-
-      const result = computeCursorArgFilter({
-        orderBy,
-        cursorRecordValues: { priority: 'RATING_4', id: 'record-1' },
-        isForwardPagination: true,
-        fieldMetadataItems: [ratingField],
-      });
-
-      expect(result).toEqual({
-        or: [
-          { priority: { lt: 'RATING_4' } },
-          {
-            and: [{ priority: { eq: 'RATING_4' } }, { id: { gt: 'record-1' } }],
-          },
-        ],
-      });
-    });
   });
 });

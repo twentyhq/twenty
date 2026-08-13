@@ -1,18 +1,25 @@
 import {
-  FieldMetadataType,
   type RecordGqlOperationFilter,
   type RecordGqlOperationOrderBy,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isPlainObject } from 'twenty-shared/utils';
 
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import {
-  type CursorOrderByField,
-  resolveCursorOrderByFields,
-} from '@/object-record/graphql/utils/resolveCursorOrderByFields';
+import { isOrderByDirection } from '@/object-record/graphql/utils/isOrderByDirection';
+
+type CursorOrderByField = {
+  fieldName: string;
+  direction: string;
+  subFieldName?: string;
+};
 
 const isAscendingOrder = (direction: string): boolean =>
   direction === 'AscNullsFirst' || direction === 'AscNullsLast';
+
+const computeOperator = (
+  isAscending: boolean,
+  isForwardPagination: boolean,
+): string =>
+  (isAscending ? isForwardPagination : !isForwardPagination) ? 'gt' : 'lt';
 
 const getCursorValue = (
   record: Record<string, unknown>,
@@ -36,87 +43,70 @@ const buildCursorWhereCondition = (
     ? { [field.fieldName]: { [field.subFieldName]: { [operator]: value } } }
     : { [field.fieldName]: { [operator]: value } };
 
-const isOptionBackedFieldType = (type: FieldMetadataType): boolean =>
-  type === FieldMetadataType.SELECT || type === FieldMetadataType.RATING;
+const resolveOrderByFields = (
+  orderBy: RecordGqlOperationOrderBy,
+): CursorOrderByField[] => {
+  const fields: CursorOrderByField[] = [];
 
-const areNullsSortedFirst = (direction: string): boolean =>
-  direction === 'AscNullsFirst' || direction === 'DescNullsFirst';
+  for (const entry of orderBy) {
+    for (const [fieldName, value] of Object.entries(entry)) {
+      if (isOrderByDirection(value)) {
+        fields.push({ fieldName, direction: value });
+      } else if (isPlainObject(value)) {
+        for (const [subFieldName, subValue] of Object.entries(
+          value as Record<string, unknown>,
+        )) {
+          if (isOrderByDirection(subValue)) {
+            fields.push({ fieldName, direction: subValue, subFieldName });
+          }
+        }
+      }
+    }
+  }
+
+  if (!fields.some((field) => field.fieldName === 'id')) {
+    fields.push({ fieldName: 'id', direction: 'AscNullsFirst' });
+  }
+
+  return fields;
+};
 
 export const computeCursorArgFilter = ({
   orderBy,
   cursorRecordValues,
   isForwardPagination,
-  fieldMetadataItems,
 }: {
   orderBy: RecordGqlOperationOrderBy;
   cursorRecordValues: Record<string, unknown>;
   isForwardPagination: boolean;
-  fieldMetadataItems: Pick<FieldMetadataItem, 'name' | 'type' | 'options'>[];
 }): RecordGqlOperationFilter => {
-  const fields = resolveCursorOrderByFields(orderBy);
+  const fields = resolveOrderByFields(orderBy);
 
-  const isOptionBackedField = (field: CursorOrderByField): boolean => {
-    if (isDefined(field.subFieldName)) {
-      return false;
-    }
-
-    const fieldMetadataItem = fieldMetadataItems.find(
-      (fieldMetadataItemToCheck) =>
-        fieldMetadataItemToCheck.name === field.fieldName,
-    );
-
-    return (
-      isDefined(fieldMetadataItem) &&
-      isOptionBackedFieldType(fieldMetadataItem.type)
-    );
-  };
-
-  const cumulativeConditions = fields
-    .map((field, index) => {
-      const equalityPrefixes = fields.slice(0, index).map((prevField) => {
-        const prevCursorValue = getCursorValue(cursorRecordValues, prevField);
-
-        if (isOptionBackedField(prevField) && !isDefined(prevCursorValue)) {
-          return { [prevField.fieldName]: { is: 'NULL' } };
-        }
-
-        return buildCursorWhereCondition(prevField, 'eq', prevCursorValue);
-      });
+  const cumulativeConditions: RecordGqlOperationFilter[] = fields.map(
+    (field, index) => {
+      const equalityPrefixes = fields
+        .slice(0, index)
+        .map((prevField) =>
+          buildCursorWhereCondition(
+            prevField,
+            'eq',
+            getCursorValue(cursorRecordValues, prevField),
+          ),
+        );
 
       const ascending = isAscendingOrder(field.direction);
-      const shouldTakeGreaterValues = ascending
-        ? isForwardPagination
-        : !isForwardPagination;
-      const cursorValue = getCursorValue(cursorRecordValues, field);
-
-      const buildNullCursorComparison = (): RecordGqlOperationFilter | null => {
-        const shouldMatchNonNullValues = isForwardPagination
-          ? areNullsSortedFirst(field.direction)
-          : !areNullsSortedFirst(field.direction);
-
-        return shouldMatchNonNullValues
-          ? { [field.fieldName]: { is: 'NOT_NULL' } }
-          : null;
-      };
-
-      const comparison =
-        isOptionBackedField(field) && !isDefined(cursorValue)
-          ? buildNullCursorComparison()
-          : buildCursorWhereCondition(
-              field,
-              shouldTakeGreaterValues ? 'gt' : 'lt',
-              cursorValue,
-            );
-
-      if (!isDefined(comparison)) {
-        return null;
-      }
+      const operator = computeOperator(ascending, isForwardPagination);
+      const comparison = buildCursorWhereCondition(
+        field,
+        operator,
+        getCursorValue(cursorRecordValues, field),
+      );
 
       const conditions = [...equalityPrefixes, comparison];
 
       return conditions.length === 1 ? conditions[0] : { and: conditions };
-    })
-    .filter(isDefined);
+    },
+  );
 
   if (cumulativeConditions.length === 0) return {};
 
