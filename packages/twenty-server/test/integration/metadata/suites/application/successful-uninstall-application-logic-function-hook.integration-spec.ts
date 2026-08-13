@@ -119,6 +119,90 @@ describe('Uninstall application logic function hook', () => {
     );
   }, 60000);
 
+  it('executes the hook when the registration manifest is unavailable', async () => {
+    await syncApplication({
+      manifest: buildManifestWithLogicFunction({
+        appId,
+        roleId,
+        logicFunctionId,
+        withUninstallHook: true,
+      }),
+      expectToFail: false,
+    });
+
+    await globalThis.testDataSource.query(
+      `UPDATE core."applicationRegistration"
+       SET "manifest" = NULL
+       WHERE "universalIdentifier" = $1`,
+      [appId],
+    );
+
+    const { data, errors } = await uninstallApplication({
+      universalIdentifier: appId,
+      expectToFail: false,
+    });
+
+    expect(errors).toBeUndefined();
+    expect(data?.uninstallApplication).toBe(true);
+    expect(executeSpy).toHaveBeenCalledTimes(1);
+    expect(executeSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        logicFunctionId: expect.any(String),
+        payload: { version: '1.0.0' },
+      }),
+    );
+  }, 60000);
+
+  it('executes the hook resolved at sync time when the registration manifest advances', async () => {
+    await syncApplication({
+      manifest: buildManifestWithLogicFunction({
+        appId,
+        roleId,
+        logicFunctionId,
+        withUninstallHook: true,
+      }),
+      expectToFail: false,
+    });
+
+    const installedUninstallLogicFunctions =
+      await globalThis.testDataSource.query(
+        `SELECT id FROM core."logicFunction"
+         WHERE "universalIdentifier" = $1 AND "deletedAt" IS NULL`,
+        [logicFunctionId],
+      );
+
+    expect(installedUninstallLogicFunctions).toHaveLength(1);
+
+    const latestRegistrationManifest = buildManifestWithLogicFunction({
+      appId,
+      roleId,
+      logicFunctionId: uuidv4(),
+      withUninstallHook: true,
+    });
+
+    await globalThis.testDataSource.query(
+      `UPDATE core."applicationRegistration"
+       SET "manifest" = $1::jsonb
+       WHERE "universalIdentifier" = $2`,
+      [JSON.stringify(latestRegistrationManifest), appId],
+    );
+
+    const { data, errors } = await uninstallApplication({
+      universalIdentifier: appId,
+      expectToFail: false,
+    });
+
+    expect(errors).toBeUndefined();
+    expect(data?.uninstallApplication).toBe(true);
+    expect(executeSpy).toHaveBeenCalledTimes(1);
+    expect(executeSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        logicFunctionId: installedUninstallLogicFunctions[0].id,
+        payload: { version: '1.0.0' },
+      }),
+    );
+  }, 60000);
+
   it('does not execute any hook when the manifest declares no uninstall logic function', async () => {
     await syncApplication({
       manifest: buildManifestWithLogicFunction({
