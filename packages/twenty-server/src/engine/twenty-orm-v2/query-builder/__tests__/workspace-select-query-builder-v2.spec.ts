@@ -1,5 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { Equal, In, LessThan, Not } from 'typeorm';
+import { And, Equal, In, LessThan, Not } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { type CompiledStatement } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
@@ -650,6 +650,19 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
 
     expect(text).toContain('"person"."nameFirstName" < $1');
     expect(values).toContain('x');
+  });
+
+  it('should combine operators with And', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.setFindOptions({ select: { id: true } });
+    queryBuilder.where({ nameFirstName: And(LessThan('z'), Not(Equal('a'))) });
+
+    const [text] = queryBuilder.getQueryAndParameters();
+
+    expect(text).toContain(
+      '("person"."nameFirstName" < $1 AND NOT ("person"."nameFirstName" = $2))',
+    );
   });
 
   it('should negate a nested operator with Not', () => {

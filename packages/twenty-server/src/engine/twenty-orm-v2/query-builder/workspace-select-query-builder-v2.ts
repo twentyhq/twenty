@@ -687,6 +687,22 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
             value.child ?? value.value,
             parameters,
           )})`;
+        case 'and':
+        case 'or': {
+          const childOperators = value.value as unknown[];
+          const separator = value.type === 'and' ? ' AND ' : ' OR ';
+
+          return `(${childOperators
+            .map((childOperator) =>
+              this.buildValueCondition(
+                quotedColumn,
+                columnName,
+                childOperator,
+                parameters,
+              ),
+            )
+            .join(separator)})`;
+        }
         case 'raw': {
           const rawValue = value.value as
             | string
