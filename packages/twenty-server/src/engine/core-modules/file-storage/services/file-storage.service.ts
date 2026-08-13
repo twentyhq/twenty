@@ -571,4 +571,50 @@ export class FileStorageService {
 
     return driver.checkFileExists({ filePath: onStorageFilePath });
   }
+
+  async copyFile({
+    from,
+    to,
+    fileId,
+    mimeType,
+    size,
+    settings,
+  }: {
+    from: ResourceIdentifier;
+    to: ResourceIdentifier;
+    fileId: string;
+    mimeType: string;
+    size: number;
+    settings: FileSettings;
+  }): Promise<FileEntity> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    const resolvedApplicationId = await this.resolveApplicationIdOrThrow({
+      applicationUniversalIdentifier: to.applicationUniversalIdentifier,
+      workspaceId: to.workspaceId,
+    });
+
+    const { onStorageFilePath: fromPath } =
+      this.validateAndBuildFileStoragePathOrThrow(from);
+    const { onStorageFilePath: toPath, filePath } =
+      this.validateAndBuildFileStoragePathOrThrow(to);
+
+    await driver.copy({
+      from: { folderPath: dirname(fromPath), filename: basename(fromPath) },
+      to: { folderPath: dirname(toPath), filename: basename(toPath) },
+    });
+
+    return this.fileRepository.upsertAndReturnOne(
+      to.workspaceId,
+      {
+        path: filePath,
+        applicationId: resolvedApplicationId,
+        id: fileId,
+        mimeType,
+        size,
+        settings,
+      },
+      ['path', 'workspaceId', 'applicationId'],
+    );
+  }
 }

@@ -12,6 +12,7 @@ import { CodeInterpreterTool } from 'src/engine/core-modules/tool/tools/code-int
 import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
 import { EmailComposerService } from 'src/engine/core-modules/tool/tools/email-tool/email-composer.service';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
+import { PrepareUploadedFileTool } from 'src/engine/core-modules/tool/tools/file-tool/prepare-uploaded-file-tool';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { NavigateAppTool } from 'src/engine/core-modules/tool/tools/navigate-tool/navigate-app-tool';
 import { ExtractJsonPathsTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/extract-json-paths-tool';
@@ -54,6 +55,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     NavigateAppTool,
     ExtractJsonPathsTool,
     SearchOutputTool,
+    PrepareUploadedFileTool,
     ToolOutputSpillService,
     provideWorkspaceScopedRepository(FileEntity),
   ],
@@ -68,6 +70,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     NavigateAppTool,
     ExtractJsonPathsTool,
     SearchOutputTool,
+    PrepareUploadedFileTool,
     ToolOutputSpillService,
   ],
 })

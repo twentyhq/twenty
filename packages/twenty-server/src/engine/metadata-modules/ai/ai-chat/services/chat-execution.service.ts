@@ -69,6 +69,7 @@ import {
 import { type ExtractedFile } from 'src/engine/metadata-modules/ai/ai-chat/types/extracted-file.type';
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
 import { hasSucceededWorkspaceSetupCompletion } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-succeeded-workspace-setup-completion.util';
+import { collectUploadedFileReferences } from 'src/engine/metadata-modules/ai/ai-chat/utils/collect-uploaded-file-references.util';
 import { extractCodeInterpreterFiles } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
 import { injectMessageTimestamps } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-timestamps.util';
 import {
@@ -266,6 +267,8 @@ export class ChatExecutionService {
 
     const isCodeInterpreterEnabled = this.codeInterpreterService.isEnabled();
 
+    const uploadedFiles = collectUploadedFileReferences(messages);
+
     let processedMessages: ExtendedUIMessage[] = replaceUnsupportedFileParts(
       messages,
       modelConfig.modalities,
@@ -311,7 +314,7 @@ export class ChatExecutionService {
       toolCatalog,
       skillCatalog,
       preloadedToolNames,
-      storedFiles,
+      { uploadedFiles, codeInterpreterFiles: storedFiles },
       workspace.aiAdditionalInstructions ?? undefined,
       userContext,
     );

@@ -25,6 +25,7 @@ import { CreateCalendarEventTool } from 'src/engine/core-modules/tool/tools/cale
 import { CodeInterpreterTool } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool';
 import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
+import { PrepareUploadedFileTool } from 'src/engine/core-modules/tool/tools/file-tool/prepare-uploaded-file-tool';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { NavigateAppTool } from 'src/engine/core-modules/tool/tools/navigate-tool/navigate-app-tool';
 import { ExtractJsonPathsTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/extract-json-paths-tool';
@@ -52,6 +53,7 @@ export class ActionToolProvider implements ToolProvider {
     private readonly extractJsonPathsTool: ExtractJsonPathsTool,
     private readonly searchOutputTool: SearchOutputTool,
     private readonly saveCampaignTool: SaveCampaignTool,
+    private readonly prepareUploadedFileTool: PrepareUploadedFileTool,
     private readonly codeInterpreterService: CodeInterpreterService,
     private readonly permissionsService: PermissionsService,
     private readonly i18nService: I18nService,
@@ -67,6 +69,7 @@ export class ActionToolProvider implements ToolProvider {
       ['extract_json_paths', this.extractJsonPathsTool],
       ['search_output', this.searchOutputTool],
       ['save_campaign', this.saveCampaignTool],
+      ['prepare_uploaded_file', this.prepareUploadedFileTool],
     ]);
   }
 
@@ -179,6 +182,15 @@ export class ActionToolProvider implements ToolProvider {
       this.buildDescriptor(
         'save_campaign',
         this.saveCampaignTool,
+        includeSchemas,
+        context.locale,
+      ),
+    );
+
+    descriptors.push(
+      this.buildDescriptor(
+        'prepare_uploaded_file',
+        this.prepareUploadedFileTool,
         includeSchemas,
         context.locale,
       ),

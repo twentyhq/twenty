@@ -16,6 +16,7 @@ import {
   type UserContext,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { CHAT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-chat/constants/chat-system-prompts.const';
+import { type UploadedFileReference } from 'src/engine/metadata-modules/ai/ai-chat/types/uploaded-file-reference.type';
 import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 
@@ -136,10 +137,10 @@ export class SystemPromptBuilderService {
     toolCatalog: ToolIndexEntry[],
     skillCatalog: FlatSkill[],
     preloadedTools: string[],
-    storedFiles?: Array<{
-      filename: string;
-      fileId: string;
-    }>,
+    uploadedFilesContext?: {
+      uploadedFiles: UploadedFileReference[];
+      codeInterpreterFiles: UploadedFileReference[];
+    },
     workspaceInstructions?: string,
     userContext?: UserContext,
   ): string {
@@ -169,8 +170,13 @@ export class SystemPromptBuilderService {
       parts.push(skillSection);
     }
 
-    if (storedFiles && storedFiles.length > 0) {
-      parts.push(this.buildUploadedFilesSection(storedFiles));
+    if (uploadedFilesContext && uploadedFilesContext.uploadedFiles.length > 0) {
+      parts.push(
+        this.buildUploadedFilesSection(
+          uploadedFilesContext.uploadedFiles,
+          uploadedFilesContext.codeInterpreterFiles,
+        ),
+      );
     }
 
     return parts.join('\n');
@@ -227,27 +233,44 @@ ${parts.join('\n')}`;
   }
 
   buildUploadedFilesSection(
-    storedFiles: Array<{ filename: string; fileId: string }>,
+    uploadedFiles: UploadedFileReference[],
+    codeInterpreterFiles: UploadedFileReference[],
   ): string {
-    const fileList = storedFiles.map((f) => `- ${f.filename}`).join('\n');
-
-    const filesJson = JSON.stringify(
-      storedFiles.map((f) => ({ filename: f.filename, fileId: f.fileId })),
+    const uploadedFilesJson = JSON.stringify(
+      uploadedFiles.map((f) => ({ filename: f.filename, fileId: f.fileId })),
     );
 
-    return `
+    const sectionParts = [
+      `
 ## Uploaded Files
 
-The user has uploaded the following files:
-${fileList}
-
-**IMPORTANT**: Use the \`code_interpreter\` tool to analyze these files.
-When calling code_interpreter, include the files parameter with these values (use fileId to reference uploaded files):
+The user has uploaded the following files in this conversation:
 \`\`\`json
-${filesJson}
+${uploadedFilesJson}
 \`\`\`
 
-In your Python code, access files at \`/home/user/{filename}\`.`;
+To store an uploaded file on a record, call \`prepare_uploaded_file\` first, then use the fieldValue it returns when creating or updating the record. A record cannot reference an uploaded fileId directly. For example, to attach a document to a person: call \`prepare_uploaded_file\` for the \`file\` field of the \`attachment\` object, then create an \`attachment\` record with that fieldValue and \`targetPersonId\`.`,
+    ];
+
+    if (codeInterpreterFiles.length > 0) {
+      const codeInterpreterFilesJson = JSON.stringify(
+        codeInterpreterFiles.map((f) => ({
+          filename: f.filename,
+          fileId: f.fileId,
+        })),
+      );
+
+      sectionParts.push(`
+**IMPORTANT**: Use the \`code_interpreter\` tool to analyze these files:
+\`\`\`json
+${codeInterpreterFilesJson}
+\`\`\`
+
+When calling code_interpreter, include the files parameter with these values (use fileId to reference uploaded files).
+In your Python code, access files at \`/home/user/{filename}\`. Other uploaded files are not available in the sandbox.`);
+    }
+
+    return sectionParts.join('\n');
   }
 
   buildSkillCatalogSection(skillCatalog: FlatSkill[]): string {
