@@ -53,6 +53,7 @@ import {
 } from 'src/engine/twenty-orm-v2/repository/utils/resolve-save-and-upsert.util';
 import { WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-select-query-builder-v2';
 import { compileNamedParameters } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
+import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { serializeJsonbWriteValue } from 'src/engine/twenty-orm-v2/sql/utils/serialize-jsonb-write-value.util';
 import {
   type WorkspaceRelationShape,
@@ -86,6 +87,10 @@ type WorkspaceRepositoryV2Options = {
   getRepositoryForObjectMetadataId: (
     objectMetadataId: string,
   ) => WorkspaceRepositoryV2;
+  isTransactional: boolean;
+  runInNewTransaction: <T>(
+    work: (transactionalRepository: WorkspaceRepositoryV2) => Promise<T>,
+  ) => Promise<T>;
 };
 
 export class WorkspaceRepositoryV2 {
@@ -446,6 +451,14 @@ export class WorkspaceRepositoryV2 {
   async updateMany(
     inputs: { criteria: string; partialEntity: Partial<ObjectRecord> }[],
   ): Promise<UpdateResult> {
+    if (inputs.length > QUERY_MAX_RECORDS) {
+      throw new TwentyOrmV2Exception(
+        `Cannot update more than ${QUERY_MAX_RECORDS} records at once`,
+        TwentyOrmV2ExceptionCode.TOO_MANY_RECORDS_TO_UPDATE,
+        msg`You can only update up to ${QUERY_MAX_RECORDS} records at once.`,
+      );
+    }
+
     const { generatedMaps, raw } = await this.runBatchUpdate({
       inputs: inputs.map((input) => ({
         id: input.criteria,
@@ -520,6 +533,33 @@ export class WorkspaceRepositoryV2 {
     return updateResult;
   }
 
+  private runAtomically<T>(
+    work: (repository: WorkspaceRepositoryV2) => Promise<T>,
+  ): Promise<T> {
+    return this.options.isTransactional
+      ? work(this)
+      : this.options.runInNewTransaction(work);
+  }
+
+  // Existence check for save/upsert: bypasses row-level permissions and includes
+  // soft-deleted rows so an existing-but-hidden id is updated rather than
+  // misclassified as an insert (which would raise a duplicate-key error).
+  private async findExistingIds(ids: string[]): Promise<Set<string>> {
+    if (ids.length === 0) {
+      return new Set<string>();
+    }
+
+    const { schemaName, tableName } = this.options.tableShape;
+    const rows = await this.executeRaw<{ id: string }>(
+      `SELECT "id" FROM ${escapeIdentifier(schemaName)}.${escapeIdentifier(
+        tableName,
+      )} WHERE "id" IN (:...ids)`,
+      { ids },
+    );
+
+    return new Set(rows.map((row) => row.id));
+  }
+
   async save(
     entityOrEntities: Partial<ObjectRecord> | Partial<ObjectRecord>[],
   ): Promise<ObjectRecord[]> {
@@ -533,52 +573,66 @@ export class WorkspaceRepositoryV2 {
       return [];
     }
 
-    const idsToCheck = entities
-      .map((entity) => entity.id)
-      .filter(isNonEmptyString);
+    return this.runAtomically(async (repository) => {
+      const existingIds = await repository.findExistingIds(
+        entities.map((entity) => entity.id).filter(isNonEmptyString),
+      );
 
-    const existingIds =
-      idsToCheck.length > 0
-        ? new Set(
-            (await this.findBy({ id: In(idsToCheck) })).map(
-              (record) => record.id,
-            ),
-          )
-        : new Set<string>();
+      const { toUpdate, toInsert } = partitionEntitiesForSave(
+        entities,
+        existingIds,
+      );
 
-    const { toUpdate, toInsert } = partitionEntitiesForSave(
-      entities,
-      existingIds,
-    );
+      if (toUpdate.length > 0) {
+        await repository.runBatchUpdate({
+          inputs: toUpdate.flatMap((entity) =>
+            isNonEmptyString(entity.id)
+              ? [{ id: entity.id, data: entity }]
+              : [],
+          ),
+          columnsToReturn: ['id'],
+        });
+      }
 
-    const updatedIds = toUpdate
-      .map((entity) => entity.id)
-      .filter(isNonEmptyString);
+      // runInsert returns identifiers in the same order as `toInsert`, which
+      // partitionEntitiesForSave builds in input order.
+      const insertedIds =
+        toInsert.length > 0
+          ? (
+              await repository.runInsert({
+                records: toInsert,
+                columnsToReturn: ['id'],
+              })
+            ).identifiers.map((identifier) => identifier.id)
+          : [];
 
-    if (updatedIds.length > 0) {
-      await this.runBatchUpdate({
-        inputs: toUpdate.flatMap((entity) =>
-          isNonEmptyString(entity.id) ? [{ id: entity.id, data: entity }] : [],
-        ),
-        columnsToReturn: ['id'],
+      const savedIds = [
+        ...toUpdate.map((entity) => entity.id).filter(isNonEmptyString),
+        ...insertedIds.filter(isNonEmptyString),
+      ];
+
+      const savedById = new Map(
+        savedIds.length > 0
+          ? (await repository.find({ where: { id: In(savedIds) } })).map(
+              (record) => [record.id, record],
+            )
+          : [],
+      );
+
+      let insertCursor = 0;
+
+      return entities.flatMap((entity) => {
+        const savedId =
+          isNonEmptyString(entity.id) && existingIds.has(entity.id)
+            ? entity.id
+            : insertedIds[insertCursor++];
+        const record = isNonEmptyString(savedId)
+          ? savedById.get(savedId)
+          : undefined;
+
+        return isDefined(record) ? [record] : [];
       });
-    }
-
-    const insertedIds =
-      toInsert.length > 0
-        ? (
-            await this.runInsert({
-              records: toInsert,
-              columnsToReturn: ['id'],
-            })
-          ).identifiers.map((identifier) => identifier.id)
-        : [];
-
-    const savedIds = [...updatedIds, ...insertedIds];
-
-    return savedIds.length > 0
-      ? this.find({ where: { id: In(savedIds) } })
-      : [];
+    });
   }
 
   async upsert(
@@ -602,54 +656,63 @@ export class WorkspaceRepositoryV2 {
       );
     }
 
-    const conflictWhere = entities.map((entity) =>
-      Object.fromEntries(
-        conflictPaths.map((path) => [path, entity[path] ?? null]),
-      ),
-    );
+    if (entities.length === 0) {
+      return new InsertResult();
+    }
 
-    const existingRecords =
-      entities.length > 0
-        ? await this.find({ where: conflictWhere, withDeleted: true })
-        : [];
+    return this.runAtomically(async (repository) => {
+      const conflictWhere = entities.map((entity) =>
+        Object.fromEntries(
+          conflictPaths.map((path) => [path, entity[path] ?? null]),
+        ),
+      );
 
-    const { toUpdate, toInsert } = matchEntitiesForUpsert(
-      entities,
-      existingRecords,
-      conflictPaths,
-    );
+      const existingRecords = await repository.find({
+        where: conflictWhere,
+        withDeleted: true,
+      });
 
-    const emptyOutcome = { identifiers: [], generatedMaps: [], raw: [] };
+      const { toUpdate, toInsert } = matchEntitiesForUpsert(
+        entities,
+        existingRecords,
+        conflictPaths,
+      );
 
-    const updateOutcome =
-      toUpdate.length > 0
-        ? await this.runBatchUpdate({
-            inputs: toUpdate.map((match) => ({
-              id: match.id,
-              data: match.entity,
-            })),
-            columnsToReturn: ['id'],
-          })
-        : emptyOutcome;
+      const emptyOutcome = { identifiers: [], generatedMaps: [], raw: [] };
 
-    const insertOutcome =
-      toInsert.length > 0
-        ? await this.runInsert({ records: toInsert, columnsToReturn: ['id'] })
-        : emptyOutcome;
+      const updateOutcome =
+        toUpdate.length > 0
+          ? await repository.runBatchUpdate({
+              inputs: toUpdate.map((match) => ({
+                id: match.id,
+                data: match.entity,
+              })),
+              columnsToReturn: ['id'],
+            })
+          : emptyOutcome;
 
-    const insertResult = new InsertResult();
+      const insertOutcome =
+        toInsert.length > 0
+          ? await repository.runInsert({
+              records: toInsert,
+              columnsToReturn: ['id'],
+            })
+          : emptyOutcome;
 
-    insertResult.identifiers = [
-      ...updateOutcome.identifiers,
-      ...insertOutcome.identifiers,
-    ];
-    insertResult.generatedMaps = [
-      ...updateOutcome.generatedMaps,
-      ...insertOutcome.generatedMaps,
-    ];
-    insertResult.raw = [...updateOutcome.raw, ...insertOutcome.raw];
+      const insertResult = new InsertResult();
 
-    return insertResult;
+      insertResult.identifiers = [
+        ...updateOutcome.identifiers,
+        ...insertOutcome.identifiers,
+      ];
+      insertResult.generatedMaps = [
+        ...updateOutcome.generatedMaps,
+        ...insertOutcome.generatedMaps,
+      ];
+      insertResult.raw = [...updateOutcome.raw, ...insertOutcome.raw];
+
+      return insertResult;
+    });
   }
 
   private assertNoNestedRelationObjects(
