@@ -21,10 +21,6 @@ const releaseSlackTeamClaimIfStillOurs = async ({
   teamId,
   claimedWorkspaceId,
 }: ReleaseSlackTeamOnInstallRevokedArgs): Promise<boolean> => {
-  // The claim can move between routing and this run: the original workspace
-  // disconnects and another one claims the same team. Only delete while the
-  // claim still points at the workspace the event was routed to, so a stale
-  // removal cannot evict the new holder's claim.
   const currentClaimHolder = await findClaimedWorkspaceId(teamId);
 
   const isClaimHeldByAnotherWorkspace =
@@ -43,9 +39,6 @@ export const releaseSlackTeamOnInstallRevoked = async ({
   teamId,
   claimedWorkspaceId,
 }: ReleaseSlackTeamOnInstallRevokedArgs): Promise<ReleaseSlackTeamOnInstallRevokedResult> => {
-  // Freeing the team claim is the point of this function, and the claim can
-  // outlive its connections, so release it first and by team id rather than
-  // through the connections.
   const hasReleasedTeam = await releaseSlackTeamClaimIfStillOurs({
     teamId,
     claimedWorkspaceId,
@@ -69,8 +62,6 @@ export const releaseSlackTeamOnInstallRevoked = async ({
 
           return connection.id;
         } catch {
-          // Best-effort: a stale per-connection entry only affects the
-          // disconnect path of a connection that is already dead.
           return null;
         }
       }),

@@ -75,11 +75,6 @@ export const slackEventsResolverHandler = async (
       );
     }
 
-    // Slack sends app_uninstalled and tokens_revoked in no guaranteed order;
-    // whichever lands first releases the claim, so an absent claim is the
-    // expected second delivery and must ack instead of erroring into Slack's
-    // retry cycle. A failed lookup still throws, so a transient error keeps
-    // the retry.
     const claimedWorkspaceId = await findClaimedWorkspaceId(body.team_id);
 
     if (claimedWorkspaceId === null) {

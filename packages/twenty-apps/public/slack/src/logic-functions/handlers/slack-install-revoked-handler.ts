@@ -6,8 +6,6 @@ import { releaseSlackTeamOnInstallRevoked } from 'src/logic-functions/utils/rele
 export const slackInstallRevokedHandler = async (
   body: SlackInstallRevokedPayload,
 ) => {
-  // The app only holds a bot token, so a revocation that spares it leaves the
-  // install working.
   if (
     body.event?.type === 'tokens_revoked' &&
     !isNonEmptyArray(body.event.tokens?.bot)
