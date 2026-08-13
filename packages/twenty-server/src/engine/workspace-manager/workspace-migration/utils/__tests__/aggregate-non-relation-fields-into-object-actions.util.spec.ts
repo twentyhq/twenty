@@ -172,7 +172,6 @@ describe('aggregateNonRelationFieldsIntoObjectActions', () => {
 
     expect(result.objectMetadata.create).toHaveLength(0);
 
-    // Field should remain in field actions (no matching object to merge into)
     expect(result.fieldMetadata.create).toMatchObject([
       {
         flatEntity: { universalIdentifier: fieldUniversalId },
@@ -245,7 +244,6 @@ describe('aggregateNonRelationFieldsIntoObjectActions', () => {
       orchestratorActionsReport: input,
     });
 
-    // Text field should be merged into object action
     expect(result.objectMetadata.create).toMatchObject([
       {
         universalFlatFieldMetadatas: [

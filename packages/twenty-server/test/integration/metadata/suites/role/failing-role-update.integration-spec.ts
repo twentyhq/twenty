@@ -41,12 +41,10 @@ describe('Role update should fail', () => {
   let existingRoleIdForDuplicate: string;
 
   beforeAll(async () => {
-    // Get a non-editable system role (Admin) for testing
     const adminRole = await findOneRoleByLabel({ label: 'Admin' });
 
     globalTestContext.nonEditableRoleId = adminRole.id;
 
-    // Create a role that will be used to test duplicate label validation
     const { data: duplicateData } = await createOneRole({
       expectToFail: false,
       input: {

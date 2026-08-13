@@ -105,7 +105,6 @@ describe('DefaultSlashCommands', () => {
         (cmd) => cmd.id === 'paragraph',
       );
 
-      // Paragraph command should have a getIsVisible function
       expect(typeof paragraphCommand?.getIsVisible).toBe('function');
       expect(typeof paragraphCommand?.getIsVisible(editor)).toBe('boolean');
     });

@@ -108,9 +108,7 @@ describe('MCP Controller (integration)', () => {
       expect(res.body.jsonrpc).toBe('2.0');
       expect(res.body.result).toBeDefined();
       expect(Array.isArray(res.body.result.tools)).toBe(true);
-      // In a seeded workspace, there should be at least one tool
       expect(res.body.result.tools.length).toBeGreaterThanOrEqual(0);
-      // If tools exist, they should have name, description and inputSchema
       const first = res.body.result.tools[0];
 
       if (first) {
@@ -172,7 +170,6 @@ describe('MCP Controller (integration)', () => {
 
         expect(res.body.jsonrpc).toBe('2.0');
         expect(res.body.id).toBe(id);
-        // Either a structured result or an error is acceptable depending on validation/business rules
         const hasResultContent = !!res.body?.result?.content;
         const hasError = !!res.body?.error;
 
@@ -232,7 +229,6 @@ describe('MCP Controller (integration)', () => {
 
       expect(events.length).toBeGreaterThanOrEqual(1);
 
-      // The last event should be the JSON-RPC response
       const lastEvent = events[events.length - 1];
 
       expect(lastEvent).toMatchObject({
@@ -273,7 +269,6 @@ describe('MCP Controller (integration)', () => {
 
       const events = parseSseEvents(res.text);
 
-      // Should have at least a progress notification and the final response
       expect(events.length).toBeGreaterThanOrEqual(2);
 
       const progressEvent = events[0];
@@ -288,7 +283,6 @@ describe('MCP Controller (integration)', () => {
         },
       });
 
-      // Last event should be the final JSON-RPC response
       const lastEvent = events[events.length - 1];
 
       expect(lastEvent).toMatchObject({

@@ -17,7 +17,6 @@ export class CreateViewGroupPermissionGuard implements CanActivate {
 
     let viewId: string | null = null;
 
-    // For GraphQL: extract from args.input or args.inputs
     const args = gqlContext.getArgs();
 
     if (typeof args?.input?.viewId === 'string') {

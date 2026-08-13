@@ -108,7 +108,6 @@ describe('detectCalendarStartDay', () => {
   });
 
   it('should handle Intl.Locale throwing error', () => {
-    // This test uses the default mock that throws an error
     Object.defineProperty(navigator, 'language', {
       writable: true,
       value: 'de-DE',

@@ -46,7 +46,6 @@ export const describeCronExpression = (
         descriptions.push(minutesDescription);
       }
       if (isDefined(hoursDescription) && hoursDescription !== '') {
-        // Remove "at" prefix from hours description when combining
         const cleanHoursDesc = hoursDescription.replace(/^at\s+/, '');
         descriptions.push(cleanHoursDesc);
       }
@@ -103,7 +102,6 @@ export const describeCronExpression = (
     if (descriptions.length === 0) {
       return t`every minute`;
     }
-    // Simple joining - just use spaces, no commas for cleaner descriptions
     return descriptions.join(' ');
   } catch (error) {
     const errorMessage =

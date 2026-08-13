@@ -51,7 +51,6 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
       return undefined;
     }
 
-    // Wait for a bit before trying again if another initialization is in progress
     while (this.isClientInitializing.get(clientId)) {
       await new Promise((resolve) => setTimeout(resolve, 10));
     }

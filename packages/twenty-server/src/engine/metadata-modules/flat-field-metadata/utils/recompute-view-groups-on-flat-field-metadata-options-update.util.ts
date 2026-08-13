@@ -131,7 +131,6 @@ export const recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate = ({
           ] ?? 0;
         const isVisible = currentVisibleCount < VIEW_GROUP_VISIBLE_OPTIONS_MAX;
 
-        // Increment the count for future iterations if this group will be visible
         if (isVisible) {
           visibleViewGroupCountByViewUniversalIdentifier[
             viewUniversalIdentifier

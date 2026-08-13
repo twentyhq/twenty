@@ -25,13 +25,11 @@ export const useMouseDownNavigation = ({
   const handleClick = (event: MouseEvent<HTMLElement>) => {
     if (disabled) return;
 
-    // For modifier keys, let the default browser behavior handle it
     if (isNavigationModifierPressed(event)) {
       onBeforeNavigation?.();
       if (isDefined(onClick) && !isDefined(to)) {
         onClick(event);
       }
-      // Don't prevent default for modifier keys to allow browser navigation
       return;
     }
 

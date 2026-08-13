@@ -9,7 +9,6 @@ import { type SpreadsheetImportTableHook } from '@/spreadsheet-import/types/Spre
 import { type SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 
 export type SpreadsheetImportDialogOptions = {
-  // callback when RSI is closed before final submit
   onClose: () => void;
   spreadsheetImportFields: SpreadsheetImportFields;
   // Runs after file upload step, receives and returns raw sheet data
@@ -33,13 +32,11 @@ export type SpreadsheetImportDialogOptions = {
     validationResult: SpreadsheetImportImportValidationResult,
     file: File,
   ) => Promise<void>;
-  // Function called when user aborts the importing flow
   onAbortSubmit?: () => void;
   // Allows submitting with errors. Default: true
   allowInvalidSubmit?: boolean;
   // Theme configuration passed to underlying Chakra-UI
   customTheme?: object;
-  // Specifies maximum number of rows for a single import
   maxRecords?: number;
   maxFileSize?: number;
   // Automatically map imported headers to specified fields if possible. Default: true

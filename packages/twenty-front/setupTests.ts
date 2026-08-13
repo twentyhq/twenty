@@ -50,7 +50,6 @@ if (globalThis.ResizeObserver === undefined) {
     ResizeObserverMock as unknown as typeof ResizeObserver;
 }
 
-// Add Jest matchers for toThrowError and other missing methods
 declare global {
   namespace jest {
     interface Matchers<R> {

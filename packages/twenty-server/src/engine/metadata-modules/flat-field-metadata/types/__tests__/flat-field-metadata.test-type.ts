@@ -11,7 +11,6 @@ type DefinedRelationIdRecord = {
   relationTargetObjectMetadataId: string;
 };
 
-// Non-relation field types have never | null relation IDs
 type NotDefinedRelationIdRecord = {
   relationTargetFieldMetadataId: never | null;
   relationTargetObjectMetadataId: never | null;
@@ -33,7 +32,6 @@ type OneToManyRelationIdArrays = {
 
 // oxlint-disable-next-line unused-imports/no-unused-vars
 type RelationIdAssertions = [
-  // Non-relation types have undefined relation IDs
   Expect<
     HasAllProperties<
       FlatFieldMetadata<FieldMetadataType.UUID>,
@@ -54,7 +52,6 @@ type RelationIdAssertions = [
     >
   >,
 
-  // Abstract type has nullable partial relation IDs
   Expect<
     HasAllProperties<
       FlatFieldMetadata,
@@ -69,7 +66,6 @@ type FlatTransformationAssertions = [
   Expect<HasAllProperties<FlatFieldMetadata, OneToManyRelationIdArrays>>,
 ];
 
-// Any narrowed flatFieldMetadata type should be assignable to non narrowed flatFieldMetadata
 type AbstractFlatFieldMetadata = FlatFieldMetadata<FieldMetadataType>;
 
 const _assertion: Record<string, AbstractFlatFieldMetadata> = {

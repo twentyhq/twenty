@@ -181,7 +181,6 @@ export default defineConfig(({ mode }) => {
         // including this one we wasted a lot of time on:
         // https://github.com/rollup/rollup/issues/2793
         output: {
-          // Custom plugin to fail build if chunks exceed max size
           plugins: [
             {
               name: 'chunk-size-limit',

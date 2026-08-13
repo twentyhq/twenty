@@ -74,7 +74,6 @@ describe('Core REST API Find Many endpoint', () => {
     expect(Array.isArray(people)).toBe(true);
     expect(people.length).toBeGreaterThanOrEqual(testPersonIds.length);
 
-    // Check that our test people are included in the results
     for (const personId of testPersonIds) {
       // @ts-expect-error legacy noImplicitAny
       const person = people.find((p) => p.id === personId);

@@ -166,7 +166,6 @@ describe('Agent creation should succeed', () => {
   });
 
   it('should create agent with role assignment', async () => {
-    // First, create a role that can be assigned to agents
     const { data: roleData } = await createOneRole({
       expectToFail: false,
       input: {
