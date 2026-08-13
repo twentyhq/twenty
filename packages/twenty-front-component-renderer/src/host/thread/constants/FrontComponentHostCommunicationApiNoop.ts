@@ -1,19 +1,17 @@
 import { type FrontComponentHostCommunicationApi } from '@/types/FrontComponentHostCommunicationApi';
 
-const noopAsync = async () => {};
-
 export const FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP: FrontComponentHostCommunicationApi =
   {
-    navigate: noopAsync,
+    navigate: async () => {},
     requestAccessTokenRefresh: async () => '',
-    openSidePanelPage: noopAsync,
-    openCommandConfirmationModal: noopAsync,
-    unmountFrontComponent: noopAsync,
-    enqueueSnackbar: noopAsync,
-    closeSidePanel: noopAsync,
-    updateProgress: noopAsync,
-    copyToClipboard: noopAsync,
-    storageSet: noopAsync,
-    storageDelete: noopAsync,
-    storageClear: noopAsync,
+    openSidePanelPage: async () => {},
+    openCommandConfirmationModal: async () => {},
+    unmountFrontComponent: async () => {},
+    enqueueSnackbar: async () => {},
+    closeSidePanel: async () => {},
+    updateProgress: async () => {},
+    copyToClipboard: async () => {},
+    storageSet: async () => {},
+    storageDelete: async () => {},
+    storageClear: async () => {},
   };

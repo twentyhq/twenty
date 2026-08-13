@@ -6,6 +6,9 @@ type RemoteStyleRendererProps = {
   styleKey?: string;
 };
 
+// Registered in the generated host component registry as the host renderer
+// for the 'remote-style' element, so it must keep the Renderer name.
+// oxlint-disable-next-line twenty/effect-components
 export const RemoteStyleRenderer = ({
   cssText,
   styleKey,

@@ -1,5 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "jsPlugins": ["../twenty-oxlint-rules/dist/oxlint-plugin.mjs"],
   "plugins": ["react", "typescript", "import", "unicorn"],
   "categories": {
     "correctness": "off"
@@ -52,6 +53,23 @@
     "react/jsx-no-useless-fragment": "off",
     "react/jsx-props-no-spreading": ["error", { "explicitSpread": "ignore" }],
     "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn"
-  }
+    "react-hooks/exhaustive-deps": "warn",
+    "twenty/effect-components": "error",
+    "twenty/component-props-naming": "error",
+    "twenty/styled-components-prefixed-with-styled": "error"
+  },
+  "overrides": [
+    {
+      "files": ["**/constants/*.ts", "**/*.constants.ts"],
+      "rules": {
+        "twenty/max-consts-per-file": ["error", { "max": 1 }]
+      }
+    },
+    {
+      "files": ["src/__stories__/**"],
+      "rules": {
+        "twenty/styled-components-prefixed-with-styled": "off"
+      }
+    }
+  ]
 }
