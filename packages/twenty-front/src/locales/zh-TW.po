@@ -3760,6 +3760,7 @@ msgstr "圖表"
 
 #. js-lingui-id: AHZflp
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
+#: src/modules/navigation/components/MobileHomeTabsRow.tsx
 msgid "Chat"
 msgstr "聊天"
 
@@ -9683,6 +9684,8 @@ msgstr "聘請合作夥伴協助你導入並自訂 Twenty。"
 
 #. js-lingui-id: i0qMbr
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
+#: src/modules/navigation/components/MobileHomeTabsRow.tsx
+#: src/modules/navigation/components/MobileNavigationBar.tsx
 msgid "Home"
 msgstr "首頁"
 
@@ -11579,11 +11582,6 @@ msgstr "循環"
 msgid "Mail Account"
 msgstr "郵件帳戶"
 
-#. js-lingui-id: HRha/x
-#: src/modules/navigation/components/MobileNavigationBar.tsx
-msgid "Main navigation"
-msgstr "主導覽列"
-
 #. js-lingui-id: 6Dd2PM
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
 msgid "Maintenance"
@@ -12401,6 +12399,7 @@ msgstr "導覽選單項目"
 
 #. js-lingui-id: s2HXiD
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
+#: src/modules/navigation/components/MobileHomeTabsRow.tsx
 msgid "Navigation tabs"
 msgstr "導航分頁"
 
@@ -17228,6 +17227,7 @@ msgid "Setting up your <0>database</0>..."
 msgstr "正在設定您的<0>資料庫</0>..."
 
 #. js-lingui-id: Tz0i8g
+#: src/modules/navigation/components/MobileHomeTabsRow.tsx
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
 #: src/modules/navigation/components/SettingsNavigationDrawer.tsx
 #: src/modules/navigation/components/SettingsNavigationDrawer.tsx

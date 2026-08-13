@@ -3760,6 +3760,7 @@ msgstr "Biểu đồ"
 
 #. js-lingui-id: AHZflp
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
+#: src/modules/navigation/components/MobileHomeTabsRow.tsx
 msgid "Chat"
 msgstr "Trò chuyện"
 
@@ -9683,6 +9684,8 @@ msgstr "Thuê một đối tác để giúp bạn triển khai và tùy chỉnh 
 
 #. js-lingui-id: i0qMbr
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
+#: src/modules/navigation/components/MobileHomeTabsRow.tsx
+#: src/modules/navigation/components/MobileNavigationBar.tsx
 msgid "Home"
 msgstr "Trang chủ"
 
@@ -11602,11 +11605,6 @@ msgstr "vòng lặp"
 msgid "Mail Account"
 msgstr "Tài Khoản Email"
 
-#. js-lingui-id: HRha/x
-#: src/modules/navigation/components/MobileNavigationBar.tsx
-msgid "Main navigation"
-msgstr "Điều hướng chính"
-
 #. js-lingui-id: 6Dd2PM
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
 msgid "Maintenance"
@@ -12424,6 +12422,7 @@ msgstr "Các mục menu điều hướng"
 
 #. js-lingui-id: s2HXiD
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
+#: src/modules/navigation/components/MobileHomeTabsRow.tsx
 msgid "Navigation tabs"
 msgstr "Tab điều hướng"
 
@@ -17251,6 +17250,7 @@ msgid "Setting up your <0>database</0>..."
 msgstr "Đang thiết lập <0>cơ sở dữ liệu</0> của bạn..."
 
 #. js-lingui-id: Tz0i8g
+#: src/modules/navigation/components/MobileHomeTabsRow.tsx
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
 #: src/modules/navigation/components/SettingsNavigationDrawer.tsx
 #: src/modules/navigation/components/SettingsNavigationDrawer.tsx

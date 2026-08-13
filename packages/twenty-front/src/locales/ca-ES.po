@@ -3760,6 +3760,7 @@ msgstr "Gràfic"
 
 #. js-lingui-id: AHZflp
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
+#: src/modules/navigation/components/MobileHomeTabsRow.tsx
 msgid "Chat"
 msgstr "Xat"
 
@@ -9683,6 +9684,8 @@ msgstr "Contracta un soci perquè t’ajudi a implementar i personalitzar Twenty
 
 #. js-lingui-id: i0qMbr
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
+#: src/modules/navigation/components/MobileHomeTabsRow.tsx
+#: src/modules/navigation/components/MobileNavigationBar.tsx
 msgid "Home"
 msgstr "Inici"
 
@@ -11602,11 +11605,6 @@ msgstr "bucle"
 msgid "Mail Account"
 msgstr "Compte de correu"
 
-#. js-lingui-id: HRha/x
-#: src/modules/navigation/components/MobileNavigationBar.tsx
-msgid "Main navigation"
-msgstr "Navegació principal"
-
 #. js-lingui-id: 6Dd2PM
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
 msgid "Maintenance"
@@ -12424,6 +12422,7 @@ msgstr "Elements del menú de navegació"
 
 #. js-lingui-id: s2HXiD
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
+#: src/modules/navigation/components/MobileHomeTabsRow.tsx
 msgid "Navigation tabs"
 msgstr "Pestanyes de navegació"
 
@@ -17251,6 +17250,7 @@ msgid "Setting up your <0>database</0>..."
 msgstr "S'està configurant la teva <0>base de dades</0>..."
 
 #. js-lingui-id: Tz0i8g
+#: src/modules/navigation/components/MobileHomeTabsRow.tsx
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
 #: src/modules/navigation/components/SettingsNavigationDrawer.tsx
 #: src/modules/navigation/components/SettingsNavigationDrawer.tsx

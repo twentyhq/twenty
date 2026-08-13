@@ -3760,6 +3760,7 @@ msgstr "Διάγραμμα"
 
 #. js-lingui-id: AHZflp
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
+#: src/modules/navigation/components/MobileHomeTabsRow.tsx
 msgid "Chat"
 msgstr "Συνομιλία"
 
@@ -9683,6 +9684,8 @@ msgstr "Προσλάβετε έναν συνεργάτη για να σας βο
 
 #. js-lingui-id: i0qMbr
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
+#: src/modules/navigation/components/MobileHomeTabsRow.tsx
+#: src/modules/navigation/components/MobileNavigationBar.tsx
 msgid "Home"
 msgstr "Αρχική"
 
@@ -11602,11 +11605,6 @@ msgstr "βρόχο"
 msgid "Mail Account"
 msgstr "Λογαριασμός Ηλεκτρονικού Ταχυδρομείου"
 
-#. js-lingui-id: HRha/x
-#: src/modules/navigation/components/MobileNavigationBar.tsx
-msgid "Main navigation"
-msgstr "Κυρίως πλοήγηση"
-
 #. js-lingui-id: 6Dd2PM
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
 msgid "Maintenance"
@@ -12424,6 +12422,7 @@ msgstr "Στοιχεία μενού πλοήγησης"
 
 #. js-lingui-id: s2HXiD
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
+#: src/modules/navigation/components/MobileHomeTabsRow.tsx
 msgid "Navigation tabs"
 msgstr "Καρτέλες πλοήγησης"
 
@@ -17251,6 +17250,7 @@ msgid "Setting up your <0>database</0>..."
 msgstr "Ρύθμιση της <0>βάσης δεδομένων</0> σας..."
 
 #. js-lingui-id: Tz0i8g
+#: src/modules/navigation/components/MobileHomeTabsRow.tsx
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
 #: src/modules/navigation/components/SettingsNavigationDrawer.tsx
 #: src/modules/navigation/components/SettingsNavigationDrawer.tsx

@@ -3760,6 +3760,7 @@ msgstr "Diagram"
 
 #. js-lingui-id: AHZflp
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
+#: src/modules/navigation/components/MobileHomeTabsRow.tsx
 msgid "Chat"
 msgstr "Chatt"
 
@@ -9683,6 +9684,8 @@ msgstr "Anlita en partner som hjälper dig att implementera och anpassa Twenty."
 
 #. js-lingui-id: i0qMbr
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
+#: src/modules/navigation/components/MobileHomeTabsRow.tsx
+#: src/modules/navigation/components/MobileNavigationBar.tsx
 msgid "Home"
 msgstr "Hem"
 
@@ -11602,11 +11605,6 @@ msgstr "loop"
 msgid "Mail Account"
 msgstr "E-postkonto"
 
-#. js-lingui-id: HRha/x
-#: src/modules/navigation/components/MobileNavigationBar.tsx
-msgid "Main navigation"
-msgstr "Huvudnavigering"
-
 #. js-lingui-id: 6Dd2PM
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
 msgid "Maintenance"
@@ -12426,6 +12424,7 @@ msgstr "Navigationsmenyalternativ"
 
 #. js-lingui-id: s2HXiD
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
+#: src/modules/navigation/components/MobileHomeTabsRow.tsx
 msgid "Navigation tabs"
 msgstr "Navigeringsflikar"
 
@@ -17255,6 +17254,7 @@ msgid "Setting up your <0>database</0>..."
 msgstr "Konfigurerar din <0>databas</0>..."
 
 #. js-lingui-id: Tz0i8g
+#: src/modules/navigation/components/MobileHomeTabsRow.tsx
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
 #: src/modules/navigation/components/SettingsNavigationDrawer.tsx
 #: src/modules/navigation/components/SettingsNavigationDrawer.tsx
