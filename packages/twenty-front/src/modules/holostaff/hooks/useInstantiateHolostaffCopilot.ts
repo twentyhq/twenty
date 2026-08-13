@@ -49,40 +49,54 @@ export const useInstantiateHolostaffCopilot = () => {
       return;
     }
 
-    scheduleIdleCallback(
+    // Guards a navigation that happens before the idle callback runs, or
+    // before the SDK import settles: an obsolete callback must not report
+    // the stage of a route the user has already left.
+    let cancelled = false;
+
+    const cancelIdleCallback = scheduleIdleCallback(
       () => {
-      sdkRef.current =
-        sdkRef.current ??
-        import('@holostaff/sdk').then((mod) => {
-          mod.holostaff.init({
-            tenantId,
-            sourceId,
-            // A CRM screen is full of customer names and emails, so mask
-            // the content of every input in the session capture, not
-            // just PII field types.
-            observe: { maskAllInputs: true },
+        if (cancelled) {
+          return;
+        }
+
+        sdkRef.current =
+          sdkRef.current ??
+          import('@holostaff/sdk').then((mod) => {
+            mod.holostaff.init({
+              tenantId,
+              sourceId,
+              // A CRM screen is full of customer names and emails, so mask
+              // the content of every input in the session capture, not
+              // just PII field types.
+              observe: { maskAllInputs: true },
+            });
+
+            return mod;
           });
 
-          return mod;
-        });
+        const stage = STAGE_ROUTES.find(([pattern]) =>
+          pattern.test(pathname),
+        )?.[1];
 
-      const stage = STAGE_ROUTES.find(([pattern]) =>
-        pattern.test(pathname),
-      )?.[1];
-
-      sdkRef.current
-        .then(({ holostaff }) => {
-          if (stage && stage !== currentStageRef.current) {
-            currentStageRef.current = stage;
-            holostaff.markStageEntry(stage);
-          }
-        })
-        .catch((error) => {
-          // eslint-disable-next-line no-console
-          console.warn('Holostaff did not load:', error);
-        });
+        sdkRef.current
+          .then(({ holostaff }) => {
+            if (!cancelled && stage && stage !== currentStageRef.current) {
+              currentStageRef.current = stage;
+              holostaff.markStageEntry(stage);
+            }
+          })
+          .catch((error) => {
+            // eslint-disable-next-line no-console
+            console.warn('Holostaff did not load:', error);
+          });
       },
       { timeout: 2000 },
     );
+
+    return () => {
+      cancelled = true;
+      cancelIdleCallback();
+    };
   }, [tenantId, sourceId, pathname]);
 };
