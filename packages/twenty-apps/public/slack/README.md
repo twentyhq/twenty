@@ -6,6 +6,7 @@
 
 - **A CRM assistant in Slack** — `@twenty how many open opportunities do we have?` or `@twenty create a company called ACME`. It answers in-thread, remembers the thread, and can read, create, update and soft-delete records
 - **Follow-ups without re-mentioning** — once it has replied in a thread you can keep talking to it for 24 hours; when that window lapses it privately nudges you to mention it again
+- **Record link previews** — paste a Twenty record link in Slack and it expands into a compact card with the record's name and key fields (an opportunity shows stage, amount and close date)
 - **Slack steps for your workflows** — post, update or delete messages, send ephemerals, add reactions, list channels
 
 ## 🤖 The assistant
