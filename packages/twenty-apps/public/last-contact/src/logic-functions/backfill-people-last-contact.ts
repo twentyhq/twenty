@@ -35,11 +35,7 @@ const handler = async ({ batchId }: BackfillBatchPayload): Promise<object> => {
 
   for (const personId of personIds) {
     const agg = aggByPersonId.get(personId);
-    const data = agg ? buildPersonUpdateData(agg) : {};
-
-    if (Object.keys(data).length === 0) {
-      continue;
-    }
+    const data = buildPersonUpdateData(agg);
 
     await executeWithRetry(() =>
       client.mutation({

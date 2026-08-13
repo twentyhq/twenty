@@ -1,6 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { CoreApiClient } from 'twenty-client-sdk/core';
 
+const { interactionMetricsMock } = vi.hoisted(() => ({
+  interactionMetricsMock: vi.fn(),
+}));
+vi.mock('src/utils/update-person-interaction-metrics', () => ({
+  updatePersonInteractionMetrics: interactionMetricsMock,
+}));
+
 import { updatePersonLastContactFromCalendar } from 'src/utils/update-person-last-contact-from-calendar';
 
 const PERSON_ID = '11111111-1111-1111-1111-111111111111';
@@ -24,6 +31,8 @@ const buildClient = (...queryResults: unknown[]) => {
 };
 
 beforeEach(() => {
+  interactionMetricsMock.mockReset();
+  interactionMetricsMock.mockResolvedValue(undefined);
   vi.useFakeTimers();
   vi.setSystemTime(new Date(NOW));
 });
@@ -129,6 +138,7 @@ describe('updatePersonLastContactAtFromCalendar', () => {
       lastInboundAt: PAST_EVENT_STARTS_AT,
       lastMeetingId: CALENDAR_EVENT_ID,
     });
+    expect(interactionMetricsMock).toHaveBeenCalledWith(client, PERSON_ID);
   });
 
   it('should not update the person when they have no past events', async () => {

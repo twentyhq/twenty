@@ -1,13 +1,17 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { queryMock, mutationMock } = vi.hoisted(() => ({
+const { queryMock, mutationMock, interactionMetricsMock } = vi.hoisted(() => ({
   queryMock: vi.fn(),
   mutationMock: vi.fn(),
+  interactionMetricsMock: vi.fn(),
 }));
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: vi.fn(function () {
     return { query: queryMock, mutation: mutationMock };
   }),
+}));
+vi.mock('src/utils/update-person-interaction-metrics', () => ({
+  updatePersonInteractionMetrics: interactionMetricsMock,
 }));
 
 import onCalendarInteraction from '../on-calendar-interaction';
@@ -30,6 +34,8 @@ const buildEvent = (personId: string | null) => ({
 beforeEach(() => {
   queryMock.mockReset();
   mutationMock.mockReset();
+  interactionMetricsMock.mockReset();
+  interactionMetricsMock.mockResolvedValue(undefined);
   mutationMock.mockResolvedValue({ updatePeople: [{ id: 'updated' }] });
 });
 
@@ -87,6 +93,10 @@ describe('on-calendar-interaction handler', () => {
       lastInboundAt: PAST_EVENT_STARTS_AT,
       lastMeetingId: 'event-1',
     });
+    expect(interactionMetricsMock).toHaveBeenCalledWith(
+      expect.anything(),
+      PERSON_ID,
+    );
   });
 
   it('should do nothing when the participant has no personId', async () => {

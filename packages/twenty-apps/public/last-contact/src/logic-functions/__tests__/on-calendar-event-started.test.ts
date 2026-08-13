@@ -1,13 +1,17 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { queryMock, mutationMock } = vi.hoisted(() => ({
+const { queryMock, mutationMock, interactionMetricsMock } = vi.hoisted(() => ({
   queryMock: vi.fn(),
   mutationMock: vi.fn(),
+  interactionMetricsMock: vi.fn(),
 }));
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: vi.fn(function () {
     return { query: queryMock, mutation: mutationMock };
   }),
+}));
+vi.mock('src/utils/update-person-interaction-metrics', () => ({
+  updatePersonInteractionMetrics: interactionMetricsMock,
 }));
 
 import onCalendarEventStarted from '../on-calendar-event-started';
@@ -82,6 +86,8 @@ const singlePage = (nodes: Record<string, unknown>[]): Page => ({
 beforeEach(() => {
   queryMock.mockReset();
   mutationMock.mockReset();
+  interactionMetricsMock.mockReset();
+  interactionMetricsMock.mockResolvedValue(undefined);
   mutationMock.mockResolvedValue({ updatePeople: [{ id: 'updated' }] });
 });
 

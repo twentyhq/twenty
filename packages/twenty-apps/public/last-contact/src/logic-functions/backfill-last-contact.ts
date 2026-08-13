@@ -28,6 +28,6 @@ export default definePostInstallLogicFunction({
   description:
     'Counts people, opportunities and companies after installation and enqueues one backfill job per record batch.',
   timeoutSeconds: 300,
-  shouldRunOnVersionUpgrade: false,
+  shouldRunOnVersionUpgrade: true,
   handler,
 });

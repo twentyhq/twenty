@@ -1,6 +1,7 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { pickContactTeamMemberId } from 'src/utils/pick-contact-team-member';
+import { updatePersonInteractionMetrics } from 'src/utils/update-person-interaction-metrics';
 import { updatePersonForInteraction } from 'src/utils/update-person-last-contact';
 import { updateRelatedLastContact } from 'src/utils/update-related-last-contact';
 
@@ -78,6 +79,8 @@ export const updatePersonLastContactFromCalendar = async (
     itemId: calendarEvent.id,
     workspaceMemberId,
   });
+
+  await updatePersonInteractionMetrics(client, personId);
 
   await updateRelatedLastContact(client, {
     personId,

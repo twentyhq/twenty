@@ -18,7 +18,9 @@ type MessageMemberInfo = { ownerId: string; fromIsMember: boolean };
 type ContactItem = { kind: 'email' | 'meeting'; id: string };
 
 export type LastContact = { at: string; item: ContactItem };
-export type PersonUpdateData = Record<string, string | null>;
+export type PersonUpdateData = Record<string, string | number | null>;
+
+type ConnectionMetric = { count: number; lastInteractionAt: string };
 
 export type PersonAgg = {
   lastContactAt?: string;
@@ -28,6 +30,52 @@ export type PersonAgg = {
   lastInboundAt?: string;
   lastEmail?: { at: string; id: string };
   lastMeeting?: { at: string; id: string };
+  interactionCount?: number;
+  strongestConnectionId?: string | null;
+  connectionMetrics?: Map<string, ConnectionMetric>;
+};
+
+export const recordInteractionMetric = (
+  agg: PersonAgg,
+  occurredAt: string,
+  workspaceMemberId: string | null | undefined,
+): void => {
+  agg.interactionCount = (agg.interactionCount ?? 0) + 1;
+
+  if (!workspaceMemberId) {
+    return;
+  }
+
+  const connectionMetrics =
+    agg.connectionMetrics ?? new Map<string, ConnectionMetric>();
+  const currentMetric = connectionMetrics.get(workspaceMemberId);
+  const candidateMetric = {
+    count: (currentMetric?.count ?? 0) + 1,
+    lastInteractionAt:
+      !currentMetric || occurredAt > currentMetric.lastInteractionAt
+        ? occurredAt
+        : currentMetric.lastInteractionAt,
+  };
+
+  connectionMetrics.set(workspaceMemberId, candidateMetric);
+  agg.connectionMetrics = connectionMetrics;
+
+  const strongestConnectionId = agg.strongestConnectionId;
+  const strongestMetric = strongestConnectionId
+    ? connectionMetrics.get(strongestConnectionId)
+    : undefined;
+  const candidateIsStronger =
+    !strongestMetric ||
+    candidateMetric.count > strongestMetric.count ||
+    (candidateMetric.count === strongestMetric.count &&
+      (candidateMetric.lastInteractionAt > strongestMetric.lastInteractionAt ||
+        (candidateMetric.lastInteractionAt ===
+          strongestMetric.lastInteractionAt &&
+          workspaceMemberId < (strongestConnectionId ?? workspaceMemberId))));
+
+  if (candidateIsStronger) {
+    agg.strongestConnectionId = workspaceMemberId;
+  }
 };
 
 const chunk = <T>(items: T[], size: number): T[][] => {
@@ -258,6 +306,7 @@ const foldEmail = (
   messageId: string,
   info: MessageMemberInfo | undefined,
 ): void => {
+  recordInteractionMetric(agg, receivedAt, info?.ownerId);
   if (!agg.lastEmail || receivedAt > agg.lastEmail.at) {
     agg.lastEmail = { at: receivedAt, id: messageId };
   }
@@ -281,6 +330,7 @@ const foldMeeting = (
   calendarEventId: string,
   ownerId: string | null,
 ): void => {
+  recordInteractionMetric(agg, startsAt, ownerId);
   if (!agg.lastMeeting || startsAt > agg.lastMeeting.at) {
     agg.lastMeeting = { at: startsAt, id: calendarEventId };
   }
@@ -335,7 +385,13 @@ export const buildPersonAggregates = async (
     return created;
   };
 
+  const seenEmails = new Set<string>();
   for (const email of emails) {
+    const interactionKey = `${email.personId}:${email.messageId}`;
+    if (seenEmails.has(interactionKey)) {
+      continue;
+    }
+    seenEmails.add(interactionKey);
     foldEmail(
       aggFor(email.personId),
       email.receivedAt,
@@ -343,7 +399,13 @@ export const buildPersonAggregates = async (
       messageMemberInfo.get(email.messageId),
     );
   }
+  const seenMeetings = new Set<string>();
   for (const meeting of meetings) {
+    const interactionKey = `${meeting.personId}:${meeting.calendarEventId}`;
+    if (seenMeetings.has(interactionKey)) {
+      continue;
+    }
+    seenMeetings.add(interactionKey);
     foldMeeting(
       aggFor(meeting.personId),
       meeting.startsAt,
@@ -371,23 +433,27 @@ export const pickLatestLastContact = (
     undefined,
   );
 
-export const buildPersonUpdateData = (agg: PersonAgg): PersonUpdateData => ({
-  ...(agg.lastContactAt
+export const buildPersonUpdateData = (
+  agg: PersonAgg | undefined,
+): PersonUpdateData => ({
+  interactionCount: agg?.interactionCount ?? 0,
+  strongestConnectionId: agg?.strongestConnectionId ?? null,
+  ...(agg?.lastContactAt
     ? {
         lastContactAt: agg.lastContactAt,
         lastContactById: agg.lastContactById ?? null,
       }
     : {}),
-  ...(agg.lastOutboundAt ? { lastOutboundAt: agg.lastOutboundAt } : {}),
-  ...(agg.lastInboundAt ? { lastInboundAt: agg.lastInboundAt } : {}),
-  ...(agg.lastEmail ? { lastEmailId: agg.lastEmail.id } : {}),
-  ...(agg.lastMeeting ? { lastMeetingId: agg.lastMeeting.id } : {}),
-  ...(agg.item?.kind === 'email'
+  ...(agg?.lastOutboundAt ? { lastOutboundAt: agg.lastOutboundAt } : {}),
+  ...(agg?.lastInboundAt ? { lastInboundAt: agg.lastInboundAt } : {}),
+  ...(agg?.lastEmail ? { lastEmailId: agg.lastEmail.id } : {}),
+  ...(agg?.lastMeeting ? { lastMeetingId: agg.lastMeeting.id } : {}),
+  ...(agg?.item?.kind === 'email'
     ? {
         lastContactItemMessageId: agg.item.id,
         lastContactItemCalendarEventId: null,
       }
-    : agg.item?.kind === 'meeting'
+    : agg?.item?.kind === 'meeting'
       ? {
           lastContactItemCalendarEventId: agg.item.id,
           lastContactItemMessageId: null,

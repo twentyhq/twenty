@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.0
+
+- Add Strongest connection and Interaction count fields to People. Counts use unique synced emails and completed, non-canceled meetings; strongest connection selects the teammate with the most interactions and breaks ties by recency.
+- Recompute interaction metrics as new email and calendar interactions arrive.
+- Run the historical backfill on version upgrades so existing installations repair last-contact fields and populate the new metrics after upgrading.
+
 ## 1.2.3
 
 - Rework the last-contact backfill into a single fan-out instead of a logic function that called its own HTTP route in a loop with blocking sleeps. On install it counts people, opportunities and companies and enqueues one job per record batch via `enqueueJob`. Each job receives its batch id and processes the matching record window (offset pagination). Jobs are staggered with `delayMs` to stay under the hosted API rate limiting.

@@ -1,6 +1,6 @@
 export const APP_DISPLAY_NAME = 'Last contact';
 export const APP_DESCRIPTION =
-  'Know where every relationship stands. Adds Last contact, Last outbound, Last inbound, Last contact by, and the last email and meeting to People, plus Last contact on Companies and Opportunities, kept up to date automatically from your synced emails and meetings.';
+  'Know where every relationship stands. Adds Last contact, Last outbound, Last inbound, Last contact by, Strongest connection, Interaction count, and the last email and meeting to People, plus Last contact on Companies and Opportunities, kept up to date automatically from your synced emails and meetings.';
 export const APPLICATION_UNIVERSAL_IDENTIFIER = '66a504cc-0a75-410e-a43f-cdeae1db1522';
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER = '34187abe-1b98-4153-85cd-4808e0aebf30';
 export const LAST_CONTACT_AT_FIELD_UNIVERSAL_IDENTIFIER =
@@ -34,6 +34,12 @@ export const LAST_CONTACT_BY_FIELD_UNIVERSAL_IDENTIFIER =
   'cfdee7bd-8d41-41e6-a888-512705e75d7b';
 export const LAST_CONTACT_FOR_PEOPLE_ON_WORKSPACE_MEMBER_FIELD_UNIVERSAL_IDENTIFIER =
   'bec41e57-6b6f-4bb2-90cc-4030384dd8f6';
+export const INTERACTION_COUNT_FIELD_UNIVERSAL_IDENTIFIER =
+  'b1282f21-c65e-41db-988c-736b9d27fb40';
+export const STRONGEST_CONNECTION_FIELD_UNIVERSAL_IDENTIFIER =
+  '40ccef2b-b076-4664-bd95-569b9f968d8f';
+export const STRONGEST_CONNECTION_FOR_PEOPLE_ON_WORKSPACE_MEMBER_FIELD_UNIVERSAL_IDENTIFIER =
+  '1a2d23af-f5b3-4810-8841-749800cbe0be';
 
 export const LAST_CONTACT_ITEM_MORPH_ID =
   '97eafe97-0ee1-4857-b233-fec855f6bf1a';
