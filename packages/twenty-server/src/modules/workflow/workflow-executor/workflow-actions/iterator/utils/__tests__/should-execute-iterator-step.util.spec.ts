@@ -128,7 +128,6 @@ describe('shouldExecuteIteratorStep', () => {
         'step-2': { status: StepStatus.SUCCESS },
       };
 
-      // Only step-1 is in the loop
       getAllStepIdsInLoop.mockReturnValue(['step-1']);
 
       const result = shouldExecuteIteratorStep({

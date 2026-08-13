@@ -162,7 +162,6 @@ describe('Field permissions restrictions', () => {
       (role: any) => role.label === 'Member',
     ).id;
 
-    // Create a company and a person
     companyId = randomUUID();
     personId = randomUUID();
     const createCompanyOp = createOneOperationFactory({
@@ -180,7 +179,6 @@ describe('Field permissions restrictions', () => {
 
     await makeGraphqlAPIRequest(createPersonOperation);
 
-    // Get object and field metadata IDs
     const getObjectMetadataOp = {
       query: gql`
         query {
@@ -240,7 +238,6 @@ describe('Field permissions restrictions', () => {
   });
 
   afterAll(async () => {
-    // Restore original role
     const restoreMemberRoleQuery = {
       query: `
         mutation UpdateWorkspaceMemberRole {
@@ -434,7 +431,6 @@ describe('Field permissions restrictions', () => {
       restrictedPersonFieldId,
     );
 
-    // Query NOT requesting the restricted field
     const graphqlOperation = findManyOperationFactory({
       objectMetadataSingularName: 'company',
       objectMetadataPluralName: 'companies',

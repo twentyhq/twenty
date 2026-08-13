@@ -74,7 +74,6 @@ const companyPeopleField = getMockFieldMetadataItemOrThrow({
 const TEST_RECORD_ID = 'test-record-123';
 const TEST_PERSON_RECORD_ID = 'test-person-456';
 
-// Widget ID constants for stories
 const WIDGET_ID_NUMBER_CHART = 'widget-number-chart';
 const WIDGET_ID_BAR_CHART = 'widget-bar-chart';
 const WIDGET_ID_SMALL = 'widget-small';
@@ -1303,10 +1302,8 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Find the "See all" link button by its test id
     const seeAllLink = await canvas.findByTestId('widget-see-all-link');
 
-    // Verify the button is visible
     expect(seeAllLink).toBeVisible();
 
     // Verify it has a well-formed link (should contain the filter query params)

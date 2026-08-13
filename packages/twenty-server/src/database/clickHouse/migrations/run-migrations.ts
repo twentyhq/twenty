@@ -114,7 +114,6 @@ async function runMigrations() {
       );
 
     for (const statement of statements) {
-      // Skip comment-only blocks
       const cleanedStatement = statement
         .split('\n')
         .filter((line) => !line.trim().startsWith('--'))

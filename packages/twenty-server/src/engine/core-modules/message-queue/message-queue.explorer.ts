@@ -205,7 +205,6 @@ export class MessageQueueExplorer implements OnModuleInit {
       },
     );
 
-    // Return early if no matching methods found
     if (filteredProcessMethodNames.length === 0) {
       return;
     }
@@ -216,7 +215,6 @@ export class MessageQueueExplorer implements OnModuleInit {
       if (this.moduleRef.registerRequestByContextId) {
         this.moduleRef.registerRequestByContextId(
           {
-            // Add workspaceId to the request object
             req: {
               workspaceId: job.data?.workspaceId,
             },

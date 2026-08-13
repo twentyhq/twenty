@@ -44,7 +44,6 @@ describe('permissionsOnRelations', () => {
       (role: any) => role.label === 'Member',
     ).id;
 
-    // Create a person record
     const companyId = randomUUID();
     const graphqlOperationForCompanyCreation = createOneOperationFactory({
       objectMetadataSingularName: 'company',
@@ -170,7 +169,6 @@ describe('permissionsOnRelations', () => {
 
     const response = await makeGraphqlAPIRequestWithJony(graphqlOperation);
 
-    // The query should succeed
     expect(response.body.data).toBeDefined();
     expect(response.body.data.people).toBeDefined();
     const person = response.body.data.people.edges[0].node;
@@ -197,7 +195,6 @@ describe('permissionsOnRelations', () => {
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     });
 
-    // Create a query with nested relations
     const graphqlOperation = findOneOperationFactory({
       objectMetadataSingularName: 'person',
       gqlFields: `

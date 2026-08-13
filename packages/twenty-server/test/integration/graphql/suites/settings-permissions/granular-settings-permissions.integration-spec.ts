@@ -88,7 +88,6 @@ describe('Granular settings permissions', () => {
   });
 
   afterAll(async () => {
-    // Restore JONY's original Member role
     await updateWorkspaceMemberRole({
       input: {
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
@@ -97,7 +96,6 @@ describe('Granular settings permissions', () => {
       expectToFail: false,
     });
 
-    // Delete the custom role
     const deleteRoleQuery = deleteOneRoleOperationFactory(customRoleId);
 
     await client
@@ -179,7 +177,6 @@ describe('Granular settings permissions', () => {
         'Updated Test Workspace',
       );
 
-      // Restore original workspace name
       const restoreWorkspaceQuery = {
         query: `
           mutation UpdateWorkspace {
@@ -226,7 +223,6 @@ describe('Granular settings permissions', () => {
       expect(response.body.data.createWorkflow).toBeDefined();
       expect(response.body.data.createWorkflow.name).toBe('Test Workflow');
 
-      // Clean up - delete the created workflow
       const graphqlOperation = destroyOneOperationFactory({
         objectMetadataSingularName: 'workflow',
         gqlFields: `
@@ -390,7 +386,6 @@ describe('Granular settings permissions', () => {
 
   describe('Dynamic Permission Updates', () => {
     it('should allow adding new setting permissions to existing role', async () => {
-      // Add SECURITY permission to the custom role
       const upsertSecurityPermissionQuery = {
         query: `
           mutation UpsertPermissionFlags {

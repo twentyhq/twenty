@@ -136,7 +136,6 @@ describe('deleteUser', () => {
     expect(createdMember).toBeDefined();
     const createdWorkspaceMemberId = createdMember.id;
 
-    // 2. Act
     const deleteUserFromWorkspaceMutation = {
       query: `
         mutation DeleteUserFromWorkspace {
@@ -156,7 +155,6 @@ describe('deleteUser', () => {
 
     expect(deleteResponse.body.errors).toBeUndefined();
 
-    // 3. Assert
     const membersAfterDeletionResponse = await client
       .post('/graphql')
       .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)

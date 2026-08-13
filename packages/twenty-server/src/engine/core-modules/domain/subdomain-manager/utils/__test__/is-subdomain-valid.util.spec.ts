@@ -288,19 +288,15 @@ describe('isSubdomainValid', () => {
     });
 
     it('should handle boundary length cases precisely', () => {
-      // Exactly 1 character (minimum valid)
       expect(isSubdomainValid('a')).toBe(true);
 
-      // Exactly 2 characters
       expect(isSubdomainValid('ab')).toBe(true);
 
-      // Exactly 30 characters (maximum valid)
       const exactly30Chars = 'a'.repeat(28) + 'bc';
 
       expect(exactly30Chars.length).toBe(30);
       expect(isSubdomainValid(exactly30Chars)).toBe(true);
 
-      // Exactly 31 characters (first invalid length)
       const exactly31Chars = 'a'.repeat(29) + 'bc';
 
       expect(exactly31Chars.length).toBe(31);
@@ -320,11 +316,8 @@ describe('isSubdomainValid', () => {
     it('should accept valid subdomains that are similar to reserved ones but not exact matches', () => {
       // 'testing' is reserved, but 'testing123' is not
       expect(isSubdomainValid('testing123')).toBe(true);
-      // 'api' is reserved, but 'myapi' is not
       expect(isSubdomainValid('myapi')).toBe(true);
-      // 'admin' is reserved, but 'adminpanel' is not
       expect(isSubdomainValid('adminpanel')).toBe(true);
-      // 'test' is reserved, but 'testapp' is not
       expect(isSubdomainValid('testapp')).toBe(true);
     });
 
@@ -360,7 +353,6 @@ describe('isSubdomainValid', () => {
       expect(isSubdomainValid('api-test')).toBe(false);
       expect(isSubdomainValid('api-123')).toBe(false);
 
-      // But allow 'api' in other positions
       expect(isSubdomainValid('myapi')).toBe(true);
     });
 
@@ -368,13 +360,10 @@ describe('isSubdomainValid', () => {
       // The regex pattern is: /^(?!api-)[a-z0-9](?:[a-z0-9-]{0,28}[a-z0-9])?$/
       // This means: start char + optional (0-28 middle chars + end char) = 1-30 total chars
 
-      // 1 char: start only
       expect(isSubdomainValid('a')).toBe(true);
 
-      // 3 chars: start + 1 middle + end
       expect(isSubdomainValid('abc')).toBe(true);
 
-      // 30 chars: start + 28 middle + end
       const thirtyChars = 'a' + 'b'.repeat(28) + 'c';
 
       expect(thirtyChars.length).toBe(30);

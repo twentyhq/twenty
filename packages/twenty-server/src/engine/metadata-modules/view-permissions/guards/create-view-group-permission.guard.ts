@@ -31,7 +31,6 @@ export class CreateViewGroupPermissionGuard implements CanActivate {
           : null;
     }
 
-    // For REST: extract from request body
     if (!viewId && typeof request.body?.viewId === 'string') {
       viewId = request.body.viewId;
     }

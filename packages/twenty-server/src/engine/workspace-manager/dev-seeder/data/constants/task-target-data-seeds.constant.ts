@@ -18,7 +18,6 @@ export const TASK_TARGET_DATA_SEED_COLUMNS: (keyof TaskTargetDataSeed)[] = [
   'targetOpportunityId',
 ];
 
-// Generate all task target IDs
 const GENERATE_TASK_TARGET_IDS = (): Record<string, string> => {
   const TASK_TARGET_IDS: Record<string, string> = {};
 
@@ -43,7 +42,6 @@ const GENERATE_TASK_TARGET_IDS = (): Record<string, string> => {
 
 const TASK_TARGET_DATA_SEED_IDS = GENERATE_TASK_TARGET_IDS();
 
-// Generate task target data seeds
 const GENERATE_TASK_TARGET_SEEDS = (): TaskTargetDataSeed[] => {
   const TASK_TARGET_SEEDS: TaskTargetDataSeed[] = [];
 
@@ -82,7 +80,6 @@ const GENERATE_TASK_TARGET_SEEDS = (): TaskTargetDataSeed[] => {
 
 export const TASK_TARGET_DATA_SEEDS = GENERATE_TASK_TARGET_SEEDS();
 
-// Map for O(1) lookups by task ID
 export const TASK_TARGET_DATA_SEEDS_MAP = new Map<string, TaskTargetDataSeed>(
   TASK_TARGET_DATA_SEEDS.filter((target) => target.taskId !== null).map(
     (target) => [target.taskId!, target],

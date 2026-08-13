@@ -64,7 +64,6 @@ describe('Role update should fail', () => {
   });
 
   beforeEach(async () => {
-    // Create a role for each test
     const { data } = await createOneRole({
       expectToFail: false,
       input: {
@@ -104,7 +103,6 @@ describe('Role update should fail', () => {
     let roleWithWritePermissionsId: string;
 
     beforeEach(async () => {
-      // Create a role with read=true and write=true
       const { data } = await createOneRole({
         expectToFail: false,
         input: {
@@ -169,7 +167,6 @@ describe('Role update should fail', () => {
         }),
       },
     },
-    // Read/Write permissions consistency tests
     {
       title:
         'when updating canReadAllObjectRecords to false while canUpdateAllObjectRecords is true',

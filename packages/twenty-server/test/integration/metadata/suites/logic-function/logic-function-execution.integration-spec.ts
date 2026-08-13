@@ -11,7 +11,6 @@ const DEFAULT_TEMPLATE_FUNCTION_CODE = `export const main = async (params: { a: 
   return { message: \`Toto: \${params.a} and \${params.b}\` };
 };`;
 
-// Test function using external packages from default layer (lodash.groupby)
 const EXTERNAL_PACKAGES_FUNCTION_CODE = `import groupBy from 'lodash.groupby';
 
 export const main = async (params: { items: Array<{ category: string; name: string }> }): Promise<object> => {
@@ -22,7 +21,6 @@ export const main = async (params: { items: Array<{ category: string; name: stri
   };
 };`;
 
-// Test function that throws an error
 const ERROR_FUNCTION_CODE = `export const main = async (params: { shouldFail: boolean }): Promise<object> => {
   if (params.shouldFail) {
     throw new Error('Intentional test error');
@@ -34,7 +32,6 @@ describe('Logic Function Execution', () => {
   const createdFunctionIds: string[] = [];
 
   afterAll(async () => {
-    // Clean up all created functions
     for (const functionId of createdFunctionIds) {
       try {
         await deleteLogicFunction({
@@ -120,7 +117,6 @@ describe('Logic Function Execution', () => {
       expectToFail: false,
     });
 
-    // Execute the function with items to group
     const { data: executeData } = await executeLogicFunction({
       input: {
         id: functionId,
@@ -237,7 +233,6 @@ describe('Logic Function Execution', () => {
   });
 
   it('should handle errors thrown by logic functions', async () => {
-    // Create the function with error-throwing code
     const { data: createData } = await createOneLogicFunction({
       input: {
         name: 'Error Test Function',

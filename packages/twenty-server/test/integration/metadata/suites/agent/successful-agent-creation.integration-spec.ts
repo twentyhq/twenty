@@ -186,7 +186,6 @@ describe('Agent creation should succeed', () => {
 
     const createdRoleId = roleData?.createOneRole?.id;
 
-    // Create agent with role assignment
     const { data } = await createOneAgent({
       expectToFail: false,
       input: {

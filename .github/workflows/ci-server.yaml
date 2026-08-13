@@ -273,6 +273,10 @@ jobs:
         include:
           - shard: 1
             orm-v2: true
+          - shard: 2
+            orm-v2: true
+          - shard: 3
+            orm-v2: true
     services:
       postgres:
         image: postgres:18
@@ -309,9 +313,13 @@ jobs:
       CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"
       CLICKHOUSE_PASSWORD: clickhousePassword
       SHARD_COUNTER: 16
+      # The flagged run keeps every suite in one process (jest maxWorkers is 1)
+      # and its heap grows across suites, so it shards on suite count, not on
+      # the 16-way split the unflagged shards use.
+      ORM_V2_SHARD_COUNTER: 3
       AUTH_COOKIE_SESSIONS_ENABLED: ${{ contains(github.event.pull_request.labels.*.name, 'ci:auth-cookie-sessions') }}
       TEST_FORCED_FEATURE_FLAGS: ${{ matrix.orm-v2 && 'IS_ORM_V2_READ_PATH_ENABLED' || '' }}
-      ORM_V2_TEST_PATH_PATTERN: '(find-many|composite-field-pagination|filter-by-relation-field|order-by-relation-field|nested-relation|soft-deleted-relation|relation-join-rls)'
+      ORM_V2_TEST_PATH_PATTERN: '(find-many|find-one|find-duplicates|group-by|composite-field-pagination|filter-by-relation-field|order-by-relation-field|nested-relation|soft-deleted-relation|relation-join-rls|object-records-permissions|merge-many)'
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -351,7 +359,7 @@ jobs:
           tag: scope:backend
           tasks: 'test:integration'
           configuration: 'with-db-reset'
-          args: ${{ matrix.orm-v2 && format('--shard=1/1 --testPathPattern={0}', env.ORM_V2_TEST_PATH_PATTERN) || format('--shard={0}/{1}', matrix.shard, env.SHARD_COUNTER) }}
+          args: ${{ matrix.orm-v2 && format('--shard={0}/{1} --testPathPattern={2}', matrix.shard, env.ORM_V2_SHARD_COUNTER, env.ORM_V2_TEST_PATH_PATTERN) || format('--shard={0}/{1}', matrix.shard, env.SHARD_COUNTER) }}
       # The secure-deployment suite boots the app as a production https
       # deployment (SERVER_URL is env-only, forced by its jest config), so it
       # cannot ride the main run. One shard is enough.

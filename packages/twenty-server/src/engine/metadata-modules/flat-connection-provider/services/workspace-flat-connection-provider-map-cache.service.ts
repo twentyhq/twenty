@@ -15,7 +15,7 @@ import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/uti
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
-@WorkspaceCache('flatConnectionProviderMaps')
+@WorkspaceCache('flatConnectionProviderMaps', { packingPonderation: 1 })
 export class WorkspaceFlatConnectionProviderMapCacheService extends WorkspaceCacheProvider<FlatConnectionProviderMaps> {
   constructor(
     @InjectRepository(ConnectionProviderEntity)

@@ -203,7 +203,6 @@ export const useNavigationMenuItemDndKit = (
       const sourceIsSortable = source !== null && isSortable(source);
       const resolved = resolveDropTarget(target, getNavItemById, sectionType);
 
-      // Branch 1: sortable-to-sortable
       if (
         resolved !== null &&
         source !== null &&
@@ -234,7 +233,6 @@ export const useNavigationMenuItemDndKit = (
         return;
       }
 
-      // Branch 3: add-to-nav drag over droppable
       if (resolved !== null) {
         setAddToNavigationFallbackDestination(resolved.destination);
         setActiveDropTargetId(resolved.effectiveDropTargetId);

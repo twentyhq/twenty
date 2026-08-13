@@ -9,6 +9,7 @@ import { createHostFetchEnforcingPolicy } from '@/host/utils/createHostFetchEnfo
 import { type GeometryTracker } from '@/host/types/GeometryTracker';
 import { fetchComponentSource } from '@/host/utils/fetchComponentSource';
 import { fetchSdkClientSources } from '@/host/utils/fetchSdkClientSources';
+import { buildFrontComponentStorageSnapshots } from '@/host/utils/buildFrontComponentStorageSnapshots';
 import { FRONT_COMPONENT_SANDBOX_DOCUMENT } from '@/remote/sandbox/generated/frontComponentSandboxDocument';
 import { createFrontComponentSandboxIframe } from '@/remote/sandbox/utils/createFrontComponentSandboxIframe';
 import { createFrontComponentSandboxMessageHandler } from '@/remote/sandbox/utils/createFrontComponentSandboxMessageHandler';
@@ -26,6 +27,7 @@ type FrontComponentWorkerEffectProps = {
   sdkClientUrls?: SdkClientUrls;
   sharedDependenciesUrl?: string;
   applicationVariables?: Record<string, string>;
+  storageNamespace?: string;
   geometryTracker: GeometryTracker;
   setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
   setThread: React.Dispatch<React.SetStateAction<FrontComponentThread | null>>;
@@ -40,6 +42,7 @@ export const FrontComponentWorkerEffect = ({
   sdkClientUrls,
   sharedDependenciesUrl,
   applicationVariables,
+  storageNamespace,
   geometryTracker,
   setReceiver,
   setThread,
@@ -125,6 +128,10 @@ export const FrontComponentWorkerEffect = ({
           return;
         }
 
+        const storageSnapshots = isDefined(storageNamespace)
+          ? buildFrontComponentStorageSnapshots(storageNamespace)
+          : undefined;
+
         await thread.imports.render(newReceiver.connection, {
           componentUrl,
           componentSource,
@@ -136,6 +143,7 @@ export const FrontComponentWorkerEffect = ({
           hostFetchOrigins: hostFetchPolicy.allowedOrigins,
           applicationVariables,
           initialViewportGeometry: geometryTracker.getViewportGeometry(),
+          storageSnapshots,
         });
       } catch (error) {
         if (!isCancelled) {
@@ -165,6 +173,7 @@ export const FrontComponentWorkerEffect = ({
     sdkClientUrls,
     sharedDependenciesUrl,
     applicationVariables,
+    storageNamespace,
     geometryTracker,
     setError,
     setReceiver,

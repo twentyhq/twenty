@@ -407,7 +407,7 @@ odpověď s přihlašovacími údaji z nedeklarovaného původu, takže se aplik
 
 Pokud jsou dva hostitelé na různých registrovatelných doménách (nejen na různých subdoménách), nastavte také `AUTH_COOKIE_SAME_SITE=none`, což vyžaduje HTTPS.
 
-Pokud je povolen vícepracovní prostředí (multi-workspace), neuvádějte zde každý dílčí doménový název pracovního prostoru.
-Místo toho směrujte API cesty (`/graphql`, `/metadata`, `/rest`, `/auth/`,
-`/client-config`, `/file`) na back-end na každém hostiteli pracovního prostoru, takže každý
-pracovní prostor zůstává stejného původu (same-origin) — takto běží Twenty Cloud.
+Je-li povoleno více pracovních prostorů (multi-workspace), neuvádějte zde každou subdoménu pracovního prostoru.
+Místo toho směrujte cesty API (`/graphql`, `/metadata`, `/rest`, `/auth/`,
+`/client-config`, `/file`) na back-end na každém hostname pracovního prostoru, aby každý
+pracovní prostor zůstal ve stejném původu (same-origin) — takto běží Twenty Cloud.

@@ -93,7 +93,6 @@ const GENERATE_MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_SEEDS =
           ? MessageDirection.INCOMING
           : MessageDirection.OUTGOING;
 
-      // Generate unique external IDs for email sync
       const MESSAGE_EXTERNAL_ID = `msg-${ASSOCIATION_INDEX}-${Date.now()}`;
       const MESSAGE_THREAD_EXTERNAL_ID = `thread-${Math.floor(ASSOCIATION_INDEX / 2)}-${Date.now()}`;
 

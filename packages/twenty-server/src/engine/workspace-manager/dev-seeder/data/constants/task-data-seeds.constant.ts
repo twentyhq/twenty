@@ -34,7 +34,6 @@ export const TASK_DATA_SEED_COLUMNS: (keyof TaskDataSeed)[] = [
   'updatedByName',
 ];
 
-// Generate all task IDs
 const GENERATE_TASK_IDS = (): Record<string, string> => {
   const TASK_IDS: Record<string, string> = {};
 
@@ -183,7 +182,6 @@ const FORMAT_DUE_DATE = (daysFromNow: number | null): string | null => {
   return DATE.toISOString();
 };
 
-// Generate task data seeds
 const GENERATE_TASK_SEEDS = (): TaskDataSeed[] => {
   const TASK_SEEDS: TaskDataSeed[] = [];
 

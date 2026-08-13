@@ -38,7 +38,6 @@ describe('PlaceAutocompleteSelect Component', () => {
       const mockOnChange = jest.fn();
       const testPlaceId = 'test-place-id';
 
-      // Simulate calling the onChange function
       mockOnChange(testPlaceId);
 
       expect(mockOnChange).toHaveBeenCalledWith(testPlaceId);
@@ -173,7 +172,6 @@ describe('PlaceAutocompleteSelect Component', () => {
       validDropdownIds.forEach((id) => {
         expect(typeof id).toBe('string');
         expect(id.length).toBeGreaterThan(0);
-        // Should not contain spaces (valid HTML ID)
         expect(id).not.toMatch(/\s/);
       });
     });

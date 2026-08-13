@@ -31,7 +31,7 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 
 @Injectable()
-@WorkspaceCache('flatFieldMetadataMaps')
+@WorkspaceCache('flatFieldMetadataMaps', { packingPonderation: 64 })
 export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCacheProvider<
   FlatEntityMaps<FlatFieldMetadata>,
   EncodedFlatFieldMetadataMaps

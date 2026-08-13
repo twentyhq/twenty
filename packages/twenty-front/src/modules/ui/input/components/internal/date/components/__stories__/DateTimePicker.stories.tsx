@@ -71,7 +71,6 @@ export const WithOpenMonthSelect: Story = {
     );
     await userEvent.click(calendarButton);
 
-    // Now find and click the month select
     const monthSelect = await body.findByText(
       'January',
       {},

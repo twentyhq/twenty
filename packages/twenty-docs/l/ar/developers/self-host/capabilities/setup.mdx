@@ -393,7 +393,7 @@ LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 
 صرّح بجميع أصول المتصفحات التي تتواصل مع واجهة برمجة التطبيقات (API)، مفصولة بفواصل. `SERVER_URL`
 و`FRONTEND_URL` موثوق بهما بالفعل. يقوم الخادم بتسجيل تحذير عندما يتصل به متصفح
-من مصدر (origin) غير مصرح به.
+من مصدر غير مصرح به.
 
 ```bash
 AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com
@@ -405,6 +405,6 @@ AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com
 
 إذا كان المضيفان على نطاقات قابلة للتسجيل مختلفة (وليس مجرد نطاقات فرعية مختلفة)، قم أيضًا بتعيين `AUTH_COOKIE_SAME_SITE=none`، والذي يتطلب HTTPS.
 
-مع تمكين ميزة تعدد مساحات العمل، لا تقم بإدراج كل نطاق فرعي لمساحة العمل هنا.
+مع تمكين ميزة تعدد مساحات العمل، لا تُدرِج كل نطاق فرعي لكل مساحة عمل هنا.
 بدلًا من ذلك، قم بتوجيه مسارات واجهة برمجة التطبيقات (API) (`/graphql`، `/metadata`، `/rest`، `/auth/`،
 `/client-config`، `/file`) إلى الواجهة الخلفية على كل اسم مضيف لمساحة عمل، بحيث تبقى كل مساحة عمل من نفس المصدر (same-origin) — هكذا تعمل Twenty Cloud.

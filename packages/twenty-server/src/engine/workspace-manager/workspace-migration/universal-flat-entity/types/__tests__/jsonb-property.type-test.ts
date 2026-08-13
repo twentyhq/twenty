@@ -22,7 +22,6 @@ type PrimitiveAssertions = [
 
 // oxlint-disable-next-line unused-imports/no-unused-vars
 type ObjectAssertions = [
-  // Objects get branded
   Expect<
     Equal<
       JsonbProperty<SimpleObject>,
@@ -85,7 +84,6 @@ type UnionAssertions = [
     >
   >,
 
-  // Array in union: array gets branded
   Expect<
     Equal<
       JsonbProperty<SimpleObject[] | null>,

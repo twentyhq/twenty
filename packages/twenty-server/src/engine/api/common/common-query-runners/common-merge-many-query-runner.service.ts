@@ -211,6 +211,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         workspaceDataSource: context.workspaceDataSource,
         rolePermissionConfig: context.rolePermissionConfig,
         selectedFields: args.selectedFieldsResult.select,
+        ...this.getNestedRelationsReadPathOptions(context),
       });
     }
 
@@ -496,6 +497,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         workspaceDataSource,
         rolePermissionConfig,
         selectedFields: args.selectedFieldsResult.select,
+        ...this.getNestedRelationsReadPathOptions(queryRunnerContext),
       });
     }
   }
