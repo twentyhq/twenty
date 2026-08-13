@@ -180,7 +180,7 @@ describe('WorkspaceMutationQueryBuilderV2', () => {
     expect(values).toEqual(['Tech Lead', null, 'id-1']);
   });
 
-  it('should return formatted rows and the affected count from execute', async () => {
+  it('should return formatted rows from execute', async () => {
     const { selectQueryBuilder, executedStatements } = buildBuilders({
       rows: [{ person_id: 'id-1' }, { person_id: 'id-2' }],
     });
@@ -191,10 +191,52 @@ describe('WorkspaceMutationQueryBuilderV2', () => {
       .returning(['id'])
       .execute();
 
-    expect(result.affected).toBe(2);
     expect(result.generatedMaps).toEqual([{ id: 'id-1' }, { id: 'id-2' }]);
     expect(executedStatements).toHaveLength(1);
     expect(executedStatements[0].values).toEqual(['id-1', 'id-2']);
+  });
+
+  it('should not overwrite a where parameter that collides with a set parameter name', () => {
+    const { selectQueryBuilder } = buildBuilders();
+
+    const [, values] = selectQueryBuilder
+      .where('"person"."id" = :ormV2Set_0', { ormV2Set_0: 'id-1' })
+      .update()
+      .set({ jobTitle: 'Tech Lead' })
+      .returning(['id'])
+      .getQueryAndParameters();
+
+    expect(values).toContain('id-1');
+    expect(values).toContain('Tech Lead');
+  });
+
+  it('should reject a soft delete on a table without a deletedAt column', () => {
+    const shapeWithoutDeletedAt: WorkspaceTableShape = {
+      ...personTableShape,
+      columnShapeByColumnName: {
+        id: buildColumn('id'),
+        updatedAt: buildColumn('updatedAt'),
+      },
+      columnNames: ['id', 'updatedAt'],
+      hasDeletedAtColumn: false,
+    };
+
+    const selectQueryBuilder = new WorkspaceSelectQueryBuilderV2('person', {
+      tableShape: shapeWithoutDeletedAt,
+      executor: { execute: async () => [] },
+      objectRecordsPermissions: {},
+      tableShapeByObjectMetadataId: () => companyTableShape,
+      onBeforeExecute: () => undefined,
+      formatResult: (records) => records as never,
+    });
+
+    expect(() =>
+      selectQueryBuilder
+        .where('"person"."id" = :id', { id: 'id-1' })
+        .softDelete()
+        .returning(['id'])
+        .getQuery(),
+    ).toThrow(TwentyOrmV2Exception);
   });
 
   it('should reject setting a column that does not exist', () => {

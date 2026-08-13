@@ -152,7 +152,6 @@ predicates on writes and database event emission ride with that wiring, not this
 
 - Insert and upsert. `INSERT` / `ON CONFLICT` still go through v1, which is where the
   column defaults and conflict-target derivation live.
-- Transactions and DDL.
 - `find` / `findOne` / `findBy` and the rest of the repository surface used by
   `src/modules`.
 - Transactions and DDL.

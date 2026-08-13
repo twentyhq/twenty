@@ -32,7 +32,6 @@ export type MutationQueryBuilderV2Context = {
 export type MutationResultV2 = {
   // oxlint-disable-next-line typescript/no-explicit-any
   generatedMaps: any[];
-  affected: number;
 };
 
 export class WorkspaceMutationQueryBuilderV2 {
@@ -105,7 +104,6 @@ export class WorkspaceMutationQueryBuilderV2 {
 
     return {
       generatedMaps: this.context.formatResult(entities),
-      affected: entities.length,
     };
   }
 
@@ -134,6 +132,8 @@ export class WorkspaceMutationQueryBuilderV2 {
     }
 
     if (this.kind === 'soft-delete') {
+      this.assertDeletedAtColumnExists();
+
       return this.withUpdatedAtMaintenance([
         {
           columnName: DELETED_AT_COLUMN_NAME,
@@ -143,6 +143,8 @@ export class WorkspaceMutationQueryBuilderV2 {
     }
 
     if (this.kind === 'restore') {
+      this.assertDeletedAtColumnExists();
+
       return this.withUpdatedAtMaintenance([
         { columnName: DELETED_AT_COLUMN_NAME, valueExpression: 'NULL' },
       ]);
@@ -160,7 +162,11 @@ export class WorkspaceMutationQueryBuilderV2 {
         );
       }
 
-      const parameterName = `ormV2Set_${mutationSetParameterSequence++}`;
+      let parameterName = `ormV2Set_${mutationSetParameterSequence++}`;
+
+      while (parameterName in parameters) {
+        parameterName = `ormV2Set_${mutationSetParameterSequence++}`;
+      }
 
       parameters[parameterName] = value;
       setClauses.push({ columnName, valueExpression: `:${parameterName}` });
@@ -192,6 +198,15 @@ export class WorkspaceMutationQueryBuilderV2 {
         valueExpression: 'CURRENT_TIMESTAMP',
       },
     ];
+  }
+
+  private assertDeletedAtColumnExists(): void {
+    if (!this.tableShape.hasDeletedAtColumn) {
+      throw new TwentyOrmV2Exception(
+        `"${this.tableShape.nameSingular}" has no "${DELETED_AT_COLUMN_NAME}" column, so it cannot be soft-deleted or restored`,
+        TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
+      );
+    }
   }
 
   private assertColumnExists(columnName: string): void {
