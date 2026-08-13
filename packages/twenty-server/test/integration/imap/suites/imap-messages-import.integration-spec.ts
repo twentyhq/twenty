@@ -9,7 +9,6 @@ import { deleteConnectedAccount } from 'test/integration/metadata/suites/connect
 import { saveImapSmtpCaldavAccount } from 'test/integration/metadata/suites/connected-account/utils/save-imap-smtp-caldav-account.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
 import { deliverMailOverSmtp } from 'test/integration/utils/deliver-mail-over-smtp.util';
-import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { findImportedMessageSubjects } from 'test/integration/utils/find-imported-records.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
@@ -68,10 +67,6 @@ describe('IMAP messages import (integration)', () => {
         MessageChannelEntity,
       ).findOneByOrFail({ connectedAccountId })
     ).id;
-
-    // The first sync discovers the mailboxes; messages are only imported from
-    // folders that already exist, so the folders are established up front.
-    await runMessageChannelSync(messageChannelId);
   }, 300000);
 
   afterAll(async () => {
@@ -96,9 +91,7 @@ describe('IMAP messages import (integration)', () => {
 
     await runMessageChannelSync(messageChannelId);
 
-    await expectEventually(async () => {
-      expect(await findImportedMessageSubjects([subject])).toEqual([subject]);
-    });
+    expect(await findImportedMessageSubjects([subject])).toEqual([subject]);
   }, 300000);
 
   it('keeps the channel active when the mailbox has not changed', async () => {
