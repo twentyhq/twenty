@@ -5,15 +5,10 @@ import { build } from 'esbuild';
 import { DEFAULT_API_URL_NAME } from 'twenty-shared/application';
 
 import { buildClientWrapperSource } from './client-wrapper';
+import { COMMON_SCALAR_TYPES } from './common-scalar-types';
 import { emptyDir, ensureDir, move, remove } from './fs-utils';
 import { generate } from './genql';
 import twentyClientTemplateSource from './twenty-client-template.ts?raw';
-
-const COMMON_SCALAR_TYPES = {
-  DateTime: 'string',
-  JSON: 'Record<string, unknown>',
-  UUID: 'string',
-};
 
 export const GENERATED_CORE_DIR = 'core/generated';
 

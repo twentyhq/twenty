@@ -4,15 +4,10 @@ import { join } from 'node:path';
 import { DEFAULT_API_URL_NAME } from 'twenty-shared/application';
 
 import { buildClientWrapperSource } from './client-wrapper';
+import { COMMON_SCALAR_TYPES } from './common-scalar-types';
 import { emptyDir, ensureDir } from './fs-utils';
 import { generate } from './genql';
 import twentyClientTemplateSource from './twenty-client-template.ts?raw';
-
-const COMMON_SCALAR_TYPES = {
-  DateTime: 'string',
-  JSON: 'Record<string, unknown>',
-  UUID: 'string',
-};
 
 export const generateMetadataClient = async ({
   schema,
