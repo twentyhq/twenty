@@ -9066,6 +9066,10 @@ export default {
                     ],
                     "modelId": [
                         1
+                    ],
+                    "fileAttachments": [
+                        505,
+                        "[FileAttachmentInput!]"
                     ]
                 }
             ],
