@@ -122,7 +122,13 @@ jobs:
         run: |
           npx http-server packages/twenty-front/storybook-static --port 6006 --silent &
           timeout 30 bash -c 'until curl -sf http://localhost:6006 > /dev/null 2>&1; do sleep 1; done'
-          npx nx storybook:test twenty-front --configuration=${{ matrix.storybook_scope }} --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }}
+          # A shard occasionally dies mid-import with "the iframe was reloaded",
+          # before a single story runs (Tests: no tests). vitest's retry only
+          # covers a story that ran and failed, so that abort takes the shard
+          # down on its own. Give the command one more go; a story that really
+          # fails still fails twice.
+          npx nx storybook:test twenty-front --configuration=${{ matrix.storybook_scope }} --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }} \
+            || npx nx storybook:test twenty-front --configuration=${{ matrix.storybook_scope }} --shard=${{ matrix.shard }}/${{ env.SHARD_COUNTER }} --skip-nx-cache
       - name: Upload screenshots for visual regression
         if: always() && !cancelled() && matrix.storybook_scope != 'performance'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
