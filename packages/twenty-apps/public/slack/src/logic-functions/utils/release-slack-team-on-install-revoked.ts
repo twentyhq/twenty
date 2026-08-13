@@ -17,8 +17,6 @@ type ReleaseSlackTeamOnInstallRevokedResult = {
 export const releaseSlackTeamOnInstallRevoked = async ({
   teamId,
 }: ReleaseSlackTeamOnInstallRevokedArgs): Promise<ReleaseSlackTeamOnInstallRevokedResult> => {
-  // A SERVER-scoped delete is a no-op unless this workspace still holds the claim,
-  // so a team reclaimed by another workspace in the meantime is left untouched.
   const hasReleasedTeam = await kv.delete(getSlackTeamKvKey(teamId), {
     scope: 'SERVER',
   });

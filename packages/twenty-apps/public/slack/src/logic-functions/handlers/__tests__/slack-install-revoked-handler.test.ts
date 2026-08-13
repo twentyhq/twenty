@@ -78,8 +78,6 @@ describe('slackInstallRevokedHandler', () => {
     });
   });
 
-  // The server only deletes a SERVER-scoped key for the workspace holding the claim,
-  // so a claim already released or taken over elsewhere comes back as a refused delete.
   it('should report no released team when the claim delete is refused', async () => {
     listConnectionsMock.mockResolvedValue([]);
     mockConnectedAccountTeams({});

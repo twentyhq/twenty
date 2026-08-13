@@ -72,8 +72,6 @@ export const slackEventsResolverHandler = async (
       );
     }
 
-    // Slack sends app_uninstalled and tokens_revoked in no guaranteed order, so an
-    // already-released claim is the expected second delivery, not a failure to retry.
     const claimedWorkspaceId = await findClaimedWorkspaceId(body.team_id);
 
     if (claimedWorkspaceId === null) {
