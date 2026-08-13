@@ -6,6 +6,8 @@ import {
 } from 'twenty-shared/types';
 import { type getAppPath } from 'twenty-shared/utils';
 
+import { type FrontComponentStorageType } from '../types/FrontComponentStorageType';
+
 export type NavigateFunction = <T extends AppPath>(
   to: T,
   params?: Parameters<typeof getAppPath<T>>[1],
@@ -141,6 +143,21 @@ export type OpenCommandConfirmationModalHostFunction = (
   params: Parameters<OpenCommandConfirmationModalFunction>[0],
 ) => Promise<void>;
 
+export type StorageSetFunction = (params: {
+  storageType: FrontComponentStorageType;
+  key: string;
+  serializedValue: string;
+}) => Promise<void>;
+
+export type StorageDeleteFunction = (params: {
+  storageType: FrontComponentStorageType;
+  key: string;
+}) => Promise<void>;
+
+export type StorageClearFunction = (params: {
+  storageType: FrontComponentStorageType;
+}) => Promise<void>;
+
 export type FrontComponentHostCommunicationApiStore = {
   navigate?: NavigateFunction;
   requestAccessTokenRefresh?: RequestAccessTokenRefreshFunction;
@@ -152,6 +169,9 @@ export type FrontComponentHostCommunicationApiStore = {
   updateProgress?: UpdateProgressFunction;
   copyToClipboard?: CopyToClipboardFunction;
   captureMedia?: CaptureMediaFunction;
+  storageSet?: StorageSetFunction;
+  storageDelete?: StorageDeleteFunction;
+  storageClear?: StorageClearFunction;
 };
 
 import { FRONT_COMPONENT_HOST_COMMUNICATION_API_KEY } from '../constants/front-component-host-communication-api-key';

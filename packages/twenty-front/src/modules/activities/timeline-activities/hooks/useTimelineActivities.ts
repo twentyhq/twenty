@@ -15,7 +15,6 @@ import {
 } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
-// do we need to test this?
 export const useTimelineActivities = (
   targetableObject: ActivityTargetableObject,
 ) => {

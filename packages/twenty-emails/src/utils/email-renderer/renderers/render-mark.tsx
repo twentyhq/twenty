@@ -28,7 +28,6 @@ export const renderMark = (node: JSONContent): ReactNode => {
   const text = node?.text || <>&nbsp;</>;
   const marks = [...((node?.marks as TipTapMark[]) || [])];
 
-  // Sort marks according to the defined render order
   marks.sort((a, b) => {
     return (
       TIPTAP_MARKS_RENDER_ORDER.indexOf(a.type) -
@@ -36,10 +35,8 @@ export const renderMark = (node: JSONContent): ReactNode => {
     );
   });
 
-  // Apply marks from innermost to outermost
   return marks.reduce((children: ReactNode, mark: TipTapMark) => {
     if (!isEmailDocumentMarkType(mark.type)) {
-      // Fallback for unknown mark types - skip unknown marks
       return children;
     }
 

@@ -14,6 +14,9 @@ const createHostThreadImportsStub = () =>
     updateProgress: jest.fn(),
     copyToClipboard: jest.fn(),
     captureMedia: jest.fn(),
+    storageSet: jest.fn(),
+    storageDelete: jest.fn(),
+    storageClear: jest.fn(),
     hostFetch: jest.fn(),
   }) as unknown as FrontComponentHostThreadExports;
 
@@ -39,6 +42,9 @@ describe('buildFrontComponentHostCommunicationApiFromThreadImports', () => {
       'openCommandConfirmationModal',
       'openSidePanelPage',
       'requestAccessTokenRefresh',
+      'storageClear',
+      'storageDelete',
+      'storageSet',
       'unmountFrontComponent',
       'updateProgress',
     ]);
@@ -66,6 +72,13 @@ describe('buildFrontComponentHostCommunicationApiFromThreadImports', () => {
     );
     expect(hostCommunicationApi.captureMedia).toBe(
       hostThreadImports.captureMedia,
+    );
+    expect(hostCommunicationApi.storageSet).toBe(hostThreadImports.storageSet);
+    expect(hostCommunicationApi.storageDelete).toBe(
+      hostThreadImports.storageDelete,
+    );
+    expect(hostCommunicationApi.storageClear).toBe(
+      hostThreadImports.storageClear,
     );
   });
 

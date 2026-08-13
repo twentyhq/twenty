@@ -202,7 +202,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     const result = await this.memoizer.memoizePromiseAndExecute(
       memoKey,
       async () => {
-        // Stage 1: Check local TTL
         const { freshKeys, staleKeys } = this.checkLocalTTL(
           workspaceId,
           cacheKeyNames,
@@ -213,7 +212,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
           return freshEntries;
         }
 
-        // Stage 2: Validate ttl stale keys against Redis hash
         const {
           validKeys,
           keysNeedingDataFromRedis,
@@ -225,13 +223,11 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         );
         const validatedEntries = this.getFromLocalCache(workspaceId, validKeys);
 
-        // Stage 3: Fetch data from Redis
         const { redisEntries, missingInRedis } = await this.fetchDataFromRedis(
           workspaceId,
           keysNeedingDataFromRedis,
         );
 
-        // Stage 4: Recompute remaining
         const keysToRecompute = [...keysNeedingRecompute, ...missingInRedis];
         const recomputedEntries = await this.recomputeDataFromProvider(
           workspaceId,

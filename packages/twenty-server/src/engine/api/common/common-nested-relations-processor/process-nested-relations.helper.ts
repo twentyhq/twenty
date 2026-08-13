@@ -5,6 +5,7 @@ import { type FindOptionsRelations, type ObjectLiteral } from 'typeorm';
 
 import { ProcessNestedRelationsOrmV2Helper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations-orm-v2.helper';
 import { ProcessNestedRelationsV2Helper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations-v2.helper';
+import { type NestedRelationsReadPathOptions } from 'src/engine/api/common/types/nested-relations-read-path-options.type';
 import { type AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -50,9 +51,7 @@ export class ProcessNestedRelationsHelper {
     rolePermissionConfig?: RolePermissionConfig;
     // oxlint-disable-next-line typescript/no-explicit-any
     selectedFields: Record<string, any>;
-    isOrmV2ReadPathEnabled?: boolean;
-    useReplica?: boolean;
-  }): Promise<void> {
+  } & Partial<NestedRelationsReadPathOptions>): Promise<void> {
     if (isOrmV2ReadPathEnabled) {
       return this.processNestedRelationsOrmV2Helper.processNestedRelations({
         flatObjectMetadataMaps,

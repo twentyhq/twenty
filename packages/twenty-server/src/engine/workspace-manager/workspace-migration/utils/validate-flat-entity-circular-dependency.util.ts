@@ -36,7 +36,6 @@ export const validateFlatEntityCircularDependency = <
   parentUniversalIdentifierKey: K;
   flatEntityMaps: UniversalFlatEntityMaps<T>;
 }): CircularDependencyValidationResult => {
-  // Direct self-reference check
   if (flatEntityUniversalIdentifier === flatEntityParentUniversalIdentifier) {
     return {
       status: 'fail',
@@ -44,7 +43,6 @@ export const validateFlatEntityCircularDependency = <
     };
   }
 
-  // Traverse ancestor chain to detect cycles and measure depth
   const visited = new Set<string>();
   let currentParentUniversalIdentifier: string | null | undefined =
     flatEntityParentUniversalIdentifier;
@@ -59,7 +57,6 @@ export const validateFlatEntityCircularDependency = <
       };
     }
 
-    // Check for circular dependency
     if (currentParentUniversalIdentifier === flatEntityUniversalIdentifier) {
       return {
         status: 'fail',
@@ -68,7 +65,6 @@ export const validateFlatEntityCircularDependency = <
       };
     }
 
-    // Check for cycle in ancestors (already visited node)
     if (visited.has(currentParentUniversalIdentifier)) {
       return {
         status: 'fail',
@@ -99,7 +95,6 @@ export const validateFlatEntityCircularDependency = <
     depth++;
   }
 
-  // Check max depth for the final depth value
   if (isDefined(maxDepth) && depth > maxDepth) {
     return {
       status: 'fail',

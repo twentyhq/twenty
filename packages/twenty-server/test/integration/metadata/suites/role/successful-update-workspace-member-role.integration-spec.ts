@@ -11,7 +11,6 @@ describe('Workspace member role update should succeed', () => {
   let shouldRestorePhilRole: boolean = false;
 
   beforeAll(async () => {
-    // Get the Admin, Guest, and Member role IDs
     const adminRole = await findOneRoleByLabel({ label: 'Admin' });
     const guestRole = await findOneRoleByLabel({ label: 'Guest' });
     const memberRole = await findOneRoleByLabel({ label: 'Member' });

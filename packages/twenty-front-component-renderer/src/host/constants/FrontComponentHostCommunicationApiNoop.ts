@@ -14,4 +14,7 @@ export const FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP: FrontComponentHostComm
     updateProgress: noopAsync,
     copyToClipboard: noopAsync,
     captureMedia: async () => ({ status: 'cancelled' }),
+    storageSet: noopAsync,
+    storageDelete: noopAsync,
+    storageClear: noopAsync,
   };

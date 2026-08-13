@@ -45,6 +45,9 @@ const mockSetCommandMenuItemProgress = jest.fn();
 const mockCopyToClipboard = jest.fn();
 const mockSetRecordPageActiveTabId = jest.fn();
 const mockRequestMediaCapture = jest.fn();
+const mockStorageSet = jest.fn();
+const mockStorageDelete = jest.fn();
+const mockStorageClear = jest.fn();
 
 let mockCurrentUser: { id: string } | null = { id: 'user-123' };
 let mockIsMobile = false;
@@ -148,6 +151,20 @@ jest.mock('~/hooks/useCopyToClipboard', () => ({
   }),
 }));
 
+jest.mock('twenty-front-component-renderer', () => ({
+  buildFrontComponentStorageNamespace: ({
+    applicationId,
+    userId,
+  }: {
+    applicationId: string;
+    userId: string;
+  }) => `frontComponentStorage:${applicationId}:${userId}:`,
+  setFrontComponentStorageItem: (...args: unknown[]) => mockStorageSet(...args),
+  deleteFrontComponentStorageItem: (...args: unknown[]) =>
+    mockStorageDelete(...args),
+  clearFrontComponentStorage: (...args: unknown[]) => mockStorageClear(...args),
+}));
+
 jest.mock(
   '@/front-components/media-capture/hooks/useFrontComponentMediaCapture',
   () => ({
@@ -165,20 +182,26 @@ jest.mock('@/page-layout/utils/setRecordPageActiveTabId', () => ({
 const renderUseFrontComponentExecutionContext = (
   params: Omit<
     Parameters<typeof useFrontComponentExecutionContext>[0],
-    'colorScheme'
-  > & { colorScheme?: 'light' | 'dark' },
+    'colorScheme' | 'applicationId'
+  > & { colorScheme?: 'light' | 'dark'; applicationId?: string },
 ) =>
   renderHook(
     () =>
-      useFrontComponentExecutionContext({ colorScheme: 'light', ...params }),
+      useFrontComponentExecutionContext({
+        colorScheme: 'light',
+        applicationId: APPLICATION_ID,
+        ...params,
+      }),
     {
       wrapper: ({ children }) => I18nProvider({ i18n, children }),
     },
   );
 
 const FRONT_COMPONENT_ID = 'fc-test-id';
-const COMMAND_MENU_ITEM_ID = 'cmd-item-1';
 const FIELD_METADATA_ID = '20202020-1111-4444-8888-000000000001';
+const APPLICATION_ID = 'application-test-id';
+const STORAGE_NAMESPACE = `frontComponentStorage:${APPLICATION_ID}:user-123:`;
+const COMMAND_MENU_ITEM_ID = 'cmd-item-1';
 
 const parentViewAtom =
   contextStoreRecordShowParentViewComponentState.atomFamily({
@@ -935,6 +958,76 @@ describe('useFrontComponentExecutionContext', () => {
       );
 
       dateNowSpy.mockRestore();
+    });
+  });
+
+  describe('storage', () => {
+    it('should namespace writes by application, user and storage type', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.storageSet({
+          storageType: 'localStorage',
+          key: 'theme',
+          serializedValue: '"dark"',
+        });
+      });
+
+      expect(mockStorageSet).toHaveBeenCalledWith({
+        namespace: STORAGE_NAMESPACE,
+        storageType: 'localStorage',
+        key: 'theme',
+        serializedValue: '"dark"',
+      });
+      expect(result.current.storageNamespace).toBe(STORAGE_NAMESPACE);
+    });
+
+    it('should forward delete and clear with the namespace applied', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.storageDelete({
+          storageType: 'localStorage',
+          key: 'theme',
+        });
+        await result.current.frontComponentHostCommunicationApi.storageClear({
+          storageType: 'sessionStorage',
+        });
+      });
+
+      expect(mockStorageDelete).toHaveBeenCalledWith({
+        namespace: STORAGE_NAMESPACE,
+        storageType: 'localStorage',
+        key: 'theme',
+      });
+      expect(mockStorageClear).toHaveBeenCalledWith({
+        namespace: STORAGE_NAMESPACE,
+        storageType: 'sessionStorage',
+      });
+    });
+
+    it('should reject writes and expose no namespace when signed out', async () => {
+      mockCurrentUser = null;
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      expect(result.current.storageNamespace).toBeUndefined();
+
+      await expect(
+        result.current.frontComponentHostCommunicationApi.storageSet({
+          storageType: 'localStorage',
+          key: 'theme',
+          serializedValue: '"dark"',
+        }),
+      ).rejects.toThrow('Device storage requires a signed-in user');
+
+      expect(mockStorageSet).not.toHaveBeenCalled();
     });
   });
 

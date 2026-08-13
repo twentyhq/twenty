@@ -87,6 +87,7 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
         workspaceDataSource,
         rolePermissionConfig,
         selectedFields: args.selectedFieldsResult.select,
+        ...this.getNestedRelationsReadPathOptions(queryRunnerContext),
       });
     }
 

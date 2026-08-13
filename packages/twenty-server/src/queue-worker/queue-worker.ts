@@ -21,7 +21,6 @@ async function bootstrap() {
     loggerService = app.get(LoggerService);
     exceptionHandlerService = app.get(ExceptionHandlerService);
 
-    // Inject our logger
     app.useLogger(loggerService ?? false);
 
     app.enableShutdownHooks();

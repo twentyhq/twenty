@@ -88,6 +88,7 @@ export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerSe
         workspaceDataSource,
         rolePermissionConfig,
         selectedFields: args.selectedFieldsResult.select,
+        ...this.getNestedRelationsReadPathOptions(queryRunnerContext),
       });
     }
 

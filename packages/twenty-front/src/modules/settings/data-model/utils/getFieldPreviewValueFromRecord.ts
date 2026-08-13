@@ -20,6 +20,5 @@ export const getFieldPreviewValueFromRecord = ({
     return recordFieldValue.edges[0]?.node;
   }
 
-  // Other fields
   return recordFieldValue;
 };

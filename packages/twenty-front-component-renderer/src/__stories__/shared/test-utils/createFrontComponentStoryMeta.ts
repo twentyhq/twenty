@@ -16,6 +16,9 @@ export const hostApiMocks = {
   openCommandConfirmationModal: fn().mockResolvedValue(undefined),
   copyToClipboard: fn().mockResolvedValue(undefined),
   captureMedia: fn().mockResolvedValue({ status: 'cancelled' }),
+  storageSet: fn().mockResolvedValue(undefined),
+  storageDelete: fn().mockResolvedValue(undefined),
+  storageClear: fn().mockResolvedValue(undefined),
 };
 
 export const FRONT_COMPONENT_STORY_DEFAULT_ARGS: NonNullable<
@@ -46,4 +49,7 @@ export const resetFrontComponentStoryMocks = () => {
   hostApiMocks.openCommandConfirmationModal.mockClear();
   hostApiMocks.copyToClipboard.mockClear();
   hostApiMocks.captureMedia.mockClear();
+  hostApiMocks.storageSet.mockClear();
+  hostApiMocks.storageDelete.mockClear();
+  hostApiMocks.storageClear.mockClear();
 };

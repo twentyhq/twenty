@@ -30,6 +30,7 @@ export type {
   TranslationValues,
 } from './translations/message';
 export type { FrontComponentExecutionContext } from './types/FrontComponentExecutionContext';
+export type { FrontComponentStorageType } from './types/FrontComponentStorageType';
 export { getFrontComponentCommandErrorDedupeKey } from './utils/getFrontComponentCommandErrorDedupeKey';
 export type {
   CaptureMediaFailureReason,
@@ -49,6 +50,9 @@ export type {
   OpenSidePanelPageFunction,
   OpenSidePanelPageParams,
   RequestAccessTokenRefreshFunction,
+  StorageClearFunction,
+  StorageDeleteFunction,
+  StorageSetFunction,
   UnmountFrontComponentFunction,
   UpdateProgressFunction,
 } from './globals/frontComponentHostCommunicationApi';
