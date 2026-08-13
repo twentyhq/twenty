@@ -103,12 +103,22 @@ export class BillingPortalWorkspaceService {
         successUrlPath,
       });
 
-    if (
-      isNonEmptyArray(customer?.billingSubscriptions) &&
-      customer.billingSubscriptions.some(
+    const nonCanceledSubscriptions =
+      customer?.billingSubscriptions?.filter(
         (subscription) => subscription.status !== SubscriptionStatus.Canceled,
-      )
-    ) {
+      ) ?? [];
+
+    const hasProvisionedSubscription = nonCanceledSubscriptions.some(
+      (subscription) =>
+        subscription.status !== SubscriptionStatus.Incomplete &&
+        subscription.status !== SubscriptionStatus.IncompleteExpired,
+    );
+
+    if (hasProvisionedSubscription) {
+      return successUrl;
+    }
+
+    if (isNonEmptyArray(nonCanceledSubscriptions)) {
       throw new BillingException(
         'Customer already has a non-canceled billing subscription',
         BillingExceptionCode.BILLING_SUBSCRIPTION_INVALID,
