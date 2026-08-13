@@ -14,6 +14,7 @@ export enum TwentyOrmV2ExceptionCode {
   MISSING_ALIAS = 'MISSING_ALIAS',
   INVALID_QUERY = 'INVALID_QUERY',
   TOO_MANY_RECORDS_TO_UPDATE = 'TOO_MANY_RECORDS_TO_UPDATE',
+  ENTITY_NOT_FOUND = 'ENTITY_NOT_FOUND',
 }
 
 export class TwentyOrmV2Exception extends CustomException<TwentyOrmV2ExceptionCode> {

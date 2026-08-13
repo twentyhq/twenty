@@ -30,6 +30,11 @@ import {
   type InsertRowValue,
 } from 'src/engine/twenty-orm-v2/sql/utils/build-insert-statement.util';
 import { type MutationKind } from 'src/engine/twenty-orm-v2/sql/utils/build-mutation-statement.util';
+import {
+  applyFindOptionsToQueryBuilder,
+  type FindOptionsV2,
+} from 'src/engine/twenty-orm-v2/query-builder/utils/apply-find-options.util';
+import { type ObjectWhereLike } from 'src/engine/twenty-orm-v2/query-builder/types/query-builder-v2.type';
 import { WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-select-query-builder-v2';
 import { compileNamedParameters } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
 import { serializeJsonbWriteValue } from 'src/engine/twenty-orm-v2/sql/utils/serialize-jsonb-write-value.util';
@@ -119,6 +124,70 @@ export class WorkspaceRepositoryV2 {
 
   getInternalContext(): WorkspaceInternalContext {
     return this.options.internalContext;
+  }
+
+  async find(options?: FindOptionsV2): Promise<ObjectRecord[]> {
+    return applyFindOptionsToQueryBuilder(
+      this.createQueryBuilder(),
+      options,
+    ).getMany<ObjectRecord>();
+  }
+
+  async findBy(
+    where: ObjectWhereLike | ObjectWhereLike[],
+  ): Promise<ObjectRecord[]> {
+    return this.find({ where });
+  }
+
+  async findOne(options?: FindOptionsV2): Promise<ObjectRecord | null> {
+    return applyFindOptionsToQueryBuilder(
+      this.createQueryBuilder(),
+      options,
+    ).getOne<ObjectRecord>();
+  }
+
+  async findOneBy(
+    where: ObjectWhereLike | ObjectWhereLike[],
+  ): Promise<ObjectRecord | null> {
+    return this.findOne({ where });
+  }
+
+  async findOneOrFail(options?: FindOptionsV2): Promise<ObjectRecord> {
+    const record = await this.findOne(options);
+
+    if (!isDefined(record)) {
+      throw new TwentyOrmV2Exception(
+        `No "${this.options.tableShape.nameSingular}" record matches the given criteria`,
+        TwentyOrmV2ExceptionCode.ENTITY_NOT_FOUND,
+      );
+    }
+
+    return record;
+  }
+
+  async findOneByOrFail(
+    where: ObjectWhereLike | ObjectWhereLike[],
+  ): Promise<ObjectRecord> {
+    return this.findOneOrFail({ where });
+  }
+
+  async count(options?: FindOptionsV2): Promise<number> {
+    return applyFindOptionsToQueryBuilder(
+      this.createQueryBuilder(),
+      options,
+    ).getCount();
+  }
+
+  async countBy(where: ObjectWhereLike | ObjectWhereLike[]): Promise<number> {
+    return this.count({ where });
+  }
+
+  async exists(options?: FindOptionsV2): Promise<boolean> {
+    return (await this.count(options)) > 0;
+  }
+
+  async existsBy(where: ObjectWhereLike | ObjectWhereLike[]): Promise<boolean> {
+    return this.exists({ where });
   }
 
   async runInsert({
