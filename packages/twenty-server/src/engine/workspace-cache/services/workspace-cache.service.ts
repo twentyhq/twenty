@@ -477,8 +477,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         let data: CacheDataType;
 
         try {
-          data =
-            this.getProviderOrThrow(keyName).expandFromStorage(rawData);
+          data = this.getProviderOrThrow(keyName).expandFromStorage(rawData);
         } catch (error) {
           this.logger.warn(
             `Failed to expand cached ${keyName} for workspace ${workspaceId}, recomputing`,

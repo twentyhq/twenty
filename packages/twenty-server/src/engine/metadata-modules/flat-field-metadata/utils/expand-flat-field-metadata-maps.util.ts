@@ -17,7 +17,8 @@ const expandFlatFieldMetadata = (
   > = {};
 
   for (const [shortCode, value] of Object.entries(compacted)) {
-    expanded[FLAT_FIELD_METADATA_KEY_LOOKUP.get(shortCode) ?? shortCode] = value;
+    expanded[FLAT_FIELD_METADATA_KEY_LOOKUP.get(shortCode) ?? shortCode] =
+      value;
   }
 
   for (const key of FLAT_FIELD_METADATA_EMPTY_ARRAY_KEYS) {
@@ -35,10 +36,9 @@ export const expandFlatFieldMetadataMaps = (
   const byUniversalIdentifier: FlatEntityMaps<FlatFieldMetadata>['byUniversalIdentifier'] =
     {};
 
-  for (const [
-    universalIdentifier,
-    compactFlatFieldMetadata,
-  ] of Object.entries(compacted.byUniversalIdentifier)) {
+  for (const [universalIdentifier, compactFlatFieldMetadata] of Object.entries(
+    compacted.byUniversalIdentifier,
+  )) {
     byUniversalIdentifier[universalIdentifier] = expandFlatFieldMetadata(
       compactFlatFieldMetadata,
     );

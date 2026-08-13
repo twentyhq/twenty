@@ -14,8 +14,6 @@ export abstract class WorkspaceCacheProvider<
 > {
   abstract computeForCache(workspaceId: string): Promise<T>;
 
-  // Shrink the object's shape for storage (e.g. short keys, drop empties).
-  // Reversible, still an object (no bytes). Default is a no-op passthrough.
   compactForStorage(data: T): T | TCompact {
     return data;
   }
