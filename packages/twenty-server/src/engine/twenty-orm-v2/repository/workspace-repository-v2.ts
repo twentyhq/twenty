@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import {
   type ObjectRecord,
@@ -17,6 +18,7 @@ import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/twenty-orm/utils/render-row-level-permission-filter-to-sql.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/resolve-row-level-permission-record-filter.util';
+import { validateRLSPredicatesForRecords } from 'src/engine/twenty-orm/utils/validate-rls-predicates-for-records.util';
 import {
   TwentyOrmV2Exception,
   TwentyOrmV2ExceptionCode,
@@ -120,7 +122,7 @@ export class WorkspaceRepositoryV2 {
     generatedMaps: ObjectRecord[];
     raw: ObjectRecord[];
   }> {
-    const { columnNames, rows, parameters, insertedColumns } =
+    const { columnNames, rows, parameters, insertedColumns, formattedRecords } =
       this.buildInsertRows(records);
 
     this.validateWriteIsPermitted({
@@ -128,6 +130,10 @@ export class WorkspaceRepositoryV2 {
       columnsToReturn,
       updatedColumns: insertedColumns,
     });
+
+    this.validateRLSPredicatesForWrittenRecords(
+      this.formatResult<ObjectRecord[]>(formattedRecords),
+    );
 
     const sql = buildInsertStatement({
       tableShape: this.options.tableShape,
@@ -139,9 +145,7 @@ export class WorkspaceRepositoryV2 {
     const rawRows = await this.executeRaw<ObjectRecord>(sql, parameters);
 
     const generatedMaps = this.formatResult<ObjectRecord[]>(rawRows);
-    const insertedIds = rawRows
-      .map((row) => row.id)
-      .filter((id): id is string => typeof id === 'string');
+    const insertedIds = rawRows.map((row) => row.id).filter(isNonEmptyString);
 
     await this.emitCreateEvents(insertedIds);
 
@@ -174,6 +178,8 @@ export class WorkspaceRepositoryV2 {
         this.options.internalContext.flatFieldMetadataMaps,
       );
 
+      delete setColumns.id;
+
       this.validateWriteIsPermitted({
         operationType: 'update',
         columnsToReturn,
@@ -184,10 +190,18 @@ export class WorkspaceRepositoryV2 {
         input.id,
       ]);
 
-      recordsBefore.push(
-        ...(await eventSelectQueryBuilder.getMany<ObjectRecord>({
+      const recordsBeforeForInput =
+        await eventSelectQueryBuilder.getMany<ObjectRecord>({
           noFormatting: true,
-        })),
+        });
+
+      recordsBefore.push(...recordsBeforeForInput);
+
+      this.validateRLSPredicatesForWrittenRecords(
+        this.formatResult<ObjectRecord[]>(
+          recordsBeforeForInput.map((record) => ({ ...record, ...setColumns })),
+        ),
+        'Updated record does not satisfy row-level security constraints of your current role',
       );
 
       const selectQueryBuilder = this.createQueryBuilder().where({
@@ -225,6 +239,7 @@ export class WorkspaceRepositoryV2 {
     rows: InsertRowValue[][];
     parameters: Record<string, unknown>;
     insertedColumns: string[];
+    formattedRecords: Record<string, unknown>[];
   } {
     const formattedRecords = records.map((record) =>
       formatData(
@@ -272,7 +287,13 @@ export class WorkspaceRepositoryV2 {
       });
     });
 
-    return { columnNames, rows, parameters, insertedColumns: columnNames };
+    return {
+      columnNames,
+      rows,
+      parameters,
+      insertedColumns: columnNames,
+      formattedRecords,
+    };
   }
 
   private async emitCreateEvents(insertedIds: string[]): Promise<void> {
@@ -308,19 +329,24 @@ export class WorkspaceRepositoryV2 {
     }
   }
 
+  private buildBypassingEventSelectQueryBuilder(
+    alias: string,
+  ): WorkspaceSelectQueryBuilderV2 {
+    return new WorkspaceSelectQueryBuilderV2(alias, {
+      tableShape: this.options.tableShape,
+      executor: this.options.executor,
+      objectRecordsPermissions: this.options.objectRecordsPermissions,
+      tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
+      onBeforeExecute: () => undefined,
+      formatResult: (records) => this.formatResult(records),
+    });
+  }
+
   private buildIdsEventSnapshotQueryBuilder(
     ids: string[],
   ): WorkspaceSelectQueryBuilderV2 {
-    return new WorkspaceSelectQueryBuilderV2(
+    return this.buildBypassingEventSelectQueryBuilder(
       this.options.tableShape.nameSingular,
-      {
-        tableShape: this.options.tableShape,
-        executor: this.options.executor,
-        objectRecordsPermissions: this.options.objectRecordsPermissions,
-        tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
-        onBeforeExecute: () => undefined,
-        formatResult: (records) => this.formatResult(records),
-      },
     )
       .where({ id: In(ids) })
       .withDeleted();
@@ -380,6 +406,15 @@ export class WorkspaceRepositoryV2 {
       );
     }
 
+    if (kind === 'update' && isDefined(setColumns)) {
+      this.validateRLSPredicatesForWrittenRecords(
+        this.formatResult<ObjectRecord[]>(
+          recordsBefore.map((record) => ({ ...record, ...setColumns })),
+        ),
+        'Updated record does not satisfy row-level security constraints of your current role',
+      );
+    }
+
     const mutationResult = await this.morphAndExecute({
       selectQueryBuilder,
       kind,
@@ -431,19 +466,9 @@ export class WorkspaceRepositoryV2 {
   private buildEventSnapshotQueryBuilder(
     source: WorkspaceSelectQueryBuilderV2,
   ): WorkspaceSelectQueryBuilderV2 {
-    const eventSelectQueryBuilder = new WorkspaceSelectQueryBuilderV2(
-      source.alias,
-      {
-        tableShape: this.options.tableShape,
-        executor: this.options.executor,
-        objectRecordsPermissions: this.options.objectRecordsPermissions,
-        tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
-        onBeforeExecute: () => undefined,
-        formatResult: (records) => this.formatResult(records),
-      },
-    );
-
-    return eventSelectQueryBuilder.copyWhereFrom(source).withDeleted();
+    return this.buildBypassingEventSelectQueryBuilder(source.alias)
+      .copyWhereFrom(source)
+      .withDeleted();
   }
 
   private validateWriteIsPermitted({
@@ -471,6 +496,20 @@ export class WorkspaceRepositoryV2 {
       selectedColumns: columnsToReturn,
       allFieldsSelected: false,
       updatedColumns,
+    });
+  }
+
+  private validateRLSPredicatesForWrittenRecords(
+    records: ObjectRecord[],
+    errorMessage?: string,
+  ): void {
+    validateRLSPredicatesForRecords({
+      records,
+      objectMetadata: this.options.flatObjectMetadata,
+      internalContext: this.options.internalContext,
+      authContext: this.options.authContext,
+      shouldBypassPermissionChecks: this.options.shouldBypassPermissionChecks,
+      ...(isDefined(errorMessage) ? { errorMessage } : {}),
     });
   }
 

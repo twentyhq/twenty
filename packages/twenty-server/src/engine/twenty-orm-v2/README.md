@@ -151,6 +151,14 @@ input still carves back to v1, because `FilesFieldSync` is coupled to the TypeOR
 and not yet reproduced here; `writeDataIsSupportedByOrmV2` makes that call, and both
 branches match their v1 counterpart byte for byte.
 
+Row-level security is enforced on two layers, matching v1: the WHERE predicate (same
+resolver and renderer as the read path) bounds which rows a mutation can touch, and the
+shared `validateRLSPredicatesForRecords` re-checks the written image in JS so a create
+cannot insert, nor an update move a row into, a state the role's predicate forbids. Insert
+validates the formatted input image, update the projected after-image (before-image merged
+with the SET values), exactly as `WorkspaceInsertQueryBuilder` / `WorkspaceUpdateQueryBuilder`
+do.
+
 Deliberate choices, the SQL ones asserted by exact-SQL unit tests:
 
 - Statements are alias-form (`UPDATE "schema"."table" AS "person" ... RETURNING
