@@ -132,7 +132,7 @@ describe('buildWorkspaceSetupPromptText', () => {
     expect(result).toContain('upload all their CSV exports at once');
   });
 
-  it('should tolerate spreadsheets and propose right away when files arrive', () => {
+  it('should tolerate spreadsheets, propose right away, and fall back to scratch without an export', () => {
     const result = buildWorkspaceSetupPromptText({
       companyEnrichment,
       locale: 'en',
@@ -164,6 +164,7 @@ describe('buildWorkspaceSetupPromptText', () => {
     expect(result).toContain('data-manipulation');
     expect(result).toContain('Bulk Import recipe');
     expect(result).toContain('as soon as the model is built');
+    expect(result).toContain('so one approval covers both');
   });
 
   it.each([
