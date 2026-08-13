@@ -175,6 +175,11 @@ describe('IMAP/SMTP outbound messaging (integration)', () => {
 
       try {
         const messageUids = await client.search({ all: true }, { uid: true });
+
+        if (messageUids === false) {
+          throw new Error('Could not search the Drafts mailbox');
+        }
+
         const [messageUid] = messageUids;
 
         if (messageUid === undefined) {
@@ -188,6 +193,10 @@ describe('IMAP/SMTP outbound messaging (integration)', () => {
           { envelope: true, flags: true },
           { uid: true },
         );
+
+        if (draft === false) {
+          throw new Error('Could not fetch the created draft');
+        }
 
         expect(draft.envelope).toMatchObject({
           subject,
