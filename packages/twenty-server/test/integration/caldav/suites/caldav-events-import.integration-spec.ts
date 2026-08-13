@@ -8,6 +8,7 @@ import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-chan
 import { deleteConnectedAccount } from 'test/integration/metadata/suites/connected-account/utils/delete-connected-account.util';
 import { saveImapSmtpCaldavAccount } from 'test/integration/metadata/suites/connected-account/utils/save-imap-smtp-caldav-account.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
+import { createCalendarEvent } from 'test/integration/utils/create-calendar-event.util';
 import { findImportedCalendarEventTitles } from 'test/integration/utils/find-imported-records.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { runCalendarChannelEventsImport } from 'test/integration/utils/run-calendar-channel-events-import.util';
@@ -156,6 +157,33 @@ describe('CalDAV calendar events import (integration)', () => {
     await syncCalendarChannel();
 
     expect(await findImportedCalendarEventTitles([summary])).toEqual([summary]);
+  }, 300000);
+
+  it('creates and persists an event in the CalDAV collection', async () => {
+    const title = `CalDAV calendar outbound ${randomUUID()}`;
+
+    const result = await createCalendarEvent({
+      connectedAccountId,
+      title,
+      description: 'Planning meeting',
+      location: 'Room 101',
+      startsAt: '2026-08-13T09:00:00Z',
+      endsAt: '2026-08-13T10:00:00Z',
+      timeZone: 'UTC',
+      attendees: 'attendee@example.com',
+      sendInvitations: true,
+    });
+
+    expect(result).toMatchObject({ success: true });
+    expect(result.iCalUid).toBeDefined();
+    expect(await findImportedCalendarEventTitles([title])).toEqual([title]);
+
+    const response = await fetch(`${collectionUrl()}${result.iCalUid}.ics`, {
+      headers: { Authorization: authorizationHeader },
+    });
+
+    expect(response.status).toBe(200);
+    expect(await response.text()).toContain(`SUMMARY:${title}`);
   }, 300000);
 
   it('advances the sync token and imports an event added afterwards', async () => {
