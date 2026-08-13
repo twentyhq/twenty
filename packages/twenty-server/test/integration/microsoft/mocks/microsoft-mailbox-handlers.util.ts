@@ -1,5 +1,6 @@
 import { type MailFolder } from '@microsoft/microsoft-graph-types';
 import { http, HttpResponse } from 'msw';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type MswHandler } from 'test/integration/utils/http-mock.util';
 import { type MockEntityStore } from 'test/integration/utils/mock-entity-store.util';
@@ -45,7 +46,7 @@ export const microsoftMailboxHandlers = (
           (candidate) => candidate.id === messageId,
         );
 
-        return message
+        return isDefined(message)
           ? { id, status: 200, body: message }
           : { id, status: 404, body: { error: { message: 'Not Found' } } };
       }),
