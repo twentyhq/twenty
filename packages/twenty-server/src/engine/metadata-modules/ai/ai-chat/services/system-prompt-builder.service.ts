@@ -171,12 +171,7 @@ export class SystemPromptBuilderService {
     }
 
     if (uploadedFilesContext && uploadedFilesContext.uploadedFiles.length > 0) {
-      parts.push(
-        this.buildUploadedFilesSection(
-          uploadedFilesContext.uploadedFiles,
-          uploadedFilesContext.codeInterpreterFiles,
-        ),
-      );
+      parts.push(this.buildUploadedFilesSection(uploadedFilesContext));
     }
 
     return parts.join('\n');
@@ -232,10 +227,13 @@ ${parts.join('\n')}`;
     }).format(new Date());
   }
 
-  buildUploadedFilesSection(
-    uploadedFiles: UploadedFileReference[],
-    codeInterpreterFiles: UploadedFileReference[],
-  ): string {
+  buildUploadedFilesSection({
+    uploadedFiles,
+    codeInterpreterFiles,
+  }: {
+    uploadedFiles: UploadedFileReference[];
+    codeInterpreterFiles: UploadedFileReference[];
+  }): string {
     const uploadedFilesJson = JSON.stringify(
       uploadedFiles.map((f) => ({ filename: f.filename, fileId: f.fileId })),
     );

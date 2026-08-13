@@ -32,8 +32,17 @@ export class PrepareUploadedFileTool implements Tool {
     parameters: ToolInput,
     context: ToolExecutionContext,
   ): Promise<ToolOutput> {
-    const { fileId, label, objectNameSingular, fieldName } =
-      PrepareUploadedFileInputZodSchema.parse(parameters);
+    const parseResult = PrepareUploadedFileInputZodSchema.safeParse(parameters);
+
+    if (!parseResult.success) {
+      return {
+        success: false,
+        message: 'Invalid prepare_uploaded_file input',
+        error: parseResult.error.message,
+      };
+    }
+
+    const { fileId, label, objectNameSingular, fieldName } = parseResult.data;
     const { workspaceId } = context;
 
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =

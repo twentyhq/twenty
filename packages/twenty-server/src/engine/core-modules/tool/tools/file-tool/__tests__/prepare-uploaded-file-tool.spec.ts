@@ -93,6 +93,17 @@ describe('PrepareUploadedFileTool', () => {
     });
   });
 
+  it('should fail with a structured error on malformed input', async () => {
+    const result = await buildTool().execute(
+      { fileId: uploadedFileId },
+      { workspaceId },
+    );
+
+    expect(result.success).toBe(false);
+    expect(result.message).toBe('Invalid prepare_uploaded_file input');
+    expect(filesFieldService.copyFileIntoFilesField).not.toHaveBeenCalled();
+  });
+
   it('should fail when the object does not exist', async () => {
     const result = await buildTool().execute(
       { ...validInput, objectNameSingular: 'unknownObject' },
