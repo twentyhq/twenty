@@ -128,10 +128,7 @@ describe('buildWorkspaceSetupPromptText', () => {
   ])(
     'should open with the migration-or-scratch question when %s is provided',
     (_label, enrichment) => {
-      const result = buildWorkspaceSetupPromptText({
-        companyEnrichment: enrichment,
-        locale: 'en',
-      });
+      const result = buildPrompt({ companyEnrichment: enrichment });
 
       expect(result).toContain(
         'moving over from another CRM or starting fresh',
@@ -177,10 +174,7 @@ describe('buildWorkspaceSetupPromptText', () => {
   );
 
   it('should request the CRM export in plain text so the upload composer stays available', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment,
-      locale: 'en',
-    });
+    const result = buildPrompt();
 
     expect(result).toContain('end that reply without calling ask_questions');
     expect(result).toContain('cannot take attachments');
@@ -188,10 +182,7 @@ describe('buildWorkspaceSetupPromptText', () => {
   });
 
   it('should tolerate spreadsheets, propose right away, and fall back to scratch without an export', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment,
-      locale: 'en',
-    });
+    const result = buildPrompt();
 
     expect(result).toContain('spreadsheet their CRM produces');
     expect(result).toContain('as separate files');
@@ -200,10 +191,7 @@ describe('buildWorkspaceSetupPromptText', () => {
   });
 
   it('should inspect uploaded exports through code_interpreter before proposing the model', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment,
-      locale: 'en',
-    });
+    const result = buildPrompt();
 
     expect(result).toContain('code_interpreter');
     expect(result).toContain('headers and a few sample rows');
@@ -211,10 +199,7 @@ describe('buildWorkspaceSetupPromptText', () => {
   });
 
   it('should import migrated rows with the Bulk Import recipe right after the model is built', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment,
-      locale: 'en',
-    });
+    const result = buildPrompt();
 
     expect(result).toContain('data-manipulation');
     expect(result).toContain('Bulk Import recipe');
@@ -353,10 +338,7 @@ describe('buildWorkspaceSetupPromptText', () => {
   });
 
   it('should end the setup by calling the completion tool once nothing is left to build', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment,
-      locale: 'en',
-    });
+    const result = buildPrompt();
 
     expect(result).toContain('## Ending the setup');
     expect(result).toContain(
@@ -442,5 +424,4 @@ describe('buildWorkspaceSetupPromptText', () => {
       'This workspace is named "Acme" (subdomain: acme). The admin setting it up signed up with admin@acme.com.',
     );
   });
-
 });
