@@ -92,9 +92,7 @@ export const PageCardHeader = ({
   const isMobile = useIsMobile();
   const isNavigationDrawerExpanded = useNavigationDrawerExpanded();
 
-  // Index and standalone headers drop their title on mobile so a pinned action
-  // can keep its label. Centered headers have no such action, and without the
-  // title their mobile bar says nothing at all.
+  // Uncentered headers drop the title on mobile to fit a labelled action.
   const hasTitleContent =
     (!isMobile || centerTitle) &&
     (isDefined(icon) || isDefined(title) || isDefined(tag));
