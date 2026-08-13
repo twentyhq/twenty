@@ -333,7 +333,7 @@ exports[`Sync application should fail on invalid navigation menu items when sync
 }
 `;
 
-exports[Sync application should fail on invalid navigation menu items when syncing a PAGE_LAYOUT item without pageLayoutUniversalIdentifier 1] = 
+exports[`Sync application should fail on invalid navigation menu items when syncing a PAGE_LAYOUT item without pageLayoutUniversalIdentifier 1`] = `
 {
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
@@ -368,9 +368,9 @@ exports[Sync application should fail on invalid navigation menu items when synci
   "message": "Validation errors occurred while syncing application manifest metadata",
   "name": "GraphQLError",
 }
-\;
+`;
 
-exports[Sync application should fail on invalid navigation menu items when syncing a VIEW item without viewUniversalIdentifier 1] = 
+exports[`Sync application should fail on invalid navigation menu items when syncing a VIEW item without viewUniversalIdentifier 1`] = `
 {
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
@@ -405,4 +405,4 @@ exports[Sync application should fail on invalid navigation menu items when synci
   "message": "Validation errors occurred while syncing application manifest metadata",
   "name": "GraphQLError",
 }
-\;
+`;
