@@ -214,9 +214,7 @@ export const buildJoinClause = (state: SelectStatementState): string =>
 
       return `LEFT JOIN ${joinSource} AS ${escapeIdentifier(
         joinClause.alias,
-      )} ON ${onConditions
-        .map((condition) => `(${condition})`)
-        .join(' AND ')}`;
+      )} ON ${onConditions.map((condition) => `(${condition})`).join(' AND ')}`;
     })
     .join(' ');
 
