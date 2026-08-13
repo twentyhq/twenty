@@ -26,6 +26,7 @@ import {
   CreateManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import { type NestedRelationsReadPathOptions } from 'src/engine/api/common/types/nested-relations-read-path-options.type';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
@@ -141,10 +142,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     authContext: WorkspaceAuthContext;
     workspaceDataSource: GlobalWorkspaceDataSource;
     rolePermissionConfig?: RolePermissionConfig;
-    nestedRelationsReadPathOptions: {
-      isOrmV2ReadPathEnabled: boolean;
-      useReplica: boolean;
-    };
+    nestedRelationsReadPathOptions: NestedRelationsReadPathOptions;
   }): Promise<void> {
     if (!args.selectedFieldsResult.relations) {
       return;
