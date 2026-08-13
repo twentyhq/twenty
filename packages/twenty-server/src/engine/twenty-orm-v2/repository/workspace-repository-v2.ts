@@ -168,6 +168,13 @@ export class WorkspaceRepositoryV2 {
   }
 
   async findOne(options?: FindOptionsV2): Promise<ObjectRecord | null> {
+    if (!isDefined(options?.where)) {
+      throw new TwentyOrmV2Exception(
+        'findOne requires a "where" condition',
+        TwentyOrmV2ExceptionCode.INVALID_PARAMETER,
+      );
+    }
+
     const record = await applyFindOptionsToQueryBuilder(
       this.createQueryBuilder(),
       options,
