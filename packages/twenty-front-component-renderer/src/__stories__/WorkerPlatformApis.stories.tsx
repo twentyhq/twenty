@@ -101,6 +101,33 @@ const classListTest: Story['play'] = async ({ canvasElement }) => {
   expect(errorHandler).not.toHaveBeenCalled();
 };
 
+const matchMediaTest: Story['play'] = async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+
+  await canvas.findByTestId(
+    'match-media-component',
+    {},
+    { timeout: MOUNT_TIMEOUT },
+  );
+
+  await waitFor(
+    () => {
+      expect(canvas.getByTestId('match-media-min-width')).toHaveTextContent(
+        'min-width matches: true',
+      );
+      expect(canvas.getByTestId('match-media-unknown-query')).toHaveTextContent(
+        'unknown query matches: false',
+      );
+      expect(
+        canvas.getByTestId('match-media-light-color-scheme'),
+      ).toHaveTextContent('light color scheme matches: true');
+    },
+    { timeout: MOUNT_TIMEOUT },
+  );
+
+  expect(errorHandler).not.toHaveBeenCalled();
+};
+
 const createStory = ({
   name,
   play,
@@ -135,5 +162,14 @@ export const ClassListReact: Story = createStory({
 export const ClassListPreact: Story = createStory({
   name: 'class-list-example',
   play: classListTest,
+  runtime: 'preact',
+});
+export const MatchMediaReact: Story = createStory({
+  name: 'match-media',
+  play: matchMediaTest,
+});
+export const MatchMediaPreact: Story = createStory({
+  name: 'match-media',
+  play: matchMediaTest,
   runtime: 'preact',
 });

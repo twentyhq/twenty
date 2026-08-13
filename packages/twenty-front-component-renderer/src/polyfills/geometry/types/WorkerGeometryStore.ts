@@ -8,5 +8,6 @@ export type WorkerGeometryStore = {
   connectTransport: (transport: GeometryObservationTransport) => void;
   applyGeometryBatch: (batch: GeometryUpdateBatch) => void;
   getViewportSnapshot: () => ViewportGeometrySnapshot | null;
+  subscribeToViewportUpdates: (listener: () => void) => () => void;
   resolveElementSnapshot: (element: object) => ElementGeometrySnapshot | null;
 };

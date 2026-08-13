@@ -16,6 +16,7 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
   const enrolledRemoteElementIds = new WeakMap<object, string>();
   const observedRemoteElementIds = new Set<string>();
   const pendingObservationIds = new Set<string>();
+  const viewportUpdateListeners = new Set<() => void>();
 
   let rootElement: object | null = null;
   let transport: GeometryObservationTransport | null = null;
@@ -134,6 +135,12 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
           .catch(warnAboutTransportFailure);
       }
     }
+
+    if (isDefined(batch.viewport)) {
+      for (const viewportUpdateListener of [...viewportUpdateListeners]) {
+        viewportUpdateListener();
+      }
+    }
   };
 
   return {
@@ -146,6 +153,13 @@ export const createWorkerGeometryStore = (): WorkerGeometryStore => {
     },
     applyGeometryBatch,
     getViewportSnapshot: () => viewportSnapshot,
+    subscribeToViewportUpdates: (listener: () => void) => {
+      viewportUpdateListeners.add(listener);
+
+      return () => {
+        viewportUpdateListeners.delete(listener);
+      };
+    },
     resolveElementSnapshot,
   };
 };
