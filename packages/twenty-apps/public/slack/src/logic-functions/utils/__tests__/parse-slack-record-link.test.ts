@@ -30,6 +30,16 @@ describe('parseSlackRecordLink', () => {
     expect(parsed?.recordId).toBe(RECORD_ID);
   });
 
+  it('should not unescape entities twice', () => {
+    // &amp;lt; decodes to the literal text &lt; — not to <
+    const parsed = parseSlackRecordLink({
+      linkUrl: `${WORKSPACE_BASE_URL}/object/person/${RECORD_ID}?q=&amp;lt;x`,
+      workspaceBaseUrl: WORKSPACE_BASE_URL,
+    });
+
+    expect(parsed?.recordId).toBe(RECORD_ID);
+  });
+
   it('should ignore links on another origin', () => {
     const parsed = parseSlackRecordLink({
       linkUrl: `https://other.twenty.com/object/person/${RECORD_ID}`,

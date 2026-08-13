@@ -5,9 +5,16 @@ import { type SlackRecordLink } from 'src/logic-functions/types/slack-record-lin
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-// Slack HTML-escapes URLs in link_shared payloads
+const SLACK_URL_HTML_ENTITIES: Record<string, string> = {
+  '&amp;': '&',
+  '&lt;': '<',
+  '&gt;': '>',
+};
+
+// Slack HTML-escapes URLs in link_shared payloads; a single pass keeps
+// pre-escaped sequences like &amp;lt; from being unescaped twice
 const decodeSlackLinkUrl = (url: string): string =>
-  url.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+  url.replace(/&(?:amp|lt|gt);/g, (entity) => SLACK_URL_HTML_ENTITIES[entity]);
 
 export const parseSlackRecordLink = ({
   linkUrl,

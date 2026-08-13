@@ -1,42 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-export const formatSlackUnfurlSelectValue = (
-  value: string,
-): string | undefined => {
-  const words = value.toLowerCase().split('_').filter(isNonEmptyString);
-
-  if (words.length === 0) {
-    return undefined;
-  }
-
-  const [firstWord, ...remainingWords] = words;
-
-  return [
-    firstWord.charAt(0).toUpperCase() + firstWord.slice(1),
-    ...remainingWords,
-  ].join(' ');
-};
-
-export const formatSlackUnfurlDate = (value: string): string | undefined => {
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return undefined;
-  }
-
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    timeZone: 'UTC',
-  });
-};
-
 export const formatSlackUnfurlCurrencyAmount = ({
   amountMicros,
   currencyCode,
 }: {
-  amountMicros: unknown;
+  amountMicros?: unknown;
   currencyCode?: string | null;
 }): string | undefined => {
   const numericAmountMicros = Number(amountMicros);

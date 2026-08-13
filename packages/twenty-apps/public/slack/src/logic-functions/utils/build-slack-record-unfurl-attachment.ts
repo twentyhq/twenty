@@ -2,8 +2,22 @@ import { type KnownBlock, type MessageAttachment } from '@slack/web-api';
 
 import { type SlackRecordUnfurlCard } from 'src/logic-functions/types/slack-record-unfurl-card.type';
 
+// Raw lengths are capped before escaping so that even worst-case entity
+// expansion stays well under Slack's Block Kit limits (3000 chars for a
+// section text, 2000 per field text).
+const TITLE_MAX_LENGTH = 250;
+const FIELD_VALUE_MAX_LENGTH = 350;
+
+const truncateText = (text: string, maxLength: number): string =>
+  text.length > maxLength ? `${text.slice(0, maxLength - 1)}…` : text;
+
 const escapeSlackMrkdwn = (text: string): string =>
   text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+// mrkdwn link syntax is <url|label>, so these characters must not appear
+// verbatim inside the embedded url
+const encodeSlackLinkUrl = (url: string): string =>
+  url.replace(/</g, '%3C').replace(/>/g, '%3E').replace(/\|/g, '%7C');
 
 export const buildSlackRecordUnfurlAttachment = ({
   linkUrl,
@@ -12,12 +26,16 @@ export const buildSlackRecordUnfurlAttachment = ({
   linkUrl: string;
   card: SlackRecordUnfurlCard;
 }): MessageAttachment => {
+  const recordTitle = escapeSlackMrkdwn(
+    truncateText(card.recordTitle, TITLE_MAX_LENGTH),
+  );
+
   const blocks: KnownBlock[] = [
     {
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: `*<${linkUrl}|${escapeSlackMrkdwn(card.recordTitle)}>*`,
+        text: `*<${encodeSlackLinkUrl(linkUrl)}|${recordTitle}>*`,
       },
     },
   ];
@@ -27,7 +45,7 @@ export const buildSlackRecordUnfurlAttachment = ({
       type: 'section',
       fields: card.fields.map((field) => ({
         type: 'mrkdwn' as const,
-        text: `*${escapeSlackMrkdwn(field.label)}*\n${escapeSlackMrkdwn(field.value)}`,
+        text: `*${escapeSlackMrkdwn(field.label)}*\n${escapeSlackMrkdwn(truncateText(field.value, FIELD_VALUE_MAX_LENGTH))}`,
       })),
     });
   }

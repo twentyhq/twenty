@@ -48,6 +48,44 @@ describe('buildSlackRecordUnfurlAttachment', () => {
     expect(attachment.blocks?.[1]?.type).toBe('context');
   });
 
+  it('should encode mrkdwn link delimiters in the embedded url', () => {
+    const attachment = buildSlackRecordUnfurlAttachment({
+      linkUrl: 'https://acme.twenty.com/object/person/id-1?view=a|b<c>',
+      card: { recordTitle: 'Jane Doe', objectLabel: 'Person', fields: [] },
+    });
+
+    expect(attachment.blocks?.[0]).toEqual({
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: '*<https://acme.twenty.com/object/person/id-1?view=a%7Cb%3Cc%3E|Jane Doe>*',
+      },
+    });
+  });
+
+  it('should truncate oversized titles and field values under Slack limits', () => {
+    const attachment = buildSlackRecordUnfurlAttachment({
+      linkUrl: 'https://acme.twenty.com/object/note/id-1',
+      card: {
+        recordTitle: 'a'.repeat(5000),
+        objectLabel: 'Note',
+        fields: [{ label: 'Created by', value: 'b'.repeat(5000) }],
+      },
+    });
+
+    const titleBlock = attachment.blocks?.[0] as {
+      text: { text: string };
+    };
+    const fieldsBlock = attachment.blocks?.[1] as {
+      fields: { text: string }[];
+    };
+
+    expect(titleBlock.text.text.length).toBeLessThanOrEqual(3000);
+    expect(titleBlock.text.text).toContain('…');
+    expect(fieldsBlock.fields[0].text.length).toBeLessThanOrEqual(2000);
+    expect(fieldsBlock.fields[0].text).toContain('…');
+  });
+
   it('should escape mrkdwn control characters in titles and values', () => {
     const attachment = buildSlackRecordUnfurlAttachment({
       linkUrl: 'https://acme.twenty.com/object/company/id-1',
