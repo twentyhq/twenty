@@ -38,7 +38,7 @@ describe('IMAP messages import (integration)', () => {
     deliverMailOverSmtp({
       host: greenmail.host,
       port: greenmail.smtpPort,
-      from: `sender-${randomUUID()}@acme.test`,
+      from: `sender-${randomUUID()}@external.test`,
       to: HANDLE,
       subject,
     });
@@ -97,9 +97,6 @@ describe('IMAP messages import (integration)', () => {
 
     await deliverMessage(subject);
 
-    // The first run establishes the mailboxes; messages are imported from the
-    // folders it discovered, on the run after.
-    await runMessageChannelSync(messageChannelId);
     await runMessageChannelSync(messageChannelId);
 
     expect(await findImportedMessageSubjects([subject])).toEqual([subject]);
