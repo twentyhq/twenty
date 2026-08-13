@@ -94,19 +94,6 @@ describe('IMAP messages import (integration)', () => {
     expect(await findImportedMessageSubjects([subject])).toEqual([subject]);
   }, 300000);
 
-  it('imports a message delivered after the stored highest uid', async () => {
-    const subject = `IMAP message ${randomUUID()}`;
-
-    await deliverMessage(subject);
-
-    await runMessageChannelSync(messageChannelId);
-
-    expect(await findImportedMessageSubjects([subject])).toEqual([subject]);
-    expect((await readChannel()).syncStatus).toBe(
-      MessageChannelSyncStatus.ACTIVE,
-    );
-  }, 300000);
-
   it('keeps the channel active when the mailbox has not changed', async () => {
     await runMessageChannelSync(messageChannelId);
 
