@@ -189,7 +189,7 @@ export class CreateCompanyAndPersonService {
       where: { id: connectedAccount.userWorkspaceId },
     });
 
-    if (!userWorkspace) {
+    if (!isDefined(userWorkspace)) {
       this.logger.warn(
         `Skipping contact creation for connected account ${connectedAccount.id} in workspace ${workspaceId}: userWorkspace ${connectedAccount.userWorkspaceId} not found`,
       );

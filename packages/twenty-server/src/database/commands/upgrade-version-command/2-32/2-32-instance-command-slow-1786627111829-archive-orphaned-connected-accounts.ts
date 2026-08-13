@@ -6,9 +6,7 @@ import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-appl
 
 // Connected accounts whose userWorkspace was hard-deleted (member removed
 // before ownership transfer existed) keep syncing and crash contact-creation
-// jobs. Re-own them to a custodian (oldest admin, else oldest member), wipe
-// credentials, archive them and stop their channels, mirroring
-// ConnectedAccountMetadataService.transferOwnership.
+// jobs. Mirrors ConnectedAccountMetadataService.transferOwnership in SQL.
 @RegisteredInstanceCommand('2.32.0', 1786627111829, { type: 'slow' })
 export class ArchiveOrphanedConnectedAccountsSlowInstanceCommand
   implements SlowInstanceCommand
