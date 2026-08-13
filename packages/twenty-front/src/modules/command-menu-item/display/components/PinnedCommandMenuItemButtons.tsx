@@ -53,9 +53,13 @@ export const PinnedCommandMenuItemButtons = () => {
   // left of the icons.
   const isSidePanelFooter = containerType === 'side-panel-footer';
 
-  // Neither the footer nor a mobile header is wide enough to label every action,
-  // so both label a single one and render the rest as icons.
-  const shouldLabelSingleCommandMenuItem = isSidePanelFooter || isMobile;
+  // A record header keeps its breadcrumb on mobile, so its actions stay icons
+  // and leave the record name room. Index and standalone headers drop their
+  // title there, which frees the width for one label.
+  const isRecordPageHeader = containerType === 'show-page-header';
+
+  const shouldLabelSingleCommandMenuItem =
+    isSidePanelFooter || (isMobile && !isRecordPageHeader);
 
   const pinnedCommandMenuItems = useMemo(
     () => commandMenuItems.filter((item) => item.isPinned === true),
@@ -67,8 +71,9 @@ export const PinnedCommandMenuItemButtons = () => {
     : null;
 
   const shouldHideCommandMenuItemLabel = (commandMenuItemId: string) =>
-    shouldLabelSingleCommandMenuItem &&
-    commandMenuItemId !== labelledCommandMenuItemId;
+    (isMobile && isRecordPageHeader) ||
+    (shouldLabelSingleCommandMenuItem &&
+      commandMenuItemId !== labelledCommandMenuItemId);
 
   const {
     pinnedInlineCommandMenuItems,
