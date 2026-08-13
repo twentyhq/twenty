@@ -149,6 +149,59 @@ describe('getNextStepIdsForIfElse', () => {
     });
   });
 
+  it('should still skip a step only reachable through a nested if/else branch', () => {
+    // If/Else A
+    //   ├ if   → If/Else B (if → step1, else → step2 → merge)
+    //   └ else → merge
+    // Whether B leads to merge is only known at runtime, so merge must stay
+    // in the skip set: keeping it would let status-based evaluation run it
+    // even when B goes down its if branch (no taken path into merge).
+    const outerIfElseStep = buildIfElseStep({
+      ifBranchNextStepIds: ['nestedIfElse'],
+      elseBranchNextStepIds: ['mergeStep'],
+    });
+
+    const nestedIfElseStep = {
+      id: 'nestedIfElse',
+      type: 'IF_ELSE',
+      name: 'If/Else',
+      nextStepIds: [],
+      settings: {
+        input: {
+          branches: [
+            {
+              id: 'nestedIfBranch',
+              filterGroupId: 'nestedFilterGroup',
+              nextStepIds: ['step1'],
+            },
+            { id: 'nestedElseBranch', nextStepIds: ['step2'] },
+          ],
+          stepFilterGroups: [],
+          stepFilters: [],
+        },
+      },
+    } as unknown as WorkflowAction;
+
+    const steps = [
+      outerIfElseStep,
+      nestedIfElseStep,
+      buildStep('step1', []),
+      buildStep('step2', ['mergeStep']),
+      buildStep('mergeStep', []),
+    ];
+
+    expect(
+      getNextStepIdsForIfElse({
+        executedStep: outerIfElseStep,
+        executedStepOutput: { result: { matchingBranchId: 'ifBranch' } },
+        steps,
+      }),
+    ).toEqual({
+      nextStepIdsToExecute: ['nestedIfElse'],
+      nextStepIdsToSkip: ['mergeStep'],
+    });
+  });
+
   it('should terminate when the matching branch contains a cycle', () => {
     const ifElseStep = buildIfElseStep({
       ifBranchNextStepIds: ['loopA'],

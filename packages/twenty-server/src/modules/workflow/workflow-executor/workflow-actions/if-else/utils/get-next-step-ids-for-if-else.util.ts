@@ -1,14 +1,19 @@
 import { isDefined } from 'twenty-shared/utils';
-import { getStepOutgoingStepIds } from 'twenty-shared/workflow';
 
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { type WorkflowIfElseResult } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/types/workflow-if-else-result.type';
+import { isWorkflowIfElseAction } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/guards/is-workflow-if-else-action.guard';
 import {
   type WorkflowAction,
   type WorkflowIfElseAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
-const getReachableStepIds = ({
+// Only follows edges that are guaranteed to fire once their step succeeds
+// (nextStepIds). Branch and iterator loop edges depend on runtime state:
+// treating a maybe-live path as live would leave its target out of the skip
+// set, and status-based evaluation would later run it even when no taken
+// path leads to it.
+const getGuaranteedReachableStepIds = ({
   fromStepIds,
   steps,
 }: {
@@ -31,8 +36,8 @@ const getReachableStepIds = ({
 
     const step = stepsById.get(stepId);
 
-    if (isDefined(step)) {
-      stepIdsToVisit.push(...getStepOutgoingStepIds(step));
+    if (isDefined(step) && !isWorkflowIfElseAction(step)) {
+      stepIdsToVisit.push(...(step.nextStepIds ?? []));
     }
   }
 
@@ -70,7 +75,7 @@ export const getNextStepIdsForIfElse = ({
     // A step can be the direct target of a non-matching branch and also be
     // reached further down the matching branch. Such convergence steps must
     // not be skipped, otherwise the matching branch stops there.
-    const stepIdsReachableFromMatchingBranch = getReachableStepIds({
+    const stepIdsReachableFromMatchingBranch = getGuaranteedReachableStepIds({
       fromStepIds: matchingBranch?.nextStepIds ?? [],
       steps,
     });
