@@ -9,7 +9,10 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
@@ -41,6 +44,19 @@ export const MobileNavigationBar = () => {
     contextStoreCurrentObjectMetadataItemIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
+  const setCurrentMobileNavigationDrawer = useSetAtomState(
+    currentMobileNavigationDrawerState,
+  );
+  const setIsNavigationDrawerExpanded = useSetAtomState(
+    isNavigationDrawerExpandedState,
+  );
+
+  // Settings is the one drawer left on mobile, and it stays open across
+  // navigation, so it would cover whatever the bottom bar goes to.
+  const closeSettingsDrawer = () => {
+    setCurrentMobileNavigationDrawer('main');
+    setIsNavigationDrawerExpanded(false);
+  };
 
   const isHomePage = pathname === AppPath.Home;
 
@@ -62,6 +78,7 @@ export const MobileNavigationBar = () => {
       Icon: IconHome,
       onClick: () => {
         closeSidePanelMenu();
+        closeSettingsDrawer();
         navigate(AppPath.Home);
       },
     },
@@ -71,6 +88,7 @@ export const MobileNavigationBar = () => {
       Icon: IconSearch,
       onClick: () => {
         closeSidePanelMenu();
+        closeSettingsDrawer();
 
         if (isSettingsPage) {
           const firstObjectMetadataItem =
@@ -93,6 +111,7 @@ export const MobileNavigationBar = () => {
             Icon: IconMessageCirclePlus,
             onClick: () => {
               closeSidePanelMenu();
+              closeSettingsDrawer();
               switchToNewChat();
             },
           },
