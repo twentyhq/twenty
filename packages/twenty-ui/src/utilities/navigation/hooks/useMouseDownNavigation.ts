@@ -31,6 +31,7 @@ export const useMouseDownNavigation = ({
       if (isDefined(onClick) && !isDefined(to)) {
         onClick(event);
       }
+      // Don't prevent default for modifier keys to allow browser navigation
       return;
     }
 
