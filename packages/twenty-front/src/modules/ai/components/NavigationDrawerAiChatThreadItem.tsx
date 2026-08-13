@@ -1,5 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { AppPath } from 'twenty-shared/types';
+import { getAppPath, isValidUuid } from 'twenty-shared/utils';
 import { IconArchive, IconComment } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -85,6 +87,9 @@ export const NavigationDrawerAiChatThreadItem = ({
     isDropdownOpenComponentState,
     itemMenuDropdownId,
   );
+  const threadPath = isValidUuid(thread.id)
+    ? getAppPath(AppPath.AiChat, { threadId: thread.id })
+    : undefined;
 
   if (isRenaming) {
     return (
@@ -105,6 +110,7 @@ export const NavigationDrawerAiChatThreadItem = ({
       label={displayLabel}
       Icon={ThreadIcon}
       active={isActive}
+      to={threadPath}
       onClick={() => onClick(thread)}
       variant={isArchived ? 'tertiary' : 'default'}
       alwaysShowRightOptions
