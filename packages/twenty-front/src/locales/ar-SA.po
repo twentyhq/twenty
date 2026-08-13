@@ -3760,6 +3760,7 @@ msgstr "الرسم البياني"
 
 #. js-lingui-id: AHZflp
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
+#: src/modules/navigation/components/MobileHomeTabsRow.tsx
 msgid "Chat"
 msgstr "الدردشة"
 
@@ -9683,6 +9684,8 @@ msgstr "استعن بشريك لمساعدتك في تنفيذ Twenty وتخصي
 
 #. js-lingui-id: i0qMbr
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
+#: src/modules/navigation/components/MobileHomeTabsRow.tsx
+#: src/modules/navigation/components/MobileNavigationBar.tsx
 msgid "Home"
 msgstr "الرئيسية"
 
@@ -11602,11 +11605,6 @@ msgstr "حلقة"
 msgid "Mail Account"
 msgstr "حساب البريد"
 
-#. js-lingui-id: HRha/x
-#: src/modules/navigation/components/MobileNavigationBar.tsx
-msgid "Main navigation"
-msgstr "التنقل الرئيسي"
-
 #. js-lingui-id: 6Dd2PM
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
 msgid "Maintenance"
@@ -12424,6 +12422,7 @@ msgstr "عناصر قائمة التنقل"
 
 #. js-lingui-id: s2HXiD
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
+#: src/modules/navigation/components/MobileHomeTabsRow.tsx
 msgid "Navigation tabs"
 msgstr "علامات تبويب التنقل"
 
@@ -17251,6 +17250,7 @@ msgid "Setting up your <0>database</0>..."
 msgstr "جارٍ إعداد <0>قاعدة البيانات</0> الخاصة بك..."
 
 #. js-lingui-id: Tz0i8g
+#: src/modules/navigation/components/MobileHomeTabsRow.tsx
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
 #: src/modules/navigation/components/SettingsNavigationDrawer.tsx
 #: src/modules/navigation/components/SettingsNavigationDrawer.tsx
