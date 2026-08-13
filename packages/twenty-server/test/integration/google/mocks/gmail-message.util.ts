@@ -2,9 +2,16 @@ import { randomUUID } from 'node:crypto';
 
 import { type gmail_v1 } from 'googleapis';
 
-export const gmailMessage = (
-  overrides: Partial<gmail_v1.Schema$Message> = {},
-): gmail_v1.Schema$Message => {
+type GmailMessageOverrides = Partial<gmail_v1.Schema$Message> & {
+  from?: string;
+  to?: string;
+};
+
+export const gmailMessage = ({
+  from,
+  to,
+  ...overrides
+}: GmailMessageOverrides = {}): gmail_v1.Schema$Message => {
   const id = overrides.id ?? `gmail-msg-${randomUUID()}`;
 
   return {
@@ -16,8 +23,8 @@ export const gmailMessage = (
     payload: {
       mimeType: 'text/plain',
       headers: [
-        { name: 'From', value: `sender-${id}@example.com` },
-        { name: 'To', value: `recipient-${id}@example.com` },
+        { name: 'From', value: from ?? `sender-${id}@example.com` },
+        { name: 'To', value: to ?? `recipient-${id}@example.com` },
         { name: 'Subject', value: `Subject ${id}` },
         { name: 'Message-ID', value: `<${id}@example.com>` },
         { name: 'Date', value: 'Wed, 15 Nov 2023 00:00:00 +0000' },

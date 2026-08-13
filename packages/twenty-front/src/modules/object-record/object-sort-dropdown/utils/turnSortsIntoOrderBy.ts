@@ -41,7 +41,6 @@ export const turnSortsIntoOrderBy = (
           ? 'AscNullsFirst'
           : 'DescNullsLast';
 
-      // Handle RELATION fields by looking up related object metadata
       if (correspondingField.type === FieldMetadataType.RELATION) {
         const relatedObjectName =
           correspondingField.relation?.targetObjectMetadata?.nameSingular;

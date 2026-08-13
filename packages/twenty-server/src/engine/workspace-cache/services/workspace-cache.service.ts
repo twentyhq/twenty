@@ -42,6 +42,10 @@ import {
 import { combineCacheHashes } from 'src/engine/workspace-cache/utils/combine-cache-hashes.util';
 import { getKeyNameFromLocalCacheKey } from 'src/engine/workspace-cache/utils/get-key-name-from-local-cache-key.util';
 import { packIdleVersions } from 'src/engine/workspace-cache/utils/pack-idle-versions.util';
+import {
+  deserializeCacheBlob,
+  serializeCacheBlob,
+} from 'src/engine/workspace-cache/utils/serialize-cache-blob.util';
 import { sweepLocalCache } from 'src/engine/workspace-cache/utils/sweep-local-cache.util';
 
 const LOCAL_TTL_MS = 100; // 100ms
@@ -54,7 +58,7 @@ const MIN_EVICT_KEYS = 100;
 const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000; // 30 minutes idle
 const LOCAL_CACHE_SWEEP_INTERVAL_MS = 60 * 1000;
 const PACKING_INTERVAL_MS = 500;
-const MAX_ENTRY_VERSIONS_PER_PACKING_RUN = 2;
+const PACKING_PONDERATION_BUDGET = 64;
 const MIN_IDLE_BEFORE_PACKING_MS = 60 * 1000;
 // Per-provider entry caps, keyed by local cache key prefix (ORM graphs are ~5 MB each).
 const MAX_LOCAL_ENTRIES_BY_KEY_NAME = new Map<string, number>([
@@ -89,6 +93,10 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     WorkspaceCacheProvider<CacheDataType, StoredCacheDataType>
   >();
   private readonly localDataOnlyKeys = new Set<WorkspaceCacheKeyName>();
+  private readonly packingPonderationByKey = new Map<
+    WorkspaceCacheKeyName,
+    number
+  >();
   private readonly memoizer = new PromiseMemoizer<CacheEntriesResult>(
     MEMOIZER_TTL_MS,
   );
@@ -131,8 +139,15 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
             instance.constructor,
           );
 
-        if (options?.localDataOnly) {
-          this.localDataOnlyKeys.add(workspaceCacheKeyName);
+        if (isDefined(options)) {
+          if (options.localDataOnly) {
+            this.localDataOnlyKeys.add(workspaceCacheKeyName);
+          }
+
+          this.packingPonderationByKey.set(
+            workspaceCacheKeyName,
+            options.packingPonderation,
+          );
         }
       }
     }
@@ -191,7 +206,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     const result = await this.memoizer.memoizePromiseAndExecute(
       memoKey,
       async () => {
-        // Stage 1: Check local TTL
         const { freshKeys, staleKeys } = this.checkLocalTTL(
           workspaceId,
           cacheKeyNames,
@@ -202,7 +216,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
           return freshEntries;
         }
 
-        // Stage 2: Validate ttl stale keys against Redis hash
         const {
           validKeys,
           keysNeedingDataFromRedis,
@@ -214,13 +227,11 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         );
         const validatedEntries = this.getFromLocalCache(workspaceId, validKeys);
 
-        // Stage 3: Fetch data from Redis
         const { redisEntries, missingInRedis } = await this.fetchDataFromRedis(
           workspaceId,
           keysNeedingDataFromRedis,
         );
 
-        // Stage 4: Recompute remaining
         const keysToRecompute = [...keysNeedingRecompute, ...missingInRedis];
         const recomputedEntries = await this.recomputeDataFromProvider(
           workspaceId,
@@ -465,11 +476,10 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         let data: CacheDataType;
 
         try {
-          data =
-            this.getProviderOrThrow(keyName).decodeFromCacheStorage(rawData);
+          data = this.getProviderOrThrow(keyName).expandFromStorage(rawData);
         } catch (error) {
           this.logger.warn(
-            `Failed to decode cached ${keyName} for workspace ${workspaceId}, recomputing`,
+            `Failed to expand cached ${keyName} for workspace ${workspaceId}, recomputing`,
             error,
           );
           missingInRedis.push(keyName);
@@ -564,7 +574,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       if (!isLocalDataOnly) {
         redisEntries.push({
           key: `${baseKey}:data`,
-          value: this.getProviderOrThrow(keyName).encodeForCacheStorage(data),
+          value: this.getProviderOrThrow(keyName).compactForStorage(data),
         });
       }
 
@@ -694,7 +704,11 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     const { packed, pending } = packIdleVersions({
       localCache: this.localCache,
       minIdleMs: MIN_IDLE_BEFORE_PACKING_MS,
-      maxEntryVersionsPerRun: MAX_ENTRY_VERSIONS_PER_PACKING_RUN,
+      ponderationBudget: PACKING_PONDERATION_BUDGET,
+      ponderationOf: (localKey) =>
+        this.packingPonderationByKey.get(
+          getKeyNameFromLocalCacheKey(localKey) as WorkspaceCacheKeyName,
+        )!,
       isPackable: (localKey) =>
         !this.localDataOnlyKeys.has(
           getKeyNameFromLocalCacheKey(localKey) as WorkspaceCacheKeyName,
@@ -704,11 +718,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
           localKey,
         ) as WorkspaceCacheKeyName;
 
-        return Buffer.from(
-          JSON.stringify(
-            this.getProviderOrThrow(keyName).encodeForCacheStorage(data),
-          ),
-          'utf8',
+        return serializeCacheBlob(
+          this.getProviderOrThrow(keyName).compactForStorage(data),
         );
       },
     });
@@ -738,8 +749,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     }
 
     const unpackStartedAt = performance.now();
-    const data = this.getProviderOrThrow(keyName).decodeFromCacheStorage(
-      JSON.parse(version.blob.toString('utf8')),
+    const data = this.getProviderOrThrow(keyName).expandFromStorage(
+      deserializeCacheBlob(version.blob),
     );
 
     entry.versions.set(hash, {

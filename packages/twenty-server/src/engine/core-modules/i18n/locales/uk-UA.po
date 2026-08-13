@@ -687,7 +687,7 @@ msgid "Annual Revenue"
 msgstr "Річний дохід"
 
 #. js-lingui-id: 4XvK/4
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-creation.util.ts
 msgid "Another application in this workspace has already registered a permission flag with this key."
 msgstr "Інший застосунок у цьому робочому просторі вже зареєстрував прапор дозволу з цим ключем."
 
@@ -1164,24 +1164,24 @@ msgid "Calendar channel not found."
 msgstr "Канал календаря не знайдено."
 
 #. js-lingui-id: 9uvvYS
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar end field metadata not found"
 msgstr ""
 
 #. js-lingui-id: 6BRvIC
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar end field must be a date or date time field"
 msgstr ""
 
 #. js-lingui-id: PEXN0U
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar end field must belong to the view object"
 msgstr ""
 
 #. js-lingui-id: k6cK5J
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar end field not found"
 msgstr ""
 
@@ -1242,24 +1242,24 @@ msgid "Calendar events"
 msgstr "Події календаря"
 
 #. js-lingui-id: Sn4xhy
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar field metadata not found"
 msgstr ""
 
 #. js-lingui-id: J3xD/M
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar field must be a date or date time field"
 msgstr ""
 
 #. js-lingui-id: hUOMKq
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar field must belong to the view object"
 msgstr ""
 
 #. js-lingui-id: 26b8pD
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar field not found"
 msgstr ""
 
@@ -1269,14 +1269,14 @@ msgid "Calendar provider is not supported."
 msgstr "Постачальник календаря не підтримується."
 
 #. js-lingui-id: /63r02
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar start and end fields must be different"
 msgstr ""
 
 #. js-lingui-id: DRukEV
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar start and end fields must have the same type"
 msgstr ""
 
@@ -1286,20 +1286,20 @@ msgid "Calendar sync error."
 msgstr "Помилка синхронізації календаря."
 
 #. js-lingui-id: zfvgb0
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar view must have a calendar field"
 msgstr ""
 
 #. js-lingui-id: JhktJw
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar view must have a calendar layout"
 msgstr ""
 
 #. js-lingui-id: D9pZ2l
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar widget views only support the month layout"
 msgstr ""
 
@@ -1405,8 +1405,8 @@ msgid "Cannot delete standard agent"
 msgstr "Неможливо видалити стандартного агента"
 
 #. js-lingui-id: kOOXTs
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-deletion.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-deletion.util.ts
 msgid "Cannot delete standard permission flag definition"
 msgstr "Неможливо видалити стандартне визначення прапора дозволу"
 
@@ -1422,8 +1422,8 @@ msgid "Cannot delete the last admin user."
 msgstr "Не можна видалити останнього адміністратора."
 
 #. js-lingui-id: W3Ik7m
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-deletion.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-deletion.util.ts
 msgid "Cannot delete the only view for this object"
 msgstr "Неможливо видалити єдине подання для цього об’єкта"
 
@@ -1550,8 +1550,8 @@ msgid "Cannot update standard agent"
 msgstr "Неможливо оновити стандартного агента"
 
 #. js-lingui-id: LWpSNC
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-update.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-update.util.ts
 msgid "Cannot update standard permission flag definition"
 msgstr "Неможливо оновити стандартне визначення прапора дозволу"
 
@@ -2091,6 +2091,16 @@ msgstr "Дата створення"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgid "Creation DateTime"
 msgstr "Дата й час створення"
+
+#. js-lingui-id: iMikvq
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Credit grant must expire after it becomes effective."
+msgstr ""
+
+#. js-lingui-id: J0OIhA
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Credit grant not found."
+msgstr ""
 
 #. js-lingui-id: 6Oaeoc
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
@@ -2879,12 +2889,12 @@ msgstr "Необхідно вказати ідентифікатор мітки 
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-search-field-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-update.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-update.util.ts
 msgid "Field metadata not found"
 msgstr "Метадані поля не знайдено"
 
@@ -3164,22 +3174,22 @@ msgstr "Поле «Файли» не підтримується як уніка�
 
 #. js-lingui-id: PR/KbU
 #. placeholder {0}: referencedFieldMetadata.label
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-select-option-error.util.ts
 msgid "Filter on \"{0}\" uses option(s) {invalidValuesText} that do not exist. Allowed values: {allowedValuesText}."
 msgstr "Фільтр за \"{0}\" використовує параметр(и) {invalidValuesText}, яких не існує. Дозволені значення: {allowedValuesText}."
 
 #. js-lingui-id: MkIaen
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-incompatible-view-filter-operand-error.util.ts
 msgid "Filter operand is not supported for this field type"
 msgstr "Операнд фільтра не підтримується для цього типу поля"
 
 #. js-lingui-id: dzteua
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-select-option-error.util.ts
 msgid "Filter uses a select option that does not exist"
 msgstr "Фільтр використовує параметр вибору, якого не існує"
 
 #. js-lingui-id: NCkLG1
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-value-error.util.ts
 msgid "Filter value is not valid for this operand"
 msgstr ""
 
@@ -4029,8 +4039,8 @@ msgid "Invalid permission setting."
 msgstr "Некоректне налаштування дозволів."
 
 #. js-lingui-id: ZoXxz9
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-update.util.ts
 msgid "Invalid permission type"
 msgstr "Некоректний тип дозволу"
 
@@ -4498,44 +4508,44 @@ msgid "June"
 msgstr "Червень"
 
 #. js-lingui-id: QS/zML
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-update.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-update.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-update.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-update.util.ts
 msgid "Kanban main group by field metadata not found"
 msgstr "Метадані поля основного групування Kanban не знайдено"
 
 #. js-lingui-id: Ce++y2
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-update.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-update.util.ts
 msgid "Kanban main group by field must be a select or a many-to-one relation field"
 msgstr "Поле основного групування Kanban має бути полем вибору або полем зв'язку типу many-to-one"
 
 #. js-lingui-id: 9SKooF
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-update.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-update.util.ts
 msgid "Kanban main group by field must be a SELECT or a many-to-one relation field"
 msgstr "Поле основного групування Kanban має бути полем SELECT або полем зв'язку типу many-to-one"
 
 #. js-lingui-id: mAbBLH
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-update.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-update.util.ts
 msgid "Kanban view must have a main group by field"
 msgstr "У поданні Kanban має бути поле основного групування"
 
 #. js-lingui-id: WDgCbh
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-update.util.ts
 msgid "Key cannot be changed"
 msgstr "Ключ не можна змінити"
 
 #. js-lingui-id: QV1ZPO
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-creation.util.ts
 msgid "Key is required"
 msgstr "Ключ є обов'язковим"
 
@@ -5529,7 +5539,7 @@ msgid "Object already exists"
 msgstr "Об'єкт вже існує"
 
 #. js-lingui-id: AV0hPh
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
 msgid "Object already has a view with the {reservedViewKey} key"
 msgstr ""
 
@@ -5562,8 +5572,8 @@ msgstr "Позначка об'єкта надто коротка"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-search-field-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-search-field-metadata-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
 msgid "Object metadata not found"
 msgstr "Метадані об'єкта не знайдено"
 
@@ -5729,8 +5739,13 @@ msgstr ""
 
 #. js-lingui-id: e/+ykp
 #. placeholder {0}: allowedOperands.join(', ')
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-incompatible-view-filter-operand-error.util.ts
 msgid "Operand \"{operand}\" is not supported on field type \"{filterType}\". Supported operands: {0}."
+msgstr ""
+
+#. js-lingui-id: iD+jGc
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Operand \"{operand}\" requires a value, an empty predicate would remove the row restriction entirely"
 msgstr ""
 
 #. js-lingui-id: Rh2dh5
@@ -6098,45 +6113,45 @@ msgid "Permission flag already exists."
 msgstr "Прапор дозволу вже існує."
 
 #. js-lingui-id: vUfYBs
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-creation.util.ts
 msgid "Permission flag definition already exists"
 msgstr "Визначення прапора дозволу вже існує"
 
 #. js-lingui-id: si69+A
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-update.util.ts
 msgid "Permission flag definition key cannot be changed after creation"
 msgstr "Ключ визначення прапора дозволу не можна змінити після створення"
 
 #. js-lingui-id: vCvEfM
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-creation.util.ts
 msgid "Permission flag definition key is required"
 msgstr "Ключ визначення прапора дозволу є обов'язковим"
 
 #. js-lingui-id: IPm2ty
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-deletion.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-update.util.ts
 msgid "Permission flag definition not found"
 msgstr "Визначення прапора дозволу не знайдено"
 
 #. js-lingui-id: /amTA5
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-update.util.ts
 msgid "Permission flag definition permission type must be 'settings' or 'tool'"
 msgstr "Тип дозволу для визначення прапора дозволу має бути \"settings\" або \"tool\""
 
 #. js-lingui-id: dKSPBk
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-deletion.util.ts
 msgid "Permission flag definition to delete not found"
 msgstr "Визначення прапора дозволу для видалення не знайдено"
 
 #. js-lingui-id: 5phRcJ
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-update.util.ts
 msgid "Permission flag definition to update not found"
 msgstr "Визначення прапора дозволу для оновлення не знайдено"
 
 #. js-lingui-id: KNBagU
 #. placeholder {0}: flatPermissionFlagToValidate.key
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-creation.util.ts
 msgid "Permission flag definition with key \"{0}\" is already registered in this workspace."
 msgstr "Визначення прапора дозволу з ключем \"{0}\" уже зареєстровано в цьому робочому просторі."
 
@@ -6147,7 +6162,7 @@ msgstr "Визначення прапора дозволу з ключем {flag
 
 #. js-lingui-id: px8Wqt
 #. placeholder {0}: flatPermissionFlagToValidate.universalIdentifier
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-creation.util.ts
 msgid "Permission flag definition with universal identifier {0} already exists"
 msgstr "Визначення прапора дозволу з універсальним ідентифікатором {0} уже існує"
 
@@ -6342,6 +6357,17 @@ msgstr "Позиція має бути скінченним числом"
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Prebuilt bundle is not installed on the function. Rebuild and try again."
 msgstr "Попередньо зібраний пакет не встановлено для функції. Виконайте повторну збірку й спробуйте ще раз."
+
+#. js-lingui-id: OAanPr
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Predicate is missing a value"
+msgstr ""
+
+#. js-lingui-id: a/WH2z
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Predicate value is not valid for this operand"
+msgstr ""
 
 #. js-lingui-id: TTHIbk
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -7183,6 +7209,11 @@ msgstr "Деякі з вибраних вами дозволів недійсн�
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr ""
 
+#. js-lingui-id: eAMUPx
+#: src/engine/core-modules/onboarding/onboarding.exception.ts
+msgid "Something went wrong while saving your onboarding progress."
+msgstr ""
+
 #. js-lingui-id: RjTo7h
 #: src/engine/core-modules/onboarding/onboarding.exception.ts
 msgid "Something went wrong while starting the app installation. Please try again."
@@ -7601,12 +7632,12 @@ msgid "Text response format should not have a schema"
 msgstr "Текстовий формат відповіді не повинен мати схеми"
 
 #. js-lingui-id: kFsyD4
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
 msgid "The {reservedViewKey} view key is reserved for the default view"
 msgstr ""
 
 #. js-lingui-id: 7s8NoS
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
 msgid "The {reservedViewKey} view key is reserved for the engine-owned default view; remove the key from the view definition"
 msgstr ""
 
@@ -8057,6 +8088,11 @@ msgstr "Виникла проблема з вашим токеном. Спроб
 msgid "There is no failed message to retry."
 msgstr "Немає невдалих повідомлень для повторної спроби."
 
+#. js-lingui-id: jMDu2a
+#: src/engine/core-modules/onboarding/onboarding.exception.ts
+msgid "There is no previous onboarding step to go back to."
+msgstr ""
+
 #. js-lingui-id: Yi0Q/T
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
@@ -8266,6 +8302,11 @@ msgstr "Цей індекс не існує або вже був видален�
 msgid "This instance did not report a server identifier. Set SERVER_ID on this instance, then try again."
 msgstr "Цей інстанс не повідомив ідентифікатор сервера. Установіть SERVER_ID на цьому інстансі й спробуйте ще раз."
 
+#. js-lingui-id: wQ3edW
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This kind of credit grant cannot be created by hand."
+msgstr ""
+
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This method is not allowed."
@@ -8290,7 +8331,7 @@ msgid "This name is reserved. Use a different name or the system will add \"Cust
 msgstr ""
 
 #. js-lingui-id: /mGcny
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
 msgid "This object already has a default view"
 msgstr ""
 
@@ -8404,11 +8445,6 @@ msgstr "Цю роль не можна редагувати."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-editable.util.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "Цю роль неможливо змінити, оскільки вона є системною. Тільки користувацькі ролі можуть бути змінені."
-
-#. js-lingui-id: nzveUr
-#: src/engine/metadata-modules/object-permission/field-permission/__tests__/field-permissions.service.spec.ts
-msgid "This role cannot be modified."
-msgstr "Цю роль не можна змінювати."
 
 #. js-lingui-id: DEJJoY
 #: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts
@@ -8811,6 +8847,11 @@ msgstr "URL має бути рядком"
 msgid "URL must be a string for widget \"{widgetTitle}\""
 msgstr "URL має бути рядком для віджета \"{widgetTitle}\""
 
+#. js-lingui-id: P7NKk0
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Usage could not be read. Please try again later."
+msgstr ""
+
 #. js-lingui-id: GkcfmO
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "User already exists"
@@ -8904,12 +8945,14 @@ msgid "User workspace role configuration not found."
 msgstr "Конфігурацію ролі робочого простору користувача не знайдено."
 
 #. js-lingui-id: sFN4Dx
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-value-error.util.ts
 msgid "Value \"{stringifiedValue}\" is not valid for operand \"{operand}\" on field type \"{filterType}\"."
 msgstr ""
 
 #. js-lingui-id: ccqQWi
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-value-error.util.ts
 msgid "Value \"{stringifiedValue}\" is not valid for operand \"{operand}\" on field type \"{filterType}\". {hint}"
 msgstr ""
 
@@ -8921,6 +8964,11 @@ msgstr ""
 #. js-lingui-id: JaflDh
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
 msgid "Value \"{stringifiedValue}\" of a chart filter of widget \"{widgetTitle}\" is not valid for operand \"{operand}\" on field type \"{filterType}\". {hint}"
+msgstr ""
+
+#. js-lingui-id: l+Dvh5
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Value \"{stringifiedValue}\" resolves to no record for operand \"{operand}\", the current record is not available to a row level permission predicate"
 msgstr ""
 
 #. js-lingui-id: UBPzFQ
@@ -8966,7 +9014,7 @@ msgid "Video recording"
 msgstr "Відеозапис"
 
 #. js-lingui-id: HhN1Bv
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
 msgid "View already exists"
 msgstr "Перегляд вже існує"
 
@@ -9074,7 +9122,7 @@ msgid "View field with same fieldMetadataUniversalIdentifier and viewUniversalId
 msgstr "Поле перегляду з однаковими fieldMetadataUniversalIdentifier і viewUniversalIdentifier вже існує"
 
 #. js-lingui-id: sbHaOg
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-creation.util.ts
 msgid "View filter already exists"
 msgstr "Фільтр перегляду вже існує"
 
@@ -9100,10 +9148,10 @@ msgstr "Ієрархія групи фільтрів перегляду пере
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-update.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-update.util.ts
 msgid "View filter group not found"
 msgstr "Групу фільтрів перегляду не знайдено"
 
@@ -9113,10 +9161,10 @@ msgid "View filter group with this universal identifier already exists"
 msgstr "Група фільтрів перегляду з цим універсальним ідентифікатором вже існує"
 
 #. js-lingui-id: 1KSqGE
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-deletion.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-deletion.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-update.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-update.util.ts
 msgid "View filter not found"
 msgstr "Фільтр перегляду не знайдено"
 
@@ -9136,7 +9184,7 @@ msgid "View filter to update not found"
 msgstr "Фільтр перегляду для оновлення не знайдено"
 
 #. js-lingui-id: bM1MKh
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-creation.util.ts
 msgid "View filter with this universal identifier already exists"
 msgstr "Фільтр перегляду з цим універсальним ідентифікатором вже існує"
 
@@ -9176,10 +9224,10 @@ msgid "View group to update parent view not found"
 msgstr "Батьківський перегляд для оновлення групи перегляду не знайдено"
 
 #. js-lingui-id: M7KWZV
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-update.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-update.util.ts
 msgid "View kanban aggregate field metadata not found"
 msgstr "Дані про перегляд канбан поля збору не знайдено"
 
@@ -9191,16 +9239,16 @@ msgstr "Дані про перегляд канбан поля збору не �
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-deletion.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-deletion.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-update.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-update.util.ts
 msgid "View not found"
 msgstr "Перегляд не знайдено"
 
@@ -9283,7 +9331,7 @@ msgid "View to update not found"
 msgstr "Перегляд для оновлення не знайдено"
 
 #. js-lingui-id: RvdHYC
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
 msgid "View with same universal identifier already exists"
 msgstr "Перегляд з таким самим універсальним ідентифікатором вже існує"
 

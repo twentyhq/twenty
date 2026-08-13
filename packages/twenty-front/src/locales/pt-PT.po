@@ -1117,6 +1117,7 @@ msgstr "A ativar..."
 
 #. js-lingui-id: F6pfE9
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -2167,6 +2168,12 @@ msgstr "Amazon Q Developer CLI"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Amber"
 msgstr "Âmbar"
+
+#. js-lingui-id: hehnjM
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
+msgid "Amount"
+msgstr ""
 
 #. js-lingui-id: s46CyD
 #: src/modules/object-record/record-field/ui/form-types/components/FormCurrencyFieldInput.tsx
@@ -3460,8 +3467,13 @@ msgid "Call recorder"
 msgstr "Gravador de chamadas"
 
 #. js-lingui-id: ahn0Ti
-#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
+#: src/modules/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetUnavailableDisplay.tsx
 msgid "Call recording is not available in this workspace."
+msgstr ""
+
+#. js-lingui-id: z9jSP/
+#: src/modules/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetUnavailableDisplay.tsx
+msgid "Call Recording Unavailable"
 msgstr ""
 
 #. js-lingui-id: +Kx1Id
@@ -3502,6 +3514,7 @@ msgstr "Não consegue escanear? Copie o"
 #. js-lingui-id: dEgA5A
 #: src/modules/applications/components/AuthorizeActionButtons.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/billing/components/AddCreditCardModal.tsx
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
@@ -4301,6 +4314,11 @@ msgstr "Empresas"
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoCardHeaderActions.tsx
 msgid "Compare plans"
 msgstr "Comparar planos"
+
+#. js-lingui-id: amPBVF
+#: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
+msgid "Compensation"
+msgstr ""
 
 #. js-lingui-id: j1828V
 #: src/modules/settings/unsubscribers/utils/getMessageSuppressionReasonBadge.ts
@@ -5320,6 +5338,11 @@ msgstr "Consumo de créditos para o período atual"
 msgid "Credit consumption over time."
 msgstr "Consumo de créditos ao longo do tempo."
 
+#. js-lingui-id: zH6NZT
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
+msgid "Credit grant revoked."
+msgstr ""
+
 #. js-lingui-id: CYpB9A
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Credit pack switching has been cancelled."
@@ -5357,6 +5380,11 @@ msgstr "créditos"
 msgid "Credits"
 msgstr "Créditos"
 
+#. js-lingui-id: AaNZqp
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
+msgid "Credits are added on top of the plan allowance and expire at the end of the current billing period. Unused granted credits carry over in full."
+msgstr ""
+
 #. js-lingui-id: 0o2LpE
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Credits are used by workflows, AI chats, agents, and approved apps"
@@ -5371,6 +5399,11 @@ msgstr "créditos disponíveis (Incluindo {rolloverCreditsDisplay} de rollover)"
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "credits available during the trial period"
 msgstr "créditos disponíveis durante o período de teste"
+
+#. js-lingui-id: MnLFOj
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
+msgid "Credits handed out on top of the plan allowance"
+msgstr ""
 
 #. js-lingui-id: iSuLEw
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
@@ -6374,6 +6407,7 @@ msgstr "Excluir este método o removerá permanentemente da sua conta."
 
 #. js-lingui-id: Ssdrw4
 #: src/modules/settings/ai/components/SettingsAiModelsTable.tsx
+#: src/pages/settings/applications/components/SettingsApplicationVariableLabelRow.tsx
 msgid "Deprecated"
 msgstr "Obsoleto"
 
@@ -8140,12 +8174,14 @@ msgid "Expiration Date"
 msgstr "Data de Expiração"
 
 #. js-lingui-id: M1RnFv
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/developers/utils/formatExpiration.ts
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Expired"
 msgstr "Expirado"
 
 #. js-lingui-id: KnN1Tu
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "Expires"
 msgstr "Expira"
@@ -9293,6 +9329,11 @@ msgstr "Ir para Configurações"
 msgid "Gold"
 msgstr "Ouro"
 
+#. js-lingui-id: +g90tY
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
+msgid "Goodwill gesture after the March incident"
+msgstr ""
+
 #. js-lingui-id: eoe8BR
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -9314,6 +9355,11 @@ msgstr "Conta Google, Microsoft ou CalDAV na qual criar o evento. Deixe em branc
 msgid "Goose"
 msgstr "Goose"
 
+#. js-lingui-id: nE5VAt
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
+msgid "Grant"
+msgstr ""
+
 #. js-lingui-id: P1Rw/Z
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "Grant access"
@@ -9329,10 +9375,26 @@ msgstr "Conceda acesso ao seu espaço de trabalho para que possamos solucionar p
 msgid "Grant admin panel access"
 msgstr "Conceder acesso ao painel de administração"
 
+#. js-lingui-id: 5O8DG6
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
+msgid "Grant credits"
+msgstr ""
+
 #. js-lingui-id: FdPN4f
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "Grant full access"
 msgstr "Conceder acesso total"
+
+#. js-lingui-id: Tbxf45
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
+msgid "Granted {parsedAmount} credits to this workspace."
+msgstr ""
+
+#. js-lingui-id: fqtGOd
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
+msgid "Granted credits"
+msgstr ""
 
 #. js-lingui-id: WUgtid
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow.tsx
@@ -12796,8 +12858,15 @@ msgstr "Não há dados de cobrança disponíveis para este espaço de trabalho."
 msgid "No body"
 msgstr "Sem corpo"
 
+#. js-lingui-id: O7I76L
+#: src/modules/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody.tsx
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
+msgid "No Call Recording"
+msgstr ""
+
 #. js-lingui-id: 8Qo8A6
-#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
+#: src/modules/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody.tsx
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
 msgid "No call recording exists for this calendar event yet."
 msgstr ""
 
@@ -13294,6 +13363,16 @@ msgstr "Nenhum administrador de servidor encontrado."
 msgid "No subject"
 msgstr ""
 
+#. js-lingui-id: Y8HpZa
+#: src/modules/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody.tsx
+msgid "No Summary"
+msgstr ""
+
+#. js-lingui-id: cU6bd5
+#: src/modules/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody.tsx
+msgid "No summary has been generated for this call recording yet."
+msgstr ""
+
 #. js-lingui-id: RQ6tfU
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelSystemObjectPickerSubView.tsx
 msgid "No system objects available"
@@ -13319,8 +13398,13 @@ msgstr "Nenhuma ferramenta foi chamada"
 msgid "No topic"
 msgstr "Sem tópico"
 
+#. js-lingui-id: 3Y/oDZ
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
+msgid "No Transcript"
+msgstr ""
+
 #. js-lingui-id: du4Icj
-#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
 msgid "No transcript is available for this recording."
 msgstr ""
 
@@ -13871,6 +13955,11 @@ msgstr ""
 msgid "Onboarding Packs"
 msgstr "Pacotes de Integração"
 
+#. js-lingui-id: wxvgdv
+#: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
+msgid "Onboarding reward"
+msgstr ""
+
 #. js-lingui-id: qaG+Ug
 #: src/modules/side-panel/pages/page-layout/components/ChartFiltersDeletedFieldsWarning.tsx
 msgid "One or more filters reference deactivated or deleted fields and will be automatically removed on save."
@@ -13951,11 +14040,6 @@ msgstr "Só você poderá ver os seus e-mails e eventos"
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 msgid "Open"
 msgstr "Abrir"
-
-#. js-lingui-id: Z5AQOT
-#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
-msgid "Open a calendar event to view its transcript."
-msgstr ""
 
 #. js-lingui-id: Kkq3xr
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -14808,6 +14892,11 @@ msgstr "A preencher os seus <0>dados do espaço de trabalho</0>..."
 msgid "Prefix"
 msgstr "Prefixo"
 
+#. js-lingui-id: dVCM1s
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
+msgid "Preparing Transcript"
+msgstr ""
+
 #. js-lingui-id: NwnQoz
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Preset link"
@@ -14925,6 +15014,16 @@ msgstr "Plano Pro"
 #. js-lingui-id: vrnnn9
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 msgid "Processing"
+msgstr ""
+
+#. js-lingui-id: HvAaN4
+#: src/modules/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody.tsx
+msgid "Processing Failed"
+msgstr ""
+
+#. js-lingui-id: 9YrAC6
+#: src/modules/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody.tsx
+msgid "Processing Recording"
 msgstr ""
 
 #. js-lingui-id: k1ifdL
@@ -15176,6 +15275,8 @@ msgid "Read/Edit/Delete permissions"
 msgstr "Permissões de Leitura/Edição/Eliminação"
 
 #. js-lingui-id: VJScHU
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterDropdown.tsx
 #: src/modules/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterMenuContent.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
@@ -15913,6 +16014,8 @@ msgid "reverse alphabetical"
 msgstr "alfabética inversa"
 
 #. js-lingui-id: GXsAby
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantRowDropdownMenu.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminRevokeSigningKeyConfirmationModal.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 msgid "Revoke"
@@ -15928,12 +16031,18 @@ msgstr "Revogar acesso"
 msgid "Revoke admin panel access"
 msgstr "Revogar acesso ao painel de administração"
 
+#. js-lingui-id: CCR+qC
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
+msgid "Revoke credit grant"
+msgstr ""
+
 #. js-lingui-id: rJrWw4
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminRevokeSigningKeyConfirmationModal.tsx
 msgid "Revoke signing key"
 msgstr "Revogar chave de assinatura"
 
 #. js-lingui-id: xGiT1z
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 msgid "Revoked"
@@ -16020,6 +16129,11 @@ msgstr "funções"
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Roles"
 msgstr "Funções"
+
+#. js-lingui-id: Q6o/eX
+#: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
+msgid "Rollover"
+msgstr ""
 
 #. js-lingui-id: ufKFGo
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -16132,6 +16246,11 @@ msgstr "Executando..."
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Russian"
 msgstr "Russo"
+
+#. js-lingui-id: mUv9U4
+#: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
+msgid "Sales"
+msgstr ""
 
 #. js-lingui-id: QeF0zb
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
@@ -17756,6 +17875,7 @@ msgstr "Estado"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims.tsx
@@ -18426,6 +18546,16 @@ msgstr ""
 "\n"
 "Veja o [guia de Introdução](https://twenty.com/developers/extend/apps/getting-started) para o passo a passo completo e [Criação de Apps](https://twenty.com/developers/extend/apps/building) para as APIs `defineApplication` / `defineEntity`."
 
+#. js-lingui-id: VsxjzF
+#: src/modules/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody.tsx
+msgid "The call recording could not be processed."
+msgstr ""
+
+#. js-lingui-id: +AFHx6
+#: src/modules/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody.tsx
+msgid "The call recording is still being processed…"
+msgstr ""
+
 #. js-lingui-id: /kfzmx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "The Data Processing Agreement could not be loaded. Please try again."
@@ -18539,13 +18669,8 @@ msgid "The shared email you want to use."
 msgstr "O e-mail partilhado que pretende utilizar."
 
 #. js-lingui-id: 9q0gnf
-#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
 msgid "The transcript could not be generated."
-msgstr ""
-
-#. js-lingui-id: bkXHoz
-#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
-msgid "The transcript is empty."
 msgstr ""
 
 #. js-lingui-id: qrhV2s
@@ -18886,6 +19011,12 @@ msgstr "Isso nunca deveria acontecer"
 #: src/modules/settings/domains/utils/getSubdomainValidationSchema.ts
 msgid "This subdomain is reserved"
 msgstr "Este subdomínio está reservado"
+
+#. js-lingui-id: ddMLFL
+#. placeholder {0}: formatCredits(grantPendingRevocation.amount)
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
+msgid "This takes {0} credits back off this workspace straight away. Revoking cannot be undone."
+msgstr ""
 
 #. js-lingui-id: MMGDfe
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -19236,8 +19367,13 @@ msgstr "Tempo total"
 msgid "Track AI consumption across your workspace."
 msgstr "Acompanhe o consumo de IA no seu espaço de trabalho."
 
+#. js-lingui-id: U2CSqa
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
+msgid "Transcript Failed"
+msgstr ""
+
 #. js-lingui-id: zDTPYv
-#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
 msgid "Transcript is being prepared…"
 msgstr ""
 
@@ -19473,6 +19609,8 @@ msgid "Two-factor authentication setup completed successfully!"
 msgstr "Configuração da autenticação em duas etapas concluída com sucesso!"
 
 #. js-lingui-id: +zy2Nq
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
@@ -19769,11 +19907,6 @@ msgstr ""
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Unpaid"
 msgstr "Em falta de pagamento"
-
-#. js-lingui-id: fkuUW0
-#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
-msgid "Unrecognized transcript format."
-msgstr ""
 
 #. js-lingui-id: SMaFdc
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx

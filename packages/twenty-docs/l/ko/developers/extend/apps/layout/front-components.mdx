@@ -520,6 +520,39 @@ export default defineFrontComponent({
 });
 ```
 
+### 저장소
+
+`localStorage`와 `sessionStorage`는 일반 페이지에서와 동일하게, 표준 동기식 API로 동작합니다. 키는 앱 설치와 로그인한 사용자 범위로만 한정됩니다. 다른 어떤 앱도 이 키를 읽을 수 없으며, 같은 브라우저에 다른 사용자가 로그인하면 비어 있는 저장소에서 시작합니다. `localStorage`에 기록된 값은 새로고침 후에도 기기에 그대로 남아 있고, `sessionStorage`는 브라우저 세션 동안만 유지됩니다.
+
+```tsx src/front-components/note-draft.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const NoteDraft = () => {
+  const [draft, setDraft] = useState(() => localStorage.getItem('draft') ?? '');
+
+  const handleChange = (nextDraft: string) => {
+    setDraft(nextDraft);
+    localStorage.setItem('draft', nextDraft);
+  };
+
+  return (
+    <textarea value={draft} onChange={(event) => handleChange(event.target.value)} />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-def0-890123456789',
+  name: 'note-draft',
+  description: 'Keeps an unsaved note on this device',
+  component: NoteDraft,
+});
+```
+
+Twenty가 앱을 대신해 값을 저장하므로, 쓰기 작업은 로컬에 즉시 반영되고 백그라운드에서 저장됩니다. 읽기 작업은 호스트를 기다리지 않습니다. 아무것도 동기화되지 않습니다. 값이 사용자를 다른 브라우저나 머신으로 따라가지 않으므로, 디바이스 변경 이후에도 유지되어야 하는 값에는 로직 함수의 [key-value store](/l/ko/developers/extend/apps/logic/key-value-store)를 사용하세요.
+
+쓰기에는 한도가 있으며, 모든 한도는 바이트가 아니라 문자 수를 기준으로 합니다. 키는 최대 512자, 단일 값은 최대 262,144자, 각 스토리지는 앱과 사용자당 최대 1,048,576자까지 저장할 수 있습니다. 한도를 초과하는 쓰기는 브라우저 API와 마찬가지로 `QuotaExceededError`를 발생시킵니다.
+
 ### 여러 기록과의 작업
 
 여러 개의 선택된 기록을 처리하려면 `useSelectedRecordIds()`를 사용하세요. 이는 일괄 작업에 유용합니다:
@@ -792,7 +825,7 @@ Front 컴포넌트는 활발히 개발 중입니다. 렌더링, 스타일링 및
 
 ### 스토리지와 네트워크
 
-`localStorage`, `sessionStorage`, IndexedDB, 쿠키, Cache API 및 `BroadcastChannel`은 모두 사용할 수 없습니다. 컴포넌트가 불투명한 origin의 워커에서 실행되기 때문입니다. 상태를 영속화하려면 [logic function](/l/ko/developers/extend/apps/logic/logic-functions)을 호출하고, 해당 [key-value store](/l/ko/developers/extend/apps/logic/key-value-store)를 사용하세요.
+`localStorage`와 `sessionStorage`는 브라우저가 아니라 Twenty에서 제공합니다. 컴포넌트는 불투명 출처의 워커에서 실행되므로, 호스트가 앱을 대신해 값을 저장합니다. 범위와 한도에 대해서는 [storage](#storage)를 참조하세요. IndexedDB, 쿠키, Cache API 및 `BroadcastChannel`은 여전히 사용할 수 없습니다. 디바이스 간에 상태를 영속화하려면 [logic function](/l/ko/developers/extend/apps/logic/logic-functions)을 호출하고 해당 [key-value store](/l/ko/developers/extend/apps/logic/key-value-store)를 사용하세요.
 
 `fetch`는 동작하지만, 몇 가지 주의사항이 있습니다:
 

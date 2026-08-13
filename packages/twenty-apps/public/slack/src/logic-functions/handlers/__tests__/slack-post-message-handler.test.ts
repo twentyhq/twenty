@@ -63,6 +63,38 @@ describe('slackPostMessageHandler', () => {
     });
   });
 
+  it('should leave Slack link previews alone when the caller does not ask for them to be turned off', async () => {
+    postMessageMock.mockResolvedValue({ ts: '1700000000.000600' });
+
+    await slackPostMessageHandler({
+      slackChannelId: CHANNEL_ID,
+      messageText: 'hello',
+    });
+
+    expect(postMessageMock).toHaveBeenCalledTimes(1);
+    expect(postMessageMock.mock.calls[0][0]).toStrictEqual({
+      channel: CHANNEL_ID,
+      thread_ts: undefined,
+      text: 'hello',
+    });
+  });
+
+  it('should turn off link and media previews when asked', async () => {
+    postMessageMock.mockResolvedValue({ ts: '1700000000.000700' });
+
+    await slackPostMessageHandler({
+      slackChannelId: CHANNEL_ID,
+      messageText: 'hello',
+      unfurlLinks: false,
+      unfurlMedia: false,
+    });
+
+    expect(postMessageMock).toHaveBeenCalledTimes(1);
+    expect(postMessageMock).toHaveBeenCalledWith(
+      expect.objectContaining({ unfurl_links: false, unfurl_media: false }),
+    );
+  });
+
   it('should reply inside a thread with a trimmed parent timestamp', async () => {
     postMessageMock.mockResolvedValue({
       ts: '1700000000.000200',

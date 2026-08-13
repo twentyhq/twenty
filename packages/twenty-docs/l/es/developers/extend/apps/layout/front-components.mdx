@@ -520,6 +520,39 @@ export default defineFrontComponent({
 });
 ```
 
+### Almacenamiento
+
+`localStorage` y `sessionStorage` funcionan como lo hacen en una página normal, con la API síncrona estándar. Tus claves están limitadas al ámbito de la instalación de tu aplicación y del usuario que ha iniciado sesión: ninguna otra aplicación puede leerlas, y otro usuario que inicie sesión en el mismo navegador comenzará con un almacenamiento vacío. Los valores escritos en `localStorage` permanecen en el dispositivo a través de las recargas; `sessionStorage` dura mientras dure la sesión del navegador.
+
+```tsx src/front-components/note-draft.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const NoteDraft = () => {
+  const [draft, setDraft] = useState(() => localStorage.getItem('draft') ?? '');
+
+  const handleChange = (nextDraft: string) => {
+    setDraft(nextDraft);
+    localStorage.setItem('draft', nextDraft);
+  };
+
+  return (
+    <textarea value={draft} onChange={(event) => handleChange(event.target.value)} />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-def0-890123456789',
+  name: 'note-draft',
+  description: 'Keeps an unsaved note on this device',
+  component: NoteDraft,
+});
+```
+
+Twenty almacena los valores en nombre de tu aplicación, por lo que una escritura se aplica localmente de inmediato y se guarda en segundo plano. Las lecturas nunca esperan al host. Nada se sincroniza: los valores no siguen al usuario a otro navegador o máquina, así que usa el [almacenamiento de clave-valor](/l/es/developers/extend/apps/logic/key-value-store) de una función de lógica para cualquier cosa que deba sobrevivir a un cambio de dispositivo.
+
+Las escrituras están limitadas y cada límite cuenta caracteres en lugar de bytes: las claves tienen como máximo 512 caracteres, un solo valor como máximo 262.144 caracteres y cada almacenamiento como máximo 1.048.576 caracteres por aplicación y usuario. Una escritura que excede un límite lanza un `QuotaExceededError`, como la API del navegador.
+
 ### Trabajar con varios registros
 
 Usa `useSelectedRecordIds()` para manejar varios registros seleccionados. Esto es útil para operaciones por lotes:
@@ -792,7 +825,7 @@ El CSS del componente, ya sea desde `import './styles.css'`, CSS-in-JS o un elem
 
 ### Almacenamiento y red
 
-`localStorage`, `sessionStorage`, IndexedDB, las cookies, la Cache API y `BroadcastChannel` no están disponibles, ya que el componente se ejecuta en un worker en un origen opaco. Para persistir el estado, llama a una [función de lógica](/l/es/developers/extend/apps/logic/logic-functions) y usa su [almacenamiento de clave-valor](/l/es/developers/extend/apps/logic/key-value-store).
+`localStorage` y `sessionStorage` son proporcionados por Twenty en lugar del navegador: el componente se ejecuta en un worker en un origen opaco, por lo que el host almacena los valores en nombre de tu aplicación. Consulta [almacenamiento](#storage) para ver su ámbito y límites. IndexedDB, las cookies, la Cache API y `BroadcastChannel` siguen sin estar disponibles. Para mantener el estado entre dispositivos, llama a una [función de lógica](/l/es/developers/extend/apps/logic/logic-functions) y usa su [almacenamiento de clave-valor](/l/es/developers/extend/apps/logic/key-value-store).
 
 `fetch` funciona, con matices:
 

@@ -143,6 +143,8 @@ import { AddIsHiddenToAgentMessageFastInstanceCommand } from './2-25/2-25-instan
 import { CreateBillingCreditGrantTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-fast-1786532184000-create-billing-credit-grant-table';
 import { BackfillCreditBalanceIntoGrantsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-slow-1786532184001-backfill-credit-balance-into-grants';
 import { AddPreviousPeriodStartToBillingSubscriptionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-fast-1786532184002-add-previous-period-start-to-billing-subscription';
+import { AddIsDeprecatedToApplicationVariablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-fast-1786533439000-add-is-deprecated-to-application-variables';
+import { EncryptEmptyApplicationVariablesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-slow-1786533438000-encrypt-empty-application-variables';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -288,4 +290,6 @@ export const INSTANCE_COMMANDS = [
   CreateBillingCreditGrantTableFastInstanceCommand,
   BackfillCreditBalanceIntoGrantsSlowInstanceCommand,
   AddPreviousPeriodStartToBillingSubscriptionFastInstanceCommand,
+  AddIsDeprecatedToApplicationVariablesFastInstanceCommand,
+  EncryptEmptyApplicationVariablesSlowInstanceCommand,
 ];

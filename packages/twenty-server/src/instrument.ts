@@ -115,8 +115,6 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
   });
 }
 
-// Meter setup
-
 const prometheusExporter = meterDrivers.includes(MeterDriver.Prometheus)
   ? new PrometheusExporter({ port: 9464 })
   : null;

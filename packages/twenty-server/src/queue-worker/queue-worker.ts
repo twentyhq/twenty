@@ -5,10 +5,13 @@ import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 import 'src/instrument';
 import { QueueWorkerModule } from 'src/queue-worker/queue-worker.module';
+import { enableValidationMetadataCache } from 'src/utils/enable-validation-metadata-cache.util';
 
 async function bootstrap() {
   let exceptionHandlerService: ExceptionHandlerService | undefined;
   let loggerService: LoggerService | undefined;
+
+  enableValidationMetadataCache();
 
   try {
     const app = await NestFactory.createApplicationContext(QueueWorkerModule, {
@@ -18,7 +21,6 @@ async function bootstrap() {
     loggerService = app.get(LoggerService);
     exceptionHandlerService = app.get(ExceptionHandlerService);
 
-    // Inject our logger
     app.useLogger(loggerService ?? false);
 
     app.enableShutdownHooks();

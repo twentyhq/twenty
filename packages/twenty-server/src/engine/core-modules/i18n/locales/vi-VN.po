@@ -687,7 +687,7 @@ msgid "Annual Revenue"
 msgstr "Doanh thu hàng năm"
 
 #. js-lingui-id: 4XvK/4
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-creation.util.ts
 msgid "Another application in this workspace has already registered a permission flag with this key."
 msgstr "Một ứng dụng khác trong workspace này đã đăng ký một cờ quyền với khóa này."
 
@@ -1164,24 +1164,24 @@ msgid "Calendar channel not found."
 msgstr "Không tìm thấy kênh lịch."
 
 #. js-lingui-id: 9uvvYS
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar end field metadata not found"
 msgstr ""
 
 #. js-lingui-id: 6BRvIC
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar end field must be a date or date time field"
 msgstr ""
 
 #. js-lingui-id: PEXN0U
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar end field must belong to the view object"
 msgstr ""
 
 #. js-lingui-id: k6cK5J
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar end field not found"
 msgstr ""
 
@@ -1242,24 +1242,24 @@ msgid "Calendar events"
 msgstr "Các sự kiện Lịch"
 
 #. js-lingui-id: Sn4xhy
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar field metadata not found"
 msgstr ""
 
 #. js-lingui-id: J3xD/M
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar field must be a date or date time field"
 msgstr ""
 
 #. js-lingui-id: hUOMKq
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar field must belong to the view object"
 msgstr ""
 
 #. js-lingui-id: 26b8pD
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar field not found"
 msgstr ""
 
@@ -1269,14 +1269,14 @@ msgid "Calendar provider is not supported."
 msgstr "Nhà cung cấp lịch không được hỗ trợ."
 
 #. js-lingui-id: /63r02
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar start and end fields must be different"
 msgstr ""
 
 #. js-lingui-id: DRukEV
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar start and end fields must have the same type"
 msgstr ""
 
@@ -1286,20 +1286,20 @@ msgid "Calendar sync error."
 msgstr "Lỗi đồng bộ lịch."
 
 #. js-lingui-id: zfvgb0
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar view must have a calendar field"
 msgstr ""
 
 #. js-lingui-id: JhktJw
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar view must have a calendar layout"
 msgstr ""
 
 #. js-lingui-id: D9pZ2l
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar widget views only support the month layout"
 msgstr ""
 
@@ -1405,8 +1405,8 @@ msgid "Cannot delete standard agent"
 msgstr "Không thể xóa tác nhân tiêu chuẩn"
 
 #. js-lingui-id: kOOXTs
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-deletion.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-deletion.util.ts
 msgid "Cannot delete standard permission flag definition"
 msgstr "Không thể xóa định nghĩa cờ quyền tiêu chuẩn"
 
@@ -1422,8 +1422,8 @@ msgid "Cannot delete the last admin user."
 msgstr "Không thể xóa người dùng quản trị cuối cùng."
 
 #. js-lingui-id: W3Ik7m
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-deletion.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-deletion.util.ts
 msgid "Cannot delete the only view for this object"
 msgstr "Không thể xóa chế độ xem duy nhất của đối tượng này"
 
@@ -1550,8 +1550,8 @@ msgid "Cannot update standard agent"
 msgstr "Không thể cập nhật tác nhân tiêu chuẩn"
 
 #. js-lingui-id: LWpSNC
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-update.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-update.util.ts
 msgid "Cannot update standard permission flag definition"
 msgstr "Không thể cập nhật định nghĩa cờ quyền tiêu chuẩn"
 
@@ -2091,6 +2091,16 @@ msgstr "Ngày tạo"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 msgid "Creation DateTime"
 msgstr "Ngày giờ tạo"
+
+#. js-lingui-id: iMikvq
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Credit grant must expire after it becomes effective."
+msgstr ""
+
+#. js-lingui-id: J0OIhA
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Credit grant not found."
+msgstr ""
 
 #. js-lingui-id: 6Oaeoc
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
@@ -2879,12 +2889,12 @@ msgstr "Yêu cầu mã nhận dạng nhãn trường"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-search-field-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-update.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-update.util.ts
 msgid "Field metadata not found"
 msgstr "Không tìm thấy siêu dữ liệu trường"
 
@@ -3164,22 +3174,22 @@ msgstr "Trường Files không được hỗ trợ cho các trường duy nhất
 
 #. js-lingui-id: PR/KbU
 #. placeholder {0}: referencedFieldMetadata.label
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-select-option-error.util.ts
 msgid "Filter on \"{0}\" uses option(s) {invalidValuesText} that do not exist. Allowed values: {allowedValuesText}."
 msgstr "Bộ lọc trên \"{0}\" sử dụng tùy chọn {invalidValuesText} không tồn tại. Giá trị được phép: {allowedValuesText}."
 
 #. js-lingui-id: MkIaen
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-incompatible-view-filter-operand-error.util.ts
 msgid "Filter operand is not supported for this field type"
 msgstr "Toán hạng bộ lọc không được hỗ trợ cho loại trường này"
 
 #. js-lingui-id: dzteua
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-select-option-error.util.ts
 msgid "Filter uses a select option that does not exist"
 msgstr "Bộ lọc sử dụng một tùy chọn chọn không tồn tại"
 
 #. js-lingui-id: NCkLG1
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-value-error.util.ts
 msgid "Filter value is not valid for this operand"
 msgstr ""
 
@@ -4029,8 +4039,8 @@ msgid "Invalid permission setting."
 msgstr "Thiết lập quyền không hợp lệ."
 
 #. js-lingui-id: ZoXxz9
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-update.util.ts
 msgid "Invalid permission type"
 msgstr "Kiểu quyền không hợp lệ"
 
@@ -4498,44 +4508,44 @@ msgid "June"
 msgstr "Tháng Sáu"
 
 #. js-lingui-id: QS/zML
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-update.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-update.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-update.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-update.util.ts
 msgid "Kanban main group by field metadata not found"
 msgstr "Không tìm thấy siêu dữ liệu của trường nhóm chính của Kanban"
 
 #. js-lingui-id: Ce++y2
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-update.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-update.util.ts
 msgid "Kanban main group by field must be a select or a many-to-one relation field"
 msgstr "Trường nhóm chính của Kanban phải là trường chọn hoặc trường quan hệ nhiều-một"
 
 #. js-lingui-id: 9SKooF
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-update.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-update.util.ts
 msgid "Kanban main group by field must be a SELECT or a many-to-one relation field"
 msgstr "Trường nhóm chính của Kanban phải là trường SELECT hoặc trường quan hệ nhiều-một"
 
 #. js-lingui-id: mAbBLH
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-update.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-update.util.ts
 msgid "Kanban view must have a main group by field"
 msgstr "Chế độ xem Kanban phải có một trường nhóm chính"
 
 #. js-lingui-id: WDgCbh
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-update.util.ts
 msgid "Key cannot be changed"
 msgstr "Không thể thay đổi khóa"
 
 #. js-lingui-id: QV1ZPO
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-creation.util.ts
 msgid "Key is required"
 msgstr "Khóa là bắt buộc"
 
@@ -5529,7 +5539,7 @@ msgid "Object already exists"
 msgstr "Đối tượng đã tồn tại"
 
 #. js-lingui-id: AV0hPh
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
 msgid "Object already has a view with the {reservedViewKey} key"
 msgstr ""
 
@@ -5562,8 +5572,8 @@ msgstr "Nhãn đối tượng quá ngắn"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-search-field-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-search-field-metadata-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
 msgid "Object metadata not found"
 msgstr "Không tìm thấy siêu dữ liệu đối tượng"
 
@@ -5729,8 +5739,13 @@ msgstr ""
 
 #. js-lingui-id: e/+ykp
 #. placeholder {0}: allowedOperands.join(', ')
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-incompatible-view-filter-operand-error.util.ts
 msgid "Operand \"{operand}\" is not supported on field type \"{filterType}\". Supported operands: {0}."
+msgstr ""
+
+#. js-lingui-id: iD+jGc
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Operand \"{operand}\" requires a value, an empty predicate would remove the row restriction entirely"
 msgstr ""
 
 #. js-lingui-id: Rh2dh5
@@ -6098,45 +6113,45 @@ msgid "Permission flag already exists."
 msgstr "Cờ quyền đã tồn tại."
 
 #. js-lingui-id: vUfYBs
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-creation.util.ts
 msgid "Permission flag definition already exists"
 msgstr "Định nghĩa cờ quyền đã tồn tại"
 
 #. js-lingui-id: si69+A
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-update.util.ts
 msgid "Permission flag definition key cannot be changed after creation"
 msgstr "Không thể thay đổi khóa định nghĩa cờ quyền sau khi tạo"
 
 #. js-lingui-id: vCvEfM
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-creation.util.ts
 msgid "Permission flag definition key is required"
 msgstr "Khóa định nghĩa cờ quyền là bắt buộc"
 
 #. js-lingui-id: IPm2ty
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-deletion.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-update.util.ts
 msgid "Permission flag definition not found"
 msgstr "Không tìm thấy định nghĩa cờ quyền"
 
 #. js-lingui-id: /amTA5
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-update.util.ts
 msgid "Permission flag definition permission type must be 'settings' or 'tool'"
 msgstr "Kiểu quyền của định nghĩa cờ quyền phải là 'settings' hoặc 'tool'"
 
 #. js-lingui-id: dKSPBk
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-deletion.util.ts
 msgid "Permission flag definition to delete not found"
 msgstr "Không tìm thấy định nghĩa cờ quyền để xóa"
 
 #. js-lingui-id: 5phRcJ
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-update.util.ts
 msgid "Permission flag definition to update not found"
 msgstr "Không tìm thấy định nghĩa cờ quyền để cập nhật"
 
 #. js-lingui-id: KNBagU
 #. placeholder {0}: flatPermissionFlagToValidate.key
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-creation.util.ts
 msgid "Permission flag definition with key \"{0}\" is already registered in this workspace."
 msgstr "Định nghĩa cờ quyền với khóa \"{0}\" đã được đăng ký trong workspace này."
 
@@ -6147,7 +6162,7 @@ msgstr "Định nghĩa cờ quyền với khóa {flagKey} vẫn đang được g
 
 #. js-lingui-id: px8Wqt
 #. placeholder {0}: flatPermissionFlagToValidate.universalIdentifier
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-permission-flag-creation.util.ts
 msgid "Permission flag definition with universal identifier {0} already exists"
 msgstr "Định nghĩa cờ quyền với định danh phổ quát {0} đã tồn tại"
 
@@ -6342,6 +6357,17 @@ msgstr "Vị trí phải là một số hữu hạn"
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Prebuilt bundle is not installed on the function. Rebuild and try again."
 msgstr "Gói dựng sẵn chưa được cài đặt cho hàm. Hãy dựng lại và thử lại."
+
+#. js-lingui-id: OAanPr
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Predicate is missing a value"
+msgstr ""
+
+#. js-lingui-id: a/WH2z
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Predicate value is not valid for this operand"
+msgstr ""
 
 #. js-lingui-id: TTHIbk
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -7183,6 +7209,11 @@ msgstr "Một số quyền hạn bạn đã chọn không hợp lệ. Vui lòng 
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "Không thể tìm thấy một số tư cách thành viên không gian làm việc. Có thể họ không còn quyền truy cập vào không gian làm việc này nữa."
 
+#. js-lingui-id: eAMUPx
+#: src/engine/core-modules/onboarding/onboarding.exception.ts
+msgid "Something went wrong while saving your onboarding progress."
+msgstr ""
+
 #. js-lingui-id: RjTo7h
 #: src/engine/core-modules/onboarding/onboarding.exception.ts
 msgid "Something went wrong while starting the app installation. Please try again."
@@ -7601,12 +7632,12 @@ msgid "Text response format should not have a schema"
 msgstr "Định dạng phản hồi văn bản không nên có lược đồ"
 
 #. js-lingui-id: kFsyD4
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
 msgid "The {reservedViewKey} view key is reserved for the default view"
 msgstr ""
 
 #. js-lingui-id: 7s8NoS
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
 msgid "The {reservedViewKey} view key is reserved for the engine-owned default view; remove the key from the view definition"
 msgstr ""
 
@@ -8057,6 +8088,11 @@ msgstr "Có vấn đề với mã thông báo của bạn. Vui lòng thử lại
 msgid "There is no failed message to retry."
 msgstr "Không có tin nhắn lỗi nào để thử lại."
 
+#. js-lingui-id: jMDu2a
+#: src/engine/core-modules/onboarding/onboarding.exception.ts
+msgid "There is no previous onboarding step to go back to."
+msgstr ""
+
 #. js-lingui-id: Yi0Q/T
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
@@ -8266,6 +8302,11 @@ msgstr "Chỉ mục này không tồn tại hoặc đã bị xóa."
 msgid "This instance did not report a server identifier. Set SERVER_ID on this instance, then try again."
 msgstr "Phiên bản này không báo cáo mã định danh máy chủ. Hãy đặt SERVER_ID trên phiên bản này rồi thử lại."
 
+#. js-lingui-id: wQ3edW
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This kind of credit grant cannot be created by hand."
+msgstr ""
+
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "This method is not allowed."
@@ -8290,7 +8331,7 @@ msgid "This name is reserved. Use a different name or the system will add \"Cust
 msgstr "Tên này đã được dành riêng. Hãy dùng tên khác, nếu không hệ thống sẽ thêm hậu tố \"Custom\"."
 
 #. js-lingui-id: /mGcny
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
 msgid "This object already has a default view"
 msgstr ""
 
@@ -8404,11 +8445,6 @@ msgstr "Không thể chỉnh sửa vai trò này."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-editable.util.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "Vai trò này không thể sửa đổi vì nó là vai trò hệ thống. Chỉ có thể chỉnh sửa vai trò tùy chỉnh."
-
-#. js-lingui-id: nzveUr
-#: src/engine/metadata-modules/object-permission/field-permission/__tests__/field-permissions.service.spec.ts
-msgid "This role cannot be modified."
-msgstr "Không thể chỉnh sửa vai trò này."
 
 #. js-lingui-id: DEJJoY
 #: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts
@@ -8811,6 +8847,11 @@ msgstr "URL phải là một chuỗi"
 msgid "URL must be a string for widget \"{widgetTitle}\""
 msgstr "URL phải là một chuỗi cho tiện ích \"{widgetTitle}\""
 
+#. js-lingui-id: P7NKk0
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Usage could not be read. Please try again later."
+msgstr ""
+
 #. js-lingui-id: GkcfmO
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "User already exists"
@@ -8904,12 +8945,14 @@ msgid "User workspace role configuration not found."
 msgstr "Không tìm thấy cấu hình vai trò không gian làm việc của người dùng."
 
 #. js-lingui-id: sFN4Dx
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-value-error.util.ts
 msgid "Value \"{stringifiedValue}\" is not valid for operand \"{operand}\" on field type \"{filterType}\"."
 msgstr ""
 
 #. js-lingui-id: ccqQWi
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-value-error.util.ts
 msgid "Value \"{stringifiedValue}\" is not valid for operand \"{operand}\" on field type \"{filterType}\". {hint}"
 msgstr ""
 
@@ -8921,6 +8964,11 @@ msgstr ""
 #. js-lingui-id: JaflDh
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
 msgid "Value \"{stringifiedValue}\" of a chart filter of widget \"{widgetTitle}\" is not valid for operand \"{operand}\" on field type \"{filterType}\". {hint}"
+msgstr ""
+
+#. js-lingui-id: l+Dvh5
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Value \"{stringifiedValue}\" resolves to no record for operand \"{operand}\", the current record is not available to a row level permission predicate"
 msgstr ""
 
 #. js-lingui-id: UBPzFQ
@@ -8966,7 +9014,7 @@ msgid "Video recording"
 msgstr "Ghi hình video"
 
 #. js-lingui-id: HhN1Bv
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
 msgid "View already exists"
 msgstr "Chế độ xem đã tồn tại"
 
@@ -9074,7 +9122,7 @@ msgid "View field with same fieldMetadataUniversalIdentifier and viewUniversalId
 msgstr "Trường chế độ xem với cùng fieldMetadataUniversalIdentifier và viewUniversalIdentifier đã tồn tại"
 
 #. js-lingui-id: sbHaOg
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-creation.util.ts
 msgid "View filter already exists"
 msgstr "Bộ lọc chế độ xem đã tồn tại"
 
@@ -9100,10 +9148,10 @@ msgstr "Hệ phân cấp Nhóm Bộ Lọc Chế Độ Xem vượt quá độ sâ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-update.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-update.util.ts
 msgid "View filter group not found"
 msgstr "Không tìm thấy Nhóm Bộ Lọc Chế Độ Xem"
 
@@ -9113,10 +9161,10 @@ msgid "View filter group with this universal identifier already exists"
 msgstr "Nhóm bộ lọc chế độ xem với định danh phổ quát này đã tồn tại"
 
 #. js-lingui-id: 1KSqGE
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-deletion.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-deletion.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-update.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-update.util.ts
 msgid "View filter not found"
 msgstr "Không tìm thấy bộ lọc chế độ xem"
 
@@ -9136,7 +9184,7 @@ msgid "View filter to update not found"
 msgstr "Không tìm thấy bộ lọc để cập nhật"
 
 #. js-lingui-id: bM1MKh
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-creation.util.ts
 msgid "View filter with this universal identifier already exists"
 msgstr "Bộ lọc chế độ xem với định danh phổ quát này đã tồn tại"
 
@@ -9176,10 +9224,10 @@ msgid "View group to update parent view not found"
 msgstr "Không tìm thấy nhóm chế độ xem cha để cập nhật"
 
 #. js-lingui-id: M7KWZV
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-update.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-update.util.ts
 msgid "View kanban aggregate field metadata not found"
 msgstr "Không tìm thấy metadata của trường tổng hợp kanban"
 
@@ -9191,16 +9239,16 @@ msgstr "Không tìm thấy metadata của trường tổng hợp kanban"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-deletion.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-deletion.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-filter-creation.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-update.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-update.util.ts
 msgid "View not found"
 msgstr "Không tìm thấy chế độ xem"
 
@@ -9283,7 +9331,7 @@ msgid "View to update not found"
 msgstr "Không tìm thấy chế độ xem cần cập nhật"
 
 #. js-lingui-id: RvdHYC
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
 msgid "View with same universal identifier already exists"
 msgstr "Chế độ xem có cùng định danh phổ quát đã tồn tại"
 

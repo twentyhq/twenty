@@ -22,7 +22,10 @@ export const InstallAppsAutoSkipEffect = ({
 
     const skip = async () => {
       try {
-        await triggerInstallAppsOnboardingStep([]);
+        await triggerInstallAppsOnboardingStep({
+          universalIdentifiers: [],
+          isAutoSkipped: true,
+        });
       } catch {
         onError();
       }

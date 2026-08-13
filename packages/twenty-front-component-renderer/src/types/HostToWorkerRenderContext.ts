@@ -1,3 +1,4 @@
+import { type FrontComponentStorageSnapshots } from '@/types/FrontComponentStorageSnapshots';
 import { type SdkClientSources } from '@/types/SdkClientSources';
 import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot';
 
@@ -12,4 +13,5 @@ export type HostToWorkerRenderContext = {
   hostFetchOrigins?: string[];
   applicationVariables?: Record<string, string>;
   initialViewportGeometry?: ViewportGeometrySnapshot;
+  storageSnapshots?: FrontComponentStorageSnapshots;
 };
