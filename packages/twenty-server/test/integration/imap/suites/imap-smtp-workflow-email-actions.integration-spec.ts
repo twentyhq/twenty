@@ -1,5 +1,8 @@
 import { randomUUID } from 'node:crypto';
 
+import { isNonEmptyString } from '@sniptt/guards';
+import { ImapFlow } from 'imapflow';
+
 import { EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/enums/email-connection-security.enum';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 
@@ -22,6 +25,40 @@ describe('IMAP/SMTP workflow email actions (integration)', () => {
   let greenmail: GreenmailServer;
   let connectedAccountId: string;
   let messageChannelId: string;
+
+  const findDraftSubjects = async (): Promise<string[]> => {
+    const client = new ImapFlow({
+      host: greenmail.host,
+      port: greenmail.imapPort,
+      secure: false,
+      auth: { user: HANDLE.split('@')[0], pass: PASSWORD },
+      logger: false,
+    });
+
+    await client.connect();
+
+    try {
+      const { exists } = await client.mailboxOpen('Drafts');
+
+      if (exists === 0) {
+        return [];
+      }
+
+      const subjects: string[] = [];
+
+      for await (const message of client.fetch('1:*', { envelope: true })) {
+        const subject = message.envelope?.subject;
+
+        if (isNonEmptyString(subject)) {
+          subjects.push(subject);
+        }
+      }
+
+      return subjects;
+    } finally {
+      await client.logout();
+    }
+  };
 
   beforeAll(async () => {
     await updateConfigVariable({
@@ -71,7 +108,7 @@ describe('IMAP/SMTP workflow email actions (integration)', () => {
       input: { key: 'OUTBOUND_HTTP_SAFE_MODE_ENABLED', value: true },
     }).catch(() => undefined);
 
-    if (connectedAccountId) {
+    if (isNonEmptyString(connectedAccountId)) {
       await deleteConnectedAccount({
         id: connectedAccountId,
         expectToFail: false,
@@ -174,6 +211,7 @@ describe('IMAP/SMTP workflow email actions (integration)', () => {
       subject,
       connectedAccountId,
     });
+    expect(await findDraftSubjects()).toContain(subject);
     expect(
       await findRecordNodesByFilter<{ id: string }>(
         'message',

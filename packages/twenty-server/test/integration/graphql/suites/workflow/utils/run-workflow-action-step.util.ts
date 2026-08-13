@@ -1,5 +1,6 @@
 import gql from 'graphql-tag';
 import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
+import { isDefined } from 'twenty-shared/utils';
 import {
   destroyWorkflowRun,
   runWorkflowVersion,
@@ -43,7 +44,7 @@ const createWorkflow = async (name: string): Promise<string> => {
 };
 
 const destroyWorkflow = async (workflowId: string): Promise<void> => {
-  const response = await makeGraphqlAPIRequest({
+  await makeGraphqlAPIRequest({
     query: gql`
       mutation DestroyWorkflow($id: ID!) {
         destroyWorkflow(id: $id) {
@@ -53,8 +54,6 @@ const destroyWorkflow = async (workflowId: string): Promise<void> => {
     `,
     variables: { id: workflowId },
   });
-
-  expect(response.body.errors).toBeUndefined();
 };
 
 const findDraftWorkflowVersionId = async (
@@ -190,38 +189,44 @@ export const runWorkflowActionStep = async ({
   payload?: object;
 }): Promise<WorkflowActionStepRun> => {
   const workflowId = await createWorkflow(name);
-  const workflowVersionId = await findDraftWorkflowVersionId(workflowId);
 
-  await updateWorkflowVersionTrigger({
-    workflowVersionId,
-    trigger: {
-      name: 'Manual Trigger',
-      type: 'MANUAL',
-      settings: { outputSchema: {} },
-      nextStepIds: [],
-      position: { x: 0, y: 0 },
-    },
-  });
+  let workflowRunId: string | undefined;
 
-  await createWorkflowVersionStep({ workflowVersionId, stepType });
+  try {
+    const workflowVersionId = await findDraftWorkflowVersionId(workflowId);
 
-  const step = await findWorkflowVersionStep({ workflowVersionId, stepType });
+    await updateWorkflowVersionTrigger({
+      workflowVersionId,
+      trigger: {
+        name: 'Manual Trigger',
+        type: 'MANUAL',
+        settings: { outputSchema: {} },
+        nextStepIds: [],
+        position: { x: 0, y: 0 },
+      },
+    });
 
-  await updateWorkflowVersionStepInput({ workflowVersionId, step, input });
+    await createWorkflowVersionStep({ workflowVersionId, stepType });
 
-  const workflowRunId = await runWorkflowVersion({
-    workflowVersionId,
-    payload,
-  });
-  const workflowRun = await waitForWorkflowCompletion(workflowRunId);
-  const stepInfo = workflowRun?.state?.stepInfos?.[step.id];
+    const step = await findWorkflowVersionStep({ workflowVersionId, stepType });
 
-  await destroyWorkflowRun(workflowRunId);
-  await destroyWorkflow(workflowId);
+    await updateWorkflowVersionStepInput({ workflowVersionId, step, input });
 
-  return {
-    status: workflowRun?.status,
-    stepStatus: stepInfo?.status,
-    stepResult: stepInfo?.result,
-  };
+    workflowRunId = await runWorkflowVersion({ workflowVersionId, payload });
+
+    const workflowRun = await waitForWorkflowCompletion(workflowRunId);
+    const stepInfo = workflowRun?.state?.stepInfos?.[step.id];
+
+    return {
+      status: workflowRun?.status,
+      stepStatus: stepInfo?.status,
+      stepResult: stepInfo?.result,
+    };
+  } finally {
+    if (isDefined(workflowRunId)) {
+      await destroyWorkflowRun(workflowRunId);
+    }
+
+    await destroyWorkflow(workflowId);
+  }
 };
