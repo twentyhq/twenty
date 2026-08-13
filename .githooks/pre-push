@@ -24,6 +24,32 @@ REPO_ROOT="$(git rev-parse --show-toplevel)" || exit 1
 cd "$REPO_ROOT" || exit 1
 
 # ---------------------------------------------------------------------------
+# 🔴 THE GATE MUST NOT INHERIT THIS PUSH'S GIT LOCATION.
+#
+# Git exports GIT_DIR and friends into EVERY hook, and they override both `cwd` and
+# `git -C`. verify.sh below runs this repo's suite, and a suite that builds a throwaway
+# repository — which most do — has every one of its git commands silently redirected at
+# THIS repository instead of its fixture.
+#
+# Not theoretical. Measured 2026-08-13 in internal-knowledge-base (fixed in its #577):
+#
+#   * a fixture wrote its commits AND its `core.hooksPath=/dev/null` into the real clone,
+#     disarming the push gate for every session using it. Silent; found by live-firing.
+#   * `git init --bare` with NO path argument, under an inherited GIT_DIR, re-initialises
+#     the repository GIT_DIR points at and writes `bare = true` into it. Every command
+#     needing a work tree then fails while `git fetch` keeps working, so nothing reports
+#     it — the mechanism behind that day's bare-clone incident.
+#
+# REPO_ROOT is resolved ABOVE this line, from the hook's own environment, because that is
+# what decides which repository is being pushed. Scrubbing before that would make the hook
+# guess from cwd; scrubbing after verify.sh would be no scrub at all. Order is the design.
+#
+# Scrubbed once, here, so every check verify.sh grows tomorrow is covered without anyone
+# remembering — including checks written by someone who has never heard of this.
+unset GIT_DIR GIT_COMMON_DIR GIT_INDEX_FILE GIT_WORK_TREE GIT_PREFIX \
+      GIT_OBJECT_DIRECTORY GIT_ALTERNATE_OBJECT_DIRECTORIES
+
+# ---------------------------------------------------------------------------
 # THE ESCAPE HATCH IS LOUD *AND* LEAVES A TRACE.
 #
 # Removing the hatch entirely wedges people, and a wedged gate gets routed around — with
