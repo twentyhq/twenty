@@ -71,12 +71,19 @@ export class MessagingMessageFolderAssociationService {
           ),
         );
 
-        const recordsToInsert = records.filter(
-          (record) =>
-            !existingKeys.has(
-              `${record.messageChannelMessageAssociationId}:${record.messageFolderId}`,
-            ),
-        );
+        const seenKeys = new Set<string>();
+
+        const recordsToInsert = records.filter((record) => {
+          const key = `${record.messageChannelMessageAssociationId}:${record.messageFolderId}`;
+
+          if (existingKeys.has(key) || seenKeys.has(key)) {
+            return false;
+          }
+
+          seenKeys.add(key);
+
+          return true;
+        });
 
         if (recordsToInsert.length > 0) {
           await repository.insert(recordsToInsert, transactionManager);
