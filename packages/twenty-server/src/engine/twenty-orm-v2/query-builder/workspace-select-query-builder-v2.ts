@@ -250,7 +250,12 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     return this;
   }
 
-  leftJoin(relationPath: string, alias: string, condition?: string): this {
+  leftJoin(
+    relationPath: string,
+    alias: string,
+    condition?: string,
+    options?: { allowToManyJoin?: boolean },
+  ): this {
     const [parentAlias, relationFieldName] = relationPath.split('.');
 
     if (!isDefined(relationFieldName)) {
@@ -280,9 +285,21 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
 
     const joinColumnName = relationShape.joinColumnName;
 
-    // A to-many join has no renderable condition, but it is still recorded so the shared
-    // to-one guard rejects it with the same error the TypeORM path produces. Reaching SQL
-    // generation with one of these means the guard was bypassed, which throws there.
+    // A to-one relation carries its join column on the current table, so the condition
+    // is always renderable. A to-many relation carries the foreign key on the target
+    // table; it is only built when the caller opts in (group-by "with records" ordering)
+    // and renders as a DISTINCT ON derived table so it stays one row per parent.
+    // Otherwise the condition is left undefined and the shared to-one guard rejects it.
+    const toManyJoin =
+      options?.allowToManyJoin === true
+        ? this.buildToManyJoin({
+            parentAlias,
+            alias,
+            targetTableShape,
+            targetFieldMetadataId: relationShape.targetFieldMetadataId,
+          })
+        : undefined;
+
     this.joinClauses.push({
       alias,
       targetTableShape,
@@ -290,11 +307,46 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       condition: isDefined(joinColumnName)
         ? (condition ??
           `${this.quoteColumn(parentAlias, joinColumnName)} = ${this.quoteColumn(alias, 'id')}`)
-        : undefined,
+        : (condition ?? toManyJoin?.condition),
+      toManyForeignKeyColumnName: toManyJoin?.foreignKeyColumnName,
       additionalOnConditions: [],
     });
 
     return this;
+  }
+
+  private buildToManyJoin({
+    parentAlias,
+    alias,
+    targetTableShape,
+    targetFieldMetadataId,
+  }: {
+    parentAlias: string;
+    alias: string;
+    targetTableShape: WorkspaceTableShape;
+    targetFieldMetadataId: string | null;
+  }): { condition: string; foreignKeyColumnName: string } | undefined {
+    if (!isDefined(targetFieldMetadataId)) {
+      return undefined;
+    }
+
+    const inverseRelationShape = Object.values(
+      targetTableShape.relationShapeByFieldName,
+    ).find(
+      (relationShape) =>
+        relationShape.fieldMetadataId === targetFieldMetadataId,
+    );
+
+    const foreignKeyColumnName = inverseRelationShape?.joinColumnName;
+
+    if (!isDefined(foreignKeyColumnName)) {
+      return undefined;
+    }
+
+    return {
+      condition: `${this.quoteColumn(alias, foreignKeyColumnName)} = ${this.quoteColumn(parentAlias, 'id')}`,
+      foreignKeyColumnName,
+    };
   }
 
   withDeleted(): this {
@@ -566,19 +618,36 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
         );
       }
 
-      if (!(value instanceof FindOperator) || value.type !== 'in') {
-        throw new TwentyOrmV2Exception(
-          `Object where only supports the "in" operator on "${columnName}"`,
-          TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
-        );
+      const quotedColumn = quoteColumn(this.alias, columnName);
+
+      if (value === null) {
+        conditions.push(`${quotedColumn} IS NULL`);
+        continue;
       }
 
       const parameterName = `ormV2ObjectWhere_${objectWhereParameterSequence++}`;
 
-      conditions.push(
-        `${quoteColumn(this.alias, columnName)} IN (:...${parameterName})`,
-      );
-      parameters[parameterName] = value.value;
+      if (value instanceof FindOperator) {
+        if (value.type === 'in') {
+          conditions.push(`${quotedColumn} IN (:...${parameterName})`);
+          parameters[parameterName] = value.value;
+          continue;
+        }
+
+        if (value.type === 'equal') {
+          conditions.push(`${quotedColumn} = :${parameterName}`);
+          parameters[parameterName] = value.value;
+          continue;
+        }
+
+        throw new TwentyOrmV2Exception(
+          `Object where supports only the "in" and "equal" operators on "${columnName}"`,
+          TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
+        );
+      }
+
+      conditions.push(`${quotedColumn} = :${parameterName}`);
+      parameters[parameterName] = value;
     }
 
     return { sql: conditions.join(' AND '), parameters };

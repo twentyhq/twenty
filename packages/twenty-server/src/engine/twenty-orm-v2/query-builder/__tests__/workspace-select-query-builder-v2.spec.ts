@@ -1,5 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { In, LessThan } from 'typeorm';
+import { Equal, In, LessThan } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { type CompiledStatement } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
@@ -34,7 +34,16 @@ const companyTableShape: WorkspaceTableShape = {
     deletedAt: buildColumn('deletedAt'),
   },
   columnNames: ['id', 'name', 'deletedAt'],
-  relationShapeByFieldName: {},
+  relationShapeByFieldName: {
+    person: {
+      fieldName: 'person',
+      fieldMetadataId: 'field-company',
+      relationType: RelationType.MANY_TO_ONE,
+      targetObjectMetadataId: 'person-object-id',
+      targetFieldMetadataId: 'field-people',
+      joinColumnName: 'personId',
+    },
+  },
   hasDeletedAtColumn: true,
 };
 
@@ -171,6 +180,23 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
       },
     ]);
     expect(() => queryBuilder.getQuery()).toThrow(TwentyOrmV2Exception);
+  });
+
+  it('should render a deduped to-many join on the inverse foreign key when the caller opts in', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.setFindOptions({ select: { id: true } });
+    queryBuilder.leftJoin('person.people', 'people', undefined, {
+      allowToManyJoin: true,
+    });
+
+    expect(queryBuilder.getQuery()).toContain(
+      `LEFT JOIN (SELECT DISTINCT ON ("personId") * ` +
+        `FROM "${SCHEMA_NAME}"."company" ` +
+        `WHERE "deletedAt" IS NULL ` +
+        `ORDER BY "personId", "id") AS "people" ` +
+        'ON ("people"."personId" = "person"."id")',
+    );
   });
 
   it('should emit a plain parameterised LIMIT, with no distinct sub-select', () => {
@@ -622,12 +648,40 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
     );
   });
 
-  it('should reject a plain value in an object-literal where', () => {
+  it('should treat a plain value in an object-literal where as equality', () => {
     const { queryBuilder } = buildQueryBuilder();
 
-    expect(() => queryBuilder.where({ companyId: 'company-1' })).toThrow(
-      TwentyOrmV2Exception,
-    );
+    queryBuilder
+      .setFindOptions({ select: { id: true } })
+      .where({ companyId: 'company-1' });
+
+    const [text, values] = queryBuilder.getQueryAndParameters();
+
+    expect(text).toContain('("person"."companyId" = $1)');
+    expect(values).toEqual(['company-1']);
+  });
+
+  it('should treat the Equal operator in an object-literal where as equality', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder
+      .setFindOptions({ select: { id: true } })
+      .where({ companyId: Equal('company-1') });
+
+    const [text, values] = queryBuilder.getQueryAndParameters();
+
+    expect(text).toContain('("person"."companyId" = $1)');
+    expect(values).toEqual(['company-1']);
+  });
+
+  it('should treat a null value in an object-literal where as IS NULL', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder
+      .setFindOptions({ select: { id: true } })
+      .where({ companyId: null });
+
+    expect(queryBuilder.getQuery()).toContain('("person"."companyId" IS NULL)');
   });
 
   it('should emit a GROUP BY with aggregate and grouped columns', () => {
