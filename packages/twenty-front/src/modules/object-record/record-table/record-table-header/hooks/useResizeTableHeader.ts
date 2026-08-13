@@ -7,7 +7,7 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { recordTableWidthComponentState } from '@/object-record/record-table/states/recordTableWidthComponentState';
 
-import { isRecordTableCheckboxColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableCheckboxColumnHiddenComponentState';
+import { useIsRecordTableCheckboxColumnHidden } from '@/object-record/record-table/hooks/useIsRecordTableCheckboxColumnHidden';
 import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
 import { resizedFieldMetadataIdComponentState } from '@/object-record/record-table/states/resizedFieldMetadataIdComponentState';
 import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
@@ -76,10 +76,8 @@ export const useResizeTableHeader = () => {
     recordTableId,
   );
 
-  const isRecordTableCheckboxColumnHidden = useAtomComponentStateValue(
-    isRecordTableCheckboxColumnHiddenComponentState,
-    recordTableId,
-  );
+  const isRecordTableCheckboxColumnHidden =
+    useIsRecordTableCheckboxColumnHidden(recordTableId);
 
   const handleResizeHandlerStart = useCallback<PointerEventListener>(
     ({ x }) => {
