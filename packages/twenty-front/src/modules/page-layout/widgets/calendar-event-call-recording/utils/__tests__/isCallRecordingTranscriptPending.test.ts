@@ -13,6 +13,7 @@ const createCallRecording = ({
   status,
   transcript,
   summary: null,
+  video: null,
   createdAt: '2026-08-01T00:00:00.000Z',
 });
 
