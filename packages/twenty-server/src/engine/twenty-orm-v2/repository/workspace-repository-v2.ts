@@ -234,7 +234,10 @@ export class WorkspaceRepositoryV2 {
   async exists(options?: FindOptionsV2): Promise<boolean> {
     const queryBuilder = applyFindOptionsToQueryBuilder(
       this.createQueryBuilder(),
-      options,
+      {
+        where: options?.where,
+        withDeleted: options?.withDeleted,
+      },
     );
 
     queryBuilder.select(['id']);

@@ -1,4 +1,3 @@
-import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import {
@@ -72,14 +71,7 @@ export const applyMutationCriteriaToQueryBuilder = (
     return queryBuilder;
   }
 
-  if (isDefined(criteria) && isPlainObject(criteria)) {
-    queryBuilder.where(criteria);
+  queryBuilder.where(criteria);
 
-    return queryBuilder;
-  }
-
-  throw new TwentyOrmV2Exception(
-    'Unsupported mutation criteria',
-    TwentyOrmV2ExceptionCode.INVALID_PARAMETER,
-  );
+  return queryBuilder;
 };
