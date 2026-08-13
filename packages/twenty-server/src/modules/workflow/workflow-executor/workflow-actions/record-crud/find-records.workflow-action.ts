@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isUndefined } from '@sniptt/guards';
 import {
   computeRecordGqlOperationFilter,
   isDefined,
@@ -71,10 +72,28 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
     if (workflowActionInput.filter?.recordFilters) {
       for (const filter of workflowActionInput.filter.recordFilters) {
         if (!isRecordFilterValueValid(filter)) {
-          throw new WorkflowStepExecutorException(
-            `Filter condition has an empty value after variable resolution. This likely means a workflow variable could not be resolved. Filter field: ${filter.fieldMetadataId}, operand: ${filter.operand}`,
-            WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
-          );
+          // An unresolved/broken variable reference resolves to `undefined`
+          // (see resolveInput/evalFromContext) - that's a genuine input
+          // error, so keep failing the step to avoid silently building an
+          // unfiltered query.
+          if (isUndefined(filter.value)) {
+            throw new WorkflowStepExecutorException(
+              `Filter condition has an empty value after variable resolution. This likely means a workflow variable could not be resolved. Filter field: ${filter.fieldMetadataId}, operand: ${filter.operand}`,
+              WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+            );
+          }
+
+          // A variable that resolved successfully to a legitimately empty
+          // value (e.g. null for an optional relation that isn't set) is
+          // valid business data, not a broken reference. Treat it as
+          // "no records match" instead of aborting the whole run.
+          return {
+            result: {
+              first: undefined,
+              all: [],
+              totalCount: 0,
+            },
+          };
         }
       }
     }
