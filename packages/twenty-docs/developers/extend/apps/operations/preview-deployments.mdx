@@ -133,6 +133,8 @@ Sign in with the prefilled demo credentials on the login screen; your app is ins
 - **Cost.** Actions minutes are free on public repositories. On private repositories a 5-hour job bills 300 runner-minutes per push, so consider gating the workflow on a label instead of every push.
 - **Forks.** `pull_request` runs from forks get a read-only token, so the PR comment step is skipped; the tunnel URL is still printed in the job log.
 
-## How Twenty runs this for its own app PRs
+## How Twenty previews its own app PRs
 
-The [twentyhq/twenty](https://github.com/twentyhq/twenty) monorepo runs the same flow for pull requests that touch `packages/twenty-apps/**`, split across repositories so that fork-safe tokens never coexist with PR-controlled code: `app-preview-dispatch.yaml` (in twenty) lists the changed apps and dispatches to [ci-public](https://github.com/twentyhq/ci-public)'s `app-preview.yaml`, which starts the tunnel and hands the URL to ci-privileged for the PR comment before any app code runs. If you are building the preview for a single-app repository you own, the workflow above is the whole thing.
+The [twentyhq/twenty](https://github.com/twentyhq/twenty) monorepo does it differently, on purpose: pull requests touching `packages/twenty-apps/**` get the changed apps installed on the PR's **preview environment**, which is built from the PR's own server and front. In the monorepo, apps and platform capabilities land together, so only the PR's build can exercise an app that uses an SDK capability from the same PR.
+
+A dedicated app repository has the opposite constraint — it builds against *released* Twenty, the version its users run — which is exactly what the workflow above previews. If you are building the preview for an app repository you own, the workflow above is the whole thing.
