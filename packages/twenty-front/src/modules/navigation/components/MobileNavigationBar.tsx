@@ -3,6 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -35,6 +36,7 @@ export const MobileNavigationBar = () => {
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
   const isSettingsPage = useIsSettingsPage();
+  const isSettingsDrawer = useIsSettingsDrawer();
   const { switchToNewChat } = useSwitchToNewAiChat();
   const { alphaSortedActiveNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
@@ -52,8 +54,14 @@ export const MobileNavigationBar = () => {
   );
 
   // Settings is the one drawer left on mobile, and it stays open across
-  // navigation, so it would cover whatever the bottom bar goes to.
+  // navigation, so it would cover whatever the bottom bar goes to. Guarded so a
+  // tap outside settings leaves the persisted expansion alone: it is shared with
+  // the desktop drawer, which every tap would otherwise collapse.
   const closeSettingsDrawer = () => {
+    if (!isSettingsDrawer) {
+      return;
+    }
+
     setCurrentMobileNavigationDrawer('main');
     setIsNavigationDrawerExpanded(false);
   };
