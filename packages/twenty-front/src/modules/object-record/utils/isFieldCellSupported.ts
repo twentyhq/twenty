@@ -1,6 +1,7 @@
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { isAdvancedRelationTargetObjectMetadata } from '@/object-metadata/utils/isAdvancedRelationTargetObjectMetadata';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -51,7 +52,8 @@ export const isFieldCellSupported = (
 
     if (
       !options.includeSystemObjectRelations &&
-      !isObjectMetadataAvailableForRelation(relationObjectMetadataItem)
+      (!isObjectMetadataAvailableForRelation(relationObjectMetadataItem) ||
+        isAdvancedRelationTargetObjectMetadata(relationObjectMetadataItem))
     ) {
       return false;
     }
