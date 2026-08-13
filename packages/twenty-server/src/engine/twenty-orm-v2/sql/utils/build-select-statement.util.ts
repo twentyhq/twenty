@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { buildColumnResultAlias } from 'src/engine/twenty-orm-v2/sql/utils/build-column-result-alias.util';
@@ -21,6 +21,7 @@ export type JoinClause = {
   targetTableShape: WorkspaceTableShape;
   relationType: RelationType;
   condition?: string;
+  toManyForeignKeyColumnName?: string;
   additionalOnConditions: string[];
 };
 
@@ -150,6 +151,23 @@ export const buildFromClause = (state: SelectStatementState): string =>
     state.tableShape.tableName,
   )} AS ${escapeIdentifier(state.alias)}`;
 
+const buildToManyDedupedJoinSource = ({
+  tableExpression,
+  foreignKeyColumnName,
+  includeSoftDeleteFilter,
+}: {
+  tableExpression: string;
+  foreignKeyColumnName: string;
+  includeSoftDeleteFilter: boolean;
+}): string => {
+  const foreignKey = escapeIdentifier(foreignKeyColumnName);
+  const whereClause = includeSoftDeleteFilter
+    ? ` WHERE ${escapeIdentifier('deletedAt')} IS NULL`
+    : '';
+
+  return `(SELECT DISTINCT ON (${foreignKey}) * FROM ${tableExpression}${whereClause} ORDER BY ${foreignKey}, ${escapeIdentifier('id')})`;
+};
+
 export const buildJoinClause = (state: SelectStatementState): string =>
   state.joinClauses
     .map((joinClause) => {
@@ -160,25 +178,43 @@ export const buildJoinClause = (state: SelectStatementState): string =>
         );
       }
 
+      const softDeletePredicateApplies =
+        !state.includeDeleted && joinClause.targetTableShape.hasDeletedAtColumn;
+
+      const isDedupedToManyJoin =
+        joinClause.relationType === RelationType.ONE_TO_MANY &&
+        isDefined(joinClause.toManyForeignKeyColumnName);
+
       const onConditions = [
         joinClause.condition,
         ...joinClause.additionalOnConditions,
       ];
 
-      if (
-        !state.includeDeleted &&
-        joinClause.targetTableShape.hasDeletedAtColumn
-      ) {
+      // A to-one join filters soft-deleted rows in its ON clause. The deduped
+      // to-many join picks one representative row per parent, so its soft-delete
+      // filter runs inside the derived table before that pick.
+      if (softDeletePredicateApplies && !isDedupedToManyJoin) {
         onConditions.push(
           `${quoteColumn(joinClause.alias, 'deletedAt')} IS NULL`,
         );
       }
 
-      return `LEFT JOIN ${escapeIdentifier(
+      const tableExpression = `${escapeIdentifier(
         joinClause.targetTableShape.schemaName,
-      )}.${escapeIdentifier(
-        joinClause.targetTableShape.tableName,
-      )} AS ${escapeIdentifier(joinClause.alias)} ON ${onConditions
+      )}.${escapeIdentifier(joinClause.targetTableShape.tableName)}`;
+
+      const joinSource = isDedupedToManyJoin
+        ? buildToManyDedupedJoinSource({
+            tableExpression,
+            foreignKeyColumnName:
+              joinClause.toManyForeignKeyColumnName as string,
+            includeSoftDeleteFilter: softDeletePredicateApplies,
+          })
+        : tableExpression;
+
+      return `LEFT JOIN ${joinSource} AS ${escapeIdentifier(
+        joinClause.alias,
+      )} ON ${onConditions
         .map((condition) => `(${condition})`)
         .join(' AND ')}`;
     })

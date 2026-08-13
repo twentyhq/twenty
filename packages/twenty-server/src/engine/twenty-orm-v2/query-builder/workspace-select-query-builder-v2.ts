@@ -287,12 +287,12 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
 
     // A to-one relation carries its join column on the current table, so the condition
     // is always renderable. A to-many relation carries the foreign key on the target
-    // table; it is renderable too, but rendering it duplicates root rows, so it is only
-    // built when the caller opts in (group-by "with records" ordering). Otherwise the
-    // condition is left undefined and the shared to-one guard rejects it at SQL generation.
-    const toManyCondition =
+    // table; it is only built when the caller opts in (group-by "with records" ordering)
+    // and renders as a DISTINCT ON derived table so it stays one row per parent.
+    // Otherwise the condition is left undefined and the shared to-one guard rejects it.
+    const toManyJoin =
       options?.allowToManyJoin === true
-        ? this.buildToManyJoinCondition({
+        ? this.buildToManyJoin({
             parentAlias,
             alias,
             targetTableShape,
@@ -307,14 +307,15 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       condition: isDefined(joinColumnName)
         ? (condition ??
           `${this.quoteColumn(parentAlias, joinColumnName)} = ${this.quoteColumn(alias, 'id')}`)
-        : (condition ?? toManyCondition),
+        : (condition ?? toManyJoin?.condition),
+      toManyForeignKeyColumnName: toManyJoin?.foreignKeyColumnName,
       additionalOnConditions: [],
     });
 
     return this;
   }
 
-  private buildToManyJoinCondition({
+  private buildToManyJoin({
     parentAlias,
     alias,
     targetTableShape,
@@ -324,7 +325,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     alias: string;
     targetTableShape: WorkspaceTableShape;
     targetFieldMetadataId: string | null;
-  }): string | undefined {
+  }): { condition: string; foreignKeyColumnName: string } | undefined {
     if (!isDefined(targetFieldMetadataId)) {
       return undefined;
     }
@@ -336,11 +337,16 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
         relationShape.fieldMetadataId === targetFieldMetadataId,
     );
 
-    if (!isDefined(inverseRelationShape?.joinColumnName)) {
+    const foreignKeyColumnName = inverseRelationShape?.joinColumnName;
+
+    if (!isDefined(foreignKeyColumnName)) {
       return undefined;
     }
 
-    return `${this.quoteColumn(alias, inverseRelationShape.joinColumnName)} = ${this.quoteColumn(parentAlias, 'id')}`;
+    return {
+      condition: `${this.quoteColumn(alias, foreignKeyColumnName)} = ${this.quoteColumn(parentAlias, 'id')}`,
+      foreignKeyColumnName,
+    };
   }
 
   withDeleted(): this {

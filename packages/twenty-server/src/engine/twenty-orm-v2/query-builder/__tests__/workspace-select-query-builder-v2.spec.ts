@@ -182,7 +182,7 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
     expect(() => queryBuilder.getQuery()).toThrow(TwentyOrmV2Exception);
   });
 
-  it('should render a to-many join on the inverse foreign key when the caller opts in', () => {
+  it('should render a deduped to-many join on the inverse foreign key when the caller opts in', () => {
     const { queryBuilder } = buildQueryBuilder();
 
     queryBuilder.setFindOptions({ select: { id: true } });
@@ -191,9 +191,11 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
     });
 
     expect(queryBuilder.getQuery()).toContain(
-      `LEFT JOIN "${SCHEMA_NAME}"."company" AS "people" ` +
-        'ON ("people"."personId" = "person"."id") ' +
-        'AND ("people"."deletedAt" IS NULL)',
+      `LEFT JOIN (SELECT DISTINCT ON ("personId") * ` +
+        `FROM "${SCHEMA_NAME}"."company" ` +
+        `WHERE "deletedAt" IS NULL ` +
+        `ORDER BY "personId", "id") AS "people" ` +
+        'ON ("people"."personId" = "person"."id")',
     );
   });
 

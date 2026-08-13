@@ -234,14 +234,17 @@ update, upsert, delete, and merge — whatever field types it touches (scalars, 
 relation join columns, relation `{connect}` / `{disconnect}`, and files fields). Nothing on
 the write path falls back to v1 on the value of its input.
 
-`WorkspaceSelectQueryBuilderV2.leftJoin` can render a to-many join (child foreign key =
-parent id, plus the soft-delete predicate) when the caller passes `allowToManyJoin`. Only
-group-by "with records" record-ordering opts in; every other join site (filter traversal,
-relation loading) leaves it off, so a to-many relation there still surfaces the standard
-`UNSUPPORTED_OPERATION` error. This capability is currently latent: the GraphQL order-by
-input excludes to-many relations (`generateSimpleRelationFieldOrderByInputType` returns `{}`
-for `ONE_TO_MANY`), so no API query can order by one today. The join is unit-tested against
-its exact SQL and activates automatically if that input is ever exposed.
+`WorkspaceSelectQueryBuilderV2.leftJoin` can render a to-many join when the caller passes
+`allowToManyJoin`. It renders as a `DISTINCT ON (foreignKey)` derived table ordered by
+`foreignKey, id`, so each parent keeps exactly one representative child row (its lowest-id
+live child) and the join never multiplies parent rows — record ranking and paging stay
+correct. The soft-delete predicate runs inside that derived table, before the row is picked.
+Only group-by "with records" record-ordering opts in; every other join site (filter
+traversal, relation loading) leaves it off, so a to-many relation there still surfaces the
+standard `UNSUPPORTED_OPERATION` error. This capability is currently latent: the GraphQL
+order-by input excludes to-many relations (`generateSimpleRelationFieldOrderByInputType`
+returns `{}` for `ONE_TO_MANY`), so no API query can order by one today. The join is
+unit-tested against its exact SQL and activates automatically if that input is ever exposed.
 
 ## Not covered yet
 

@@ -255,13 +255,11 @@ export class WorkspaceRepositoryV2 {
     }
 
     for (const [index, input] of inputs.entries()) {
-      const setColumns = formatData(
+      const { id: _id, ...setColumns } = formatData(
         dataByInputIndex[index],
         this.options.flatObjectMetadata,
         this.options.internalContext.flatFieldMetadataMaps,
       );
-
-      delete setColumns.id;
 
       this.validateWriteIsPermitted({
         operationType: 'update',
