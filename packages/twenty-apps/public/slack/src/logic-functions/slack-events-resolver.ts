@@ -10,12 +10,9 @@ import {
   SLACK_INSTALL_REVOKED_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
-import { type SlackInstallRevokedPayload } from 'src/logic-functions/types/slack-install-revoked-payload.type';
+import { findClaimedWorkspaceId } from 'src/logic-functions/utils/find-claimed-workspace-id';
 import { getSlackWebhookSecret } from 'src/logic-functions/utils/get-slack-webhook-secret';
-import {
-  findClaimedWorkspaceId,
-  resolveTargetWorkspaceId,
-} from 'src/logic-functions/utils/resolve-target-workspace-id';
+import { resolveTargetWorkspaceId } from 'src/logic-functions/utils/resolve-target-workspace-id';
 import { verifySlackRequestSignature } from 'src/logic-functions/utils/verify-slack-request-signature';
 
 type SlackEventsResolverResult =
@@ -23,7 +20,7 @@ type SlackEventsResolverResult =
   | {
       workspaceId: string;
       targetLogicFunctionUniversalIdentifier: string;
-      payload: SlackEventsRequestBody | SlackInstallRevokedPayload;
+      payload: SlackEventsRequestBody;
     };
 
 export const slackEventsResolverHandler = async (
@@ -75,6 +72,8 @@ export const slackEventsResolverHandler = async (
       );
     }
 
+    // Slack sends app_uninstalled and tokens_revoked in no guaranteed order, so an
+    // already-released claim is the expected second delivery, not a failure to retry.
     const claimedWorkspaceId = await findClaimedWorkspaceId(body.team_id);
 
     if (claimedWorkspaceId === null) {
@@ -87,7 +86,7 @@ export const slackEventsResolverHandler = async (
     return {
       workspaceId: claimedWorkspaceId,
       targetLogicFunctionUniversalIdentifier,
-      payload: { ...body, claimedWorkspaceId },
+      payload: body,
     };
   }
 

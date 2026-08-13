@@ -13,7 +13,7 @@ vi.mock('twenty-sdk/logic-function', () => ({
   listConnections: listConnectionsMock,
 }));
 
-const mockStoredTeams = (teamByKey: Record<string, string>) => {
+const mockConnectedAccountTeams = (teamByKey: Record<string, string>) => {
   kvGetMock.mockImplementation((key: string) => {
     return Promise.resolve(teamByKey[key] ?? null);
   });
@@ -29,8 +29,7 @@ describe('slackInstallRevokedHandler', () => {
       { id: 'connection-1' },
       { id: 'connection-2' },
     ]);
-    mockStoredTeams({
-      'slack-team:T123': 'workspace-1',
+    mockConnectedAccountTeams({
       'slack-connected-account-team:connection-1': 'T123',
       'slack-connected-account-team:connection-2': 'T999',
     });
@@ -40,7 +39,6 @@ describe('slackInstallRevokedHandler', () => {
       type: 'event_callback',
       team_id: 'T123',
       event: { type: 'app_uninstalled' },
-      claimedWorkspaceId: 'workspace-1',
     });
 
     expect(result).toEqual({
@@ -61,14 +59,13 @@ describe('slackInstallRevokedHandler', () => {
 
   it('should release the team claim even when no connection matches the team', async () => {
     listConnectionsMock.mockResolvedValue([]);
-    mockStoredTeams({ 'slack-team:T123': 'workspace-1' });
+    mockConnectedAccountTeams({});
     kvDeleteMock.mockResolvedValue(true);
 
     const result = await slackInstallRevokedHandler({
       type: 'event_callback',
       team_id: 'T123',
       event: { type: 'app_uninstalled' },
-      claimedWorkspaceId: 'workspace-1',
     });
 
     expect(result).toEqual({
@@ -81,37 +78,17 @@ describe('slackInstallRevokedHandler', () => {
     });
   });
 
-  it('should not evict a claim another workspace took after the event was routed', async () => {
+  // The server only deletes a SERVER-scoped key for the workspace holding the claim,
+  // so a claim already released or taken over elsewhere comes back as a refused delete.
+  it('should report no released team when the claim delete is refused', async () => {
     listConnectionsMock.mockResolvedValue([]);
-    mockStoredTeams({ 'slack-team:T123': 'workspace-2' });
-
-    const result = await slackInstallRevokedHandler({
-      type: 'event_callback',
-      team_id: 'T123',
-      event: { type: 'app_uninstalled' },
-      claimedWorkspaceId: 'workspace-1',
-    });
-
-    expect(result).toEqual({
-      ok: true,
-      releasedTeamId: null,
-      releasedConnectedAccountIds: [],
-    });
-    expect(kvDeleteMock).not.toHaveBeenCalledWith('slack-team:T123', {
-      scope: 'SERVER',
-    });
-  });
-
-  it('should report no released team when the claim was already gone', async () => {
-    listConnectionsMock.mockResolvedValue([]);
-    mockStoredTeams({});
+    mockConnectedAccountTeams({});
     kvDeleteMock.mockResolvedValue(false);
 
     const result = await slackInstallRevokedHandler({
       type: 'event_callback',
       team_id: 'T123',
       event: { type: 'app_uninstalled' },
-      claimedWorkspaceId: 'workspace-1',
     });
 
     expect(result).toEqual({
@@ -121,46 +98,33 @@ describe('slackInstallRevokedHandler', () => {
     });
   });
 
-  it('should release the claim even when a connection lookup fails', async () => {
-    listConnectionsMock.mockResolvedValue([
-      { id: 'connection-1' },
-      { id: 'connection-2' },
-    ]);
-    kvGetMock.mockImplementation((key: string) => {
-      if (key === 'slack-team:T123') {
-        return Promise.resolve('workspace-1');
-      }
-      if (key === 'slack-connected-account-team:connection-1') {
-        return Promise.reject(new Error('kv unavailable'));
-      }
-      return Promise.resolve('T123');
-    });
+  it('should release the team claim before a failing connection lookup surfaces', async () => {
+    listConnectionsMock.mockResolvedValue([{ id: 'connection-1' }]);
+    kvGetMock.mockRejectedValue(new Error('kv unavailable'));
     kvDeleteMock.mockResolvedValue(true);
 
-    const result = await slackInstallRevokedHandler({
-      type: 'event_callback',
-      team_id: 'T123',
-      event: { type: 'app_uninstalled' },
-      claimedWorkspaceId: 'workspace-1',
-    });
+    await expect(
+      slackInstallRevokedHandler({
+        type: 'event_callback',
+        team_id: 'T123',
+        event: { type: 'app_uninstalled' },
+      }),
+    ).rejects.toThrow('kv unavailable');
 
-    expect(result).toEqual({
-      ok: true,
-      releasedTeamId: 'T123',
-      releasedConnectedAccountIds: ['connection-2'],
+    expect(kvDeleteMock).toHaveBeenCalledWith('slack-team:T123', {
+      scope: 'SERVER',
     });
   });
 
   it('should release the claim when a tokens_revoked event revokes the bot token', async () => {
     listConnectionsMock.mockResolvedValue([]);
-    mockStoredTeams({ 'slack-team:T123': 'workspace-1' });
+    mockConnectedAccountTeams({});
     kvDeleteMock.mockResolvedValue(true);
 
     const result = await slackInstallRevokedHandler({
       type: 'event_callback',
       team_id: 'T123',
       event: { type: 'tokens_revoked', tokens: { bot: ['B123'] } },
-      claimedWorkspaceId: 'workspace-1',
     });
 
     expect(result).toEqual({
@@ -175,7 +139,6 @@ describe('slackInstallRevokedHandler', () => {
       type: 'event_callback',
       team_id: 'T123',
       event: { type: 'tokens_revoked', tokens: { oauth: ['U123'] } },
-      claimedWorkspaceId: 'workspace-1',
     });
 
     expect(result).toEqual({ ok: true, skipped: 'No bot token was revoked' });
@@ -188,7 +151,6 @@ describe('slackInstallRevokedHandler', () => {
       type: 'event_callback',
       team_id: 'T123',
       event: { type: 'tokens_revoked' },
-      claimedWorkspaceId: 'workspace-1',
     });
 
     expect(result).toEqual({ ok: true, skipped: 'No bot token was revoked' });

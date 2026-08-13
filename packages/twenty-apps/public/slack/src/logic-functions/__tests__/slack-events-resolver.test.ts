@@ -30,6 +30,9 @@ vi.mock('src/logic-functions/utils/verify-slack-request-signature', () => ({
 
 vi.mock('src/logic-functions/utils/resolve-target-workspace-id', () => ({
   resolveTargetWorkspaceId: resolveWorkspaceMock,
+}));
+
+vi.mock('src/logic-functions/utils/find-claimed-workspace-id', () => ({
   findClaimedWorkspaceId: findClaimedWorkspaceMock,
 }));
 
@@ -57,7 +60,7 @@ describe('slackEventsResolverHandler', () => {
     verifySignatureMock.mockReturnValue(true);
   });
 
-  it('should route app_uninstalled to the install-revoked function with the claim holder on the payload', async () => {
+  it('should route app_uninstalled to the install-revoked function in the claiming workspace', async () => {
     findClaimedWorkspaceMock.mockResolvedValue('workspace-1');
 
     const body: SlackEventsRequestBody = {
@@ -72,7 +75,7 @@ describe('slackEventsResolverHandler', () => {
       workspaceId: 'workspace-1',
       targetLogicFunctionUniversalIdentifier:
         SLACK_INSTALL_REVOKED_UNIVERSAL_IDENTIFIER,
-      payload: { ...body, claimedWorkspaceId: 'workspace-1' },
+      payload: body,
     });
   });
 

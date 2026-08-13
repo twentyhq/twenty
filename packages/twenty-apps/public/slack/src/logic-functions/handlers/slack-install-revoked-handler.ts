@@ -1,10 +1,10 @@
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 
-import { type SlackInstallRevokedPayload } from 'src/logic-functions/types/slack-install-revoked-payload.type';
+import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 import { releaseSlackTeamOnInstallRevoked } from 'src/logic-functions/utils/release-slack-team-on-install-revoked';
 
 export const slackInstallRevokedHandler = async (
-  body: SlackInstallRevokedPayload,
+  body: SlackEventsRequestBody,
 ) => {
   if (
     body.event?.type === 'tokens_revoked' &&
@@ -19,8 +19,5 @@ export const slackInstallRevokedHandler = async (
     );
   }
 
-  return releaseSlackTeamOnInstallRevoked({
-    teamId: body.team_id,
-    claimedWorkspaceId: body.claimedWorkspaceId,
-  });
+  return releaseSlackTeamOnInstallRevoked({ teamId: body.team_id });
 };
