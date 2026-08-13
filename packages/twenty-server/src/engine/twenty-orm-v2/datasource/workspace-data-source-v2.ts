@@ -117,6 +117,22 @@ export class WorkspaceDataSourceV2 {
       );
     }
 
+    return this.buildRepositoryForObjectMetadataId({
+      objectMetadataId,
+      rolePermissionConfig,
+      executor,
+    });
+  }
+
+  private buildRepositoryForObjectMetadataId({
+    objectMetadataId,
+    rolePermissionConfig,
+    executor,
+  }: {
+    objectMetadataId: string;
+    rolePermissionConfig?: RolePermissionConfig;
+    executor: QueryExecutorV2;
+  }): WorkspaceRepositoryV2 {
     const flatObjectMetadata =
       this.getFlatObjectMetadataOrThrow(objectMetadataId);
 
@@ -138,6 +154,12 @@ export class WorkspaceDataSourceV2 {
         this.getTableShape(targetObjectMetadataId),
       flatObjectMetadataByObjectMetadataId: (targetObjectMetadataId) =>
         this.getFlatObjectMetadataOrThrow(targetObjectMetadataId),
+      getRepositoryForObjectMetadataId: (targetObjectMetadataId) =>
+        this.buildRepositoryForObjectMetadataId({
+          objectMetadataId: targetObjectMetadataId,
+          rolePermissionConfig,
+          executor,
+        }),
     });
   }
 

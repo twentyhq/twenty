@@ -6,7 +6,7 @@ import {
   type ObjectsPermissions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In } from 'typeorm';
+import { DeleteResult, In, InsertResult, UpdateResult } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -30,10 +30,34 @@ import {
   type InsertRowValue,
 } from 'src/engine/twenty-orm-v2/sql/utils/build-insert-statement.util';
 import { type MutationKind } from 'src/engine/twenty-orm-v2/sql/utils/build-mutation-statement.util';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import {
+  applyFindOptionsToQueryBuilder,
+  type FindOptionsRelationsV2,
+  type FindOptionsV2,
+} from 'src/engine/twenty-orm-v2/query-builder/utils/apply-find-options.util';
+import {
+  applyMutationCriteriaToQueryBuilder,
+  type MutationCriteria,
+} from 'src/engine/twenty-orm-v2/query-builder/utils/apply-mutation-criteria.util';
+import { type ObjectWhereLike } from 'src/engine/twenty-orm-v2/query-builder/types/query-builder-v2.type';
+import {
+  attachToManyRelationToRecords,
+  attachToOneRelationToRecords,
+  collectForeignKeys,
+  collectRecordIds,
+} from 'src/engine/twenty-orm-v2/repository/utils/attach-relations.util';
+import {
+  matchEntitiesForUpsert,
+  partitionEntitiesForSave,
+} from 'src/engine/twenty-orm-v2/repository/utils/resolve-save-and-upsert.util';
 import { WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-select-query-builder-v2';
 import { compileNamedParameters } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
 import { serializeJsonbWriteValue } from 'src/engine/twenty-orm-v2/sql/utils/serialize-jsonb-write-value.util';
-import { type WorkspaceTableShape } from 'src/engine/twenty-orm-v2/table-shape/types/workspace-table-shape.type';
+import {
+  type WorkspaceRelationShape,
+  type WorkspaceTableShape,
+} from 'src/engine/twenty-orm-v2/table-shape/types/workspace-table-shape.type';
 
 const MUTATION_EVENT_ACTIONS_BY_KIND: Record<
   MutationKind,
@@ -59,6 +83,9 @@ type WorkspaceRepositoryV2Options = {
   flatObjectMetadataByObjectMetadataId: (
     objectMetadataId: string,
   ) => FlatObjectMetadata;
+  getRepositoryForObjectMetadataId: (
+    objectMetadataId: string,
+  ) => WorkspaceRepositoryV2;
 };
 
 export class WorkspaceRepositoryV2 {
@@ -119,6 +146,531 @@ export class WorkspaceRepositoryV2 {
 
   getInternalContext(): WorkspaceInternalContext {
     return this.options.internalContext;
+  }
+
+  async find(options?: FindOptionsV2): Promise<ObjectRecord[]> {
+    const records = await applyFindOptionsToQueryBuilder(
+      this.createQueryBuilder(),
+      options,
+    ).getMany<ObjectRecord>();
+
+    if (isDefined(options?.relations)) {
+      await this.loadRelations(
+        records,
+        options.relations,
+        options.withDeleted ?? false,
+      );
+    }
+
+    return records;
+  }
+
+  async findBy(
+    where: ObjectWhereLike | ObjectWhereLike[],
+  ): Promise<ObjectRecord[]> {
+    return this.find({ where });
+  }
+
+  async findOne(options?: FindOptionsV2): Promise<ObjectRecord | null> {
+    if (!isDefined(options?.where)) {
+      throw new TwentyOrmV2Exception(
+        'findOne requires a "where" condition',
+        TwentyOrmV2ExceptionCode.INVALID_PARAMETER,
+      );
+    }
+
+    const record = await applyFindOptionsToQueryBuilder(
+      this.createQueryBuilder(),
+      options,
+    ).getOne<ObjectRecord>();
+
+    if (isDefined(record) && isDefined(options?.relations)) {
+      await this.loadRelations(
+        [record],
+        options.relations,
+        options.withDeleted ?? false,
+      );
+    }
+
+    return record;
+  }
+
+  async findOneBy(
+    where: ObjectWhereLike | ObjectWhereLike[],
+  ): Promise<ObjectRecord | null> {
+    return this.findOne({ where });
+  }
+
+  async findOneOrFail(options?: FindOptionsV2): Promise<ObjectRecord> {
+    const record = await this.findOne(options);
+
+    if (!isDefined(record)) {
+      throw new TwentyOrmV2Exception(
+        `No "${this.options.tableShape.nameSingular}" record matches the given criteria`,
+        TwentyOrmV2ExceptionCode.ENTITY_NOT_FOUND,
+      );
+    }
+
+    return record;
+  }
+
+  async findOneByOrFail(
+    where: ObjectWhereLike | ObjectWhereLike[],
+  ): Promise<ObjectRecord> {
+    return this.findOneOrFail({ where });
+  }
+
+  async count(options?: FindOptionsV2): Promise<number> {
+    return applyFindOptionsToQueryBuilder(
+      this.createQueryBuilder(),
+      options,
+    ).getCount();
+  }
+
+  async countBy(where: ObjectWhereLike | ObjectWhereLike[]): Promise<number> {
+    return this.count({ where });
+  }
+
+  async exists(options?: FindOptionsV2): Promise<boolean> {
+    const queryBuilder = applyFindOptionsToQueryBuilder(
+      this.createQueryBuilder(),
+      {
+        where: options?.where,
+        withDeleted: options?.withDeleted,
+      },
+    );
+
+    queryBuilder.select(['id']);
+
+    return isDefined(await queryBuilder.getRawOne());
+  }
+
+  async existsBy(where: ObjectWhereLike | ObjectWhereLike[]): Promise<boolean> {
+    return this.exists({ where });
+  }
+
+  private async loadRelations(
+    records: ObjectRecord[],
+    relations: FindOptionsRelationsV2,
+    withDeleted: boolean,
+  ): Promise<void> {
+    if (records.length === 0) {
+      return;
+    }
+
+    for (const [fieldName, nested] of Object.entries(relations)) {
+      if (nested === false) {
+        continue;
+      }
+
+      const relationShape =
+        this.options.tableShape.relationShapeByFieldName[fieldName];
+
+      if (!isDefined(relationShape)) {
+        throw new TwentyOrmV2Exception(
+          `Relation "${fieldName}" does not exist on "${this.options.tableShape.nameSingular}"`,
+          TwentyOrmV2ExceptionCode.UNKNOWN_RELATION,
+        );
+      }
+
+      const nestedRelations = typeof nested === 'object' ? nested : undefined;
+      const targetRepository = this.options.getRepositoryForObjectMetadataId(
+        relationShape.targetObjectMetadataId,
+      );
+
+      if (relationShape.relationType === RelationType.MANY_TO_ONE) {
+        await this.attachToOneRelation({
+          records,
+          fieldName,
+          joinColumnName: relationShape.joinColumnName,
+          targetRepository,
+          nestedRelations,
+        });
+      } else if (relationShape.relationType === RelationType.ONE_TO_MANY) {
+        await this.attachToManyRelation({
+          records,
+          fieldName,
+          relationShape,
+          targetRepository,
+          nestedRelations,
+          withDeleted,
+        });
+      } else {
+        throw new TwentyOrmV2Exception(
+          `Loading "${relationShape.relationType}" relations through find is not supported yet`,
+          TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
+        );
+      }
+    }
+  }
+
+  private async attachToOneRelation({
+    records,
+    fieldName,
+    joinColumnName,
+    targetRepository,
+    nestedRelations,
+  }: {
+    records: ObjectRecord[];
+    fieldName: string;
+    joinColumnName?: string;
+    targetRepository: WorkspaceRepositoryV2;
+    nestedRelations?: FindOptionsRelationsV2;
+  }): Promise<void> {
+    if (!isDefined(joinColumnName)) {
+      throw new TwentyOrmV2Exception(
+        `Relation "${fieldName}" has no join column to resolve`,
+        TwentyOrmV2ExceptionCode.UNKNOWN_RELATION,
+      );
+    }
+
+    const foreignKeys = collectForeignKeys(records, joinColumnName);
+
+    const targets =
+      foreignKeys.length > 0
+        ? await targetRepository.find({
+            where: { id: In(foreignKeys) },
+            withDeleted: true,
+            relations: nestedRelations,
+          })
+        : [];
+
+    attachToOneRelationToRecords({
+      records,
+      fieldName,
+      joinColumnName,
+      targets,
+    });
+  }
+
+  private async attachToManyRelation({
+    records,
+    fieldName,
+    relationShape,
+    targetRepository,
+    nestedRelations,
+    withDeleted,
+  }: {
+    records: ObjectRecord[];
+    fieldName: string;
+    relationShape: WorkspaceRelationShape;
+    targetRepository: WorkspaceRepositoryV2;
+    nestedRelations?: FindOptionsRelationsV2;
+    withDeleted: boolean;
+  }): Promise<void> {
+    const inverseForeignKeyColumnName =
+      this.resolveInverseForeignKeyColumnName(relationShape);
+
+    const parentIds = collectRecordIds(records);
+
+    const children =
+      parentIds.length > 0
+        ? await targetRepository.find({
+            where: { [inverseForeignKeyColumnName]: In(parentIds) },
+            relations: nestedRelations,
+            withDeleted,
+          })
+        : [];
+
+    attachToManyRelationToRecords({
+      records,
+      fieldName,
+      inverseForeignKeyColumnName,
+      children,
+    });
+  }
+
+  private resolveInverseForeignKeyColumnName(
+    relationShape: WorkspaceRelationShape,
+  ): string {
+    const targetTableShape = this.options.tableShapeByObjectMetadataId(
+      relationShape.targetObjectMetadataId,
+    );
+
+    const inverseRelationShape = Object.values(
+      targetTableShape.relationShapeByFieldName,
+    ).find(
+      (candidate) =>
+        candidate.fieldMetadataId === relationShape.targetFieldMetadataId,
+    );
+
+    if (!isDefined(inverseRelationShape?.joinColumnName)) {
+      throw new TwentyOrmV2Exception(
+        `Could not resolve the inverse foreign key for a to-many relation on "${this.options.tableShape.nameSingular}"`,
+        TwentyOrmV2ExceptionCode.UNKNOWN_RELATION,
+      );
+    }
+
+    return inverseRelationShape.joinColumnName;
+  }
+
+  async insert(
+    entityOrEntities: Partial<ObjectRecord> | Partial<ObjectRecord>[],
+  ): Promise<InsertResult> {
+    const records = Array.isArray(entityOrEntities)
+      ? entityOrEntities
+      : [entityOrEntities];
+
+    const { identifiers, generatedMaps, raw } = await this.runInsert({
+      records,
+      columnsToReturn: ['id'],
+    });
+
+    const insertResult = new InsertResult();
+
+    insertResult.identifiers = identifiers;
+    insertResult.generatedMaps = generatedMaps;
+    insertResult.raw = raw;
+
+    return insertResult;
+  }
+
+  async update(
+    criteria: MutationCriteria,
+    partialEntity: Partial<ObjectRecord>,
+  ): Promise<UpdateResult> {
+    const records = await this.runMutation({
+      selectQueryBuilder: applyMutationCriteriaToQueryBuilder(
+        this.createQueryBuilder(),
+        criteria,
+      ),
+      rowLevelPermissionsApplied: false,
+      kind: 'update',
+      columnsToReturn: ['id'],
+      data: partialEntity,
+    });
+
+    return this.buildUpdateResult(records);
+  }
+
+  async updateMany(
+    inputs: { criteria: string; partialEntity: Partial<ObjectRecord> }[],
+  ): Promise<UpdateResult> {
+    const { generatedMaps, raw } = await this.runBatchUpdate({
+      inputs: inputs.map((input) => ({
+        id: input.criteria,
+        data: input.partialEntity,
+      })),
+      columnsToReturn: ['id'],
+    });
+
+    const updateResult = new UpdateResult();
+
+    updateResult.raw = raw;
+    updateResult.affected = raw.length;
+    updateResult.generatedMaps = generatedMaps;
+
+    return updateResult;
+  }
+
+  async delete(criteria: MutationCriteria): Promise<DeleteResult> {
+    const records = await this.runMutation({
+      selectQueryBuilder: applyMutationCriteriaToQueryBuilder(
+        this.createQueryBuilder(),
+        criteria,
+      ),
+      rowLevelPermissionsApplied: false,
+      kind: 'delete',
+      columnsToReturn: ['id'],
+    });
+
+    const deleteResult = new DeleteResult();
+
+    deleteResult.raw = records;
+    deleteResult.affected = records.length;
+
+    return deleteResult;
+  }
+
+  async softDelete(criteria: MutationCriteria): Promise<UpdateResult> {
+    const records = await this.runMutation({
+      selectQueryBuilder: applyMutationCriteriaToQueryBuilder(
+        this.createQueryBuilder(),
+        criteria,
+      ),
+      rowLevelPermissionsApplied: false,
+      kind: 'soft-delete',
+      columnsToReturn: ['id'],
+    });
+
+    return this.buildUpdateResult(records);
+  }
+
+  async restore(criteria: MutationCriteria): Promise<UpdateResult> {
+    const records = await this.runMutation({
+      selectQueryBuilder: applyMutationCriteriaToQueryBuilder(
+        this.createQueryBuilder(),
+        criteria,
+      ),
+      rowLevelPermissionsApplied: false,
+      kind: 'restore',
+      columnsToReturn: ['id'],
+    });
+
+    return this.buildUpdateResult(records);
+  }
+
+  private buildUpdateResult(records: ObjectRecord[]): UpdateResult {
+    const updateResult = new UpdateResult();
+
+    updateResult.raw = records;
+    updateResult.affected = records.length;
+    updateResult.generatedMaps = records;
+
+    return updateResult;
+  }
+
+  async save(
+    entityOrEntities: Partial<ObjectRecord> | Partial<ObjectRecord>[],
+  ): Promise<ObjectRecord[]> {
+    const entities = Array.isArray(entityOrEntities)
+      ? entityOrEntities
+      : [entityOrEntities];
+
+    this.assertNoNestedRelationObjects(entities);
+
+    if (entities.length === 0) {
+      return [];
+    }
+
+    const idsToCheck = entities
+      .map((entity) => entity.id)
+      .filter(isNonEmptyString);
+
+    const existingIds =
+      idsToCheck.length > 0
+        ? new Set(
+            (await this.findBy({ id: In(idsToCheck) })).map(
+              (record) => record.id,
+            ),
+          )
+        : new Set<string>();
+
+    const { toUpdate, toInsert } = partitionEntitiesForSave(
+      entities,
+      existingIds,
+    );
+
+    const updatedIds = toUpdate
+      .map((entity) => entity.id)
+      .filter(isNonEmptyString);
+
+    if (updatedIds.length > 0) {
+      await this.runBatchUpdate({
+        inputs: toUpdate.flatMap((entity) =>
+          isNonEmptyString(entity.id) ? [{ id: entity.id, data: entity }] : [],
+        ),
+        columnsToReturn: ['id'],
+      });
+    }
+
+    const insertedIds =
+      toInsert.length > 0
+        ? (
+            await this.runInsert({
+              records: toInsert,
+              columnsToReturn: ['id'],
+            })
+          ).identifiers.map((identifier) => identifier.id)
+        : [];
+
+    const savedIds = [...updatedIds, ...insertedIds];
+
+    return savedIds.length > 0
+      ? this.find({ where: { id: In(savedIds) } })
+      : [];
+  }
+
+  async upsert(
+    entityOrEntities: Partial<ObjectRecord> | Partial<ObjectRecord>[],
+    conflictPathsOrOptions: string[] | { conflictPaths: string[] },
+  ): Promise<InsertResult> {
+    const entities = Array.isArray(entityOrEntities)
+      ? entityOrEntities
+      : [entityOrEntities];
+
+    this.assertNoNestedRelationObjects(entities);
+
+    const conflictPaths = Array.isArray(conflictPathsOrOptions)
+      ? conflictPathsOrOptions
+      : conflictPathsOrOptions.conflictPaths;
+
+    if (conflictPaths.length === 0) {
+      throw new TwentyOrmV2Exception(
+        'upsert requires at least one conflict path',
+        TwentyOrmV2ExceptionCode.INVALID_PARAMETER,
+      );
+    }
+
+    const conflictWhere = entities.map((entity) =>
+      Object.fromEntries(
+        conflictPaths.map((path) => [path, entity[path] ?? null]),
+      ),
+    );
+
+    const existingRecords =
+      entities.length > 0
+        ? await this.find({ where: conflictWhere, withDeleted: true })
+        : [];
+
+    const { toUpdate, toInsert } = matchEntitiesForUpsert(
+      entities,
+      existingRecords,
+      conflictPaths,
+    );
+
+    const emptyOutcome = { identifiers: [], generatedMaps: [], raw: [] };
+
+    const updateOutcome =
+      toUpdate.length > 0
+        ? await this.runBatchUpdate({
+            inputs: toUpdate.map((match) => ({
+              id: match.id,
+              data: match.entity,
+            })),
+            columnsToReturn: ['id'],
+          })
+        : emptyOutcome;
+
+    const insertOutcome =
+      toInsert.length > 0
+        ? await this.runInsert({ records: toInsert, columnsToReturn: ['id'] })
+        : emptyOutcome;
+
+    const insertResult = new InsertResult();
+
+    insertResult.identifiers = [
+      ...updateOutcome.identifiers,
+      ...insertOutcome.identifiers,
+    ];
+    insertResult.generatedMaps = [
+      ...updateOutcome.generatedMaps,
+      ...insertOutcome.generatedMaps,
+    ];
+    insertResult.raw = [...updateOutcome.raw, ...insertOutcome.raw];
+
+    return insertResult;
+  }
+
+  private assertNoNestedRelationObjects(
+    entities: Partial<ObjectRecord>[],
+  ): void {
+    for (const entity of entities) {
+      for (const key of Object.keys(entity)) {
+        const value = entity[key];
+
+        if (
+          isDefined(this.options.tableShape.relationShapeByFieldName[key]) &&
+          typeof value === 'object' &&
+          value !== null
+        ) {
+          throw new TwentyOrmV2Exception(
+            `Writing nested relation "${key}" through the ORM v2 repository is not supported yet`,
+            TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
+          );
+        }
+      }
+    }
   }
 
   async runInsert({

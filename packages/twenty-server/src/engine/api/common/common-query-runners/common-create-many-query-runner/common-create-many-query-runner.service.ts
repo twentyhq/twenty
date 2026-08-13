@@ -4,7 +4,13 @@ import { msg } from '@lingui/core/macro';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { FeatureFlagKey, ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { FindOptionsRelations, In, InsertResult, ObjectLiteral } from 'typeorm';
+import {
+  Brackets,
+  FindOptionsRelations,
+  In,
+  InsertResult,
+  ObjectLiteral,
+} from 'typeorm';
 
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import { type ConflictingFieldGroup } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/types/conflicting-field-group.type';
@@ -302,6 +308,10 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatFieldMetadataMaps,
       args,
       conflictingFieldGroups,
+      isOrmV2Enabled:
+        queryRunnerContext.featureFlagsMap[
+          FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED
+        ],
     });
 
     const { recordsToUpdate, recordsToInsert } = categorizeRecords(
@@ -392,12 +402,14 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     flatFieldMetadataMaps,
     args,
     conflictingFieldGroups,
+    isOrmV2Enabled,
   }: {
     repository: WorkspaceRepository<ObjectLiteral>;
     flatObjectMetadata: FlatObjectMetadata;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     args: CreateManyQueryArgs;
     conflictingFieldGroups: ConflictingFieldGroup[];
+    isOrmV2Enabled: boolean;
   }): Promise<PartialObjectRecordWithId[]> {
     const queryBuilder = repository.createQueryBuilder(
       flatObjectMetadata.nameSingular,
@@ -412,9 +424,23 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       return [];
     }
 
-    whereConditions.forEach((condition) => {
-      queryBuilder.orWhere(condition);
-    });
+    if (isOrmV2Enabled) {
+      queryBuilder.andWhere(
+        new Brackets((qb) => {
+          whereConditions.forEach((condition, index) => {
+            if (index === 0) {
+              qb.where(condition);
+            } else {
+              qb.orWhere(condition);
+            }
+          });
+        }),
+      );
+    } else {
+      whereConditions.forEach((condition) => {
+        queryBuilder.orWhere(condition);
+      });
+    }
 
     const restrictedFields =
       repository.objectRecordsPermissions?.[flatObjectMetadata.id]
