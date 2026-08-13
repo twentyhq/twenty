@@ -13,9 +13,16 @@ import { MESSAGING_GMAIL_EXCLUDED_SYSTEM_LABELS } from 'src/modules/messaging/me
 import { GmailMessagesImportErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-messages-import-error-handler.service';
 import { filterGmailMessagesByFolderPolicy } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/filter-gmail-messages-by-folder-policy.util';
 import { parseAndFormatGmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-and-format-gmail-message.util';
+import { createConcurrencyLimiter } from 'src/modules/messaging/message-import-manager/drivers/utils/create-concurrency-limiter.util';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 
 const GMAIL_BATCH_REQUEST_MAX_SIZE = 50;
+// Gmail enforces a per-user concurrent-request limit ("Too many concurrent
+// requests for user"). Each batch request below already groups up to
+// GMAIL_BATCH_REQUEST_MAX_SIZE messages into one HTTP call, but a large
+// full-sync (thousands of messages) still fires hundreds of those batch
+// calls at once via Promise.all with no cap, which is what trips the limit.
+const GMAIL_FETCH_MAX_CONCURRENT_BATCH_REQUESTS = 4;
 
 @Injectable()
 export class GmailGetMessagesService {
@@ -164,12 +171,22 @@ export class GmailGetMessagesService {
     messageIds: string[],
     connectedAccount: Pick<ConnectedAccountEntity, 'handle' | 'handleAliases'>,
   ): Promise<MessageWithParticipants[]> {
+    const limitConcurrentBatchRequests = createConcurrencyLimiter(
+      GMAIL_FETCH_MAX_CONCURRENT_BATCH_REQUESTS,
+    );
+
     const results = await Promise.all(
       messageIds.map((messageId) =>
-        gmailClient.users.messages
-          .get({ userId: 'me', id: messageId })
-          .then((response) => ({ messageId, data: response.data, error: null }))
-          .catch((error) => ({ messageId, data: null, error })),
+        limitConcurrentBatchRequests(() =>
+          gmailClient.users.messages
+            .get({ userId: 'me', id: messageId })
+            .then((response) => ({
+              messageId,
+              data: response.data,
+              error: null,
+            }))
+            .catch((error) => ({ messageId, data: null, error })),
+        ),
       ),
     );
 
