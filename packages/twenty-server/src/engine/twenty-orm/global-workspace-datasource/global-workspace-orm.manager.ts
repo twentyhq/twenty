@@ -84,6 +84,34 @@ export class GlobalWorkspaceOrmManager {
     return this.globalWorkspaceDataSourceService.getGlobalWorkspaceDataSourceReplica();
   }
 
+  async ensureEntityMetadatasLoaded(): Promise<void> {
+    const context = getWorkspaceContext();
+
+    if (context.entityMetadatas.length > 0) {
+      return;
+    }
+
+    const { ORMEntityMetadatas } =
+      await this.workspaceCacheService.getOrRecompute(
+        context.authContext.workspace.id,
+        ['ORMEntityMetadatas'],
+      );
+
+    context.entityMetadatas.push(...ORMEntityMetadatas);
+  }
+
+  async getGlobalWorkspaceDataSourceWithEntityMetadatas(): Promise<GlobalWorkspaceDataSource> {
+    await this.ensureEntityMetadatasLoaded();
+
+    return this.getGlobalWorkspaceDataSource();
+  }
+
+  async getGlobalWorkspaceDataSourceReplicaWithEntityMetadatas(): Promise<GlobalWorkspaceDataSource> {
+    await this.ensureEntityMetadatasLoaded();
+
+    return this.getGlobalWorkspaceDataSourceReplica();
+  }
+
   async executeInWorkspaceContext<T>(
     fn: () => T | Promise<T>,
     authContext?: WorkspaceAuthContext,
@@ -124,8 +152,6 @@ export class GlobalWorkspaceOrmManager {
       'flatRowLevelPermissionPredicateGroupMaps',
     ]);
 
-    // The TypeORM EntityMetadata graph is only consumed by the v1 repository, so
-    // when the ORM v2 read path is enabled it is neither loaded nor unpacked.
     const entityMetadatas = featureFlagsMap[
       FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED
     ]

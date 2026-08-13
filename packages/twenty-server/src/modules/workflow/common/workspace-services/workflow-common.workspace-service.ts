@@ -427,7 +427,7 @@ export class WorkflowCommonWorkspaceService {
     });
 
     const workspaceDataSource =
-      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSourceWithEntityMetadatas();
 
     const queryRunner = workspaceDataSource.createQueryRunner();
 

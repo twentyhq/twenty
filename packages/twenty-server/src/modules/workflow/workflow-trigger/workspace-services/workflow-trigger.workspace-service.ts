@@ -294,7 +294,7 @@ export class WorkflowTriggerWorkspaceService {
     );
 
     const workspaceDataSource =
-      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSourceWithEntityMetadatas();
 
     const queryRunner = workspaceDataSource.createQueryRunner();
 
@@ -408,7 +408,7 @@ export class WorkflowTriggerWorkspaceService {
     await this.deleteCommandMenuItem(workflowVersion, workspaceId);
 
     const workspaceDataSource =
-      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSourceWithEntityMetadatas();
 
     const queryRunner = workspaceDataSource.createQueryRunner();
 

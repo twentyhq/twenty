@@ -49,7 +49,7 @@ export class CalendarSaveEventsService {
           );
 
         const workspaceDataSource =
-          await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+          await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSourceWithEntityMetadatas();
 
         await workspaceDataSource.transaction(
           async (transactionManager: WorkspaceEntityManager) => {

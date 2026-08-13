@@ -134,6 +134,20 @@ export class WorkspaceRepositoryV2 {
     );
   }
 
+  private createPermissionBypassingQueryBuilder(): WorkspaceSelectQueryBuilderV2 {
+    return new WorkspaceSelectQueryBuilderV2(
+      this.options.tableShape.nameSingular,
+      {
+        tableShape: this.options.tableShape,
+        executor: this.options.executor,
+        objectRecordsPermissions: this.options.objectRecordsPermissions,
+        tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
+        onBeforeExecute: () => undefined,
+        formatResult: (records) => this.formatResult(records),
+      },
+    );
+  }
+
   formatResult<T>(records: unknown): T {
     return formatResult<T>(
       records,
@@ -603,9 +617,6 @@ export class WorkspaceRepositoryV2 {
       : this.options.runInNewTransaction(work);
   }
 
-  // Existence check for save/upsert: bypasses row-level permissions and includes
-  // soft-deleted rows so an existing-but-hidden id is updated rather than
-  // misclassified as an insert (which would raise a duplicate-key error).
   private async findExistingIds(ids: string[]): Promise<Set<string>> {
     if (ids.length === 0) {
       return new Set<string>();
@@ -656,8 +667,6 @@ export class WorkspaceRepositoryV2 {
         });
       }
 
-      // runInsert returns identifiers in the same order as `toInsert`, which
-      // partitionEntitiesForSave builds in input order.
       const insertedIds =
         toInsert.length > 0
           ? (
@@ -675,9 +684,12 @@ export class WorkspaceRepositoryV2 {
 
       const savedById = new Map(
         savedIds.length > 0
-          ? (await repository.find({ where: { id: In(savedIds) } })).map(
-              (record) => [record.id, record],
-            )
+          ? (
+              await repository.find({
+                where: { id: In(savedIds) },
+                withDeleted: true,
+              })
+            ).map((record) => [record.id, record])
           : [],
       );
 
@@ -729,10 +741,10 @@ export class WorkspaceRepositoryV2 {
         ),
       );
 
-      const existingRecords = await repository.find({
-        where: conflictWhere,
-        withDeleted: true,
-      });
+      const existingRecords = await applyFindOptionsToQueryBuilder(
+        repository.createPermissionBypassingQueryBuilder(),
+        { where: conflictWhere, withDeleted: true },
+      ).getMany<ObjectRecord>();
 
       const { toUpdate, toInsert } = matchEntitiesForUpsert(
         entities,

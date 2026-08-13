@@ -234,7 +234,7 @@ export class WorkflowVersionCoreSyncService {
         );
 
       const dataSource =
-        await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+        await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSourceWithEntityMetadatas();
       const queryRunner = dataSource.createQueryRunner();
 
       await queryRunner.connect();

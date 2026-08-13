@@ -680,7 +680,7 @@ export class MessageCampaignService {
     );
 
     const workspaceDataSource =
-      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSourceWithEntityMetadatas();
 
     if (!workspaceDataSource) {
       throw new Error(

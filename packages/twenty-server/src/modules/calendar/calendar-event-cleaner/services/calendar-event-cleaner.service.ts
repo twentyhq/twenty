@@ -33,7 +33,7 @@ export class CalendarEventCleanerService {
           );
 
         const workspaceDataSource =
-          await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+          await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSourceWithEntityMetadatas();
 
         await workspaceDataSource.transaction(async (manager) => {
           const transactionManager = manager as WorkspaceEntityManager;

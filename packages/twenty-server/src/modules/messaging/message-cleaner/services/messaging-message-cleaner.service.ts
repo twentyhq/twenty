@@ -142,7 +142,7 @@ export class MessagingMessageCleanerService {
           );
 
         const workspaceDataSource =
-          await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+          await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSourceWithEntityMetadatas();
 
         await workspaceDataSource.transaction(async (manager) => {
           const transactionManager = manager as WorkspaceEntityManager;
@@ -208,7 +208,7 @@ export class MessagingMessageCleanerService {
           );
 
         const workspaceDataSource =
-          await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+          await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSourceWithEntityMetadatas();
 
         await workspaceDataSource.transaction(
           async (transactionManager: WorkspaceEntityManager) => {
