@@ -11,6 +11,7 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { RecordTableAggregateFooterCell } from '@/object-record/record-table/record-table-footer/components/RecordTableAggregateFooterCell';
 import { RecordTableColumnAggregateFooterCellContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterCellContext';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledPlaceholderDragAndDropFooterCell = styled.div`
   background-color: ${themeCssVariables.background.primary};
@@ -53,6 +54,13 @@ export const RecordTableAggregateFooter = ({
   currentRecordGroupId?: string;
 }) => {
   const { visibleRecordFields } = useRecordTableContextOrThrow();
+  const isMobile = useIsMobile();
+
+  // Aggregates are a desktop affordance; on a phone the bar is a permanent row
+  // of vertical space over content that matters more.
+  if (isMobile) {
+    return null;
+  }
 
   return (
     <StyledAggregateFooterContainer>
