@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import {
   type ObjectRecord,
   type ObjectsPermissions,
@@ -9,15 +11,30 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { validateOperationIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
+import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/twenty-orm/utils/render-row-level-permission-filter-to-sql.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/resolve-row-level-permission-record-filter.util';
+import {
+  TwentyOrmV2Exception,
+  TwentyOrmV2ExceptionCode,
+} from 'src/engine/twenty-orm-v2/exceptions/twenty-orm-v2.exception';
 import { type QueryExecutorV2 } from 'src/engine/twenty-orm-v2/executor/types/query-executor-v2.type';
 import { type MutationKind } from 'src/engine/twenty-orm-v2/sql/utils/build-mutation-statement.util';
 import { WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-select-query-builder-v2';
 import { compileNamedParameters } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm-v2/table-shape/types/workspace-table-shape.type';
+
+const MUTATION_EVENT_ACTIONS_BY_KIND: Record<
+  MutationKind,
+  DatabaseEventAction[]
+> = {
+  delete: [DatabaseEventAction.DESTROYED],
+  restore: [DatabaseEventAction.RESTORED],
+  'soft-delete': [DatabaseEventAction.DELETED],
+  update: [DatabaseEventAction.UPDATED, DatabaseEventAction.UPSERTED],
+};
 
 type WorkspaceRepositoryV2Options = {
   tableShape: WorkspaceTableShape;
@@ -88,17 +105,32 @@ export class WorkspaceRepositoryV2 {
     rowLevelPermissionsApplied,
     kind,
     columnsToReturn,
+    data,
   }: {
     selectQueryBuilder: WorkspaceSelectQueryBuilderV2;
     rowLevelPermissionsApplied: boolean;
     kind: MutationKind;
     columnsToReturn: string[];
+    data?: Partial<ObjectRecord>;
   }): Promise<ObjectRecord[]> {
     if (!rowLevelPermissionsApplied) {
       this.applyRowLevelPermissionPredicates(selectQueryBuilder);
     }
 
-    this.validateWriteIsPermitted({ operationType: kind, columnsToReturn });
+    const setColumns =
+      kind === 'update' && isDefined(data)
+        ? formatData(
+            data,
+            this.options.flatObjectMetadata,
+            this.options.internalContext.flatFieldMetadataMaps,
+          )
+        : undefined;
+
+    this.validateWriteIsPermitted({
+      operationType: kind,
+      columnsToReturn,
+      updatedColumns: isDefined(setColumns) ? Object.keys(setColumns) : [],
+    });
 
     const eventSelectQueryBuilder =
       this.buildEventSnapshotQueryBuilder(selectQueryBuilder);
@@ -114,10 +146,19 @@ export class WorkspaceRepositoryV2 {
             noFormatting: true,
           });
 
+    if (kind === 'update' && recordsBefore.length > QUERY_MAX_RECORDS) {
+      throw new TwentyOrmV2Exception(
+        `Cannot update more than ${QUERY_MAX_RECORDS} records at once`,
+        TwentyOrmV2ExceptionCode.TOO_MANY_RECORDS_TO_UPDATE,
+        msg`You can only update up to ${QUERY_MAX_RECORDS} records at once.`,
+      );
+    }
+
     const mutationResult = await this.morphAndExecute({
       selectQueryBuilder,
       kind,
       columnsToReturn,
+      setColumns,
     });
 
     const recordsAfter =
@@ -136,11 +177,21 @@ export class WorkspaceRepositoryV2 {
     selectQueryBuilder,
     kind,
     columnsToReturn,
+    setColumns,
   }: {
     selectQueryBuilder: WorkspaceSelectQueryBuilderV2;
     kind: MutationKind;
     columnsToReturn: string[];
+    setColumns?: Record<string, unknown>;
   }): Promise<{ generatedMaps: ObjectRecord[] }> {
+    if (kind === 'update') {
+      return selectQueryBuilder
+        .update()
+        .set(setColumns ?? {})
+        .returning(columnsToReturn)
+        .execute();
+    }
+
     const mutationQueryBuilder =
       kind === 'soft-delete'
         ? selectQueryBuilder.softDelete()
@@ -172,9 +223,11 @@ export class WorkspaceRepositoryV2 {
   private validateWriteIsPermitted({
     operationType,
     columnsToReturn,
+    updatedColumns,
   }: {
     operationType: MutationKind;
     columnsToReturn: string[];
+    updatedColumns: string[];
   }): void {
     if (this.options.shouldBypassPermissionChecks) {
       return;
@@ -191,7 +244,7 @@ export class WorkspaceRepositoryV2 {
         this.options.internalContext.objectIdByNameSingular,
       selectedColumns: columnsToReturn,
       allFieldsSelected: false,
-      updatedColumns: [],
+      updatedColumns,
     });
   }
 
@@ -204,29 +257,30 @@ export class WorkspaceRepositoryV2 {
     recordsBefore: ObjectRecord[];
     recordsAfter?: ObjectRecord[];
   }): void {
-    const action =
-      kind === 'delete'
-        ? DatabaseEventAction.DESTROYED
-        : kind === 'restore'
-          ? DatabaseEventAction.RESTORED
-          : DatabaseEventAction.DELETED;
+    const actions = MUTATION_EVENT_ACTIONS_BY_KIND[kind];
 
-    const event = formatTwentyOrmEventToDatabaseBatchEvent({
-      action,
-      objectMetadataItem: this.options.flatObjectMetadata,
-      flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
-      workspaceId: this.options.internalContext.workspaceId,
-      recordsBefore: this.formatResult<ObjectRecord[]>(recordsBefore),
-      recordsAfter: isDefined(recordsAfter)
-        ? this.formatResult<ObjectRecord[]>(recordsAfter)
-        : undefined,
-      authContext: this.options.authContext,
-    });
+    const formattedBefore = this.formatResult<ObjectRecord[]>(recordsBefore);
+    const formattedAfter = isDefined(recordsAfter)
+      ? this.formatResult<ObjectRecord[]>(recordsAfter)
+      : undefined;
 
-    if (isDefined(event)) {
-      this.options.internalContext.eventEmitterService.emitDatabaseBatchEvent(
-        event,
-      );
+    for (const action of actions) {
+      const event = formatTwentyOrmEventToDatabaseBatchEvent({
+        action,
+        objectMetadataItem: this.options.flatObjectMetadata,
+        flatFieldMetadataMaps:
+          this.options.internalContext.flatFieldMetadataMaps,
+        workspaceId: this.options.internalContext.workspaceId,
+        recordsBefore: formattedBefore,
+        recordsAfter: formattedAfter,
+        authContext: this.options.authContext,
+      });
+
+      if (isDefined(event)) {
+        this.options.internalContext.eventEmitterService.emitDatabaseBatchEvent(
+          event,
+        );
+      }
     }
   }
 

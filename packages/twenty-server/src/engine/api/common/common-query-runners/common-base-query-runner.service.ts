@@ -22,6 +22,7 @@ import {
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { buildMutationQueryBuilder } from 'src/engine/api/common/common-query-runners/utils/build-mutation-query-builder.util';
 import { buildMutationQueryBuilderV2 } from 'src/engine/api/common/common-query-runners/utils/build-mutation-query-builder-v2.util';
+import { updateDataIsSupportedByOrmV2 } from 'src/engine/api/common/common-query-runners/utils/update-data-is-supported-by-orm-v2.util';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
@@ -420,21 +421,33 @@ export abstract class CommonBaseQueryRunnerService<
     filter,
     columnsToReturn,
     kind,
+    data,
   }: {
     queryRunnerContext: CommonExtendedQueryRunnerContext;
     filter: Partial<ObjectRecordFilter>;
     columnsToReturn: string[];
     kind: MutationKind;
+    data?: Partial<ObjectRecord>;
   }): Promise<ObjectRecord[]> {
     const {
       repository,
       flatObjectMetadata,
+      flatFieldMetadataMaps,
       commonQueryParser,
       featureFlagsMap,
     } = queryRunnerContext;
     const alias = flatObjectMetadata.nameSingular;
 
-    if (featureFlagsMap[FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED]) {
+    const ormV2CanHandle =
+      featureFlagsMap[FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED] &&
+      (kind !== 'update' ||
+        updateDataIsSupportedByOrmV2({
+          data: data ?? {},
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+        }));
+
+    if (ormV2CanHandle) {
       const writeRepository = this.getWriteRepository(queryRunnerContext);
 
       const { selectQueryBuilder, rowLevelPermissionsApplied } =
@@ -450,6 +463,7 @@ export abstract class CommonBaseQueryRunnerService<
         rowLevelPermissionsApplied,
         kind,
         columnsToReturn,
+        data,
       });
     }
 
@@ -459,6 +473,16 @@ export abstract class CommonBaseQueryRunnerService<
       filter,
       commonQueryParser,
     });
+
+    if (kind === 'update') {
+      const result = await queryBuilder
+        .update()
+        .set(data ?? {})
+        .returning(columnsToReturn)
+        .execute();
+
+      return result.generatedMaps as ObjectRecord[];
+    }
 
     const mutationQueryBuilder =
       kind === 'soft-delete'
