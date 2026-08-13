@@ -1,4 +1,4 @@
-import './setupServerRenderingGlobals';
+import '@/testing/setupServerRenderingGlobals';
 
 import { act, type ReactElement } from 'react';
 import { createRoot } from 'react-dom/client';

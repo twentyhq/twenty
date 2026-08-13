@@ -1,4 +1,4 @@
-import { setupGeometryGlobals } from './setupGeometryGlobals';
+import { setupGeometryGlobals } from '@/testing/setupGeometryGlobals';
 
 import { GEOMETRY_IDLE_FRAME_THRESHOLD } from '@/host/constants/GeometryIdleFrameThreshold';
 import { createGeometryTracker } from '../createGeometryTracker';

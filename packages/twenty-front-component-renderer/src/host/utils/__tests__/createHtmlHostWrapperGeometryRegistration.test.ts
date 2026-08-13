@@ -1,11 +1,11 @@
-import './setupServerRenderingGlobals';
+import '@/testing/setupServerRenderingGlobals';
 
 import { REMOTE_ELEMENT_PROP } from '@remote-dom/react/host';
 import { act, createElement, type ComponentType } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { jsx } from 'react/jsx-runtime';
 
-import { createStubGeometryTracker } from '@/__tests__/createStubGeometryTracker';
+import { createStubGeometryTracker } from '@/testing/createStubGeometryTracker';
 import { FrontComponentGeometryTrackerContext } from '@/host/contexts/FrontComponentGeometryTrackerContext';
 import { type GeometryTracker } from '@/host/types/GeometryTracker';
 import { createHtmlHostWrapper } from '../createHtmlHostWrapper';

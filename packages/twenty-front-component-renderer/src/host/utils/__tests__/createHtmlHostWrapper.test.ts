@@ -1,4 +1,4 @@
-import './setupServerRenderingGlobals';
+import '@/testing/setupServerRenderingGlobals';
 
 import { REMOTE_ELEMENT_PROP } from '@remote-dom/react/host';
 import { act, createElement, type ComponentType } from 'react';

@@ -1,9 +1,9 @@
-import '../../../host/utils/__tests__/setupServerRenderingGlobals';
+import '@/testing/setupServerRenderingGlobals';
 
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 
-import { createStubGeometryTracker } from '@/__tests__/createStubGeometryTracker';
+import { createStubGeometryTracker } from '@/testing/createStubGeometryTracker';
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
 import { FrontComponentGeometryTrackerEffect } from '../FrontComponentGeometryTrackerEffect';
 
