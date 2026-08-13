@@ -310,7 +310,7 @@ describe('computeCursorArgFilter', () => {
       });
     });
 
-    it('should drop the comparison branch when the cursor value is null', () => {
+    it('should match non-null values for a null cursor when nulls are sorted first and paginating forward', () => {
       const orderBy: RecordGqlOperationOrderBy = [{ stage: 'AscNullsFirst' }];
 
       const result = computeCursorArgFilter({
@@ -322,8 +322,48 @@ describe('computeCursorArgFilter', () => {
 
       expect(result).toEqual({
         or: [
+          { stage: { is: 'NOT_NULL' } },
           {
-            and: [{ stage: { eq: null } }, { id: { gt: 'record-1' } }],
+            and: [{ stage: { is: 'NULL' } }, { id: { gt: 'record-1' } }],
+          },
+        ],
+      });
+    });
+
+    it('should drop the comparison branch for a null cursor when nulls are sorted last and paginating forward', () => {
+      const orderBy: RecordGqlOperationOrderBy = [{ stage: 'AscNullsLast' }];
+
+      const result = computeCursorArgFilter({
+        orderBy,
+        cursorRecordValues: { stage: null, id: 'record-1' },
+        isForwardPagination: true,
+        fieldMetadataItems: [stageField],
+      });
+
+      expect(result).toEqual({
+        or: [
+          {
+            and: [{ stage: { is: 'NULL' } }, { id: { gt: 'record-1' } }],
+          },
+        ],
+      });
+    });
+
+    it('should match non-null values for a null cursor when nulls are sorted last and paginating backward', () => {
+      const orderBy: RecordGqlOperationOrderBy = [{ stage: 'AscNullsLast' }];
+
+      const result = computeCursorArgFilter({
+        orderBy,
+        cursorRecordValues: { stage: null, id: 'record-1' },
+        isForwardPagination: false,
+        fieldMetadataItems: [stageField],
+      });
+
+      expect(result).toEqual({
+        or: [
+          { stage: { is: 'NOT_NULL' } },
+          {
+            and: [{ stage: { is: 'NULL' } }, { id: { lt: 'record-1' } }],
           },
         ],
       });

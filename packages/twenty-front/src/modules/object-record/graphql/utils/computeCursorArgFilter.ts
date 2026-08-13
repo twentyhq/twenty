@@ -40,6 +40,9 @@ const buildCursorWhereCondition = (
 const isOptionBackedFieldType = (type: FieldMetadataType): boolean =>
   type === FieldMetadataType.SELECT || type === FieldMetadataType.RATING;
 
+const areNullsSortedFirst = (direction: string): boolean =>
+  direction === 'AscNullsFirst' || direction === 'DescNullsFirst';
+
 export const computeCursorArgFilter = ({
   orderBy,
   cursorRecordValues,
@@ -53,17 +56,33 @@ export const computeCursorArgFilter = ({
 }): RecordGqlOperationFilter => {
   const fields = resolveCursorOrderByFields(orderBy);
 
+  const isOptionBackedField = (field: CursorOrderByField): boolean => {
+    if (isDefined(field.subFieldName)) {
+      return false;
+    }
+
+    const fieldMetadataItem = fieldMetadataItems.find(
+      (fieldMetadataItemToCheck) =>
+        fieldMetadataItemToCheck.name === field.fieldName,
+    );
+
+    return (
+      isDefined(fieldMetadataItem) &&
+      isOptionBackedFieldType(fieldMetadataItem.type)
+    );
+  };
+
   const cumulativeConditions = fields
     .map((field, index) => {
-      const equalityPrefixes = fields
-        .slice(0, index)
-        .map((prevField) =>
-          buildCursorWhereCondition(
-            prevField,
-            'eq',
-            getCursorValue(cursorRecordValues, prevField),
-          ),
-        );
+      const equalityPrefixes = fields.slice(0, index).map((prevField) => {
+        const prevCursorValue = getCursorValue(cursorRecordValues, prevField);
+
+        if (isOptionBackedField(prevField) && !isDefined(prevCursorValue)) {
+          return { [prevField.fieldName]: { is: 'NULL' } };
+        }
+
+        return buildCursorWhereCondition(prevField, 'eq', prevCursorValue);
+      });
 
       const ascending = isAscendingOrder(field.direction);
       const shouldTakeGreaterValues = ascending
@@ -76,21 +95,37 @@ export const computeCursorArgFilter = ({
           fieldMetadataItemToCheck.name === field.fieldName,
       );
 
-      const comparison =
-        !field.subFieldName &&
-        isDefined(fieldMetadataItem) &&
-        isOptionBackedFieldType(fieldMetadataItem.type)
-          ? buildOptionBackedCursorComparison({
-              fieldName: field.fieldName,
-              fieldMetadataItem,
-              cursorValue,
-              shouldTakeGreaterValues,
-            })
-          : buildCursorWhereCondition(
-              field,
-              shouldTakeGreaterValues ? 'gt' : 'lt',
-              cursorValue,
-            );
+      const buildOptionBackedComparison =
+        (): RecordGqlOperationFilter | null => {
+          if (!isDefined(fieldMetadataItem)) {
+            return null;
+          }
+
+          if (!isDefined(cursorValue)) {
+            const shouldMatchNonNullValues = isForwardPagination
+              ? areNullsSortedFirst(field.direction)
+              : !areNullsSortedFirst(field.direction);
+
+            return shouldMatchNonNullValues
+              ? { [field.fieldName]: { is: 'NOT_NULL' } }
+              : null;
+          }
+
+          return buildOptionBackedCursorComparison({
+            fieldName: field.fieldName,
+            fieldMetadataItem,
+            cursorValue,
+            shouldTakeGreaterValues,
+          });
+        };
+
+      const comparison = isOptionBackedField(field)
+        ? buildOptionBackedComparison()
+        : buildCursorWhereCondition(
+            field,
+            shouldTakeGreaterValues ? 'gt' : 'lt',
+            cursorValue,
+          );
 
       if (!isDefined(comparison)) {
         return null;
