@@ -2,13 +2,11 @@ import { randomUUID } from 'node:crypto';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-
 import { setupMicrosoftMock } from 'test/integration/microsoft/mocks/setup-microsoft-mock.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { createCalendarEvent } from 'test/integration/utils/create-calendar-event.util';
-import { findPersistedMessages } from 'test/integration/utils/find-persisted-messages.util';
 import { findImportedCalendarEventTitles } from 'test/integration/utils/find-imported-records.util';
+import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
 import { sendEmail } from 'test/integration/utils/send-email.util';
 
@@ -89,51 +87,93 @@ describe('Microsoft outbound messaging and calendar creation (integration)', () 
       }),
     ]);
     expect(microsoft.sentMessageIds).toEqual(['microsoft-reply-message']);
-    expect(
-      await findPersistedMessages({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        subject,
-      }),
-    ).toEqual([
-      expect.objectContaining({
-        isDraft: false,
-        messageThreadId: expect.any(String),
-        text: 'Microsoft reply body',
-        messageChannelMessageAssociations: [
-          expect.objectContaining({
-            messageChannelId: channel.channelId,
-            messageExternalId: 'microsoft-reply-message',
-          }),
-        ],
-        messageParticipants: expect.arrayContaining([
-          expect.objectContaining({ handle: RECIPIENTS.to, role: 'TO' }),
-          expect.objectContaining({ handle: RECIPIENTS.cc, role: 'CC' }),
-          expect.objectContaining({ handle: RECIPIENTS.bcc, role: 'BCC' }),
-        ]),
-      }),
-    ]);
-  }, 60000);
-
-  it('sends a synced Microsoft draft through GraphQL and replaces it in the database', async () => {
-    const [draft] = await findPersistedMessages({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      subject: DRAFT_SUBJECT,
+    const [message] = await findRecordNodesByFilter<{
+      id: string;
+      isDraft: boolean;
+      messageThreadId: string | null;
+      text: string | null;
+    }>('message', 'messages', 'id isDraft messageThreadId text', {
+      subject: { eq: subject },
     });
 
-    expect(draft).toMatchObject({
-      isDraft: true,
-      messageChannelMessageAssociations: [
-        expect.objectContaining({
-          messageChannelId: channel.channelId,
-          messageExternalId: DRAFT_MESSAGE.id,
-        }),
-      ],
-      messageParticipants: expect.arrayContaining([
+    expect(message).toMatchObject({
+      isDraft: false,
+      messageThreadId: expect.any(String),
+      text: 'Microsoft reply body',
+    });
+    expect(
+      await findRecordNodesByFilter<{
+        messageChannelId: string;
+        messageExternalId: string;
+      }>(
+        'messageChannelMessageAssociation',
+        'messageChannelMessageAssociations',
+        'messageChannelId messageExternalId',
+        { messageId: { eq: message.id } },
+      ),
+    ).toEqual([
+      expect.objectContaining({
+        messageChannelId: channel.channelId,
+        messageExternalId: 'microsoft-reply-message',
+      }),
+    ]);
+    expect(
+      await findRecordNodesByFilter<{ handle: string; role: string }>(
+        'messageParticipant',
+        'messageParticipants',
+        'handle role',
+        { messageId: { eq: message.id } },
+      ),
+    ).toEqual(
+      expect.arrayContaining([
         expect.objectContaining({ handle: RECIPIENTS.to, role: 'TO' }),
         expect.objectContaining({ handle: RECIPIENTS.cc, role: 'CC' }),
         expect.objectContaining({ handle: RECIPIENTS.bcc, role: 'BCC' }),
       ]),
+    );
+  }, 60000);
+
+  it('sends a synced Microsoft draft through GraphQL and replaces it in the database', async () => {
+    const [draft] = await findRecordNodesByFilter<{
+      id: string;
+      isDraft: boolean;
+    }>('message', 'messages', 'id isDraft', {
+      subject: { eq: DRAFT_SUBJECT },
     });
+
+    expect(draft).toMatchObject({
+      isDraft: true,
+    });
+    expect(
+      await findRecordNodesByFilter<{
+        messageChannelId: string;
+        messageExternalId: string;
+      }>(
+        'messageChannelMessageAssociation',
+        'messageChannelMessageAssociations',
+        'messageChannelId messageExternalId',
+        { messageId: { eq: draft.id } },
+      ),
+    ).toEqual([
+      expect.objectContaining({
+        messageChannelId: channel.channelId,
+        messageExternalId: DRAFT_MESSAGE.id,
+      }),
+    ]);
+    expect(
+      await findRecordNodesByFilter<{ handle: string; role: string }>(
+        'messageParticipant',
+        'messageParticipants',
+        'handle role',
+        { messageId: { eq: draft.id } },
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ handle: RECIPIENTS.to, role: 'TO' }),
+        expect.objectContaining({ handle: RECIPIENTS.cc, role: 'CC' }),
+        expect.objectContaining({ handle: RECIPIENTS.bcc, role: 'BCC' }),
+      ]),
+    );
 
     const result = await sendEmail({
       connectedAccountId: channel.connectedAccountId,
@@ -155,22 +195,34 @@ describe('Microsoft outbound messaging and calendar creation (integration)', () 
       }),
     ]);
     expect(microsoft.sentMessageIds).toEqual(['microsoft-message-1']);
+    const [sentMessage] = await findRecordNodesByFilter<{
+      id: string;
+      isDraft: boolean;
+      messageThreadId: string | null;
+      text: string | null;
+    }>('message', 'messages', 'id isDraft messageThreadId text', {
+      subject: { eq: DRAFT_SUBJECT },
+    });
+
+    expect(sentMessage).toMatchObject({
+      isDraft: false,
+      messageThreadId: expect.any(String),
+      text: 'Microsoft draft body',
+    });
     expect(
-      await findPersistedMessages({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        subject: DRAFT_SUBJECT,
-      }),
+      await findRecordNodesByFilter<{
+        messageChannelId: string;
+        messageExternalId: string;
+      }>(
+        'messageChannelMessageAssociation',
+        'messageChannelMessageAssociations',
+        'messageChannelId messageExternalId',
+        { messageId: { eq: sentMessage.id } },
+      ),
     ).toEqual([
       expect.objectContaining({
-        isDraft: false,
-        messageThreadId: expect.any(String),
-        text: 'Microsoft draft body',
-        messageChannelMessageAssociations: [
-          expect.objectContaining({
-            messageChannelId: channel.channelId,
-            messageExternalId: 'microsoft-message-1',
-          }),
-        ],
+        messageChannelId: channel.channelId,
+        messageExternalId: 'microsoft-message-1',
       }),
     ]);
     expect(result.messageThreadId).toEqual(expect.any(String));

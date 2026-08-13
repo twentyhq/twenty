@@ -2,12 +2,10 @@ import { randomUUID } from 'node:crypto';
 
 import { EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/enums/email-connection-security.enum';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-
 import { deleteConnectedAccount } from 'test/integration/metadata/suites/connected-account/utils/delete-connected-account.util';
 import { saveImapSmtpCaldavAccount } from 'test/integration/metadata/suites/connected-account/utils/save-imap-smtp-caldav-account.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
-import { findPersistedMessages } from 'test/integration/utils/find-persisted-messages.util';
+import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
 import { sendEmail } from 'test/integration/utils/send-email.util';
@@ -97,25 +95,43 @@ describe('IMAP/SMTP outbound messaging (integration)', () => {
 
     expect(result).toMatchObject({ success: true });
 
+    const [message] = await findRecordNodesByFilter<{
+      id: string;
+      isDraft: boolean;
+      messageThreadId: string | null;
+      text: string | null;
+    }>('message', 'messages', 'id isDraft messageThreadId text', {
+      subject: { eq: subject },
+    });
+
+    expect(message).toMatchObject({
+      isDraft: false,
+      messageThreadId: expect.any(String),
+      text: 'SMTP reply body',
+    });
     expect(
-      await findPersistedMessages({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        subject,
-      }),
-    ).toEqual([
-      expect.objectContaining({
-        isDraft: false,
-        messageThreadId: expect.any(String),
-        text: 'SMTP reply body',
-        messageChannelMessageAssociations: [
-          expect.objectContaining({ messageChannelId }),
-        ],
-        messageParticipants: expect.arrayContaining([
-          expect.objectContaining({ handle: HANDLE, role: 'TO' }),
-          expect.objectContaining({ handle: HANDLE, role: 'CC' }),
-          expect.objectContaining({ handle: HANDLE, role: 'BCC' }),
-        ]),
-      }),
-    ]);
+      await findRecordNodesByFilter<{
+        messageChannelId: string;
+      }>(
+        'messageChannelMessageAssociation',
+        'messageChannelMessageAssociations',
+        'messageChannelId',
+        { messageId: { eq: message.id } },
+      ),
+    ).toEqual([expect.objectContaining({ messageChannelId })]);
+    expect(
+      await findRecordNodesByFilter<{ handle: string; role: string }>(
+        'messageParticipant',
+        'messageParticipants',
+        'handle role',
+        { messageId: { eq: message.id } },
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ handle: HANDLE, role: 'TO' }),
+        expect.objectContaining({ handle: HANDLE, role: 'CC' }),
+        expect.objectContaining({ handle: HANDLE, role: 'BCC' }),
+      ]),
+    );
   }, 300000);
 });

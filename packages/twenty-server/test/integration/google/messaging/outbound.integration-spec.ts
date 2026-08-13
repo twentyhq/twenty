@@ -2,14 +2,12 @@ import { randomUUID } from 'node:crypto';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-
 import { gmailMessage } from 'test/integration/google/mocks/gmail-message.util';
 import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { createCalendarEvent } from 'test/integration/utils/create-calendar-event.util';
-import { findPersistedMessages } from 'test/integration/utils/find-persisted-messages.util';
 import { findImportedCalendarEventTitles } from 'test/integration/utils/find-imported-records.util';
+import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
 import { sendEmail } from 'test/integration/utils/send-email.util';
 
@@ -95,50 +93,89 @@ describe('Gmail outbound messaging and calendar creation (integration)', () => {
     expect(raw).toContain('In-Reply-To: <gmail-parent@example.com>');
     expect(raw).toContain('References: <gmail-parent@example.com>');
 
-    expect(
-      await findPersistedMessages({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        subject,
-      }),
-    ).toEqual([
-      expect.objectContaining({
-        isDraft: false,
-        messageThreadId: expect.any(String),
-        text: 'Gmail reply body',
-        messageChannelMessageAssociations: [
-          expect.objectContaining({
-            messageChannelId: channel.channelId,
-          }),
-        ],
-        messageParticipants: expect.arrayContaining([
-          expect.objectContaining({ handle: RECIPIENTS.to, role: 'TO' }),
-          expect.objectContaining({ handle: RECIPIENTS.cc, role: 'CC' }),
-          expect.objectContaining({ handle: RECIPIENTS.bcc, role: 'BCC' }),
-        ]),
-      }),
-    ]);
-  }, 60000);
-
-  it('sends a synced Gmail draft through GraphQL and replaces it in the database', async () => {
-    const [draft] = await findPersistedMessages({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      subject: DRAFT_SUBJECT,
+    const [message] = await findRecordNodesByFilter<{
+      id: string;
+      isDraft: boolean;
+      messageThreadId: string | null;
+      text: string | null;
+    }>('message', 'messages', 'id isDraft messageThreadId text', {
+      subject: { eq: subject },
     });
 
-    expect(draft).toMatchObject({
-      isDraft: true,
-      messageChannelMessageAssociations: [
-        expect.objectContaining({
-          messageChannelId: channel.channelId,
-          messageExternalId: DRAFT_MESSAGE.id,
-        }),
-      ],
-      messageParticipants: expect.arrayContaining([
+    expect(message).toMatchObject({
+      isDraft: false,
+      messageThreadId: expect.any(String),
+      text: 'Gmail reply body',
+    });
+    expect(
+      await findRecordNodesByFilter<{
+        messageChannelId: string;
+      }>(
+        'messageChannelMessageAssociation',
+        'messageChannelMessageAssociations',
+        'messageChannelId',
+        { messageId: { eq: message.id } },
+      ),
+    ).toEqual([
+      expect.objectContaining({ messageChannelId: channel.channelId }),
+    ]);
+    expect(
+      await findRecordNodesByFilter<{ handle: string; role: string }>(
+        'messageParticipant',
+        'messageParticipants',
+        'handle role',
+        { messageId: { eq: message.id } },
+      ),
+    ).toEqual(
+      expect.arrayContaining([
         expect.objectContaining({ handle: RECIPIENTS.to, role: 'TO' }),
         expect.objectContaining({ handle: RECIPIENTS.cc, role: 'CC' }),
         expect.objectContaining({ handle: RECIPIENTS.bcc, role: 'BCC' }),
       ]),
+    );
+  }, 60000);
+
+  it('sends a synced Gmail draft through GraphQL and replaces it in the database', async () => {
+    const [draft] = await findRecordNodesByFilter<{
+      id: string;
+      isDraft: boolean;
+    }>('message', 'messages', 'id isDraft', {
+      subject: { eq: DRAFT_SUBJECT },
     });
+
+    expect(draft).toMatchObject({
+      isDraft: true,
+    });
+    expect(
+      await findRecordNodesByFilter<{
+        messageChannelId: string;
+        messageExternalId: string;
+      }>(
+        'messageChannelMessageAssociation',
+        'messageChannelMessageAssociations',
+        'messageChannelId messageExternalId',
+        { messageId: { eq: draft.id } },
+      ),
+    ).toEqual([
+      expect.objectContaining({
+        messageChannelId: channel.channelId,
+        messageExternalId: DRAFT_MESSAGE.id,
+      }),
+    ]);
+    expect(
+      await findRecordNodesByFilter<{ handle: string; role: string }>(
+        'messageParticipant',
+        'messageParticipants',
+        'handle role',
+        { messageId: { eq: draft.id } },
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ handle: RECIPIENTS.to, role: 'TO' }),
+        expect.objectContaining({ handle: RECIPIENTS.cc, role: 'CC' }),
+        expect.objectContaining({ handle: RECIPIENTS.bcc, role: 'BCC' }),
+      ]),
+    );
 
     const result = await sendEmail({
       connectedAccountId: channel.connectedAccountId,
@@ -151,9 +188,13 @@ describe('Gmail outbound messaging and calendar creation (integration)', () => {
     });
 
     expect(result).toMatchObject({ success: true });
-    const [sentMessage] = await findPersistedMessages({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      subject: DRAFT_SUBJECT,
+    const [sentMessage] = await findRecordNodesByFilter<{
+      id: string;
+      isDraft: boolean;
+      messageThreadId: string | null;
+      text: string | null;
+    }>('message', 'messages', 'id isDraft messageThreadId text', {
+      subject: { eq: DRAFT_SUBJECT },
     });
 
     expect(sentMessage).toEqual(
@@ -161,17 +202,20 @@ describe('Gmail outbound messaging and calendar creation (integration)', () => {
         isDraft: false,
         messageThreadId: expect.any(String),
         text: 'Gmail draft body',
-        messageChannelMessageAssociations: [
-          expect.objectContaining({
-            messageChannelId: channel.channelId,
-            messageExternalId: expect.any(String),
-          }),
-        ],
       }),
     );
-    expect(
-      sentMessage.messageChannelMessageAssociations[0].messageExternalId,
-    ).not.toBe(DRAFT_MESSAGE.id);
+    const [association] = await findRecordNodesByFilter<{
+      messageChannelId: string;
+      messageExternalId: string;
+    }>(
+      'messageChannelMessageAssociation',
+      'messageChannelMessageAssociations',
+      'messageChannelId messageExternalId',
+      { messageId: { eq: sentMessage.id } },
+    );
+
+    expect(association.messageChannelId).toBe(channel.channelId);
+    expect(association.messageExternalId).not.toBe(DRAFT_MESSAGE.id);
     expect(result.messageThreadId).toEqual(expect.any(String));
   }, 60000);
 
