@@ -116,7 +116,7 @@ describe('getNextStepIdsForIfElse', () => {
     });
   });
 
-  it('should not skip a convergence step reached through an iterator loop with serialized ids', () => {
+  it('should not skip a convergence step reached through an iterator loop', () => {
     const ifElseStep = buildIfElseStep({
       ifBranchNextStepIds: ['iterator'],
       elseBranchNextStepIds: ['mergeStep'],
@@ -127,7 +127,7 @@ describe('getNextStepIdsForIfElse', () => {
       type: 'ITERATOR',
       name: 'iterator',
       nextStepIds: ['mergeStep'],
-      settings: { input: { initialLoopStepIds: '["insideLoop"]' } },
+      settings: { input: { initialLoopStepIds: ['insideLoop'] } },
     } as unknown as WorkflowAction;
 
     const steps = [

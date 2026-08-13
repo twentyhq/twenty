@@ -68,27 +68,6 @@ describe('getStepOutgoingStepIds', () => {
     expect(getStepOutgoingStepIds(step)).toEqual(['loop-1']);
   });
 
-  it('should include iterator initialLoopStepIds stored as a serialized string', () => {
-    const step: ValidatableWorkflowStep = {
-      id: 'step-1',
-      type: WorkflowActionType.ITERATOR,
-      settings: { input: { initialLoopStepIds: '["loop-1","loop-2"]' } },
-    };
-
-    expect(getStepOutgoingStepIds(step)).toEqual(['loop-1', 'loop-2']);
-  });
-
-  it('should ignore an unparsable serialized initialLoopStepIds', () => {
-    const step: ValidatableWorkflowStep = {
-      id: 'step-1',
-      type: WorkflowActionType.ITERATOR,
-      nextStepIds: ['after'],
-      settings: { input: { initialLoopStepIds: 'not-json' } },
-    };
-
-    expect(getStepOutgoingStepIds(step)).toEqual(['after']);
-  });
-
   it('should fall back to nextStepIds when input is not an object', () => {
     expect(
       getStepOutgoingStepIds({
