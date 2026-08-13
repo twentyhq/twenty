@@ -7,7 +7,6 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsMobile } from 'twenty-ui/utilities';
 
 export const RecordShowCommandMenu = () => {
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
@@ -24,7 +23,6 @@ export const RecordShowCommandMenu = () => {
     contextStoreTargetedRecordsRule.mode === 'selection' &&
     contextStoreTargetedRecordsRule.selectedRecordIds.length === 1;
 
-  const isMobile = useIsMobile();
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
@@ -39,7 +37,7 @@ export const RecordShowCommandMenu = () => {
             containerType="show-page-header"
             isInPreviewMode={isLayoutCustomizationModeEnabled}
           >
-            {!isMobile && <PinnedCommandMenuItemButtons />}
+            <PinnedCommandMenuItemButtons />
           </CommandMenuContextProvider>
           <CommandMenuItemEditButton />
         </>

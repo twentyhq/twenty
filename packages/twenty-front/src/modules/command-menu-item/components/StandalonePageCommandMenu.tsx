@@ -19,12 +19,10 @@ import {
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
 import { evaluateConditionalAvailabilityExpression } from 'twenty-shared/utils';
-import { useIsMobile } from 'twenty-ui/utilities';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
 export const StandalonePageCommandMenu = () => {
   const store = useStore();
-  const isMobile = useIsMobile();
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
@@ -134,7 +132,7 @@ export const StandalonePageCommandMenu = () => {
         isInPreviewMode: false,
       }}
     >
-      {!isMobile && <PinnedCommandMenuItemButtons />}
+      <PinnedCommandMenuItemButtons />
       <CommandMenuItemEditButton />
     </CommandMenuContext.Provider>
   );

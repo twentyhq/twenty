@@ -10,6 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { motion } from 'framer-motion';
 import { useContext, useMemo } from 'react';
 import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useIsMobile } from 'twenty-ui/utilities';
 import {
   type CommandMenuItemFieldsFragment,
   EngineComponentKey,
@@ -46,23 +47,28 @@ const StyledItemsContainer = styled.div<{ shouldReverse: boolean }>`
 export const PinnedCommandMenuItemButtons = () => {
   const { theme } = useContext(ThemeContext);
   const { commandMenuItems, containerType } = useContext(CommandMenuContext);
+  const isMobile = useIsMobile();
 
-  // The footer is far narrower than a page header, so it labels a single action
-  // and keeps that label rightmost. Headers label every action and reverse the
-  // row so their labels sit left of the icons.
+  // The footer keeps its label rightmost. Headers reverse the row so labels sit
+  // left of the icons.
   const isSidePanelFooter = containerType === 'side-panel-footer';
+
+  // Neither the footer nor a mobile header is wide enough to label every action,
+  // so both label a single one and render the rest as icons.
+  const shouldLabelSingleCommandMenuItem = isSidePanelFooter || isMobile;
 
   const pinnedCommandMenuItems = useMemo(
     () => commandMenuItems.filter((item) => item.isPinned === true),
     [commandMenuItems],
   );
 
-  const labelledCommandMenuItemId = isSidePanelFooter
+  const labelledCommandMenuItemId = shouldLabelSingleCommandMenuItem
     ? getLabelledPinnedCommandMenuItemId(pinnedCommandMenuItems)
     : null;
 
   const shouldHideCommandMenuItemLabel = (commandMenuItemId: string) =>
-    isSidePanelFooter && commandMenuItemId !== labelledCommandMenuItemId;
+    shouldLabelSingleCommandMenuItem &&
+    commandMenuItemId !== labelledCommandMenuItemId;
 
   const {
     pinnedInlineCommandMenuItems,
