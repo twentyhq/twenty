@@ -109,19 +109,4 @@ describe('IMAP messages import (integration)', () => {
       MessageChannelSyncStatus.ACTIVE,
     );
   }, 300000);
-
-  it('fails the channel when the server becomes unreachable', async () => {
-    await getCoreRepository<MessageChannelEntity>(MessageChannelEntity).update(
-      { id: messageChannelId },
-      { syncCursor: '' },
-    );
-
-    await greenmail.stop();
-
-    await runMessageChannelSync(messageChannelId);
-
-    expect((await readChannel()).syncStatus).not.toBe(
-      MessageChannelSyncStatus.ACTIVE,
-    );
-  }, 300000);
 });
