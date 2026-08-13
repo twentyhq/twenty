@@ -53,6 +53,27 @@ const setWorkspaceCap = (hasReachedCurrentPeriodCap: boolean) => {
   });
 };
 
+const setWorkspaceWithoutBillingSubscription = () => {
+  jotaiStore.set(currentWorkspaceState.atom, {
+    ...mockCurrentWorkspace,
+    currentBillingSubscription: undefined,
+  });
+};
+
+const creditsExhaustedError = () =>
+  new CombinedGraphQLErrors({
+    errors: [
+      {
+        message: 'Credits exhausted',
+        extensions: {
+          code: 'FORBIDDEN',
+          subCode: 'BILLING_CREDITS_EXHAUSTED',
+        },
+      },
+    ],
+    data: null,
+  });
+
 const renderHasReachedAiChatCreditsCap = () =>
   renderHook(() => useHasReachedAiChatCreditsCap(), { wrapper: Wrapper });
 
@@ -78,30 +99,26 @@ describe('useHasReachedAiChatCreditsCap', () => {
     expect(result.current).toBe(true);
   });
 
-  it('should return true when the thread failed with credits exhausted even though the workspace reports no cap', () => {
+  it('should trust the cleared workspace flag over a leftover thread error after an upgrade', () => {
     setWorkspaceCap(false);
-    setThreadError(
-      new CombinedGraphQLErrors({
-        errors: [
-          {
-            message: 'Credits exhausted',
-            extensions: {
-              code: 'FORBIDDEN',
-              subCode: 'BILLING_CREDITS_EXHAUSTED',
-            },
-          },
-        ],
-        data: null,
-      }),
-    );
+    setThreadError(creditsExhaustedError());
+
+    const { result } = renderHasReachedAiChatCreditsCap();
+
+    expect(result.current).toBe(false);
+  });
+
+  it('should fall back to the thread error when the workspace state has no resource credit item', () => {
+    setWorkspaceWithoutBillingSubscription();
+    setThreadError(creditsExhaustedError());
 
     const { result } = renderHasReachedAiChatCreditsCap();
 
     expect(result.current).toBe(true);
   });
 
-  it('should return false when the thread failed with an unrelated error', () => {
-    setWorkspaceCap(false);
+  it('should return false for an unrelated thread error when the workspace state has no resource credit item', () => {
+    setWorkspaceWithoutBillingSubscription();
     setThreadError(new Error('Thread not found'));
 
     const { result } = renderHasReachedAiChatCreditsCap();

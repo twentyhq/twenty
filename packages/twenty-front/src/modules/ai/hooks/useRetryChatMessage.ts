@@ -13,7 +13,10 @@ import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/a
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
-import { markWorkspaceCreditsExhausted } from '@/workspace/utils/markWorkspaceCreditsExhausted';
+import {
+  markWorkspaceCreditsAvailable,
+  markWorkspaceCreditsExhausted,
+} from '@/workspace/utils/updateWorkspaceResourceCreditCap';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 export const useRetryChatMessage = () => {
@@ -50,6 +53,8 @@ export const useRetryChatMessage = () => {
           modelId: modelIdForRequest ?? undefined,
         },
       });
+
+      store.set(currentWorkspaceState.atom, markWorkspaceCreditsAvailable);
 
       dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
     } catch (retryError) {

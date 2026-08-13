@@ -72,7 +72,7 @@ export class BillingSubscriptionItemResolver {
       );
     } catch (error) {
       this.logger.warn(
-        `Failed to derive hasReachedCurrentPeriodCap for billing subscription item ${billingSubscriptionItem.id}: ${error.message}`,
+        `Failed to derive hasReachedCurrentPeriodCap for billing subscription item ${billingSubscriptionItem.id}: ${error instanceof Error ? error.message : String(error)}`,
       );
 
       return false;

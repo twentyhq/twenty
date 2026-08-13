@@ -42,7 +42,10 @@ import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { markWorkspaceCreditsExhausted } from '@/workspace/utils/markWorkspaceCreditsExhausted';
+import {
+  markWorkspaceCreditsAvailable,
+  markWorkspaceCreditsExhausted,
+} from '@/workspace/utils/updateWorkspaceResourceCreditCap';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 export const useAgentChat = (
@@ -193,6 +196,8 @@ export const useAgentChat = (
             fileAttachments.length > 0 ? fileAttachments : undefined,
         },
       });
+
+      store.set(currentWorkspaceState.atom, markWorkspaceCreditsAvailable);
 
       if (isBrowsingContextChanged) {
         store.set(lastSentBrowsingContextAtom, browsingContext);
