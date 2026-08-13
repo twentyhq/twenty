@@ -10,7 +10,7 @@
 
 ## 🤖 The assistant
 
-Mention the bot in a channel or DM it. It replies in the thread with your CRM data, using the recent conversation as context. Answers carry native thumbs up / thumbs down feedback buttons; ratings are stored on the matching Slack Assistant Request record in Twenty.
+Mention the bot in a channel or DM it. It replies in the thread with your CRM data, using the recent conversation as context. Answers end with native thumbs up / thumbs down feedback buttons — except very long answers, which fall back to plain text without them — and ratings are stored on the matching Slack Assistant Request record in Twenty.
 
 Anyone who can message the bot acts with the **Slack Assistant** role, which by default can read, create, update and soft-delete people, companies, opportunities, notes and tasks. Workspace members stay read-only and hard delete is off. Tighten the role in **Settings → Roles** if you want a narrower bot.
 
