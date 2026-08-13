@@ -197,7 +197,6 @@ const CREATE_EVENT_PARTICIPANT_DATA = (
     if (WORKSPACE_PARTICIPANT) return WORKSPACE_PARTICIPANT;
   }
 
-  // Fallback to fake participant
   return CREATE_FAKE_EVENT_PARTICIPANT();
 };
 

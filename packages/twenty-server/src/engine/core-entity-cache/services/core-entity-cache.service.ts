@@ -148,7 +148,6 @@ export class CoreEntityCacheService implements OnModuleInit {
           return redisData as CacheableValue;
         }
 
-        // Stage 4: Recompute from provider
         return this.recomputeFromProvider(entityId, cacheKeyName);
       },
     );

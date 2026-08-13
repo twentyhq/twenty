@@ -437,7 +437,6 @@ describe('applyDiff', () => {
         normalProp: 'normal',
       });
 
-      // Verify safe property was actually removed
       expect(result).not.toHaveProperty('safe');
     });
   });
@@ -526,7 +525,6 @@ describe('applyDiff', () => {
           oldValue: 'users',
           value: 'contacts',
         },
-        // Remove first step
         { type: 'REMOVE', path: ['steps', 0], oldValue: '1' },
         // Update remaining step
         {
@@ -580,7 +578,6 @@ describe('applyDiff', () => {
       };
 
       const diffs: Difference[] = [
-        // Remove items at indices 1 and 3 (Item 2 and Item 4)
         { type: 'REMOVE', path: ['items', 1], oldValue: 'Item 2' },
         { type: 'REMOVE', path: ['items', 3], oldValue: 'Item 4' },
         { type: 'REMOVE', path: ['items', 3], oldValue: 'Item 4' },

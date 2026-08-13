@@ -307,7 +307,6 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     now,
   }),
 
-  // Relation fields
   company: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

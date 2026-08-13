@@ -179,7 +179,6 @@ describe('WorkspaceRepository', () => {
       false,
     );
 
-    // Mock the private methods
     jest
       .spyOn(repository as any, 'getObjectMetadataFromTarget')
       .mockResolvedValue({

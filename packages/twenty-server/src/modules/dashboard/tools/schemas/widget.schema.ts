@@ -424,7 +424,6 @@ const barChartConfigSchema = withRangeMinMaxRefinement(
   ),
 );
 
-// Graph configuration schema for LINE charts
 const lineChartConfigSchemaCore = z.object({
   configurationType: z.literal(WidgetConfigurationType.LINE_CHART),
   aggregateFieldMetadataId: z
@@ -568,7 +567,6 @@ const pieChartConfigSchema = withManualSortRefinement(
   }),
 );
 
-// Record table configuration
 const recordTableConfigSchema = z.object({
   configurationType: z.literal(WidgetConfigurationType.RECORD_TABLE),
   viewId: z
@@ -590,7 +588,6 @@ const iframeConfigSchema = z.object({
   url: z.string().url().optional().describe('URL to embed'),
 });
 
-// Rich text configuration
 const richTextConfigSchema = z.object({
   configurationType: z.literal(WidgetConfigurationType.STANDALONE_RICH_TEXT),
   body: z

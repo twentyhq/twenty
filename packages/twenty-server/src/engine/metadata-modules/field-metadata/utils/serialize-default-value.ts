@@ -14,7 +14,6 @@ export const serializeDefaultValue = (
     return null;
   }
 
-  // Function default values
   if (isFunctionDefaultValue(defaultValue)) {
     const serializedTypeDefaultValue =
       serializeFunctionDefaultValue(defaultValue);
@@ -29,7 +28,6 @@ export const serializeDefaultValue = (
     return serializedTypeDefaultValue;
   }
 
-  // Static default values
   if (typeof defaultValue === 'string' && defaultValue.startsWith("'")) {
     return defaultValue;
   }

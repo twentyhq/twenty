@@ -285,7 +285,6 @@ export const convertGraphQLErrorToBaseGraphQLError = (
           // Other 4xx errors
           errorCode = ErrorCode.BAD_USER_INPUT;
         } else {
-          // 5xx errors default to internal server error
           errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
         }
     }

@@ -1,6 +1,5 @@
 import { detectNumberFormat } from '@/localization/utils/detection/detectNumberFormat';
 
-// Mock navigator.language
 Object.defineProperty(navigator, 'language', {
   writable: true,
   value: 'en-US',
@@ -124,7 +123,6 @@ describe('detectNumberFormat', () => {
   });
 
   it('should detect APOSTROPHE_AND_DOT format for locales using regular apostrophe separator', () => {
-    // Mock formatToParts to return apostrophe
     const originalNumberFormat = Intl.NumberFormat;
     // @ts-expect-error - Mocking for test
     global.Intl.NumberFormat = jest.fn().mockImplementation(() => ({

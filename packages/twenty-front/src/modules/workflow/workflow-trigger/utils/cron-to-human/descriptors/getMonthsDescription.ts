@@ -88,7 +88,6 @@ export const getMonthsDescription = (
     return t`between ${startMonth} and ${endMonth}`;
   }
 
-  // List values (e.g., "1,6,12")
   if (isListValue(months)) {
     const values = months.split(',').map((v) => v.trim());
     const monthNames = values.map((month) => {

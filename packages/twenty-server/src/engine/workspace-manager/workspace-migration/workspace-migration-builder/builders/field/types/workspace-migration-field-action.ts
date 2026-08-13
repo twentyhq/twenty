@@ -8,7 +8,6 @@ import { type BaseUniversalCreateWorkspaceMigrationAction } from 'src/engine/wor
 import { type BaseUniversalDeleteWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-universal-delete-workspace-migration-action.type';
 import { type BaseUniversalUpdateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-universal-update-workspace-migration-action.type';
 
-// Universal action types (always use universal identifiers)
 export type UniversalCreateFieldAction =
   BaseUniversalCreateWorkspaceMigrationAction<'fieldMetadata'> & {
     // For relation fields, the related field on the other side of the relation.
@@ -30,7 +29,6 @@ export type UniversalUpdateFieldAction =
 export type UniversalDeleteFieldAction =
   BaseUniversalDeleteWorkspaceMigrationAction<'fieldMetadata'>;
 
-// Flat action types (always use entity IDs)
 export type FlatCreateFieldAction =
   BaseFlatCreateWorkspaceMigrationAction<'fieldMetadata'> & {
     relatedFlatFieldMetadata?: FlatFieldMetadata;

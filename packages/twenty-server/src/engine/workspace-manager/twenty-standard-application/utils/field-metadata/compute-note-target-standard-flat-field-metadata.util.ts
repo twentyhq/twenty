@@ -195,7 +195,6 @@ export const buildNoteTargetStandardFlatFieldMetadatas = ({
     now,
   }),
 
-  // Relation fields
   note: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

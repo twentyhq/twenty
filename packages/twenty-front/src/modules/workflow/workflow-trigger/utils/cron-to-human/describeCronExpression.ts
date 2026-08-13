@@ -65,10 +65,8 @@ export const describeCronExpression = (
       // Pattern like "0 * * * *" - should be "every hour", not "at the top of the hour"
       descriptions.push(t`every hour`);
     } else if (isDefined(hoursDescription) && hoursDescription !== '') {
-      // Use hours description for specific hours or hour patterns
       descriptions.push(hoursDescription);
     } else if (isDefined(minutesDescription) && minutesDescription !== '') {
-      // Fallback to minutes description
       descriptions.push(minutesDescription);
     }
     const dayOfMonthDesc = getDayOfMonthDescription(

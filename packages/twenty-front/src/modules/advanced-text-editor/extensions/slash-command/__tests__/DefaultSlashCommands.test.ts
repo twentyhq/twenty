@@ -44,7 +44,6 @@ describe('DefaultSlashCommands', () => {
         expect(command).toHaveProperty('getIsVisible');
         expect(command).toHaveProperty('getOnSelect');
 
-        // Verify functions are actually functions
         expect(typeof command.getIsActive).toBe('function');
         expect(typeof command.getIsVisible).toBe('function');
         expect(typeof command.getOnSelect).toBe('function');

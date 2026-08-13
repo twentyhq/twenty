@@ -50,7 +50,6 @@ describe('Object Permissions Validation', () => {
 
   describe('cases with role with all rights by default', () => {
     beforeEach(async () => {
-      // Create a custom role for each test
       const roleOperation = createRoleOperation({
         label: 'TestRole',
         description: 'Test role for object permission validation',
@@ -67,7 +66,6 @@ describe('Object Permissions Validation', () => {
     });
 
     afterEach(async () => {
-      // Clean up the role after each test
       if (customRoleId) {
         await deleteRole(client, customRoleId);
       }

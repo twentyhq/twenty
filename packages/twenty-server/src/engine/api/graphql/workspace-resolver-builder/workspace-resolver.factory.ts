@@ -121,7 +121,6 @@ export class WorkspaceResolverFactory {
         }
       }
 
-      // Generate mutation resolvers
       for (const methodName of workspaceResolverBuilderMethods.mutations) {
         const resolverName = getResolverName(flatObjectMetadata, methodName);
         const resolverFactory = factories.get(methodName);

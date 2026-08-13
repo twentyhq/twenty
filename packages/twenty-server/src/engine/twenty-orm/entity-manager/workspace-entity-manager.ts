@@ -539,7 +539,6 @@ export class WorkspaceEntityManager extends EntityManager {
     permissionOptions?: PermissionOptions,
   ): Promise<Entity | null> {
     const metadata = this.connection.getMetadata(entityClass);
-    // prepare alias for built query
     let alias = metadata.name;
 
     if (options && options.join) {

@@ -10,7 +10,6 @@ export const computeStandardPersonViewFields = (
   args: Omit<CreateStandardViewFieldArgs<'person'>, 'context'>,
 ): Record<string, FlatViewField> => {
   return {
-    // allPeople view fields
     allPeopleName: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'person',

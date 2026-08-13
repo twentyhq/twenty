@@ -72,7 +72,6 @@ describe('Restricted fields', () => {
       (obj: any) => obj.node.nameSingular === 'person',
     )?.node.id;
 
-    // Get field metadata ID for email field
     const getFieldMetadataOperation = {
       query: gql`
         query {

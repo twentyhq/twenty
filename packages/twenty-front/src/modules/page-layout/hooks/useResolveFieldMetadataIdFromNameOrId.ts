@@ -12,7 +12,6 @@ export const useResolveFieldMetadataIdFromNameOrId = (
   });
 
   return useMemo(() => {
-    // Try to find field by name first
     const fieldByName = objectMetadataItem.fields.find(
       (field) => field.name === fieldMetadataIdOrName,
     );

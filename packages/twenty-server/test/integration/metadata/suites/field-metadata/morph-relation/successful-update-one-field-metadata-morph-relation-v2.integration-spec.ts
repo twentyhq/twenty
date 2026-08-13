@@ -158,7 +158,6 @@ describe('updateOne FieldMetadataService morph relation fields v2', () => {
   });
 
   it('It should update all morph related flat field metadata and their related field allowing its deletion', async () => {
-    // SETUP
     const { fields: findResult } = await findManyFieldsMetadata({
       input: {
         filter: { id: { eq: createdFieldMetadataId } },
@@ -297,7 +296,6 @@ describe('updateOne FieldMetadataService morph relation fields v2', () => {
         `,
     });
 
-    //ASSERT
     {
       const morphRelationFieldsAfterUpdate = (await findManyFieldsMetadata({
         input: {

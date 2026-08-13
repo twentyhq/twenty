@@ -199,7 +199,6 @@ describe('useIsLayoutCustomizationDirty', () => {
       MOCK_PAGE_LAYOUT,
     );
 
-    // Second layout is dirty
     const secondLayout: PageLayout = {
       ...MOCK_PAGE_LAYOUT,
       id: PAGE_LAYOUT_ID_2,

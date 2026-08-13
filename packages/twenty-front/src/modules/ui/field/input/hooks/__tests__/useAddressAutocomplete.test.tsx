@@ -5,7 +5,6 @@ import { act, renderHook } from '@testing-library/react';
 import { useAddressAutocomplete } from '@/ui/field/input/hooks/useAddressAutocomplete';
 import { useCountryUtils } from '@/ui/field/input/hooks/useCountryUtils';
 
-// Mock dependencies
 jest.mock('@/geo-map/hooks/useGetPlaceApiData');
 jest.mock('../useCountryUtils');
 jest.mock('@/ui/layout/dropdown/hooks/useOpenDropdown');

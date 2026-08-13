@@ -98,7 +98,6 @@ export class RefactorAgentChatEntities1764100000000 implements MigrationInterfac
       `DROP INDEX "core"."IDX_3be906dca9d5b50fbfe40e33f0"`,
     );
 
-    // Drop new tables
     await queryRunner.query(`DROP TABLE "core"."agentMessagePart"`);
     await queryRunner.query(`DROP TABLE "core"."agentMessage"`);
     await queryRunner.query(`DROP TYPE "core"."agentMessage_role_enum"`);

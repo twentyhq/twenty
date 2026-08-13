@@ -97,7 +97,6 @@ describe('Granular settings permissions', () => {
       expectToFail: false,
     });
 
-    // Delete the custom role
     const deleteRoleQuery = deleteOneRoleOperationFactory(customRoleId);
 
     await client
@@ -226,7 +225,6 @@ describe('Granular settings permissions', () => {
       expect(response.body.data.createWorkflow).toBeDefined();
       expect(response.body.data.createWorkflow.name).toBe('Test Workflow');
 
-      // Clean up - delete the created workflow
       const graphqlOperation = destroyOneOperationFactory({
         objectMetadataSingularName: 'workflow',
         gqlFields: `

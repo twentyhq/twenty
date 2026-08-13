@@ -106,7 +106,6 @@ describe('View Sort deletion should succeed', () => {
 
     expect(deleteData.deleteViewSort).toBe(true);
 
-    // Clean up
     await destroyOneViewSort({
       expectToFail: false,
       input: { id: viewSortId },

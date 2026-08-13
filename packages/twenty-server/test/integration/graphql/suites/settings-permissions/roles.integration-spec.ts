@@ -214,7 +214,6 @@ describe('roles permissions', () => {
     });
 
     it('should allow to update role when user has permission (admin role)', async () => {
-      // Arrange
       const getRolesQuery = {
         query: `
             query GetRoles {
@@ -251,7 +250,6 @@ describe('roles permissions', () => {
         `,
       };
 
-      // Act and assert
       await client
         .post('/metadata')
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
@@ -307,7 +305,6 @@ describe('roles permissions', () => {
     });
 
     it('should create a role when user has permission to create a role (admin role)', async () => {
-      // Act and assert
       const query = {
         query: `
           mutation CreateOneRole {

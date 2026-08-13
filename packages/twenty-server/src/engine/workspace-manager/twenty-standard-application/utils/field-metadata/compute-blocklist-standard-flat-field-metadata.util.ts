@@ -213,7 +213,6 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
     now,
   }),
 
-  // Relation fields
   workspaceMember: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

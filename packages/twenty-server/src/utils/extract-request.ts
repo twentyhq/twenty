@@ -1,11 +1,9 @@
 import { type ExecutionContext } from '@nestjs/common';
 import { type GqlContextType, GqlExecutionContext } from '@nestjs/graphql';
 
-// extract request from the execution context
 export const getRequest = (context: ExecutionContext) => {
   let request;
 
-  // if context is an http request
   if (context.getType() === 'http') {
     request = context.switchToHttp().getRequest();
   } else if (context.getType<GqlContextType>() === 'graphql') {

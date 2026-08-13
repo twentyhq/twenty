@@ -49,7 +49,6 @@ export type SpreadsheetImportDialogOptions = {
   autoMapHeaders?: boolean;
   // Headers matching accuracy: 1 for strict and up for more flexible matching
   autoMapDistance?: number;
-  // Initial Step state to be rendered on load
   initialStepState?: SpreadsheetImportStep;
   // Sets SheetJS dateNF option. If date parsing is applied, date will be formatted e.g. "yyyy-mm-dd hh:mm:ss", "m/d/yy h:mm", 'mmm-yy', etc.
   dateFormat?: string;
@@ -59,6 +58,5 @@ export type SpreadsheetImportDialogOptions = {
   rtl?: boolean;
   // Allow header selection
   selectHeader?: boolean;
-  // Available field for import
   availableFieldMetadataItems: FieldMetadataItem[];
 };

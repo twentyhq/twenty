@@ -31,7 +31,6 @@ const StyledConversationContainer = styled.div`
 
 const INSTANCE_ID = 'agentChatStoryInstance';
 
-// Mock messages for the conversation showcase
 const mockUserMessage: ExtendedUIMessage = {
   id: 'msg-user-1',
   role: 'user',

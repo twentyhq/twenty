@@ -299,7 +299,6 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     now,
   }),
 
-  // Relation fields
   pointOfContact: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

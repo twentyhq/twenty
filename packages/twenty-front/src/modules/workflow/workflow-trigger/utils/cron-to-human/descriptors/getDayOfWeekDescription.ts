@@ -124,7 +124,6 @@ export const getDayOfWeekDescription = (
     return t`from ${startDay} to ${endDay}`;
   }
 
-  // List values (e.g., "1,3,5")
   if (isListValue(dayOfWeek)) {
     const values = dayOfWeek.split(',').map((v) => v.trim());
     const dayNames = values.map((day) => {

@@ -10,7 +10,6 @@ export const computeStandardCompanyViewFields = (
   args: Omit<CreateStandardViewFieldArgs<'company'>, 'context'>,
 ): Record<string, FlatViewField> => {
   return {
-    // allCompanies view fields
     allCompaniesName: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'company',
@@ -99,7 +98,6 @@ export const computeStandardCompanyViewFields = (
       },
     }),
 
-    // companyRecordPageFields view fields
     companyRecordPageFieldsDomainName: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'company',
