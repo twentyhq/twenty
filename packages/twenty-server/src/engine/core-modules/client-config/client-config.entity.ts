@@ -300,6 +300,8 @@ export class ClientConfig {
 
   @Field(() => Support)
   support: Support;
+
+  @Field(() => Holostaff)
   holostaff: Holostaff;
 
   @Field(() => Boolean)
