@@ -34,6 +34,12 @@ describe('Microsoft outbound messaging and calendar creation (integration)', () 
       getAppProviderByClassName<DraftEmailTool>('DraftEmailTool');
   }, 60000);
 
+  beforeEach(() => {
+    microsoft.createdMessages.length = 0;
+    microsoft.sentMessageIds.length = 0;
+    microsoft.createdCalendarEvents.length = 0;
+  });
+
   afterAll(async () => {
     await channel?.cleanup().catch(() => undefined);
   });
@@ -79,7 +85,6 @@ describe('Microsoft outbound messaging and calendar creation (integration)', () 
 
     expect(result.success).toBe(true);
     expect(microsoft.createdMessages).toEqual([
-      expect.objectContaining({ subject: expect.any(String) }),
       expect.objectContaining({
         subject,
         toRecipients: [{ emailAddress: { address: RECIPIENTS.to } }],

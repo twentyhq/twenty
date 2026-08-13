@@ -178,10 +178,9 @@ describe('CalDAV calendar events import (integration)', () => {
     expect(result.iCalUid).toBeDefined();
     expect(await findImportedCalendarEventTitles([title])).toEqual([title]);
 
-    const response = await fetch(
-      `${collectionUrl()}${result.iCalUid as string}.ics`,
-      { headers: { Authorization: authorizationHeader } },
-    );
+    const response = await fetch(`${collectionUrl()}${result.iCalUid}.ics`, {
+      headers: { Authorization: authorizationHeader },
+    });
 
     expect(response.status).toBe(200);
     expect(await response.text()).toContain(`SUMMARY:${title}`);
