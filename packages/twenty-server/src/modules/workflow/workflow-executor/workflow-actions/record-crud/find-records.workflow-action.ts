@@ -85,15 +85,26 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
 
           // A variable that resolved successfully to a legitimately empty
           // value (e.g. null for an optional relation that isn't set) is
-          // valid business data, not a broken reference. Treat it as
-          // "no records match" instead of aborting the whole run.
-          return {
-            result: {
-              first: undefined,
-              all: [],
-              totalCount: 0,
-            },
-          };
+          // valid business data, not a broken reference. An ungrouped
+          // filter is implicitly AND-ed with every other filter, so one
+          // unevaluable value means the whole query can't match - short-
+          // circuit to "no records" instead of aborting the run.
+          //
+          // A filter inside a recordFilterGroup may be one branch of an
+          // OR, where a sibling predicate can still match: don't zero out
+          // the whole result here, let computeRecordGqlOperationFilter's
+          // per-branch handling (turnRecordFilterIntoRecordGqlOperationFilter
+          // already drops an unevaluable predicate from its own group)
+          // decide instead.
+          if (!isDefined(filter.recordFilterGroupId)) {
+            return {
+              result: {
+                first: undefined,
+                all: [],
+                totalCount: 0,
+              },
+            };
+          }
         }
       }
     }
