@@ -82,7 +82,7 @@ export class CompositeFieldMetadataFilterGqlInputTypeGenerator {
           this.logger.error(message, { key });
           throw new Error(message);
         }
-        type = createGqlEnumFilterType(enumType, property.type);
+        type = createGqlEnumFilterType(enumType);
       } else {
         type = this.typeMapperService.mapToFilterType(
           property.type,

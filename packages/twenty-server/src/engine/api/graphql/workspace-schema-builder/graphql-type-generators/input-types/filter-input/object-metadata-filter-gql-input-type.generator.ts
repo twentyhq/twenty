@@ -143,7 +143,7 @@ export class ObjectMetadataFilterGqlInputTypeGenerator {
       throw new Error(message);
     }
 
-    const type = createGqlEnumFilterType(enumType, fieldMetadata.type);
+    const type = createGqlEnumFilterType(enumType);
 
     return {
       [fieldMetadata.name]: {
