@@ -5385,10 +5385,10 @@ msgstr "Credits are added on top of the plan allowance and expire at the end of 
 msgid "Credits are used by workflows, AI chats, agents, and approved apps"
 msgstr "Credits are used by workflows, AI chats, agents, and approved apps"
 
-#. js-lingui-id: tx/xSF
+#. js-lingui-id: Ydxr+g
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
-msgid "credits available (Including {rolloverCreditsDisplay} from rollover)"
-msgstr "credits available (Including {rolloverCreditsDisplay} from rollover)"
+msgid "credits available (including {extraCreditsDisplay} on top of your plan)"
+msgstr "credits available (including {extraCreditsDisplay} on top of your plan)"
 
 #. js-lingui-id: zaaZ8V
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -9387,6 +9387,7 @@ msgid "Granted {parsedAmount} credits to this workspace."
 msgstr "Granted {parsedAmount} credits to this workspace."
 
 #. js-lingui-id: fqtGOd
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 msgid "Granted credits"
 msgstr "Granted credits"
@@ -16129,11 +16130,6 @@ msgstr "Roles"
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Rollover"
 msgstr "Rollover"
-
-#. js-lingui-id: ufKFGo
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
-msgid "Rollover credits"
-msgstr "Rollover credits"
 
 #. js-lingui-id: uJc01W
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx

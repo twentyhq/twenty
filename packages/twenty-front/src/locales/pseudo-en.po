@@ -5385,9 +5385,9 @@ msgstr ""
 msgid "Credits are used by workflows, AI chats, agents, and approved apps"
 msgstr ""
 
-#. js-lingui-id: tx/xSF
+#. js-lingui-id: Ydxr+g
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
-msgid "credits available (Including {rolloverCreditsDisplay} from rollover)"
+msgid "credits available (including {extraCreditsDisplay} on top of your plan)"
 msgstr ""
 
 #. js-lingui-id: zaaZ8V
@@ -9387,6 +9387,7 @@ msgid "Granted {parsedAmount} credits to this workspace."
 msgstr ""
 
 #. js-lingui-id: fqtGOd
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 msgid "Granted credits"
 msgstr ""
@@ -16105,11 +16106,6 @@ msgstr ""
 #. js-lingui-id: Q6o/eX
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Rollover"
-msgstr ""
-
-#. js-lingui-id: ufKFGo
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
-msgid "Rollover credits"
 msgstr ""
 
 #. js-lingui-id: uJc01W
