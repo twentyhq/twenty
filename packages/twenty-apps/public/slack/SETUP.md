@@ -67,6 +67,7 @@ The assistant reuses the same Slack connection — no second bot identity.
    - `message.channels` — replies in public-channel threads, for un-mentioned follow-ups
    - `message.groups` — same, for private channels the bot is in
    - `member_joined_channel` — optional; lets the bot introduce itself when it is added to a channel
+   - `app_uninstalled` and `tokens_revoked` — the app was removed from the Slack workspace or its bot token was revoked; releases the Slack team claim so the team can be connected again
 
    Invite the bot to any channel where it should follow threads. Slack may ask you to reinstall after changing subscriptions.
 
@@ -82,7 +83,7 @@ The assistant reuses the same Slack connection — no second bot identity.
 - **Thread memory.** After a successful reply the bot stays active in that thread, so follow-ups need no mention. Channel threads stay active for 24 hours after the last reply (each reply renews it); DM threads never expire.
 - **No silent dead-ends.** A mention or DM with no request text gets a short hint reply. The first follow-up in a thread whose 24-hour window has lapsed gets an ephemeral nudge (only that member sees it) to mention the bot again.
 - **Channel welcome.** With `member_joined_channel` subscribed, the bot posts a short introduction the first time it is added to a channel, with the details (what to ask it, what it reads, and the shared-role caveat from step 4 above) in a thread reply so the channel itself stays quiet. It fires once per channel for 30 days, and only for the bot's own join — humans joining afterwards trigger nothing. Skip the subscription if you would rather it arrived silently.
-- **One Slack workspace per Twenty workspace.** Connecting Slack claims that Slack team for the connecting Twenty workspace. On the same server, a second Twenty workspace connecting the same Slack team is rejected. Removing the connection releases the claim, so another Twenty workspace can then connect that Slack team. Uninstalling the app releases it too.
+- **One Slack workspace per Twenty workspace.** Connecting Slack claims that Slack team for the connecting Twenty workspace. On the same server, a second Twenty workspace connecting the same Slack team is rejected. Removing the connection releases the claim, so another Twenty workspace can then connect that Slack team. Uninstalling the app releases it too, and so does removing the app on the Slack side (uninstalling it from the Slack workspace or revoking its bot token) — with `app_uninstalled` and `tokens_revoked` subscribed, Slack reports the removal and the claim is released. The dead connection still shows under **Connections** until you remove it; reconnecting means removing it and adding a new connection.
 
 ## Workflow field names (for step authors)
 
