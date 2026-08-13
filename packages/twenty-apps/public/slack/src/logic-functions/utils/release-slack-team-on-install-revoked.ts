@@ -4,6 +4,7 @@ import { kv, listConnections } from 'twenty-sdk/logic-function';
 import { getSlackConnectedAccountTeam } from 'src/logic-functions/utils/get-slack-connected-account-team';
 import { getSlackConnectedAccountTeamKvKey } from 'src/logic-functions/utils/get-slack-connected-account-team-kv-key';
 import { getSlackTeamKvKey } from 'src/logic-functions/utils/get-slack-team-kv-key';
+import { findClaimedWorkspaceId } from 'src/logic-functions/utils/resolve-target-workspace-id';
 
 type ReleaseSlackTeamOnInstallRevokedArgs = {
   teamId: string;
@@ -24,9 +25,7 @@ const releaseSlackTeamClaimIfStillOurs = async ({
   // disconnects and another one claims the same team. Only delete while the
   // claim still points at the workspace the event was routed to, so a stale
   // removal cannot evict the new holder's claim.
-  const currentClaimHolder = await kv.get<string>(getSlackTeamKvKey(teamId), {
-    scope: 'SERVER',
-  });
+  const currentClaimHolder = await findClaimedWorkspaceId(teamId);
 
   const isClaimHeldByAnotherWorkspace =
     isNonEmptyString(currentClaimHolder) &&
