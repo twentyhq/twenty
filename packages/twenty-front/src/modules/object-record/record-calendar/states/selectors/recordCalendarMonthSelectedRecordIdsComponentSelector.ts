@@ -3,9 +3,9 @@ import { isRecordCalendarCardSelectedComponentFamilyState } from '@/object-recor
 import { recordCalendarRecordIdsComponentState } from '@/object-record/record-calendar/states/recordCalendarRecordIdsComponentState';
 import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentSelector';
 
-export const recordCalendarSelectedRecordIdsComponentSelector =
+export const recordCalendarMonthSelectedRecordIdsComponentSelector =
   createAtomComponentSelector<string[]>({
-    key: 'recordCalendarSelectedRecordIdsSelector',
+    key: 'recordCalendarMonthSelectedRecordIdsComponentSelector',
     componentInstanceContext: RecordCalendarComponentInstanceContext,
     get:
       ({ instanceId }) =>
@@ -15,7 +15,7 @@ export const recordCalendarSelectedRecordIdsComponentSelector =
         });
 
         return allRecordIds.filter(
-          (recordId: string) =>
+          (recordId) =>
             get(isRecordCalendarCardSelectedComponentFamilyState, {
               instanceId,
               familyKey: recordId,
