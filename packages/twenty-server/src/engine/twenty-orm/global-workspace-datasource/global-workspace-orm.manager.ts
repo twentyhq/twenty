@@ -1,5 +1,6 @@
 import { Injectable, type Type } from '@nestjs/common';
 
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { type ObjectLiteral } from 'typeorm';
 
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
@@ -10,10 +11,12 @@ import { GlobalWorkspaceDataSourceService } from 'src/engine/twenty-orm/global-w
 import { ExecuteInWorkspaceContextOptions } from 'src/engine/twenty-orm/global-workspace-datasource/types/execute-in-workspace-context-options.type';
 import type { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import {
+  getWorkspaceContext,
   type ORMWorkspaceContext,
   withWorkspaceContext,
 } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import type { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/utils/convert-class-to-object-metadata-name.util';
 
@@ -22,6 +25,7 @@ export class GlobalWorkspaceOrmManager {
   constructor(
     private readonly globalWorkspaceDataSourceService: GlobalWorkspaceDataSourceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service,
   ) {}
 
   async getRepository<T extends ObjectLiteral>(
@@ -49,6 +53,19 @@ export class GlobalWorkspaceOrmManager {
       objectMetadataName = convertClassNameToObjectMetadataName(
         workspaceEntityOrObjectMetadataName.name,
       );
+    }
+
+    if (
+      getWorkspaceContext().featureFlagsMap[
+        FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED
+      ]
+    ) {
+      return this.workspaceDataSourceV2Service
+        .getDataSource({ useReplica: false })
+        .getRepository(
+          objectMetadataName,
+          permissionOptions,
+        ) as unknown as WorkspaceRepository<T>;
     }
 
     const globalDataSource = await this.getGlobalWorkspaceDataSource();
