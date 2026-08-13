@@ -9,6 +9,7 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 import { deleteConnectedAccount } from 'test/integration/metadata/suites/connected-account/utils/delete-connected-account.util';
 import { saveImapSmtpCaldavAccount } from 'test/integration/metadata/suites/connected-account/utils/save-imap-smtp-caldav-account.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
+import { deliverMailOverSmtp } from 'test/integration/utils/deliver-mail-over-smtp.util';
 import { findPersistedMessages } from 'test/integration/utils/find-persisted-messages.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
@@ -20,29 +21,6 @@ import {
 
 const PASSWORD = 'greenmail-password';
 const HANDLE = `imap-smtp-outbound-${randomUUID()}@acme.test`;
-
-const createMailbox = async ({
-  greenmail,
-  mailbox,
-}: {
-  greenmail: GreenmailServer;
-  mailbox: string;
-}): Promise<void> => {
-  const client = new ImapFlow({
-    host: greenmail.host,
-    port: greenmail.imapPort,
-    auth: { user: HANDLE.split('@')[0], pass: PASSWORD },
-    secure: false,
-  });
-
-  await client.connect();
-
-  try {
-    await client.mailboxCreate(mailbox);
-  } finally {
-    await client.logout();
-  }
-};
 
 const appendDraft = async ({
   greenmail,
@@ -62,7 +40,7 @@ const appendDraft = async ({
 
   try {
     await client.append(
-      'Drafts',
+      'INBOX',
       [
         `From: ${HANDLE}`,
         `To: ${HANDLE}`,
@@ -96,8 +74,13 @@ describe('IMAP/SMTP outbound messaging (integration)', () => {
       username: HANDLE,
       password: PASSWORD,
     });
-    await createMailbox({ greenmail, mailbox: 'Sent' });
-    await createMailbox({ greenmail, mailbox: 'Drafts' });
+    await deliverMailOverSmtp({
+      host: greenmail.host,
+      port: greenmail.smtpPort,
+      from: `seed-${randomUUID()}@external.test`,
+      to: HANDLE,
+      subject: `IMAP setup ${randomUUID()}`,
+    });
 
     const { data } = await saveImapSmtpCaldavAccount({
       input: {
@@ -147,7 +130,7 @@ describe('IMAP/SMTP outbound messaging (integration)', () => {
     await greenmail?.stop().catch(() => undefined);
   });
 
-  it('sends a threaded SMTP message and appends it to the sent mailbox', async () => {
+  it('sends a threaded SMTP message through GraphQL and persists it', async () => {
     const subject = `IMAP/SMTP outbound ${randomUUID()}`;
 
     const result = await sendEmail({
