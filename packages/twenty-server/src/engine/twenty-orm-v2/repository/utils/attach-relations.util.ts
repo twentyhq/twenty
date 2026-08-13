@@ -14,7 +14,6 @@ export const collectRecordIds = (records: ObjectRecord[]): string[] => [
   ...new Set(records.map((record) => record.id).filter(isNonEmptyString)),
 ];
 
-// Mutates `records`, setting each `fieldName` to its matching target (or null).
 export const attachToOneRelationToRecords = ({
   records,
   fieldName,
@@ -37,8 +36,6 @@ export const attachToOneRelationToRecords = ({
   }
 };
 
-// Mutates `records`, grouping `children` by their inverse foreign key onto each
-// parent's `fieldName` (empty array when a parent has no children).
 export const attachToManyRelationToRecords = ({
   records,
   fieldName,

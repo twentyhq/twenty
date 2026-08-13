@@ -28,10 +28,6 @@ const normalizeSelect = (select: FindOptionsSelectV2): FindOptionsSelectLike =>
     ? Object.fromEntries(select.map((columnName) => [columnName, true]))
     : select;
 
-// A `where` array is an OR of AND-groups, matching TypeORM's find semantics. It
-// is wrapped in a single bracketed group so a later ANDed predicate (e.g. the
-// row-level permission filter) applies to the whole disjunction, not just the
-// first branch.
 const applyWhere = (
   queryBuilder: WorkspaceSelectQueryBuilderV2,
   where: ObjectWhereLike | ObjectWhereLike[],
@@ -69,8 +65,6 @@ export const applyFindOptionsToQueryBuilder = (
     return queryBuilder;
   }
 
-  // `relations` are loaded by the repository after the base rows are fetched,
-  // never rendered into this base query.
   if (options.withDeleted) {
     queryBuilder.withDeleted();
   }

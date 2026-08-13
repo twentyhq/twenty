@@ -425,9 +425,6 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     }
 
     if (isOrmV2Enabled) {
-      // Group the OR conditions so the v2 row-level-permission predicate, which
-      // is ANDed onto the query, applies to the whole disjunction rather than
-      // only the first branch.
       queryBuilder.andWhere(
         new Brackets((qb) => {
           whereConditions.forEach((condition, index) => {

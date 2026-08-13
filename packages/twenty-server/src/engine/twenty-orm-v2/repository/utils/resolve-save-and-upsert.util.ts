@@ -7,7 +7,6 @@ export type SavePartition = {
   toInsert: Partial<ObjectRecord>[];
 };
 
-// `save` updates entities whose id already exists and inserts the rest.
 export const partitionEntitiesForSave = (
   entities: Partial<ObjectRecord>[],
   existingIds: Set<string>,
@@ -33,8 +32,6 @@ export const buildConflictKey = (
   conflictPaths: string[],
 ): string => JSON.stringify(conflictPaths.map((path) => entity[path] ?? null));
 
-// Postgres `ON CONFLICT` never treats a NULL conflict value as a conflict, so a
-// row with any nullish conflict value can only be inserted.
 const hasCompleteConflictKey = (
   record: Partial<ObjectRecord>,
   conflictPaths: string[],
@@ -45,8 +42,6 @@ export type UpsertPartition = {
   toInsert: Partial<ObjectRecord>[];
 };
 
-// `upsert` matches incoming entities to existing rows on the conflict columns,
-// updating matches by their existing id and inserting the rest.
 export const matchEntitiesForUpsert = (
   entities: Partial<ObjectRecord>[],
   existingRecords: ObjectRecord[],

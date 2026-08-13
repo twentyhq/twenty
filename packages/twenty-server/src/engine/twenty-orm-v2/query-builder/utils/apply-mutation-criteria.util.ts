@@ -19,8 +19,6 @@ const isPlainObject = (value: unknown): value is ObjectWhereLike =>
   value !== null &&
   Object.getPrototypeOf(value) === Object.prototype;
 
-// TypeORM mutation criteria are an id, a list of ids, a where object, or a list
-// of where objects (OR). Bare ids collapse to an `{ id }` predicate.
 export const applyMutationCriteriaToQueryBuilder = (
   queryBuilder: WorkspaceSelectQueryBuilderV2,
   criteria: MutationCriteria,
@@ -59,8 +57,6 @@ export const applyMutationCriteriaToQueryBuilder = (
       );
     }
 
-    // Bracket the OR group so a later ANDed permission predicate applies to the
-    // whole disjunction rather than only the first branch.
     queryBuilder.where({
       whereFactory: (nestedQueryBuilder) => {
         criteria.forEach((entry, index) => {

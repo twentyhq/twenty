@@ -28,8 +28,6 @@ import { getAssociatedRelationFieldName } from 'src/engine/twenty-orm/utils/get-
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 import { getRecordToConnectFields } from 'src/engine/twenty-orm/utils/get-record-to-connect-fields.util';
 
-// Resolves the connect lookup off the TypeORM builder so the ORM v2 write path
-// can supply its own query runner while the v1 path keeps using the builder.
 export type ConnectQueryRunner = (args: {
   connectQueryConfig: RelationConnectQueryConfig;
   clause: string;

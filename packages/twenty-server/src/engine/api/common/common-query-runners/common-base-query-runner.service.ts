@@ -361,10 +361,6 @@ export abstract class CommonBaseQueryRunnerService<
       ? await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSourceReplica()
       : await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
 
-    // When the ORM v2 read path is enabled, the runners only read `repository`
-    // for a handful of lookups (create re-fetch, upsert existing, merge fetch),
-    // all of which the v2 repository serves. Building it here instead of the v1
-    // one avoids constructing the TypeORM EntityMetadata-backed repository.
     const repository = context.featureFlagsMap[
       FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED
     ]

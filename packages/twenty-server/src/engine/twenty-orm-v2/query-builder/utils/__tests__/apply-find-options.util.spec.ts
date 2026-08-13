@@ -88,8 +88,6 @@ describe('applyFindOptionsToQueryBuilder', () => {
 
     const [text] = queryBuilder.getQueryAndParameters();
 
-    // The disjunction is grouped, then the soft-delete predicate is ANDed onto
-    // the whole group rather than only the first branch.
     expect(text).toContain(
       '((("person"."name" = $1) OR ("person"."name" = $2))) AND "person"."deletedAt" IS NULL',
     );

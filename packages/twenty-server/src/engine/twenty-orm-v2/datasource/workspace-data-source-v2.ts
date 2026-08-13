@@ -124,8 +124,6 @@ export class WorkspaceDataSourceV2 {
     });
   }
 
-  // Relation loading needs sibling repositories that share the caller's executor
-  // (so a relation load stays on the same transaction) and role permissions.
   private buildRepositoryForObjectMetadataId({
     objectMetadataId,
     rolePermissionConfig,
