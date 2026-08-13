@@ -7,17 +7,14 @@ import { scheduleIdleCallback } from '~/utils/scheduleIdleCallback';
 
 type BowtieStage = 'onboarding' | 'adoption' | 'expansion';
 
-// Journey stages, by the route the user is on. First match wins. The
-// copilot uses this to know whether someone is setting up their
-// workspace, working their records, or growing the team; everything else
-// (stall detection, what to say, whether to say anything at all) comes
-// from the journey map, not from this file.
+// Journey stages, by the route the user is on. First match wins. Only
+// routes rendered under DefaultLayout are listed, since that is the only
+// place this hook mounts: the onboarding and invite steps live under
+// BlankLayout, so the copilot never sees them and they are not mapped
+// here. Everything else (stall detection, what to say, whether to say
+// anything at all) comes from the journey map, not from this file.
 const STAGE_ROUTES: [RegExp, BowtieStage][] = [
-  [
-    /^\/(workspace-activation|create\/profile|sync\/emails|install-apps|book-call)/,
-    'onboarding',
-  ],
-  [/^\/(invite-team|settings\/(members|billing))/, 'expansion'],
+  [/^\/settings\/(members|billing)/, 'expansion'],
   [/./, 'adoption'],
 ];
 
