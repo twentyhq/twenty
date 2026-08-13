@@ -294,11 +294,6 @@ export class BillingSubscriptionService {
       updatedSubscription.id,
     );
 
-    await this.billingSubscriptionItemRepository.update(
-      { stripeSubscriptionId: updatedSubscription.id },
-      { hasReachedCurrentPeriodCap: false },
-    );
-
     await this.billingUsageCacheService.flushAvailableCredits(workspace.id);
 
     await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [

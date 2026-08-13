@@ -21,7 +21,6 @@ import { BillingCreditGrantService } from 'src/engine/core-modules/billing/servi
 import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/services/billing-subscription-item.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
-import { BillingUsageCapService } from 'src/engine/core-modules/billing/services/billing-usage-cap.service';
 import { buildBillingCreditStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-credit-state-lock-key.util';
 import { getBillingSubscriptionPeriod } from 'src/engine/core-modules/billing/utils/get-billing-subscription-period.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -50,7 +49,7 @@ type ResolvedAvailableCredits = {
   isCounterWarm: boolean;
 };
 
-type CreditAvailability =
+export type CreditAvailability =
   | { hasAvailableCredits: true }
   | {
       hasAvailableCredits: false;
@@ -79,7 +78,6 @@ export class BillingUsageService {
     private readonly billingSubscriptionRepository: WorkspaceScopedRepository<BillingSubscriptionEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly clickHouseService: ClickHouseService,
-    private readonly billingUsageCapService: BillingUsageCapService,
     private readonly cacheLockService: CacheLockService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
@@ -271,25 +269,13 @@ export class BillingUsageService {
     // that may predate it: incrementing an absent key would install
     // -usedCredits as the whole balance. Compute this turn locally instead and
     // let the next read rebuild once the marker lapses.
-    const decrementedAvailableCredits = isCounterWarm
+    return isCounterWarm
       ? await this.billingUsageCacheService.adjustAvailableCredits(
           workspaceId,
           currentPeriodStart,
           -usedCredits,
         )
       : availableCredits - usedCredits;
-
-    const hasJustReachedCap =
-      availableCredits > 0 && decrementedAvailableCredits <= 0;
-
-    if (hasJustReachedCap) {
-      await this.billingUsageCapService.setSubscriptionItemHasReachedCap(
-        workspaceId,
-        true,
-      );
-    }
-
-    return decrementedAvailableCredits;
   }
 
   // Warming is a read of the ledger followed by a write of what it implies, so
@@ -370,7 +356,7 @@ export class BillingUsageService {
     return { availableCredits, isCounterWarm: true };
   }
 
-  private async resolveCreditAvailability(
+  async getCreditAvailability(
     workspaceId: string,
   ): Promise<CreditAvailability> {
     if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
@@ -413,49 +399,18 @@ export class BillingUsageService {
 
   async hasAvailableCredits(workspaceId: string): Promise<boolean> {
     const { hasAvailableCredits } =
-      await this.resolveCreditAvailability(workspaceId);
+      await this.getCreditAvailability(workspaceId);
 
     return hasAvailableCredits;
   }
 
   async hasAvailableCreditsOrThrow(workspaceId: string): Promise<void> {
-    const availability = await this.resolveCreditAvailability(workspaceId);
+    const hasCredits = await this.hasAvailableCredits(workspaceId);
 
-    if (availability.hasAvailableCredits) {
-      return;
-    }
-
-    if (availability.reason === 'no-credits') {
-      await this.markHasReachedCap(workspaceId);
-    }
-
-    throw new BillingException(
-      'Credits exhausted',
-      BillingExceptionCode.BILLING_CREDITS_EXHAUSTED,
-    );
-  }
-
-  // decrementAvailableCreditsInCache only arms the cap on the decrement that
-  // crosses zero, and a grant or manual top-up clears it. Once the balance is
-  // spent again this gate refuses before any usage is recorded, so no decrement
-  // ever crosses zero a second time and the flag would stay off forever, leaving
-  // the workspace blocked with no banner telling anyone why. Re-arming it here
-  // is best effort: failing to record the cap must not mask the refusal.
-  private async markHasReachedCap(workspaceId: string): Promise<void> {
-    try {
-      const hasChanged =
-        await this.billingUsageCapService.markHasReachedCapForWorkspace(
-          workspaceId,
-        );
-
-      if (hasChanged) {
-        await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-          'currentBillingSubscription',
-        ]);
-      }
-    } catch (error) {
-      this.logger.error(
-        `Failed to mark workspace ${workspaceId} as having reached its credit cap: ${error.message}`,
+    if (!hasCredits) {
+      throw new BillingException(
+        'Credits exhausted',
+        BillingExceptionCode.BILLING_CREDITS_EXHAUSTED,
       );
     }
   }
