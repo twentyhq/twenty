@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { enqueueSnackbar } from 'twenty-sdk/front-component';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useDebouncedCallback } from 'use-debounce';
 
 import { StyledSettingsTextInput } from 'src/front-components/components/StyledSettingsTextInput';
-import { useDebouncedCallback } from 'src/front-components/hooks/use-debounced-callback';
 import { useUpdateApplicationVariable } from 'src/front-components/hooks/use-update-application-variable';
 import { type FirefliesApplicationVariable } from 'src/front-components/types/fireflies-application-variable.type';
 
@@ -23,7 +23,7 @@ const StyledLabelRow = styled.div`
   margin-bottom: ${() => themeCssVariables.spacing[1]};
 `;
 
-const StyledLabel = styled.span`
+const StyledLabel = styled.label`
   color: ${() => themeCssVariables.font.color.light};
   font-family: ${() => themeCssVariables.font.family};
   font-size: 11px;
@@ -40,7 +40,7 @@ const StyledDescription = styled.span`
 type ApplicationVariableRowProps = {
   applicationId: string;
   variable: FirefliesApplicationVariable;
-  onVariableSaved?: (variableKey: string, value: string) => void;
+  onVariableSaved?: (params: { variableKey: string; value: string }) => void;
 };
 
 export const ApplicationVariableRow = ({
@@ -48,6 +48,8 @@ export const ApplicationVariableRow = ({
   variable,
   onVariableSaved,
 }: ApplicationVariableRowProps) => {
+  const inputId = useId();
+
   const isSecretFilled = variable.isSecret && isNonEmptyString(variable.value);
 
   const [draftValue, setDraftValue] = useState(
@@ -71,18 +73,19 @@ export const ApplicationVariableRow = ({
       return;
     }
 
-    onVariableSaved?.(variable.key, newValue);
+    onVariableSaved?.({ variableKey: variable.key, value: newValue });
   }, APPLICATION_VARIABLE_SAVE_DEBOUNCE_MILLISECONDS);
 
   return (
     <StyledRow>
       <StyledLabelRow>
-        <StyledLabel>{variable.key}</StyledLabel>
+        <StyledLabel htmlFor={inputId}>{variable.key}</StyledLabel>
       </StyledLabelRow>
       {isNonEmptyString(variable.description) && (
         <StyledDescription>{variable.description}</StyledDescription>
       )}
       <StyledSettingsTextInput
+        id={inputId}
         type={variable.isSecret ? 'password' : 'text'}
         autoComplete="off"
         placeholder={isSecretFilled ? variable.value : 'Value'}
@@ -91,6 +94,7 @@ export const ApplicationVariableRow = ({
           setDraftValue(event.target.value);
           saveDebounced(event.target.value);
         }}
+        onBlur={() => saveDebounced.flush()}
       />
     </StyledRow>
   );

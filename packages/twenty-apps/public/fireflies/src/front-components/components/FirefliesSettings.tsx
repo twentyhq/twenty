@@ -52,7 +52,6 @@ export const FirefliesSettings = () => {
     errorMessage,
   } = useFirefliesApplicationVariables();
 
-  // Overrides the fetched value once the user edits the API key in this session
   const [isApiKeyConfiguredOverride, setIsApiKeyConfiguredOverride] = useState<
     boolean | undefined
   >(undefined);
@@ -90,7 +89,7 @@ export const FirefliesSettings = () => {
               key={variable.key}
               applicationId={applicationId}
               variable={variable}
-              onVariableSaved={(variableKey, value) => {
+              onVariableSaved={({ variableKey, value }) => {
                 if (variableKey === FIREFLIES_API_KEY_VARIABLE_KEY) {
                   setIsApiKeyConfiguredOverride(isNonEmptyString(value));
                 }

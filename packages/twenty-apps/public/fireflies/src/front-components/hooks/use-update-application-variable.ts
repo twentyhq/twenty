@@ -1,11 +1,15 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
+type UpdateApplicationVariableParams = {
+  variableKey: string;
+  value: string;
+};
+
 type UpdateApplicationVariableState = {
-  updateApplicationVariable: (params: {
-    variableKey: string;
-    value: string;
-  }) => Promise<boolean>;
+  updateApplicationVariable: (
+    params: UpdateApplicationVariableParams,
+  ) => Promise<boolean>;
   isUpdatingApplicationVariable: boolean;
 };
 
@@ -15,13 +19,12 @@ export const useUpdateApplicationVariable = (
   const [isUpdatingApplicationVariable, setIsUpdatingApplicationVariable] =
     useState(false);
 
-  const updateApplicationVariable = async ({
+  const pendingUpdateRef = useRef<Promise<boolean>>(Promise.resolve(true));
+
+  const performUpdate = async ({
     variableKey,
     value,
-  }: {
-    variableKey: string;
-    value: string;
-  }): Promise<boolean> => {
+  }: UpdateApplicationVariableParams): Promise<boolean> => {
     setIsUpdatingApplicationVariable(true);
 
     try {
@@ -39,6 +42,19 @@ export const useUpdateApplicationVariable = (
     } finally {
       setIsUpdatingApplicationVariable(false);
     }
+  };
+
+  // Updates are chained so concurrent saves reach the server in the order they were issued
+  const updateApplicationVariable = (
+    params: UpdateApplicationVariableParams,
+  ): Promise<boolean> => {
+    const queuedUpdate = pendingUpdateRef.current.then(() =>
+      performUpdate(params),
+    );
+
+    pendingUpdateRef.current = queuedUpdate;
+
+    return queuedUpdate;
   };
 
   return { updateApplicationVariable, isUpdatingApplicationVariable };

@@ -14,18 +14,25 @@ type FirefliesApplicationVariablesState = {
 
 const APPLICATION_VARIABLES_ERROR_MESSAGE = 'Please try again later.';
 
+const APPLICATION_VARIABLES_LOADING_STATE: FirefliesApplicationVariablesState =
+  {
+    applicationId: undefined,
+    applicationVariables: [],
+    isApplicationVariablesQueryLoading: true,
+    errorMessage: undefined,
+  };
+
 export const useFirefliesApplicationVariables =
   (): FirefliesApplicationVariablesState => {
     const frontComponentId = useFrontComponentId();
-    const [state, setState] = useState<FirefliesApplicationVariablesState>({
-      applicationId: undefined,
-      applicationVariables: [],
-      isApplicationVariablesQueryLoading: true,
-      errorMessage: undefined,
-    });
+    const [state, setState] = useState<FirefliesApplicationVariablesState>(
+      APPLICATION_VARIABLES_LOADING_STATE,
+    );
 
     useEffect(() => {
       let cancelled = false;
+
+      setState(APPLICATION_VARIABLES_LOADING_STATE);
 
       const fetchApplicationVariables = async () => {
         try {

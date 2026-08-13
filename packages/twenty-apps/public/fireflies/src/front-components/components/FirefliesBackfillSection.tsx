@@ -11,6 +11,7 @@ import { DEFAULT_FIREFLIES_BACKFILL_DAYS } from 'src/front-components/constants/
 import { useRequestFirefliesBackfill } from 'src/front-components/hooks/use-request-fireflies-backfill';
 import { getFirefliesBackfillFeedback } from 'src/front-components/utils/get-fireflies-backfill-feedback.util';
 import { parseBackfillDays } from 'src/front-components/utils/parse-backfill-days.util';
+import { FIREFLIES_BACKFILL_MAX_WINDOW_DAYS } from 'src/logic-functions/constants/fireflies-backfill-max-window-days.constant';
 
 const StyledSection = styled.div`
   display: flex;
@@ -80,8 +81,10 @@ export const FirefliesBackfillSection = ({
       <StyledRow>
         <StyledDaysInputContainer>
           <StyledSettingsTextInput
+            aria-label="Days of call history to import"
             type="number"
             min="1"
+            max={FIREFLIES_BACKFILL_MAX_WINDOW_DAYS}
             step="1"
             value={daysDraftValue}
             onChange={(event) => setDaysDraftValue(event.target.value)}
@@ -96,6 +99,12 @@ export const FirefliesBackfillSection = ({
       </StyledRow>
       {!isApiKeyConfigured && (
         <StyledHint>Set the Fireflies API key first.</StyledHint>
+      )}
+      {isApiKeyConfigured && isUndefined(parsedDays) && (
+        <StyledHint>
+          Enter a whole number of days between 1 and{' '}
+          {FIREFLIES_BACKFILL_MAX_WINDOW_DAYS}.
+        </StyledHint>
       )}
     </StyledSection>
   );

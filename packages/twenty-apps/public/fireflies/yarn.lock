@@ -1397,6 +1397,7 @@ __metadata:
     twenty-sdk: "npm:2.31.0-alpha.1"
     twenty-ui: "npm:^1.0.0-alpha.1"
     typescript: "npm:^5.9.3"
+    use-debounce: "npm:^10.0.0"
     vite-tsconfig-paths: "npm:^4.2.1"
     vitest: "npm:^4.0.0"
     zod: "npm:^4.1.11"
@@ -3793,6 +3794,15 @@ __metadata:
   version: 4.2.0
   resolution: "unfetch@npm:4.2.0"
   checksum: 10c0/a5c0a896a6f09f278b868075aea65652ad185db30e827cb7df45826fe5ab850124bf9c44c4dafca4bf0c55a0844b17031e8243467fcc38dd7a7d435007151f1b
+  languageName: node
+  linkType: hard
+
+"use-debounce@npm:^10.0.0":
+  version: 10.1.1
+  resolution: "use-debounce@npm:10.1.1"
+  peerDependencies:
+    react: "*"
+  checksum: 10c0/0d1b2ff16447651c92ef444be3b7e29608e229c169a90e7cbd1ef13775475734b0910eaf01f2f64dc9f2b1d5dd8cf03042c5a09e230c9bb2ee148a18b5bba074
   languageName: node
   linkType: hard
 
