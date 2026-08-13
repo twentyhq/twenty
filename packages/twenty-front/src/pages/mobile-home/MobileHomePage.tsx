@@ -1,10 +1,20 @@
-import { MainNavigationDrawerContent } from '@/navigation/components/MainNavigationDrawerContent';
+import { MainNavigationDrawerNavigationContent } from '@/navigation/components/MainNavigationDrawerNavigationContent';
+import { MobileHomeTabsRow } from '@/navigation/components/MobileHomeTabsRow';
+import { NavigationDrawerTabbedContent } from '@/navigation/components/NavigationDrawerTabbedContent';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
-import { NavigationDrawerHeader } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerHeader';
+import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { MultiWorkspaceDropdownButton } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
+import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
+import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent';
+import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
+import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { Navigate } from 'react-router-dom';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -17,19 +27,56 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
+const StyledTopRow = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  justify-content: space-between;
+  width: 100%;
+`;
+
 export const MobileHomePage = () => {
   const isMobile = useIsMobile();
   const { defaultHomePagePath } = useDefaultHomePagePath();
+  const navigationDrawerActiveTab = useAtomStateValue(
+    navigationDrawerActiveTabState,
+  );
+  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
 
   // Desktop keeps the drawer, so the page has nothing to show there.
   if (!isMobile) {
     return <Navigate to={defaultHomePagePath} replace />;
   }
 
+  const showAiChatContent =
+    hasAiPermission &&
+    navigationDrawerActiveTab === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY;
+
+  const showSettingsContent =
+    navigationDrawerActiveTab === NAVIGATION_DRAWER_TABS.SETTINGS;
+
   return (
     <StyledContainer>
-      <NavigationDrawerHeader showCollapseButton={false} />
-      <MainNavigationDrawerContent />
+      <NavigationDrawerFixedContent>
+        <StyledTopRow>
+          <MobileHomeTabsRow />
+          <MultiWorkspaceDropdownButton shouldHideLabel />
+        </StyledTopRow>
+      </NavigationDrawerFixedContent>
+
+      <NavigationDrawerScrollableContent>
+        <NavigationDrawerTabbedContent
+          showAiChatContent={showAiChatContent}
+          shouldMountAiChatContent={hasAiPermission}
+          navigationContent={
+            showSettingsContent ? (
+              <SettingsNavigationDrawerItems />
+            ) : (
+              <MainNavigationDrawerNavigationContent />
+            )
+          }
+        />
+      </NavigationDrawerScrollableContent>
     </StyledContainer>
   );
 };

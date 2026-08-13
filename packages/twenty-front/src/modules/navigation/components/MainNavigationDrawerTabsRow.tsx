@@ -183,37 +183,28 @@ export const MainNavigationDrawerTabsRow = ({
   const getTabIconColor = (isActive: boolean) =>
     isActive ? theme.font.color.primary : theme.font.color.tertiary;
 
+  // The mobile home page adds a settings tab this two-tab pill does not have, so
+  // anything that is not the chat tab belongs to the menu tab here.
+  const isNavigationMenuTabActive =
+    navigationDrawerActiveTab !== NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY;
+
   return (
     <StyledRow isExpanded={isExpanded}>
       <NavigationDrawerAnimatedCollapseWrapper>
         <StyledTabsPill role="tablist" aria-label={t`Navigation tabs`}>
           <StyledTabWrapper
-            isActive={
-              navigationDrawerActiveTab ===
-              NAVIGATION_DRAWER_TABS.NAVIGATION_MENU
-            }
+            isActive={isNavigationMenuTabActive}
             role="tab"
-            aria-selected={
-              navigationDrawerActiveTab ===
-              NAVIGATION_DRAWER_TABS.NAVIGATION_MENU
-            }
+            aria-selected={isNavigationMenuTabActive}
             aria-label={navigationMenuTabLabel}
-            tabIndex={
-              navigationDrawerActiveTab ===
-              NAVIGATION_DRAWER_TABS.NAVIGATION_MENU
-                ? 0
-                : -1
-            }
+            tabIndex={isNavigationMenuTabActive ? 0 : -1}
             onClick={handleTabClick(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU)}
             onKeyDown={handleTabKeyDown(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU)}
           >
             <StyledTabIcon>
               <NavigationMenuTabIcon
                 size={theme.icon.size.md}
-                color={getTabIconColor(
-                  navigationDrawerActiveTab ===
-                    NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
-                )}
+                color={getTabIconColor(isNavigationMenuTabActive)}
               />
             </StyledTabIcon>
           </StyledTabWrapper>

@@ -16,10 +16,12 @@ import { ThemeContext } from 'twenty-ui/theme-constants';
 
 type MultiWorkspaceDropdownClickableComponentProps = {
   disabled?: boolean;
+  shouldHideLabel?: boolean;
 };
 
 export const MultiWorkspaceDropdownClickableComponent = ({
   disabled,
+  shouldHideLabel = false,
 }: MultiWorkspaceDropdownClickableComponentProps) => {
   const { theme } = useContext(ThemeContext);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -37,17 +39,21 @@ export const MultiWorkspaceDropdownClickableComponent = ({
           currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
         )}
       />
-      <StyledLabelWrapper>
-        <NavigationDrawerAnimatedCollapseWrapper>
-          <StyledLabel>{currentWorkspace?.displayName ?? ''}</StyledLabel>
-        </NavigationDrawerAnimatedCollapseWrapper>
-      </StyledLabelWrapper>
-      <NavigationDrawerAnimatedCollapseWrapper>
-        <StyledIconChevronDown
-          size={theme.icon.size.md}
-          stroke={theme.icon.stroke.sm}
-        />
-      </NavigationDrawerAnimatedCollapseWrapper>
+      {!shouldHideLabel && (
+        <>
+          <StyledLabelWrapper>
+            <NavigationDrawerAnimatedCollapseWrapper>
+              <StyledLabel>{currentWorkspace?.displayName ?? ''}</StyledLabel>
+            </NavigationDrawerAnimatedCollapseWrapper>
+          </StyledLabelWrapper>
+          <NavigationDrawerAnimatedCollapseWrapper>
+            <StyledIconChevronDown
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
+            />
+          </NavigationDrawerAnimatedCollapseWrapper>
+        </>
+      )}
     </StyledContainer>
   );
 };
