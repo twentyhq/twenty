@@ -504,7 +504,6 @@ export class WorkspaceInvitationService {
     emails: string[],
   ) {
     try {
-      //limit invitation sending for specific invite emails
       await Promise.all(
         emails.map(async (email) => {
           await this.throttlerService.tokenBucketThrottleOrThrow(
@@ -520,7 +519,6 @@ export class WorkspaceInvitationService {
         }),
       );
 
-      //limit invitation sending for a specific workspace
       await this.throttlerService.tokenBucketThrottleOrThrow(
         `invitation-resending-workspace:throttler:${workspaceId}`,
         emails.length,

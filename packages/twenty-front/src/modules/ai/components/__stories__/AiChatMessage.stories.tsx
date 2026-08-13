@@ -309,7 +309,6 @@ const meta: Meta<typeof AiChatMessage> = {
 export default meta;
 type Story = StoryObj<typeof AiChatMessage>;
 
-// Conversation showcase - demonstrates a full AI chat flow
 export const ConversationWithCodeExecution: Story = {
   render: () => (
     <StyledConversationContainer>

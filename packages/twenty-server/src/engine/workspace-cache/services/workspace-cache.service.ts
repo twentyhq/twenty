@@ -212,7 +212,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
           return freshEntries;
         }
 
-        // Stage 2: Validate ttl stale keys against Redis hash
         const {
           validKeys,
           keysNeedingDataFromRedis,

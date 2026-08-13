@@ -142,7 +142,6 @@ describe('Field permissions restrictions', () => {
   };
 
   beforeAll(async () => {
-    // Get the original Member role ID for restoration later
     const getRolesQuery = {
       query: `
         query GetRoles {
@@ -537,7 +536,6 @@ describe('Field permissions restrictions', () => {
         restrictedCompanyFieldId,
       );
 
-      // Query requesting the aggregate restricted field
       const graphqlOperation = {
         query: gql`
           query Companies {
@@ -561,7 +559,6 @@ describe('Field permissions restrictions', () => {
         restrictedPersonFieldId,
       );
 
-      // Query requesting the aggregate restricted field
       const graphqlOperation = findManyOperationFactory({
         objectMetadataSingularName: 'company',
         objectMetadataPluralName: 'companies',

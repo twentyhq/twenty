@@ -1,4 +1,3 @@
-// System prompts for AI Chat (user-facing conversational interface)
 export const CHAT_SYSTEM_PROMPTS = {
   BASE: `You are a helpful AI assistant integrated into Twenty, a CRM (similar to Salesforce).
 

@@ -102,7 +102,6 @@ export const repairToolCall = async ({
       input: JSON.stringify(repairedInput),
     };
   } catch {
-    // If repair fails, return null to let the error propagate
     return null;
   } finally {
     if (billingContext && usage) {

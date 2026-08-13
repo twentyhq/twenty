@@ -419,7 +419,6 @@ describe('applyDiff', () => {
       };
 
       const diffs: Difference[] = [
-        // Try to remove forbidden keys (these should be silently skipped)
         { type: 'REMOVE', path: ['__proto__'], oldValue: 'anything' },
         { type: 'REMOVE', path: ['constructor'], oldValue: 'anything' },
         { type: 'REMOVE', path: ['prototype'], oldValue: 'anything' },
@@ -428,7 +427,6 @@ describe('applyDiff', () => {
 
       const result = applyDiff(obj, diffs);
 
-      // Only the safe property should be removed, normalProp should remain
       expect(result).toEqual({
         normalProp: 'normal',
       });

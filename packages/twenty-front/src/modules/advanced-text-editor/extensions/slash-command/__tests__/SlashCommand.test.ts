@@ -113,14 +113,12 @@ describe('SlashCommand', () => {
 
   describe('Command availability', () => {
     it('should allow setting headings when heading extension is present', () => {
-      // Editor with heading extension should be able to set headings
       expect(editor.can().setHeading({ level: 1 })).toBe(true);
       expect(editor.can().setHeading({ level: 2 })).toBe(true);
       expect(editor.can().setHeading({ level: 3 })).toBe(true);
     });
 
     it('should allow toggling lists when list extension is present', () => {
-      // Editor with list extension should be able to toggle lists
       expect(editor.can().toggleBulletList()).toBe(true);
       expect(editor.can().toggleOrderedList()).toBe(true);
     });

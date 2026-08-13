@@ -421,7 +421,6 @@ describe('WorkspaceEntityManager', () => {
       findColumnWithPropertyPath: jest.fn(),
     };
 
-    // Update mockWorkspaceDataSource to include metadata
     mockWorkspaceDataSource.getMetadata = jest
       .fn()
       .mockReturnValue(mockMetadata);

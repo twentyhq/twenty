@@ -37,7 +37,6 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
   const currentSettings = watch('settings');
   const junctionTargetFieldId = currentSettings?.junctionTargetFieldId;
 
-  // Only applies to ONE_TO_MANY with single target
   if (
     !isAdvancedModeEnabled ||
     relationType !== RelationType.ONE_TO_MANY ||
@@ -82,7 +81,6 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
       }
     });
 
-  // Add regular MANY_TO_ONE relations (not pointing back to source)
   junctionObjectMetadataItem.fields
     .filter((field) => {
       if (

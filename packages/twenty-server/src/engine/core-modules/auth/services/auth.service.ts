@@ -583,7 +583,6 @@ export class AuthService {
       }
     }
 
-    // Validate requested scopes are a subset of the registration's allowed scopes
     const parsedScopes = authorizeAppInput.scope
       ? authorizeAppInput.scope.split(' ').filter(Boolean)
       : [];
@@ -703,7 +702,6 @@ export class AuthService {
       passwordHash: newPasswordHash,
     });
 
-    // Invalidate all existing refresh tokens for this user across all workspaces
     await this.appTokenRepository.update(
       {
         userId,

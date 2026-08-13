@@ -12,7 +12,6 @@ type NestedObject = { nested: { deep: number } };
 
 // oxlint-disable-next-line unused-imports/no-unused-vars
 type PrimitiveAssertions = [
-  // Primitives pass through unchanged (not objects)
   Expect<Equal<JsonbProperty<string>, string>>,
   Expect<Equal<JsonbProperty<number>, number>>,
   Expect<Equal<JsonbProperty<boolean>, boolean>>,
@@ -44,7 +43,6 @@ type ObjectAssertions = [
 
 // oxlint-disable-next-line unused-imports/no-unused-vars
 type ArrayAssertions = [
-  // Arrays are objects, so they get branded on the array itself
   Expect<
     Equal<
       JsonbProperty<string[]>,
@@ -67,7 +65,6 @@ type ArrayAssertions = [
 
 // oxlint-disable-next-line unused-imports/no-unused-vars
 type UnionAssertions = [
-  // Union of object and null: object gets branded, null passes through
   Expect<
     Equal<
       JsonbProperty<SimpleObject | null>,
@@ -75,7 +72,6 @@ type UnionAssertions = [
     >
   >,
 
-  // Union of objects: both get branded (distributive conditional)
   Expect<
     Equal<
       JsonbProperty<SimpleObject | NestedObject>,

@@ -136,7 +136,6 @@ export class OAuthRegistrationController {
       };
     }
 
-    // Parse and validate scopes — cap to allowed scopes
     const validScopes: readonly string[] = ALL_OAUTH_SCOPES;
     const requestedScopes = body.scope
       ? body.scope.split(' ').filter((s) => validScopes.includes(s))

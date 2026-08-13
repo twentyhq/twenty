@@ -354,7 +354,6 @@ describe('French locale tests', () => {
       const date = '2025-01-05T00:00:00.000Z';
       const dateToCompareWith = '2024-01-01T00:00:00.000Z';
       const result = beautifyDateDiff(date, dateToCompareWith, false, fr);
-      // Should use date-fns which handles French properly
       expect(result).toBeTruthy();
       expect(result.length).toBeGreaterThan(0);
     });

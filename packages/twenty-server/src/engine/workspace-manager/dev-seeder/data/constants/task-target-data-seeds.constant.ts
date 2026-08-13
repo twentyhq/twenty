@@ -45,7 +45,6 @@ const TASK_TARGET_DATA_SEED_IDS = GENERATE_TASK_TARGET_IDS();
 const GENERATE_TASK_TARGET_SEEDS = (): TaskTargetDataSeed[] => {
   const TASK_TARGET_SEEDS: TaskTargetDataSeed[] = [];
 
-  // Person task targets (link each person task to its corresponding person)
   for (let INDEX = 1; INDEX <= 1200; INDEX++) {
     TASK_TARGET_SEEDS.push({
       id: TASK_TARGET_DATA_SEED_IDS[`ID_${INDEX}`],
@@ -59,7 +58,6 @@ const GENERATE_TASK_TARGET_SEEDS = (): TaskTargetDataSeed[] => {
     });
   }
 
-  // Company task targets (link each company task to its corresponding company)
   for (let INDEX = 1201; INDEX <= 1800; INDEX++) {
     const COMPANY_INDEX = INDEX - 1200;
 

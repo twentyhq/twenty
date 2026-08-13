@@ -367,7 +367,6 @@ describe('upsertFieldsWidget', () => {
 
       const groupId = uuidv4();
 
-      // First assign the field to a group so it has a non-null viewFieldGroupId
       await upsertFieldsWidget({
         expectToFail: false,
         input: {
@@ -390,7 +389,6 @@ describe('upsertFieldsWidget', () => {
         },
       });
 
-      // Now switch to flat fields with different position and visibility
       await upsertFieldsWidget({
         expectToFail: false,
         input: {

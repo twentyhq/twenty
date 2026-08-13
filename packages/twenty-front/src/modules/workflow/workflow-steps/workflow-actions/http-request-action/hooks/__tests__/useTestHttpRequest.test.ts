@@ -18,7 +18,6 @@ jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
 jest.mock('twenty-shared/utils', () => ({
   ...jest.requireActual('twenty-shared/utils'),
   resolveInput: jest.fn((input, context) => {
-    // For testing purposes, we'll actually do the replacement for simple cases
     if (typeof input === 'string') {
       return input.replace(/{{([^}]+)}}/g, (match, path) => {
         const parts = path.split('.');
@@ -343,7 +342,6 @@ describe('useTestHttpRequest', () => {
       );
     });
 
-    // The mocked resolveInput should have been called with nested context
     expect(resolveInput).toHaveBeenCalledWith('https://api.example.com/users', {
       auth: { token: 'test-token-123' },
       trigger: { properties: { after: { name: 'Yo' } } },

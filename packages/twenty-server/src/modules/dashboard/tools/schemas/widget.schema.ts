@@ -293,7 +293,6 @@ export const widgetTypeSchema = z.enum([
   WidgetType.RECORD_TABLE,
 ]);
 
-// Graph configuration schema for AGGREGATE type (KPI numbers)
 const aggregateChartConfigSchemaBase = z.object({
   configurationType: z.literal(WidgetConfigurationType.AGGREGATE_CHART),
   aggregateFieldMetadataId: z

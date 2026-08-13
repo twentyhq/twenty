@@ -304,7 +304,6 @@ describe('isSubdomainValid', () => {
     });
 
     it('should validate that reserved subdomains check is case insensitive', () => {
-      // Test mixed case variations of reserved subdomains
       expect(isSubdomainValid('Trust')).toBe(false);
       expect(isSubdomainValid('TRUST')).toBe(false);
       expect(isSubdomainValid('tRuSt')).toBe(false);
@@ -314,7 +313,6 @@ describe('isSubdomainValid', () => {
     });
 
     it('should accept valid subdomains that are similar to reserved ones but not exact matches', () => {
-      // 'testing' is reserved, but 'testing123' is not
       expect(isSubdomainValid('testing123')).toBe(true);
       expect(isSubdomainValid('myapi')).toBe(true);
       expect(isSubdomainValid('adminpanel')).toBe(true);
@@ -338,12 +336,10 @@ describe('isSubdomainValid', () => {
 
   describe('pattern validation specifics', () => {
     it('should enforce the exact regex pattern requirements', () => {
-      // Test that the pattern requires alphanumeric start and end
       expect(isSubdomainValid('a-b')).toBe(true);
       expect(isSubdomainValid('1-2')).toBe(true);
       expect(isSubdomainValid('test-123')).toBe(true);
 
-      // Test that it rejects patterns not matching the regex
       expect(isSubdomainValid('-ab')).toBe(false);
       expect(isSubdomainValid('ab-')).toBe(false);
     });

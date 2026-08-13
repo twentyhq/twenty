@@ -114,7 +114,6 @@ describe('hasTokenPair', () => {
     });
 
     it('should not perform additional validation beyond getTokenPair', () => {
-      // This test ensures hasTokenPair doesn't duplicate validation logic
       const tokenPair = {
         accessOrWorkspaceAgnosticToken: {
           token: 'any-token-that-getTokenPair-considers-valid',
@@ -130,7 +129,6 @@ describe('hasTokenPair', () => {
       const result = hasTokenPair();
 
       expect(result).toBe(true);
-      // Should only call getTokenPair once, no additional validation
       expect(mockGetTokenPair).toHaveBeenCalledTimes(1);
     });
   });
