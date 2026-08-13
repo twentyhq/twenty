@@ -1,5 +1,5 @@
 import { type PropertySchema } from '@/types/PropertySchema';
-import { SVG_PRESENTATION_PROPERTIES } from './SvgPresentationProperties';
+import { SVG_PRESENTATION_PROPERTIES } from '@/constants/SvgPresentationProperties';
 
 export type AllowedHtmlElement = {
   tag: string;

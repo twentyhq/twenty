@@ -1,4 +1,4 @@
-import { ALLOWED_HTML_ELEMENTS } from './AllowedHtmlElements';
+import { ALLOWED_HTML_ELEMENTS } from '@/constants/AllowedHtmlElements';
 
 const UTILITY_TAG_MAPPINGS: Record<string, string> = {
   'remote-style': 'RemoteStyle',

@@ -21,9 +21,9 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 import { FrontComponentWorkerEffect } from '@/host/effect-components/FrontComponentWorkerEffect';
-import { componentRegistry } from '../generated/host-component-registry';
-import { createFallbackComponentRegistry } from '../utils/createFallbackComponentRegistry';
-import { FrontComponentErrorBox } from './FrontComponentErrorBox';
+import { componentRegistry } from '@/host/generated/host-component-registry';
+import { createFallbackComponentRegistry } from '@/host/utils/createFallbackComponentRegistry';
+import { FrontComponentErrorBox } from '@/host/components/FrontComponentErrorBox';
 
 const fallbackComponentRegistry =
   createFallbackComponentRegistry(componentRegistry);

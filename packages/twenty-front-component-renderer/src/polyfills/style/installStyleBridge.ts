@@ -1,7 +1,7 @@
 import { type RemoteRootElement } from '@remote-dom/core/elements';
 
 import { type RemoteStyleProperties } from '@/remote/generated/remote-elements';
-import { MockCSSStyleSheet } from './MockCSSStyleSheet';
+import { MockCSSStyleSheet } from '@/polyfills/style/MockCSSStyleSheet';
 
 export const installStyleBridge = (remoteRoot: RemoteRootElement): void => {
   const styleElementMap = new WeakMap<
