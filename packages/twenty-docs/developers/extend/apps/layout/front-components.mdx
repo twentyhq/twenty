@@ -779,20 +779,18 @@ If one of these blocks you, [open an issue](https://github.com/twentyhq/twenty/i
 
 ### Layout and measurement
 
-Elements can measure themselves. The host measures your elements on the real page and mirrors the values into the sandbox, so reads are answered locally but can be up to one frame stale, and the very first read of an element that was never measured returns zeros. Write-then-measure in the same tick returns the stale value; re-read in a `requestAnimationFrame` callback or an effect.
+Elements can measure themselves: the host mirrors geometry into the sandbox, so reads are answered locally but can be up to one frame stale, and the first read of a never-measured element returns zeros. After writing, re-read in a `requestAnimationFrame` callback or an effect.
 
 | API | What happens |
 |-----|--------------|
-| `getBoundingClientRect()` | Works from the mirror: up to one frame stale, and a zero rect on the first read of a never-measured element |
-| `getClientRects()` | Throws |
-| `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Work, with the same staleness (`0` on the first read); assigning `scrollTop` / `scrollLeft` is a no-op |
+| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Work, from the mirror; assigning `scrollTop` / `scrollLeft` is a no-op |
+| `getClientRects()`, `window.matchMedia()` | Throws |
 | `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY` | Work, reporting the **browser viewport**; your widget's own size is `document.body.clientWidth` / `clientHeight` |
-| `window.getComputedStyle()` | Returns the element's inline styles only, never the host-computed cascade, so a value set by a stylesheet reads as empty |
-| `window.matchMedia()` | Throws |
+| `window.getComputedStyle()` | Returns the element's inline styles only, never the host-computed cascade |
 | `ResizeObserver`, `IntersectionObserver` | `ReferenceError` (`typeof` guards do work) |
-| `MutationObserver` | Works: `childList`, `attributes`, `characterData`, `subtree`, `attributeFilter`, old values, `disconnect()`, `takeRecords()` |
+| `MutationObserver` | Works, including `subtree`, `attributeFilter`, old values and `takeRecords()` |
 
-Measurement unblocks code that positions or sizes itself from `getBoundingClientRect`, but anything that *watches* for size changes through `ResizeObserver` (recharts `ResponsiveContainer`, Floating UI's `autoUpdate`) still does not work. Prefer CSS for layout anyway: your stylesheet reaches the real page, so flexbox, grid, `aspect-ratio`, `clamp()` and `@container` all behave normally, with no frame lag.
+Positioning from `getBoundingClientRect` now works, but anything watching size changes through `ResizeObserver` (recharts `ResponsiveContainer`, Floating UI's `autoUpdate`) still does not. Prefer CSS for layout anyway: your stylesheet reaches the real page, so flexbox, grid, `aspect-ratio`, `clamp()` and `@container` behave normally, with no frame lag.
 
 <Note>
 `requestAnimationFrame`, `fetch`, `setTimeout` and `queueMicrotask` work without the `window.` prefix. Only `window.requestAnimationFrame(...)` and friends throw.
