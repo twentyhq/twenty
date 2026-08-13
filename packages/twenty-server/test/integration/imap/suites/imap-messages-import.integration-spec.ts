@@ -18,7 +18,11 @@ import {
 } from 'test/integration/utils/start-greenmail-container.util';
 
 const PASSWORD = 'greenmail-password';
+
+// GreenMail registers a declared user under the local part of its address, so
+// that is the login, while the channel keeps the full address as its handle.
 const HANDLE = `imap-messages-import-${randomUUID()}@acme.test`;
+const MAILBOX_LOGIN = HANDLE.split('@')[0];
 
 describe('IMAP messages import (integration)', () => {
   let greenmail: GreenmailServer;
@@ -56,7 +60,7 @@ describe('IMAP messages import (integration)', () => {
           IMAP: {
             host: greenmail.host,
             port: greenmail.imapPort,
-            username: HANDLE,
+            username: MAILBOX_LOGIN,
             password: PASSWORD,
             connectionSecurity: EmailConnectionSecurity.NONE,
           },
