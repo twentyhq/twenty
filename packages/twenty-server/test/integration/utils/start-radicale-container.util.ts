@@ -4,7 +4,8 @@ import {
   Wait,
 } from 'testcontainers';
 
-const RADICALE_IMAGE = 'tomsquest/docker-radicale:3.5.7.0';
+const RADICALE_IMAGE =
+  'tomsquest/docker-radicale:3.5.7.0@sha256:ed0bc36eb284ae7ad6e81d0f00b4f477c025e3ed22e780ca683a80b35102a66e';
 const RADICALE_PORT = 5232;
 
 export type RadicaleServer = {
