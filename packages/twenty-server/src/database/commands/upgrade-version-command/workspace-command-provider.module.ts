@@ -24,6 +24,7 @@ import { V2_27_UpgradeVersionCommandModule } from 'src/database/commands/upgrade
 import { V2_28_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/2-28/2-28-upgrade-version-command.module';
 import { V2_3_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/2-3/2-3-upgrade-version-command.module';
 import { V2_31_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/2-31/2-31-upgrade-version-command.module';
+import { V2_32_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/2-32/2-32-upgrade-version-command.module';
 import { V2_4_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/2-4/2-4-upgrade-version-command.module';
 import { V2_5_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/2-5/2-5-upgrade-version-command.module';
 import { V2_7_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/2-7/2-7-upgrade-version-command.module';
@@ -61,6 +62,7 @@ import { V2_9_UpgradeVersionCommandModule } from 'src/database/commands/upgrade-
     V2_27_UpgradeVersionCommandModule,
     V2_28_UpgradeVersionCommandModule,
     V2_31_UpgradeVersionCommandModule,
+    V2_32_UpgradeVersionCommandModule,
   ],
 })
 export class WorkspaceCommandProviderModule {}

@@ -1,33 +1,38 @@
+import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { CallRecordingWidgetEmptyStateDisplay } from '@/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetEmptyStateDisplay';
 import { CallRecordingWidgetForbiddenDisplay } from '@/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetForbiddenDisplay';
 import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
-import { isCallRecordingTranscriptFailed } from '@/page-layout/widgets/calendar-event-call-recording/utils/isCallRecordingTranscriptFailed';
-import { isCallRecordingTranscriptPending } from '@/page-layout/widgets/calendar-event-call-recording/utils/isCallRecordingTranscriptPending';
-import { CallRecordingTranscriptEntryList } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList';
+import { isCallRecordingSummaryFailed } from '@/page-layout/widgets/call-recording-summary/utils/isCallRecordingSummaryFailed';
+import { isCallRecordingSummaryPending } from '@/page-layout/widgets/call-recording-summary/utils/isCallRecordingSummaryPending';
 import { PageLayoutWidgetErrorDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetErrorDisplay';
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { t } from '@lingui/core/macro';
-import {
-  isDefined,
-  isNonEmptyArray,
-  parseCallRecordingTranscriptEntries,
-} from 'twenty-shared/utils';
+import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-type CallRecordingTranscriptBodyProps = {
+const StyledSummaryContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: ${themeCssVariables.spacing[2]};
+`;
+
+type CallRecordingSummaryBodyProps = {
   callRecording: CalendarEventCallRecordingCandidate | undefined;
   loading: boolean;
   error: Error | undefined;
   restriction: WidgetAccessDenialInfo | undefined;
 };
 
-export const CallRecordingTranscriptBody = ({
+export const CallRecordingSummaryBody = ({
   callRecording,
   loading,
   error,
   restriction,
-}: CallRecordingTranscriptBodyProps) => {
+}: CallRecordingSummaryBodyProps) => {
   const widget = useCurrentWidget();
 
   if (isDefined(restriction)) {
@@ -52,30 +57,32 @@ export const CallRecordingTranscriptBody = ({
     );
   }
 
-  const transcriptEntries = parseCallRecordingTranscriptEntries(
-    callRecording.transcript,
-  );
+  const trimmedSummaryMarkdown = callRecording.summary?.markdown?.trim();
 
-  if (isNonEmptyArray(transcriptEntries)) {
-    return <CallRecordingTranscriptEntryList entries={transcriptEntries} />;
+  if (isNonEmptyString(trimmedSummaryMarkdown)) {
+    return (
+      <StyledSummaryContainer>
+        <LazyMarkdownRenderer text={trimmedSummaryMarkdown} />
+      </StyledSummaryContainer>
+    );
   }
 
-  if (isCallRecordingTranscriptPending(callRecording)) {
+  if (isCallRecordingSummaryPending(callRecording)) {
     return (
       <CallRecordingWidgetEmptyStateDisplay
         animatedPlaceholderType="loadingMessages"
-        title={t`Preparing Transcript`}
-        subTitle={t`Transcript is being prepared…`}
+        title={t`Processing Recording`}
+        subTitle={t`The call recording is still being processed…`}
       />
     );
   }
 
-  if (isCallRecordingTranscriptFailed(callRecording)) {
+  if (isCallRecordingSummaryFailed(callRecording)) {
     return (
       <CallRecordingWidgetEmptyStateDisplay
         animatedPlaceholderType="errorIndex"
-        title={t`Transcript Failed`}
-        subTitle={t`The transcript could not be generated.`}
+        title={t`Processing Failed`}
+        subTitle={t`The call recording could not be processed.`}
       />
     );
   }
@@ -83,8 +90,8 @@ export const CallRecordingTranscriptBody = ({
   return (
     <CallRecordingWidgetEmptyStateDisplay
       animatedPlaceholderType="noMatchRecord"
-      title={t`No Transcript`}
-      subTitle={t`No transcript is available for this recording.`}
+      title={t`No Summary`}
+      subTitle={t`No summary has been generated for this call recording yet.`}
     />
   );
 };
