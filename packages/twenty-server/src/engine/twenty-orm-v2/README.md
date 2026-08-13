@@ -20,9 +20,11 @@ framing:
 - **The pg driver, not TypeORM, dominates row handling.** In the profile behind #23980,
   `parseRow` is 14.6% of slow-request event-loop time and TypeORM entity hydration is 3.0%.
   The 14.6% survives removing the ORM, so this is not where the win is.
-- **Writes still need `EntityMetadata`.** Insert and update derive their column list,
-  `RETURNING` mapping and `updatedAt` maintenance from it. Bypassing reads shrinks what
-  the metadata cache is used for; it does not delete the cache.
+- **Insert and upsert still lean on `EntityMetadata`.** They derive column defaults and
+  the conflict target from it. Update, delete, soft-delete and restore turn out not to:
+  their column list is the caller's data, their `RETURNING` mapping is the same projection
+  the read path builds, and `updatedAt` is a single `CURRENT_TIMESTAMP` rule. Bypassing
+  reads shrinks what the metadata cache is used for; it does not delete the cache.
 
 So v2 has no ORM metadata. `WorkspaceTableShape` is the whole model: table name, schema,
 columns, relations, and the composite-column mapping, derived from the flat maps. It is
@@ -35,7 +37,7 @@ per object type rather than thousands, and it can be rebuilt or discarded freely
 |---|---|
 | `sql/` | named-parameter compiler: `:name` / `:...list` to `$1..$n` |
 | `table-shape/` | `WorkspaceTableShape` and its builder from flat field metadata |
-| `query-builder/` | `WorkspaceSelectQueryBuilderV2`, the TypeORM-shaped builder |
+| `query-builder/` | `WorkspaceSelectQueryBuilderV2` and `WorkspaceMutationQueryBuilderV2`, the TypeORM-shaped builders |
 | `repository/` | `WorkspaceRepositoryV2`, permissions and result formatting |
 | `datasource/` | pool ownership and per-request data source |
 | `executor/` | statement execution against a `pg` pool |
@@ -118,12 +120,64 @@ table-shape builder cannot represent. `GroupByWithRecordsV2Service` builds the i
 subquery with the v2 builder and runs the composed outer query through
 `repository.executeRaw`; the runner flag-branches between it and the v1 service.
 
+## Writes: delete, destroy, restore and (most) update route through v2
+
+`WorkspaceMutationQueryBuilderV2` generates `UPDATE` / `DELETE` / soft-delete / restore
+statements with `RETURNING`, reusing the same primitives as the select builder
+(`quoteColumn`, the shared where renderer, the `mapRowToEntity` decode) plus a `SET`
+generator. The select builder morphs into it: `.update()` / `.delete()` / `.softDelete()`
+/ `.restore()` carry the current where clauses and parameters into the mutation, matching
+the TypeORM surface the mutation runners already call.
+
+`deleteMany`, `destroyMany`, `restoreMany` and `updateMany` (and their `...One` delegates)
+flag-branch to this path through the shared `runFilteredMutation` on the base runner. Each
+builds the filtered v2 select builder with `buildMutationQueryBuilderV2` (which rewrites a
+relation-traversal filter into an `id IN (subquery)` predicate, RLS inside the subquery)
+and hands it to `WorkspaceRepositoryV2.runMutation`, which owns the choreography the v1
+mutation builders own: apply the row-level predicate, validate the write with the matching
+operation type, snapshot the affected rows before and after through a permission-bypassing
+all-columns select, run the statement, and emit the batch event(s) through the shared
+`formatTwentyOrmEventToDatabaseBatchEvent` — `DELETED` / `RESTORED` / `DESTROYED` for the
+soft ones, `UPDATED` then `UPSERTED` for update. `getWriteRepository` on the base runner
+pins the primary and counts `orm-v2/write-path-used`.
+
+Update flattens its input with the shared `formatData` (composite fields to columns) and
+validates the field-level write permission over the resulting column set. It carves back
+to v1 for one case: data that sets a relation (`{connect}` / `{disconnect}`) or a files
+field, because that input is resolved by `RelationNestedQueries` / `FilesFieldSync`, which
+are coupled to the TypeORM builder and not yet reproduced here. `updateDataIsSupportedByOrmV2`
+makes that call; both branches match their v1 counterpart byte for byte.
+
+Deliberate choices, the SQL ones asserted by exact-SQL unit tests:
+
+- Statements are alias-form (`UPDATE "schema"."table" AS "person" ... RETURNING
+  "person"."id" AS "person_id"`), so the where renderer and the `RETURNING` projection are
+  the select builder's, unchanged. The returned records come from `RETURNING` rather than a
+  full re-select; the GraphQL layer reads only the selected fields either way, so this is
+  observably identical to v1.
+- A mutation never adds the `deletedAt IS NULL` predicate the read path uses: it operates
+  on exactly the rows its filter matches, so restore reaches soft-deleted rows and delete
+  reaches any row. This mirrors TypeORM, which injects the soft-delete predicate for
+  SELECT only. The event snapshot select is `withDeleted` for the same reason.
+- `updatedAt` is stamped `CURRENT_TIMESTAMP` on every update unless the caller set it;
+  soft-delete stamps `deletedAt` and `updatedAt`; restore clears `deletedAt` and stamps
+  `updatedAt`.
+- Hard delete snapshots its before-image with `getOne`, so a `DESTROYED` event carries at
+  most one record. This matches the v1 delete builder rather than fixing it here; changing
+  it would change flag-off behaviour too and belongs in a separate change to both paths.
+- A filter that traverses a to-many relation surfaces the same `UNSUPPORTED_OPERATION`
+  user-input error the read path already produces (v2 refuses to render a to-many join),
+  rather than the row-multiplying join v1 would emit.
+
+Insert and upsert still keep `repository` (v1), as does update with relation/files input.
+
 ## Not covered yet
 
-- Writes. Insert, update, delete, soft delete and upsert still go through v1, which is
-  where `EntityMetadata` is genuinely used (column list, `RETURNING` mapping, `updatedAt`
-  maintenance). Removing it from reads shrinks what the metadata cache is used for; it
-  does not delete the cache.
+- Insert and upsert. `INSERT` and `ON CONFLICT` still go through v1, which is where the
+  column defaults and conflict-target derivation live.
+- Relation connect/disconnect and files-field input on writes, resolved by
+  `RelationNestedQueries` / `FilesFieldSync`. Update carves these back to v1; create and
+  upsert stay on v1 entirely until this input machinery has a v2 form.
 - `find` / `findOne` / `findBy` and the rest of the repository surface used by
   `src/modules`.
 - Transactions and DDL.

@@ -93,7 +93,6 @@ describe('deleteUser', () => {
         );
       });
 
-    // Sign up a new user into the current workspace via public invite link
     const testEmail = `test_user_${Date.now()}@example.com`;
     const signUpMutation = signUpOperationFactory({
       email: testEmail,
@@ -105,7 +104,6 @@ describe('deleteUser', () => {
     expect(signUpResponse.status).toBe(200);
     expect(signUpResponse.body.errors).toBeUndefined();
 
-    // Query workspace members and find the created user by email to get workspaceMemberId
     const newWorkspaceMemberQuery = {
       query: `
         query WorkspaceMember($workspaceMemberFilter: WorkspaceMemberFilterInput!) {
@@ -136,7 +134,6 @@ describe('deleteUser', () => {
     expect(createdMember).toBeDefined();
     const createdWorkspaceMemberId = createdMember.id;
 
-    // 2. Act
     const deleteUserFromWorkspaceMutation = {
       query: `
         mutation DeleteUserFromWorkspace {
@@ -156,7 +153,6 @@ describe('deleteUser', () => {
 
     expect(deleteResponse.body.errors).toBeUndefined();
 
-    // 3. Assert
     const membersAfterDeletionResponse = await client
       .post('/graphql')
       .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)

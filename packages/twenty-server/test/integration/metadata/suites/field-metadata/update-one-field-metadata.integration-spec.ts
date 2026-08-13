@@ -60,14 +60,12 @@ describe('updateOne', () => {
     });
 
     it('should update a field name and label when they are synced correctly', async () => {
-      // Arrange
       const updateFieldInput = {
         name: 'newName',
         label: 'New name',
         isLabelSyncedWithName: true,
       };
 
-      // Act
       const { data } = await updateOneFieldMetadata({
         input: { idToUpdate: testFieldId, updatePayload: updateFieldInput },
         gqlFields: `
@@ -78,19 +76,16 @@ describe('updateOne', () => {
         `,
       });
 
-      // Assert
       expect(data.updateOneField.name).toBe('newName');
     });
 
     it('should update a field name and label when they are not synced correctly and labelSync is false', async () => {
-      // Arrange
       const updateFieldInput = {
         name: 'differentName',
         label: 'New name',
         isLabelSyncedWithName: false,
       };
 
-      // Act
       const { data } = await updateOneFieldMetadata({
         input: { idToUpdate: testFieldId, updatePayload: updateFieldInput },
         gqlFields: `
@@ -101,7 +96,6 @@ describe('updateOne', () => {
           `,
       });
 
-      // Assert
       expect(data.updateOneField.name).toBe('differentName');
     });
   });
@@ -155,13 +149,11 @@ describe('updateOne', () => {
     });
 
     it('should not update a field name if it is not synced correctly with label and labelSync is true', async () => {
-      // Arrange
       const updateFieldInput = {
         name: 'newName',
         isLabelSyncedWithName: true,
       };
 
-      // Act
       const { errors } = await updateOneFieldMetadata({
         input: { idToUpdate: testFieldId, updatePayload: updateFieldInput },
         gqlFields: `

@@ -3,7 +3,6 @@ import { type PlaceAutocompleteResult } from '@/geo-map/types/placeApi';
 describe('PlaceAutocompleteSelect Component', () => {
   describe('component interface', () => {
     it('should have correct prop types', () => {
-      // Test that the component accepts the expected props
       const mockProps = {
         list: [] as PlaceAutocompleteResult[],
         onChange: jest.fn(),
@@ -38,7 +37,6 @@ describe('PlaceAutocompleteSelect Component', () => {
       const mockOnChange = jest.fn();
       const testPlaceId = 'test-place-id';
 
-      // Simulate calling the onChange function
       mockOnChange(testPlaceId);
 
       expect(mockOnChange).toHaveBeenCalledWith(testPlaceId);
@@ -152,7 +150,6 @@ describe('PlaceAutocompleteSelect Component', () => {
 
   describe('component requirements', () => {
     it('should require all mandatory props', () => {
-      // Test that all required props are defined in the interface
       const requiredProps = ['list', 'onChange', 'dropdownId'];
 
       requiredProps.forEach((prop) => {
@@ -173,7 +170,6 @@ describe('PlaceAutocompleteSelect Component', () => {
       validDropdownIds.forEach((id) => {
         expect(typeof id).toBe('string');
         expect(id.length).toBeGreaterThan(0);
-        // Should not contain spaces (valid HTML ID)
         expect(id).not.toMatch(/\s/);
       });
     });

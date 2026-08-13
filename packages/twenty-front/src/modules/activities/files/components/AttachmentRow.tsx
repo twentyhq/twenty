@@ -159,7 +159,6 @@ export const AttachmentRow = ({
       return;
     }
 
-    // Only prevent default and use preview if onPreview is provided
     if (isDefined(onPreview)) {
       e.preventDefault();
       onPreview(attachment);

@@ -177,7 +177,6 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
     existingFlatViewToUpdate.visibility === 'WORKSPACE' &&
     isDefined(userWorkspaceId)
   ) {
-    // Re-allocate the view to the current user
     flatViewToUpdate.createdByUserWorkspaceId = userWorkspaceId;
   }
 

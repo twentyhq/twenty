@@ -1,7 +1,12 @@
 import { randomUUID } from 'crypto';
 import { expect, test } from './fixture';
 
-test.use({ storageState: { cookies: [], origins: [] } });
+// Signing up on the workspace subdomain the shared fixture points at is
+// refused, so create the workspace from the base domain instead.
+test.use({
+  storageState: { cookies: [], origins: [] },
+  baseURL: process.env.FRONTEND_BASE_URL ?? 'http://localhost:3001',
+});
 
 test('New workspace signup goes through every onboarding stage', async ({
   page,
@@ -34,41 +39,44 @@ test('New workspace signup goes through every onboarding stage', async ({
     await page.waitForURL('**/workspace-activation', { timeout: 90000 });
   });
 
-  let hasSkippedSyncEmailStage = false;
+  const syncEmailsHeading = page.getByText('Import your contacts');
+  const installAppsHeading = page.getByText('Install your first apps');
+  const createProfileHeading = page.getByText('Create profile');
 
-  await test.step('Sync-email stage (skip when shown)', async () => {
-    const syncEmailsHeading = page.getByText('Import your contacts');
-    const installAppsHeading = page.getByText('Install your first apps');
-
-    await expect(syncEmailsHeading.or(installAppsHeading)).toBeVisible({
+  // Both stages auto-skip when the instance has no connected-account provider
+  // and no vetted marketplace app, which is how the e2e server is configured.
+  await test.step('Sync-email stage (when shown)', async () => {
+    await expect(
+      syncEmailsHeading.or(installAppsHeading).or(createProfileHeading),
+    ).toBeVisible({
       timeout: 90000,
     });
 
-    if (await syncEmailsHeading.isVisible()) {
-      await loginPage.clickSkipOnboardingStep();
-      hasSkippedSyncEmailStage = true;
-    }
-  });
-
-  await test.step('Install-apps stage', async () => {
-    await expect(page.getByText('Install your first apps')).toBeVisible();
-
-    if (hasSkippedSyncEmailStage) {
-      await test.step('Goes back to the skipped sync-email stage', async () => {
-        await page.getByRole('button', { name: 'Go back' }).click();
-        await expect(page.getByText('Import your contacts')).toBeVisible();
-
-        await page.reload();
-        await expect(page.getByText('Import your contacts')).toBeVisible({
-          timeout: 30000,
-        });
-
-        await loginPage.clickSkipOnboardingStep();
-        await expect(page.getByText('Install your first apps')).toBeVisible();
-      });
+    if (!(await syncEmailsHeading.isVisible())) {
+      return;
     }
 
     await loginPage.clickSkipOnboardingStep();
+    await expect(installAppsHeading).toBeVisible();
+
+    await test.step('Goes back to the skipped sync-email stage', async () => {
+      await page.getByRole('button', { name: 'Go back' }).click();
+      await expect(syncEmailsHeading).toBeVisible();
+
+      await page.reload();
+      await expect(syncEmailsHeading).toBeVisible({
+        timeout: 30000,
+      });
+
+      await loginPage.clickSkipOnboardingStep();
+      await expect(installAppsHeading).toBeVisible();
+    });
+  });
+
+  await test.step('Install-apps stage (when shown)', async () => {
+    if (await installAppsHeading.isVisible()) {
+      await loginPage.clickSkipOnboardingStep();
+    }
   });
 
   await test.step('Create-profile stage', async () => {

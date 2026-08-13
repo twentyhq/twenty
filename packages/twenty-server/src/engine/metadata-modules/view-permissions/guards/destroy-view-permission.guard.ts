@@ -17,14 +17,12 @@ export class DestroyViewPermissionGuard implements CanActivate {
 
     let viewId: string | null = null;
 
-    // For GraphQL: extract from args
     const args = gqlContext.getArgs();
 
     if (typeof args?.id === 'string') {
       viewId = args.id;
     }
 
-    // For REST: extract from URL params
     if (!viewId && typeof request.params?.id === 'string') {
       viewId = request.params.id;
     }

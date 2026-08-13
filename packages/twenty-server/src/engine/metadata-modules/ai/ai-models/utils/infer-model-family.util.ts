@@ -1,6 +1,5 @@
 import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 
-// Maps models.dev provider names to model families.
 const NAME_TO_MODEL_FAMILY: Record<string, ModelFamily> = {
   openai: ModelFamily.GPT,
   anthropic: ModelFamily.CLAUDE,

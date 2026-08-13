@@ -36,7 +36,6 @@ export const createCustomRoleWithObjectPermissions = async (options: {
   expect(response.body.data.createOneRole).toBeDefined();
   const roleId = response.body.data.createOneRole.id;
 
-  // Get object metadata IDs for Person and Company
   const getObjectMetadataOperation = {
     query: gql`
       query {
@@ -67,7 +66,6 @@ export const createCustomRoleWithObjectPermissions = async (options: {
     (obj: any) => obj.node.nameSingular === 'opportunity',
   )?.node.id;
 
-  // Create object permissions based on the options
   const objectPermissions = [];
 
   if (

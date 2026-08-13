@@ -26,12 +26,10 @@ export const normalizeLocale = (value: string | null): AppLocale => {
     return SOURCE_LOCALE;
   }
 
-  // Direct match in our supported locales
   if (value in APP_LOCALES) {
     return value as AppLocale;
   }
 
-  // Try case-insensitive match (e.g., 'fr-fr' -> 'fr-FR')
   const caseInsensitiveMatch = Object.keys(APP_LOCALES).find(
     (locale) => locale.toLowerCase() === value.toLowerCase(),
   );

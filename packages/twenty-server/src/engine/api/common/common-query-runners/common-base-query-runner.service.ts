@@ -1,8 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { type PermissionFlagType } from 'twenty-shared/constants';
-import { FeatureFlagKey } from 'twenty-shared/types';
+import { FeatureFlagKey, type ObjectRecord } from 'twenty-shared/types';
 import { type ObjectLiteral } from 'typeorm';
+
+import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-field-value';
 
@@ -18,6 +20,9 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { buildMutationQueryBuilder } from 'src/engine/api/common/common-query-runners/utils/build-mutation-query-builder.util';
+import { buildMutationQueryBuilderV2 } from 'src/engine/api/common/common-query-runners/utils/build-mutation-query-builder-v2.util';
+import { updateDataIsSupportedByOrmV2 } from 'src/engine/api/common/common-query-runners/utils/update-data-is-supported-by-orm-v2.util';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
@@ -32,6 +37,7 @@ import {
   CommonQueryResult,
 } from 'src/engine/api/common/types/common-query-result.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import { type NestedRelationsReadPathOptions } from 'src/engine/api/common/types/nested-relations-read-path-options.type';
 import { OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS } from 'src/engine/api/graphql/graphql-query-runner/constants/objects-with-settings-permissions-requirements';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { WorkspacePreQueryHookPayload } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
@@ -61,6 +67,7 @@ import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { type WorkspaceRepositoryV2 } from 'src/engine/twenty-orm-v2/repository/workspace-repository-v2';
+import { type MutationKind } from 'src/engine/twenty-orm-v2/sql/utils/build-mutation-statement.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -390,12 +397,113 @@ export abstract class CommonBaseQueryRunnerService<
       .getRepository(flatObjectMetadata.nameSingular, rolePermissionConfig);
   }
 
+  // Writes always hit the primary, so useReplica is pinned false regardless of isReadOnly.
+  protected getWriteRepository({
+    rolePermissionConfig,
+    flatObjectMetadata,
+  }: Pick<
+    CommonExtendedQueryRunnerContext,
+    'rolePermissionConfig' | 'flatObjectMetadata'
+  >): WorkspaceRepositoryV2 {
+    this.metricsService.incrementCounterBy({
+      key: MetricsKeys.OrmV2WritePathUsed,
+      amount: 1,
+      attributes: { operation: this.operationName },
+    });
+
+    return this.workspaceDataSourceV2Service
+      .getDataSource({ useReplica: false })
+      .getRepository(flatObjectMetadata.nameSingular, rolePermissionConfig);
+  }
+
+  protected async runFilteredMutation({
+    queryRunnerContext,
+    filter,
+    columnsToReturn,
+    kind,
+    data,
+  }: {
+    queryRunnerContext: CommonExtendedQueryRunnerContext;
+    filter: Partial<ObjectRecordFilter>;
+    columnsToReturn: string[];
+    kind: MutationKind;
+    data?: Partial<ObjectRecord>;
+  }): Promise<ObjectRecord[]> {
+    const {
+      repository,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+      commonQueryParser,
+      featureFlagsMap,
+    } = queryRunnerContext;
+    const alias = flatObjectMetadata.nameSingular;
+
+    const ormV2CanHandle =
+      featureFlagsMap[FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED] &&
+      (kind !== 'update' ||
+        updateDataIsSupportedByOrmV2({
+          data: data ?? {},
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+        }));
+
+    if (ormV2CanHandle) {
+      const writeRepository = this.getWriteRepository(queryRunnerContext);
+
+      const { selectQueryBuilder, rowLevelPermissionsApplied } =
+        buildMutationQueryBuilderV2({
+          repository: writeRepository,
+          alias,
+          filter,
+          commonQueryParser,
+        });
+
+      return writeRepository.runMutation({
+        selectQueryBuilder,
+        rowLevelPermissionsApplied,
+        kind,
+        columnsToReturn,
+        data,
+      });
+    }
+
+    const queryBuilder = buildMutationQueryBuilder({
+      repository,
+      alias,
+      filter,
+      commonQueryParser,
+    });
+
+    if (kind === 'update') {
+      const result = await queryBuilder
+        .update()
+        .set(data ?? {})
+        .returning(columnsToReturn)
+        .execute();
+
+      return result.generatedMaps as ObjectRecord[];
+    }
+
+    const mutationQueryBuilder =
+      kind === 'soft-delete'
+        ? queryBuilder.softDelete()
+        : kind === 'restore'
+          ? queryBuilder.restore()
+          : queryBuilder.delete();
+
+    const result = await mutationQueryBuilder
+      .returning(columnsToReturn)
+      .execute();
+
+    return result.generatedMaps as ObjectRecord[];
+  }
+
   protected getNestedRelationsReadPathOptions({
     featureFlagsMap,
-  }: Pick<CommonExtendedQueryRunnerContext, 'featureFlagsMap'>): {
-    isOrmV2ReadPathEnabled: boolean;
-    useReplica: boolean;
-  } {
+  }: Pick<
+    CommonExtendedQueryRunnerContext,
+    'featureFlagsMap'
+  >): NestedRelationsReadPathOptions {
     return {
       isOrmV2ReadPathEnabled:
         featureFlagsMap[FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED],

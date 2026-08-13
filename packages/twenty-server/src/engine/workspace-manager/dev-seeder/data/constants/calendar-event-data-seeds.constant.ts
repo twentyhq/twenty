@@ -184,7 +184,6 @@ const GENERATE_CALENDAR_EVENT_SEEDS = (): CalendarEventDataSeed[] => {
       END_TIME.setMinutes(END_TIME.getMinutes() + TEMPLATE.duration);
     }
 
-    // Random location and conference solution
     const LOCATION =
       TEMPLATE.locations[Math.floor(Math.random() * TEMPLATE.locations.length)];
     const CONFERENCE_SOLUTION =
@@ -192,10 +191,8 @@ const GENERATE_CALENDAR_EVENT_SEEDS = (): CalendarEventDataSeed[] => {
         Math.floor(Math.random() * TEMPLATE.conferenceSolutions.length)
       ];
 
-    // 5% chance of being cancelled
     const IS_CANCELLED = Math.random() < 0.05;
 
-    // Generate conference link if it's an online meeting
     const CONFERENCE_LINK = ['Zoom', 'Teams', 'Google Meet'].includes(
       CONFERENCE_SOLUTION,
     )

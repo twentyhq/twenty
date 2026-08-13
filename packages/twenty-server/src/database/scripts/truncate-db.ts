@@ -6,7 +6,6 @@ async function dropSchemasSequentially() {
   try {
     await rawDataSource.initialize();
 
-    // Fetch all schemas excluding the ones we want to keep
     const schemas =
       (await performQuery<{ schema_name: string }[]>(
         `

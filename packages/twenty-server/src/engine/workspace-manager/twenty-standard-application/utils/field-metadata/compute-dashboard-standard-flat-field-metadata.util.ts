@@ -25,7 +25,6 @@ export const buildDashboardStandardFlatFieldMetadatas = ({
   CreateStandardFieldArgs<'dashboard', FieldMetadataType>,
   'context'
 >): Record<AllStandardObjectFieldName<'dashboard'>, FlatFieldMetadata> => ({
-  // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -105,7 +104,6 @@ export const buildDashboardStandardFlatFieldMetadatas = ({
     now,
   }),
 
-  // Dashboard-specific fields
   title: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -223,7 +221,6 @@ export const buildDashboardStandardFlatFieldMetadatas = ({
     now,
   }),
 
-  // Relation fields
   timelineActivities: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

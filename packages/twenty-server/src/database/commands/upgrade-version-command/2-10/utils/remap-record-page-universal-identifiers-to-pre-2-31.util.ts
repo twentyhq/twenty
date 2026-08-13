@@ -27,7 +27,6 @@ export const PRE_2_31_RECORD_PAGE_UNIVERSAL_IDENTIFIER_BY_DERIVED: Record<
   string,
   string
 > = {
-  // calendarEvent record-page view stack
   [CALENDAR_EVENT_RECORD_PAGE_VIEW.universalIdentifier]:
     'c73668d1-022d-4eaf-b825-4e2548180db6',
   [CALENDAR_EVENT_RECORD_PAGE_VIEW.viewFieldGroups.general.universalIdentifier]:
@@ -58,7 +57,6 @@ export const PRE_2_31_RECORD_PAGE_UNIVERSAL_IDENTIFIER_BY_DERIVED: Record<
     '8be763dd-6217-47fb-a7d2-ac223af881d2',
   [CALENDAR_EVENT_RECORD_PAGE_VIEW.viewFields.conferenceSolution
     .universalIdentifier]: '795905b6-c6f8-42cf-b8ea-3e5b6d32145f',
-  // calendarEvent record-page layout stack
   [CALENDAR_EVENT_RECORD_PAGE_LAYOUT.universalIdentifier]:
     'b9b10e40-9ce2-4704-8ac6-c6e92e2563c1',
   [CALENDAR_EVENT_RECORD_PAGE_LAYOUT.tabs.home.universalIdentifier]:
@@ -73,7 +71,6 @@ export const PRE_2_31_RECORD_PAGE_UNIVERSAL_IDENTIFIER_BY_DERIVED: Record<
     '9cb35d6d-932d-49bc-b303-593116ca5343',
   [CALENDAR_EVENT_RECORD_PAGE_LAYOUT.tabs.timeline.widgets.timeline
     .universalIdentifier]: '8273e2c4-cc17-4d3e-ba08-5bac612b5d44',
-  // callRecording record-page view stack
   [CALL_RECORDING_RECORD_PAGE_VIEW.universalIdentifier]:
     '99fa8b47-3b11-4f9b-8fbc-e67a9e1da682',
   [CALL_RECORDING_RECORD_PAGE_VIEW.viewFieldGroups.general.universalIdentifier]:
@@ -96,7 +93,6 @@ export const PRE_2_31_RECORD_PAGE_UNIVERSAL_IDENTIFIER_BY_DERIVED: Record<
     '782c97f6-e6b1-472b-8992-bbb60d25791b',
   [CALL_RECORDING_RECORD_PAGE_VIEW.viewFields.summary.universalIdentifier]:
     'a0ace064-cc72-4631-ade3-07cdded86b0e',
-  // callRecording record-page layout stack
   [CALL_RECORDING_RECORD_PAGE_LAYOUT.universalIdentifier]:
     'fa475fb3-3fe4-4ab8-8320-495eba5b2e58',
   [CALL_RECORDING_RECORD_PAGE_LAYOUT.tabs.home.universalIdentifier]:
@@ -107,7 +103,6 @@ export const PRE_2_31_RECORD_PAGE_UNIVERSAL_IDENTIFIER_BY_DERIVED: Record<
     '9fb360fa-bc10-430c-8425-25d4e9da4386',
   [CALL_RECORDING_RECORD_PAGE_LAYOUT.tabs.timeline.widgets.timeline
     .universalIdentifier]: '9347305a-73de-4651-a116-c67b2706beda',
-  // messageCampaign record-page view stack
   [MESSAGE_CAMPAIGN_RECORD_PAGE_VIEW.universalIdentifier]:
     '20202020-a009-4a09-8a09-fa9de11ca901',
   [MESSAGE_CAMPAIGN_RECORD_PAGE_VIEW.viewFieldGroups.stats.universalIdentifier]:
@@ -124,7 +119,6 @@ export const PRE_2_31_RECORD_PAGE_UNIVERSAL_IDENTIFIER_BY_DERIVED: Record<
     .universalIdentifier]: '20202020-af09-4a09-8a09-fa9de11ca907',
   [MESSAGE_CAMPAIGN_RECORD_PAGE_VIEW.viewFields.complainedCount
     .universalIdentifier]: '20202020-af09-4a09-8a09-fa9de11ca908',
-  // messageCampaign record-page layout stack
   [MESSAGE_CAMPAIGN_RECORD_PAGE_LAYOUT.universalIdentifier]:
     '8704b091-94bd-4f8f-82b1-e2f3eab92217',
   [MESSAGE_CAMPAIGN_RECORD_PAGE_LAYOUT.tabs.home.universalIdentifier]:

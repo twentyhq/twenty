@@ -441,7 +441,6 @@ describe('shouldExecuteChildStep', () => {
       nextStepIds: [],
     })) as unknown as WorkflowAction[];
 
-    // All parents stopped or skipped, none succeeded
     const stepInfos = Object.fromEntries(
       manyParentSteps.map((step, i) => [
         step.id,
@@ -519,7 +518,6 @@ describe('shouldExecuteChildStep', () => {
       nextStepIds: [],
     })) as unknown as WorkflowAction[];
 
-    // First parent succeeded, rest are still running
     const stepInfos = Object.fromEntries(
       manyParentSteps.map((step, i) => [
         step.id,

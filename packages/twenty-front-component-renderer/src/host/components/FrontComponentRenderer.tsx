@@ -36,6 +36,7 @@ type FrontComponentRendererProps = {
   sdkClientUrls?: SdkClientUrls;
   sharedDependenciesUrl?: string;
   applicationVariables?: Record<string, string>;
+  storageNamespace?: string;
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
   onError: (error?: Error) => void;
@@ -51,6 +52,7 @@ export const FrontComponentRenderer = ({
   sdkClientUrls,
   sharedDependenciesUrl,
   applicationVariables,
+  storageNamespace,
   executionContext,
   frontComponentHostCommunicationApi,
   onError,
@@ -77,6 +79,7 @@ export const FrontComponentRenderer = ({
           sdkClientUrls={sdkClientUrls}
           sharedDependenciesUrl={sharedDependenciesUrl}
           applicationVariables={applicationVariables}
+          storageNamespace={storageNamespace}
           geometryTracker={geometryTracker}
           setReceiver={setReceiver}
           setThread={setThread}

@@ -8,7 +8,6 @@ export const computeStandardTaskTargetViewFields = (
   args: Omit<CreateStandardViewFieldArgs<'taskTarget'>, 'context'>,
 ): Record<string, FlatViewField> => {
   return {
-    // Label identifier for junction tables
     allTaskTargetsId: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'taskTarget',
