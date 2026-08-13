@@ -6,6 +6,7 @@ import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/
 import { CallRecordingTranscriptBody } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, waitFor, within } from 'storybook/test';
+import { parseCallRecordingTranscriptEntries } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import {
   PageLayoutType,
@@ -80,6 +81,7 @@ const completedCallRecording: CalendarEventCallRecordingCandidate = {
   status: CallRecordingStatus.COMPLETED,
   transcript: [],
   summary: null,
+  video: null,
   createdAt: '2026-01-01T00:00:00Z',
 };
 
@@ -127,6 +129,21 @@ const readableCallRecording: CalendarEventCallRecordingCandidate = {
   transcript: rawTranscript,
 };
 
+const recordedCallRecording: CalendarEventCallRecordingCandidate = {
+  ...readableCallRecording,
+  video: [
+    {
+      fileId: 'video-file-id',
+      label: 'recording.mp4',
+      extension: 'mp4',
+      url: 'https://files.example.com/recording.mp4',
+    },
+  ],
+};
+
+const parsedTranscriptEntries =
+  parseCallRecordingTranscriptEntries(rawTranscript);
+
 const meta: Meta<typeof CallRecordingTranscriptBody> = {
   title: 'Modules/PageLayout/Widgets/CallRecordingTranscriptBody',
   component: CallRecordingTranscriptBody,
@@ -141,6 +158,11 @@ const meta: Meta<typeof CallRecordingTranscriptBody> = {
   parameters: {
     layout: 'centered',
   },
+  args: {
+    transcriptEntries: undefined,
+    videoFileUrl: undefined,
+    refetchCallRecording: () => {},
+  },
 };
 
 export default meta;
@@ -149,6 +171,7 @@ type Story = StoryObj<typeof CallRecordingTranscriptBody>;
 export const Ready: Story = {
   args: {
     callRecording: readableCallRecording,
+    transcriptEntries: parsedTranscriptEntries,
     loading: false,
     error: undefined,
     restriction: undefined,
@@ -161,6 +184,25 @@ export const Ready: Story = {
       'Happy to. Pipeline grew twenty percent since the last call.',
     );
     await canvas.findByText('Inaudible segment.');
+  },
+};
+
+export const WithVideo: Story = {
+  args: {
+    callRecording: recordedCallRecording,
+    transcriptEntries: parsedTranscriptEntries,
+    videoFileUrl: 'https://files.example.com/recording.mp4',
+    loading: false,
+    error: undefined,
+    restriction: undefined,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('Ada Lovelace');
+    await canvas.findByText(
+      'Happy to. Pipeline grew twenty percent since the last call.',
+    );
   },
 };
 

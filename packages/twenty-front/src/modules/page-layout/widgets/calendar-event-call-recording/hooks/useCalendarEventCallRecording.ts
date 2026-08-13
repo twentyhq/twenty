@@ -23,6 +23,7 @@ const CALL_RECORDING_RECORD_FIELDS = {
   status: true,
   transcript: true,
   summary: true,
+  video: true,
   createdAt: true,
 } as const satisfies RecordGqlOperationGqlRecordFields;
 
@@ -40,7 +41,7 @@ const REQUIRED_FIELD_NAMES_BY_QUERY_SCOPE: Record<
   string[]
 > = {
   'call-recording-summary': ['status', 'summary', 'createdAt'],
-  'call-recording-transcript': ['status', 'transcript', 'createdAt'],
+  'call-recording-transcript': ['status', 'transcript', 'video', 'createdAt'],
 };
 
 export const useCalendarEventCallRecording = ({
@@ -49,9 +50,11 @@ export const useCalendarEventCallRecording = ({
   queryScope: CalendarEventCallRecordingQueryScope;
 }): {
   callRecording: CalendarEventCallRecordingCandidate | undefined;
+  callRecordingsCount: number;
   loading: boolean;
   error: Error | undefined;
   restriction: WidgetAccessDenialInfo | undefined;
+  refetch: () => Promise<unknown>;
 } => {
   const { targetRecordIdentifier } = useLayoutRenderingContext();
 
@@ -167,5 +170,12 @@ export const useCalendarEventCallRecording = ({
 
   const callRecording = selectCalendarEventCallRecording(callRecordings);
 
-  return { callRecording, loading, error, restriction };
+  return {
+    callRecording,
+    callRecordingsCount: callRecordings.length,
+    loading,
+    error,
+    restriction,
+    refetch,
+  };
 };

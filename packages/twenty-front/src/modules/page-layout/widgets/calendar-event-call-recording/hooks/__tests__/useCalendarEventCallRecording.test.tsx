@@ -38,6 +38,7 @@ jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
         { id: 'status-field-id', name: 'status', label: 'Status' },
         { id: 'transcript-field-id', name: 'transcript', label: 'Transcript' },
         { id: 'summary-field-id', name: 'summary', label: 'Summary' },
+        { id: 'video-field-id', name: 'video', label: 'Video' },
         {
           id: 'created-at-field-id',
           name: 'createdAt',
@@ -128,6 +129,7 @@ describe('useCalendarEventCallRecording', () => {
           status: true,
           transcript: true,
           summary: true,
+          video: true,
           createdAt: true,
         },
         skip: false,
@@ -254,6 +256,30 @@ describe('useCalendarEventCallRecording', () => {
     );
 
     expect(transcriptResult.current.restriction).toBeUndefined();
+  });
+
+  it('reports a video field restriction for the transcript scope only', () => {
+    objectPermissionsResult = {
+      canReadObjectRecords: true,
+      restrictedFields: { 'video-field-id': { canRead: false } },
+    };
+
+    const { result: transcriptResult } = renderHook(() =>
+      useCalendarEventCallRecording({
+        queryScope: 'call-recording-transcript',
+      }),
+    );
+
+    expect(transcriptResult.current.restriction).toEqual({
+      type: 'field',
+      fieldNames: ['Video'],
+    });
+
+    const { result: summaryResult } = renderHook(() =>
+      useCalendarEventCallRecording({ queryScope: 'call-recording-summary' }),
+    );
+
+    expect(summaryResult.current.restriction).toBeUndefined();
   });
 
   it('passes loading through and resolves to no recording without records', () => {

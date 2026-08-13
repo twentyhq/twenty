@@ -94,6 +94,7 @@ const summarizedCallRecording: CalendarEventCallRecordingCandidate = {
   status: CallRecordingStatus.COMPLETED,
   transcript: [],
   summary: { markdown: summaryMarkdown },
+  video: null,
   createdAt: '2026-01-01T00:00:00Z',
 };
 
