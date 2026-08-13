@@ -200,18 +200,17 @@ alongside `In`.
 
 `createMany` with `upsert: true` reads the existing records by their conflict fields,
 splits the input into inserts and updates, then inserts the new records and updates the
-matched ones. The insert half routes through `runInsert` on v2 (same `CREATED` / `UPSERTED`
-events as the non-upsert create); the batch update of matched records stays on v1, because
-its single batch event over N per-id updates has no v2 form yet. The read-then-split and
-conflict-target derivation are unchanged.
+matched ones. The insert half routes through `runInsert`; the update half through
+`runBatchUpdate`, which runs each per-id update as its own statement but emits one batch
+`UPDATED` + `UPSERTED` over the collected before/after images, matching v1's `updateMany`.
+The read-then-split and conflict-target derivation are unchanged.
 
 ## Not covered yet
 
-- The upsert batch update of already-matched records (v1's `updateMany` with per-id
-  inputs). A v2 batch-update path that emits one batch event over N updates would move it.
 - Relation connect/disconnect and files-field input on writes, resolved by
   `RelationNestedQueries` / `FilesFieldSync`. Update, create, upsert and merge carve these
-  back to v1 per request until this input machinery has a v2 form.
+  back to v1 per request; a request that sets `{connect}` / `{disconnect}` or a files field
+  runs entirely on v1. Relation *join columns* are plain FK writes and stay on v2.
 - `find` / `findOne` / `findBy` and the rest of the repository surface used by
   `src/modules`.
 - DDL.

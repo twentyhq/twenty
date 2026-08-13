@@ -148,6 +148,74 @@ export class WorkspaceRepositoryV2 {
     };
   }
 
+  async runBatchUpdate({
+    inputs,
+    columnsToReturn,
+  }: {
+    inputs: { id: string; data: Partial<ObjectRecord> }[];
+    columnsToReturn: string[];
+  }): Promise<{
+    identifiers: { id: string }[];
+    generatedMaps: ObjectRecord[];
+    raw: ObjectRecord[];
+  }> {
+    const recordsBefore: ObjectRecord[] = [];
+    const recordsAfter: ObjectRecord[] = [];
+    const generatedMaps: ObjectRecord[] = [];
+
+    for (const input of inputs) {
+      const setColumns = formatData(
+        input.data,
+        this.options.flatObjectMetadata,
+        this.options.internalContext.flatFieldMetadataMaps,
+      );
+
+      this.validateWriteIsPermitted({
+        operationType: 'update',
+        columnsToReturn,
+        updatedColumns: Object.keys(setColumns),
+      });
+
+      const eventSelectQueryBuilder = this.buildIdsEventSnapshotQueryBuilder([
+        input.id,
+      ]);
+
+      recordsBefore.push(
+        ...(await eventSelectQueryBuilder.getMany<ObjectRecord>({
+          noFormatting: true,
+        })),
+      );
+
+      const selectQueryBuilder = this.createQueryBuilder().where({
+        id: input.id,
+      });
+
+      this.applyRowLevelPermissionPredicates(selectQueryBuilder);
+
+      const result = await selectQueryBuilder
+        .update()
+        .set(setColumns)
+        .returning(columnsToReturn)
+        .execute();
+
+      generatedMaps.push(...(result.generatedMaps as ObjectRecord[]));
+
+      recordsAfter.push(
+        ...(await eventSelectQueryBuilder.getMany<ObjectRecord>({
+          noFormatting: true,
+        })),
+      );
+    }
+
+    this.emitMutationEvent({ kind: 'update', recordsBefore, recordsAfter });
+
+    return {
+      identifiers: generatedMaps.map((record) => ({ id: String(record.id) })),
+      generatedMaps,
+      raw: generatedMaps,
+    };
+  }
+
   private buildInsertRows(records: Partial<ObjectRecord>[]): {
     columnNames: string[];
     rows: InsertRowValue[][];

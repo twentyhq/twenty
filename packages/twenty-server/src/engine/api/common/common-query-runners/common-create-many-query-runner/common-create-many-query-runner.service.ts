@@ -341,6 +341,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         flatFieldMetadataMaps,
         result,
         columnsToReturn,
+        queryRunnerContext,
       });
     }
 
@@ -446,6 +447,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     flatFieldMetadataMaps,
     result,
     columnsToReturn,
+    queryRunnerContext,
   }: {
     partialRecordsToUpdate: PartialObjectRecordWithId[];
     repository: WorkspaceRepository<ObjectLiteral>;
@@ -453,24 +455,46 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     result: InsertResult;
     columnsToReturn: string[];
+    queryRunnerContext: CommonExtendedQueryRunnerContext;
   }): Promise<void> {
-    const partialRecordsToUpdateWithoutCreatedByUpdate =
-      partialRecordsToUpdate.map((record) =>
+    const updateInputs = partialRecordsToUpdate
+      .map((record) =>
         this.getRecordWithoutCreatedBy(
           record,
           flatObjectMetadata,
           flatFieldMetadataMaps,
         ),
+      )
+      .map((record) => ({
+        id: record.id,
+        data: { ...record, deletedAt: null },
+      }));
+
+    const ormV2CanHandle =
+      queryRunnerContext.featureFlagsMap[
+        FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED
+      ] &&
+      updateInputs.every((input) =>
+        writeDataIsSupportedByOrmV2({
+          data: input.data,
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+        }),
       );
 
-    const savedRecords = await repository.updateMany(
-      partialRecordsToUpdateWithoutCreatedByUpdate.map((record) => ({
-        criteria: record.id,
-        partialEntity: { ...record, deletedAt: null },
-      })),
-      undefined,
-      columnsToReturn,
-    );
+    const savedRecords = ormV2CanHandle
+      ? await this.getWriteRepository(queryRunnerContext).runBatchUpdate({
+          inputs: updateInputs,
+          columnsToReturn,
+        })
+      : await repository.updateMany(
+          updateInputs.map((input) => ({
+            criteria: input.id,
+            partialEntity: input.data,
+          })),
+          undefined,
+          columnsToReturn,
+        );
 
     result.identifiers.push(
       ...savedRecords.generatedMaps.map((record) => ({ id: record.id })),
