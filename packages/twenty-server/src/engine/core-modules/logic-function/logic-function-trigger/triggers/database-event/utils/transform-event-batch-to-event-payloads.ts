@@ -53,7 +53,13 @@ const filterEventsByUpdatedFields = ({
   operation: string;
   triggerUpdatedFields?: string[];
 }): ObjectRecordEvent[] => {
-  if (operation !== 'updated') {
+  // Upserted events carry the same before/after-derived `updatedFields` as
+  // updated events (see formatTwentyOrmEventToDatabaseBatchEvent), so a
+  // trigger's watched-fields filter applies to both operations. Without
+  // this, an upserted trigger fires on every write regardless of which
+  // fields changed, which is surprising and can cause self-triggering
+  // loops when a logic function upserts back into the same record.
+  if (operation !== 'updated' && operation !== 'upserted') {
     return events;
   }
 
