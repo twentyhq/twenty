@@ -57,6 +57,30 @@ export class BillingUsageCapService {
     );
   }
 
+  // Same tolerance as clearHasReachedCapForWorkspace: this runs on the refusal
+  // path of a credit-consuming call, which must fail with the credits exhausted
+  // error rather than with a missing subscription item one. Returns whether
+  // anything changed so callers can skip invalidating caches on a no-op.
+  async markHasReachedCapForWorkspace(workspaceId: string): Promise<boolean> {
+    const billingSubscriptionItems =
+      await this.findResourceCreditSubscriptionItems(workspaceId);
+
+    const itemIdsToMark = billingSubscriptionItems
+      .filter((item) => !item.hasReachedCurrentPeriodCap)
+      .map((item) => item.id);
+
+    if (itemIdsToMark.length === 0) {
+      return false;
+    }
+
+    await this.billingSubscriptionItemRepository.update(
+      { id: In(itemIdsToMark) },
+      { hasReachedCurrentPeriodCap: true },
+    );
+
+    return true;
+  }
+
   private async findResourceCreditSubscriptionItems(
     workspaceId: string,
   ): Promise<BillingSubscriptionItemEntity[]> {

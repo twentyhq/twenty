@@ -10,7 +10,11 @@ import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
 import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
+import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
+import { markWorkspaceCreditsExhausted } from '@/workspace/utils/markWorkspaceCreditsExhausted';
+import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 export const useRetryChatMessage = () => {
   const apolloClient = useApolloClient();
@@ -54,6 +58,15 @@ export const useRetryChatMessage = () => {
         errorAtom,
         retryError instanceof Error ? retryError : previousError,
       );
+
+      if (
+        isGraphqlErrorOfType(
+          retryError,
+          AiChatErrorCode.BILLING_CREDITS_EXHAUSTED,
+        )
+      ) {
+        store.set(currentWorkspaceState.atom, markWorkspaceCreditsExhausted);
+      }
     }
   }, [apolloClient, store, modelIdForRequest]);
 

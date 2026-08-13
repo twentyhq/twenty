@@ -50,6 +50,13 @@ type ResolvedAvailableCredits = {
   isCounterWarm: boolean;
 };
 
+type CreditAvailability =
+  | { hasAvailableCredits: true }
+  | {
+      hasAvailableCredits: false;
+      reason: 'workspace-suspended' | 'no-subscription' | 'no-credits';
+    };
+
 // This gate runs before every credit-consuming execution, so it waits far less
 // than a writer does and falls back to computing unlocked rather than failing
 // the execution outright.
@@ -363,9 +370,11 @@ export class BillingUsageService {
     return { availableCredits, isCounterWarm: true };
   }
 
-  async hasAvailableCredits(workspaceId: string): Promise<boolean> {
+  private async resolveCreditAvailability(
+    workspaceId: string,
+  ): Promise<CreditAvailability> {
     if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
-      return true;
+      return { hasAvailableCredits: true };
     }
 
     const workspace = await this.coreEntityCacheService.get(
@@ -377,7 +386,7 @@ export class BillingUsageService {
       isDefined(workspace) &&
       workspace.activationStatus === WorkspaceActivationStatus.SUSPENDED
     ) {
-      return false;
+      return { hasAvailableCredits: false, reason: 'workspace-suspended' };
     }
 
     const { currentBillingSubscription } =
@@ -386,7 +395,7 @@ export class BillingUsageService {
       ]);
 
     if (currentBillingSubscription === NO_BILLING_SUBSCRIPTION) {
-      return false;
+      return { hasAvailableCredits: false, reason: 'no-subscription' };
     }
 
     const subscription = currentBillingSubscription;
@@ -397,16 +406,56 @@ export class BillingUsageService {
       currentPeriodEnd: subscription.currentPeriodEnd,
     });
 
-    return availableCredits > 0;
+    return availableCredits > 0
+      ? { hasAvailableCredits: true }
+      : { hasAvailableCredits: false, reason: 'no-credits' };
+  }
+
+  async hasAvailableCredits(workspaceId: string): Promise<boolean> {
+    const { hasAvailableCredits } =
+      await this.resolveCreditAvailability(workspaceId);
+
+    return hasAvailableCredits;
   }
 
   async hasAvailableCreditsOrThrow(workspaceId: string): Promise<void> {
-    const hasCredits = await this.hasAvailableCredits(workspaceId);
+    const availability = await this.resolveCreditAvailability(workspaceId);
 
-    if (!hasCredits) {
-      throw new BillingException(
-        'Credits exhausted',
-        BillingExceptionCode.BILLING_CREDITS_EXHAUSTED,
+    if (availability.hasAvailableCredits) {
+      return;
+    }
+
+    if (availability.reason === 'no-credits') {
+      await this.markHasReachedCap(workspaceId);
+    }
+
+    throw new BillingException(
+      'Credits exhausted',
+      BillingExceptionCode.BILLING_CREDITS_EXHAUSTED,
+    );
+  }
+
+  // decrementAvailableCreditsInCache only arms the cap on the decrement that
+  // crosses zero, and a grant or manual top-up clears it. Once the balance is
+  // spent again this gate refuses before any usage is recorded, so no decrement
+  // ever crosses zero a second time and the flag would stay off forever, leaving
+  // the workspace blocked with no banner telling anyone why. Re-arming it here
+  // is best effort: failing to record the cap must not mask the refusal.
+  private async markHasReachedCap(workspaceId: string): Promise<void> {
+    try {
+      const hasChanged =
+        await this.billingUsageCapService.markHasReachedCapForWorkspace(
+          workspaceId,
+        );
+
+      if (hasChanged) {
+        await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+          'currentBillingSubscription',
+        ]);
+      }
+    } catch (error) {
+      this.logger.error(
+        `Failed to mark workspace ${workspaceId} as having reached its credit cap: ${error.message}`,
       );
     }
   }
