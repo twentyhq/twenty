@@ -22,6 +22,11 @@ name: App Preview
 on:
   pull_request:
 
+env:
+  # Pin to the Twenty version your app's engines.twenty targets, so previews
+  # don't shift when a new release moves the latest tag.
+  TWENTY_VERSION: latest
+
 permissions:
   pull-requests: write
 
@@ -60,12 +65,11 @@ jobs:
         run: |
           # SERVER_URL must be the public tunnel origin at boot: cookies and
           # redirects are minted against it, and the front only authenticates
-          # from the server's own origin. Pin the tag to the Twenty version
-          # your app targets instead of relying on latest.
+          # from the server's own origin.
           docker run -d --name twenty -p 2021:2021 \
             -e NODE_PORT=2021 \
             -e SERVER_URL=${{ steps.tunnel.outputs.url }} \
-            twentycrm/twenty-app-dev:latest
+            twentycrm/twenty-app-dev:$TWENTY_VERSION
 
           for _ in $(seq 1 100); do
             curl -sf http://localhost:2021/healthz >/dev/null && break
@@ -100,8 +104,7 @@ jobs:
             "remotes": {
               "preview": {
                 "apiUrl": "http://localhost:2021",
-                "apiKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC0xYzI1LTRkMDItYmYyNS02YWVjY2Y3ZWE0MTkiLCJ0eXBlIjoiQVBJX0tFWSIsIndvcmtzcGFjZUlkIjoiMjAyMDIwMjAtMWMyNS00ZDAyLWJmMjUtNmFlY2NmN2VhNDE5IiwiaWF0IjoxNzM1Njg5NjAwLCJleHAiOjQ4OTE0NDk2MDAsImp0aSI6IjIwMjAyMDIwLWY0MDEtNGQ4YS1hNzMxLTY0ZDAwN2MyN2JhZCJ9.bfQjfyN0NEtTCLE_xPyNcwonDzlSXFoP8kdCQTdnuDc",
-                "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC0xYzI1LTRkMDItYmYyNS02YWVjY2Y3ZWE0MTkiLCJ0eXBlIjoiQVBJX0tFWSIsIndvcmtzcGFjZUlkIjoiMjAyMDIwMjAtMWMyNS00ZDAyLWJmMjUtNmFlY2NmN2VhNDE5IiwiaWF0IjoxNzM1Njg5NjAwLCJleHAiOjQ4OTE0NDk2MDAsImp0aSI6IjIwMjAyMDIwLWY0MDEtNGQ4YS1hNzMxLTY0ZDAwN2MyN2JhZCJ9.bfQjfyN0NEtTCLE_xPyNcwonDzlSXFoP8kdCQTdnuDc"
+                "apiKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC0xYzI1LTRkMDItYmYyNS02YWVjY2Y3ZWE0MTkiLCJ0eXBlIjoiQVBJX0tFWSIsIndvcmtzcGFjZUlkIjoiMjAyMDIwMjAtMWMyNS00ZDAyLWJmMjUtNmFlY2NmN2VhNDE5IiwiaWF0IjoxNzM1Njg5NjAwLCJleHAiOjQ4OTE0NDk2MDAsImp0aSI6IjIwMjAyMDIwLWY0MDEtNGQ4YS1hNzMxLTY0ZDAwN2MyN2JhZCJ9.bfQjfyN0NEtTCLE_xPyNcwonDzlSXFoP8kdCQTdnuDc"
               }
             },
             "defaultRemote": "preview"
@@ -125,7 +128,7 @@ Sign in with the prefilled demo credentials on the login screen; your app is ins
 
 ## Notes
 
-- **Pin the image tag.** `latest` moves with Twenty releases. Pin `twentycrm/twenty-app-dev` to the version your app's `engines.twenty` targets so previews don't shift under you.
+- **Pin the image tag.** `latest` moves with Twenty releases. Set `TWENTY_VERSION` to the version your app's `engines.twenty` targets so previews don't shift under you.
 - **The preview runs released Twenty.** If your app depends on an SDK capability newer than the pinned image, the app installs but that capability is missing at runtime — previews tell you how the app behaves for users on that release, which is the point.
 - **Cost.** Actions minutes are free on public repositories. On private repositories a 5-hour job bills 300 runner-minutes per push, so consider gating the workflow on a label instead of every push.
 - **Forks.** `pull_request` runs from forks get a read-only token, so the PR comment step is skipped; the tunnel URL is still printed in the job log.
