@@ -129,8 +129,6 @@ const saveExternalBotIdOrCancelBotAfterCallRecordingDeletion = async ({
   } catch (writeBackError) {
     let callRecordingAfterWriteBackFailure: CallRecordingRecord | undefined;
 
-    // Cancellation is safe only when the row is definitively gone. Otherwise,
-    // preserve the bot and let the idempotent scheduling recovery retry write-back.
     try {
       callRecordingAfterWriteBackFailure = (
         await findCallRecordingsByIds(client, [callRecordingId])
