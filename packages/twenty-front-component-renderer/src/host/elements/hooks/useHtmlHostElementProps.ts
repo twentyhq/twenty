@@ -1,9 +1,7 @@
 import { useContext } from 'react';
 
-import {
-  FrontComponentInputFocusContext,
-  type SetEditableFocused,
-} from '@/host/caret/contexts/FrontComponentInputFocusContext';
+import { FrontComponentInputFocusContext } from '@/host/caret/contexts/FrontComponentInputFocusContext';
+import { type SetEditableFocused } from '@/host/caret/types/SetEditableFocused';
 import { useComposedElementRef } from '@/host/elements/hooks/useComposedElementRef';
 import { useGeometryNodeRef } from '@/host/geometry/hooks/useGeometryNodeRef';
 import { useReactUnsupportedEventListenerRef } from '@/host/events/hooks/useReactUnsupportedEventListenerRef';

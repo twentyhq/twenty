@@ -1,7 +1,7 @@
 import { isFunction, isNonEmptyString, isNumber } from '@sniptt/guards';
 import React from 'react';
 
-import { type SetEditableFocused } from '@/host/caret/contexts/FrontComponentInputFocusContext';
+import { type SetEditableFocused } from '@/host/caret/types/SetEditableFocused';
 import { type ElementRefCallback } from '@/host/elements/types/ElementRefCallback';
 
 type CaretPreservingElement = HTMLInputElement | HTMLTextAreaElement;

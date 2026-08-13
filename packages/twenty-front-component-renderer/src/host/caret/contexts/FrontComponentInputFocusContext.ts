@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-export type SetEditableFocused = (focused: boolean) => void;
+import { type SetEditableFocused } from '@/host/caret/types/SetEditableFocused';
 
 export const FrontComponentInputFocusContext =
   createContext<SetEditableFocused | null>(null);

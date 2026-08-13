@@ -1,8 +1,6 @@
 export { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
-export {
-  FrontComponentInputFocusContext,
-  type SetEditableFocused,
-} from '@/host/caret/contexts/FrontComponentInputFocusContext';
+export { FrontComponentInputFocusContext } from '@/host/caret/contexts/FrontComponentInputFocusContext';
+export { type SetEditableFocused } from '@/host/caret/types/SetEditableFocused';
 export { componentRegistry } from '@/host/generated/host-component-registry';
 export { FrontComponentConfirmationModalResultEffect } from '@/host/effect-components/FrontComponentConfirmationModalResultEffect';
 export { FrontComponentErrorEffect } from '@/host/effect-components/FrontComponentErrorEffect';
