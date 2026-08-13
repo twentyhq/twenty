@@ -250,8 +250,14 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         );
 
       if (ormV2CanHandle) {
-        return this.getWriteRepository(queryRunnerContext).runInsert({
-          records: args.data,
+        const writeRepository = this.getWriteRepository(queryRunnerContext);
+
+        return writeRepository.runInsert({
+          records: await this.resolveNestedRelationsForOrmV2({
+            records: args.data,
+            queryRunnerContext,
+            writeRepository,
+          }),
           columnsToReturn: selectedColumns,
         });
       }
@@ -482,19 +488,33 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         }),
       );
 
-    const savedRecords = ormV2CanHandle
-      ? await this.getWriteRepository(queryRunnerContext).runBatchUpdate({
-          inputs: updateInputs,
-          columnsToReturn,
-        })
-      : await repository.updateMany(
-          updateInputs.map((input) => ({
-            criteria: input.id,
-            partialEntity: input.data,
-          })),
-          undefined,
-          columnsToReturn,
-        );
+    let savedRecords;
+
+    if (ormV2CanHandle) {
+      const writeRepository = this.getWriteRepository(queryRunnerContext);
+      const resolvedData = await this.resolveNestedRelationsForOrmV2({
+        records: updateInputs.map((input) => input.data),
+        queryRunnerContext,
+        writeRepository,
+      });
+
+      savedRecords = await writeRepository.runBatchUpdate({
+        inputs: updateInputs.map((input, index) => ({
+          id: input.id,
+          data: resolvedData[index],
+        })),
+        columnsToReturn,
+      });
+    } else {
+      savedRecords = await repository.updateMany(
+        updateInputs.map((input) => ({
+          criteria: input.id,
+          partialEntity: input.data,
+        })),
+        undefined,
+        columnsToReturn,
+      );
+    }
 
     result.identifiers.push(
       ...savedRecords.generatedMaps.map((record) => ({ id: record.id })),
@@ -537,12 +557,26 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
         }),
       );
 
-    const insertResult = ormV2CanHandle
-      ? await this.getWriteRepository(queryRunnerContext).runInsert({
+    let insertResult;
+
+    if (ormV2CanHandle) {
+      const writeRepository = this.getWriteRepository(queryRunnerContext);
+
+      insertResult = await writeRepository.runInsert({
+        records: await this.resolveNestedRelationsForOrmV2({
           records: recordsToInsert,
-          columnsToReturn,
-        })
-      : await repository.insert(recordsToInsert, undefined, columnsToReturn);
+          queryRunnerContext,
+          writeRepository,
+        }),
+        columnsToReturn,
+      });
+    } else {
+      insertResult = await repository.insert(
+        recordsToInsert,
+        undefined,
+        columnsToReturn,
+      );
+    }
 
     result.identifiers.push(...insertResult.identifiers);
     result.generatedMaps.push(...insertResult.generatedMaps);

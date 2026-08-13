@@ -142,11 +142,14 @@ soft ones, `UPDATED` then `UPSERTED` for update. `getWriteRepository` on the bas
 pins the primary and counts `orm-v2/write-path-used`.
 
 Update flattens its input with the shared `formatData` (composite fields to columns) and
-validates the field-level write permission over the resulting column set. It carves back
-to v1 for one case: data that sets a relation (`{connect}` / `{disconnect}`) or a files
-field, because that input is resolved by `RelationNestedQueries` / `FilesFieldSync`, which
-are coupled to the TypeORM builder and not yet reproduced here. `writeDataIsSupportedByOrmV2`
-makes that call; both branches match their v1 counterpart byte for byte.
+validates the field-level write permission over the resulting column set. Relation
+`{connect}` / `{disconnect}` input is resolved to plain join-column values before the write
+by `resolveNestedRelationsForOrmV2` on the base runner, which runs the unchanged v1
+`RelationNestedQueries` (its lookup select stays on v1) and then drops the relation
+field-name keys it leaves behind so only columns reach the v2 statement. Only files-field
+input still carves back to v1, because `FilesFieldSync` is coupled to the TypeORM builder
+and not yet reproduced here; `writeDataIsSupportedByOrmV2` makes that call, and both
+branches match their v1 counterpart byte for byte.
 
 Deliberate choices, the SQL ones asserted by exact-SQL unit tests:
 
@@ -172,13 +175,14 @@ Deliberate choices, the SQL ones asserted by exact-SQL unit tests:
 ## Writes: create (non-upsert insert) routes through v2
 
 `createMany` (and `createOne`) route their non-upsert insert through
-`WorkspaceRepositoryV2.runInsert` under the same carve-out: a create whose records only set
-scalar and composite fields flattens through `formatData`, inserts with
+`WorkspaceRepositoryV2.runInsert`: records flatten through `formatData`, insert with
 `buildInsertStatement` (a multi-row `INSERT ... VALUES ... RETURNING`, `DEFAULT` for the
-columns a given row omits so Postgres column defaults apply), validates the insert
-permission over the inserted columns, and emits `CREATED` then `UPSERTED` from an
-all-columns re-select of the inserted ids — matching the v1 insert builder. Records that
-set a relation or files field, and the whole upsert path (`ON CONFLICT`), stay on v1.
+columns a given row omits so Postgres column defaults apply), validate the insert
+permission over the inserted columns, and emit `CREATED` then `UPSERTED` from an
+all-columns re-select of the inserted ids — matching the v1 insert builder. Relation
+`{connect}` / `{disconnect}` input is resolved to join columns by
+`resolveNestedRelationsForOrmV2` before the write, exactly as on the update path; only
+records that set a files field carve back to v1.
 
 ## Transactions and merge
 
@@ -203,14 +207,18 @@ splits the input into inserts and updates, then inserts the new records and upda
 matched ones. The insert half routes through `runInsert`; the update half through
 `runBatchUpdate`, which runs each per-id update as its own statement but emits one batch
 `UPDATED` + `UPSERTED` over the collected before/after images, matching v1's `updateMany`.
-The read-then-split and conflict-target derivation are unchanged.
+Both halves resolve relation `{connect}` / `{disconnect}` input to join columns through
+`resolveNestedRelationsForOrmV2` first, just like the plain create and update paths. The
+read-then-split and conflict-target derivation are unchanged.
 
 ## Not covered yet
 
-- Relation connect/disconnect and files-field input on writes, resolved by
-  `RelationNestedQueries` / `FilesFieldSync`. Update, create, upsert and merge carve these
-  back to v1 per request; a request that sets `{connect}` / `{disconnect}` or a files field
-  runs entirely on v1. Relation *join columns* are plain FK writes and stay on v2.
+- Files-field input on writes, resolved by `FilesFieldSync`, which is coupled to the
+  TypeORM builder. Update, create and upsert carve a records-set-a-files-field request back
+  to v1; merge additionally carves back when its merged data sets a relation by name.
+  Relation `{connect}` / `{disconnect}` input on create, update and upsert is resolved to
+  join columns before the v2 write, so it no longer forces v1. Relation *join columns* are
+  plain FK writes and stay on v2 throughout.
 - `find` / `findOne` / `findBy` and the rest of the repository surface used by
   `src/modules`.
 - DDL.

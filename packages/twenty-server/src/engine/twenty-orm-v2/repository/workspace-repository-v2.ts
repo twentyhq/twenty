@@ -105,6 +105,10 @@ export class WorkspaceRepositoryV2 {
     this.applyRowLevelPermissionPredicates(queryBuilder);
   }
 
+  getInternalContext(): WorkspaceInternalContext {
+    return this.options.internalContext;
+  }
+
   async runInsert({
     records,
     columnsToReturn,

@@ -33,10 +33,6 @@ export const writeDataIsSupportedByOrmV2 = ({
       return false;
     }
 
-    return (
-      fieldMetadata.type !== FieldMetadataType.RELATION &&
-      fieldMetadata.type !== FieldMetadataType.MORPH_RELATION &&
-      fieldMetadata.type !== FieldMetadataType.FILES
-    );
+    return fieldMetadata.type !== FieldMetadataType.FILES;
   });
 };

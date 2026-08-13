@@ -58,24 +58,22 @@ describe('writeDataIsSupportedByOrmV2', () => {
     );
   });
 
-  it('should return false when a relation field is set', () => {
+  it('should return true when a relation connect field is set', () => {
     expect(callWith({ company: { connect: { where: { id: 'x' } } } })).toBe(
-      false,
+      true,
     );
   });
 
-  it('should return false when a morph relation field is set', () => {
-    expect(callWith({ owner: { connect: { where: { id: 'x' } } } })).toBe(
-      false,
-    );
+  it('should return true when a morph relation connect field is set', () => {
+    expect(callWith({ owner: { connect: { where: { id: 'x' } } } })).toBe(true);
   });
 
   it('should return false when a files field is set', () => {
     expect(callWith({ attachments: [] })).toBe(false);
   });
 
-  it('should resolve a relation set through its join column name', () => {
-    expect(callWith({ companyId: 'company-id' })).toBe(false);
+  it('should return true for a relation set through its join column name', () => {
+    expect(callWith({ companyId: 'company-id' })).toBe(true);
   });
 
   it('should return false for an unknown field', () => {

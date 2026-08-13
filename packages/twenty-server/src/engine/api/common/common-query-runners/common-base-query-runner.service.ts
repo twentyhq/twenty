@@ -1,7 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { type PermissionFlagType } from 'twenty-shared/constants';
-import { FeatureFlagKey, type ObjectRecord } from 'twenty-shared/types';
+import {
+  FeatureFlagKey,
+  FieldMetadataType,
+  type ObjectRecord,
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -53,7 +58,9 @@ import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   PermissionsException,
@@ -61,6 +68,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { RelationNestedQueries } from 'src/engine/twenty-orm/field-operations/relation-nested-queries/relation-nested-queries';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
@@ -450,6 +458,17 @@ export abstract class CommonBaseQueryRunnerService<
     if (ormV2CanHandle) {
       const writeRepository = this.getWriteRepository(queryRunnerContext);
 
+      const resolvedData =
+        kind === 'update' && isDefined(data)
+          ? (
+              await this.resolveNestedRelationsForOrmV2({
+                records: [data],
+                queryRunnerContext,
+                writeRepository,
+              })
+            )[0]
+          : data;
+
       const { selectQueryBuilder, rowLevelPermissionsApplied } =
         buildMutationQueryBuilderV2({
           repository: writeRepository,
@@ -463,7 +482,7 @@ export abstract class CommonBaseQueryRunnerService<
         rowLevelPermissionsApplied,
         kind,
         columnsToReturn,
-        data,
+        data: resolvedData,
       });
     }
 
@@ -496,6 +515,66 @@ export abstract class CommonBaseQueryRunnerService<
       .execute();
 
     return result.generatedMaps as ObjectRecord[];
+  }
+
+  protected async resolveNestedRelationsForOrmV2({
+    records,
+    queryRunnerContext,
+    writeRepository,
+  }: {
+    records: Partial<ObjectRecord>[];
+    queryRunnerContext: CommonExtendedQueryRunnerContext;
+    writeRepository: WorkspaceRepositoryV2;
+  }): Promise<Partial<ObjectRecord>[]> {
+    const { repository, flatObjectMetadata, flatFieldMetadataMaps } =
+      queryRunnerContext;
+    const nameSingular = flatObjectMetadata.nameSingular;
+
+    const relationNestedQueries = new RelationNestedQueries(
+      writeRepository.getInternalContext(),
+    );
+
+    const relationNestedConfig =
+      relationNestedQueries.prepareNestedRelationQueries(records, nameSingular);
+
+    if (!isDefined(relationNestedConfig)) {
+      return records;
+    }
+
+    const resolvedRecords =
+      await relationNestedQueries.processRelationNestedQueries({
+        entities: records,
+        relationNestedConfig,
+        queryBuilder: repository.createQueryBuilder(nameSingular),
+      });
+
+    const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
+    );
+
+    return resolvedRecords.map((record) => {
+      const columnKeyedRecord: Partial<ObjectRecord> = {};
+
+      for (const [fieldName, value] of Object.entries(record)) {
+        const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: fieldIdByName[fieldName],
+          flatEntityMaps: flatFieldMetadataMaps,
+        });
+
+        if (
+          isDefined(fieldMetadata) &&
+          (fieldMetadata.type === FieldMetadataType.RELATION ||
+            fieldMetadata.type === FieldMetadataType.MORPH_RELATION)
+        ) {
+          continue;
+        }
+
+        columnKeyedRecord[fieldName] = value;
+      }
+
+      return columnKeyedRecord;
+    });
   }
 
   protected getNestedRelationsReadPathOptions({
