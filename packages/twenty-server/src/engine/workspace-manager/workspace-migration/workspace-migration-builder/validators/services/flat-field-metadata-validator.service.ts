@@ -160,7 +160,6 @@ export class FlatFieldMetadataValidatorService {
         });
       }
     }
-    ///
 
     if (isDefined(flatEntityUpdate.name)) {
       validationResult.errors.push(

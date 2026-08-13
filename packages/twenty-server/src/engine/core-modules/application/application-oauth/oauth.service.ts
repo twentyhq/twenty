@@ -544,7 +544,6 @@ export class OAuthService {
         iat: decoded.iat,
       };
     } catch {
-      // Try as access token (with signature verification)
       try {
         const payload =
           await this.applicationTokenService.validateApplicationAccessToken(

@@ -16,7 +16,6 @@ export const mockedClientConfig: ClientConfig = {
   },
   frontDomain: 'localhost',
   defaultSubdomain: 'app',
-  subdomainMinLength: 3,
   analyticsEnabled: true,
   support: {
     supportDriver: SupportDriver.FRONT,

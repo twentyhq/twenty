@@ -98,7 +98,6 @@ export const useLoadCurrentUser = () => {
 
       setCurrentWorkspaceMember(workspaceMember);
 
-      // Initialize unified format preferences state
       initializeFormatPreferences(workspaceMember);
       dynamicActivate(
         (workspaceMember.locale as keyof typeof APP_LOCALES) ?? SOURCE_LOCALE,

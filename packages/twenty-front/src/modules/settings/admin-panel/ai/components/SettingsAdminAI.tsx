@@ -4,7 +4,9 @@ import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconBolt, IconRobot } from 'twenty-ui/icon';
+import { IconBolt, IconMessage, IconRobot } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/input';
+import { UndecoratedLink } from 'twenty-ui/navigation';
 import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import { Card } from 'twenty-ui/surfaces';
@@ -293,6 +295,21 @@ export const SettingsAdminAI = () => {
           />
         </Section>
       )}
+
+      <Section>
+        <H2Title
+          title={t`Chats`}
+          description={t`Browse AI chat threads across all workspaces, including onboarding chats`}
+        />
+        <UndecoratedLink to={getSettingsPath(SettingsPath.AdminPanelChats)}>
+          <Button
+            Icon={IconMessage}
+            title={t`View all chats`}
+            size="small"
+            variant="secondary"
+          />
+        </UndecoratedLink>
+      </Section>
 
       <Section>
         <H2Title

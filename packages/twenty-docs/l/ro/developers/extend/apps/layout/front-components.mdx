@@ -520,6 +520,39 @@ export default defineFrontComponent({
 });
 ```
 
+### Stocare
+
+`localStorage` și `sessionStorage` funcționează la fel ca într-o pagină normală, cu API-ul sincron standard. Cheile tale sunt limitate la instalarea aplicației tale și la utilizatorul autentificat: nicio altă aplicație nu le poate citi, iar un alt utilizator care se conectează în același browser pornește de la un spațiu de stocare gol. Valorile scrise în `localStorage` rămân pe dispozitiv între reîncărcări; `sessionStorage` durează pe durata sesiunii de browser.
+
+```tsx src/front-components/note-draft.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const NoteDraft = () => {
+  const [draft, setDraft] = useState(() => localStorage.getItem('draft') ?? '');
+
+  const handleChange = (nextDraft: string) => {
+    setDraft(nextDraft);
+    localStorage.setItem('draft', nextDraft);
+  };
+
+  return (
+    <textarea value={draft} onChange={(event) => handleChange(event.target.value)} />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-def0-890123456789',
+  name: 'note-draft',
+  description: 'Keeps an unsaved note on this device',
+  component: NoteDraft,
+});
+```
+
+Twenty stochează valorile în numele aplicației tale, astfel încât o operație de scriere este aplicată local imediat și salvată în fundal. Citirile nu așteaptă niciodată gazda. Nimic nu este sincronizat: valorile nu urmează utilizatorul într-un alt browser sau pe o altă mașină, așa că folosește [key-value store-ul](/l/ro/developers/extend/apps/logic/key-value-store) al unei logic function pentru orice trebuie să supraviețuiască unei schimbări de dispozitiv.
+
+Scrierile sunt limitate, iar fiecare limită ia în calcul caracterele, nu octeții: cheile au cel mult 512 caractere, o singură valoare are cel mult 262.144 de caractere, iar fiecare spațiu de stocare are cel mult 1.048.576 de caractere per aplicație și utilizator. O scriere care depășește o limită aruncă o eroare `QuotaExceededError`, la fel ca API-ul de browser.
+
 ### Lucrul cu mai multe înregistrări
 
 Folosiți `useSelectedRecordIds()` pentru a gestiona mai multe înregistrări selectate. Acest lucru este util pentru operațiuni în masă:
@@ -600,6 +633,43 @@ export default defineFrontComponent({
 ```
 
 Consultați [secțiunea despre resurse publice](/l/ro/developers/extend/apps/config/public-assets) pentru detalii.
+
+## Partajare dependențe între componentele din față
+
+În mod implicit, fiecare componentă din față grupează propria copie a bibliotecilor pe care le importă, astfel încât o aplicație cu cinci componente expediază React de cinci ori. Declară dependențe partajate în fișierul `pachet al aplicației tale. son` pentru a construi acele biblioteci o dată și a avea fiecare componentă a aplicației să le încarce dintr-un singur fișier cache:
+
+```json package.json
+{
+  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+}
+```
+
+Fiecare componentă importă apoi dependențele sale exact ca înainte - nimic nu modifică codul componentei tale:
+
+```tsx src/front-components/counter.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'counter',
+  component: Counter,
+});
+```
+
+Câteva lucruri de știut:
+
+* **Un pachet de dependențe partajate pentru fiecare aplicație.** Pachetul este construit din propriile dependențe ale aplicației dvs., așa că țineți controlul deplin asupra versiunilor pe care le expediați.
+* **Listați specificatorii pe care îi importați.** `douăzeci și ui/input` și `douăzeci și ui/afișează` sunt două intrări; doar un nume de pachet nu acoperă subcăile sale. Listarea `react` acoperă automat `react/jsx-runtime`.
+* **Distribuie `react-dom/client` alături de `react`.** Fiecare componentă redă prin `createRoot`, astfel lăsând-o înseamnă că fiecare componentă încă lipsește React DOM.
+* \*\*Pachetul este cacheat. \* Este servită sub un URL content-hash cu o geocutie mutabilă de lungă durată, astfel încât acesta este descărcat o dată și reutilizat pe toate componentele aplicației până când una dintre dependențele sale se schimbă.
+* **Componente care importă niciunul dintre pachetele partajate nu îl descarcă niciodată.**
 
 ## Stilizare
 
@@ -755,7 +825,7 @@ CSS-ul componentei, fie din `import './styles.css'`, CSS-in-JS sau un element `\
 
 ### Stocare și rețea
 
-`localStorage`, `sessionStorage`, IndexedDB, cookie-urile, Cache API și `BroadcastChannel` nu sunt disponibile, deoarece componenta rulează într-un worker cu o origine opacă. Pentru a păstra starea, apelează o [logic function](/l/ro/developers/extend/apps/logic/logic-functions) și folosește [key-value store-ul](/l/ro/developers/extend/apps/logic/key-value-store) acesteia.
+`localStorage` și `sessionStorage` sunt furnizate de Twenty, nu de browser: componenta rulează într-un worker cu o origine opacă, astfel încât gazda stochează valorile în numele aplicației tale. Consultă secțiunea [storage](#storage) pentru aria lor de aplicare și limite. IndexedDB, cookie-urile, Cache API și `BroadcastChannel` rămân indisponibile. Pentru a păstra starea între dispozitive, apelează o [logic function](/l/ro/developers/extend/apps/logic/logic-functions) și folosește [key-value store-ul](/l/ro/developers/extend/apps/logic/key-value-store) acesteia.
 
 `fetch` funcționează, cu unele rezerve:
 

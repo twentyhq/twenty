@@ -19,6 +19,7 @@ import { FieldWidgetRelationCard } from '@/page-layout/widgets/field/components/
 import { FieldWidgetRelationField } from '@/page-layout/widgets/field/components/FieldWidgetRelationField';
 import { FieldWidgetRelationTable } from '@/page-layout/widgets/field/components/FieldWidgetRelationTable';
 import { assertFieldWidgetOrThrow } from '@/page-layout/widgets/field/utils/assertFieldWidgetOrThrow';
+import { getFieldWidgetEffectiveDisplayMode } from '@/page-layout/widgets/field/utils/getFieldWidgetEffectiveDisplayMode';
 import { FieldWidgetTextEditor } from '@/page-layout/widgets/field/components/FieldWidgetTextEditor';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
@@ -97,7 +98,9 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
     labelWidth: 90,
   });
 
-  const fieldDisplayMode = widget.configuration.fieldDisplayMode;
+  const fieldDisplayMode = getFieldWidgetEffectiveDisplayMode(
+    widget.configuration,
+  );
 
   if (isFieldMorphRelation(fieldDefinition)) {
     if (fieldDisplayMode === FieldDisplayMode.CARD) {

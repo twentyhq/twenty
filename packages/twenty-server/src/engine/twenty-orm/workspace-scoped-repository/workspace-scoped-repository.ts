@@ -264,7 +264,6 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     return this.repository.createQueryBuilder(alias);
   }
 
-  // Returns a wrapper bound to the given EntityManager (transactions).
   withManager(manager: EntityManager): WorkspaceScopedRepository<T> {
     return new WorkspaceScopedRepository<T>(
       manager.getRepository(this.repository.target),

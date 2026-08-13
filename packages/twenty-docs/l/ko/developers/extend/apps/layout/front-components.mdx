@@ -520,6 +520,39 @@ export default defineFrontComponent({
 });
 ```
 
+### 저장소
+
+`localStorage`와 `sessionStorage`는 일반 페이지에서와 동일하게, 표준 동기식 API로 동작합니다. 키는 앱 설치와 로그인한 사용자 범위로만 한정됩니다. 다른 어떤 앱도 이 키를 읽을 수 없으며, 같은 브라우저에 다른 사용자가 로그인하면 비어 있는 저장소에서 시작합니다. `localStorage`에 기록된 값은 새로고침 후에도 기기에 그대로 남아 있고, `sessionStorage`는 브라우저 세션 동안만 유지됩니다.
+
+```tsx src/front-components/note-draft.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const NoteDraft = () => {
+  const [draft, setDraft] = useState(() => localStorage.getItem('draft') ?? '');
+
+  const handleChange = (nextDraft: string) => {
+    setDraft(nextDraft);
+    localStorage.setItem('draft', nextDraft);
+  };
+
+  return (
+    <textarea value={draft} onChange={(event) => handleChange(event.target.value)} />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-def0-890123456789',
+  name: 'note-draft',
+  description: 'Keeps an unsaved note on this device',
+  component: NoteDraft,
+});
+```
+
+Twenty가 앱을 대신해 값을 저장하므로, 쓰기 작업은 로컬에 즉시 반영되고 백그라운드에서 저장됩니다. 읽기 작업은 호스트를 기다리지 않습니다. 아무것도 동기화되지 않습니다. 값이 사용자를 다른 브라우저나 머신으로 따라가지 않으므로, 디바이스 변경 이후에도 유지되어야 하는 값에는 로직 함수의 [key-value store](/l/ko/developers/extend/apps/logic/key-value-store)를 사용하세요.
+
+쓰기에는 한도가 있으며, 모든 한도는 바이트가 아니라 문자 수를 기준으로 합니다. 키는 최대 512자, 단일 값은 최대 262,144자, 각 스토리지는 앱과 사용자당 최대 1,048,576자까지 저장할 수 있습니다. 한도를 초과하는 쓰기는 브라우저 API와 마찬가지로 `QuotaExceededError`를 발생시킵니다.
+
 ### 여러 기록과의 작업
 
 여러 개의 선택된 기록을 처리하려면 `useSelectedRecordIds()`를 사용하세요. 이는 일괄 작업에 유용합니다:
@@ -600,6 +633,43 @@ export default defineFrontComponent({
 ```
 
 자세한 내용은 [퍼블릭 에셋 섹션](/l/ko/developers/extend/apps/config/public-assets)을 참조하세요.
+
+## 프론트 컴포넌트 간의 의존성 공유하기
+
+기본적으로 각 프론트 컴포넌트는 가져온 라이브러리의 사본을 자체적으로 번들링하므로, 컴포넌트가 다섯 개인 앱은 React를 다섯 번 제공하게 됩니다. 앱의 `package.json`에서 공유 의존성을 선언해 해당 라이브러리들을 한 번만 빌드하고, 앱의 모든 컴포넌트가 단일 캐시 파일에서 이를 불러오도록 할 수 있습니다:
+
+```json package.json
+{
+  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+}
+```
+
+그다음 각 컴포넌트는 이전과 완전히 동일한 방식으로 의존성을 import하며, 컴포넌트 코드에는 아무런 변경이 필요하지 않습니다:
+
+```tsx src/front-components/counter.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'counter',
+  component: Counter,
+});
+```
+
+알아두면 좋은 몇 가지 사항:
+
+* **앱당 하나의 공유 의존성 번들.** 번들은 앱 자체의 의존성으로부터 빌드되므로, 배포하는 버전에 대한 완전한 통제권을 유지할 수 있습니다.
+* **가져오는 정확한 specifier를 나열하세요.** `twenty-ui/input`과 `twenty-ui/display`는 두 개의 항목이며, 패키지 이름만으로는 그 하위 경로가 포함되지 않습니다. `react`를 나열하면 `react/jsx-runtime`이 자동으로 포함됩니다.
+* **`react`와 함께 `react-dom/client`도 공유하세요.** 모든 컴포넌트는 `createRoot`를 통해 렌더링되므로, 이를 제외하면 각 컴포넌트가 여전히 React DOM을 번들링하게 됩니다.
+* **번들은 캐시됩니다.** 이 번들은 장기 불변 캐시가 적용된 content-hash URL로 제공되므로, 한 번만 다운로드된 뒤 의존성 중 하나가 변경될 때까지 앱의 모든 컴포넌트에서 재사용됩니다.
+* **공유 패키지를 전혀 import하지 않는 컴포넌트는 이 번들을 다운로드하지 않습니다.**
 
 ## 스타일링
 
@@ -755,7 +825,7 @@ Front 컴포넌트는 활발히 개발 중입니다. 렌더링, 스타일링 및
 
 ### 스토리지와 네트워크
 
-`localStorage`, `sessionStorage`, IndexedDB, 쿠키, Cache API 및 `BroadcastChannel`은 모두 사용할 수 없습니다. 컴포넌트가 불투명한 origin의 워커에서 실행되기 때문입니다. 상태를 영속화하려면 [logic function](/l/ko/developers/extend/apps/logic/logic-functions)을 호출하고, 해당 [key-value store](/l/ko/developers/extend/apps/logic/key-value-store)를 사용하세요.
+`localStorage`와 `sessionStorage`는 브라우저가 아니라 Twenty에서 제공합니다. 컴포넌트는 불투명 출처의 워커에서 실행되므로, 호스트가 앱을 대신해 값을 저장합니다. 범위와 한도에 대해서는 [storage](#storage)를 참조하세요. IndexedDB, 쿠키, Cache API 및 `BroadcastChannel`은 여전히 사용할 수 없습니다. 디바이스 간에 상태를 영속화하려면 [logic function](/l/ko/developers/extend/apps/logic/logic-functions)을 호출하고 해당 [key-value store](/l/ko/developers/extend/apps/logic/key-value-store)를 사용하세요.
 
 `fetch`는 동작하지만, 몇 가지 주의사항이 있습니다:
 

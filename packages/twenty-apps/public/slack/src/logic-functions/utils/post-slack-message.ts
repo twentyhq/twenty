@@ -1,4 +1,5 @@
 import { type WebClient } from '@slack/web-api';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { type SlackPostMessageInput } from 'src/logic-functions/types/slack-post-message-input.type';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
@@ -15,12 +16,21 @@ export const postSlackMessage = async (
 
   return await sendSlackMessageWithBodyFallbacks({
     messageText: parameters.messageText,
-    messageBody: { messageFormat: parameters.messageFormat },
+    messageBody: {
+      messageFormat: parameters.messageFormat,
+      messageBlocks: parameters.messageBlocks,
+    },
     failureMessage: 'Failed to post Slack message',
     sendMessage: async (bodyFields) => {
       const data = await client.chat.postMessage({
         channel: parameters.slackChannelId,
         thread_ts: parentTimestamp,
+        ...(isDefined(parameters.unfurlLinks)
+          ? { unfurl_links: parameters.unfurlLinks }
+          : {}),
+        ...(isDefined(parameters.unfurlMedia)
+          ? { unfurl_media: parameters.unfurlMedia }
+          : {}),
         ...bodyFields,
       });
 

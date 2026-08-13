@@ -13,6 +13,7 @@ type SlackInboundEvent = {
   ts?: string;
   thread_ts?: string;
   channel?: string;
+  tab?: string;
 };
 
 export type SlackEventsRequestBody = {

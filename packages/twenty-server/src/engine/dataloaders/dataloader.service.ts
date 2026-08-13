@@ -9,10 +9,12 @@ import { type IndexMetadataInterface } from 'src/engine/metadata-modules/index-m
 
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationTranslationCacheService } from 'src/engine/core-modules/application/application-translation/application-translation-cache.service';
-import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
+import { FieldMetadataConnectionLoaderFactory } from 'src/engine/dataloaders/factories/field-metadata-connection-loader.factory';
+import { IndexMetadataConnectionLoaderFactory } from 'src/engine/dataloaders/factories/index-metadata-connection-loader.factory';
 import { filterMorphRelationDuplicateFields } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
+import { loadApplicationCatalogsByRegistrationId } from 'src/engine/dataloaders/utils/load-application-catalogs-by-registration-id.util';
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -144,13 +146,19 @@ export class DataloaderService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationTranslationCacheService: ApplicationTranslationCacheService,
+    private readonly fieldMetadataConnectionLoaderFactory: FieldMetadataConnectionLoaderFactory,
+    private readonly indexMetadataConnectionLoaderFactory: IndexMetadataConnectionLoaderFactory,
   ) {}
 
   createLoaders(): IDataloaders {
     const relationLoader = this.createRelationLoader();
     const morphRelationLoader = this.createMorphRelationLoader();
     const fieldMetadataLoader = this.createFieldMetadataLoader();
+    const fieldMetadataConnectionLoader =
+      this.fieldMetadataConnectionLoaderFactory.create();
     const indexMetadataLoader = this.createIndexMetadataLoader();
+    const indexMetadataConnectionLoader =
+      this.indexMetadataConnectionLoaderFactory.create();
     const indexFieldMetadataLoader = this.createIndexFieldMetadataLoader();
     const searchFieldMetadataLoader = this.createSearchFieldMetadataLoader();
     const objectMetadataLoader = this.createObjectMetadataLoader();
@@ -174,7 +182,9 @@ export class DataloaderService {
       relationLoader,
       morphRelationLoader,
       fieldMetadataLoader,
+      fieldMetadataConnectionLoader,
       indexMetadataLoader,
+      indexMetadataConnectionLoader,
       indexFieldMetadataLoader,
       searchFieldMetadataLoader,
       objectMetadataLoader,
@@ -398,12 +408,14 @@ export class DataloaderService {
         );
 
         const applicationCatalogByRegistrationId =
-          await this.loadApplicationCatalogByRegistrationId({
+          await loadApplicationCatalogsByRegistrationId({
             applicationIds: objectFlatFieldMetadatasList
               .flat()
               .map((flatFieldMetadata) => flatFieldMetadata.applicationId),
             flatApplicationMaps,
             locale: safeLocale,
+            applicationTranslationCacheService:
+              this.applicationTranslationCacheService,
           });
 
         const fieldMetadataCollection = objectFlatFieldMetadatasList.map(
@@ -902,10 +914,12 @@ export class DataloaderService {
         getTwentyStandardApplicationIdOrThrow(flatApplicationMaps);
 
       const catalogByRegistrationId =
-        await this.loadApplicationCatalogByRegistrationId({
+        await loadApplicationCatalogsByRegistrationId({
           applicationIds: params.map((param) => param.applicationId),
           flatApplicationMaps,
           locale,
+          applicationTranslationCacheService:
+            this.applicationTranslationCacheService,
         });
 
       return params.map((param) => {
@@ -922,43 +936,5 @@ export class DataloaderService {
           : undefined;
       });
     });
-  }
-
-  private async loadApplicationCatalogByRegistrationId({
-    applicationIds,
-    flatApplicationMaps,
-    locale,
-  }: {
-    applicationIds: string[];
-    flatApplicationMaps: FlatApplicationCacheMaps;
-    locale: keyof typeof APP_LOCALES;
-  }): Promise<Map<string, Record<string, string>>> {
-    const registrationIds = [
-      ...new Set(
-        applicationIds
-          .map(
-            (applicationId) =>
-              flatApplicationMaps.byId[applicationId]
-                ?.applicationRegistrationId,
-          )
-          .filter(isDefined),
-      ),
-    ];
-
-    const catalogByRegistrationId = new Map<string, Record<string, string>>();
-
-    await Promise.all(
-      registrationIds.map(async (applicationRegistrationId) => {
-        const catalog =
-          await this.applicationTranslationCacheService.getCatalog({
-            applicationRegistrationId,
-            locale,
-          });
-
-        catalogByRegistrationId.set(applicationRegistrationId, catalog);
-      }),
-    );
-
-    return catalogByRegistrationId;
   }
 }

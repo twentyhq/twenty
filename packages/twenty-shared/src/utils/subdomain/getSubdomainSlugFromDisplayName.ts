@@ -2,7 +2,7 @@ import { slugify } from 'transliteration';
 
 import { isDefined } from '@/utils/validation/isDefined';
 
-const SUBDOMAIN_MIN_LENGTH = 3;
+const SUBDOMAIN_MIN_LENGTH = 1;
 const SUBDOMAIN_MAX_LENGTH = 30;
 
 export const getSubdomainSlugFromDisplayName = (

@@ -4,4 +4,5 @@ export type CommandMenuItemContainerType =
   | 'index-page-dropdown'
   | 'show-page-header'
   | 'standalone-page-header'
-  | 'command-menu-show-page-dropdown';
+  | 'command-menu-show-page-dropdown'
+  | 'side-panel-footer';

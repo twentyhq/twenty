@@ -15,4 +15,7 @@ export const buildFrontComponentHostCommunicationApiFromThreadImports = (
   closeSidePanel: hostThreadImports.closeSidePanel,
   updateProgress: hostThreadImports.updateProgress,
   copyToClipboard: hostThreadImports.copyToClipboard,
+  storageSet: hostThreadImports.storageSet,
+  storageDelete: hostThreadImports.storageDelete,
+  storageClear: hostThreadImports.storageClear,
 });

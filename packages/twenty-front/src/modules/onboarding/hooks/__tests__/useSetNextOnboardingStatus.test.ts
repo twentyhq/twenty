@@ -10,6 +10,7 @@ import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isB
 import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
 import { ONBOARDING_BOOK_CALL_PENDING_USER_VAR_KEY } from '@/onboarding/constants/OnboardingBookCallPendingUserVarKey';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
+import { type OnboardingStepHistoryEffect } from '@/onboarding/types/OnboardingStepHistoryEffect';
 import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -34,8 +35,10 @@ type RenderHooksOptions = {
   isBillingEnabled?: boolean;
   withOneWorkspaceMember?: boolean;
   isOnboardingAiChatEnabled?: boolean;
+  stepHistoryEffect?: OnboardingStepHistoryEffect;
   isBookCallOnboardingStepEnabled?: boolean;
   isBookCallOnboardingStepPending?: boolean;
+  isWorkspaceCreator?: boolean;
 };
 
 const renderHooks = (
@@ -45,8 +48,10 @@ const renderHooks = (
     isBillingEnabled = false,
     withOneWorkspaceMember = true,
     isOnboardingAiChatEnabled = false,
+    stepHistoryEffect = 'leaveUnchanged',
     isBookCallOnboardingStepEnabled = false,
     isBookCallOnboardingStepPending = false,
+    isWorkspaceCreator = true,
   }: RenderHooksOptions = {},
 ) => {
   jotaiStore.set(
@@ -92,6 +97,7 @@ const renderHooks = (
     result.current.setCurrentUser({
       ...mockedUserData,
       onboardingStatus,
+      isWorkspaceCreator,
       userVars: {
         ...mockedUserData.userVars,
         [ONBOARDING_BOOK_CALL_PENDING_USER_VAR_KEY]:
@@ -116,10 +122,12 @@ const renderHooks = (
     );
   });
   act(() => {
-    result.current.setNextOnboardingStatus();
+    result.current.setNextOnboardingStatus({ stepHistoryEffect });
   });
   return {
     nextOnboardingStatus: result.current.currentUser?.onboardingStatus,
+    previousOnboardingStatus:
+      result.current.currentUser?.previousOnboardingStatus,
     isWelcomeAnimationVisible: result.current.isWelcomeAnimationVisible,
     shouldOpenAiChatAfterOnboarding:
       result.current.shouldOpenAiChatAfterOnboarding,
@@ -375,6 +383,16 @@ describe('useSetNextOnboardingStatus', () => {
     expect(shouldOpenAiChatAfterOnboarding).toBe(true);
   });
 
+  it('should not open the ai chat after onboarding for an invitee', () => {
+    const { isWelcomeAnimationVisible, shouldOpenAiChatAfterOnboarding } =
+      renderHooks(OnboardingStatus.INVITE_TEAM, {
+        isOnboardingAiChatEnabled: true,
+        isWorkspaceCreator: false,
+      });
+    expect(isWelcomeAnimationVisible).toBe(true);
+    expect(shouldOpenAiChatAfterOnboarding).toBe(false);
+  });
+
   it('should still show the welcome animation when the ai chat is disabled', () => {
     const { isWelcomeAnimationVisible, shouldOpenAiChatAfterOnboarding } =
       renderHooks(OnboardingStatus.INVITE_TEAM, {
@@ -382,6 +400,30 @@ describe('useSetNextOnboardingStatus', () => {
       });
     expect(isWelcomeAnimationVisible).toBe(true);
     expect(shouldOpenAiChatAfterOnboarding).toBe(false);
+  });
+
+  it('should make the left step the one to go back to when it was reversible', () => {
+    const { previousOnboardingStatus } = renderHooks(
+      OnboardingStatus.SYNC_EMAIL,
+      { stepHistoryEffect: 'recordAsReversible' },
+    );
+    expect(previousOnboardingStatus).toEqual(OnboardingStatus.SYNC_EMAIL);
+  });
+
+  it('should keep the earlier reversible step when the left step was not reversible', () => {
+    const { previousOnboardingStatus } = renderHooks(
+      OnboardingStatus.SYNC_EMAIL,
+      { stepHistoryEffect: 'leaveUnchanged' },
+    );
+    expect(previousOnboardingStatus).toBeUndefined();
+  });
+
+  it('should drop every step to go back to after an irreversible step', () => {
+    const { previousOnboardingStatus } = renderHooks(
+      OnboardingStatus.INVITE_TEAM,
+      { stepHistoryEffect: 'clearAfterIrreversibleStep' },
+    );
+    expect(previousOnboardingStatus).toBeNull();
   });
 
   it('should stay on the plan step when advancing from it without a subscription', () => {
@@ -431,7 +473,7 @@ describe('useSetNextOnboardingStatus', () => {
           [ONBOARDING_BOOK_CALL_PENDING_USER_VAR_KEY]: true,
         },
       }));
-      advanceCapturedBeforeEnrichment();
+      advanceCapturedBeforeEnrichment({ stepHistoryEffect: 'leaveUnchanged' });
     });
 
     expect(jotaiStore.get(currentUserState.atom)?.onboardingStatus).toEqual(
@@ -461,7 +503,7 @@ describe('useSetNextOnboardingStatus', () => {
         ...mockedUserData,
         onboardingStatus: OnboardingStatus.SYNC_EMAIL,
       });
-      advanceCapturedBeforeActivation();
+      advanceCapturedBeforeActivation({ stepHistoryEffect: 'leaveUnchanged' });
     });
 
     expect(jotaiStore.get(currentUserState.atom)?.onboardingStatus).toEqual(

@@ -29,14 +29,23 @@ import {
   WorkspaceCacheExceptionCode,
 } from 'src/engine/workspace-cache/exceptions/workspace-cache.exception';
 import {
-  WORKSPACE_CACHE_KEYS_V2,
   WorkspaceCacheKeyName,
   type WorkspaceCacheDataMap,
   type WorkspaceCacheResult,
   type WorkspaceCacheResultWithHashes,
+  type WorkspaceCacheStoredDataMap,
 } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
-import { type WorkspaceLocalCacheEntry } from 'src/engine/workspace-cache/types/workspace-local-cache-entry.type';
+import {
+  type VersionEntry,
+  type WorkspaceLocalCacheEntry,
+} from 'src/engine/workspace-cache/types/workspace-local-cache-entry.type';
 import { combineCacheHashes } from 'src/engine/workspace-cache/utils/combine-cache-hashes.util';
+import { getKeyNameFromLocalCacheKey } from 'src/engine/workspace-cache/utils/get-key-name-from-local-cache-key.util';
+import { packIdleVersions } from 'src/engine/workspace-cache/utils/pack-idle-versions.util';
+import {
+  deserializeCacheBlob,
+  serializeCacheBlob,
+} from 'src/engine/workspace-cache/utils/serialize-cache-blob.util';
 import { sweepLocalCache } from 'src/engine/workspace-cache/utils/sweep-local-cache.util';
 
 const LOCAL_TTL_MS = 100; // 100ms
@@ -48,11 +57,16 @@ const MAX_LOCAL_CACHE_ENTRIES = 6_000;
 const MIN_EVICT_KEYS = 100;
 const LOCAL_ENTRY_TTL_MS = 30 * 60 * 1000; // 30 minutes idle
 const LOCAL_CACHE_SWEEP_INTERVAL_MS = 60 * 1000;
+const PACKING_INTERVAL_MS = 500;
+const PACKING_PONDERATION_BUDGET = 64;
+const MIN_IDLE_BEFORE_PACKING_MS = 60 * 1000;
 // Per-provider entry caps, keyed by local cache key prefix (ORM graphs are ~5 MB each).
-const MAX_LOCAL_ENTRIES_BY_PREFIX = new Map<string, number>([
-  [WORKSPACE_CACHE_KEYS_V2.ORMEntityMetadatas, 128],
+const MAX_LOCAL_ENTRIES_BY_KEY_NAME = new Map<string, number>([
+  ['ORMEntityMetadatas', 128],
+  ['flatFieldMetadataMaps', 256],
 ]);
 type CacheDataType = WorkspaceCacheDataMap[WorkspaceCacheKeyName];
+type StoredCacheDataType = WorkspaceCacheStoredDataMap[WorkspaceCacheKeyName];
 
 type CacheEntriesResult = {
   data: Partial<WorkspaceCacheDataMap>;
@@ -72,12 +86,17 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     string,
     WorkspaceLocalCacheEntry<CacheDataType>
   >();
-  private lastLocalCacheSweepAt: number | undefined;
+  private sweepTimer?: ReturnType<typeof setInterval>;
+  private packingTimer?: ReturnType<typeof setInterval>;
   private readonly workspaceCacheProviders = new Map<
     WorkspaceCacheKeyName,
-    WorkspaceCacheProvider<CacheDataType>
+    WorkspaceCacheProvider<CacheDataType, StoredCacheDataType>
   >();
   private readonly localDataOnlyKeys = new Set<WorkspaceCacheKeyName>();
+  private readonly packingPonderationByKey = new Map<
+    WorkspaceCacheKeyName,
+    number
+  >();
   private readonly memoizer = new PromiseMemoizer<CacheEntriesResult>(
     MEMOIZER_TTL_MS,
   );
@@ -120,17 +139,45 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
             instance.constructor,
           );
 
-        if (options?.localDataOnly) {
-          this.localDataOnlyKeys.add(workspaceCacheKeyName);
+        if (isDefined(options)) {
+          if (options.localDataOnly) {
+            this.localDataOnlyKeys.add(workspaceCacheKeyName);
+          }
+
+          this.packingPonderationByKey.set(
+            workspaceCacheKeyName,
+            options.packingPonderation,
+          );
         }
       }
     }
 
     this.cacheMetricsService.start(this.localCache);
+    this.startMaintenanceTimers();
   }
 
   onModuleDestroy(): void {
+    if (isDefined(this.sweepTimer)) {
+      clearInterval(this.sweepTimer);
+    }
+    if (isDefined(this.packingTimer)) {
+      clearInterval(this.packingTimer);
+    }
     this.cacheMetricsService.stop();
+  }
+
+  private startMaintenanceTimers(): void {
+    this.sweepTimer = setInterval(
+      () => this.sweepLocalCache(),
+      LOCAL_CACHE_SWEEP_INTERVAL_MS,
+    );
+    this.sweepTimer.unref();
+
+    this.packingTimer = setInterval(
+      () => this.runPacking(),
+      PACKING_INTERVAL_MS,
+    );
+    this.packingTimer.unref();
   }
 
   public async getOrRecompute<const K extends WorkspaceCacheKeyName[]>(
@@ -151,7 +198,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     workspaceId: string,
     cacheKeyNames: K,
   ): Promise<WorkspaceCacheResultWithHashes<K>> {
-    this.sweepLocalCacheIfDue();
     this.assertValidCacheParameters(workspaceId, cacheKeyNames);
 
     const memoKey =
@@ -160,7 +206,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     const result = await this.memoizer.memoizePromiseAndExecute(
       memoKey,
       async () => {
-        // Stage 1: Check local TTL
         const { freshKeys, staleKeys } = this.checkLocalTTL(
           workspaceId,
           cacheKeyNames,
@@ -171,7 +216,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
           return freshEntries;
         }
 
-        // Stage 2: Validate ttl stale keys against Redis hash
         const {
           validKeys,
           keysNeedingDataFromRedis,
@@ -183,13 +227,11 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         );
         const validatedEntries = this.getFromLocalCache(workspaceId, validKeys);
 
-        // Stage 3: Fetch data from Redis
         const { redisEntries, missingInRedis } = await this.fetchDataFromRedis(
           workspaceId,
           keysNeedingDataFromRedis,
         );
 
-        // Stage 4: Recompute remaining
         const keysToRecompute = [...keysNeedingRecompute, ...missingInRedis];
         const recomputedEntries = await this.recomputeDataFromProvider(
           workspaceId,
@@ -261,10 +303,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         await this.recomputeDataFromProvider(workspaceId, cacheKeyNames, {
           strategy: 'mint',
         });
-
-        // Invalidation writes entries too, so run the sweep here as well — otherwise an
-        // invalidate-only workload never enforces the per-provider caps.
-        this.sweepLocalCacheIfDue();
 
         // Clear memoizer again after recomputation to evict any stale entries
         // cached by concurrent getOrRecompute calls during the flush window.
@@ -431,10 +469,23 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     );
 
     for (const [index, keyName] of cacheKeyNames.entries()) {
-      const data = allValues[index * 2] as CacheDataType | undefined;
+      const rawData = allValues[index * 2] as CacheDataType | undefined;
       const hash = allValues[index * 2 + 1] as string | undefined;
 
-      if (isDefined(data) && isDefined(hash)) {
+      if (isDefined(rawData) && isDefined(hash)) {
+        let data: CacheDataType;
+
+        try {
+          data = this.getProviderOrThrow(keyName).expandFromStorage(rawData);
+        } catch (error) {
+          this.logger.warn(
+            `Failed to expand cached ${keyName} for workspace ${workspaceId}, recomputing`,
+            error,
+          );
+          missingInRedis.push(keyName);
+          continue;
+        }
+
         Object.assign(redisEntries.data, { [keyName]: data });
         redisEntries.hashes[keyName] = hash;
         this.setInLocalCache(workspaceId, keyName, data, hash);
@@ -499,7 +550,10 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
     const computed = await Promise.all(computePromises);
 
-    const redisEntries: Array<{ key: string; value: unknown }> = [];
+    const redisEntries: Array<{
+      key: string;
+      value: StoredCacheDataType | string;
+    }> = [];
     const bootstrapHashEntries: Array<{ key: string; value: string }> = [];
 
     for (const { keyName, data, hash, isAdopted } of computed) {
@@ -518,7 +572,10 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       }
 
       if (!isLocalDataOnly) {
-        redisEntries.push({ key: `${baseKey}:data`, value: data });
+        redisEntries.push({
+          key: `${baseKey}:data`,
+          value: this.getProviderOrThrow(keyName).compactForStorage(data),
+        });
       }
 
       this.setInLocalCache(workspaceId, keyName, data, hash);
@@ -562,8 +619,14 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       const version = entry?.versions.get(entry.latestHash);
 
       if (isDefined(entry) && isDefined(version)) {
-        version.lastReadAt = Date.now();
-        Object.assign(result.data, { [keyName]: version.data });
+        const data = this.readVersion({
+          keyName,
+          entry,
+          hash: entry.latestHash,
+          version,
+        });
+
+        Object.assign(result.data, { [keyName]: data });
         result.hashes[keyName] = entry.latestHash;
         this.cleanupStaleVersions(entry);
       }
@@ -613,27 +676,19 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       this.localCache.set(localKey, entry);
     }
 
-    entry.versions.set(hash, { data, lastReadAt: Date.now() });
+    entry.versions.set(hash, { state: 'live', data, lastReadAt: Date.now() });
     entry.latestHash = hash;
     entry.lastHashCheckedAt = Date.now();
 
     this.cleanupStaleVersions(entry);
   }
 
-  private sweepLocalCacheIfDue(): void {
+  private sweepLocalCache(): void {
     const now = Date.now();
-
-    if (
-      isDefined(this.lastLocalCacheSweepAt) &&
-      now - this.lastLocalCacheSweepAt < LOCAL_CACHE_SWEEP_INTERVAL_MS
-    ) {
-      return;
-    }
-    this.lastLocalCacheSweepAt = now;
 
     const evicted = sweepLocalCache(this.localCache, now, {
       ttlMs: LOCAL_ENTRY_TTL_MS,
-      maxEntriesByPrefix: MAX_LOCAL_ENTRIES_BY_PREFIX,
+      maxEntriesByKeyName: MAX_LOCAL_ENTRIES_BY_KEY_NAME,
       globalMaxEntries: MAX_LOCAL_CACHE_ENTRIES,
       minEvict: MIN_EVICT_KEYS,
     });
@@ -641,6 +696,75 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     if (evicted > 0) {
       this.cacheMetricsService.recordEviction(evicted);
     }
+  }
+
+  private runPacking(): void {
+    const startedAt = performance.now();
+
+    const { packed, pending } = packIdleVersions({
+      localCache: this.localCache,
+      minIdleMs: MIN_IDLE_BEFORE_PACKING_MS,
+      ponderationBudget: PACKING_PONDERATION_BUDGET,
+      ponderationOf: (localKey) =>
+        this.packingPonderationByKey.get(
+          getKeyNameFromLocalCacheKey(localKey) as WorkspaceCacheKeyName,
+        )!,
+      isPackable: (localKey) =>
+        !this.localDataOnlyKeys.has(
+          getKeyNameFromLocalCacheKey(localKey) as WorkspaceCacheKeyName,
+        ),
+      pack: ({ localKey, data }) => {
+        const keyName = getKeyNameFromLocalCacheKey(
+          localKey,
+        ) as WorkspaceCacheKeyName;
+
+        return serializeCacheBlob(
+          this.getProviderOrThrow(keyName).compactForStorage(data),
+        );
+      },
+    });
+
+    this.cacheMetricsService.recordPackingRun({
+      durationSeconds: (performance.now() - startedAt) / 1000,
+      packed,
+      pending,
+    });
+  }
+
+  private readVersion({
+    keyName,
+    entry,
+    hash,
+    version,
+  }: {
+    keyName: WorkspaceCacheKeyName;
+    entry: WorkspaceLocalCacheEntry<CacheDataType>;
+    hash: string;
+    version: VersionEntry<CacheDataType>;
+  }): CacheDataType {
+    if (version.state === 'live') {
+      version.lastReadAt = Date.now();
+
+      return version.data;
+    }
+
+    const unpackStartedAt = performance.now();
+    const data = this.getProviderOrThrow(keyName).expandFromStorage(
+      deserializeCacheBlob(version.blob),
+    );
+
+    entry.versions.set(hash, {
+      state: 'live',
+      data,
+      lastReadAt: Date.now(),
+    });
+
+    this.cacheMetricsService.recordUnpacking(
+      (performance.now() - unpackStartedAt) / 1000,
+      keyName,
+    );
+
+    return data;
   }
 
   private cleanupStaleVersions(
@@ -677,7 +801,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
   private getProviderOrThrow(
     keyName: WorkspaceCacheKeyName,
-  ): WorkspaceCacheProvider<CacheDataType> {
+  ): WorkspaceCacheProvider<CacheDataType, StoredCacheDataType> {
     const provider = this.workspaceCacheProviders.get(keyName);
 
     if (!isDefined(provider)) {
@@ -691,6 +815,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     workspaceId: string,
     keyName: WorkspaceCacheKeyName,
   ): string {
-    return `${WORKSPACE_CACHE_KEYS_V2[keyName]}:${workspaceId}`;
+    return `${keyName}:${workspaceId}`;
   }
 }
