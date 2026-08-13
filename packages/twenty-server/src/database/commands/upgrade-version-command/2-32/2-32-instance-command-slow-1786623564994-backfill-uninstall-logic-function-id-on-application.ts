@@ -11,7 +11,9 @@ import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 // function owned by the application in the same workspace, so a registration
 // manifest that advanced past the installed release cannot pin a foreign
 // function. Unresolvable declarations stay NULL (hook skipped, as before) and
-// self-heal on the application's next sync.
+// self-heal on the application's next sync. The comparison casts the uuid
+// column to text rather than the manifest value to uuid: uuid-to-text never
+// fails, so a malformed manifest value cannot abort the upgrade.
 @RegisteredInstanceCommand('2.32.0', 1786623564994, { type: 'slow' })
 export class BackfillUninstallLogicFunctionIdOnApplicationSlowInstanceCommand
   implements SlowInstanceCommand
@@ -31,7 +33,7 @@ export class BackfillUninstallLogicFunctionIdOnApplicationSlowInstanceCommand
          AND "applicationRegistration"."manifest" -> 'application' -> 'uninstallLogicFunction' ->> 'universalIdentifier' IS NOT NULL
          AND "logicFunction"."workspaceId" = "application"."workspaceId"
          AND "logicFunction"."applicationId" = "application"."id"
-         AND "logicFunction"."universalIdentifier" = ("applicationRegistration"."manifest" -> 'application' -> 'uninstallLogicFunction' ->> 'universalIdentifier')::uuid
+         AND "logicFunction"."universalIdentifier"::text = lower("applicationRegistration"."manifest" -> 'application' -> 'uninstallLogicFunction' ->> 'universalIdentifier')
          AND "logicFunction"."deletedAt" IS NULL
          AND "application"."deletedAt" IS NULL
          RETURNING "application"."id"
