@@ -62,6 +62,7 @@ export class SyncMessageFoldersService {
     const discoveredFolders = await this.discoverAllFolders(
       messageChannel.connectedAccount,
       messageChannel,
+      messageChannel.messageFolders,
     );
 
     const { messageFolders: existingFolders, id: messageChannelId } =
@@ -87,6 +88,7 @@ export class SyncMessageFoldersService {
       | 'workspaceId'
     >,
     messageChannel: Pick<MessageChannelEntity, 'messageFolderImportPolicy'>,
+    existingFolders: MessageFolder[] = [],
   ): Promise<DiscoveredMessageFolder[]> {
     switch (connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE:
@@ -103,6 +105,7 @@ export class SyncMessageFoldersService {
         return this.imapGetAllFoldersService.getAllMessageFolders(
           connectedAccount,
           messageChannel,
+          existingFolders,
         );
       default:
         throw new Error(
