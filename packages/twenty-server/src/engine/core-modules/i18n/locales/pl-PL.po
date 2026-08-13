@@ -8491,6 +8491,11 @@ msgstr "Ta wersja nie jest wyższa niż obecnie wdrożona wersja. Zwiększ numer
 msgid "This version of the application is already installed in this workspace."
 msgstr "Ta wersja aplikacji jest już zainstalowana w tym obszarze roboczym."
 
+#. js-lingui-id: o/Kt/Y
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This workspace already has a subscription."
+msgstr ""
+
 #. js-lingui-id: IdEnkZ
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This workspace's upgrade state could not be determined. Please try again once the workspace has finished upgrading."
