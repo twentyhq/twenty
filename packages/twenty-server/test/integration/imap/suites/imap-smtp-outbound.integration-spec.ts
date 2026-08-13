@@ -174,7 +174,10 @@ describe('IMAP/SMTP outbound messaging (integration)', () => {
       const lock = await client.getMailboxLock('Drafts');
 
       try {
-        const messageUids = await client.search({ all: true }, { uid: true });
+        const messageUids = await client.search(
+          { header: { subject } },
+          { uid: true },
+        );
 
         if (messageUids === false) {
           throw new Error('Could not search the Drafts mailbox');
