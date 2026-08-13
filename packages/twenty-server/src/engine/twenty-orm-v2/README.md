@@ -120,7 +120,7 @@ table-shape builder cannot represent. `GroupByWithRecordsV2Service` builds the i
 subquery with the v2 builder and runs the composed outer query through
 `repository.executeRaw`; the runner flag-branches between it and the v1 service.
 
-## Writes: delete, destroy and restore route through v2
+## Writes: delete, destroy, restore and (most) update route through v2
 
 `WorkspaceMutationQueryBuilderV2` generates `UPDATE` / `DELETE` / soft-delete / restore
 statements with `RETURNING`, reusing the same primitives as the select builder
@@ -129,16 +129,24 @@ generator. The select builder morphs into it: `.update()` / `.delete()` / `.soft
 / `.restore()` carry the current where clauses and parameters into the mutation, matching
 the TypeORM surface the mutation runners already call.
 
-`deleteMany`, `destroyMany` and `restoreMany` (and their `...One` delegates) flag-branch to
-this path. Each runner builds the filtered v2 select builder with
-`buildMutationQueryBuilderV2` (which rewrites a relation-traversal filter into an
-`id IN (subquery)` predicate, RLS inside the subquery) and hands it to
-`WorkspaceRepositoryV2.runMutation`, which owns the choreography the v1 mutation builders
-own: apply the row-level predicate, validate the write with the matching operation type,
-snapshot the affected rows before and after through a permission-bypassing all-columns
-select, run the statement, and emit the `DELETED` / `RESTORED` / `DESTROYED` batch event
-through the shared `formatTwentyOrmEventToDatabaseBatchEvent`. `getWriteRepository` on the
-base runner pins the primary and counts `orm-v2/write-path-used`.
+`deleteMany`, `destroyMany`, `restoreMany` and `updateMany` (and their `...One` delegates)
+flag-branch to this path through the shared `runFilteredMutation` on the base runner. Each
+builds the filtered v2 select builder with `buildMutationQueryBuilderV2` (which rewrites a
+relation-traversal filter into an `id IN (subquery)` predicate, RLS inside the subquery)
+and hands it to `WorkspaceRepositoryV2.runMutation`, which owns the choreography the v1
+mutation builders own: apply the row-level predicate, validate the write with the matching
+operation type, snapshot the affected rows before and after through a permission-bypassing
+all-columns select, run the statement, and emit the batch event(s) through the shared
+`formatTwentyOrmEventToDatabaseBatchEvent` — `DELETED` / `RESTORED` / `DESTROYED` for the
+soft ones, `UPDATED` then `UPSERTED` for update. `getWriteRepository` on the base runner
+pins the primary and counts `orm-v2/write-path-used`.
+
+Update flattens its input with the shared `formatData` (composite fields to columns) and
+validates the field-level write permission over the resulting column set. It carves back
+to v1 for one case: data that sets a relation (`{connect}` / `{disconnect}`) or a files
+field, because that input is resolved by `RelationNestedQueries` / `FilesFieldSync`, which
+are coupled to the TypeORM builder and not yet reproduced here. `updateDataIsSupportedByOrmV2`
+makes that call; both branches match their v1 counterpart byte for byte.
 
 Deliberate choices, the SQL ones asserted by exact-SQL unit tests:
 
@@ -161,13 +169,15 @@ Deliberate choices, the SQL ones asserted by exact-SQL unit tests:
   user-input error the read path already produces (v2 refuses to render a to-many join),
   rather than the row-multiplying join v1 would emit.
 
-Update, insert and upsert still keep `repository` (v1).
+Insert and upsert still keep `repository` (v1), as does update with relation/files input.
 
 ## Not covered yet
 
-- Update, insert and upsert. `UPDATE ... SET` from caller data, `INSERT` and
-  `ON CONFLICT` still go through v1, which is where composite flattening of the input and
-  the column defaults / conflict-target derivation live.
+- Insert and upsert. `INSERT` and `ON CONFLICT` still go through v1, which is where the
+  column defaults and conflict-target derivation live.
+- Relation connect/disconnect and files-field input on writes, resolved by
+  `RelationNestedQueries` / `FilesFieldSync`. Update carves these back to v1; create and
+  upsert stay on v1 entirely until this input machinery has a v2 form.
 - `find` / `findOne` / `findBy` and the rest of the repository surface used by
   `src/modules`.
 - Transactions and DDL.
