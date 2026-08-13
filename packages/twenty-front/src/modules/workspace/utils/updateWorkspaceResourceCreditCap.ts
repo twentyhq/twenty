@@ -1,6 +1,6 @@
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
+import { isResourceCreditSubscriptionItem } from '@/workspace/utils/isResourceCreditSubscriptionItem';
 import { isDefined } from 'twenty-shared/utils';
-import { BillingProductKey } from '~/generated-metadata/graphql';
 
 const updateWorkspaceResourceCreditCap = (
   currentWorkspace: CurrentWorkspace | null,
@@ -24,8 +24,7 @@ const updateWorkspaceResourceCreditCap = (
     currentBillingSubscription: {
       ...currentBillingSubscription,
       billingSubscriptionItems: billingSubscriptionItems.map((item) =>
-        item.billingProduct.metadata?.['productKey'] ===
-        BillingProductKey.RESOURCE_CREDIT
+        isResourceCreditSubscriptionItem(item)
           ? { ...item, hasReachedCurrentPeriodCap }
           : item,
       ),

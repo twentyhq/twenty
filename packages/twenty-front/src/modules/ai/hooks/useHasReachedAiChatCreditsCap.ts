@@ -5,7 +5,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { hasReachedCurrentBillingPeriodCapSelector } from '@/workspace/states/hasReachedCurrentBillingPeriodCapSelector';
-import { BillingProductKey } from '~/generated-metadata/graphql';
+import { isResourceCreditSubscriptionItem } from '@/workspace/utils/isResourceCreditSubscriptionItem';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 // The credits exhausted error renders nothing on its own, so the banner must
@@ -34,9 +34,7 @@ export const useHasReachedAiChatCreditsCap = () => {
 
   const hasResourceCreditSubscriptionItem =
     currentWorkspace?.currentBillingSubscription?.billingSubscriptionItems?.some(
-      (item) =>
-        item.billingProduct.metadata?.['productKey'] ===
-        BillingProductKey.RESOURCE_CREDIT,
+      isResourceCreditSubscriptionItem,
     ) ?? false;
 
   if (hasResourceCreditSubscriptionItem) {
