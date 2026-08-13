@@ -13,22 +13,12 @@ export type RadicaleServer = {
   stop: () => Promise<void>;
 };
 
-// The image's entrypoint rejects passed arguments, so configuration arrives as
-// a file. Credentials are required rather than open: Radicale derives the
-// principal collection from the authenticated user, and an anonymous session
-// resolves to no calendars at all.
-const radicaleConfig = `[server]
-hosts = 0.0.0.0:${RADICALE_PORT}
+const RADICALE_BINARY = '/venv/bin/radicale';
+const RADICALE_USERS_FILE = '/config/users';
 
-[auth]
-type = htpasswd
-htpasswd_filename = /config/users
-htpasswd_encryption = plain
-
-[storage]
-filesystem_folder = /data/collections
-`;
-
+// Credentials are required rather than open: Radicale derives the principal
+// collection from the authenticated user, so an anonymous session resolves to
+// no calendars at all.
 export const startRadicaleContainer = async ({
   username,
   password,
@@ -40,8 +30,20 @@ export const startRadicaleContainer = async ({
     RADICALE_IMAGE,
   )
     .withCopyContentToContainer([
-      { content: radicaleConfig, target: '/config/config' },
-      { content: `${username}:${password}\n`, target: '/config/users' },
+      { content: `${username}:${password}\n`, target: RADICALE_USERS_FILE },
+    ])
+    .withCommand([
+      RADICALE_BINARY,
+      '--server-hosts',
+      `0.0.0.0:${RADICALE_PORT}`,
+      '--auth-type',
+      'htpasswd',
+      '--auth-htpasswd-filename',
+      RADICALE_USERS_FILE,
+      '--auth-htpasswd-encryption',
+      'plain',
+      '--storage-filesystem-folder',
+      '/data/collections',
     ])
     .withExposedPorts(RADICALE_PORT)
     .withWaitStrategy(Wait.forListeningPorts())
