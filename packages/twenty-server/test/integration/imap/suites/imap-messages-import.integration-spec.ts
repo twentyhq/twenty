@@ -17,6 +17,7 @@ import {
   startGreenmailContainer,
 } from 'test/integration/utils/start-greenmail-container.util';
 
+const PASSWORD = 'greenmail-password';
 const HANDLE = `imap-messages-import-${randomUUID()}@acme.test`;
 
 describe('IMAP messages import (integration)', () => {
@@ -43,11 +44,10 @@ describe('IMAP messages import (integration)', () => {
       input: { key: 'OUTBOUND_HTTP_SAFE_MODE_ENABLED', value: false },
     });
 
-    greenmail = await startGreenmailContainer();
-
-    // The account save authenticates against IMAP straight away, and GreenMail
-    // only creates the user once mail has been delivered to it.
-    await deliverMessage(`IMAP mailbox seed ${randomUUID()}`);
+    greenmail = await startGreenmailContainer({
+      username: HANDLE,
+      password: PASSWORD,
+    });
 
     const { data } = await saveImapSmtpCaldavAccount({
       input: {
@@ -57,7 +57,7 @@ describe('IMAP messages import (integration)', () => {
             host: greenmail.host,
             port: greenmail.imapPort,
             username: HANDLE,
-            password: HANDLE,
+            password: PASSWORD,
             connectionSecurity: EmailConnectionSecurity.NONE,
           },
         },

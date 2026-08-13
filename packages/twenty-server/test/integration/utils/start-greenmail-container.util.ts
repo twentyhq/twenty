@@ -15,15 +15,27 @@ export type GreenmailServer = {
   stop: () => Promise<void>;
 };
 
-// GreenMail creates a user on delivery, with the login and password both set
-// to the recipient address, so a mailbox exists once mail has been sent to it.
-export const startGreenmailContainer = async (): Promise<GreenmailServer> => {
+// The mailbox has to be declared up front: the account save authenticates
+// against IMAP immediately, before any mail exists to create a user implicitly.
+export const startGreenmailContainer = async ({
+  username,
+  password,
+}: {
+  username: string;
+  password: string;
+}): Promise<GreenmailServer> => {
+  const [localPart, domain] = username.split('@');
+
   const container: StartedTestContainer = await new GenericContainer(
     GREENMAIL_IMAGE,
   )
     .withEnvironment({
-      GREENMAIL_OPTS:
-        '-Dgreenmail.setup.test.imap -Dgreenmail.setup.test.smtp -Dgreenmail.hostname=0.0.0.0',
+      GREENMAIL_OPTS: [
+        '-Dgreenmail.setup.test.imap',
+        '-Dgreenmail.setup.test.smtp',
+        '-Dgreenmail.hostname=0.0.0.0',
+        `-Dgreenmail.users=${localPart}:${password}@${domain}`,
+      ].join(' '),
     })
     .withExposedPorts(GREENMAIL_IMAP_PORT, GREENMAIL_SMTP_PORT)
     .withWaitStrategy(Wait.forListeningPorts())
