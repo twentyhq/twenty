@@ -34,9 +34,9 @@ describe('createOpenCommandConfirmationModalAdapter', () => {
   it('should reject and clear the pending state when the host call fails', async () => {
     const openCommandConfirmationModal =
       createOpenCommandConfirmationModalAdapter({
-        openCommandConfirmationModal: jest.fn(async () => {
-          throw new Error('host modal failed');
-        }),
+        openCommandConfirmationModal: jest
+          .fn(async () => {})
+          .mockRejectedValueOnce(new Error('host modal failed')),
       });
 
     await expect(openCommandConfirmationModal(modalParams)).rejects.toThrow(
