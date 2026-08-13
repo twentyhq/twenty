@@ -42,6 +42,10 @@ import {
 import { combineCacheHashes } from 'src/engine/workspace-cache/utils/combine-cache-hashes.util';
 import { getKeyNameFromLocalCacheKey } from 'src/engine/workspace-cache/utils/get-key-name-from-local-cache-key.util';
 import { packIdleVersions } from 'src/engine/workspace-cache/utils/pack-idle-versions.util';
+import {
+  deserializeCacheBlob,
+  serializeCacheBlob,
+} from 'src/engine/workspace-cache/utils/serialize-cache-blob.util';
 import { sweepLocalCache } from 'src/engine/workspace-cache/utils/sweep-local-cache.util';
 
 const LOCAL_TTL_MS = 100; // 100ms
@@ -474,10 +478,10 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
         try {
           data =
-            this.getProviderOrThrow(keyName).decodeFromCacheStorage(rawData);
+            this.getProviderOrThrow(keyName).expandFromStorage(rawData);
         } catch (error) {
           this.logger.warn(
-            `Failed to decode cached ${keyName} for workspace ${workspaceId}, recomputing`,
+            `Failed to expand cached ${keyName} for workspace ${workspaceId}, recomputing`,
             error,
           );
           missingInRedis.push(keyName);
@@ -572,7 +576,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       if (!isLocalDataOnly) {
         redisEntries.push({
           key: `${baseKey}:data`,
-          value: this.getProviderOrThrow(keyName).encodeForCacheStorage(data),
+          value: this.getProviderOrThrow(keyName).compactForStorage(data),
         });
       }
 
@@ -716,11 +720,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
           localKey,
         ) as WorkspaceCacheKeyName;
 
-        return Buffer.from(
-          JSON.stringify(
-            this.getProviderOrThrow(keyName).encodeForCacheStorage(data),
-          ),
-          'utf8',
+        return serializeCacheBlob(
+          this.getProviderOrThrow(keyName).compactForStorage(data),
         );
       },
     });
@@ -750,8 +751,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     }
 
     const unpackStartedAt = performance.now();
-    const data = this.getProviderOrThrow(keyName).decodeFromCacheStorage(
-      JSON.parse(version.blob.toString('utf8')),
+    const data = this.getProviderOrThrow(keyName).expandFromStorage(
+      deserializeCacheBlob(version.blob),
     );
 
     entry.versions.set(hash, {
