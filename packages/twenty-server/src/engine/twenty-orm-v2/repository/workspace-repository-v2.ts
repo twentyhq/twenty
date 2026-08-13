@@ -6,7 +6,7 @@ import {
   type ObjectsPermissions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In } from 'typeorm';
+import { DeleteResult, In, InsertResult, UpdateResult } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -34,6 +34,10 @@ import {
   applyFindOptionsToQueryBuilder,
   type FindOptionsV2,
 } from 'src/engine/twenty-orm-v2/query-builder/utils/apply-find-options.util';
+import {
+  applyMutationCriteriaToQueryBuilder,
+  type MutationCriteria,
+} from 'src/engine/twenty-orm-v2/query-builder/utils/apply-mutation-criteria.util';
 import { type ObjectWhereLike } from 'src/engine/twenty-orm-v2/query-builder/types/query-builder-v2.type';
 import { WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-select-query-builder-v2';
 import { compileNamedParameters } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
@@ -188,6 +192,122 @@ export class WorkspaceRepositoryV2 {
 
   async existsBy(where: ObjectWhereLike | ObjectWhereLike[]): Promise<boolean> {
     return this.exists({ where });
+  }
+
+  async insert(
+    entityOrEntities: Partial<ObjectRecord> | Partial<ObjectRecord>[],
+  ): Promise<InsertResult> {
+    const records = Array.isArray(entityOrEntities)
+      ? entityOrEntities
+      : [entityOrEntities];
+
+    const { identifiers, generatedMaps, raw } = await this.runInsert({
+      records,
+      columnsToReturn: ['id'],
+    });
+
+    const insertResult = new InsertResult();
+
+    insertResult.identifiers = identifiers;
+    insertResult.generatedMaps = generatedMaps;
+    insertResult.raw = raw;
+
+    return insertResult;
+  }
+
+  async update(
+    criteria: MutationCriteria,
+    partialEntity: Partial<ObjectRecord>,
+  ): Promise<UpdateResult> {
+    const records = await this.runMutation({
+      selectQueryBuilder: applyMutationCriteriaToQueryBuilder(
+        this.createQueryBuilder(),
+        criteria,
+      ),
+      rowLevelPermissionsApplied: false,
+      kind: 'update',
+      columnsToReturn: ['id'],
+      data: partialEntity,
+    });
+
+    return this.buildUpdateResult(records);
+  }
+
+  async updateMany(
+    inputs: { criteria: string; partialEntity: Partial<ObjectRecord> }[],
+  ): Promise<UpdateResult> {
+    const { generatedMaps, raw } = await this.runBatchUpdate({
+      inputs: inputs.map((input) => ({
+        id: input.criteria,
+        data: input.partialEntity,
+      })),
+      columnsToReturn: ['id'],
+    });
+
+    const updateResult = new UpdateResult();
+
+    updateResult.raw = raw;
+    updateResult.affected = raw.length;
+    updateResult.generatedMaps = generatedMaps;
+
+    return updateResult;
+  }
+
+  async delete(criteria: MutationCriteria): Promise<DeleteResult> {
+    const records = await this.runMutation({
+      selectQueryBuilder: applyMutationCriteriaToQueryBuilder(
+        this.createQueryBuilder(),
+        criteria,
+      ),
+      rowLevelPermissionsApplied: false,
+      kind: 'delete',
+      columnsToReturn: ['id'],
+    });
+
+    const deleteResult = new DeleteResult();
+
+    deleteResult.raw = records;
+    deleteResult.affected = records.length;
+
+    return deleteResult;
+  }
+
+  async softDelete(criteria: MutationCriteria): Promise<UpdateResult> {
+    const records = await this.runMutation({
+      selectQueryBuilder: applyMutationCriteriaToQueryBuilder(
+        this.createQueryBuilder(),
+        criteria,
+      ),
+      rowLevelPermissionsApplied: false,
+      kind: 'soft-delete',
+      columnsToReturn: ['id'],
+    });
+
+    return this.buildUpdateResult(records);
+  }
+
+  async restore(criteria: MutationCriteria): Promise<UpdateResult> {
+    const records = await this.runMutation({
+      selectQueryBuilder: applyMutationCriteriaToQueryBuilder(
+        this.createQueryBuilder(),
+        criteria,
+      ),
+      rowLevelPermissionsApplied: false,
+      kind: 'restore',
+      columnsToReturn: ['id'],
+    });
+
+    return this.buildUpdateResult(records);
+  }
+
+  private buildUpdateResult(records: ObjectRecord[]): UpdateResult {
+    const updateResult = new UpdateResult();
+
+    updateResult.raw = records;
+    updateResult.affected = records.length;
+    updateResult.generatedMaps = records;
+
+    return updateResult;
   }
 
   async runInsert({
