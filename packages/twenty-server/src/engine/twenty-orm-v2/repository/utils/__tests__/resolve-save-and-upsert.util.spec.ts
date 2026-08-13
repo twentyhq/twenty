@@ -59,5 +59,19 @@ describe('resolve-save-and-upsert util', () => {
       ]);
       expect(toInsert).toEqual([{ email: 'b@twenty.com', name: 'B' }]);
     });
+
+    it('routes entities with a null conflict value to insert (NULL never conflicts)', () => {
+      const entities = [{ email: null, name: 'A' }];
+      const existing = [{ id: 'existing', email: null }] as ObjectRecord[];
+
+      const { toUpdate, toInsert } = matchEntitiesForUpsert(
+        entities,
+        existing,
+        ['email'],
+      );
+
+      expect(toUpdate).toEqual([]);
+      expect(toInsert).toEqual([{ email: null, name: 'A' }]);
+    });
   });
 });

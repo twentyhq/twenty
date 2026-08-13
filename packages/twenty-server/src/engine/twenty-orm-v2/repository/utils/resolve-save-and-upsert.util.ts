@@ -1,5 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ObjectRecord } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 export type SavePartition = {
   toUpdate: Partial<ObjectRecord>[];
@@ -32,6 +33,13 @@ export const buildConflictKey = (
   conflictPaths: string[],
 ): string => JSON.stringify(conflictPaths.map((path) => entity[path] ?? null));
 
+// Postgres `ON CONFLICT` never treats a NULL conflict value as a conflict, so a
+// row with any nullish conflict value can only be inserted.
+const hasCompleteConflictKey = (
+  record: Partial<ObjectRecord>,
+  conflictPaths: string[],
+): boolean => conflictPaths.every((path) => isDefined(record[path]));
+
 export type UpsertPartition = {
   toUpdate: { id: string; entity: Partial<ObjectRecord> }[];
   toInsert: Partial<ObjectRecord>[];
@@ -47,7 +55,10 @@ export const matchEntitiesForUpsert = (
   const existingIdByConflictKey = new Map<string, string>();
 
   for (const existingRecord of existingRecords) {
-    if (isNonEmptyString(existingRecord.id)) {
+    if (
+      isNonEmptyString(existingRecord.id) &&
+      hasCompleteConflictKey(existingRecord, conflictPaths)
+    ) {
       existingIdByConflictKey.set(
         buildConflictKey(existingRecord, conflictPaths),
         existingRecord.id,
@@ -59,9 +70,9 @@ export const matchEntitiesForUpsert = (
   const toInsert: Partial<ObjectRecord>[] = [];
 
   for (const entity of entities) {
-    const existingId = existingIdByConflictKey.get(
-      buildConflictKey(entity, conflictPaths),
-    );
+    const existingId = hasCompleteConflictKey(entity, conflictPaths)
+      ? existingIdByConflictKey.get(buildConflictKey(entity, conflictPaths))
+      : undefined;
 
     if (isNonEmptyString(existingId)) {
       toUpdate.push({ id: existingId, entity });
