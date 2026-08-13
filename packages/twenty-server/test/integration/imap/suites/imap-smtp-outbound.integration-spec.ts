@@ -23,10 +23,13 @@ import {
 const PASSWORD = 'greenmail-password';
 const HANDLE = `imap-smtp-outbound-${randomUUID()}@acme.test`;
 
-const createMailbox = async (
-  greenmail: GreenmailServer,
-  mailbox: string,
-): Promise<void> => {
+const createMailbox = async ({
+  greenmail,
+  mailbox,
+}: {
+  greenmail: GreenmailServer;
+  mailbox: string;
+}): Promise<void> => {
   const client = new ImapFlow({
     host: greenmail.host,
     port: greenmail.imapPort,
@@ -58,7 +61,7 @@ describe('IMAP/SMTP outbound messaging (integration)', () => {
       username: HANDLE,
       password: PASSWORD,
     });
-    await createMailbox(greenmail, 'Sent');
+    await createMailbox({ greenmail, mailbox: 'Sent' });
 
     const { data } = await saveImapSmtpCaldavAccount({
       input: {
