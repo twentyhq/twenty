@@ -68,18 +68,26 @@ describe('applyMutationCriteriaToQueryBuilder', () => {
     expect(values).toContain('Twenty');
   });
 
-  it('treats a where array as an OR', () => {
+  it('treats a where array as a bracketed OR', () => {
     const [text] = applyMutationCriteriaToQueryBuilder(buildQueryBuilder(), [
       { name: 'A' },
       { name: 'B' },
     ]).getQueryAndParameters();
 
-    expect(text).toContain('OR');
+    expect(text).toContain(
+      '((("person"."name" = $1) OR ("person"."name" = $2)))',
+    );
   });
 
   it('throws on an empty criteria array', () => {
     expect(() =>
       applyMutationCriteriaToQueryBuilder(buildQueryBuilder(), []),
+    ).toThrow(TwentyOrmV2Exception);
+  });
+
+  it('throws on an empty-string id criterion', () => {
+    expect(() =>
+      applyMutationCriteriaToQueryBuilder(buildQueryBuilder(), ''),
     ).toThrow(TwentyOrmV2Exception);
   });
 });

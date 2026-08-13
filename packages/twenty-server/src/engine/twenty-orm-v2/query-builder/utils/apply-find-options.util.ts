@@ -9,9 +9,11 @@ import {
 
 export type FindOptionsRelationsV2 = Record<string, boolean | object>;
 
+export type FindOptionsSelectV2 = FindOptionsSelectLike | string[];
+
 export type FindOptionsV2 = {
   where?: ObjectWhereLike | ObjectWhereLike[];
-  select?: FindOptionsSelectLike;
+  select?: FindOptionsSelectV2;
   order?: OrderByConditionLike;
   take?: number;
   skip?: number;
@@ -19,19 +21,41 @@ export type FindOptionsV2 = {
   relations?: FindOptionsRelationsV2;
 };
 
-// A `where` array is an OR of AND-groups, matching TypeORM's find semantics.
+const normalizeSelect = (select: FindOptionsSelectV2): FindOptionsSelectLike =>
+  Array.isArray(select)
+    ? Object.fromEntries(select.map((columnName) => [columnName, true]))
+    : select;
+
+// A `where` array is an OR of AND-groups, matching TypeORM's find semantics. It
+// is wrapped in a single bracketed group so a later ANDed predicate (e.g. the
+// row-level permission filter) applies to the whole disjunction, not just the
+// first branch.
 const applyWhere = (
   queryBuilder: WorkspaceSelectQueryBuilderV2,
   where: ObjectWhereLike | ObjectWhereLike[],
 ): void => {
-  const clauses = Array.isArray(where) ? where : [where];
+  if (!Array.isArray(where)) {
+    queryBuilder.where(where);
 
-  clauses.forEach((clause, index) => {
-    if (index === 0) {
-      queryBuilder.where(clause);
-    } else {
-      queryBuilder.orWhere(clause);
-    }
+    return;
+  }
+
+  if (where.length === 1) {
+    queryBuilder.where(where[0]);
+
+    return;
+  }
+
+  queryBuilder.where({
+    whereFactory: (nestedQueryBuilder) => {
+      where.forEach((clause, index) => {
+        if (index === 0) {
+          nestedQueryBuilder.where(clause);
+        } else {
+          nestedQueryBuilder.orWhere(clause);
+        }
+      });
+    },
   });
 };
 
@@ -45,12 +69,12 @@ export const applyFindOptionsToQueryBuilder = (
 
   // `relations` are loaded by the repository after the base rows are fetched,
   // never rendered into this base query.
-  if (options.withDeleted === true) {
+  if (options.withDeleted) {
     queryBuilder.withDeleted();
   }
 
   if (isDefined(options.select)) {
-    queryBuilder.setFindOptions({ select: options.select });
+    queryBuilder.setFindOptions({ select: normalizeSelect(options.select) });
   }
 
   if (isDefined(options.where)) {

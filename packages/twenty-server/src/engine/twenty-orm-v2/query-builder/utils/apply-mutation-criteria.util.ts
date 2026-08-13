@@ -26,6 +26,13 @@ export const applyMutationCriteriaToQueryBuilder = (
   criteria: MutationCriteria,
 ): WorkspaceSelectQueryBuilderV2 => {
   if (typeof criteria === 'string') {
+    if (criteria.length === 0) {
+      throw new TwentyOrmV2Exception(
+        'A mutation criteria id cannot be an empty string',
+        TwentyOrmV2ExceptionCode.INVALID_PARAMETER,
+      );
+    }
+
     queryBuilder.where({ id: criteria });
 
     return queryBuilder;
@@ -45,19 +52,25 @@ export const applyMutationCriteriaToQueryBuilder = (
       return queryBuilder;
     }
 
-    criteria.forEach((entry, index) => {
-      if (!isPlainObject(entry)) {
-        throw new TwentyOrmV2Exception(
-          'A mutation criteria array must be all ids or all where objects',
-          TwentyOrmV2ExceptionCode.INVALID_PARAMETER,
-        );
-      }
+    if (!criteria.every(isPlainObject)) {
+      throw new TwentyOrmV2Exception(
+        'A mutation criteria array must be all ids or all where objects',
+        TwentyOrmV2ExceptionCode.INVALID_PARAMETER,
+      );
+    }
 
-      if (index === 0) {
-        queryBuilder.where(entry);
-      } else {
-        queryBuilder.orWhere(entry);
-      }
+    // Bracket the OR group so a later ANDed permission predicate applies to the
+    // whole disjunction rather than only the first branch.
+    queryBuilder.where({
+      whereFactory: (nestedQueryBuilder) => {
+        criteria.forEach((entry, index) => {
+          if (index === 0) {
+            nestedQueryBuilder.where(entry);
+          } else {
+            nestedQueryBuilder.orWhere(entry);
+          }
+        });
+      },
     });
 
     return queryBuilder;

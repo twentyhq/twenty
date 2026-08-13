@@ -217,7 +217,14 @@ export class WorkspaceRepositoryV2 {
   }
 
   async exists(options?: FindOptionsV2): Promise<boolean> {
-    return (await this.count(options)) > 0;
+    const queryBuilder = applyFindOptionsToQueryBuilder(
+      this.createQueryBuilder(),
+      options,
+    );
+
+    queryBuilder.select(['id']);
+
+    return isDefined(await queryBuilder.getRawOne());
   }
 
   async existsBy(where: ObjectWhereLike | ObjectWhereLike[]): Promise<boolean> {

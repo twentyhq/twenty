@@ -81,16 +81,28 @@ describe('applyFindOptionsToQueryBuilder', () => {
     expect(queryBuilder.getQuery()).toContain('"person"."companyId" IS NULL');
   });
 
-  it('treats a where array as an OR of AND-groups', () => {
+  it('treats a where array as a bracketed OR so an ANDed predicate covers all branches', () => {
     const queryBuilder = applyFindOptionsToQueryBuilder(buildQueryBuilder(), {
       where: [{ name: 'A' }, { name: 'B' }],
     });
 
     const [text] = queryBuilder.getQueryAndParameters();
 
-    expect(text).toContain('"person"."name" = $1');
-    expect(text).toContain('OR');
-    expect(text).toContain('"person"."name" = $2');
+    // The disjunction is grouped, then the soft-delete predicate is ANDed onto
+    // the whole group rather than only the first branch.
+    expect(text).toContain(
+      '((("person"."name" = $1) OR ("person"."name" = $2))) AND "person"."deletedAt" IS NULL',
+    );
+  });
+
+  it('normalizes an array select into the builder column map', () => {
+    const queryBuilder = applyFindOptionsToQueryBuilder(buildQueryBuilder(), {
+      select: ['id', 'name'],
+    });
+
+    expect(queryBuilder.getQuery()).toContain(
+      'SELECT "person"."id" AS "person_id", "person"."name" AS "person_name"',
+    );
   });
 
   it('applies select, order, take and skip', () => {
