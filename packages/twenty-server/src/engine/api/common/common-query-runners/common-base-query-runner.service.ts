@@ -361,10 +361,23 @@ export abstract class CommonBaseQueryRunnerService<
       ? await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSourceReplica()
       : await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
 
-    const repository = globalWorkspaceDataSource.getRepository(
-      queryRunnerContext.flatObjectMetadata.nameSingular,
-      rolePermissionConfig,
-    );
+    // When the ORM v2 read path is enabled, the runners only read `repository`
+    // for a handful of lookups (create re-fetch, upsert existing, merge fetch),
+    // all of which the v2 repository serves. Building it here instead of the v1
+    // one avoids constructing the TypeORM EntityMetadata-backed repository.
+    const repository = context.featureFlagsMap[
+      FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED
+    ]
+      ? (this.workspaceDataSourceV2Service
+          .getDataSource({ useReplica: this.isReadOnly })
+          .getRepository(
+            queryRunnerContext.flatObjectMetadata.nameSingular,
+            rolePermissionConfig,
+          ) as unknown as WorkspaceRepository<ObjectLiteral>)
+      : globalWorkspaceDataSource.getRepository(
+          queryRunnerContext.flatObjectMetadata.nameSingular,
+          rolePermissionConfig,
+        );
 
     return {
       ...queryRunnerContext,
