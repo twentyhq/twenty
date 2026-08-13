@@ -332,3 +332,77 @@ exports[`Sync application should fail on invalid navigation menu items when sync
   "name": "GraphQLError",
 }
 `;
+
+exports[Sync application should fail on invalid navigation menu items when syncing a PAGE_LAYOUT item without pageLayoutUniversalIdentifier 1] = 
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "navigationMenuItem": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
+              "message": "A valid pageLayoutUniversalIdentifier is required for PAGE_LAYOUT type",
+              "userFriendlyMessage": "A valid pageLayoutUniversalIdentifier is required for PAGE_LAYOUT type",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "Page layout without identifier",
+            "type": "PAGE_LAYOUT",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "navigationMenuItem",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 navigationMenuItem",
+    "summary": {
+      "navigationMenuItem": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "A valid pageLayoutUniversalIdentifier is required for PAGE_LAYOUT type",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+\;
+
+exports[Sync application should fail on invalid navigation menu items when syncing a VIEW item without viewUniversalIdentifier 1] = 
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "navigationMenuItem": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_NAVIGATION_MENU_ITEM_INPUT",
+              "message": "A valid viewUniversalIdentifier is required for VIEW type",
+              "userFriendlyMessage": "A valid viewUniversalIdentifier is required for VIEW type",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "View without identifier",
+            "type": "VIEW",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "navigationMenuItem",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 navigationMenuItem",
+    "summary": {
+      "navigationMenuItem": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "A valid viewUniversalIdentifier is required for VIEW type",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+\;
