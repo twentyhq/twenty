@@ -136,6 +136,13 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     return this.appendWhere('and', condition, parameters);
   }
 
+  copyWhereFrom(source: WorkspaceSelectQueryBuilderV2): this {
+    this.whereClauses.push(...source.whereClauses);
+    this.parameters = { ...this.parameters, ...source.parameters };
+
+    return this;
+  }
+
   andWhere(
     condition: WhereConditionLike,
     parameters?: Record<string, unknown>,
