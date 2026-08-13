@@ -170,10 +170,45 @@ describe('CalendarEvent standard metadata build', () => {
       Object.keys(
         STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs,
       ),
-    ).toEqual(['home', 'timeline', 'callRecording']);
+    ).toEqual(['home', 'timeline', 'summary', 'callRecording']);
 
     expect(timelineWidget?.universalConfiguration).toMatchObject({
       configurationType: WidgetConfigurationType.TIMELINE,
+    });
+  });
+
+  it('configures the native summary tab on the calendar event record page', () => {
+    const summaryTabUniversalIdentifier =
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
+        .summary.universalIdentifier;
+    const summaryWidgetUniversalIdentifier =
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
+        .summary.widgets.summary.universalIdentifier;
+
+    const summaryTab =
+      allFlatEntityMaps.flatPageLayoutTabMaps.byUniversalIdentifier[
+        summaryTabUniversalIdentifier
+      ];
+    const summaryWidget =
+      allFlatEntityMaps.flatPageLayoutWidgetMaps.byUniversalIdentifier[
+        summaryWidgetUniversalIdentifier
+      ];
+
+    expect(summaryTab).toMatchObject({
+      title: 'Summary',
+      icon: 'IconFileText',
+      position: 30,
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+    });
+    expect(summaryWidget).toMatchObject({
+      title: 'Summary',
+      type: WidgetType.CALL_RECORDING_SUMMARY,
+      pageLayoutTabUniversalIdentifier: summaryTabUniversalIdentifier,
+      gridPosition: GRID_POSITIONS.FULL_WIDTH,
+      position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
+      universalConfiguration: {
+        configurationType: WidgetConfigurationType.CALL_RECORDING_SUMMARY,
+      },
     });
   });
 

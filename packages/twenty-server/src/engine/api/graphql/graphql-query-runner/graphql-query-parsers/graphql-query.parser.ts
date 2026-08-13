@@ -200,7 +200,6 @@ export class GraphqlQueryParser {
             ? `"${parts[0]}"."${parts[1]}"`
             : `"${orderByField}"`;
 
-        // Build column expression with optional ::text cast and LOWER()
         let columnExpr = quotedColumn;
 
         if (orderByCondition.castToText) {

@@ -406,4 +406,4 @@ AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com
 2 つのホストが異なる登録可能ドメイン（単なる異なるサブドメインではない）の場合は、`AUTH_COOKIE_SAME_SITE=none` も設定してください。これは HTTPS を必須とします。
 
 マルチワークスペースが有効な場合、ここにすべてのワークスペースのサブドメインを列挙しないでください。
-代わりに、各ワークスペースのホスト名ごとに API パス（`/graphql`、`/metadata`、`/rest`、`/auth/`、`/client-config`、`/file`）をバックエンドへルーティングし、すべてのワークスペースが same-origin を維持するようにします。これは Twenty Cloud が動作している方式です。
+代わりに、各ワークスペースのホスト名ごとに API パス（`/graphql`、`/metadata`、`/rest`、`/auth/`、`/client-config`、`/file`）をバックエンドにルーティングし、すべてのワークスペースが同一オリジンを維持するようにします。Twenty Cloud はこの方式で稼働しています。

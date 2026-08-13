@@ -125,7 +125,6 @@ export const computeStandardNoteViewFields = (
         },
       },
     ),
-    // System group
     noteRecordPageFieldsCreatedAt: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'note',

@@ -310,7 +310,6 @@ export class WorkspaceService {
         ...payload,
       });
     } catch (error) {
-      // revert custom domain registration on error
       if (payload.customDomain && customDomainRegistered) {
         this.dnsManagerService
           .deleteHostnameSilently(payload.customDomain)

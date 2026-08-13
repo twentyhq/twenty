@@ -1,6 +1,9 @@
 import gql from 'graphql-tag';
 
-import { type MessageFolderImportPolicy } from 'twenty-shared/types';
+import {
+  type CalendarChannelContactAutoCreationPolicy,
+  type MessageFolderImportPolicy,
+} from 'twenty-shared/types';
 
 import { type CalendarChannelDTO } from 'src/engine/metadata-modules/calendar-channel/dtos/calendar-channel.dto';
 import { type ConnectedAccountDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account.dto';
@@ -53,6 +56,8 @@ export type CalendarChannelDto = Pick<
   | 'syncStage'
   | 'syncStageStartedAt'
   | 'throttleFailureCount'
+  | 'isContactAutoCreationEnabled'
+  | 'contactAutoCreationPolicy'
   | 'visibility'
 >;
 
@@ -70,6 +75,7 @@ type MessageChannelUpdate = {
 type CalendarChannelUpdate = {
   isSyncEnabled?: boolean;
   isContactAutoCreationEnabled?: boolean;
+  contactAutoCreationPolicy?: CalendarChannelContactAutoCreationPolicy;
 };
 
 const MESSAGE_CHANNEL_FIELDS = gql`
@@ -164,6 +170,8 @@ export const queryCalendarChannels = async (
           syncStage
           syncStageStartedAt
           throttleFailureCount
+          isContactAutoCreationEnabled
+          contactAutoCreationPolicy
           visibility
         }
       }

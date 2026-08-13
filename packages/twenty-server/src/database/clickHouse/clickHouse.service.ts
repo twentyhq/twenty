@@ -51,7 +51,6 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
       return undefined;
     }
 
-    // Wait for a bit before trying again if another initialization is in progress
     while (this.isClientInitializing.get(clientId)) {
       await new Promise((resolve) => setTimeout(resolve, 10));
     }
@@ -93,7 +92,6 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
       log: { level: ClickHouseLogLevel.OFF },
     });
 
-    // Ping to check connection
     await client.ping();
 
     return client;
@@ -115,7 +113,6 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
 
   async onModuleInit() {
     if (this.mainClient) {
-      // Just ping to verify the connection
       try {
         await this.mainClient.ping();
       } catch (err) {
@@ -125,12 +122,10 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
   }
 
   async onModuleDestroy() {
-    // Close main client
     if (this.mainClient) {
       await this.mainClient.close();
     }
 
-    // Close all other clients
     for (const [, client] of this.clients) {
       await client.close();
     }
@@ -165,7 +160,6 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  // Method to execute a select query
   public async select<T>(
     query: string,
     // oxlint-disable-next-line typescript/no-explicit-any

@@ -409,7 +409,7 @@ que configures esto.
 Si los dos hosts están en dominios registrables diferentes (no solo en
 subdominios distintos), también establece `AUTH_COOKIE_SAME_SITE=none`, lo cual requiere HTTPS.
 
-Con el modo multi-workspace habilitado, no incluyas aquí cada subdominio de workspace.
+Con varios espacios de trabajo habilitados, no listes aquí todos los subdominios de los espacios de trabajo.
 En su lugar, enruta las rutas de la API (`/graphql`, `/metadata`, `/rest`, `/auth/`,
-`/client-config`, `/file`) al back-end en cada nombre de host de workspace, de modo que cada
-workspace permanezca con el mismo origen; así es como Twenty Cloud se ejecuta.
+`/client-config`, `/file`) al back-end en cada nombre de host de cada espacio de trabajo, de modo que cada
+espacio de trabajo permanezca en el mismo origen — así es como funciona Twenty Cloud.

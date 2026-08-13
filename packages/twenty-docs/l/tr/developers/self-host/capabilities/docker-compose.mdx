@@ -109,7 +109,7 @@ curl http://localhost:3000
 
 ### Twenty'yi Dış Erişime Açma
 
-Varsayılan olarak, Twenty `localhost` üzerinde `3000` portunda çalışır. UI, API'yi tarayıcının kendi origin'inden çözümler; bu nedenle container'a erişen herhangi bir hostname'den yüklenir — ancak yine de `SERVER_URL` değerini genel (public) URL'inize ayarlayın: sunucu bunu oluşturulan bağlantılar (e-postalar, OAuth geri aramaları) ve güvenli çerezler için HTTPS'i algılamak amacıyla kullanır.
+Varsayılan olarak, Twenty `localhost` üzerinde `3000` portunda çalışır. UI, API'ye tarayıcının kendi origin'inden erişir; bu nedenle konteynere ulaşan herhangi bir ana bilgisayar adından yüklenir — ancak yine de `SERVER_URL` değerini herkese açık URL'nize ayarlayın: sunucu bunu oluşturulan bağlantılar (e-postalar, OAuth geri çağrıları) ve güvenli çerezler için HTTPS'i saptamak amacıyla kullanır.
 
 #### `SERVER_URL`'a Genel Bakış
 

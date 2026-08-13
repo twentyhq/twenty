@@ -109,7 +109,7 @@ curl http://localhost:3000
 
 ### Otevření Twenty pro Externí Přístup
 
-Ve výchozím nastavení běží Twenty na `localhost` na portu `3000`. UI řeší API z vlastního původu prohlížeče, takže se načítá z libovolného hostnamu, který dosáhne na kontejner — ale přesto nastavte `SERVER_URL` na svou veřejnou URL: server ji používá pro generované odkazy (e-maily, OAuth callbacky) a k detekci HTTPS pro zabezpečené cookies.
+Ve výchozím nastavení běží Twenty na `localhost` na portu `3000`. Uživatelské rozhraní určuje adresu API podle původu (origin) prohlížeče, takže se načte z libovolného názvu hostitele, který směřuje na kontejner — přesto však nastavte `SERVER_URL` na svou veřejnou adresu URL: server ji používá pro generované odkazy (e-maily, zpětná volání OAuth) a ke zjištění, zda se používá HTTPS, pro zabezpečené soubory cookie.
 
 #### Porozumění `SERVER_URL`
 

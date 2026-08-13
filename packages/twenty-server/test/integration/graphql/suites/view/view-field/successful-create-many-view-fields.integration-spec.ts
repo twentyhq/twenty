@@ -198,7 +198,6 @@ describe('View Field Resolver - Successful Create Many Operations', () => {
     expect(createdViewFields).toBeDefined();
     expect(createdViewFields).toHaveLength(3);
 
-    // Verify each created view field
     createdViewFields.forEach((viewField, index) => {
       expect(viewField).toMatchObject({
         fieldMetadataId: inputs[index].fieldMetadataId,

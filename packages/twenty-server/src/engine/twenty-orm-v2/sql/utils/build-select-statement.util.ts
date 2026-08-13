@@ -43,6 +43,7 @@ export type SelectStatementState = {
   extraSelectClauses: SelectClause[];
   joinClauses: JoinClause[];
   whereClauses: WhereClause[];
+  groupByExpressions: string[];
   orderByClauses: OrderByClause[];
   includeDeleted: boolean;
   limitValue?: number;
@@ -107,19 +108,24 @@ export const buildProjection = (
   return { expressions, mainAliasColumnNames };
 };
 
-export const buildWhereExpression = (
-  state: SelectStatementState,
-  {
-    includeSoftDeletePredicate = true,
-  }: { includeSoftDeletePredicate?: boolean } = {},
-): string => {
-  const userExpression = state.whereClauses
+export const renderUserWhereExpression = (
+  whereClauses: WhereClause[],
+): string =>
+  whereClauses
     .map((clause, index) =>
       index === 0
         ? clause.sql
         : `${clause.operator.toUpperCase()} ${clause.sql}`,
     )
     .join(' ');
+
+export const buildWhereExpression = (
+  state: SelectStatementState,
+  {
+    includeSoftDeletePredicate = true,
+  }: { includeSoftDeletePredicate?: boolean } = {},
+): string => {
+  const userExpression = renderUserWhereExpression(state.whereClauses);
 
   const shouldAddSoftDeletePredicate =
     includeSoftDeletePredicate &&
@@ -178,6 +184,14 @@ export const buildJoinClause = (state: SelectStatementState): string =>
     })
     .join(' ');
 
+export const buildGroupByClause = (state: SelectStatementState): string => {
+  if (state.groupByExpressions.length === 0) {
+    return '';
+  }
+
+  return `GROUP BY ${state.groupByExpressions.join(', ')}`;
+};
+
 export const buildOrderByClause = (state: SelectStatementState): string => {
   if (state.orderByClauses.length === 0) {
     return '';
@@ -222,9 +236,23 @@ export const buildSelectStatement = (state: SelectStatementState): string => {
     buildFromClause(state),
     buildJoinClause(state),
     whereExpression.length > 0 ? `WHERE ${whereExpression}` : '',
+    buildGroupByClause(state),
     buildOrderByClause(state),
     isDefined(state.limitValue) ? `LIMIT :${LIMIT_PARAMETER_NAME}` : '',
     isDefined(state.offsetValue) ? `OFFSET :${OFFSET_PARAMETER_NAME}` : '',
+  ]
+    .filter((part) => part.length > 0)
+    .join(' ');
+};
+
+export const buildCountStatement = (state: SelectStatementState): string => {
+  const whereExpression = buildWhereExpression(state);
+
+  return [
+    'SELECT COUNT(1) AS "count"',
+    buildFromClause(state),
+    buildJoinClause(state),
+    whereExpression.length > 0 ? `WHERE ${whereExpression}` : '',
   ]
     .filter((part) => part.length > 0)
     .join(' ');

@@ -5,7 +5,6 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 
 import testTokens from './test/integration/constants/test-tokens.json';
 
-// Load .env vars at jest boot time
 if (process.env.NODE_ENV === 'test') {
   dotenv.config({ path: '.env.test', override: true });
 } else {
@@ -38,7 +37,9 @@ const jestConfig: JestConfigWithTsJest = {
   modulePathIgnorePatterns: ['<rootDir>/dist'],
   globalSetup: '<rootDir>/test/integration/utils/setup-test.ts',
   globalTeardown: '<rootDir>/test/integration/utils/teardown-test.ts',
-  setupFilesAfterEnv: ['<rootDir>/test/integration/utils/setup-wait-for-all-jobs-between-tests.ts'],
+  setupFilesAfterEnv: [
+    '<rootDir>/test/integration/utils/setup-wait-for-all-jobs-between-tests.ts',
+  ],
   testTimeout: 20000,
   maxWorkers: 1,
   // jsdom 29 and msw ship ESM-only transitive deps (parse5, entities,
