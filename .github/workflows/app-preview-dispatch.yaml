@@ -11,8 +11,10 @@ on:
       - packages/twenty-apps/public/**
       - .github/workflows/app-preview-dispatch.yaml
 
+# Keyed by PR number: under pull_request_target github.ref is the BASE ref,
+# which would put every PR in one group and let them cancel each other.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
@@ -55,7 +57,15 @@ jobs:
           set -euo pipefail
           all_apps=$(gh api "repos/${REPOSITORY}/pulls/${PR_NUMBER}/files" --paginate --jq '.[].filename' \
             | grep -oE '^packages/twenty-apps/(examples|internal|public)/[a-z0-9][a-z0-9-]*' \
-            | sort -u)
+            | sort -u || true)
+
+          # A PR can match this workflow's own path filter without touching any
+          # app folder (e.g. edits to this file); succeed as a no-op then.
+          if [ -z "$all_apps" ]; then
+            echo "No app folders changed; nothing to preview."
+            echo "app_paths=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
 
           # Each preview holds a runner and a tunnel for 5 hours; cap the
           # fan-out so a sweeping refactor cannot claim a fleet of them.

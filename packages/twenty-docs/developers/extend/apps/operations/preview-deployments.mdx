@@ -112,7 +112,9 @@ jobs:
           yarn twenty app:install --remote preview
 
       - name: Keep the preview alive
-        run: timeout 300m sleep 18000
+        # Plain sleep exits 0 so a preview that served its full 5 hours shows
+        # green; the job's timeout-minutes is the hard stop.
+        run: sleep 18000
 
       - name: Cleanup
         if: always()
