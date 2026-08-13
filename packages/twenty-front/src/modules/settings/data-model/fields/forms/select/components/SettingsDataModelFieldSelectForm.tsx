@@ -443,7 +443,6 @@ export const SettingsDataModelFieldSelectForm = ({
                               key={option.id}
                               draggableId={option.id}
                               index={index}
-                              isDragDisabled={options.length === 1}
                               itemComponent={
                                 <SettingsDataModelFieldSelectFormOptionRow
                                   key={option.id}
