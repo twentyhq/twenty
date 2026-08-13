@@ -15,15 +15,15 @@ export type GreenmailServer = {
   stop: () => Promise<void>;
 };
 
-// GreenMail creates a mailbox on first authentication, so accounts need no
-// provisioning step: any handle plus password is a usable inbox.
+// GreenMail creates a user on delivery, with the login and password both set
+// to the recipient address, so a mailbox exists once mail has been sent to it.
 export const startGreenmailContainer = async (): Promise<GreenmailServer> => {
   const container: StartedTestContainer = await new GenericContainer(
     GREENMAIL_IMAGE,
   )
     .withEnvironment({
       GREENMAIL_OPTS:
-        '-Dgreenmail.setup.test.imap -Dgreenmail.setup.test.smtp -Dgreenmail.hostname=0.0.0.0 -Dgreenmail.auth.disabled',
+        '-Dgreenmail.setup.test.imap -Dgreenmail.setup.test.smtp -Dgreenmail.hostname=0.0.0.0',
     })
     .withExposedPorts(GREENMAIL_IMAP_PORT, GREENMAIL_SMTP_PORT)
     .withWaitStrategy(Wait.forListeningPorts())

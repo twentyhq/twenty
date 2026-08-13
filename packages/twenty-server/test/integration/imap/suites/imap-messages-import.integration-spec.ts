@@ -53,7 +53,7 @@ describe('IMAP messages import (integration)', () => {
             host: greenmail.host,
             port: greenmail.imapPort,
             username: HANDLE,
-            password: 'greenmail-password',
+            password: HANDLE,
             connectionSecurity: EmailConnectionSecurity.NONE,
           },
         },
