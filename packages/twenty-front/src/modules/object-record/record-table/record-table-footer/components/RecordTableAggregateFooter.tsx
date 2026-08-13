@@ -56,8 +56,6 @@ export const RecordTableAggregateFooter = ({
   const { visibleRecordFields } = useRecordTableContextOrThrow();
   const isMobile = useIsMobile();
 
-  // Aggregates are a desktop affordance; on a phone the bar is a permanent row
-  // of vertical space over content that matters more.
   if (isMobile) {
     return null;
   }
