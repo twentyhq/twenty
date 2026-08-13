@@ -1,17 +1,14 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { kv } from 'twenty-sdk/logic-function';
 
-import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 import { getSlackTeamKvKey } from 'src/logic-functions/utils/get-slack-team-kv-key';
 
 export const resolveTargetWorkspaceId = async (
-  body: SlackEventsRequestBody,
+  teamId: string | undefined,
 ): Promise<string> => {
-  const teamId = body.team_id;
-
   if (!isNonEmptyString(teamId)) {
     throw new Error(
-      'Slack event has no team_id; cannot resolve the target workspace',
+      'Slack request has no team id; cannot resolve the target workspace',
     );
   }
 

@@ -58,7 +58,7 @@ export const slackEventsResolverHandler = async (
   }
 
   return {
-    workspaceId: await resolveTargetWorkspaceId(body),
+    workspaceId: await resolveTargetWorkspaceId(body.team_id),
     targetLogicFunctionUniversalIdentifier:
       resolveTargetLogicFunctionUniversalIdentifier(body),
     payload: body,

@@ -1,6 +1,6 @@
 {
   "name": "@twentyhq/slack",
-  "version": "0.3.0",
+  "version": "0.5.0",
   "description": "Slack assistant and workflow steps for Twenty",
   "license": "MIT",
   "engines": {
