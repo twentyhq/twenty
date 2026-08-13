@@ -1,0 +1,107 @@
+name: 'App Preview Dispatch'
+
+permissions: {}
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, labeled]
+    paths:
+      - packages/twenty-apps/examples/**
+      - packages/twenty-apps/internal/**
+      - packages/twenty-apps/public/**
+      - .github/workflows/app-preview-dispatch.yaml
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  trigger-app-preview:
+    if: |
+      (github.event.action == 'labeled' && github.event.label.name == 'preview-app') ||
+      (
+        (
+          github.event.pull_request.author_association == 'MEMBER' ||
+          github.event.pull_request.author_association == 'OWNER' ||
+          github.event.pull_request.author_association == 'COLLABORATOR'
+        ) && (
+          github.event.action == 'opened' ||
+          github.event.action == 'synchronize' ||
+          github.event.action == 'reopened'
+        )
+      )
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      # App previews boot a STOCK twentycrm/twenty-app-dev image — the released
+      # instance app developers build against — never this PR's server or front
+      # build (that is what the server preview is for). Same split as
+      # preview-env-dispatch: ci-public runs the tunnel + keepalive on free
+      # public-repo minutes and holds no privileged secret; ci-privileged posts
+      # the PR comment.
+      #
+      # Changed apps come from the PR files API rather than a checkout: under
+      # pull_request_target nothing from the PR head may be checked out here.
+      - name: List changed apps
+        id: apps
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          all_apps=$(gh api "repos/${REPOSITORY}/pulls/${PR_NUMBER}/files" --paginate --jq '.[].filename' \
+            | grep -oE '^packages/twenty-apps/(examples|internal|public)/[a-z0-9][a-z0-9-]*' \
+            | sort -u)
+
+          # Each preview holds a runner and a tunnel for 5 hours; cap the
+          # fan-out so a sweeping refactor cannot claim a fleet of them.
+          apps=$(printf '%s\n' "$all_apps" | head -3)
+          dropped=$(printf '%s\n' "$all_apps" | tail -n +4)
+          if [ -n "$dropped" ]; then
+            echo "::warning::More than 3 apps changed; not previewing: $(printf '%s' "$dropped" | tr '\n' ' ')"
+          fi
+
+          echo "Changed apps:"
+          printf '%s\n' "$apps"
+          {
+            echo 'app_paths<<APPS_EOF'
+            printf '%s\n' "$apps"
+            echo 'APPS_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Mint ci-public dispatch token
+        if: steps.apps.outputs.app_paths != ''
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ vars.TWENTY_WORKFLOW_DISPATCHER_CLIENT_ID }}
+          private-key: ${{ secrets.TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY }}
+          owner: twentyhq
+          repositories: ci-public
+          permission-actions: write
+
+      - name: Dispatch app previews to ci-public
+        if: steps.apps.outputs.app_paths != ''
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          REPOSITORY: ${{ github.repository }}
+          APP_PATHS: ${{ steps.apps.outputs.app_paths }}
+        run: |
+          set -euo pipefail
+          while IFS= read -r app_path; do
+            [ -z "$app_path" ] && continue
+            app_name=$(basename "$app_path")
+            echo "Dispatching app preview for $app_name"
+            gh workflow run app-preview.yaml --repo twentyhq/ci-public --ref main \
+              -f pr_number="$PR_NUMBER" \
+              -f pr_head_sha="$PR_HEAD_SHA" \
+              -f repo="$REPOSITORY" \
+              -f app_path="$app_path" \
+              -f app_name="$app_name"
+          done <<< "$APP_PATHS"
