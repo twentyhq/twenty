@@ -1,5 +1,5 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { Equal, In, LessThan } from 'typeorm';
+import { Equal, In, LessThan, Not } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { type CompiledStatement } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
@@ -640,12 +640,27 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
     );
   });
 
-  it('should reject a non-in operator in an object-literal where', () => {
+  it('should render comparison operators in an object-literal where', () => {
     const { queryBuilder } = buildQueryBuilder();
 
-    expect(() => queryBuilder.where({ id: LessThan('x') })).toThrow(
-      TwentyOrmV2Exception,
-    );
+    queryBuilder.setFindOptions({ select: { id: true } });
+    queryBuilder.where({ nameFirstName: LessThan('x') });
+
+    const [text, values] = queryBuilder.getQueryAndParameters();
+
+    expect(text).toContain('"person"."nameFirstName" < $1');
+    expect(values).toContain('x');
+  });
+
+  it('should negate a nested operator with Not', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.setFindOptions({ select: { id: true } });
+    queryBuilder.where({ id: Not(In(['a', 'b'])) });
+
+    const [text] = queryBuilder.getQueryAndParameters();
+
+    expect(text).toContain('NOT ("person"."id" IN ($1, $2))');
   });
 
   it('should treat a plain value in an object-literal where as equality', () => {

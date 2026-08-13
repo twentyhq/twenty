@@ -254,6 +254,68 @@ export class WorkspaceRepositoryV2 {
     return this.exists({ where });
   }
 
+  async minimum(
+    columnName: string,
+    where?: ObjectWhereLike | ObjectWhereLike[],
+  ): Promise<number | null> {
+    return this.aggregate('MIN', columnName, where);
+  }
+
+  async maximum(
+    columnName: string,
+    where?: ObjectWhereLike | ObjectWhereLike[],
+  ): Promise<number | null> {
+    return this.aggregate('MAX', columnName, where);
+  }
+
+  async sum(
+    columnName: string,
+    where?: ObjectWhereLike | ObjectWhereLike[],
+  ): Promise<number | null> {
+    return this.aggregate('SUM', columnName, where);
+  }
+
+  async average(
+    columnName: string,
+    where?: ObjectWhereLike | ObjectWhereLike[],
+  ): Promise<number | null> {
+    return this.aggregate('AVG', columnName, where);
+  }
+
+  private async aggregate(
+    sqlFunction: 'MIN' | 'MAX' | 'SUM' | 'AVG',
+    columnName: string,
+    where?: ObjectWhereLike | ObjectWhereLike[],
+  ): Promise<number | null> {
+    if (
+      !isDefined(this.options.tableShape.columnShapeByColumnName[columnName])
+    ) {
+      throw new TwentyOrmV2Exception(
+        `Column "${columnName}" does not exist on "${this.options.tableShape.nameSingular}"`,
+        TwentyOrmV2ExceptionCode.UNKNOWN_COLUMN,
+      );
+    }
+
+    const queryBuilder = applyFindOptionsToQueryBuilder(
+      this.createQueryBuilder(),
+      isDefined(where) ? { where } : undefined,
+    );
+
+    queryBuilder.select([]);
+    queryBuilder.addSelect(
+      `${sqlFunction}(${escapeIdentifier(
+        this.options.tableShape.nameSingular,
+      )}.${escapeIdentifier(columnName)})`,
+      'value',
+    );
+
+    const row = await queryBuilder.getRawOne<{
+      value: string | number | null;
+    }>();
+
+    return isDefined(row?.value) ? Number(row.value) : null;
+  }
+
   private async loadRelations(
     records: ObjectRecord[],
     relations: FindOptionsRelationsV2,
