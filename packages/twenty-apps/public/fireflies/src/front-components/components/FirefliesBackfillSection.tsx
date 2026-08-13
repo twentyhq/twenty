@@ -34,7 +34,20 @@ const StyledDaysUnit = styled.span`
   font-size: ${() => themeCssVariables.font.size.sm};
 `;
 
-export const FirefliesBackfillSection = () => {
+const StyledHint = styled.span`
+  color: ${() => themeCssVariables.font.color.tertiary};
+  font-family: ${() => themeCssVariables.font.family};
+  font-size: ${() => themeCssVariables.font.size.xs};
+  margin-top: ${() => themeCssVariables.spacing[2]};
+`;
+
+type FirefliesBackfillSectionProps = {
+  isApiKeyConfigured: boolean;
+};
+
+export const FirefliesBackfillSection = ({
+  isApiKeyConfigured,
+}: FirefliesBackfillSectionProps) => {
   const [daysDraftValue, setDaysDraftValue] = useState(
     String(DEFAULT_FIREFLIES_BACKFILL_DAYS),
   );
@@ -43,7 +56,9 @@ export const FirefliesBackfillSection = () => {
 
   const parsedDays = parseBackfillDays(daysDraftValue);
   const isStartDisabled =
-    isUndefined(parsedDays) || isRequestingFirefliesBackfill;
+    !isApiKeyConfigured ||
+    isUndefined(parsedDays) ||
+    isRequestingFirefliesBackfill;
 
   const handleStartClick = async () => {
     if (isUndefined(parsedDays)) {
@@ -60,7 +75,7 @@ export const FirefliesBackfillSection = () => {
     <StyledSection>
       <H2Title
         title="Import call history"
-        description="Imports Fireflies calls from the chosen period into call recordings. Already-imported calls are skipped, and the import runs in the background after it starts."
+        description="Imports past Fireflies calls as call recordings. Already-imported calls are skipped."
       />
       <StyledRow>
         <StyledDaysInputContainer>
@@ -79,6 +94,9 @@ export const FirefliesBackfillSection = () => {
           onClick={handleStartClick}
         />
       </StyledRow>
+      {!isApiKeyConfigured && (
+        <StyledHint>Set the Fireflies API key first.</StyledHint>
+      )}
     </StyledSection>
   );
 };

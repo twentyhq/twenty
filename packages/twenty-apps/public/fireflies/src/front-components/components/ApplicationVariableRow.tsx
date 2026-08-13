@@ -40,11 +40,13 @@ const StyledDescription = styled.span`
 type ApplicationVariableRowProps = {
   applicationId: string;
   variable: FirefliesApplicationVariable;
+  onVariableSaved?: (variableKey: string, value: string) => void;
 };
 
 export const ApplicationVariableRow = ({
   applicationId,
   variable,
+  onVariableSaved,
 }: ApplicationVariableRowProps) => {
   const isSecretFilled = variable.isSecret && isNonEmptyString(variable.value);
 
@@ -66,7 +68,10 @@ export const ApplicationVariableRow = ({
         message: `Could not save ${variable.key}.`,
         variant: 'error',
       });
+      return;
     }
+
+    onVariableSaved?.(variable.key, newValue);
   }, APPLICATION_VARIABLE_SAVE_DEBOUNCE_MILLISECONDS);
 
   return (
