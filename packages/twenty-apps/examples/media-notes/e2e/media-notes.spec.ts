@@ -115,6 +115,15 @@ test.describe('Media notes capture flow', () => {
     expect(audioSrc).toBeTruthy();
     expect(audioSrc).toContain('/file');
 
+    // Actually fetch it: a signed url for a folder the file guard does not
+    // serve still looks correct in the src attribute but answers 401/403, so
+    // asserting on the string alone would not catch an unplayable recording.
+    const mediaResponse = await page.request.get(audioSrc as string);
+    expect(mediaResponse.status()).toBe(200);
+    // The body, not content-length: the file route streams the response, so
+    // the header is absent even on a perfectly good recording.
+    expect((await mediaResponse.body()).length).toBeGreaterThan(0);
+
     // The recording is attached to a record, which is what makes the
     // uploaded file permanent instead of a temporary orphan.
     await expect(

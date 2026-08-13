@@ -98,6 +98,8 @@ export const useFrontComponentMediaRecorder = ({
     isDisposedRef.current = false;
 
     return () => {
+      // Set before releasing so the stop event, which fires after this
+      // cleanup, sees the hook as disposed.
       isDisposedRef.current = true;
       releaseRecorderResources();
     };
@@ -172,6 +174,16 @@ export const useFrontComponentMediaRecorder = ({
 
         clearElapsedInterval();
         stopMediaStream();
+
+        // Disposal is checked separately from settlement: an externally closed
+        // modal resolves the request through the manager, so the settled flag
+        // stays false while the hook is already unmounted. Building the blob
+        // then would strand an object url holding the whole recording.
+        if (isDisposedRef.current) {
+          recordedChunksRef.current = [];
+
+          return;
+        }
 
         if (isCaptureSettled()) {
           return;
