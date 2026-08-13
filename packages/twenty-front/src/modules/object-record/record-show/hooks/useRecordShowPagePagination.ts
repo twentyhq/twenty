@@ -84,6 +84,7 @@ export const useRecordShowPagePagination = (
         orderBy,
         cursorRecordValues: currentRecordKeysetValues,
         isForwardPagination: false,
+        fieldMetadataItems: objectMetadataItem.fields,
       })
     : undefined;
 
@@ -92,6 +93,7 @@ export const useRecordShowPagePagination = (
         orderBy,
         cursorRecordValues: currentRecordKeysetValues,
         isForwardPagination: true,
+        fieldMetadataItems: objectMetadataItem.fields,
       })
     : undefined;
 
