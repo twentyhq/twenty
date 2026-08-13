@@ -1,3 +1,4 @@
+import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { RecordIndexCommandMenuDropdown } from '@/command-menu-item/components/RecordIndexCommandMenuDropdown';
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
 import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
@@ -25,7 +26,7 @@ export const RecordIndexCommandMenu = () => {
           <CommandMenuContextProvider
             isInSidePanel={false}
             displayType="button"
-            containerType="index-page-header"
+            containerType={CommandMenuItemContainerType.IndexPageHeader}
             isInPreviewMode={isLayoutCustomizationModeEnabled}
           >
             <PinnedCommandMenuItemButtons />
@@ -33,7 +34,7 @@ export const RecordIndexCommandMenu = () => {
           <CommandMenuContextProvider
             isInSidePanel={false}
             displayType="dropdownItem"
-            containerType="index-page-dropdown"
+            containerType={CommandMenuItemContainerType.IndexPageDropdown}
           >
             <RecordIndexCommandMenuDropdown />
           </CommandMenuContextProvider>

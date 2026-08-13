@@ -1,3 +1,4 @@
+import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
 import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
 import { CommandMenuItemEditButton } from '@/command-menu-item/edit/components/CommandMenuItemEditButton';
@@ -34,7 +35,7 @@ export const RecordShowCommandMenu = () => {
           <CommandMenuContextProvider
             isInSidePanel={false}
             displayType="button"
-            containerType="show-page-header"
+            containerType={CommandMenuItemContainerType.ShowPageHeader}
             isInPreviewMode={isLayoutCustomizationModeEnabled}
           >
             <PinnedCommandMenuItemButtons />
