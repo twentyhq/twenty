@@ -197,7 +197,18 @@ export const useAgentChat = (
         },
       });
 
-      store.set(currentWorkspaceState.atom, markWorkspaceCreditsAvailable);
+      // The stream this send started can exhaust the balance and publish
+      // credits-exhausted before this response resolves; that event marks the
+      // thread error, so its presence means the exhaustion is newer information
+      // than the gate pass this response proves.
+      if (
+        !isGraphqlErrorOfType(
+          store.get(errorAtom),
+          AiChatErrorCode.BILLING_CREDITS_EXHAUSTED,
+        )
+      ) {
+        store.set(currentWorkspaceState.atom, markWorkspaceCreditsAvailable);
+      }
 
       if (isBrowsingContextChanged) {
         store.set(lastSentBrowsingContextAtom, browsingContext);
