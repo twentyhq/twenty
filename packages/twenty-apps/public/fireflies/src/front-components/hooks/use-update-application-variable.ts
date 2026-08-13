@@ -44,7 +44,6 @@ export const useUpdateApplicationVariable = (
     }
   };
 
-  // Updates are chained so concurrent saves reach the server in the order they were issued
   const updateApplicationVariable = (
     params: UpdateApplicationVariableParams,
   ): Promise<boolean> => {
