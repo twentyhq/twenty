@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString, isNull } from '@sniptt/guards';
@@ -35,6 +35,8 @@ import { isWorkDomain, isWorkEmail } from 'src/utils/is-work-email';
 
 @Injectable()
 export class CreateCompanyAndPersonService {
+  private readonly logger = new Logger(CreateCompanyAndPersonService.name);
+
   constructor(
     private readonly createPersonService: CreatePersonService,
     private readonly createCompaniesService: CreateCompanyService,
@@ -183,19 +185,21 @@ export class CreateCompanyAndPersonService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { id: connectedAccount.userWorkspaceId },
+    });
+
+    if (!userWorkspace) {
+      this.logger.warn(
+        `Skipping contact creation for connected account ${connectedAccount.id} in workspace ${workspaceId}: userWorkspace ${connectedAccount.userWorkspaceId} not found`,
+      );
+
+      return;
+    }
+
     const accountOwner =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
-          const userWorkspace = await this.userWorkspaceRepository.findOne({
-            where: { id: connectedAccount.userWorkspaceId },
-          });
-
-          if (!userWorkspace) {
-            throw new Error(
-              `UserWorkspace with id ${connectedAccount.userWorkspaceId} not found`,
-            );
-          }
-
           const workspaceMemberRepository =
             await this.globalWorkspaceOrmManager.getRepository(
               workspaceId,
