@@ -1,10 +1,43 @@
+import { isDefined } from 'twenty-shared/utils';
+import { getStepOutgoingStepIds } from 'twenty-shared/workflow';
+
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
-import { getReachableStepIds } from 'src/modules/workflow/workflow-executor/utils/get-reachable-step-ids.util';
 import { type WorkflowIfElseResult } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/types/workflow-if-else-result.type';
 import {
   type WorkflowAction,
   type WorkflowIfElseAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+
+const getReachableStepIds = ({
+  fromStepIds,
+  steps,
+}: {
+  fromStepIds: string[];
+  steps: WorkflowAction[];
+}): Set<string> => {
+  const stepsById = new Map(steps.map((step) => [step.id, step]));
+
+  const reachableStepIds = new Set<string>();
+  const stepIdsToVisit = [...fromStepIds];
+
+  while (stepIdsToVisit.length > 0) {
+    const stepId = stepIdsToVisit.pop();
+
+    if (!isDefined(stepId) || reachableStepIds.has(stepId)) {
+      continue;
+    }
+
+    reachableStepIds.add(stepId);
+
+    const step = stepsById.get(stepId);
+
+    if (isDefined(step)) {
+      stepIdsToVisit.push(...getStepOutgoingStepIds(step));
+    }
+  }
+
+  return reachableStepIds;
+};
 
 export const getNextStepIdsForIfElse = ({
   executedStep,

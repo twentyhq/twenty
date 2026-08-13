@@ -116,6 +116,64 @@ describe('getNextStepIdsForIfElse', () => {
     });
   });
 
+  it('should not skip a convergence step reached through an iterator loop with serialized ids', () => {
+    const ifElseStep = buildIfElseStep({
+      ifBranchNextStepIds: ['iterator'],
+      elseBranchNextStepIds: ['mergeStep'],
+    });
+
+    const iteratorStep = {
+      id: 'iterator',
+      type: 'ITERATOR',
+      name: 'iterator',
+      nextStepIds: ['mergeStep'],
+      settings: { input: { initialLoopStepIds: '["insideLoop"]' } },
+    } as unknown as WorkflowAction;
+
+    const steps = [
+      ifElseStep,
+      iteratorStep,
+      buildStep('insideLoop', ['iterator']),
+      buildStep('mergeStep', []),
+    ];
+
+    expect(
+      getNextStepIdsForIfElse({
+        executedStep: ifElseStep,
+        executedStepOutput: { result: { matchingBranchId: 'ifBranch' } },
+        steps,
+      }),
+    ).toEqual({
+      nextStepIdsToExecute: ['iterator'],
+      nextStepIdsToSkip: [],
+    });
+  });
+
+  it('should terminate when the matching branch contains a cycle', () => {
+    const ifElseStep = buildIfElseStep({
+      ifBranchNextStepIds: ['loopA'],
+      elseBranchNextStepIds: ['elseStep'],
+    });
+
+    const steps = [
+      ifElseStep,
+      buildStep('loopA', ['loopB']),
+      buildStep('loopB', ['loopA']),
+      buildStep('elseStep', []),
+    ];
+
+    expect(
+      getNextStepIdsForIfElse({
+        executedStep: ifElseStep,
+        executedStepOutput: { result: { matchingBranchId: 'ifBranch' } },
+        steps,
+      }),
+    ).toEqual({
+      nextStepIdsToExecute: ['loopA'],
+      nextStepIdsToSkip: ['elseStep'],
+    });
+  });
+
   it('should skip every branch when the if/else step is skipped', () => {
     const ifElseStep = buildIfElseStep({
       ifBranchNextStepIds: ['ifStep'],

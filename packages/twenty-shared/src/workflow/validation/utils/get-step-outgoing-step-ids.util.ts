@@ -1,8 +1,8 @@
 import { isDefined } from '@/utils';
+import { WorkflowActionType } from '@/workflow/types/WorkflowActionType';
 import { isIfElseStepInput } from '@/workflow/validation/guards/isIfElseStepInput';
-import { isIteratorStepInput } from '@/workflow/validation/guards/isIteratorStepInput';
 import { type ValidatableWorkflowStep } from '@/workflow/validation/types/workflow-validation.type';
-import { isObject } from '@sniptt/guards';
+import { isObject, isString } from '@sniptt/guards';
 
 export const getStepInput = (
   step: ValidatableWorkflowStep,
@@ -14,6 +14,30 @@ export const getStepInput = (
   }
 
   return undefined;
+};
+
+// initialLoopStepIds can be stored either as a string array or as its
+// JSON-serialized form, depending on how the version was authored.
+const parseLoopStepIds = (value: unknown): string[] => {
+  if (isString(value)) {
+    try {
+      const parsed: unknown = JSON.parse(value);
+
+      if (Array.isArray(parsed) && parsed.every(isString)) {
+        return parsed;
+      }
+    } catch {
+      return [];
+    }
+
+    return [];
+  }
+
+  if (Array.isArray(value) && value.every(isString)) {
+    return value;
+  }
+
+  return [];
 };
 
 export const getStepOutgoingStepIds = (
@@ -29,8 +53,10 @@ export const getStepOutgoingStepIds = (
     }
   }
 
-  if (isIteratorStepInput(step)) {
-    for (const nextStepId of step.settings.input.initialLoopStepIds ?? []) {
+  if (step.type === WorkflowActionType.ITERATOR) {
+    for (const nextStepId of parseLoopStepIds(
+      getStepInput(step)?.initialLoopStepIds,
+    )) {
       outgoingStepIds.add(nextStepId);
     }
   }
