@@ -7,7 +7,6 @@ Object.defineProperty(navigator, 'language', {
 
 describe('detectNumberFormat', () => {
   beforeEach(() => {
-    // Reset to default
     Object.defineProperty(navigator, 'language', {
       writable: true,
       value: 'en-US',

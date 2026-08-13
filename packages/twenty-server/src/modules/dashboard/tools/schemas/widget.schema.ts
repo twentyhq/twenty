@@ -332,7 +332,6 @@ const aggregateChartConfigSchema = aggregateChartConfigSchemaBase.extend({
 const aggregateChartConfigSchemaWithoutDefaults =
   aggregateChartConfigSchemaBase;
 
-// Graph configuration schema for BAR charts
 const barChartConfigSchemaCore = z.object({
   configurationType: z.literal(WidgetConfigurationType.BAR_CHART),
   aggregateFieldMetadataId: z
@@ -509,7 +508,6 @@ const lineChartConfigSchema = withRangeMinMaxRefinement(
   ),
 );
 
-// Graph configuration schema for PIE charts
 const pieChartConfigSchemaCore = z.object({
   configurationType: z.literal(WidgetConfigurationType.PIE_CHART),
   aggregateFieldMetadataId: z
@@ -582,7 +580,6 @@ const recordTableConfigSchema = z.object({
     .describe('Maximum number of records displayed in the table widget.'),
 });
 
-// Iframe configuration
 const iframeConfigSchema = z.object({
   configurationType: z.literal(WidgetConfigurationType.IFRAME),
   url: z.string().url().optional().describe('URL to embed'),
@@ -658,5 +655,4 @@ export const widgetConfigurationSchemaWithoutDefaults = z
   .optional()
   .describe('Widget configuration - structure depends on widget type');
 
-// Export enums for documentation
 export { AggregateOperations, WidgetConfigurationType };

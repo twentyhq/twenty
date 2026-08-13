@@ -178,11 +178,9 @@ export const CodeSectionExpanded: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Click to expand the code section
     const codeHeader = await canvas.findByText('Code');
     await userEvent.click(codeHeader);
 
-    // The code editor should now be visible
     expect(await canvas.findByText('Completed')).toBeVisible();
   },
 };

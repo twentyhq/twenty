@@ -9,7 +9,6 @@ describe('detectCalendarStartDay', () => {
   let originalIntlLocale: typeof Intl.Locale;
 
   beforeEach(() => {
-    // Reset to default
     Object.defineProperty(navigator, 'language', {
       writable: true,
       value: 'en-US',

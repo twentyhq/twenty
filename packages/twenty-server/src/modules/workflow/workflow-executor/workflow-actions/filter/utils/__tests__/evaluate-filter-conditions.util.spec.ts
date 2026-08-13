@@ -1634,7 +1634,6 @@ describe('evaluateFilterConditions', () => {
           50,
           'unknown',
         );
-        // strings are converted to numbers
         const filter3 = createFilter(
           ViewFilterOperand.GREATER_THAN_OR_EQUAL,
           '1234',

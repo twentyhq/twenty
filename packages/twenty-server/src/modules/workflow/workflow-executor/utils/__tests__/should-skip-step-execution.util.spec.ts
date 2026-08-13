@@ -242,7 +242,6 @@ describe('shouldSkipStepExecution', () => {
       createMockCodeStep('step-4', []),
     ];
 
-    // Test case 1: All skipped - should return true
     expect(
       shouldSkipStepExecution({
         step: steps[3],

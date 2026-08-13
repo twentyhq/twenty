@@ -125,7 +125,6 @@ describe('Field update permissions restrictions', () => {
       (role: any) => role.label === 'Member',
     ).id;
 
-    // Create a company and a person
     companyId = randomUUID();
     personId = randomUUID();
     const createCompanyOp = createOneOperationFactory({

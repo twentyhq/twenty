@@ -6,7 +6,6 @@ const TEST_COMPANY_IDS = {
   ALPHA: '20202020-aaaa-4000-8000-000000000001',
   BETA: '20202020-aaaa-4000-8000-000000000002',
   GAMMA: '20202020-aaaa-4000-8000-000000000003',
-  // Companies for case-insensitive sorting tests
   ACME_LOWER: '20202020-aaaa-4000-8000-000000000004',
   ACME_UPPER: '20202020-aaaa-4000-8000-000000000005',
   ZEBRA: '20202020-aaaa-4000-8000-000000000006',
@@ -58,7 +57,6 @@ describe('Order by relation field (e2e)', () => {
       objectMetadataPluralName: 'people',
       gqlFields: 'id',
       data: [
-        // People with companies (for testing sorting)
         { id: TEST_PERSON_IDS[0], companyId: TEST_COMPANY_IDS.ALPHA },
         { id: TEST_PERSON_IDS[1], companyId: TEST_COMPANY_IDS.ALPHA },
         { id: TEST_PERSON_IDS[2], companyId: TEST_COMPANY_IDS.BETA },
@@ -70,7 +68,6 @@ describe('Order by relation field (e2e)', () => {
         { id: TEST_PERSON_IDS[7], companyId: null },
         { id: TEST_PERSON_IDS[8], companyId: null },
         { id: TEST_PERSON_IDS[9], companyId: null },
-        // People for case-insensitive sorting tests
         {
           id: CASE_INSENSITIVE_TEST_PERSON_IDS[0],
           companyId: TEST_COMPANY_IDS.ACME_LOWER,
@@ -237,7 +234,6 @@ describe('Order by relation field (e2e)', () => {
     expect(Array.isArray(edges)).toBe(true);
     expect(edges.length).toBeGreaterThan(0);
 
-    // Check that null companies appear at the end
     let seenNull = false;
 
     for (const edge of edges) {
@@ -251,7 +247,6 @@ describe('Order by relation field (e2e)', () => {
   });
 
   it('should work with offset pagination', async () => {
-    // First request to get initial data
     const firstQueryData = {
       query: gql`
         query People(
@@ -349,7 +344,6 @@ describe('Order by relation field (e2e)', () => {
   });
 
   it.skip('should return clear error when using cursor pagination with relation orderBy', async () => {
-    // First get a cursor by fetching records
     const firstQueryData = {
       query: gql`
         query People(
@@ -502,7 +496,6 @@ describe('Order by relation field (e2e)', () => {
       )
       .filter((index: number) => index !== -1);
 
-    // All ACME variants should appear before Zebra
     for (const acmeIndex of acmeIndices) {
       expect(acmeIndex).toBeLessThan(zebraIndex);
     }

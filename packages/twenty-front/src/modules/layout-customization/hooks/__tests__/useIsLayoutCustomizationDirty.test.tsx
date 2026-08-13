@@ -160,7 +160,6 @@ describe('useIsLayoutCustomizationDirty', () => {
       status: 'up-to-date',
     });
     store.set(isLayoutCustomizationModeEnabledState.atom, true);
-    // Nav draft differs from prefetch
     store.set(navigationMenuItemsDraftState.atom, []);
 
     const { result } = renderHook(() => useIsLayoutCustomizationDirty(), {
@@ -185,7 +184,6 @@ describe('useIsLayoutCustomizationDirty', () => {
       PAGE_LAYOUT_ID_2,
     ]);
 
-    // First layout is clean
     store.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_ID_1,

@@ -94,7 +94,6 @@ describe('hasTokenPair', () => {
 
       expect(mockGetTokenPair).toHaveBeenCalledTimes(1);
 
-      // Reset and test with valid token
       mockGetTokenPair.mockClear();
       const validToken = {
         accessOrWorkspaceAgnosticToken: {

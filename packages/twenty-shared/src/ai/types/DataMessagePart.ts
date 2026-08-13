@@ -73,7 +73,6 @@ export type DataMessagePart = {
       routingCostInCredits?: number;
       agentCostInCredits?: number;
       totalCostInCredits?: number;
-      // Plan execution
       planReasoning?: string;
       totalSteps?: number;
       steps?: Array<{

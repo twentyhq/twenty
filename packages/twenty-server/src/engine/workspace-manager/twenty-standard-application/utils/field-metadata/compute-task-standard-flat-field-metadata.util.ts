@@ -26,7 +26,6 @@ export const buildTaskStandardFlatFieldMetadatas = ({
   AllStandardObjectFieldName<'task'>,
   FlatFieldMetadata
 > => ({
-  // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -112,7 +111,6 @@ export const buildTaskStandardFlatFieldMetadatas = ({
     now,
   }),
 
-  // Task-specific fields
   position: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,

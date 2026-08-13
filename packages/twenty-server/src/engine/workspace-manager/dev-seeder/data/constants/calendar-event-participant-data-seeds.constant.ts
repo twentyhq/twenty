@@ -177,7 +177,6 @@ const CREATE_EVENT_PARTICIPANT_DATA = (
 ): EventParticipantData => {
   const PARTICIPANT_TYPE = Math.random();
 
-  // Try person participant (40% chance)
   if (PARTICIPANT_TYPE < 0.4) {
     const PERSON_PARTICIPANT = CREATE_PERSON_EVENT_PARTICIPANT(
       personIds,

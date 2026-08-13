@@ -259,7 +259,6 @@ export const computeStandardPersonViewFields = (
         viewFieldGroupName: 'general',
       },
     }),
-    // Work group
     personRecordPageFieldsCompany: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'person',
@@ -286,7 +285,6 @@ export const computeStandardPersonViewFields = (
         viewFieldGroupName: 'work',
       },
     }),
-    // Social group
     personRecordPageFieldsLinkedinLink: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'person',
@@ -300,7 +298,6 @@ export const computeStandardPersonViewFields = (
         viewFieldGroupName: 'social',
       },
     }),
-    // System group
     personRecordPageFieldsCreatedAt: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'person',

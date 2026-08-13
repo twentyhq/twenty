@@ -248,7 +248,6 @@ describe('useAddressAutocomplete', () => {
 
     const { result } = renderHook(() => useAddressAutocomplete(mockOnChange));
 
-    // Set initial token
     act(() => {
       result.current.setTokenForPlaceApi('initial-token');
     });

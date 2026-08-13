@@ -88,7 +88,6 @@ export const categorizeRelationFields = ({
       continue;
     }
 
-    // Boxed relations need read permission check
     if (canReadRelationTarget(field, objectPermissionsByObjectMetadataId)) {
       boxedRelationFields.push(field);
     }

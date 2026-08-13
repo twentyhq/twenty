@@ -8,7 +8,6 @@ export function objectRecordDiffMerge(
   // oxlint-disable-next-line typescript/no-explicit-any
   const result: Record<string, any> = { diff: {} };
 
-  // Iterate over the keys in the oldRecord diff
   Object.keys(oldRecord.diff ?? {}).forEach((key) => {
     if (newRecord.diff && newRecord.diff[key]) {
       // If the key also exists in the newRecord, merge the 'before' from the oldRecord and the 'after' from the newRecord

@@ -426,7 +426,6 @@ describe('WorkspaceEntityManager', () => {
       .fn()
       .mockReturnValue(mockMetadata);
 
-    // Reset the mock before each test
     jest.clearAllMocks();
   });
 

@@ -83,7 +83,6 @@ describe('Core REST API Find Many endpoint', () => {
       expect(person.jobTitle).toBe(testPersonJobTitles[personId]);
     }
 
-    // Check pagination metadata
     expect(pageInfo).toBeDefined();
     expect(pageInfo.startCursor).toBeDefined();
     expect(pageInfo.endCursor).toBeDefined();

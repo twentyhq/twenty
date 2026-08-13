@@ -215,7 +215,6 @@ describe('updateOne FieldMetadataService morph relation fields v2', () => {
       ({ targetFieldMetadata }) => targetFieldMetadata.id,
     );
 
-    /// ASSERT
     {
       const morphRelationFieldsBeforeUpdate = (await findManyFieldsMetadata({
         input: {
@@ -274,7 +273,6 @@ describe('updateOne FieldMetadataService morph relation fields v2', () => {
       expect(aggregatedRelationFieldMetadataDtos).toMatchSnapshot();
     }
 
-    // UPDATE
     const input = {
       idToUpdate: createdFieldMetadataId,
       updatePayload: {

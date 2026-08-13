@@ -56,7 +56,6 @@ const GENERATE_CALENDAR_CHANNEL_EVENT_ASSOCIATION_SEEDS =
       CALENDAR_CHANNEL_DATA_SEED_IDS.TEAM_CALENDAR,
     ];
 
-    // Create associations for each event
     EVENT_IDS.forEach((eventId, index) => {
       // Distribute events across channels with weighted distribution
       let CHANNEL_ID: string;

@@ -74,7 +74,6 @@ const companyPeopleField = getMockFieldMetadataItemOrThrow({
 const TEST_RECORD_ID = 'test-record-123';
 const TEST_PERSON_RECORD_ID = 'test-person-456';
 
-// Widget ID constants for stories
 const WIDGET_ID_NUMBER_CHART = 'widget-number-chart';
 const WIDGET_ID_BAR_CHART = 'widget-bar-chart';
 const WIDGET_ID_SMALL = 'widget-small';

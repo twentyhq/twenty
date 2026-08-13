@@ -1,10 +1,8 @@
 import { camelCase } from 'src/utils/camel-case';
 
 export const cleanEntityName = (entityName: string) => {
-  // Remove all leading numbers
   let camelCasedEntityName = entityName.replace(/^[0-9]+/, '');
 
-  // Trim the string
   camelCasedEntityName = camelCasedEntityName.trim();
 
   camelCasedEntityName = camelCase(camelCasedEntityName);

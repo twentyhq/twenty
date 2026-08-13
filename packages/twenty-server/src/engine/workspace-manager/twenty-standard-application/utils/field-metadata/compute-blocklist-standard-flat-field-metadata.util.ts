@@ -25,7 +25,6 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
   CreateStandardFieldArgs<'blocklist', FieldMetadataType>,
   'context'
 >): Record<AllStandardObjectFieldName<'blocklist'>, FlatFieldMetadata> => ({
-  // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -194,7 +193,6 @@ export const buildBlocklistStandardFlatFieldMetadatas = ({
     now,
   }),
 
-  // Blocklist-specific fields
   handle: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,

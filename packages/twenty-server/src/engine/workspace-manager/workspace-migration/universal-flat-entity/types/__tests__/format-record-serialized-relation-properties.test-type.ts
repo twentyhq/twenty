@@ -43,7 +43,6 @@ type ObjectAssertions = [
     >
   >,
 
-  // Object without SerializedRelation: no changes
   Expect<
     Equal<
       FormatRecordSerializedRelationProperties<ObjectWithoutRelation>,
@@ -54,11 +53,9 @@ type ObjectAssertions = [
 
 // oxlint-disable-next-line unused-imports/no-unused-vars
 type PrimitiveAssertions = [
-  // Primitives pass through unchanged
   Expect<Equal<FormatRecordSerializedRelationProperties<string>, string>>,
   Expect<Equal<FormatRecordSerializedRelationProperties<number>, number>>,
   Expect<Equal<FormatRecordSerializedRelationProperties<null>, null>>,
-  // SerializedRelation becomes nullable
   Expect<
     Equal<
       FormatRecordSerializedRelationProperties<SerializedRelation>,
@@ -88,7 +85,6 @@ type ArrayAssertions = [
     >
   >,
 
-  // Array of primitives: passes through unchanged
   Expect<Equal<FormatRecordSerializedRelationProperties<string[]>, string[]>>,
 
   // Nested array of objects: transforms innermost elements
