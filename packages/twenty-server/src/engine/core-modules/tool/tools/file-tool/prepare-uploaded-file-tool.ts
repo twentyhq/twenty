@@ -9,10 +9,8 @@ import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/to
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 @Injectable()
@@ -70,19 +68,14 @@ export class PrepareUploadedFileTool implements Tool {
       };
     }
 
-    const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
-      flatFieldMetadataMaps,
+    const objectFields = getFlatFieldsFromFlatObjectMetadata(
       flatObjectMetadata,
+      flatFieldMetadataMaps,
     );
 
-    const fieldMetadataId = fieldIdByName[fieldName];
-
-    const flatFieldMetadata = isDefined(fieldMetadataId)
-      ? findFlatEntityByIdInFlatEntityMaps<FlatFieldMetadata>({
-          flatEntityId: fieldMetadataId,
-          flatEntityMaps: flatFieldMetadataMaps,
-        })
-      : undefined;
+    const flatFieldMetadata = objectFields.find(
+      (field) => field.name === fieldName,
+    );
 
     if (!isDefined(flatFieldMetadata)) {
       return {
@@ -93,16 +86,9 @@ export class PrepareUploadedFileTool implements Tool {
     }
 
     if (flatFieldMetadata.type !== FieldMetadataType.FILES) {
-      const filesFieldNames = Object.entries(fieldIdByName)
-        .map(([name, id]) =>
-          findFlatEntityByIdInFlatEntityMaps<FlatFieldMetadata>({
-            flatEntityId: id,
-            flatEntityMaps: flatFieldMetadataMaps,
-          })?.type === FieldMetadataType.FILES
-            ? name
-            : undefined,
-        )
-        .filter(isDefined)
+      const filesFieldNames = objectFields
+        .filter((field) => field.type === FieldMetadataType.FILES)
+        .map((field) => field.name)
         .join(', ');
 
       return {
