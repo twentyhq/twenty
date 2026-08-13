@@ -230,6 +230,7 @@ export class RecordLabelFormulaService {
   }: Omit<RecordLabelFormulaRecomputeArgs, 'recordIds'>): Promise<void> {
     const repository = workspaceDataSource.getRepository(
       flatObjectMetadata.nameSingular,
+      { shouldBypassPermissionChecks: true },
     );
     let lastRecordId: string | undefined;
 
@@ -302,6 +303,7 @@ export class RecordLabelFormulaService {
     );
     const repository = workspaceDataSource.getRepository(
       flatObjectMetadata.nameSingular,
+      { shouldBypassPermissionChecks: true },
     );
     const records = (await repository.find({
       select: ['id', ...new Set(sourceFieldNames)],
@@ -394,6 +396,7 @@ export class RecordLabelFormulaService {
 
       const repository = workspaceDataSource.getRepository(
         candidateObjectMetadata.nameSingular,
+        { shouldBypassPermissionChecks: true },
       );
       const dependentRecordIds = new Set<string>();
 

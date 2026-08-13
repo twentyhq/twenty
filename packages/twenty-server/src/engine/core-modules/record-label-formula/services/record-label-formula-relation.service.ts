@@ -10,6 +10,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { getMinimalSelectForRecordIdentifier } from 'src/engine/metadata-modules/navigation-menu-item/utils/get-minimal-select-for-record-identifier.util';
 import { type GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 
 @Injectable()
@@ -62,17 +63,6 @@ export class RecordLabelFormulaRelationService {
         continue;
       }
 
-      const targetLabelIdentifierFieldMetadata =
-        findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId:
-            targetObjectMetadata.labelIdentifierFieldMetadataId ?? '',
-          flatEntityMaps: flatFieldMetadataMaps,
-        });
-
-      if (!isDefined(targetLabelIdentifierFieldMetadata)) {
-        continue;
-      }
-
       const targetRecordIds = new Set<string>();
 
       for (const relationField of relationFields) {
@@ -95,9 +85,13 @@ export class RecordLabelFormulaRelationService {
 
       const targetRepository = workspaceDataSource.getRepository(
         targetObjectMetadata.nameSingular,
+        { shouldBypassPermissionChecks: true },
       );
       const targetRecords = (await targetRepository.find({
-        select: ['id', targetLabelIdentifierFieldMetadata.name],
+        select: getMinimalSelectForRecordIdentifier({
+          flatObjectMetadata: targetObjectMetadata,
+          flatFieldMetadataMaps,
+        }),
         where: { id: In([...targetRecordIds]) },
       })) as ObjectRecord[];
 
