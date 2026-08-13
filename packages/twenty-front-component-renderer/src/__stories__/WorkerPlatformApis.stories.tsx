@@ -68,20 +68,62 @@ const mutationObserverTest: Story['play'] = async ({ canvasElement }) => {
   expect(errorHandler).not.toHaveBeenCalled();
 };
 
-const createStory = (name: string, runtime?: 'preact'): Story => ({
+const matchMediaTest: Story['play'] = async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+
+  await canvas.findByTestId(
+    'match-media-component',
+    {},
+    { timeout: MOUNT_TIMEOUT },
+  );
+
+  await waitFor(
+    () => {
+      expect(canvas.getByTestId('match-media-min-width')).toHaveTextContent(
+        'min-width matches: true',
+      );
+      expect(canvas.getByTestId('match-media-unknown-query')).toHaveTextContent(
+        'unknown query matches: false',
+      );
+      expect(
+        canvas.getByTestId('match-media-light-color-scheme'),
+      ).toHaveTextContent('light color scheme matches: true');
+    },
+    { timeout: MOUNT_TIMEOUT },
+  );
+
+  expect(errorHandler).not.toHaveBeenCalled();
+};
+
+const createStory = (
+  name: string,
+  play: Story['play'],
+  runtime?: 'preact',
+): Story => ({
   args: {
     componentUrl: getBuiltStoryComponentPathForRender(
       `${name}.front-component`,
       runtime,
     ),
   },
-  play: mutationObserverTest,
+  play,
 });
 
 export const MutationObserverReact: Story = createStory(
   'mutation-observer-example',
+  mutationObserverTest,
 );
 export const MutationObserverPreact: Story = createStory(
   'mutation-observer-example',
+  mutationObserverTest,
+  'preact',
+);
+export const MatchMediaReact: Story = createStory(
+  'match-media',
+  matchMediaTest,
+);
+export const MatchMediaPreact: Story = createStory(
+  'match-media',
+  matchMediaTest,
   'preact',
 );

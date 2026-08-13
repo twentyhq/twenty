@@ -17,6 +17,7 @@ import { installMutationObserver } from '@/polyfills/dom/utils/installMutationOb
 import { workerGeometryStore } from '@/polyfills/geometry/states/workerGeometryStore';
 import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
 import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/installWindowGeometryPolyfill';
+import { installMatchMediaPolyfill } from '@/polyfills/media-query/utils/installMatchMediaPolyfill';
 import { frontComponentStorageBridges } from '@/polyfills/storage/states/frontComponentStorageBridges';
 import { installStorageBridge } from '@/polyfills/storage/utils/installStorageBridge';
 import { exposeGlobals } from '@/utils/exposeGlobals';
@@ -26,7 +27,9 @@ import { buildFrontComponentHostCommunicationApiFromThreadImports } from '@/remo
 import { handleCommandConfirmationModalResult } from '@/remote/worker/thread/utils/handleCommandConfirmationModalResult';
 import { installErrorEventBridge } from '@/remote/worker/thread/utils/installErrorEventBridge';
 import { renderFrontComponent } from '@/remote/worker/rendering/utils/renderFrontComponent';
+import { getFrontComponentColorScheme } from '@/remote/worker/environment/utils/getFrontComponentColorScheme';
 import { setFrontComponentExecutionContext } from '@/remote/worker/environment/utils/setFrontComponentExecutionContext';
+import { subscribeToFrontComponentExecutionContextUpdates } from '@/remote/worker/environment/utils/subscribeToFrontComponentExecutionContextUpdates';
 import { type FrontComponentHostThread } from '@/types/FrontComponentHostThread';
 import { type FrontComponentHostThreadExports } from '@/types/FrontComponentHostThreadExports';
 import { type WorkerExports } from '@/types/WorkerExports';
@@ -56,6 +59,14 @@ installElementGeometryPolyfill({
 installWindowGeometryPolyfill({
   globalScope: globalThis as unknown as Record<string, unknown>,
   geometryStore: workerGeometryStore,
+});
+
+installMatchMediaPolyfill({
+  globalScope: globalThis as unknown as Record<string, unknown>,
+  geometryStore: workerGeometryStore,
+  getColorScheme: getFrontComponentColorScheme,
+  subscribeToColorSchemeUpdates:
+    subscribeToFrontComponentExecutionContextUpdates,
 });
 
 installStorageBridge({
