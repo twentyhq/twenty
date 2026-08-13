@@ -1,0 +1,310 @@
+---
+title: 4. Создание пользовательского интерфейса
+icon: table-columns
+description: Виды, боковая навигация, команды и передние компоненты.
+---
+
+Сейчас объекты доступны только через Настройки. Давайте придадим приложению
+реальное присутствие в интерфейсе: представления списков, элементы боковой панели, однокнопочную
+команду **Generate document**, фронтенд-компонент на странице записи для **предварительного просмотра**
+документа и встроенную вкладку **Editor** с редактором форматированного текста для шаблонов.
+
+## Виды и навигация
+
+[view](/l/ru/developers/extend/apps/layout/views) — это сохраненный список объектов.
+[пункт меню навигации](/l/ru/developers/extend/apps/layout/navigation-menu-items)
+помещает его в боковую панель. Сервер уже автоматически создает для каждого объекта
+представление по умолчанию "All ...", поэтому представления, определяемые приложением,
+являются дополнительными, специально отобранными.
+
+```ts filename="src/views/documents.view.ts"
+import { defineView } from 'twenty-sdk/define';
+
+export default defineView({
+  universalIdentifier: DOCUMENTS_VIEW_UNIVERSAL_IDENTIFIER,
+  name: 'All documents',
+  objectUniversalIdentifier: DOCUMENT_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconFile',
+  position: 0,
+  fields: [
+    { universalIdentifier: DOCUMENTS_VIEW_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier: DOCUMENT_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0, isVisible: true, size: 280 },
+    { universalIdentifier: DOCUMENTS_VIEW_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier: DOCUMENT_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 1, isVisible: true, size: 120 },
+    { universalIdentifier: DOCUMENTS_VIEW_TEMPLATE_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldMetadataUniversalIdentifier: DOCUMENT_TEMPLATE_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 2, isVisible: true, size: 200 },
+  ],
+});
+```
+
+```ts filename="src/navigation-menu-items/documents.navigation-menu-item.ts"
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: DOCUMENTS_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIER,
+  name: 'Documents',
+  icon: 'IconFile',
+  color: 'green',
+  position: 1,
+  type: NavigationMenuItemType.VIEW,
+  viewUniversalIdentifier: DOCUMENTS_VIEW_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Добавьте ту же пару для шаблонов. Оба теперь показываются в боковой панели:
+
+<Frame caption="Документы и шаблоны в боковой панели, со сгенерированным документом.">
+  <img src="/images/docs/developers/extends/apps/document-generator/04-documents-view.png" alt="Просмотр документов с созданным документом" />
+</Frame>
+
+## Передний компонент
+
+[передний компонент](/l/ru/developers/extend/apps/layout/front-components) — компонент React
+внутри Twenty. Наш компонент считывает выбранную запись, загружает
+персональные шаблоны через `CoreApiClient` и отправляет POST-запрос на маршрут из прошлого
+раздела.
+
+```tsx filename="src/front-components/generate-document-form.front-component.tsx"
+import { useEffect, useState } from 'react';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { RestApiClient } from 'twenty-client-sdk/rest';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { enqueueSnackbar, useSelectedRecordIds } from 'twenty-sdk/front-component';
+
+const GenerateDocumentForm = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+  const recordId = selectedRecordIds.length === 1 ? selectedRecordIds[0] : null;
+  const [templates, setTemplates] = useState<{ id: string; name: string }[]>([]);
+  const [templateId, setTemplateId] = useState('');
+
+  useEffect(() => {
+    new CoreApiClient()
+      .query({ documentTemplates: {
+        __args: { filter: { target: { eq: 'PERSON' } }, first: 100 },
+        edges: { node: { id: true, name: true } } } })
+      .then(({ documentTemplates }) => {
+        const list = documentTemplates?.edges?.map((e) => e.node) ?? [];
+        setTemplates(list);
+        if (list[0]) setTemplateId(list[0].id);
+      });
+  }, []);
+
+  const generate = async () => {
+    const res = await new RestApiClient().post<{ success: boolean }>(
+      '/s/documents/generate',
+      { templateId, recordId },
+    );
+    await enqueueSnackbar({
+      message: res.success ? 'Document generated.' : 'Generation failed.',
+      variant: res.success ? 'success' : 'error',
+    });
+  };
+
+  // ...render a <select> of templates and a Generate button
+};
+
+export default defineFrontComponent({
+  universalIdentifier: GENERATE_DOCUMENT_FORM_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+  name: 'generate-document-form',
+  component: GenerateDocumentForm,
+});
+```
+
+<Warning>
+Стиль с inline CSS переменными (`var(--t-color-blue)`), а не значениями, импортированными из
+`twenty-ui`. SDK моктирует этот пакет во время сборки, поэтому импорт модулей уровня
+констант темы был бы `неопределённым`. См.
+[полный компонент](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/front-components/generate-document-form.front-component.tsx).
+</Warning>
+
+## Команда открытия
+
+[пункт меню команды](/l/ru/developers/extend/apps/layout/command-menu-items) с
+`availabilityType: 'RECORD_SELECTION'` отображается при выборе персоны, и
+открывает компонент в боковой панели.
+
+```ts filename="src/command-menu-items/generate-document.command-menu-item.ts"
+import { defineCommandMenuItem, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: GENERATE_DOCUMENT_COMMAND_UNIVERSAL_IDENTIFIER,
+  label: 'Generate document',
+  availabilityType: 'RECORD_SELECTION',
+  availabilityObjectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+  frontComponentUniversalIdentifier:
+    GENERATE_DOCUMENT_FORM_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+});
+```
+
+## Попробуйте весь поток
+
+Откройте **People**, выберите человека и нажмите <kbd>⌘K</kbd> / <kbd>Ctrl K</kbd>.
+Появляется "Генерировать документ" с тегом в вашем приложении:
+
+<Frame caption="Эта команда появляется, когда выбран персон.">
+  <img src="/images/docs/developers/extends/apps/document-generator/06-command-menu.png" alt="Меню команды с документом Генерировать" />
+</Frame>
+
+Запустить — ваш компонент открывается в боковой панели. Выберите шаблон, нажмите
+**Сгенерировать** и новые записи земель в **Документах**.
+
+<Frame caption="Передний компонент, загрузка шаблонов и создание клика.">
+  <img src="/images/docs/developers/extends/apps/document-generator/06b-front-component.png" alt="Создать панель документа" />
+</Frame>
+
+Каждый сгенерированный документ записывает ваше приложение как автора:
+
+<Frame caption="Создано в виде статуса Генератора.">
+  <img src="/images/docs/developers/extends/apps/document-generator/05-document-record.png" alt="Созданная запись документа" />
+</Frame>
+
+## Предпросмотр документа на странице записи
+
+Передний компонент не только для командных меню — вы можете смонтировать его как \*\*вкладку на странице записи
+\*\*. Давайте добавим вкладку *Предварительный просмотр* к документу, который отображает
+тело Markdown как отполированную страницу для печати.
+
+Компонент считывает идентификатор текущей записи из своего контекста выполнения, загружает
+документ и отображает его. Передние компоненты запускаются в **песочнице**, что позволяет
+белым списком HTML тегов (`dangerouslySetInnerHTML`) и
+`\<style>`, поэтому мы блокируем Markdown как React elements inline
+через маленькие [`Markdown`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/utils/markdown-to-react.tsx)
+помощника.
+
+```tsx filename="src/front-components/document-viewer.front-component.tsx"
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { RestApiClient } from 'twenty-client-sdk/rest';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useFrontComponentExecutionContext } from 'twenty-sdk/front-component';
+import { Markdown } from 'src/utils/markdown-to-react';
+
+const DocumentViewer = () => {
+  const recordId = useFrontComponentExecutionContext((c) => c.recordId ?? null);
+  // ...load { content, file } for recordId, then derive the links:
+  const pdfUrl = document.file?.[0]?.url;
+  const webUrl = new RestApiClient().resolveUrl('/s/documents/view', {
+    query: { id: recordId },
+  });
+
+  // Render the template body, plus quick links to the web page and the PDF.
+  // Links open in a new tab so they don't navigate the embedded component.
+  return (
+    <div style={styles.scroll}>
+      <div style={styles.actions}>
+        <a style={styles.actionLink} href={webUrl} target="_blank" rel="noopener noreferrer">
+          Open web page
+        </a>
+        {pdfUrl ? (
+          <a style={styles.actionLink} href={pdfUrl} target="_blank" rel="noopener noreferrer">
+            Download PDF
+          </a>
+        ) : null}
+      </div>
+      <div style={styles.paper}>
+        <div style={styles.body}>
+          <Markdown content={document.content} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: DOCUMENT_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+  name: 'document-viewer',
+  component: DocumentViewer,
+});
+```
+
+Монтируйте его с [разметкой](/l/ru/developers/extend/apps/layout/page-layouts). Макет
+`RECORD_PAGE` добавляет вкладки к представлению записи объекта; вкладка с одним
+виджетом `FRONT_COMPONENT` размещает компонент на всю ширину:
+
+```ts filename="src/page-layouts/document-record.page-layout.ts"
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+
+export default definePageLayout({
+  universalIdentifier: DOCUMENT_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+  name: 'Document record page',
+  type: 'RECORD_PAGE',
+  objectUniversalIdentifier: DOCUMENT_OBJECT_UNIVERSAL_IDENTIFIER,
+  tabs: [{
+    universalIdentifier: DOCUMENT_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER,
+    title: 'Preview',
+    icon: 'IconEye',
+    position: 50,
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+    widgets: [{
+      universalIdentifier: DOCUMENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
+      title: 'Document preview',
+      type: 'FRONT_COMPONENT',
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier: DOCUMENT_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+      },
+    }],
+  }],
+});
+```
+
+Откройте любой документ — вкладка **Preview** красиво его отобразит, с ссылками на
+общедоступную веб-страницу и PDF:
+
+<Frame caption="Вкладка &#x22;Предварительный просмотр&#x22; отображает документ в встроенных стилях, а также быстрые ссылки.">
+  <img src="/images/docs/developers/extends/apps/document-generator/09-document-viewer.png" alt="Фронтальный компонент просмотра документа в вкладке записи" />
+</Frame>
+
+## Редактировать шаблон с редактором rich-text
+
+Шаблонам вообще не нужен пользовательский компонент. Поскольку `body` — это поле
+`RICH_TEXT`, Twenty уже предоставляет для него полнофункциональный редактор форматированного текста —
+тот же, который используют стандартные объекты Note и Task. Мы просто покрываем его на странице шаблона
+.
+
+Добавьте вкладку с виджета `FIELD` в режиме отображения `EDITOR`, указывая на `body`
+поле `fieldMetadaId`:
+
+```ts filename="src/page-layouts/template-record.page-layout.ts"
+{
+  universalIdentifier: TEMPLATE_PAGE_LAYOUT_TAB_UNIVERSAL_IDENTIFIER,
+  title: 'Template',
+  position: 1,
+  layoutMode: PageLayoutTabLayoutMode.GRID,
+  widgets: [{
+    universalIdentifier: TEMPLATE_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
+    title: 'Template',
+    type: 'FIELD',
+    gridPosition: { row: 0, column: 0, rowSpan: 6, columnSpan: 12 },
+    configuration: {
+      configurationType: 'FIELD',
+      fieldMetadataId: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldDisplayMode: 'EDITOR',
+    },
+  }],
+}
+```
+
+Поле `RICH_TEXT` хранит как блок JSON редактора, так и проекцию Markdown
+. Трубопровод поколения гласит, что Markdown проекция, так что
+плейсхолдеров, PDF, и общедоступной веб-страницы все работают без изменений —
+смотрите полную
+[`template-record. age-layout.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/page-layouts/template-record.page-layout.ts).
+Виджеты `FIELD` также поддерживают другие режимы отображения и параметры, включая
+вывод записей вложенной связи на два шага глубже — см. раздел
+[справочник по виджетам field](/l/ru/developers/extend/apps/layout/page-layouts#field-widgets).
+Теперь редакторы пишут шаблоны в соответствующем rich-text редакторе:
+
+<Frame caption="Вкладка Template tab: родной rich-text редактор, связанный с телом.">
+  <img src="/images/docs/developers/extends/apps/document-generator/10-template-editor.png" alt="Запись шаблона с встроенным редактором rich-text" />
+</Frame>
+
+**После этого шага:** документы просматривают красиво и шаблоны можно редактировать
+в приложении. Далее позвольте агенту ИИ сгенерировать их из чата.
+
+<Card title="Далее: Агент ИИ →" icon="robot" href="/l/ru/developers/extend/apps/tutorials/document-generator/ai-agent">
+  Добавьте агента и навык, вызывающий ваш инструмент.
+</Card>

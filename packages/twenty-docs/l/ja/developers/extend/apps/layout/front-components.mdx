@@ -806,22 +806,22 @@ Front components は現在も積極的に開発が進められています。 �
 | `element.classList.add(...)`                                                                                | 例外を投げます（`classList` は `undefined` です）  | `className` 文字列を自分で組み立ててください                                      |
 | `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | 例外を投げます                                | 動作する `querySelector()` / `querySelectorAll()` を使ってください            |
 | `document.activeElement`                                                                                    | 常に `undefined` です                      | `onFocus` / `onBlur` でフォーカスを追跡してください                              |
-| `\<canvas>`                                                                                | 何もレンダリングされず、エラーも出ません                   | SVG を使うか、オフスクリーンで描画して `<img src={dataUrl}>` として表示してください           |
+| `canvas`                                                                                                    | 何もレンダリングされず、エラーも出ません                   | SVG、またはオフスクリーンで描画して、その結果を `img` 要素で表示します                          |
 | `createPortal(node, document.body)`                                                                         | `isConnected` は成功を報告しますが、何もレンダリングされません | `position: absolute` によるインラインのオーバーレイを使うか、ライブラリに自前のコンテナー要素を渡してください |
 
 このポータルのギャップが原因で、Radix、Headless UI、MUI、react-select のポップオーバーはデフォルトでは何もレンダリングしません。 ほとんどのライブラリは container プロップを受け付けるので、自分がレンダリングした要素を指定してください。
 
 ### イベント
 
-マウス、ポインター、タッチ、ドラッグ、キーボード、フォーカス、`input`/`change`/`submit`、`scroll`/`wheel`/`contextmenu`、そして `animationend`/`transitionend` はホストへ渡されます。さらに、要素ごとにいくつかのイベントも渡されます：`<img>` の `load`/`error`、`<input>`/`\<textarea>` のクリップボードおよびコンポジション、`\<video>`/`\<audio>` のメディア、`\<details>`/`\<dialog>` の `toggle` などです。 それ以外（`onAuxClick`、`onSelect`、`onInvalid`、`onReset`、`onAnimationStart`、pointer capture、`<img>` の `onLoad`）は、警告なしに破棄されます。
+マウス、ポインター、タッチ、ドラッグ、キーボード、フォーカス、`input`/`change`/`submit`、`scroll`/`wheel`/`contextmenu`、そして `animationend`/`transitionend` はホストへ渡されます。さらに、要素ごとにいくつかのイベントも渡されます：`img` の `load`/`error`、`input`/`textarea` のクリップボードおよびコンポジション、`video`/`audio` のメディア、`details`/`dialog` の `toggle` などです。 それ以外（`onAuxClick`、`onSelect`、`onInvalid`、`onReset`、`onAnimationStart`、pointer capture、`img` の `onLoad`）は、警告なしに破棄されます。
 
 `document.addEventListener()` と `window.addEventListener()` はエラーなく登録されますが、一度も発火しません。そのため、ドラッグは開始した要素からポインターが離れた瞬間に止まります。 `event.preventDefault()` も渡されません。フォーム送信、`dragover`/`drop`、およびリンクのクリックは、すでに保護されています。
 
 ### 属性とスタイリング
 
-各要素は自分自身のプロパティをホスト DOM にフォワードします（`\<a>` の `href`、`<img>` の `src`/`alt`、`<input>` の `value`/`placeholder`/`disabled` など）。さらに、すべての要素に共通のプロパティセットもフォワードされます：`id`、`className`、`style`、`title`、`tabIndex`、`role`、`draggable`、および任意の `aria-*` / `data-*` 属性（ハイフン区切りのため、`ariaLabel` は破棄されます）。 それ以外のものはすべて暗黙的に破棄されるため、カスタム状態は `data-*` として表現してください。
+各要素は自分自身のプロパティをホスト DOM にフォワードします（`a` の `href`、`img` の `src`/`alt`、`input` の `value`/`placeholder`/`disabled` など）。さらに、すべての要素に共通のプロパティセットもフォワードされます：`id`、`className`、`style`、`title`、`tabIndex`、`role`、`draggable`、および任意の `aria-*` / `data-*` 属性（ハイフン区切りのため、`ariaLabel` は破棄されます）。 それ以外のものはすべて暗黙的に破棄されるため、カスタム状態は `data-*` として表現してください。
 
-コンポーネントの CSS（`import './styles.css'`、CSS-in-JS、または `\<style>` 要素のいずれであっても）は、ホストページの `\<head>` に **スコープなし（unscoped）** で挿入されます。 そのため、クラス名が Twenty 独自のクラス名と衝突します（プレフィックスを付け、決して素の `div { ... }` セレクタは書かないでください）。また、`@media` はウィジェットではなくブラウザウィンドウに対してマッチします（独自の `container-type` を指定した `@container` を使用してください）。 インラインの `style` props には影響しません。
+コンポーネントの CSS（`import './styles.css'`、CSS-in-JS、または `style` 要素のいずれであっても）は、ホストページの `head` に **スコープなし（unscoped）** で挿入されます。 そのため、クラス名が Twenty 独自のクラス名と衝突します（プレフィックスを付け、決して素の `div { ... }` セレクタは書かないでください）。また、`@media` はウィジェットではなくブラウザウィンドウに対してマッチします（独自の `container-type` を指定した `@container` を使用してください）。 インラインの `style` props には影響しません。
 
 ### ストレージとネットワーク
 
@@ -835,7 +835,7 @@ Front components は現在も積極的に開発が進められています。 �
 
 ### その他のギャップ
 
-* **ファイル内容。** `<input type="file">` は、ハンドラーにファイルのメタデータのみを渡し、バイト列は渡さないため、`FileReader` やアップロードはまだ利用できません。
+* **ファイル内容。** type が `file` の `input` は、ハンドラーにファイルのメタデータのみを渡し、バイト列は渡さないため、`FileReader` やアップロードはまだ利用できません。
 * **ドラッグ＆ドロップのペイロード。** ドラッグイベントは発火しますが、`event.dataTransfer` は `undefined` です。
 * **Node 組み込みモジュール。** `fs`、`path`、`node:crypto` はビルドに失敗するため、その処理は [ロジック関数](/l/ja/developers/extend/apps/logic/logic-functions) に移動してください。 Web Crypto、`fetch`、`TextEncoder`、および `URL` は利用可能です。
-* **`\<iframe>`** は常に `allow-same-origin` なしで再サンドボックス化されるため、独自のセッションに依存する埋め込みは、ログアウト状態としてレンダリングされます。 また、`onLoad` もありません。
+* **`iframe`** は常に `allow-same-origin` なしで再サンドボックス化されるため、独自のセッションに依存する埋め込みは、ログアウト状態としてレンダリングされます。 また、`onLoad` もありません。

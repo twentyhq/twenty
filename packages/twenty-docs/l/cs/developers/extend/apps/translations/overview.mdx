@@ -53,8 +53,8 @@ const Card = ({ count, name }: { count: number; name: string }) => {
 
 ### Kdy co použít
 
-* **`<Trans>…</Trans>`** — statický text v JSX. Použijte props `message` a `values`
-  pro interpolaci (`<Trans message="Hi {name}" values={{ name }} />`);
+* **`Trans`** — statický text v JSX. Použijte props `message` a `values` pro
+  interpolaci, jak je ukázáno v `Trans message="Hi {name}" values={{ name }}`;
   interpolace přímo v potomcích není staticky extrahovatelná.
 * **`useTranslate().t`** — dynamické řetězce uvnitř komponenty. Znovu se vykreslí, když
   uživatel přepne jazyk. Uvnitř renderu tomuto dávejte přednost.
@@ -83,7 +83,7 @@ twenty dev:translations-extract                  # collect strings into locales/
 twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 ```
 
-Extrakce shromáždí jak popisky manifestu, tak řetězce `t()`/`msg()`/`\<Trans>`
+Extrakce shromáždí jak popisky manifestu, tak řetězce `t()`/`msg()`/`Trans`
 z vašeho zdrojového kódu front komponent do `locales/\<locale>.json`, kde jsou klíčem
 zdrojové řetězce. Doplňte překlady:
 
@@ -105,7 +105,7 @@ překladu. Jakýkoli řetězec ponechaný prázdný spadne zpět na zdrojový te
 aktuálního uživatele: popisky manifestu jsou vyhodnoceny na straně serveru a katalogy
 front komponent jsou zabudovány do každého balíčku komponent. Za běhu komponenta čte
 jazykovou verzi (locale) z vykonávacího kontextu (aktuální jazyk hostitele) a překládá
-každý řetězec podle svého katalogu, přičemž při chybějícím překladu spadne zpět na zdroj. Přepnutí jazyka v hostiteli znovu vykreslí řetězce `\<Trans>` a
+každý řetězec podle svého katalogu, přičemž při chybějícím překladu spadne zpět na zdroj. Přepnutí jazyka v hostiteli znovu vykreslí řetězce `Trans` a
 `useTranslate().t` v reálném čase.
 
 Protože katalogy jsou kompilovány v době buildu, aktualizace překladu znamená
@@ -116,6 +116,13 @@ Překlady jsou kompilovány příkazy `twenty dev:build` (a `twenty apply`). Nep
 otestujte pomocí jednorázového buildu.
 </Note>
 
-Potomci `<Trans>` s textem mohou být rozloženi na více řádků — prázdné znaky jsou zpracovány
-stejně, jako je zpracovává JSX, takže `<Trans>Welcome\n  back</Trans>` i extrahovaný
-klíč se oba stanou `Welcome back`.
+Textoví potomci `Trans` mohou být na více řádcích — bílé znaky se slučují
+stejně jako je slučuje JSX, takže oba tyto případy se extrahují pod klíčem `Welcome back`:
+
+```tsx
+<Trans>Welcome back</Trans>
+<Trans>
+  Welcome
+  back
+</Trans>
+```

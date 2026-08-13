@@ -121,5 +121,6 @@ Plan: 1 to add, 1 to change, 0 to destroy.
 
 * **Manifest 构建错误**——CLI 在同步前失败（`MANIFEST_BUILD_FAILED`、`TYPECHECK_FAILED`）；请修复你的应用源代码。
 * **同步 / 迁移错误**——构建成功，但在应用 diff 时失败，并给出实体名称和 `universalIdentifier`；请修复冲突的元数据。
+* **依赖项大小错误** — 同步或安装失败，是因为应用的生产环境 `dependencies` 过大，无法作为运行时层进行安装（`LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED`）；请将逻辑函数在运行时不导入的包（UI 库、开发工具等）移动到 `devDependencies`。
 * **应用代码运行时错误** — 同步成功，但你的逻辑函数或组件在运行时行为异常；请检查[函数日志](/l/zh/developers/extend/apps/operations/cli)。
 * **本地实例状态** — 不属于以上任何一种情况，但工作区仍然显示异常；请按照恢复步骤逐级排查。
