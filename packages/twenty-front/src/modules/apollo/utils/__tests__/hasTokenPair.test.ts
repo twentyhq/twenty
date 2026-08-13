@@ -86,8 +86,6 @@ describe('hasTokenPair', () => {
 
   describe('validation behavior', () => {
     it('should rely on getTokenPair for all validation logic', () => {
-      // Test that hasTokenPair doesn't do its own validation
-      // and trusts getTokenPair's validation completely
       mockGetTokenPair.mockReturnValue(undefined);
 
       hasTokenPair();

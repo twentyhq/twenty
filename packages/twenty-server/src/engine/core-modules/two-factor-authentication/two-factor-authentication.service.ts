@@ -52,14 +52,8 @@ export class TwoFactorAuthenticationService {
     });
   }
 
-  /**
-   * Validates two-factor authentication requirements for a workspace.
-   *
-   * @throws {AuthException} with TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED if 2FA is set up and needs verification
-   * @throws {AuthException} with TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED if 2FA is enforced but not set up
-   * @param targetWorkspace - The workspace to check 2FA requirements for
-   * @param userTwoFactorAuthenticationMethods - Optional array of user's 2FA methods
-   */
+  // Throws TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED when 2FA is set up, and
+  // TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED when it is enforced but not set up
   async validateTwoFactorAuthenticationRequirement(
     targetWorkspace: WorkspaceEntity,
     userTwoFactorAuthenticationMethods?: TwoFactorAuthenticationMethodEntity[],

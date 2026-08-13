@@ -10,15 +10,15 @@ type WorkspaceCacheDataType = WorkspaceCacheDataMap[WorkspaceCacheKeyName];
 @Injectable()
 export abstract class WorkspaceCacheProvider<
   T extends WorkspaceCacheDataType = WorkspaceCacheDataType,
-  TEncoded = T,
+  TCompact = T,
 > {
   abstract computeForCache(workspaceId: string): Promise<T>;
 
-  encodeForCacheStorage(data: T): T | TEncoded {
+  compactForStorage(data: T): T | TCompact {
     return data;
   }
 
-  decodeFromCacheStorage(rawData: T | TEncoded): T {
-    return rawData as T;
+  expandFromStorage(compactData: T | TCompact): T {
+    return compactData as T;
   }
 }

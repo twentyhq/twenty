@@ -4,19 +4,19 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 
 type ShortCodeByKey = typeof FLAT_FIELD_METADATA_SHORT_CODE_BY_KEY;
 
-export type EncodedFlatFieldMetadata = {
+export type CompactFlatFieldMetadata = {
   [Key in keyof FlatFieldMetadata as Key extends keyof ShortCodeByKey
     ? ShortCodeByKey[Key]
     : Key]?: FlatFieldMetadata[Key];
 };
 
-export type EncodedFlatFieldMetadataMaps = {
-  byUniversalIdentifier: Record<string, EncodedFlatFieldMetadata>;
+export type CompactFlatFieldMetadataMaps = {
+  byUniversalIdentifier: Record<string, CompactFlatFieldMetadata>;
   universalIdentifierById: FlatEntityMaps<FlatFieldMetadata>['universalIdentifierById'];
   universalIdentifiersByApplicationId: FlatEntityMaps<FlatFieldMetadata>['universalIdentifiersByApplicationId'];
 };
 
-export type EncodableFlatFieldMetadataMaps = {
+export type ExpandedFlatFieldMetadataMaps = {
   byUniversalIdentifier: Partial<Record<string, Partial<FlatFieldMetadata>>>;
   universalIdentifierById: FlatEntityMaps<FlatFieldMetadata>['universalIdentifierById'];
   universalIdentifiersByApplicationId: FlatEntityMaps<FlatFieldMetadata>['universalIdentifiersByApplicationId'];

@@ -112,8 +112,11 @@ describe('getTabsRenderableForTargetObject', () => {
     expect(result.map((tab) => tab.id)).toEqual(['tab-4']);
   });
 
-  it('requires call recordings for the native transcript widget', () => {
+  it('requires call recordings for both native call recording widgets', () => {
     const tabs = [
+      createMockTab('summary-tab', [
+        createMockWidget('summary-widget', WidgetType.CALL_RECORDING_SUMMARY),
+      ]),
       createMockTab('transcript-tab', [
         createMockWidget(
           'transcript-widget',
@@ -134,7 +137,7 @@ describe('getTabsRenderableForTargetObject', () => {
         tabs,
         targetObjectFields: [createRelationField('callRecordings')],
       }).map((tab) => tab.id),
-    ).toEqual(['transcript-tab']);
+    ).toEqual(['summary-tab', 'transcript-tab']);
   });
 
   it('should drop tabs whose relation field exists but is deactivated', () => {
