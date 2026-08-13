@@ -108,19 +108,24 @@ export const buildProjection = (
   return { expressions, mainAliasColumnNames };
 };
 
-export const buildWhereExpression = (
-  state: SelectStatementState,
-  {
-    includeSoftDeletePredicate = true,
-  }: { includeSoftDeletePredicate?: boolean } = {},
-): string => {
-  const userExpression = state.whereClauses
+export const renderUserWhereExpression = (
+  whereClauses: WhereClause[],
+): string =>
+  whereClauses
     .map((clause, index) =>
       index === 0
         ? clause.sql
         : `${clause.operator.toUpperCase()} ${clause.sql}`,
     )
     .join(' ');
+
+export const buildWhereExpression = (
+  state: SelectStatementState,
+  {
+    includeSoftDeletePredicate = true,
+  }: { includeSoftDeletePredicate?: boolean } = {},
+): string => {
+  const userExpression = renderUserWhereExpression(state.whereClauses);
 
   const shouldAddSoftDeletePredicate =
     includeSoftDeletePredicate &&
