@@ -181,9 +181,10 @@ export const buildJoinClause = (state: SelectStatementState): string =>
       const softDeletePredicateApplies =
         !state.includeDeleted && joinClause.targetTableShape.hasDeletedAtColumn;
 
-      const isDedupedToManyJoin =
-        joinClause.relationType === RelationType.ONE_TO_MANY &&
-        isDefined(joinClause.toManyForeignKeyColumnName);
+      const toManyForeignKeyColumnName =
+        joinClause.relationType === RelationType.ONE_TO_MANY
+          ? joinClause.toManyForeignKeyColumnName
+          : undefined;
 
       const onConditions = [
         joinClause.condition,
@@ -193,7 +194,10 @@ export const buildJoinClause = (state: SelectStatementState): string =>
       // A to-one join filters soft-deleted rows in its ON clause. The deduped
       // to-many join picks one representative row per parent, so its soft-delete
       // filter runs inside the derived table before that pick.
-      if (softDeletePredicateApplies && !isDedupedToManyJoin) {
+      if (
+        softDeletePredicateApplies &&
+        !isDefined(toManyForeignKeyColumnName)
+      ) {
         onConditions.push(
           `${quoteColumn(joinClause.alias, 'deletedAt')} IS NULL`,
         );
@@ -203,11 +207,10 @@ export const buildJoinClause = (state: SelectStatementState): string =>
         joinClause.targetTableShape.schemaName,
       )}.${escapeIdentifier(joinClause.targetTableShape.tableName)}`;
 
-      const joinSource = isDedupedToManyJoin
+      const joinSource = isDefined(toManyForeignKeyColumnName)
         ? buildToManyDedupedJoinSource({
             tableExpression,
-            foreignKeyColumnName:
-              joinClause.toManyForeignKeyColumnName as string,
+            foreignKeyColumnName: toManyForeignKeyColumnName,
             includeSoftDeleteFilter: softDeletePredicateApplies,
           })
         : tableExpression;
