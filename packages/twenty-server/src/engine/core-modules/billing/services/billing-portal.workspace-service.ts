@@ -26,6 +26,7 @@ import { StripeBillingPortalService } from 'src/engine/core-modules/billing/stri
 import { StripeCheckoutService } from 'src/engine/core-modules/billing/stripe/services/stripe-checkout.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { type BillingGetPricesPerPlanResult } from 'src/engine/core-modules/billing/types/billing-get-prices-per-plan-result.type';
+import { isProvisionedBillingSubscription } from 'src/engine/core-modules/billing/utils/is-provisioned-billing-subscription.util';
 import { type BillingPortalCheckoutSessionParameters } from 'src/engine/core-modules/billing/types/billing-portal-checkout-session-parameters.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -109,9 +110,7 @@ export class BillingPortalWorkspaceService {
       ) ?? [];
 
     const hasProvisionedSubscription = nonCanceledSubscriptions.some(
-      (subscription) =>
-        subscription.status !== SubscriptionStatus.Incomplete &&
-        subscription.status !== SubscriptionStatus.IncompleteExpired,
+      (subscription) => isProvisionedBillingSubscription(subscription),
     );
 
     if (hasProvisionedSubscription) {
@@ -238,10 +237,8 @@ export class BillingPortalWorkspaceService {
   ): boolean {
     return (
       !isDefined(customer) ||
-      !customer.billingSubscriptions.some(
-        (subscription) =>
-          subscription.status !== SubscriptionStatus.Incomplete &&
-          subscription.status !== SubscriptionStatus.IncompleteExpired,
+      !customer.billingSubscriptions.some((subscription) =>
+        isProvisionedBillingSubscription(subscription),
       )
     );
   }

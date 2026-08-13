@@ -181,15 +181,22 @@ describe('BillingPortalWorkspaceService', () => {
     );
 
     it.each([
-      ['no customer', null],
-      ['no subscription', buildCustomer([])],
+      ['no customer', null, undefined, true],
+      ['no subscription', buildCustomer([]), 'stripe-customer-id', true],
       [
         'only canceled subscriptions',
         buildCustomer([SubscriptionStatus.Canceled]),
+        'stripe-customer-id',
+        false,
       ],
     ])(
       'should create the subscription and return the success url when customer has %s',
-      async (_, customer) => {
+      async (
+        _,
+        customer,
+        expectedStripeCustomerId,
+        expectedWithTrialPeriod,
+      ) => {
         billingCustomerRepository.findOne.mockResolvedValue(customer);
 
         const result = await callCreateDirectSubscription();
@@ -197,7 +204,18 @@ describe('BillingPortalWorkspaceService', () => {
         expect(result).toBe('https://acme.twenty.com/success');
         expect(
           stripeCheckoutService.createDirectSubscription,
-        ).toHaveBeenCalledTimes(1);
+        ).toHaveBeenCalledWith({
+          user,
+          workspace,
+          stripeSubscriptionLineItems: [
+            { price: 'price-base', quantity: 3 },
+            { price: 'price-credit', quantity: 1 },
+          ],
+          stripeCustomerId: expectedStripeCustomerId,
+          plan: BillingPlanKey.PRO,
+          requirePaymentMethod: false,
+          withTrialPeriod: expectedWithTrialPeriod,
+        });
         expect(
           billingSubscriptionService.syncSubscriptionToDatabase,
         ).toHaveBeenCalledWith('workspace-id', 'new-stripe-subscription-id');
