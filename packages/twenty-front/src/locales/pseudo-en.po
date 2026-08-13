@@ -3004,6 +3004,11 @@ msgstr ""
 msgid "Available"
 msgstr ""
 
+#. js-lingui-id: HsAhgd
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectLabelFormulaForm.tsx
+msgid "Available fields:"
+msgstr ""
+
 #. js-lingui-id: STA+22
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Available models"
@@ -13677,6 +13682,7 @@ msgstr ""
 #: src/modules/settings/accounts/components/SettingsAccountsMessageAutoCreationCard.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectLabelFormulaForm.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
@@ -15590,6 +15596,11 @@ msgstr ""
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm.tsx
 msgid "Record label"
+msgstr ""
+
+#. js-lingui-id: Pp7MBT
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectLabelFormulaForm.tsx
+msgid "Record label formula"
 msgstr ""
 
 #. js-lingui-id: XueM/X
@@ -20623,6 +20634,11 @@ msgstr ""
 #. js-lingui-id: hCZsJ0
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Use best models only"
+msgstr ""
+
+#. js-lingui-id: kp9jLK
+#: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectLabelFormulaForm.tsx
+msgid "Use field API names in braces. Use ?? for a fallback. Clear the formula to enter labels manually."
 msgstr ""
 
 #. js-lingui-id: 5ZehS/

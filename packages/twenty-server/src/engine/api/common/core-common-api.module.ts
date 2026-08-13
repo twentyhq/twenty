@@ -16,6 +16,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
+import { RecordLabelFormulaModule } from 'src/engine/core-modules/record-label-formula/record-label-formula.module';
 import { RecordTransformerModule } from 'src/engine/core-modules/record-transformer/record-transformer.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
@@ -42,6 +43,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ThrottlerModule,
     MetricsModule,
     RecordPositionModule,
+    RecordLabelFormulaModule,
     RecordTransformerModule,
     FeatureFlagModule,
     WorkspaceCacheModule,

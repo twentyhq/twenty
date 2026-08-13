@@ -2,8 +2,14 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { isFieldMetadataReadOnlyByPermissions } from '@/object-record/read-only/utils/internal/isFieldMetadataReadOnlyByPermissions';
 import { isOneToManyRelationFieldReadOnlyDueToTargetUpdatePermission } from '@/object-record/read-only/utils/isOneToManyRelationFieldReadOnlyDueToTargetUpdatePermission';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
-import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { type ObjectPermission } from '~/generated-metadata/graphql';
+import {
+  type FieldMetadata,
+  type FieldTextMetadata,
+} from '@/object-record/record-field/ui/types/FieldMetadata';
+import {
+  FieldMetadataType,
+  type ObjectPermission,
+} from '~/generated-metadata/graphql';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -49,8 +55,16 @@ export const isRecordFieldReadOnly = ({
   const isReadOnlyStandardFieldOnSystemObject =
     isSystemObject === true && isFieldFromStandardApplication !== false;
 
+  const isLabelIdentifierComputedByFormula =
+    fieldDefinition?.type === FieldMetadataType.TEXT &&
+    isDefined(
+      (fieldDefinition.metadata as FieldTextMetadata).settings
+        ?.labelIdentifierFormula,
+    );
+
   return (
     isRecordReadOnly ||
+    isLabelIdentifierComputedByFormula ||
     isReadOnlyStandardFieldOnSystemObject ||
     !(fieldMetadataItem.isUIEditable ?? true) ||
     fieldReadOnlyByPermissions ||

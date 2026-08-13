@@ -32,6 +32,7 @@ import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner
 import { getAllSelectableColumnNames } from 'src/engine/api/utils/get-all-selectable-column-names.utils';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
+import { RecordLabelFormulaService } from 'src/engine/core-modules/record-label-formula/services/record-label-formula.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -50,7 +51,10 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
 > {
   protected readonly operationName = CommonQueryNames.CREATE_MANY;
 
-  constructor(private readonly recordPositionService: RecordPositionService) {
+  constructor(
+    private readonly recordPositionService: RecordPositionService,
+    private readonly recordLabelFormulaService: RecordLabelFormulaService,
+  ) {
     super();
   }
 
@@ -95,6 +99,14 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatIndexMaps,
       args,
       workspaceId: authContext.workspace.id,
+    });
+
+    await this.recordLabelFormulaService.recomputeAffectedRecordLabels({
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      recordIds: objectRecords.generatedMaps.map((record) => record.id),
+      workspaceDataSource,
     });
 
     const upsertedRecords = await this.fetchUpsertedRecords({

@@ -24,6 +24,7 @@ import {
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { RecordLabelFormulaService } from 'src/engine/core-modules/record-label-formula/services/record-label-formula.service';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -74,6 +75,7 @@ export class FieldMetadataResolver {
     @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly uniqueFieldMetadataIdsService: UniqueFieldMetadataIdsService,
+    private readonly recordLabelFormulaService: RecordLabelFormulaService,
   ) {}
 
   @UseGuards(NoPermissionGuard)
@@ -279,6 +281,11 @@ export class FieldMetadataResolver {
     try {
       const flatFieldMetadata = await this.fieldMetadataService.updateOneField({
         updateFieldInput: { ...input.update, id: input.id },
+        workspaceId,
+      });
+
+      await this.recordLabelFormulaService.recomputeForFieldMetadataChange({
+        fieldMetadataUniversalIdentifier: flatFieldMetadata.universalIdentifier,
         workspaceId,
       });
 

@@ -1,5 +1,6 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
+import { isFieldMetadataItemLabelIdentifierFormulaEnabled } from '@/object-metadata/utils/isFieldMetadataItemLabelIdentifierFormulaEnabled';
 import { useBuildRecordInputFromRLSPredicates } from '@/object-record/hooks/useBuildRecordInputFromRLSPredicates';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/selectors/recordGroupDefinitionsComponentSelector';
@@ -101,7 +102,12 @@ export const useCreateNewIndexRecord = ({
         const labelIdentifierFieldMetadataItem =
           getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 
-        if (isDefined(labelIdentifierFieldMetadataItem)) {
+        if (
+          isDefined(labelIdentifierFieldMetadataItem) &&
+          !isFieldMetadataItemLabelIdentifierFormulaEnabled(
+            labelIdentifierFieldMetadataItem,
+          )
+        ) {
           store.set(newRecordTitleCellToOpenState.atom, {
             recordId,
             fieldName: labelIdentifierFieldMetadataItem.name,

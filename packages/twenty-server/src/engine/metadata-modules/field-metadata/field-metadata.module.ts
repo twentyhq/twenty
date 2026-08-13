@@ -7,6 +7,7 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { ApplicationTranslationModule } from 'src/engine/core-modules/application/application-translation/application-translation.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { RecordLabelFormulaModule } from 'src/engine/core-modules/record-label-formula/record-label-formula.module';
 import { FieldMetadataController } from 'src/engine/metadata-modules/field-metadata/controllers/field-metadata.controller';
 import { FieldMetadataResolver } from 'src/engine/metadata-modules/field-metadata/field-metadata.resolver';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
@@ -35,6 +36,7 @@ import { FieldMetadataEntity } from './field-metadata.entity';
     TokenModule,
     WorkspaceCacheStorageModule,
     FeatureFlagModule,
+    RecordLabelFormulaModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     ObjectMetadataModule,
     TypeORMModule,

@@ -7896,6 +7896,11 @@ msgstr ""
 msgid "The provider is temporarily unavailable. Please try again later."
 msgstr ""
 
+#. js-lingui-id: wdaHel
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-text-flat-field-metadata.util.ts
+msgid "The record label formula is invalid."
+msgstr ""
+
 #. js-lingui-id: pv+BoZ
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
 msgid "The request is too complex to process. Please try reducing the amount of requested fields."

@@ -120,6 +120,8 @@ export {
 export type {
   FieldNumberVariant,
   FieldCurrencyFormat,
+  LabelIdentifierFormulaFieldReference,
+  LabelIdentifierFormula,
   FieldMetadataSettingsMapping,
   AllFieldMetadataSettings,
   FieldMetadataSettings,

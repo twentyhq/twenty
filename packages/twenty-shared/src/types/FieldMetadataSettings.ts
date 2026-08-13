@@ -33,8 +33,18 @@ type FieldMetadataCurrencySettings = {
   decimals?: number;
 };
 
+export type LabelIdentifierFormulaFieldReference = {
+  fieldMetadataUniversalIdentifiers: string[];
+};
+
+export type LabelIdentifierFormula = {
+  template: string;
+  fieldReferences: LabelIdentifierFormulaFieldReference[];
+};
+
 type FieldMetadataTextSettings = {
   displayedMaxRows?: number;
+  labelIdentifierFormula?: LabelIdentifierFormula;
 };
 
 type FieldMetadataDateSettings = {

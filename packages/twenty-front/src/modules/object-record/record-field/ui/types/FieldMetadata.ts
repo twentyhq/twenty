@@ -7,6 +7,7 @@ import {
   type AllowedAddressSubField,
   type FieldMetadataMultiItemSettings,
   type FileCategory,
+  type LabelIdentifierFormula,
 } from 'twenty-shared/types';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { z } from 'zod';
@@ -31,6 +32,7 @@ export type FieldTextMetadata = BaseFieldMetadata & {
   placeHolder: string;
   settings?: {
     displayedMaxRows?: number;
+    labelIdentifierFormula?: LabelIdentifierFormula;
   };
 };
 

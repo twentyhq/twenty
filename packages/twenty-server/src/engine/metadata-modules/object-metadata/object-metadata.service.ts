@@ -7,6 +7,7 @@ import { v4, v5 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { RecordLabelFormulaService } from 'src/engine/core-modules/record-label-formula/services/record-label-formula.service';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import {
   buildNavigationFlatCommandMenuItem,
@@ -55,6 +56,7 @@ export class ObjectMetadataService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationService: ApplicationService,
+    private readonly recordLabelFormulaService: RecordLabelFormulaService,
   ) {}
 
   async updateOneObject({
@@ -243,6 +245,11 @@ export class ObjectMetadataService {
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'rolesPermissions',
       ]);
+      await this.recordLabelFormulaService.recomputeForObjectMetadataChange({
+        objectMetadataUniversalIdentifier:
+          updatedFlatObjectMetadata.universalIdentifier,
+        workspaceId,
+      });
     }
 
     if (isActiveChangeDefined) {
