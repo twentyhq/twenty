@@ -5,7 +5,7 @@ import {
 } from '@remote-dom/core/elements';
 
 import { workerGeometryStore } from '@/polyfills/geometry/states/workerGeometryStore';
-import { installStyleBridge } from '@/polyfills/style/installStyleBridge';
+import { installStyleBridge } from '@/polyfills/style/utils/installStyleBridge';
 
 export const attachRemoteRenderRootToWorkerDocument = (
   connection: RemoteConnection,

@@ -1,6 +1,6 @@
 type OnChangeCallback = (cssText: string) => void;
 
-class MockCSSRule {
+class MockCssRule {
   cssText: string;
 
   constructor(cssText: string) {
@@ -8,14 +8,14 @@ class MockCSSRule {
   }
 }
 
-class MockCSSRuleList extends Array<MockCSSRule> {
-  item(index: number): MockCSSRule | null {
+class MockCssRuleList extends Array<MockCssRule> {
+  item(index: number): MockCssRule | null {
     return this[index] ?? null;
   }
 }
 
-export class MockCSSStyleSheet {
-  cssRules = new MockCSSRuleList();
+class MockCssStyleSheet {
+  cssRules = new MockCssRuleList();
   private onChange: OnChangeCallback;
 
   constructor(onChange: OnChangeCallback) {
@@ -24,7 +24,7 @@ export class MockCSSStyleSheet {
 
   insertRule(rule: string, index?: number): number {
     const insertAt = index ?? this.cssRules.length;
-    this.cssRules.splice(insertAt, 0, new MockCSSRule(rule));
+    this.cssRules.splice(insertAt, 0, new MockCssRule(rule));
     this.notify();
     return insertAt;
   }
@@ -39,3 +39,8 @@ export class MockCSSStyleSheet {
     this.onChange(cssText);
   }
 }
+
+export const createMockCssStyleSheet = (
+  onChange: OnChangeCallback,
+): CSSStyleSheet =>
+  new MockCssStyleSheet(onChange) as unknown as CSSStyleSheet;
