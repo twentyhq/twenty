@@ -203,15 +203,18 @@ all-columns re-select of the inserted ids — matching the v1 insert builder. Re
 `getRepository` returns repositories bound to that client through a `ClientQueryExecutor`,
 so every statement and event snapshot inside runs on the one connection.
 
-`mergeMany` routes through it: `executeMergeWithinTransactionV2` re-points the losing
-records' foreign keys to the survivor across each related object, hard-deletes the losers,
-and updates the survivor with the merged data — each step a `runMutation` on a
-transaction-scoped repository, so the same `UPDATED`/`DESTROYED`/`UPSERTED` events fire as
-v1. A merge whose merged data sets a relation by name carves back to v1
-(`isMergeSupportedByOrmV2`), because the merge path does not resolve `{connect}` input;
-relation join columns and files fields are handled on v2 like any other update. Its
-object-literal `where` support grew to cover scalar equality, `Equal`, and `IS NULL`
-alongside `In`.
+`mergeMany` routes through it with the flag on, always: `executeMergeWithinTransactionV2`
+re-points the losing records' foreign keys to the survivor across each related object,
+hard-deletes the losers, and updates the survivor with the merged data — each step a
+`runMutation` on a transaction-scoped repository, so the same `UPDATED`/`DESTROYED`/
+`UPSERTED` events fire as v1. Before the survivor update the merged data goes through
+`resolveNestedRelationsForOrmV2`, the same relation resolution the other write paths use, so
+a relation set by name resolves to its join column instead of forcing v1. In practice the
+merged data only ever carries columns and join columns: the write path selects columns
+(`buildColumnsToSelect` maps relations to their join columns) and loads relations by name
+only on the dry-run branch, so the resolution is a no-op on real merges and the old
+`isMergeSupportedByOrmV2` carve-out was dead. Its object-literal `where` support grew to
+cover scalar equality, `Equal`, and `IS NULL` alongside `In`.
 
 ## Upsert
 
@@ -224,20 +227,27 @@ Both halves resolve relation `{connect}` / `{disconnect}` input to join columns 
 `resolveNestedRelationsForOrmV2` first, just like the plain create and update paths. The
 read-then-split and conflict-target derivation are unchanged.
 
+## Coverage
+
+Every write the API layer can reach runs entirely on v2 when the flag is on — create,
+update, upsert, delete, and merge — whatever field types it touches (scalars, composites,
+relation join columns, relation `{connect}` / `{disconnect}`, and files fields). Nothing on
+the write path falls back to v1 on the value of its input.
+
+`WorkspaceSelectQueryBuilderV2.leftJoin` can render a to-many join (child foreign key =
+parent id, plus the soft-delete predicate) when the caller passes `allowToManyJoin`. Only
+group-by "with records" record-ordering opts in; every other join site (filter traversal,
+relation loading) leaves it off, so a to-many relation there still surfaces the standard
+`UNSUPPORTED_OPERATION` error. This capability is currently latent: the GraphQL order-by
+input excludes to-many relations (`generateSimpleRelationFieldOrderByInputType` returns `{}`
+for `ONE_TO_MANY`), so no API query can order by one today. The join is unit-tested against
+its exact SQL and activates automatically if that input is ever exposed.
+
 ## Not covered yet
 
-- Merge whose merged data sets a relation *by name* (`{connect}`), because the merge
-  transaction does not run the nested-relation resolution the other write paths do; it
-  carves back to v1 (`isMergeSupportedByOrmV2`). Every other write — create, update, upsert,
-  delete, and the rest of merge — runs entirely on v2 when the flag is on, whatever field
-  types it touches (scalars, composites, relation join columns, relation `{connect}` /
-  `{disconnect}`, and files fields).
 - `find` / `findOne` / `findBy` and the rest of the repository surface used by
   `src/modules`.
 - DDL.
-- Ordering group-by "with records" by a to-many relation: v2 refuses to-many joins, so
-  it surfaces the standard "unsupported" user error rather than the row-multiplying join
-  v1 would emit.
 - The read runners hand the v2 builder to the shared parsers with a cast, because they
   are typed against the TypeORM class rather than an interface. Giving the parsers a
   structural `SelectQueryBuilderLike` type removes it and is the next cleanup.

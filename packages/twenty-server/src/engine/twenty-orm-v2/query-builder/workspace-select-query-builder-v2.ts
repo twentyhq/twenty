@@ -250,7 +250,12 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     return this;
   }
 
-  leftJoin(relationPath: string, alias: string, condition?: string): this {
+  leftJoin(
+    relationPath: string,
+    alias: string,
+    condition?: string,
+    options?: { allowToManyJoin?: boolean },
+  ): this {
     const [parentAlias, relationFieldName] = relationPath.split('.');
 
     if (!isDefined(relationFieldName)) {
@@ -280,9 +285,21 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
 
     const joinColumnName = relationShape.joinColumnName;
 
-    // A to-many join has no renderable condition, but it is still recorded so the shared
-    // to-one guard rejects it with the same error the TypeORM path produces. Reaching SQL
-    // generation with one of these means the guard was bypassed, which throws there.
+    // A to-one relation carries its join column on the current table, so the condition
+    // is always renderable. A to-many relation carries the foreign key on the target
+    // table; it is renderable too, but rendering it duplicates root rows, so it is only
+    // built when the caller opts in (group-by "with records" ordering). Otherwise the
+    // condition is left undefined and the shared to-one guard rejects it at SQL generation.
+    const toManyCondition =
+      options?.allowToManyJoin === true
+        ? this.buildToManyJoinCondition({
+            parentAlias,
+            alias,
+            targetTableShape,
+            targetFieldMetadataId: relationShape.targetFieldMetadataId,
+          })
+        : undefined;
+
     this.joinClauses.push({
       alias,
       targetTableShape,
@@ -290,11 +307,40 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       condition: isDefined(joinColumnName)
         ? (condition ??
           `${this.quoteColumn(parentAlias, joinColumnName)} = ${this.quoteColumn(alias, 'id')}`)
-        : undefined,
+        : (condition ?? toManyCondition),
       additionalOnConditions: [],
     });
 
     return this;
+  }
+
+  private buildToManyJoinCondition({
+    parentAlias,
+    alias,
+    targetTableShape,
+    targetFieldMetadataId,
+  }: {
+    parentAlias: string;
+    alias: string;
+    targetTableShape: WorkspaceTableShape;
+    targetFieldMetadataId: string | null;
+  }): string | undefined {
+    if (!isDefined(targetFieldMetadataId)) {
+      return undefined;
+    }
+
+    const inverseRelationShape = Object.values(
+      targetTableShape.relationShapeByFieldName,
+    ).find(
+      (relationShape) =>
+        relationShape.fieldMetadataId === targetFieldMetadataId,
+    );
+
+    if (!isDefined(inverseRelationShape?.joinColumnName)) {
+      return undefined;
+    }
+
+    return `${this.quoteColumn(alias, inverseRelationShape.joinColumnName)} = ${this.quoteColumn(parentAlias, 'id')}`;
   }
 
   withDeleted(): this {

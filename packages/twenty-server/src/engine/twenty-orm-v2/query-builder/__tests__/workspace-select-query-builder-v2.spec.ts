@@ -34,7 +34,16 @@ const companyTableShape: WorkspaceTableShape = {
     deletedAt: buildColumn('deletedAt'),
   },
   columnNames: ['id', 'name', 'deletedAt'],
-  relationShapeByFieldName: {},
+  relationShapeByFieldName: {
+    person: {
+      fieldName: 'person',
+      fieldMetadataId: 'field-company',
+      relationType: RelationType.MANY_TO_ONE,
+      targetObjectMetadataId: 'person-object-id',
+      targetFieldMetadataId: 'field-people',
+      joinColumnName: 'personId',
+    },
+  },
   hasDeletedAtColumn: true,
 };
 
@@ -171,6 +180,21 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
       },
     ]);
     expect(() => queryBuilder.getQuery()).toThrow(TwentyOrmV2Exception);
+  });
+
+  it('should render a to-many join on the inverse foreign key when the caller opts in', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.setFindOptions({ select: { id: true } });
+    queryBuilder.leftJoin('person.people', 'people', undefined, {
+      allowToManyJoin: true,
+    });
+
+    expect(queryBuilder.getQuery()).toContain(
+      `LEFT JOIN "${SCHEMA_NAME}"."company" AS "people" ` +
+        'ON ("people"."personId" = "person"."id") ' +
+        'AND ("people"."deletedAt" IS NULL)',
+    );
   });
 
   it('should emit a plain parameterised LIMIT, with no distinct sub-select', () => {

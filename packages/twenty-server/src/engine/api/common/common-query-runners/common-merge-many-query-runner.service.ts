@@ -85,27 +85,26 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
 
     const idsToDelete = args.ids.filter((id) => id !== priorityRecord.id);
 
-    const updatedRecord =
-      queryRunnerContext.featureFlagsMap[
-        FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED
-      ] && this.isMergeSupportedByOrmV2(queryRunnerContext, mergedData)
-        ? await this.executeMergeWithinTransactionV2({
-            args,
-            queryRunnerContext,
-            idsToDelete,
-            priorityRecordId: priorityRecord.id,
-            mergedData,
-          })
-        : await queryRunnerContext.workspaceDataSource.transaction(
-            (transactionManager: WorkspaceEntityManager) =>
-              this.executeMergeWithinTransaction(transactionManager, {
-                args,
-                queryRunnerContext,
-                idsToDelete,
-                priorityRecordId: priorityRecord.id,
-                mergedData,
-              }),
-          );
+    const updatedRecord = queryRunnerContext.featureFlagsMap[
+      FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED
+    ]
+      ? await this.executeMergeWithinTransactionV2({
+          args,
+          queryRunnerContext,
+          idsToDelete,
+          priorityRecordId: priorityRecord.id,
+          mergedData,
+        })
+      : await queryRunnerContext.workspaceDataSource.transaction(
+          (transactionManager: WorkspaceEntityManager) =>
+            this.executeMergeWithinTransaction(transactionManager, {
+              args,
+              queryRunnerContext,
+              idsToDelete,
+              priorityRecordId: priorityRecord.id,
+              mergedData,
+            }),
+        );
 
     await this.processNestedRelations({
       args,
@@ -400,32 +399,6 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     return updatedRecord;
   }
 
-  private isMergeSupportedByOrmV2(
-    context: CommonExtendedQueryRunnerContext,
-    mergedData: Partial<ObjectRecord>,
-  ): boolean {
-    const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
-      context.flatFieldMetadataMaps,
-      context.flatObjectMetadata,
-    );
-
-    return Object.keys(mergedData).every((fieldName) => {
-      const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: fieldIdByName[fieldName],
-        flatEntityMaps: context.flatFieldMetadataMaps,
-      });
-
-      if (!isDefined(fieldMetadata)) {
-        return true;
-      }
-
-      return (
-        fieldMetadata.type !== FieldMetadataType.RELATION &&
-        fieldMetadata.type !== FieldMetadataType.MORPH_RELATION
-      );
-    });
-  }
-
   private getRelationFieldsPointingToCurrentObject(
     context: CommonExtendedQueryRunnerContext,
   ): Array<{ objectMetadata: FlatObjectMetadata; joinColumnName: string }> {
@@ -576,6 +549,12 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
           columnsToReturn,
         });
 
+        const [resolvedMergedData] = await this.resolveNestedRelationsForOrmV2({
+          records: [mergedData],
+          queryRunnerContext,
+          writeRepository: objectRepository,
+        });
+
         const updatedRecords = await objectRepository.runMutation({
           selectQueryBuilder: objectRepository
             .createQueryBuilder(alias)
@@ -583,7 +562,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
           rowLevelPermissionsApplied: false,
           kind: 'update',
           columnsToReturn,
-          data: mergedData,
+          data: resolvedMergedData,
         });
 
         if (!isDefined(updatedRecords[0])) {

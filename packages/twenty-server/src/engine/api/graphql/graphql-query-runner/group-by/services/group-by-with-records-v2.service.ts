@@ -278,11 +278,12 @@ export class GroupByWithRecordsV2Service {
     }
 
     for (const joinInfo of relationJoins) {
-      addRelationJoinAliasToQueryBuilder({
-        queryBuilder: subQueryBuilder,
-        parentAlias: flatObjectMetadata.nameSingular,
-        relationName: joinInfo.joinAlias,
-      });
+      subQueryBuilder.leftJoin(
+        `${flatObjectMetadata.nameSingular}.${joinInfo.joinAlias}`,
+        joinInfo.joinAlias,
+        undefined,
+        { allowToManyJoin: true },
+      );
     }
 
     return `ROW_NUMBER() OVER (PARTITION BY ${partitionBy} ${orderByRawSQL})`;
