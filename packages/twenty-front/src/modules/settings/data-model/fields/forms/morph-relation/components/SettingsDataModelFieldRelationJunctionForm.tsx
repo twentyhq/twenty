@@ -61,7 +61,6 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
     return null;
   }
 
-  // Build options from junction object fields
   const junctionFieldOptions: { label: string; value: string }[] = [];
 
   // Add MORPH_RELATION fields (use first field of each morphId group)

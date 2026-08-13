@@ -125,7 +125,6 @@ describe('Field update permissions restrictions', () => {
       (role: any) => role.label === 'Member',
     ).id;
 
-    // Create a company and a person
     companyId = randomUUID();
     personId = randomUUID();
     const createCompanyOp = createOneOperationFactory({
@@ -143,7 +142,6 @@ describe('Field update permissions restrictions', () => {
 
     await makeGraphqlAPIRequest(createPersonOperation);
 
-    // Get object and field metadata IDs
     const getObjectMetadataOp = {
       query: gql`
         query {
@@ -195,7 +193,6 @@ describe('Field update permissions restrictions', () => {
   });
 
   afterAll(async () => {
-    // Restore original role
     const restoreMemberRoleQuery = {
       query: `
         mutation UpdateWorkspaceMemberRole {
@@ -239,15 +236,6 @@ describe('Field update permissions restrictions', () => {
     }
   });
 
-  // describe('should throw an error if updating a restricted field', () => {
-  //   beforeEach(async () => {
-  //     await restrictUpdateAccessToCompanyEmployee(
-  //       customRoleId,
-  //       companyObjectId,
-  //       restrictedCompanyFieldId,
-  //     );
-  //   });
-
   //   it('1. updateMany with restricted field', async () => {
   //     const graphqlOperation = updateManyOperationFactory({
   //       objectMetadataSingularName: 'company',
@@ -255,12 +243,6 @@ describe('Field update permissions restrictions', () => {
   //       gqlFields: COMPANY_GQL_FIELDS_WITH_EMPLOYEES,
   //       data: { employees: 20 },
   //     });
-
-  //     const response =
-  //       await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
-
-  //     expectPermissionDeniedError(response);
-  //   });
 
   //   it('2. updateOne with restricted field', async () => {
   //     const graphqlOperation = updateOneOperationFactory({
@@ -270,22 +252,6 @@ describe('Field update permissions restrictions', () => {
   //       data: { employees: 20 },
   //     });
 
-  //     const response =
-  //       await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
-
-  //     expectPermissionDeniedError(response);
-  //   });
-  // });
-
-  // describe('should succeed if updating non-restricted fields', () => {
-  //   beforeEach(async () => {
-  //     await restrictUpdateAccessToCompanyEmployee(
-  //       customRoleId,
-  //       companyObjectId,
-  //       restrictedCompanyFieldId,
-  //     );
-  //   });
-
   //   it('1. updateMany with non-restricted field', async () => {
   //     const graphqlOperation = updateManyOperationFactory({
   //       objectMetadataSingularName: 'company',
@@ -294,14 +260,6 @@ describe('Field update permissions restrictions', () => {
   //       data: { name: 'UpdatedCompany' },
   //     });
 
-  //     const response =
-  //       await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
-
-  //     expect(response.body.errors).toBeUndefined();
-  //     expect(response.body.data).toBeDefined();
-  //     expect(response.body.data.updateCompanies[0].name).toBe('UpdatedCompany');
-  //   });
-
   //   it('2. updateOne with non-restricted field', async () => {
   //     const graphqlOperation = updateOneOperationFactory({
   //       objectMetadataSingularName: 'company',
@@ -309,15 +267,6 @@ describe('Field update permissions restrictions', () => {
   //       recordId: companyId,
   //       data: { name: 'UpdatedCompany2' },
   //     });
-
-  //     const response =
-  //       await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
-
-  //     expect(response.body.errors).toBeUndefined();
-  //     expect(response.body.data).toBeDefined();
-  //     expect(response.body.data.updateCompany.name).toBe('UpdatedCompany2');
-  //   });
-  // });
 
   describe('should allow employees field when creating if field is in RLS predicate', () => {
     beforeEach(async () => {

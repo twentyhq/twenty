@@ -29,6 +29,8 @@ import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-f
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
+import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -51,6 +53,9 @@ export class ApplicationSyncService {
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
+    @InjectRepository(FrontComponentEntity)
+    private readonly frontComponentRepository: Repository<FrontComponentEntity>,
+    private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
   ) {}
 
   public async synchronizeFromManifest({
@@ -171,6 +176,8 @@ export class ApplicationSyncService {
       autoUpgrade: false,
       isSdkLayerStale: false,
       sdkClientCoreChecksum: null,
+      frontComponentSharedDependenciesChecksum: null,
+      frontComponentSharedDependenciesBuiltPath: null,
       applicationRegistrationId: null,
       primaryPublicDomainId: null,
       createdAt: now,
@@ -249,16 +256,78 @@ export class ApplicationSyncService {
     const resolvedRegistrationId =
       applicationRegistrationId ?? application.applicationRegistrationId;
 
-    return await this.applicationService.update(application.id, {
-      name,
-      description: manifest.application.description,
-      logo: manifest.application.logo ?? manifest.application.logoUrl ?? null,
-      version: packageJson.version,
-      packageJsonChecksum: manifest.application.packageJsonChecksum,
-      yarnLockChecksum: manifest.application.yarnLockChecksum,
-      applicationRegistrationId: resolvedRegistrationId,
-      workspaceId,
-    });
+    const frontComponentSharedDependenciesChecksum =
+      manifest.application.frontComponentSharedDependencies?.builtChecksum ??
+      null;
+    const frontComponentSharedDependenciesBuiltPath =
+      manifest.application.frontComponentSharedDependencies?.builtPath ?? null;
+
+    const updatedApplication = await this.applicationService.update(
+      application.id,
+      {
+        name,
+        description: manifest.application.description,
+        logo: manifest.application.logo ?? manifest.application.logoUrl ?? null,
+        version: packageJson.version,
+        packageJsonChecksum: manifest.application.packageJsonChecksum,
+        yarnLockChecksum: manifest.application.yarnLockChecksum,
+        frontComponentSharedDependenciesChecksum,
+        frontComponentSharedDependenciesBuiltPath,
+        applicationRegistrationId: resolvedRegistrationId,
+        workspaceId,
+      },
+    );
+
+    if (
+      application.frontComponentSharedDependenciesChecksum !==
+      frontComponentSharedDependenciesChecksum
+    ) {
+      await this.broadcastFrontComponentSharedDependenciesChecksumUpdates({
+        workspaceId,
+        applicationId: application.id,
+        frontComponentSharedDependenciesChecksum,
+      });
+    }
+
+    return updatedApplication;
+  }
+
+  private async broadcastFrontComponentSharedDependenciesChecksumUpdates({
+    workspaceId,
+    applicationId,
+    frontComponentSharedDependenciesChecksum,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+    frontComponentSharedDependenciesChecksum: string | null;
+  }): Promise<void> {
+    try {
+      const frontComponents = await this.frontComponentRepository.find({
+        select: ['id'],
+        where: { applicationId, workspaceId },
+      });
+
+      await this.workspaceEventBroadcaster.broadcast({
+        workspaceId,
+        events: frontComponents.map((frontComponent) => ({
+          type: 'updated',
+          entityName: 'frontComponent',
+          recordId: frontComponent.id,
+          properties: {
+            updatedFields: ['frontComponentSharedDependenciesChecksum'],
+            after: {
+              id: frontComponent.id,
+              frontComponentSharedDependenciesChecksum,
+            },
+          },
+        })),
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to broadcast the shared dependencies checksum update for application ${applicationId} in workspace ${workspaceId}`,
+        error,
+      );
+    }
   }
 
   public async uninstallApplication({

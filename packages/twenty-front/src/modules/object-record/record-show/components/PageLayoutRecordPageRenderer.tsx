@@ -1,5 +1,5 @@
 import { RecordPageSidePanelCommandMenu } from '@/command-menu-item/components/RecordPageSidePanelCommandMenu';
-import { RecordShowSidePanelOpenRecordButton } from '@/command-menu-item/components/RecordShowSidePanelOpenRecordButton';
+import { RecordPageSidePanelPinnedCommandMenuItems } from '@/command-menu-item/components/RecordPageSidePanelPinnedCommandMenuItems';
 import { InformationBannerDeletedRecord } from '@/information-banner/components/deleted-record/InformationBannerDeletedRecord';
 import { RecordShowContainerContextStoreTargetedRecordsEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreTargetedRecordsEffect';
 import { RecordShowEffect } from '@/object-record/record-show/components/RecordShowEffect';
@@ -67,6 +67,8 @@ export const PageLayoutRecordPageRenderer = ({
       (commandMenuItem) => commandMenuItem.isPinned !== false,
     );
 
+  // A widget that contributes footer actions, such as the email composer,
+  // supersedes the record's own actions rather than doubling up with them.
   const hasPinnedWidgetCommandMenuItems =
     pinnedWidgetCommandMenuItems.length > 0;
 
@@ -133,15 +135,7 @@ export const PageLayoutRecordPageRenderer = ({
                       disabled={commandMenuItem.disabled}
                     />
                   ))
-                : [
-                    <RecordShowSidePanelOpenRecordButton
-                      key="open"
-                      objectNameSingular={
-                        targetRecordIdentifier.targetObjectNameSingular
-                      }
-                      recordId={targetRecordIdentifier.id}
-                    />,
-                  ]),
+                : [<RecordPageSidePanelPinnedCommandMenuItems key="pinned" />]),
             ]}
           />
         )}

@@ -227,18 +227,13 @@ export class FieldMetadataToolsFactory {
                 )
               : undefined);
 
-          const rawResults = await this.fieldMetadataService.query({
-            filter: {
-              workspaceId: { eq: workspaceId },
-              ...(parameters.id ? { id: { eq: parameters.id } } : {}),
-              ...(isDefined(objectMetadataId)
-                ? {
-                    objectMetadataId: { eq: objectMetadataId },
-                  }
-                : {}),
-            },
-            paging: { limit: parameters.limit ?? 100 },
-          });
+          const rawResults =
+            await this.fieldMetadataService.findManyWithinWorkspace({
+              workspaceId,
+              fieldMetadataId: parameters.id,
+              objectMetadataId,
+              limit: parameters.limit ?? 100,
+            });
 
           const compactedFields = (
             rawResults as unknown as Record<string, unknown>[]

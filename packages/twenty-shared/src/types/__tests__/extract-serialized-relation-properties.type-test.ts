@@ -3,7 +3,6 @@ import { type ExtractSerializedRelationProperties } from '@/types/ExtractSeriali
 import { type SerializedRelation } from '@/types/SerializedRelation.type';
 
 type TestedRecord = {
-  // Non-SerializedRelation fields
   plainString: string;
   plainNumber: number;
   plainBoolean: boolean;
@@ -46,10 +45,8 @@ type Assertions = [
   Expect<Equal<ExtractSerializedRelationProperties<number>, never>>,
   Expect<Equal<ExtractSerializedRelationProperties<null>, never>>,
 
-  // Empty object returns never
   Expect<Equal<ExtractSerializedRelationProperties<object>, never>>,
 
-  // Union types distribute correctly
   Expect<
     Equal<
       ExtractSerializedRelationProperties<
@@ -59,7 +56,6 @@ type Assertions = [
     >
   >,
 
-  // Mixed union with object and primitive
   Expect<
     Equal<
       ExtractSerializedRelationProperties<{ rel: SerializedRelation } | string>,

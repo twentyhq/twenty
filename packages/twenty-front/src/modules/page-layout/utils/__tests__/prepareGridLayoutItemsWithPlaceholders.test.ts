@@ -9,6 +9,8 @@ import {
 
 describe('prepareGridLayoutItemsWithPlaceholders', () => {
   const createMockWidget = (id: string): PageLayoutWidget => ({
+    isSystemSideEffect: false,
+    universalIdentifier: 'universal-identifier-mock',
     id,
     applicationId: '',
     isActive: true,
@@ -161,7 +163,6 @@ describe('prepareGridLayoutItemsWithPlaceholders', () => {
         id: PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY,
         type: 'placeholder',
       });
-      // Check that all other items are widgets
       for (let i = 0; i < result.length - 1; i++) {
         expect(result[i].type).toBe('widget');
       }
@@ -231,7 +232,6 @@ describe('prepareGridLayoutItemsWithPlaceholders', () => {
 
       prepareGridLayoutItemsWithPlaceholders(originalWidgets, true);
 
-      // Check that the array wasn't mutated
       expect(originalWidgets).toHaveLength(2);
       expect(originalWidgets).toEqual(widgetsCopy);
       expect(originalWidgets[0]).toBe(widget1);

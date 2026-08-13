@@ -63,13 +63,11 @@ const MIGRATED_REST_METHODS = [
     TwentyORMModule,
     GlobalWorkspaceDataSourceModule,
     ClickHouseModule,
-    // Core engine module, contains all the core modules
     CoreEngineModule,
     // Modules module, contains all business logic modules
     ModulesModule,
     // Needed for the user workspace middleware
     WorkspaceCacheStorageModule,
-    // Api modules
     CoreGraphQLApiModule,
     MetadataGraphQLApiModule,
     AdminPanelGraphQLApiModule,
@@ -79,9 +77,7 @@ const MIGRATED_REST_METHODS = [
     JwtModule,
     UserSessionModule,
     WorkspaceMetadataVersionModule,
-    // I18n module for translations
     I18nModule,
-    // Conditional modules
     ...AppModule.getConditionalModules(),
   ],
   providers: [
@@ -97,13 +93,6 @@ export class AppModule {
     const frontPath = join(__dirname, 'front');
 
     // NestJS DevTools - can be useful for debugging and profiling
-    /* if (process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT) {
-      modules.push(
-        DevtoolsModule.register({
-          http: true,
-        }),
-      );
-    } */
 
     if (existsSync(frontPath)) {
       modules.push(
@@ -116,11 +105,6 @@ export class AppModule {
     // Messaque Queue explorer only for sync driver
     // Maybe we don't need to conditionaly register the explorer, because we're creating a jobs module
     // that will expose classes that are only used in the queue worker
-    /*
-    if (process.env.MESSAGE_QUEUE_TYPE === MessageQueueDriverType.Sync) {
-      modules.push(MessageQueueModule.registerExplorer());
-    }
-    */
 
     return modules;
   }

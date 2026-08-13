@@ -2,6 +2,7 @@ import { type RemoteConnection } from '@remote-dom/core/elements';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
 import { workerGeometryStore } from '@/polyfills/geometry/workerGeometryStore';
+import { frontComponentStorageBridges } from '@/polyfills/storage/frontComponentStorageBridges';
 import { attachRemoteRenderRootToWorkerDocument } from '@/remote/worker/utils/attachRemoteRenderRootToWorkerDocument';
 import { installHostFetchProxy } from '@/remote/worker/utils/installHostFetchProxy';
 import { loadFrontComponentModule } from '@/remote/worker/utils/loadFrontComponentModule';
@@ -39,9 +40,21 @@ export const renderFrontComponent = async ({
     });
   }
 
+  const storageSnapshots = renderContext.storageSnapshots;
+
+  if (isDefined(storageSnapshots)) {
+    frontComponentStorageBridges.localStorage.seed(
+      storageSnapshots.localStorage,
+    );
+    frontComponentStorageBridges.sessionStorage.seed(
+      storageSnapshots.sessionStorage,
+    );
+  }
+
   const componentModule = await loadFrontComponentModule({
     componentSource: renderContext.componentSource,
     sdkClientSources: renderContext.sdkClientSources,
+    sharedDependenciesSource: renderContext.sharedDependenciesSource,
   });
 
   componentModule.default(renderContainer);

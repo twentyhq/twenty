@@ -4,15 +4,19 @@ import { GraphQLError } from 'graphql';
 import { Provider as JotaiProvider } from 'jotai';
 import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 
-import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
+import { currentUserState } from '@/auth/states/currentUserState';
+import { isCompanyEnrichmentEnabledState } from '@/client-config/states/isCompanyEnrichmentEnabledState';
 import { CompanyEnrichmentOnboardingEffect } from '@/onboarding/effect-components/CompanyEnrichmentOnboardingEffect';
 import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
 import { hasAttemptedCompanyEnrichmentFetchState } from '@/onboarding/states/hasAttemptedCompanyEnrichmentFetchState';
+import { getIsBookCallOnboardingStepPending } from '@/onboarding/utils/getIsBookCallOnboardingStepPending';
+import { waitForCompanyEnrichmentSettlement } from '@/onboarding/utils/waitForCompanyEnrichmentSettlement';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
+  CompleteBookCallOnboardingStepDocument,
   EnrichWorkspaceCompanyDocument,
   OnboardingStatus,
 } from '~/generated-metadata/graphql';
@@ -44,10 +48,12 @@ const buildEnrichMock = ({
   outcome,
   enrichmentPayload,
   countCall,
+  isBookCallOnboardingStepPending = false,
 }: {
   outcome: string;
   enrichmentPayload: WorkspaceCompanyEnrichment | null;
   countCall: () => void;
+  isBookCallOnboardingStepPending?: boolean;
 }) => ({
   request: { query: EnrichWorkspaceCompanyDocument },
   result: () => {
@@ -59,6 +65,7 @@ const buildEnrichMock = ({
           __typename: 'WorkspaceCompanyEnrichmentResult',
           outcome,
           enrichment: enrichmentPayload,
+          isBookCallOnboardingStepPending,
         },
       },
     };
@@ -84,8 +91,32 @@ describe('CompanyEnrichmentOnboardingEffect', () => {
   beforeEach(() => {
     resetJotaiStore();
     localStorage.clear();
+    sessionStorage.clear();
     mockOnboardingStatus.mockReturnValue(OnboardingStatus.PROFILE_CREATION);
-    jotaiStore.set(isOnboardingAiChatEnabledState.atom, true);
+    jotaiStore.set(isCompanyEnrichmentEnabledState.atom, true);
+  });
+
+  it('does not fetch when enrichment has no consumer or api key', async () => {
+    jotaiStore.set(isCompanyEnrichmentEnabledState.atom, false);
+
+    let callCount = 0;
+    renderEffect([
+      buildEnrichMock({
+        outcome: 'matched',
+        enrichmentPayload: enrichment,
+        countCall: () => {
+          callCount += 1;
+        },
+      }),
+    ]);
+
+    await flushMutation();
+
+    expect(callCount).toBe(0);
+    expect(jotaiStore.get(companyEnrichmentState.atom)).toBeNull();
+    expect(jotaiStore.get(hasAttemptedCompanyEnrichmentFetchState.atom)).toBe(
+      false,
+    );
   });
 
   afterEach(() => {
@@ -128,6 +159,38 @@ describe('CompanyEnrichmentOnboardingEffect', () => {
     );
   });
 
+  it('stays unsettled for a waiter while the fetch is in flight', async () => {
+    let hasSettled = false;
+
+    void waitForCompanyEnrichmentSettlement({
+      store: jotaiStore,
+      timeoutMs: 10_000,
+    }).then(() => {
+      hasSettled = true;
+    });
+
+    renderEffect([
+      buildEnrichMock({
+        outcome: 'matched',
+        enrichmentPayload: enrichment,
+        countCall: () => {},
+      }),
+    ]);
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(jotaiStore.get(hasAttemptedCompanyEnrichmentFetchState.atom)).toBe(
+      true,
+    );
+    expect(hasSettled).toBe(false);
+
+    await flushMutation();
+
+    expect(hasSettled).toBe(true);
+  });
+
   it.each([OnboardingStatus.COMPLETED, OnboardingStatus.WORKSPACE_ACTIVATION])(
     'does not fetch when the onboarding status is %s',
     async (status) => {
@@ -150,26 +213,6 @@ describe('CompanyEnrichmentOnboardingEffect', () => {
       expect(jotaiStore.get(companyEnrichmentState.atom)).toBeNull();
     },
   );
-
-  it('does not fetch when onboarding AI chat is disabled', async () => {
-    jotaiStore.set(isOnboardingAiChatEnabledState.atom, false);
-
-    let callCount = 0;
-    renderEffect([
-      buildEnrichMock({
-        outcome: 'matched',
-        enrichmentPayload: enrichment,
-        countCall: () => {
-          callCount += 1;
-        },
-      }),
-    ]);
-
-    await flushMutation();
-
-    expect(callCount).toBe(0);
-    expect(jotaiStore.get(companyEnrichmentState.atom)).toBeNull();
-  });
 
   it('does not fetch when an enrichment is already stored', async () => {
     jotaiStore.set(companyEnrichmentState.atom, enrichment);
@@ -213,6 +256,121 @@ describe('CompanyEnrichmentOnboardingEffect', () => {
       );
     },
   );
+
+  it('records the pending book-call step reported by the server', async () => {
+    jotaiStore.set(currentUserState.atom, { id: 'user-id' } as never);
+
+    renderEffect([
+      buildEnrichMock({
+        outcome: 'matched',
+        enrichmentPayload: enrichment,
+        countCall: () => {},
+        isBookCallOnboardingStepPending: true,
+      }),
+    ]);
+
+    await flushMutation();
+
+    expect(
+      getIsBookCallOnboardingStepPending(jotaiStore.get(currentUserState.atom)),
+    ).toBe(true);
+  });
+
+  it('records the pending book-call step even when the enrichment did not match', async () => {
+    jotaiStore.set(currentUserState.atom, { id: 'user-id' } as never);
+
+    renderEffect([
+      buildEnrichMock({
+        outcome: 'transientError',
+        enrichmentPayload: null,
+        countCall: () => {},
+        isBookCallOnboardingStepPending: true,
+      }),
+    ]);
+
+    await flushMutation();
+
+    expect(
+      getIsBookCallOnboardingStepPending(jotaiStore.get(currentUserState.atom)),
+    ).toBe(true);
+  });
+
+  it('drops a pending book-call step that lands after the user advanced past it', async () => {
+    mockOnboardingStatus.mockReturnValue(OnboardingStatus.PROFILE_CREATION);
+    jotaiStore.set(currentUserState.atom, {
+      id: 'user-id',
+      onboardingStatus: OnboardingStatus.PLAN_REQUIRED,
+    } as never);
+
+    let hasClearedBookCallStep = false;
+
+    renderEffect([
+      buildEnrichMock({
+        outcome: 'matched',
+        enrichmentPayload: enrichment,
+        countCall: () => {},
+        isBookCallOnboardingStepPending: true,
+      }),
+      {
+        request: {
+          query: CompleteBookCallOnboardingStepDocument,
+          variables: { hasBookedCall: false, isAutoSkipped: true },
+        },
+        result: () => {
+          hasClearedBookCallStep = true;
+
+          return {
+            data: {
+              completeBookCallOnboardingStep: {
+                __typename: 'OnboardingStepSuccess',
+                success: true,
+              },
+            },
+          };
+        },
+      },
+    ]);
+
+    await flushMutation();
+
+    expect(
+      getIsBookCallOnboardingStepPending(jotaiStore.get(currentUserState.atom)),
+    ).toBe(false);
+    expect(hasClearedBookCallStep).toBe(true);
+    expect(jotaiStore.get(companyEnrichmentState.atom)).toMatchObject({
+      domain: 'acme.com',
+    });
+  });
+
+  it('keeps the step pending locally when clearing it on the server fails', async () => {
+    jotaiStore.set(currentUserState.atom, {
+      id: 'user-id',
+      onboardingStatus: OnboardingStatus.PLAN_REQUIRED,
+    } as never);
+
+    renderEffect([
+      buildEnrichMock({
+        outcome: 'matched',
+        enrichmentPayload: enrichment,
+        countCall: () => {},
+        isBookCallOnboardingStepPending: true,
+      }),
+      {
+        request: { query: CompleteBookCallOnboardingStepDocument },
+        result: { errors: [new GraphQLError('Internal server error')] },
+      },
+    ]);
+
+    await flushMutation();
+
+    // The server still has the offer, so local state must not claim otherwise.
+    expect(
+      getIsBookCallOnboardingStepPending(jotaiStore.get(currentUserState.atom)),
+    ).toBe(true);
+    expect(jotaiStore.get(companyEnrichmentState.atom)).toMatchObject({
+      domain: 'acme.com',
+    });
+  });
 
   it('stores nothing when the mutation fails', async () => {
     renderEffect([

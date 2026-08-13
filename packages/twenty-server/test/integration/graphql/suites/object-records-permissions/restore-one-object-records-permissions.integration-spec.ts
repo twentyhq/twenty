@@ -14,7 +14,6 @@ describe('restoreOneObjectRecordsPermissions', () => {
   const personId = randomUUID();
 
   beforeAll(async () => {
-    // Create a person
     const createGraphqlOperation = createOneOperationFactory({
       objectMetadataSingularName: 'person',
       gqlFields: PERSON_GQL_FIELDS,
@@ -25,7 +24,6 @@ describe('restoreOneObjectRecordsPermissions', () => {
 
     await makeGraphqlAPIRequest(createGraphqlOperation);
 
-    // Delete the person
     const deleteGraphqlOperation = deleteOneOperationFactory({
       objectMetadataSingularName: 'person',
       gqlFields: PERSON_GQL_FIELDS,

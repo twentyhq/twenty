@@ -1,13 +1,33 @@
+import { type OpenAPIV3_1 } from 'openapi-types';
 import { capitalize } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-export const getFindManyResponse200 = (
-  item: Pick<FlatObjectMetadata, 'nameSingular' | 'namePlural'>,
-) => {
+export const getFindManyResponse200 = ({
+  item,
+  isDirectDataFeatureFlagged = false,
+}: {
+  item: Pick<FlatObjectMetadata, 'nameSingular' | 'namePlural'>;
+  isDirectDataFeatureFlagged?: boolean;
+}): OpenAPIV3_1.ResponseObject => {
   const schemaRef = `#/components/schemas/${capitalize(
     item.nameSingular,
   )}ForResponse`;
+
+  const directDataSchema: OpenAPIV3_1.SchemaObject = {
+    type: 'array',
+    items: { $ref: schemaRef },
+  };
+
+  const nestedDataSchema: OpenAPIV3_1.SchemaObject = {
+    type: 'object',
+    properties: {
+      [item.namePlural]: {
+        type: 'array',
+        items: { $ref: schemaRef },
+      },
+    },
+  };
 
   return {
     description: 'Successful operation',
@@ -16,26 +36,26 @@ export const getFindManyResponse200 = (
         schema: {
           type: 'object',
           properties: {
-            data: {
-              type: 'object',
-              properties: {
-                [item.namePlural]: {
-                  type: 'array',
-                  items: {
-                    $ref: schemaRef,
-                  },
-                },
-              },
-            },
+            // Endpoints behind IS_REST_METADATA_API_NEW_FORMAT_DIRECT answer
+            // with either envelope depending on the workspace flag, so both
+            // are documented rather than only the post-flag shape.
+            data: isDirectDataFeatureFlagged
+              ? {
+                  description:
+                    'An array when IS_REST_METADATA_API_NEW_FORMAT_DIRECT is enabled for the workspace, otherwise the legacy nested envelope.',
+                  oneOf: [directDataSchema, nestedDataSchema],
+                }
+              : nestedDataSchema,
             pageInfo: {
               type: 'object',
               properties: {
                 hasNextPage: { type: 'boolean' },
+                hasPreviousPage: { type: 'boolean' },
                 startCursor: {
-                  type: 'string',
+                  type: ['string', 'null'],
                 },
                 endCursor: {
-                  type: 'string',
+                  type: ['string', 'null'],
                 },
               },
             },

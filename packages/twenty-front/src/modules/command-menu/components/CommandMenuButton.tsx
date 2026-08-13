@@ -25,6 +25,7 @@ export type CommandMenuButtonProps = {
   to?: string;
   disabled?: boolean;
   isPrimaryAction?: boolean;
+  shouldHideLabel?: boolean;
 };
 
 export const CommandMenuButton = ({
@@ -33,14 +34,17 @@ export const CommandMenuButton = ({
   to,
   disabled = false,
   isPrimaryAction = false,
+  shouldHideLabel = false,
 }: CommandMenuButtonProps) => {
   const resolvedLabel = getCommandMenuItemLabel(command.label);
 
-  const resolvedShortLabel = isDefined(command.shortLabel)
-    ? getCommandMenuItemLabel(command.shortLabel)
-    : undefined;
+  const resolvedShortLabel =
+    isDefined(command.shortLabel) && !shouldHideLabel
+      ? getCommandMenuItemLabel(command.shortLabel)
+      : undefined;
 
-  const buttonAccent = command.isPrimaryCTA ? 'blue' : 'default';
+  const buttonAccent =
+    isPrimaryAction || command.isPrimaryCTA === true ? 'blue' : 'default';
 
   return (
     <>
@@ -48,8 +52,8 @@ export const CommandMenuButton = ({
         <Button
           Icon={command.Icon}
           size="small"
-          variant={isPrimaryAction ? 'primary' : 'secondary'}
-          accent={isPrimaryAction ? 'blue' : buttonAccent}
+          variant="primary"
+          accent={buttonAccent}
           to={to}
           onClick={onClick}
           disabled={disabled}
@@ -61,8 +65,8 @@ export const CommandMenuButton = ({
           <IconButton
             Icon={command.Icon}
             size="small"
-            variant={isPrimaryAction ? 'primary' : 'secondary'}
-            accent={isPrimaryAction ? 'blue' : buttonAccent}
+            variant={buttonAccent === 'blue' ? 'primary' : 'tertiary'}
+            accent={buttonAccent}
             to={to}
             onClick={onClick}
             disabled={disabled}

@@ -21,14 +21,12 @@ export class UpdateViewFieldPermissionGuard implements CanActivate {
 
     let entityId = '';
 
-    // For GraphQL: extract from args.input.id
     const args = gqlContext.getArgs();
 
     if (typeof args?.input?.id === 'string') {
       entityId = args.input.id;
     }
 
-    // For REST: extract from URL params
     if (!entityId && typeof request.params?.id === 'string') {
       entityId = request.params.id;
     }

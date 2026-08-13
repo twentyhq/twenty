@@ -72,7 +72,6 @@ describe('Restricted fields', () => {
       (obj: any) => obj.node.nameSingular === 'person',
     )?.node.id;
 
-    // Get field metadata ID for email field
     const getFieldMetadataOperation = {
       query: gql`
         query {
@@ -108,7 +107,6 @@ describe('Restricted fields', () => {
         field.node.object.nameSingular === 'person',
     ).node.id;
 
-    // Get member role ID
     const getRolesOperation = {
       query: gql`
         query {
@@ -224,7 +222,6 @@ describe('Restricted fields', () => {
     });
 
     it('should allow update when user has no restricted update permissions', async () => {
-      // Remove field permission restrictions
       await upsertFieldPermissions({
         roleId: memberRoleId,
         fieldPermissions: [

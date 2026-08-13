@@ -1,6 +1,6 @@
 {
   "name": "twenty-client-sdk",
-  "version": "2.28.0",
+  "version": "2.32.0",
   "sideEffects": false,
   "license": "MIT",
   "scripts": {

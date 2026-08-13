@@ -10,15 +10,23 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
-const shouldShrinkFromFullWidthMock = jest.fn();
 const sidePanelCloseAnimationCompleteCleanupMock = jest.fn();
 
-jest.mock('@/side-panel/hooks/useShouldShrinkSidePanelFromFullWidth', () => ({
-  useShouldShrinkSidePanelFromFullWidth: () => shouldShrinkFromFullWidthMock(),
-}));
+let capturedOnContinueChatFromFullWidth: (() => void) | undefined;
 
 jest.mock('@/side-panel/components/SidePanelAskAiHandoffEffect', () => ({
-  SidePanelAskAiHandoffEffect: () => null,
+  SidePanelAskAiHandoffEffect: ({
+    onContinueChatFromFullWidth,
+  }: {
+    onContinueChatFromFullWidth: () => void;
+  }) => {
+    capturedOnContinueChatFromFullWidth = onContinueChatFromFullWidth;
+    return null;
+  },
+}));
+
+jest.mock('framer-motion', () => ({
+  useReducedMotion: () => false,
 }));
 
 jest.mock('@/side-panel/components/SidePanelRouter', () => ({
@@ -51,23 +59,30 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
+const startHandoffShrink = () => {
+  act(() => {
+    capturedOnContinueChatFromFullWidth?.();
+  });
+};
+
 describe('SidePanelForDesktop', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
-    shouldShrinkFromFullWidthMock.mockReturnValue(false);
+    capturedOnContinueChatFromFullWidth = undefined;
     sidePanelCloseAnimationCompleteCleanupMock.mockImplementation(() => {
       jotaiStore.set(isSidePanelClosingState.atom, false);
     });
   });
 
   it('should keep the content mounted while closing after a handoff entrance', () => {
-    shouldShrinkFromFullWidthMock.mockReturnValue(true);
     jotaiStore.set(isSidePanelOpenedState.atom, true);
 
     const { queryByTestId } = render(<SidePanelForDesktop />, {
       wrapper: Wrapper,
     });
+
+    startHandoffShrink();
 
     expect(queryByTestId('side-panel-content')).toBeInTheDocument();
 
@@ -78,8 +93,7 @@ describe('SidePanelForDesktop', () => {
     expect(queryByTestId('side-panel-content')).toBeInTheDocument();
   });
 
-  it('should stop shrinking from full width once the entrance animation ends', () => {
-    shouldShrinkFromFullWidthMock.mockReturnValue(true);
+  it('should shrink from full width when the handoff continues the chat', () => {
     jotaiStore.set(isSidePanelOpenedState.atom, true);
 
     const { container } = render(<SidePanelForDesktop />, { wrapper: Wrapper });
@@ -89,6 +103,32 @@ describe('SidePanelForDesktop', () => {
     if (wrapperElement === null) {
       throw new Error('side panel wrapper not found');
     }
+
+    expect(wrapperElement).toHaveAttribute(
+      'data-shrink-from-full-width',
+      'false',
+    );
+
+    startHandoffShrink();
+
+    expect(wrapperElement).toHaveAttribute(
+      'data-shrink-from-full-width',
+      'true',
+    );
+  });
+
+  it('should stop shrinking from full width once the entrance animation ends', () => {
+    jotaiStore.set(isSidePanelOpenedState.atom, true);
+
+    const { container } = render(<SidePanelForDesktop />, { wrapper: Wrapper });
+
+    const wrapperElement = container.querySelector('[data-side-panel]');
+
+    if (wrapperElement === null) {
+      throw new Error('side panel wrapper not found');
+    }
+
+    startHandoffShrink();
 
     expect(wrapperElement).toHaveAttribute(
       'data-shrink-from-full-width',
@@ -104,7 +144,6 @@ describe('SidePanelForDesktop', () => {
   });
 
   it('should complete the close lifecycle when closed while the entrance animation is still running', () => {
-    shouldShrinkFromFullWidthMock.mockReturnValue(true);
     jotaiStore.set(isSidePanelOpenedState.atom, true);
 
     const { container, queryByTestId } = render(<SidePanelForDesktop />, {
@@ -116,6 +155,8 @@ describe('SidePanelForDesktop', () => {
     if (wrapperElement === null) {
       throw new Error('side panel wrapper not found');
     }
+
+    startHandoffShrink();
 
     act(() => {
       jotaiStore.set(isSidePanelOpenedState.atom, false);
@@ -129,7 +170,6 @@ describe('SidePanelForDesktop', () => {
   });
 
   it('should run the close cleanup once when both the animation and the transition end', () => {
-    shouldShrinkFromFullWidthMock.mockReturnValue(true);
     jotaiStore.set(isSidePanelOpenedState.atom, true);
 
     const { container } = render(<SidePanelForDesktop />, { wrapper: Wrapper });
@@ -139,6 +179,8 @@ describe('SidePanelForDesktop', () => {
     if (wrapperElement === null) {
       throw new Error('side panel wrapper not found');
     }
+
+    startHandoffShrink();
 
     act(() => {
       jotaiStore.set(isSidePanelOpenedState.atom, false);

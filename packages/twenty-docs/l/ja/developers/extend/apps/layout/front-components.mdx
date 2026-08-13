@@ -601,6 +601,43 @@ export default defineFrontComponent({
 
 詳細は[公開アセットのセクション](/l/ja/developers/extend/apps/config/public-assets)を参照してください。
 
+## フロントコンポーネント間で依存関係を共有することについて
+
+デフォルトでは、各フロントコンポーネントはインポートするライブラリのコピーをそれぞれ同梱するため、5つのコンポーネントを持つアプリでは、React が5回配信されます。 共有する依存関係をアプリの `package.json` に宣言すると、それらのライブラリを一度だけビルドし、アプリ内のすべてのコンポーネントが単一のキャッシュ済みファイルから読み込むようにできます:
+
+```json package.json
+{
+  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+}
+```
+
+その後、各コンポーネントはこれまでどおり依存関係をインポートするだけで済み、コンポーネントコード側で変更する必要はありません:
+
+```tsx src/front-components/counter.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'counter',
+  component: Counter,
+});
+```
+
+知っておくべきこと：
+
+* **アプリごとに1つの共有依存関係バンドル。** バンドルはアプリ自身の依存関係からビルドされるため、配信するバージョンを完全にコントロールできます。
+* **インポートする正確な指定子を列挙してください。** `twenty-ui/input` と `twenty-ui/display` は 2 つのエントリです。パッケージ名だけでは、そのサブパスは対象になりません。 `react` を列挙すると、自動的に `react/jsx-runtime` も対象になります。
+* **`react` と一緒に `react-dom/client` を共有してください。** すべてのコンポーネントは `createRoot` を通じてレンダーされるため、これを含めない場合、各コンポーネントは引き続き React DOM を同梱することになります。
+* **バンドルはキャッシュされます。** バンドルは長期間有効な不変キャッシュ付きのコンテンツハッシュ URL で提供されるため、一度ダウンロードされると、その依存関係のいずれかが変更されるまでアプリのすべてのコンポーネントで再利用されます。
+* **共有パッケージを一切インポートしないコンポーネントは、バンドルをダウンロードすることはありません。**
+
 ## スタイリング
 
 フロントコンポーネントは複数のスタイリング手法をサポートしています。 次のものを使用できます：

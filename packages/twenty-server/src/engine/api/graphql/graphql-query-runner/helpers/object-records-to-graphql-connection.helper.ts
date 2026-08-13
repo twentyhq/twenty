@@ -64,7 +64,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
     selectedAggregatedFields?: Record<string, any>;
     objectName: string;
     take: number;
-    totalCount: number;
+    totalCount: number | undefined;
     order?: ObjectRecordOrderBy;
     hasNextPage: boolean;
     hasPreviousPage: boolean;
@@ -164,7 +164,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
     // oxlint-disable-next-line typescript/no-explicit-any
     selectedAggregatedFields?: Record<string, any>;
     take: number;
-    totalCount: number;
+    totalCount: number | undefined;
     order?: ObjectRecordOrderBy;
     depth?: number;
   }): T {

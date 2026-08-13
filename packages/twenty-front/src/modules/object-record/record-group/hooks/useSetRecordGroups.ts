@@ -61,7 +61,6 @@ export const useSetRecordGroups = () => {
         store.set(recordIndexGroupFieldMetadata, fieldMetadata);
       }
 
-      // Set the record groups by id
       recordGroups.forEach((recordGroup) => {
         const existingRecordGroup = store.get(
           recordGroupDefinitionFamilyState.atomFamily(recordGroup.id),
@@ -93,7 +92,6 @@ export const useSetRecordGroups = () => {
         return;
       }
 
-      // Set the record group ids
       store.set(
         recordGroupIdsComponentState.atomFamily({
           instanceId: recordIndexId,

@@ -8,7 +8,7 @@ Le SDK fournit des API programmatiques qui vous permettent de construire, déplo
 
 ## Utilisation de packages npm
 
-Vous pouvez installer et utiliser n'importe quel package npm dans votre application. Les fonctions logiques et les composants frontaux sont tous deux empaquetés avec [esbuild](https://esbuild.github.io/), qui intègre toutes les dépendances dans la sortie — aucun `node_modules` n'est nécessaire à l'exécution.
+Vous pouvez installer et utiliser n'importe quel package npm dans votre application. Les fonctions logiques et les composants frontaux sont tous deux empaquetés avec [esbuild](https://esbuild.github.io/), qui intègre leurs dépendances dans la sortie — aucun `node_modules` n'est nécessaire à l'exécution.
 
 ### Installation d'un package
 
@@ -56,13 +56,15 @@ export default defineFrontComponent({
 
 ### Comment fonctionne le bundling
 
-L'étape de build utilise esbuild pour produire un seul fichier autonome par fonction logique et par composant frontal. Tous les packages importés sont intégrés dans le bundle.
+L'étape de build utilise esbuild pour produire un seul fichier autonome par fonction logique et par composant frontal. Les paquets importés sont intégrés dans le bundle, à l’exception de ceux listés ci-dessous.
 
 **Les fonctions logiques** s'exécutent dans un environnement Node.js. Les modules intégrés de Node (`fs`, `path`, `crypto`, `http`, etc.) sont disponibles et n'ont pas besoin d'être installés.
 
 **Les composants frontaux** s'exécutent dans un Web Worker. Les modules intégrés de Node ne sont **pas** disponibles — seuls les packages npm qui fonctionnent dans un environnement navigateur sont pris en charge. Notez que le bac à sable implémente un DOM *partiel*, de sorte qu’un package peut être compilé sans erreur tout en échouant à l’exécution ; voir [Limitations actuelles](/l/fr/developers/extend/apps/layout/front-components#current-limitations).
 
 Les deux environnements disposent de `twenty-client-sdk/core` et `twenty-client-sdk/metadata` en tant que modules pré-fournis — ils ne sont pas intégrés au bundle mais résolus à l'exécution par le serveur.
+
+Les composants frontaux peuvent également partager des dépendances via un [bundle de dépendances partagées](/l/fr/developers/extend/apps/layout/front-components#sharing-dependencies-across-front-components). Les paquets listés dans le champ `frontComponentSharedDependencies` du fichier package.json de l'application sont construits une fois dans un fichier séparé et chargés à partir de celui-ci à l'exécution au lieu d'être intégrés à chaque composant, de sorte qu'un composant qui n'importe que des paquets partagés n'embarque quasiment aucun code de dépendance propre.
 
 ## Installation
 

@@ -23,9 +23,10 @@ describe('isSubdomainValid', () => {
       expect(isSubdomainValid('my-app-123')).toBe(true);
     });
 
-    it('should accept minimum length subdomains (3 characters)', () => {
-      expect(isSubdomainValid('abc')).toBe(true);
-      expect(isSubdomainValid('a1b')).toBe(true);
+    it('should accept minimum length subdomains (1 character)', () => {
+      expect(isSubdomainValid('a')).toBe(true);
+      expect(isSubdomainValid('1')).toBe(true);
+      expect(isSubdomainValid('ab')).toBe(true);
       expect(isSubdomainValid('x-y')).toBe(true);
     });
 
@@ -49,13 +50,6 @@ describe('isSubdomainValid', () => {
   describe('invalid subdomain patterns', () => {
     it('should reject empty strings', () => {
       expect(isSubdomainValid('')).toBe(false);
-    });
-
-    it('should reject subdomains that are too short (less than 3 characters)', () => {
-      expect(isSubdomainValid('a')).toBe(false);
-      expect(isSubdomainValid('ab')).toBe(false);
-      expect(isSubdomainValid('1')).toBe(false);
-      expect(isSubdomainValid('12')).toBe(false);
     });
 
     it('should reject subdomains that are too long (more than 30 characters)', () => {
@@ -294,16 +288,15 @@ describe('isSubdomainValid', () => {
     });
 
     it('should handle boundary length cases precisely', () => {
-      // Exactly 3 characters (minimum valid)
-      expect(isSubdomainValid('abc')).toBe(true);
+      expect(isSubdomainValid('a')).toBe(true);
 
-      // Exactly 30 characters (maximum valid)
+      expect(isSubdomainValid('ab')).toBe(true);
+
       const exactly30Chars = 'a'.repeat(28) + 'bc';
 
       expect(exactly30Chars.length).toBe(30);
       expect(isSubdomainValid(exactly30Chars)).toBe(true);
 
-      // Exactly 31 characters (first invalid length)
       const exactly31Chars = 'a'.repeat(29) + 'bc';
 
       expect(exactly31Chars.length).toBe(31);
@@ -323,11 +316,8 @@ describe('isSubdomainValid', () => {
     it('should accept valid subdomains that are similar to reserved ones but not exact matches', () => {
       // 'testing' is reserved, but 'testing123' is not
       expect(isSubdomainValid('testing123')).toBe(true);
-      // 'api' is reserved, but 'myapi' is not
       expect(isSubdomainValid('myapi')).toBe(true);
-      // 'admin' is reserved, but 'adminpanel' is not
       expect(isSubdomainValid('adminpanel')).toBe(true);
-      // 'test' is reserved, but 'testapp' is not
       expect(isSubdomainValid('testapp')).toBe(true);
     });
 
@@ -363,18 +353,17 @@ describe('isSubdomainValid', () => {
       expect(isSubdomainValid('api-test')).toBe(false);
       expect(isSubdomainValid('api-123')).toBe(false);
 
-      // But allow 'api' in other positions
       expect(isSubdomainValid('myapi')).toBe(true);
     });
 
     it('should validate length constraints from regex', () => {
-      // The regex pattern is: /^(?!api-).*^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/
-      // This means: start char + 1-28 middle chars + end char = 3-30 total chars
+      // The regex pattern is: /^(?!api-)[a-z0-9](?:[a-z0-9-]{0,28}[a-z0-9])?$/
+      // This means: start char + optional (0-28 middle chars + end char) = 1-30 total chars
 
-      // 3 chars: start + 1 middle + end
+      expect(isSubdomainValid('a')).toBe(true);
+
       expect(isSubdomainValid('abc')).toBe(true);
 
-      // 30 chars: start + 28 middle + end
       const thirtyChars = 'a' + 'b'.repeat(28) + 'c';
 
       expect(thirtyChars.length).toBe(30);

@@ -13,9 +13,12 @@ import { installDocumentGetElementById } from '@/polyfills/dom/utils/installDocu
 import { installGetComputedStyle } from '@/polyfills/dom/utils/installGetComputedStyle';
 import { installGetElementsByClassName } from '@/polyfills/dom/utils/installGetElementsByClassName';
 import { installLocalStyleOnBaseElements } from '@/polyfills/dom/utils/installLocalStyleOnBaseElements';
+import { installMutationObserver } from '@/polyfills/dom/utils/installMutationObserver';
 import { workerGeometryStore } from '@/polyfills/geometry/workerGeometryStore';
 import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
 import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/installWindowGeometryPolyfill';
+import { frontComponentStorageBridges } from '@/polyfills/storage/frontComponentStorageBridges';
+import { installStorageBridge } from '@/polyfills/storage/utils/installStorageBridge';
 import { exposeGlobals } from '@/remote/utils/exposeGlobals';
 import { installStylePropertyOnRemoteElements } from '@/remote/utils/installStylePropertyOnRemoteElements';
 import { patchRemoteElementAttributes } from '@/remote/utils/patchRemoteElementAttributes';
@@ -40,6 +43,10 @@ installLocalStyleOnBaseElements(Element.prototype);
 
 installGetComputedStyle(globalThis as unknown as Record<string, unknown>);
 
+installMutationObserver({
+  globalScope: globalThis as unknown as Record<string, unknown>,
+});
+
 installElementGeometryPolyfill({
   elementPrototype: Element.prototype,
   documentTarget: document,
@@ -49,6 +56,11 @@ installElementGeometryPolyfill({
 installWindowGeometryPolyfill({
   globalScope: globalThis as unknown as Record<string, unknown>,
   geometryStore: workerGeometryStore,
+});
+
+installStorageBridge({
+  globalScope: globalThis as unknown as Record<string, unknown>,
+  storageBridges: frontComponentStorageBridges,
 });
 
 exposeGlobals({
@@ -76,6 +88,12 @@ const workerExports: WorkerExports = {
         hostThread.imports,
       ),
     );
+
+    for (const storageBridge of Object.values(frontComponentStorageBridges)) {
+      storageBridge.connectHostCommunicationApi(
+        frontComponentHostCommunicationApi,
+      );
+    }
   },
   updateContext: async (context) => {
     setFrontComponentExecutionContext(context);

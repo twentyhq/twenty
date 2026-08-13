@@ -9,6 +9,7 @@ import { createHostFetchEnforcingPolicy } from '@/host/utils/createHostFetchEnfo
 import { type GeometryTracker } from '@/host/types/GeometryTracker';
 import { fetchComponentSource } from '@/host/utils/fetchComponentSource';
 import { fetchSdkClientSources } from '@/host/utils/fetchSdkClientSources';
+import { buildFrontComponentStorageSnapshots } from '@/host/utils/buildFrontComponentStorageSnapshots';
 import { FRONT_COMPONENT_SANDBOX_DOCUMENT } from '@/remote/sandbox/generated/frontComponentSandboxDocument';
 import { createFrontComponentSandboxIframe } from '@/remote/sandbox/utils/createFrontComponentSandboxIframe';
 import { createFrontComponentSandboxMessageHandler } from '@/remote/sandbox/utils/createFrontComponentSandboxMessageHandler';
@@ -16,6 +17,7 @@ import { type FrontComponentThread } from '@/types/FrontComponentThread';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
 import { buildAuthorizationHeadersFromAccessToken } from '@/utils/buildAuthorizationHeadersFromAccessToken';
 import { containsSdkClientImportSpecifier } from '@/utils/containsSdkClientImportSpecifier';
+import { containsSharedDependenciesImportSpecifier } from '@/utils/containsSharedDependenciesImportSpecifier';
 
 type FrontComponentWorkerEffectProps = {
   componentUrl: string;
@@ -23,7 +25,9 @@ type FrontComponentWorkerEffectProps = {
   apiUrl?: string;
   functionsBaseUrl?: string;
   sdkClientUrls?: SdkClientUrls;
+  sharedDependenciesUrl?: string;
   applicationVariables?: Record<string, string>;
+  storageNamespace?: string;
   geometryTracker: GeometryTracker;
   setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
   setThread: React.Dispatch<React.SetStateAction<FrontComponentThread | null>>;
@@ -36,7 +40,9 @@ export const FrontComponentWorkerEffect = ({
   apiUrl,
   functionsBaseUrl,
   sdkClientUrls,
+  sharedDependenciesUrl,
   applicationVariables,
+  storageNamespace,
   geometryTracker,
   setReceiver,
   setThread,
@@ -63,6 +69,7 @@ export const FrontComponentWorkerEffect = ({
       apiUrl,
       functionsBaseUrl,
       sdkClientUrls,
+      sharedDependenciesUrl,
     });
 
     const hostFetch = createHostFetchEnforcingPolicy(hostFetchPolicy);
@@ -100,18 +107,30 @@ export const FrontComponentWorkerEffect = ({
           return;
         }
 
-        const sdkClientSources =
+        const [sdkClientSources, sharedDependenciesSource] = await Promise.all([
           isDefined(sdkClientUrls) &&
           containsSdkClientImportSpecifier(componentSource)
-            ? await fetchSdkClientSources({
+            ? fetchSdkClientSources({
                 sdkClientUrls,
                 headers: authorizationHeaders,
               })
-            : undefined;
+            : undefined,
+          isDefined(sharedDependenciesUrl) &&
+          containsSharedDependenciesImportSpecifier(componentSource)
+            ? fetchComponentSource({
+                url: sharedDependenciesUrl,
+                headers: authorizationHeaders,
+              })
+            : undefined,
+        ]);
 
         if (isCancelled) {
           return;
         }
+
+        const storageSnapshots = isDefined(storageNamespace)
+          ? buildFrontComponentStorageSnapshots(storageNamespace)
+          : undefined;
 
         await thread.imports.render(newReceiver.connection, {
           componentUrl,
@@ -120,9 +139,11 @@ export const FrontComponentWorkerEffect = ({
           apiUrl,
           functionsBaseUrl,
           sdkClientSources,
+          sharedDependenciesSource,
           hostFetchOrigins: hostFetchPolicy.allowedOrigins,
           applicationVariables,
           initialViewportGeometry: geometryTracker.getViewportGeometry(),
+          storageSnapshots,
         });
       } catch (error) {
         if (!isCancelled) {
@@ -150,7 +171,9 @@ export const FrontComponentWorkerEffect = ({
     apiUrl,
     functionsBaseUrl,
     sdkClientUrls,
+    sharedDependenciesUrl,
     applicationVariables,
+    storageNamespace,
     geometryTracker,
     setError,
     setReceiver,

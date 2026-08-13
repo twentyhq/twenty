@@ -6,8 +6,8 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -43,7 +43,7 @@ export const RecordTitleCellSingleTextDisplayMode = ({
   const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
   const fieldValue = recordStore?.[fieldDefinition.metadata.fieldName];
-  const isEmpty = !isDefined(fieldValue) || fieldValue.trim() === '';
+  const isEmpty = !isNonEmptyString(fieldValue) || fieldValue.trim() === '';
 
   const { openRecordTitleCell } = useRecordTitleCell();
 
@@ -64,12 +64,7 @@ export const RecordTitleCellSingleTextDisplayMode = ({
       {isEmpty ? (
         <StyledEmptyText>{t`Untitled`}</StyledEmptyText>
       ) : (
-        <OverflowingTextWithTooltip
-          text={
-            recordStore?.[fieldDefinition.metadata.fieldName] ||
-            fieldDefinition.label
-          }
-        />
+        <OverflowingTextWithTooltip text={fieldValue} />
       )}
     </StyledDiv>
   );

@@ -212,6 +212,7 @@ export class UserResolver {
 
     const userVarAllowList: string[] = [
       OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
+      OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING,
       AccountsToReconnectKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS,
       AccountsToReconnectKeys.ACCOUNTS_TO_RECONNECT_EMAIL_ALIASES,
     ];
@@ -574,7 +575,39 @@ export class UserResolver {
     if (!workspace) return null;
 
     return this.onboardingService.getOnboardingStatus({
-      user,
+      userId: user.id,
+      workspaceId: workspace.id,
+    });
+  }
+
+  @ResolveField(() => OnboardingStatus, {
+    nullable: true,
+  })
+  async previousOnboardingStatus(
+    @Parent() user: UserEntity,
+    @AuthWorkspace({ allowUndefined: true })
+    workspace: WorkspaceEntity | undefined,
+  ): Promise<OnboardingStatus | null> {
+    if (!workspace) return null;
+
+    return this.onboardingService.getPreviousReversibleOnboardingStatus({
+      userId: user.id,
+      workspaceId: workspace.id,
+    });
+  }
+
+  @ResolveField(() => Boolean, {
+    nullable: true,
+  })
+  async isWorkspaceCreator(
+    @Parent() user: UserEntity,
+    @AuthWorkspace({ allowUndefined: true })
+    workspace: WorkspaceEntity | undefined,
+  ): Promise<boolean | null> {
+    if (!workspace) return null;
+
+    return this.userWorkspaceService.isWorkspaceCreator({
+      userId: user.id,
       workspaceId: workspace.id,
     });
   }

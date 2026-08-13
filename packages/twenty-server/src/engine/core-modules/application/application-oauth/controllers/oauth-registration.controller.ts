@@ -68,7 +68,6 @@ export class OAuthRegistrationController {
       return rateLimitResult;
     }
 
-    // Validate redirect URIs
     for (const uri of body.redirect_uris) {
       const result = validateRedirectUri(uri);
 
@@ -105,7 +104,6 @@ export class OAuthRegistrationController {
       }
     }
 
-    // Validate response_types
     const responseTypes = body.response_types ?? ['code'];
 
     for (const responseType of responseTypes) {

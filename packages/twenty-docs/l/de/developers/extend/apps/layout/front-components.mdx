@@ -601,6 +601,43 @@ export default defineFrontComponent({
 
 Details finden Sie im Abschnitt [Öffentliche Assets](/l/de/developers/extend/apps/config/public-assets).
 
+## Freigabe von Abhängigkeiten über die Front-Komponenten
+
+Standardmäßig bündelt jede Front-Komponente ihre eigene Kopie der von ihr importierten Bibliotheken, so dass eine App mit fünf Komponenten fünf Mal React verschickt. Erklären Sie geteilte Abhängigkeiten im Paket Ihrer App. son\`, um diese Bibliotheken einmal zu erstellen und jede Komponente der App aus einer einzigen zwischengespeicherten Datei laden zu lassen:
+
+```json package.json
+{
+  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+}
+```
+
+Jede Komponente importiert dann ihre Abhängigkeiten genau wie zuvor — nichts ändert sich im Komponentencode:
+
+```tsx src/front-components/counter.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'counter',
+  component: Counter,
+});
+```
+
+Ein paar Dinge, die Sie wissen sollten:
+
+* **Ein freigegebenes Abhängigkeitsbündel pro App.** Das Paket wird aus den eigenen Abhängigkeiten deiner App aufgebaut, so dass du die volle Kontrolle über die von dir ausgelieferten Versionen behalten kannst.
+* **Listet die exakten Angaben, die du importierst, auf.** `twenty-ui/input` und `twenty-ui/display` sind zwei Einträge; ein Paketname allein deckt seine Unterpfade nicht ab. Das Auflisten von `react` deckt automatisch `react/jsx-runtime` ab.
+* **Teile `react-dom/client` neben `react`.** Jede Komponente wird durch `createRoot` erzeugt, so dass es herauskommt, dass jede Komponente noch React DOM-Pakete enthält.
+* \*\*Das Bundle wird zwischengespeichert. \* Es wird unter einer Content-Hash-URL mit einem langlebigen unveränderlichen Cache versorgt so dass es einmal heruntergeladen und über alle Komponenten der App wiederverwendet wird, bis sich eine seiner Abhängigkeiten ändert.
+* **Komponenten, die keines der gemeinsam genutzten Pakete importieren, laden sie nie herunter.**
+
 ## Styling
 
 Front-Komponenten unterstützen mehrere Styling-Ansätze. Sie können verwenden:

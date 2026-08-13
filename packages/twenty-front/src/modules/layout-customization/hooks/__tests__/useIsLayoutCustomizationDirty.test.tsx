@@ -19,10 +19,12 @@ const PAGE_LAYOUT_ID_1 = 'page-layout-1';
 const PAGE_LAYOUT_ID_2 = 'page-layout-2';
 
 const MOCK_PAGE_LAYOUT: PageLayout = {
+  applicationId: 'application-id-mock',
   __typename: 'PageLayout',
   id: PAGE_LAYOUT_ID_1,
   name: 'Test Layout',
   type: PageLayoutType.RECORD_PAGE,
+  isSystemSideEffect: true,
   objectMetadataId: 'obj-1',
   universalIdentifier: '20202020-0000-0000-0000-000000000001',
   tabs: [],
@@ -158,7 +160,6 @@ describe('useIsLayoutCustomizationDirty', () => {
       status: 'up-to-date',
     });
     store.set(isLayoutCustomizationModeEnabledState.atom, true);
-    // Nav draft differs from prefetch
     store.set(navigationMenuItemsDraftState.atom, []);
 
     const { result } = renderHook(() => useIsLayoutCustomizationDirty(), {
@@ -183,7 +184,6 @@ describe('useIsLayoutCustomizationDirty', () => {
       PAGE_LAYOUT_ID_2,
     ]);
 
-    // First layout is clean
     store.set(
       pageLayoutPersistedComponentState.atomFamily({
         instanceId: PAGE_LAYOUT_ID_1,
@@ -197,7 +197,6 @@ describe('useIsLayoutCustomizationDirty', () => {
       MOCK_PAGE_LAYOUT,
     );
 
-    // Second layout is dirty
     const secondLayout: PageLayout = {
       ...MOCK_PAGE_LAYOUT,
       id: PAGE_LAYOUT_ID_2,

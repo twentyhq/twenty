@@ -6,7 +6,6 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { TwoFactorAuthenticationVerificationCodeDash } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationCodeDash';
 import { TwoFactorAuthenticationVerificationCodeSlot } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationCodeSlot';
 
-// OTP Form Types
 type OTPFormValues = {
   otp: string;
 };

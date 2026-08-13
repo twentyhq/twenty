@@ -44,9 +44,6 @@ const APP_VERSION_MISMATCH_CODE = 'APP_VERSION_MISMATCH';
 type GraphQLErrorHandlerHookOptions = {
   metricsService: MetricsService;
 
-  /**
-   * The exception handler service to use.
-   */
   exceptionHandlerService: ExceptionHandlerService;
 
   i18nService: I18nService;
@@ -144,7 +141,6 @@ export const useGraphQLErrorHandlerHook = <
               return originalError;
             });
 
-            // Error metrics
             const codeToMetricKey: Partial<Record<ErrorCode, MetricsKeys>> = {
               [ErrorCode.UNAUTHENTICATED]: MetricsKeys.GraphqlOperation401,
               [ErrorCode.FORBIDDEN]: MetricsKeys.GraphqlOperation403,

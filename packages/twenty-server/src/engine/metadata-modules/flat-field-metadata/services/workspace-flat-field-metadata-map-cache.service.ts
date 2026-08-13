@@ -10,6 +10,9 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type EncodedFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/types/encoded-flat-field-metadata-maps.type';
+import { decodeFlatFieldMetadataMapsFromCache } from 'src/engine/metadata-modules/flat-field-metadata/utils/decode-flat-field-metadata-maps-from-cache.util';
+import { encodeFlatFieldMetadataMapsForCache } from 'src/engine/metadata-modules/flat-field-metadata/utils/encode-flat-field-metadata-maps-for-cache.util';
 import { fromFieldMetadataEntityToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-field-metadata-entity-to-flat-field-metadata.util';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { computeUniqueFieldMetadataIdsFromIndexEntities } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-field-metadata-ids-from-index-entities.util';
@@ -28,9 +31,10 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
 
 @Injectable()
-@WorkspaceCache('flatFieldMetadataMaps')
+@WorkspaceCache('flatFieldMetadataMaps', { packingPonderation: 64 })
 export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCacheProvider<
-  FlatEntityMaps<FlatFieldMetadata>
+  FlatEntityMaps<FlatFieldMetadata>,
+  EncodedFlatFieldMetadataMaps
 > {
   constructor(
     @InjectRepository(FieldMetadataEntity)
@@ -55,6 +59,18 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
     private readonly searchFieldMetadataRepository: WorkspaceScopedRepository<SearchFieldMetadataEntity>,
   ) {
     super();
+  }
+
+  override encodeForCacheStorage(
+    data: FlatEntityMaps<FlatFieldMetadata>,
+  ): EncodedFlatFieldMetadataMaps {
+    return encodeFlatFieldMetadataMapsForCache(data);
+  }
+
+  override decodeFromCacheStorage(
+    rawData: EncodedFlatFieldMetadataMaps,
+  ): FlatEntityMaps<FlatFieldMetadata> {
+    return decodeFlatFieldMetadataMapsFromCache(rawData);
   }
 
   async computeForCache(

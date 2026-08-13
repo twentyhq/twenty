@@ -5,7 +5,6 @@ import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 import { QueryFailedError } from 'typeorm';
-import { v5 } from 'uuid';
 
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
@@ -17,14 +16,12 @@ import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-ch
 import { WorkspaceSetupChatOutcome } from 'src/engine/metadata-modules/ai/ai-chat/enums/workspace-setup-chat-outcome.enum';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
 import { buildWorkspaceSetupPromptText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-prompt-text.util';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-
-const WORKSPACE_SETUP_CHAT_THREAD_ID_NAMESPACE =
-  '1e9195f3-c26a-4bfc-961e-dc317b4badbd';
 
 const WORKSPACE_SETUP_CHAT_THREAD_TITLE = msg`Workspace setup`;
 
@@ -93,10 +90,10 @@ export class WorkspaceSetupChatService {
       workspaceId: workspace.id,
     });
 
-    const threadId = v5(
-      `${workspace.id}:${userWorkspaceId}`,
-      WORKSPACE_SETUP_CHAT_THREAD_ID_NAMESPACE,
-    );
+    const threadId = buildWorkspaceSetupChatThreadId({
+      workspaceId: workspace.id,
+      userWorkspaceId,
+    });
 
     let thread = await this.agentChatService.findThreadById({
       threadId,

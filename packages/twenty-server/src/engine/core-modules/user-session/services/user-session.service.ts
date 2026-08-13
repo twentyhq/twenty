@@ -418,15 +418,24 @@ export class UserSessionService {
     });
   }
 
-  async findActiveSessionsForUser(
-    userId: string,
-  ): Promise<UserSessionEntity[]> {
+  // Scoped to one workspace: a session belongs to the workspace its exchange
+  // selected, and the same person's membership of another workspace is not that
+  // workspace's business. Sessions with no workspace are the workspace-agnostic
+  // ones minted on the default subdomain, which belong to no workspace's list.
+  async findActiveSessionsForUserWorkspace({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }): Promise<UserSessionEntity[]> {
     const now = new Date();
     const idleTimeoutMs = this.getIdleTimeoutMs();
 
     return this.userSessionRepository.find({
       where: {
         userId,
+        workspaceId,
         revokedAt: IsNull(),
         expiresAt: MoreThan(now),
         lastActiveAt: MoreThan(addMilliseconds(now, -idleTimeoutMs)),
@@ -448,18 +457,21 @@ export class UserSessionService {
     return await this.revokeSessionEntity(session, reason);
   }
 
-  async revokeSessionByIdForUser({
+  async revokeSessionByIdForUserWorkspace({
     sessionId,
     userId,
+    workspaceId,
     reason,
   }: {
     sessionId: string;
     userId: string;
+    workspaceId: string;
     reason: UserSessionRevokedReason;
   }): Promise<boolean> {
     const session = await this.userSessionRepository.findOneBy({
       id: sessionId,
       userId,
+      workspaceId,
     });
 
     if (!isDefined(session)) {
@@ -472,12 +484,16 @@ export class UserSessionService {
     return await this.revokeSessionEntity(session, reason);
   }
 
+  // workspaceId narrows this to one workspace, which is what the settings panel
+  // wants. Account-wide callers (password change) leave it out on purpose.
   async revokeAllSessionsForUser({
     userId,
+    workspaceId,
     reason,
     exceptSessionId,
   }: {
     userId: string;
+    workspaceId?: string;
     reason: UserSessionRevokedReason;
     exceptSessionId?: string;
   }): Promise<number> {
@@ -490,6 +506,10 @@ export class UserSessionService {
       .set({ revokedAt: new Date(), revokedReason: reason })
       .where('"userId" = :userId', { userId })
       .andWhere('"revokedAt" IS NULL');
+
+    if (isDefined(workspaceId)) {
+      revokingQuery.andWhere('"workspaceId" = :workspaceId', { workspaceId });
+    }
 
     if (isDefined(exceptSessionId)) {
       revokingQuery.andWhere('"id" != :exceptSessionId', { exceptSessionId });

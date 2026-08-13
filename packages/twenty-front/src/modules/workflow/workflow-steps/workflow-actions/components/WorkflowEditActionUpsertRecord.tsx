@@ -4,7 +4,7 @@ import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjec
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
-import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
+import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useViewOrDefaultView } from '@/views/hooks/useViewOrDefaultView';
@@ -12,6 +12,11 @@ import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpd
 import { type WorkflowUpsertRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import {
+  buildUpdatedRecordActionFormData,
+  type RecordActionFormData,
+  type RelationManyToOneField,
+} from '@/workflow/workflow-steps/workflow-actions/utils/buildUpdatedRecordActionFormData';
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { t } from '@lingui/core/macro';
@@ -22,16 +27,8 @@ import { HorizontalSeparator } from 'twenty-ui/layout';
 import { type SelectOption } from 'twenty-ui/input';
 import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
-import { RelationType } from '~/generated-metadata/graphql';
 
-type RelationManyToOneField = {
-  id: string;
-};
-
-type UpsertRecordFormData = {
-  objectName: string;
-  [field: string]: RelationManyToOneField | JsonValue;
-};
+type UpsertRecordFormData = RecordActionFormData;
 
 type WorkflowEditActionUpsertRecordProps = {
   action: WorkflowUpsertRecordAction;
@@ -163,20 +160,12 @@ export const WorkflowEditActionUpsertRecord = ({
       return;
     }
 
-    const isFieldRelationManyToOne =
-      isFieldRelation(fieldDefinition) &&
-      fieldDefinition.metadata.relationType === RelationType.MANY_TO_ONE;
-
-    const fieldValue = isFieldRelationManyToOne
-      ? {
-          id: updatedValue,
-        }
-      : updatedValue;
-
-    const newFormData: UpsertRecordFormData = {
-      ...formData,
-      [fieldName]: fieldValue,
-    };
+    const newFormData = buildUpdatedRecordActionFormData({
+      formData,
+      fieldName,
+      fieldDefinition,
+      updatedValue,
+    });
 
     setFormData(newFormData);
 
@@ -291,11 +280,7 @@ export const WorkflowEditActionUpsertRecord = ({
             );
           }
 
-          const isFieldRelationManyToOne =
-            isFieldRelation(fieldDefinition) &&
-            fieldDefinition.metadata.relationType === RelationType.MANY_TO_ONE;
-
-          const currentValue = isFieldRelationManyToOne
+          const currentValue = isFieldRelationManyToOne(fieldDefinition)
             ? (
                 formData[
                   fieldDefinition.metadata.fieldName

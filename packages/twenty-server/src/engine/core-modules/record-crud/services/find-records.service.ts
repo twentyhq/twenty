@@ -79,7 +79,7 @@ export class FindRecordsService {
       ];
 
       const {
-        results: { records, totalCount },
+        results: { records, totalCount, pageInfo },
       } = await this.commonFindManyRunner.execute(
         {
           filter,
@@ -108,7 +108,8 @@ export class FindRecordsService {
         message: `Found ${records.length} ${objectName} records`,
         result: {
           records,
-          count: totalCount,
+          count: totalCount ?? 0,
+          hasNextPage: pageInfo.hasNextPage,
         },
         ...(isNonEmptyArray(warnings) ? { warnings: warnings } : {}),
         recordReferences,
