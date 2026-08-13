@@ -34,7 +34,6 @@ describe('REST API Core Group By endpoint', () => {
   const COMPANY_2_POSITION = 20;
 
   beforeAll(async () => {
-    //   Create test companies
     await makeGraphqlAPIRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'company',
@@ -128,7 +127,6 @@ describe('REST API Core Group By endpoint', () => {
   });
 
   afterAll(async () => {
-    // Cleanup created opportunities
     for (const id of [
       testOpportunityId1,
       testOpportunityId2,
@@ -144,7 +142,6 @@ describe('REST API Core Group By endpoint', () => {
       );
     }
 
-    // Cleanup created companies
     for (const id of [testCompanyId1, testCompanyId2]) {
       await makeGraphqlAPIRequest(
         destroyOneOperationFactory({
@@ -157,7 +154,6 @@ describe('REST API Core Group By endpoint', () => {
   });
 
   it('groups by stage and closeDate with records', async () => {
-    // Add query parameters for group by
     const groupByQuery = JSON.stringify([
       {
         closeDate: {

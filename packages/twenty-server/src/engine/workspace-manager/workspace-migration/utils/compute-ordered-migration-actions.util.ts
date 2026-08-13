@@ -46,7 +46,6 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.view.delete,
     ///
 
-    // Logic functions
     ...aggregatedOrchestratorActionsReport.logicFunction.delete,
     ...aggregatedOrchestratorActionsReport.logicFunction.create,
     ...aggregatedOrchestratorActionsReport.logicFunction.update,
@@ -62,7 +61,6 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.roleTarget.delete,
     ///
 
-    // Agents (must exist before roleTarget create/update that reference them)
     ...aggregatedOrchestratorActionsReport.agent.delete,
     ...aggregatedOrchestratorActionsReport.agent.create,
     ...aggregatedOrchestratorActionsReport.agent.update,
@@ -73,13 +71,11 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.roleTarget.update,
     ///
 
-    // Object permissions
     ...aggregatedOrchestratorActionsReport.objectPermission.delete,
     ...aggregatedOrchestratorActionsReport.objectPermission.create,
     ...aggregatedOrchestratorActionsReport.objectPermission.update,
     ///
 
-    // Field permissions
     ...aggregatedOrchestratorActionsReport.fieldPermission.delete,
     ...aggregatedOrchestratorActionsReport.fieldPermission.create,
     ...aggregatedOrchestratorActionsReport.fieldPermission.update,
@@ -100,43 +96,36 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.skill.update,
     ///
 
-    // Front components
     ...aggregatedOrchestratorActionsReport.frontComponent.delete,
     ...aggregatedOrchestratorActionsReport.frontComponent.create,
     ...aggregatedOrchestratorActionsReport.frontComponent.update,
     ///
 
-    // Command Menu Items
     ...aggregatedOrchestratorActionsReport.commandMenuItem.delete,
     ...aggregatedOrchestratorActionsReport.commandMenuItem.create,
     ...aggregatedOrchestratorActionsReport.commandMenuItem.update,
     ///
 
-    // Page layouts
     ...aggregatedOrchestratorActionsReport.pageLayout.delete,
     ...aggregatedOrchestratorActionsReport.pageLayout.create,
     ...aggregatedOrchestratorActionsReport.pageLayout.update,
     ///
 
-    // Page layout tabs
     ...aggregatedOrchestratorActionsReport.pageLayoutTab.delete,
     ...aggregatedOrchestratorActionsReport.pageLayoutTab.create,
     ...aggregatedOrchestratorActionsReport.pageLayoutTab.update,
     ///
 
-    // Page layout widgets
     ...aggregatedOrchestratorActionsReport.pageLayoutWidget.delete,
     ...aggregatedOrchestratorActionsReport.pageLayoutWidget.create,
     ...aggregatedOrchestratorActionsReport.pageLayoutWidget.update,
     ///
 
-    // Navigation Menu Items
     ...aggregatedOrchestratorActionsReport.navigationMenuItem.delete,
     ...aggregatedOrchestratorActionsReport.navigationMenuItem.create,
     ...aggregatedOrchestratorActionsReport.navigationMenuItem.update,
     ///
 
-    // Row level permission predicate groups
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicateGroup
       .delete,
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicateGroup
@@ -145,7 +134,6 @@ export const computeOrderedMigrationActions = (
       .update,
     ///
 
-    // Row level permission predicates
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate.delete,
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate.create,
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate.update,
@@ -157,12 +145,10 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.webhook.update,
     ///
 
-    // Application Variables
     ...aggregatedOrchestratorActionsReport.applicationVariable.delete,
     ...aggregatedOrchestratorActionsReport.applicationVariable.create,
     ...aggregatedOrchestratorActionsReport.applicationVariable.update,
 
-    // Connection providers
     ...aggregatedOrchestratorActionsReport.connectionProvider.delete,
     ...aggregatedOrchestratorActionsReport.connectionProvider.create,
     ...aggregatedOrchestratorActionsReport.connectionProvider.update,

@@ -64,15 +64,12 @@ export type DataMessagePart = {
       contextSizeBytes?: number;
       toolCallCount?: number;
       toolCount?: number;
-      // Routing AI call tokens
       routingPromptTokens?: number;
       routingCompletionTokens?: number;
       routingTotalTokens?: number;
-      // Agent AI call tokens
       agentPromptTokens?: number;
       agentCompletionTokens?: number;
       agentTotalTokens?: number;
-      // Cost in Twenty credits
       routingCostInCredits?: number;
       agentCostInCredits?: number;
       totalCostInCredits?: number;

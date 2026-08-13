@@ -6,7 +6,6 @@ import {
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
-// Relation field types have defined relation IDs
 type DefinedRelationIdRecord = {
   relationTargetFieldMetadataId: string;
   relationTargetObjectMetadataId: string;
@@ -18,7 +17,6 @@ type NotDefinedRelationIdRecord = {
   relationTargetObjectMetadataId: never | null;
 };
 
-// Date properties are cast to strings
 type DatePropertiesCastToString = {
   createdAt: string;
   updatedAt: string;
@@ -85,7 +83,6 @@ const _assertion: Record<string, AbstractFlatFieldMetadata> = {
   numeric: {} as FlatFieldMetadata<FieldMetadataType.NUMERIC>,
   position: {} as FlatFieldMetadata<FieldMetadataType.POSITION>,
 
-  // Date types
   date: {} as FlatFieldMetadata<FieldMetadataType.DATE>,
   dateTime: {} as FlatFieldMetadata<FieldMetadataType.DATE_TIME>,
 
@@ -103,12 +100,10 @@ const _assertion: Record<string, AbstractFlatFieldMetadata> = {
   select: {} as FlatFieldMetadata<FieldMetadataType.SELECT>,
   multiSelect: {} as FlatFieldMetadata<FieldMetadataType.MULTI_SELECT>,
 
-  // JSON/Array types
   rawJson: {} as FlatFieldMetadata<FieldMetadataType.RAW_JSON>,
   array: {} as FlatFieldMetadata<FieldMetadataType.ARRAY>,
   richText: {} as FlatFieldMetadata<FieldMetadataType.RICH_TEXT>,
 
-  // Relation types
   relation: {} as FlatFieldMetadata<FieldMetadataType.RELATION>,
   morphRelation: {} as FlatFieldMetadata<FieldMetadataType.MORPH_RELATION>,
 

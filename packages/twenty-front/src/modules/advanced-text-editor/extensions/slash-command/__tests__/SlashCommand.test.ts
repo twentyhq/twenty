@@ -139,7 +139,6 @@ describe('SlashCommand', () => {
         editable: false,
       });
 
-      // Verify editor is not editable
       expect(readonlyEditor.isEditable).toBe(false);
 
       readonlyEditor.destroy();

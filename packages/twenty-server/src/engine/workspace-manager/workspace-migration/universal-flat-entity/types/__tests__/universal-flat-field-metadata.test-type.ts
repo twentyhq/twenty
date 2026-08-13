@@ -15,7 +15,6 @@ import {
 
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
-// Relation field types have defined relation universal identifiers
 type DefinedRelationUniversalIdentifierRecord = {
   relationTargetFieldMetadataUniversalIdentifier: string;
   relationTargetObjectMetadataUniversalIdentifier: string;
@@ -27,7 +26,6 @@ type NotDefinedRelationUniversalIdentifierRecord = {
   relationTargetObjectMetadataUniversalIdentifier: never | null;
 };
 
-// Date properties are cast to strings
 type DatePropertiesCastToString = {
   createdAt: string;
   updatedAt: string;

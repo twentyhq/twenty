@@ -64,7 +64,6 @@ describe('granularObjectRecordsPermissions', () => {
     });
 
     it('should throw permission error when querying person while person reading rights are overriden to false', async () => {
-      // Arrange
       const { roleId } = await createCustomRoleWithObjectPermissions({
         label: 'PersonReadRightsExcludedRole',
         canReadPerson: false,
@@ -78,7 +77,6 @@ describe('granularObjectRecordsPermissions', () => {
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       });
 
-      // Act
       const graphqlOperation = findOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: `
@@ -104,7 +102,6 @@ describe('granularObjectRecordsPermissions', () => {
         companyGraphqlOperation,
       );
 
-      // Assert
       expect(personResponse.body.errors).toBeDefined();
       expect(personResponse.body.errors[0].message).toBe(
         PermissionsExceptionMessage.PERMISSION_DENIED,
@@ -117,7 +114,6 @@ describe('granularObjectRecordsPermissions', () => {
     });
 
     it('should successfully query person when person reading rights are overriden to true', async () => {
-      // Arrange
       const { roleId } = await createCustomRoleWithObjectPermissions({
         label: 'PersonRole',
         canReadPerson: true,
@@ -132,7 +128,6 @@ describe('granularObjectRecordsPermissions', () => {
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       });
 
-      // Act
       const graphqlOperation = findOneOperationFactory({
         objectMetadataSingularName: 'person',
         gqlFields: `
@@ -158,7 +153,6 @@ describe('granularObjectRecordsPermissions', () => {
         companyGraphqlOperation,
       );
 
-      // Assert
       expect(personResponse.body.data).toBeDefined();
       expect(personResponse.body.data.person).toBeDefined();
       expect(companyResponse.body.errors).toBeDefined();

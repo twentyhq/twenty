@@ -331,7 +331,6 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     now,
   }),
 
-  // Relation fields
   targetTask: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

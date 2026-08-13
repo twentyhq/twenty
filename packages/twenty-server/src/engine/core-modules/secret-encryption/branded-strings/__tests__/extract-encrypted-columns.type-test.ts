@@ -87,7 +87,6 @@ type Assertions = [
     >
   >,
 
-  // Empty object returns never
   Expect<Equal<ExtractEncryptedColumns<EmptyObject>, never>>,
 
   // Object with no EncryptedString fields returns never

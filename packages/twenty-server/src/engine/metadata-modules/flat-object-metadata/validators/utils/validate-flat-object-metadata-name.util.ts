@@ -56,7 +56,6 @@ export const validateFlatObjectMetadataNames = ({
       });
     }
 
-    // Reserved keywords check
     if (RESERVED_METADATA_NAME_KEYWORDS.includes(name)) {
       errors.push({
         code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
@@ -67,7 +66,6 @@ export const validateFlatObjectMetadataNames = ({
     }
   }
 
-  // Check if names are identical
   const namesAreIdentical =
     namePlural.trim().toLowerCase() === nameSingular.trim().toLowerCase();
 

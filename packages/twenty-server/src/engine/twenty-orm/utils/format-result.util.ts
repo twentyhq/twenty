@@ -401,10 +401,8 @@ function handleEmptyCompositeFields(
 
     if (allRequiredPropertiesAreNull && requiredPropertyNames.length > 0) {
       if (fieldMetadata.isNullable) {
-        // Field is nullable, set to null
         data[fieldMetadata.name] = null;
       } else {
-        // Field is non-nullable, provide a default value
         data[fieldMetadata.name] = getDefaultCompositeFieldValue(
           fieldMetadata.type,
         );
@@ -413,9 +411,6 @@ function handleEmptyCompositeFields(
   }
 }
 
-/**
- * Returns a default value for non-nullable composite fields.
- */
 function getDefaultCompositeFieldValue(
   fieldType: FieldMetadataType,
   // oxlint-disable-next-line typescript/no-explicit-any

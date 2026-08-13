@@ -1303,10 +1303,8 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Find the "See all" link button by its test id
     const seeAllLink = await canvas.findByTestId('widget-see-all-link');
 
-    // Verify the button is visible
     expect(seeAllLink).toBeVisible();
 
     // Verify it has a well-formed link (should contain the filter query params)

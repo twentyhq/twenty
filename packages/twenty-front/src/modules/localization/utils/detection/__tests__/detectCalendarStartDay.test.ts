@@ -1,6 +1,5 @@
 import { detectCalendarStartDay } from '@/localization/utils/detection/detectCalendarStartDay';
 
-// Mock navigator.language
 Object.defineProperty(navigator, 'language', {
   writable: true,
   value: 'en-US',
@@ -24,7 +23,6 @@ describe('detectCalendarStartDay', () => {
   });
 
   afterEach(() => {
-    // Restore original Intl.Locale
     (global.Intl as any).Locale = originalIntlLocale;
   });
 

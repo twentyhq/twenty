@@ -197,7 +197,6 @@ describe('upsertFieldsWidget', () => {
 
       expect(deletedGroup.length).toBe(0);
 
-      // Verify the kept group is still active
       const { data: keptGroupData } = await findViewFieldGroups({
         viewId: testSetup.viewId,
         gqlFields: 'id',
@@ -242,7 +241,6 @@ describe('upsertFieldsWidget', () => {
         },
       });
 
-      // Verify the view field was updated
       const { data: fieldsData } = await findViewFields({
         viewId: testSetup.viewId,
         gqlFields: 'id isVisible position viewFieldGroupId',
@@ -309,7 +307,6 @@ describe('upsertFieldsWidget', () => {
         },
       });
 
-      // Verify group exists
       const { data: groupBeforeData } = await findViewFieldGroups({
         viewId: testSetup.viewId,
         gqlFields: 'id',
@@ -350,7 +347,6 @@ describe('upsertFieldsWidget', () => {
 
       expect(specificGroup).toBeUndefined();
 
-      // Verify the field's viewFieldGroupId is null
       const { data: updatedFieldData } = await findViewFields({
         viewId: testSetup.viewId,
         gqlFields: 'id viewFieldGroupId',

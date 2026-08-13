@@ -11,7 +11,6 @@ const DEFAULT_TEMPLATE_FUNCTION_CODE = `export const main = async (params: { a: 
   return { message: \`Toto: \${params.a} and \${params.b}\` };
 };`;
 
-// Test function using external packages from default layer (lodash.groupby)
 const EXTERNAL_PACKAGES_FUNCTION_CODE = `import groupBy from 'lodash.groupby';
 
 export const main = async (params: { items: Array<{ category: string; name: string }> }): Promise<object> => {
@@ -34,7 +33,6 @@ describe('Logic Function Execution', () => {
   const createdFunctionIds: string[] = [];
 
   afterAll(async () => {
-    // Clean up all created functions
     for (const functionId of createdFunctionIds) {
       try {
         await deleteLogicFunction({

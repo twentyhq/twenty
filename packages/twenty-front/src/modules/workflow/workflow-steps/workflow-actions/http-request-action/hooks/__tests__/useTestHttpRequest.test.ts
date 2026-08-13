@@ -6,7 +6,6 @@ import React from 'react';
 import { resolveInput } from 'twenty-shared/utils';
 import { useTestHttpRequest } from '@/workflow/workflow-steps/workflow-actions/http-request-action/hooks/useTestHttpRequest';
 
-// Mock Apollo Client
 jest.mock('@apollo/client/react', () => ({
   ...jest.requireActual('@apollo/client/react'),
   useMutation: jest.fn(),
@@ -16,7 +15,6 @@ jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
   useApolloCoreClient: jest.fn(),
 }));
 
-// Mock the resolveInput function
 jest.mock('twenty-shared/utils', () => ({
   ...jest.requireActual('twenty-shared/utils'),
   resolveInput: jest.fn((input, context) => {

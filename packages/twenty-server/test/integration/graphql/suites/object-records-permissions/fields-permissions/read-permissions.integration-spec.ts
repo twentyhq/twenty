@@ -180,7 +180,6 @@ describe('Field permissions restrictions', () => {
 
     await makeGraphqlAPIRequest(createPersonOperation);
 
-    // Get object and field metadata IDs
     const getObjectMetadataOp = {
       query: gql`
         query {
@@ -240,7 +239,6 @@ describe('Field permissions restrictions', () => {
   });
 
   afterAll(async () => {
-    // Restore original role
     const restoreMemberRoleQuery = {
       query: `
         mutation UpdateWorkspaceMemberRole {

@@ -120,7 +120,6 @@ export class UpdateIndexActionHandlerService extends WorkspaceMigrationRunnerAct
 
     const schemaName = getWorkspaceSchemaName(workspaceId);
 
-    // Drop old index
     await dropIndexFromWorkspaceSchema({
       indexName: flatIndexMetadataToDelete.name,
       workspaceSchemaManagerService: this.workspaceSchemaManagerService,

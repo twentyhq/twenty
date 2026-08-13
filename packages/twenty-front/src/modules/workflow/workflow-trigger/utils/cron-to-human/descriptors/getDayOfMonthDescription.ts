@@ -72,7 +72,6 @@ export const getDayOfMonthDescription = (
     return t`between the ${startOrdinal} and ${endOrdinal} of the month`;
   }
 
-  // List values (e.g., "1,15,30")
   if (isListValue(dayOfMonth)) {
     const values = dayOfMonth.split(',').map((v) => v.trim());
     const ordinalDays = values.map((day) => {

@@ -1,6 +1,4 @@
-// Gaxios Network Error Mocks
 const gaxiosErrorMocks = {
-  // Connection Reset Error
   connectionReset: {
     code: 'ECONNRESET',
     name: 'GaxiosError',
@@ -19,7 +17,6 @@ const gaxiosErrorMocks = {
     response: undefined,
   },
 
-  // Host Not Found Error
   hostNotFound: {
     code: 'ENOTFOUND',
     name: 'GaxiosError',
@@ -38,7 +35,6 @@ const gaxiosErrorMocks = {
     response: undefined,
   },
 
-  // Connection Aborted Error
   connectionAborted: {
     code: 'ECONNABORTED',
     name: 'GaxiosError',
@@ -76,7 +72,6 @@ const gaxiosErrorMocks = {
     response: undefined,
   },
 
-  // Network Error
   networkError: {
     code: 'ERR_NETWORK',
     name: 'GaxiosError',

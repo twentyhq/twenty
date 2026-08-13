@@ -27,7 +27,6 @@ export const deepMerge = <T extends object>(
     const sourceValue = source[key as keyof T];
     const targetValue = target[key as keyof T];
 
-    // Skip undefined values in target
     if (targetValue === undefined) {
       return;
     }

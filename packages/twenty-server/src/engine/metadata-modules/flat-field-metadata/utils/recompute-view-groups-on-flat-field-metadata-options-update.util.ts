@@ -91,7 +91,6 @@ export const recomputeViewGroupsOnFlatFieldMetadataOptionsUpdate = ({
       flatViewGroups: remainingFlatViewGroups,
     });
 
-  // Count visible view groups per view to enforce the limit
   const visibleViewGroupCountByViewUniversalIdentifier =
     remainingFlatViewGroups.reduce<Record<string, number>>(
       (acc, flatViewGroup) => {

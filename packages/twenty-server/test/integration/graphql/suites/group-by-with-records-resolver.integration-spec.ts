@@ -44,7 +44,6 @@ describe('basic group-by with records', () => {
   const COMPANY_2_EMPLOYEES = 20;
 
   beforeAll(async () => {
-    //   Create test companies
     await makeGraphqlAPIRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'company',
@@ -138,7 +137,6 @@ describe('basic group-by with records', () => {
   });
 
   afterAll(async () => {
-    // Cleanup created opportunities
     for (const id of [
       testOpportunityId1,
       testOpportunityId2,
@@ -154,7 +152,6 @@ describe('basic group-by with records', () => {
       );
     }
 
-    // Cleanup created companies
     for (const id of [testCompanyId1, testCompanyId2]) {
       await makeGraphqlAPIRequest(
         destroyOneOperationFactory({
@@ -693,7 +690,6 @@ describe('basic group-by with records', () => {
       expect(newGroup).toBeDefined();
       expect(newGroup.edges).toHaveLength(3);
 
-      // Descending by company name: Company 2 > Company 1
       expect(newGroup.edges[0].node.company.name).toBe('Company 2');
       expect(newGroup.edges[1].node.company.name).toBe('Company 1');
       expect(newGroup.edges[2].node.company.name).toBe('Company 1');

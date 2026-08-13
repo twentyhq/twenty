@@ -39,7 +39,6 @@ export const useTwoFactorVerificationForSettings = () => {
     // Reload current user to refresh 2FA status
     await loadCurrentUser();
 
-    // Navigate back to profile page
     navigate(SettingsPath.ProfilePage);
   };
 

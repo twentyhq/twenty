@@ -59,7 +59,6 @@ describe('getResolverArgs', () => {
     },
   };
 
-  // Test each resolver type
   Object.entries(expectedOutputs).forEach(([resolverType, expectedOutput]) => {
     it(`should return correct args for ${resolverType} resolver`, () => {
       expect(
@@ -68,7 +67,6 @@ describe('getResolverArgs', () => {
     });
   });
 
-  // Test for an unknown resolver type
   it('should throw an error for an unknown resolver type', () => {
     const unknownType = 'unknownType';
 

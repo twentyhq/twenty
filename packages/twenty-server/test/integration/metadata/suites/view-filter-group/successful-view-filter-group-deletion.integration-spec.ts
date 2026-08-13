@@ -71,7 +71,6 @@ describe('View Filter Group deletion should succeed', () => {
 
     expect(deleteData.deleteViewFilterGroup).toBe(true);
 
-    // Clean up by destroying
     await destroyOneViewFilterGroup({
       expectToFail: false,
       id: createdViewFilterGroupId,

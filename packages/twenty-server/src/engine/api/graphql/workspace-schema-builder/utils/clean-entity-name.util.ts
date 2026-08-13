@@ -7,7 +7,6 @@ export const cleanEntityName = (entityName: string) => {
   // Trim the string
   camelCasedEntityName = camelCasedEntityName.trim();
 
-  // Camel case the string
   camelCasedEntityName = camelCase(camelCasedEntityName);
 
   // Remove all special characters but keep alphabets and numbers

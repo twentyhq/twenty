@@ -223,7 +223,6 @@ export const buildDashboardStandardFlatFieldMetadatas = ({
     now,
   }),
 
-  // Relation fields
   timelineActivities: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
