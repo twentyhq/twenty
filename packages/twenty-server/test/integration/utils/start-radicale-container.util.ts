@@ -13,19 +13,35 @@ export type RadicaleServer = {
   stop: () => Promise<void>;
 };
 
-// Authentication is left open so the suite can connect as any handle: Radicale
-// creates the collection for a principal on first write.
-export const startRadicaleContainer = async (): Promise<RadicaleServer> => {
+// The image's entrypoint rejects passed arguments, so configuration arrives as
+// a file. Credentials are required rather than open: Radicale derives the
+// principal collection from the authenticated user, and an anonymous session
+// resolves to no calendars at all.
+const radicaleConfig = `[server]
+hosts = 0.0.0.0:${RADICALE_PORT}
+
+[auth]
+type = htpasswd
+htpasswd_filename = /config/users
+htpasswd_encryption = plain
+
+[storage]
+filesystem_folder = /data/collections
+`;
+
+export const startRadicaleContainer = async ({
+  username,
+  password,
+}: {
+  username: string;
+  password: string;
+}): Promise<RadicaleServer> => {
   const container: StartedTestContainer = await new GenericContainer(
     RADICALE_IMAGE,
   )
-    .withCommand([
-      '--server-hosts',
-      `0.0.0.0:${RADICALE_PORT}`,
-      '--auth-type',
-      'none',
-      '--storage-filesystem-folder',
-      '/data/collections',
+    .withCopyContentToContainer([
+      { content: radicaleConfig, target: '/config/config' },
+      { content: `${username}:${password}\n`, target: '/config/users' },
     ])
     .withExposedPorts(RADICALE_PORT)
     .withWaitStrategy(Wait.forListeningPorts())

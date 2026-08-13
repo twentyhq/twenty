@@ -18,6 +18,9 @@ import {
 
 const HANDLE = `caldav-events-import-${randomUUID()}@acme.test`;
 const COLLECTION = 'personal';
+const PASSWORD = 'radicale-password';
+
+const authorizationHeader = `Basic ${Buffer.from(`${HANDLE}:${PASSWORD}`).toString('base64')}`;
 
 // A sync token the server no longer recognises, which drives the fallback from
 // an incremental sync-collection report to a full re-sync.
@@ -51,12 +54,18 @@ describe('CalDAV calendar events import (integration)', () => {
   const putEvent = async ({ uid, summary }: { uid: string; summary: string }) =>
     fetch(`${collectionUrl()}${uid}.ics`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'text/calendar; charset=utf-8' },
+      headers: {
+        'Content-Type': 'text/calendar; charset=utf-8',
+        Authorization: authorizationHeader,
+      },
       body: icalEvent({ uid, summary }),
     });
 
   const deleteEvent = async (uid: string) =>
-    fetch(`${collectionUrl()}${uid}.ics`, { method: 'DELETE' });
+    fetch(`${collectionUrl()}${uid}.ics`, {
+      method: 'DELETE',
+      headers: { Authorization: authorizationHeader },
+    });
 
   const readSyncCursor = async () =>
     (
@@ -77,11 +86,17 @@ describe('CalDAV calendar events import (integration)', () => {
       input: { key: 'OUTBOUND_HTTP_SAFE_MODE_ENABLED', value: false },
     });
 
-    radicale = await startRadicaleContainer();
+    radicale = await startRadicaleContainer({
+      username: HANDLE,
+      password: PASSWORD,
+    });
 
     await fetch(collectionUrl(), {
       method: 'MKCOL',
-      headers: { 'Content-Type': 'application/xml; charset=utf-8' },
+      headers: {
+        'Content-Type': 'application/xml; charset=utf-8',
+        Authorization: authorizationHeader,
+      },
       body: `<?xml version="1.0" encoding="utf-8"?>
         <mkcol xmlns="DAV:" xmlns:c="urn:ietf:params:xml:ns:caldav">
           <set><prop>
@@ -100,7 +115,7 @@ describe('CalDAV calendar events import (integration)', () => {
             host: `http://${radicale.host}:${radicale.port}`,
             port: radicale.port,
             username: HANDLE,
-            password: 'radicale-password',
+            password: PASSWORD,
           },
         },
       },
