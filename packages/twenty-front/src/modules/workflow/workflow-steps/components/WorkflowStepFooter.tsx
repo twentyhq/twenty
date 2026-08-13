@@ -29,9 +29,11 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 export const WorkflowStepFooter = ({
   stepId,
   additionalActions,
+  shouldHideOptionsDropdown = false,
 }: {
   stepId: string;
   additionalActions?: React.ReactNode[];
+  shouldHideOptionsDropdown?: boolean;
 }) => {
   const dropdownId = useId();
   const { t } = useLingui();
@@ -179,7 +181,7 @@ export const WorkflowStepFooter = ({
   return (
     <SidePanelFooter
       actions={[
-        OptionsDropdown,
+        ...(shouldHideOptionsDropdown ? [] : [OptionsDropdown]),
         ...(additionalActions ?? []),
         ...(shouldPinDeleteButton ? [deleteButton] : []),
       ]}

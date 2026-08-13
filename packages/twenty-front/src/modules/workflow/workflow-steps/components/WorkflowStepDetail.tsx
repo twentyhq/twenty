@@ -263,7 +263,14 @@ export const WorkflowStepDetail = ({
           );
         }
         case 'EMPTY': {
-          return <WorkflowEditActionEmpty key={stepId} actionOptions={props} />;
+          return (
+            <WorkflowEditActionEmpty
+              key={stepId}
+              action={stepDefinition.definition}
+              steps={steps}
+              actionOptions={props}
+            />
+          );
         }
         case 'DELAY': {
           return (
