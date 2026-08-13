@@ -52,9 +52,11 @@ const microsoftGraphErrorResponse = ({
 export const setupMicrosoftMock = ({
   handle,
   folders = DEFAULT_FOLDERS,
+  messages = [],
 }: {
   handle: string;
   folders?: MailFolder[];
+  messages?: Array<Record<string, unknown>>;
 }): MicrosoftMock => {
   const folderStore = createMockEntityStore(
     folders,
@@ -69,7 +71,7 @@ export const setupMicrosoftMock = ({
 
   const httpMock = setupHttpMock(
     ...microsoftAuthHandlers(handle),
-    ...microsoftMailboxHandlers(folderStore),
+    ...microsoftMailboxHandlers(folderStore, messages),
     ...microsoftWebhookSubscriptionHandlers(subscriptionStore),
     http.post('*/me/messages', async ({ request }) => {
       const message = (await request.json()) as Record<string, unknown>;
@@ -88,6 +90,10 @@ export const setupMicrosoftMock = ({
 
       return new HttpResponse(null, { status: 202 });
     }),
+    http.delete(
+      '*/me/messages/:messageId',
+      () => new HttpResponse(null, { status: 204 }),
+    ),
     http.get('*/me/messages', () =>
       HttpResponse.json({
         value: [

@@ -2,14 +2,13 @@ import { randomUUID } from 'node:crypto';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
-import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 import { gmailMessage } from 'test/integration/google/mocks/gmail-message.util';
 import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock.util';
-import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { createCalendarEvent } from 'test/integration/utils/create-calendar-event.util';
+import { findPersistedMessages } from 'test/integration/utils/find-persisted-messages.util';
 import { findImportedCalendarEventTitles } from 'test/integration/utils/find-imported-records.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
 import { sendEmail } from 'test/integration/utils/send-email.util';
@@ -25,20 +24,44 @@ const PARENT_MESSAGE = gmailMessage({
   threadId: 'gmail-parent-thread',
   to: HANDLE,
 });
+const DRAFT_SUBJECT = `Gmail draft ${randomUUID()}`;
+const DRAFT_MESSAGE = gmailMessage({
+  id: 'gmail-draft-message',
+  threadId: 'gmail-draft-thread',
+  from: HANDLE,
+  to: RECIPIENTS.to,
+  labelIds: ['DRAFT'],
+  payload: {
+    mimeType: 'text/plain',
+    headers: [
+      { name: 'From', value: HANDLE },
+      { name: 'To', value: RECIPIENTS.to },
+      { name: 'Cc', value: RECIPIENTS.cc },
+      { name: 'Bcc', value: RECIPIENTS.bcc },
+      { name: 'Subject', value: DRAFT_SUBJECT },
+      { name: 'Message-ID', value: '<gmail-draft@example.com>' },
+      { name: 'Date', value: 'Wed, 15 Nov 2023 00:00:00 +0000' },
+    ],
+    body: {
+      data: Buffer.from('Gmail draft body').toString('base64'),
+      size: 16,
+    },
+  },
+});
 
 describe('Gmail outbound messaging and calendar creation (integration)', () => {
-  const google = setupGoogleMock({ handle: HANDLE, inbox: [PARENT_MESSAGE] });
+  const google = setupGoogleMock({
+    handle: HANDLE,
+    inbox: [PARENT_MESSAGE, DRAFT_MESSAGE],
+  });
 
   let channel: Awaited<ReturnType<typeof connectMessagingAccount>>;
-  let draftEmailTool: DraftEmailTool;
 
   beforeAll(async () => {
     channel = await connectMessagingAccount({
       provider: ConnectedAccountProvider.GOOGLE,
       handle: HANDLE,
     });
-    draftEmailTool =
-      getAppProviderByClassName<DraftEmailTool>('DraftEmailTool');
     await runMessageChannelSync(channel.channelId);
   }, 60000);
 
@@ -71,31 +94,85 @@ describe('Gmail outbound messaging and calendar creation (integration)', () => {
     expect(raw).toContain(`Subject: ${subject}`);
     expect(raw).toContain('In-Reply-To: <gmail-parent@example.com>');
     expect(raw).toContain('References: <gmail-parent@example.com>');
+
+    expect(
+      await findPersistedMessages({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        subject,
+      }),
+    ).toEqual([
+      expect.objectContaining({
+        isDraft: false,
+        messageThreadId: expect.any(String),
+        text: 'Gmail reply body',
+        messageChannelMessageAssociations: [
+          expect.objectContaining({
+            messageChannelId: channel.channelId,
+          }),
+        ],
+        messageParticipants: expect.arrayContaining([
+          expect.objectContaining({ handle: RECIPIENTS.to, role: 'TO' }),
+          expect.objectContaining({ handle: RECIPIENTS.cc, role: 'CC' }),
+          expect.objectContaining({ handle: RECIPIENTS.bcc, role: 'BCC' }),
+        ]),
+      }),
+    ]);
   }, 60000);
 
-  it('creates a Gmail draft with the requested recipients', async () => {
-    const subject = `Gmail draft ${randomUUID()}`;
+  it('sends a synced Gmail draft through GraphQL and replaces it in the database', async () => {
+    const [draft] = await findPersistedMessages({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      subject: DRAFT_SUBJECT,
+    });
 
-    const result = await draftEmailTool.execute(
-      {
-        connectedAccountId: channel.connectedAccountId,
-        recipients: RECIPIENTS,
-        subject,
-        body: '<p>Gmail draft body</p>',
-        files: [],
-      },
-      { workspaceId: SEED_APPLE_WORKSPACE_ID },
+    expect(draft).toMatchObject({
+      isDraft: true,
+      messageChannelMessageAssociations: [
+        expect.objectContaining({
+          messageChannelId: channel.channelId,
+          messageExternalId: DRAFT_MESSAGE.id,
+        }),
+      ],
+      messageParticipants: expect.arrayContaining([
+        expect.objectContaining({ handle: RECIPIENTS.to, role: 'TO' }),
+        expect.objectContaining({ handle: RECIPIENTS.cc, role: 'CC' }),
+        expect.objectContaining({ handle: RECIPIENTS.bcc, role: 'BCC' }),
+      ]),
+    });
+
+    const result = await sendEmail({
+      connectedAccountId: channel.connectedAccountId,
+      to: RECIPIENTS.to,
+      cc: RECIPIENTS.cc,
+      bcc: RECIPIENTS.bcc,
+      subject: DRAFT_SUBJECT,
+      body: 'Gmail draft body',
+      draftMessageId: draft.id,
+    });
+
+    expect(result).toMatchObject({ success: true });
+    const [sentMessage] = await findPersistedMessages({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      subject: DRAFT_SUBJECT,
+    });
+
+    expect(sentMessage).toEqual(
+      expect.objectContaining({
+        isDraft: false,
+        messageThreadId: expect.any(String),
+        text: 'Gmail draft body',
+        messageChannelMessageAssociations: [
+          expect.objectContaining({
+            messageChannelId: channel.channelId,
+            messageExternalId: expect.any(String),
+          }),
+        ],
+      }),
     );
-
-    expect(result.success).toBe(true);
-    expect(google.draftMessages).toHaveLength(1);
-
-    const [{ raw }] = google.draftMessages;
-
-    expect(raw).toContain(`To: ${RECIPIENTS.to}`);
-    expect(raw).toContain(`Cc: ${RECIPIENTS.cc}`);
-    expect(raw).toContain(`Bcc: ${RECIPIENTS.bcc}`);
-    expect(raw).toContain(`Subject: ${subject}`);
+    expect(
+      sentMessage.messageChannelMessageAssociations[0].messageExternalId,
+    ).not.toBe(DRAFT_MESSAGE.id);
+    expect(result.messageThreadId).toEqual(expect.any(String));
   }, 60000);
 
   it('creates and persists a calendar event with invitations and conferencing', async () => {

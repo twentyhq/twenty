@@ -106,6 +106,20 @@ export const setupGoogleMock = ({
 
       return HttpResponse.json({ id: `gmail-draft-${draftMessages.length}` });
     }),
+    http.get('*/gmail/v1/users/me/drafts', () =>
+      HttpResponse.json({
+        drafts: [
+          {
+            id: 'gmail-synced-draft',
+            message: { id: 'gmail-draft-message' },
+          },
+        ],
+      }),
+    ),
+    http.delete(
+      '*/gmail/v1/users/me/drafts/:draftId',
+      () => new HttpResponse(null, { status: 204 }),
+    ),
     http.post(GOOGLE_CALENDAR_EVENTS_URL, async ({ request }) => {
       const event = (await request.json()) as calendar_v3.Schema$Event;
       const id = `google-created-calendar-event-${createdCalendarEvents.length + 1}`;
