@@ -2,6 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { isWorkflowIfElseAction } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/guards/is-workflow-if-else-action.guard';
 import { isWorkflowIteratorAction } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/guards/is-workflow-iterator-action.guard';
+import { getIteratorInitialLoopStepIds } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/get-iterator-initial-loop-step-ids.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 export const getReachableStepIds = ({
@@ -11,6 +12,8 @@ export const getReachableStepIds = ({
   fromStepIds: string[];
   steps: WorkflowAction[];
 }): Set<string> => {
+  const stepsById = new Map(steps.map((step) => [step.id, step]));
+
   const reachableStepIds = new Set<string>();
   const stepIdsToVisit = [...fromStepIds];
 
@@ -23,7 +26,7 @@ export const getReachableStepIds = ({
 
     reachableStepIds.add(stepId);
 
-    const step = steps.find((candidateStep) => candidateStep.id === stepId);
+    const step = stepsById.get(stepId);
 
     if (!isDefined(step)) {
       continue;
@@ -38,7 +41,7 @@ export const getReachableStepIds = ({
     }
 
     if (isWorkflowIteratorAction(step)) {
-      stepIdsToVisit.push(...(step.settings.input.initialLoopStepIds ?? []));
+      stepIdsToVisit.push(...getIteratorInitialLoopStepIds(step));
     }
   }
 

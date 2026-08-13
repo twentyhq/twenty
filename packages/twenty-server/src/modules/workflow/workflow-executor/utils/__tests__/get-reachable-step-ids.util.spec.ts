@@ -74,6 +74,26 @@ describe('getReachableStepIds', () => {
     );
   });
 
+  it('should follow iterator loop edges stored as a serialized string', () => {
+    const iteratorStep = {
+      id: 'iterator',
+      type: 'ITERATOR',
+      name: 'Iterator',
+      nextStepIds: ['afterLoop'],
+      settings: { input: { initialLoopStepIds: '["insideLoop"]' } },
+    } as unknown as WorkflowAction;
+
+    const steps = [
+      iteratorStep,
+      buildStep('insideLoop', ['iterator']),
+      buildStep('afterLoop', []),
+    ];
+
+    expect(getReachableStepIds({ fromStepIds: ['iterator'], steps })).toEqual(
+      new Set(['iterator', 'insideLoop', 'afterLoop']),
+    );
+  });
+
   it('should terminate on cycles', () => {
     const steps = [buildStep('a', ['b']), buildStep('b', ['a'])];
 
@@ -82,7 +102,7 @@ describe('getReachableStepIds', () => {
     );
   });
 
-  it('should ignore ids that do not match a step', () => {
+  it('should keep dangling ids that do not match a step', () => {
     const steps = [buildStep('a', ['missing'])];
 
     expect(getReachableStepIds({ fromStepIds: ['a'], steps })).toEqual(
