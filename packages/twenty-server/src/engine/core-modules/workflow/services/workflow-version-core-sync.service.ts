@@ -227,7 +227,7 @@ export class WorkflowVersionCoreSyncService {
   ): Promise<void> {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowVersionRepository =
-        await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+        await this.globalWorkspaceOrmManager.getV1Repository<WorkflowVersionWorkspaceEntity>(
           workspaceId,
           'workflowVersion',
           { shouldBypassPermissionChecks: true },
@@ -301,7 +301,7 @@ export class WorkflowVersionCoreSyncService {
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const workflowVersionRepository =
-            await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+            await this.globalWorkspaceOrmManager.getV1Repository<WorkflowVersionWorkspaceEntity>(
               workspaceId,
               'workflowVersion',
               { shouldBypassPermissionChecks: true },
@@ -328,7 +328,7 @@ export class WorkflowVersionCoreSyncService {
   ): Promise<void> {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowVersionRepository =
-        await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+        await this.globalWorkspaceOrmManager.getV1Repository<WorkflowVersionWorkspaceEntity>(
           workspaceId,
           'workflowVersion',
           { shouldBypassPermissionChecks: true },
@@ -360,7 +360,7 @@ export class WorkflowVersionCoreSyncService {
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceWorkflowVersionRepository =
-        await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+        await this.globalWorkspaceOrmManager.getV1Repository<WorkflowVersionWorkspaceEntity>(
           workspaceId,
           'workflowVersion',
           { shouldBypassPermissionChecks: true },
@@ -384,7 +384,7 @@ export class WorkflowVersionCoreSyncService {
     entityManager: WorkspaceEntityManager,
   ): Promise<void> {
     const workspaceWorkflowVersionRepository =
-      await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+      await this.globalWorkspaceOrmManager.getV1Repository<WorkflowVersionWorkspaceEntity>(
         workspaceId,
         'workflowVersion',
         { shouldBypassPermissionChecks: true },

@@ -32,19 +32,19 @@ export class MessagingMessageCleanerService {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const messageRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageWorkspaceEntity>(
+          await this.globalWorkspaceOrmManager.getV1Repository<MessageWorkspaceEntity>(
             workspaceId,
             'message',
           );
 
         const messageChannelMessageAssociationRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+          await this.globalWorkspaceOrmManager.getV1Repository<MessageChannelMessageAssociationWorkspaceEntity>(
             workspaceId,
             'messageChannelMessageAssociation',
           );
 
         const messageThreadRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
+          await this.globalWorkspaceOrmManager.getV1Repository<MessageThreadWorkspaceEntity>(
             workspaceId,
             'messageThread',
           );
@@ -136,7 +136,7 @@ export class MessagingMessageCleanerService {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const messageChannelMessageAssociationRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+          await this.globalWorkspaceOrmManager.getV1Repository<MessageChannelMessageAssociationWorkspaceEntity>(
             workspaceId,
             'messageChannelMessageAssociation',
           );
@@ -196,13 +196,13 @@ export class MessagingMessageCleanerService {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const messageThreadRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
+          await this.globalWorkspaceOrmManager.getV1Repository<MessageThreadWorkspaceEntity>(
             workspaceId,
             'messageThread',
           );
 
         const messageRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageWorkspaceEntity>(
+          await this.globalWorkspaceOrmManager.getV1Repository<MessageWorkspaceEntity>(
             workspaceId,
             'message',
           );

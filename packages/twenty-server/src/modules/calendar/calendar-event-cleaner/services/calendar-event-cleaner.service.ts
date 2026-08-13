@@ -27,7 +27,7 @@ export class CalendarEventCleanerService {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const calendarChannelEventAssociationRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
+          await this.globalWorkspaceOrmManager.getV1Repository(
             workspaceId,
             'calendarChannelEventAssociation',
           );
@@ -87,7 +87,7 @@ export class CalendarEventCleanerService {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const calendarEventRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
+          await this.globalWorkspaceOrmManager.getV1Repository(
             workspaceId,
             'calendarEvent',
           );

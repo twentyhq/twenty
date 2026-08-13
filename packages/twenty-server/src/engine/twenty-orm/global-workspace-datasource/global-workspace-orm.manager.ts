@@ -45,15 +45,9 @@ export class GlobalWorkspaceOrmManager {
     workspaceEntityOrObjectMetadataName: Type<T> | string,
     permissionOptions?: RolePermissionConfig,
   ): Promise<WorkspaceRepository<T>> {
-    let objectMetadataName: string;
-
-    if (typeof workspaceEntityOrObjectMetadataName === 'string') {
-      objectMetadataName = workspaceEntityOrObjectMetadataName;
-    } else {
-      objectMetadataName = convertClassNameToObjectMetadataName(
-        workspaceEntityOrObjectMetadataName.name,
-      );
-    }
+    const objectMetadataName = this.resolveObjectMetadataName(
+      workspaceEntityOrObjectMetadataName,
+    );
 
     if (
       getWorkspaceContext().featureFlagsMap[
@@ -98,6 +92,49 @@ export class GlobalWorkspaceOrmManager {
       );
 
     context.entityMetadatas.push(...ORMEntityMetadatas);
+  }
+
+  private resolveObjectMetadataName<T extends ObjectLiteral>(
+    workspaceEntityOrObjectMetadataName: Type<T> | string,
+  ): string {
+    if (typeof workspaceEntityOrObjectMetadataName === 'string') {
+      return workspaceEntityOrObjectMetadataName;
+    }
+
+    return convertClassNameToObjectMetadataName(
+      workspaceEntityOrObjectMetadataName.name,
+    );
+  }
+
+  async getV1Repository<T extends ObjectLiteral>(
+    workspaceId: string,
+    workspaceEntity: Type<T>,
+    permissionOptions?: RolePermissionConfig,
+  ): Promise<WorkspaceRepository<T>>;
+
+  async getV1Repository<T extends ObjectLiteral>(
+    workspaceId: string,
+    objectMetadataName: string,
+    permissionOptions?: RolePermissionConfig,
+  ): Promise<WorkspaceRepository<T>>;
+
+  async getV1Repository<T extends ObjectLiteral>(
+    _workspaceId: string,
+    workspaceEntityOrObjectMetadataName: Type<T> | string,
+    permissionOptions?: RolePermissionConfig,
+  ): Promise<WorkspaceRepository<T>> {
+    const objectMetadataName = this.resolveObjectMetadataName(
+      workspaceEntityOrObjectMetadataName,
+    );
+
+    await this.ensureEntityMetadatasLoaded();
+
+    const globalDataSource = await this.getGlobalWorkspaceDataSource();
+
+    return globalDataSource.getRepository<T>(
+      objectMetadataName,
+      permissionOptions,
+    );
   }
 
   async getGlobalWorkspaceDataSourceWithEntityMetadatas(): Promise<GlobalWorkspaceDataSource> {
