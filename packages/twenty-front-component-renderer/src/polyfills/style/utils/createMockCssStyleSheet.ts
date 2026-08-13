@@ -42,5 +42,4 @@ class MockCssStyleSheet {
 
 export const createMockCssStyleSheet = (
   onChange: OnChangeCallback,
-): CSSStyleSheet =>
-  new MockCssStyleSheet(onChange) as unknown as CSSStyleSheet;
+): CSSStyleSheet => new MockCssStyleSheet(onChange) as unknown as CSSStyleSheet;
