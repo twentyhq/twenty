@@ -86,6 +86,25 @@ describe('buildSlackRecordUnfurlAttachment', () => {
     expect(fieldsBlock.fields[0].text).toContain('…');
   });
 
+  it('should not split surrogate pairs when truncating', () => {
+    const attachment = buildSlackRecordUnfurlAttachment({
+      linkUrl: 'https://acme.twenty.com/object/note/id-1',
+      card: {
+        recordTitle: '😀'.repeat(400),
+        objectLabel: 'Note',
+        fields: [],
+      },
+    });
+
+    const titleBlock = attachment.blocks?.[0] as {
+      text: { text: string };
+    };
+    const loneSurrogatePattern = /[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/;
+
+    expect(titleBlock.text.text).toContain('…');
+    expect(loneSurrogatePattern.test(titleBlock.text.text)).toBe(false);
+  });
+
   it('should escape mrkdwn control characters in titles and values', () => {
     const attachment = buildSlackRecordUnfurlAttachment({
       linkUrl: 'https://acme.twenty.com/object/company/id-1',

@@ -66,6 +66,7 @@ describe('unfurlSlackRecordLinks', () => {
     expect(result).toEqual({ ok: true, unfurledLinkCount: 1 });
     expect(fetchSlackRecordUnfurlCardMock).toHaveBeenCalledWith({
       linkUrl: RECORD_LINK_URL,
+      recordUrl: RECORD_LINK_URL,
       objectNameSingular: 'opportunity',
       recordId: RECORD_ID,
     });

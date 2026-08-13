@@ -1,20 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { type SlackRecordLink } from 'src/logic-functions/types/slack-record-link.type';
+import { decodeSlackLinkUrl } from 'src/logic-functions/utils/decode-slack-link-url';
 
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-const SLACK_URL_HTML_ENTITIES: Record<string, string> = {
-  '&amp;': '&',
-  '&lt;': '<',
-  '&gt;': '>',
-};
-
-// Slack HTML-escapes URLs in link_shared payloads; a single pass keeps
-// pre-escaped sequences like &amp;lt; from being unescaped twice
-const decodeSlackLinkUrl = (url: string): string =>
-  url.replace(/&(?:amp|lt|gt);/g, (entity) => SLACK_URL_HTML_ENTITIES[entity]);
 
 export const parseSlackRecordLink = ({
   linkUrl,
@@ -51,5 +41,10 @@ export const parseSlackRecordLink = ({
     return undefined;
   }
 
-  return { linkUrl, objectNameSingular, recordId };
+  return {
+    linkUrl,
+    recordUrl: `${parsedLinkUrl.origin}/object/${objectNameSingular}/${recordId}`,
+    objectNameSingular,
+    recordId,
+  };
 };

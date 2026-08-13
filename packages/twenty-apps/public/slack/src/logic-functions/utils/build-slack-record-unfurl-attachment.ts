@@ -14,8 +14,14 @@ const truncateText = ({
 }: {
   text: string;
   maxLength: number;
-}): string =>
-  text.length > maxLength ? `${text.slice(0, maxLength - 1)}…` : text;
+}): string => {
+  // Slicing by code point keeps surrogate pairs intact at the boundary
+  const characters = Array.from(text);
+
+  return characters.length > maxLength
+    ? `${characters.slice(0, maxLength - 1).join('')}…`
+    : text;
+};
 
 const escapeSlackMrkdwn = (text: string): string =>
   text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');

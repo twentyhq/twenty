@@ -14,6 +14,7 @@ describe('parseSlackRecordLink', () => {
 
     expect(parsed).toEqual({
       linkUrl: `${WORKSPACE_BASE_URL}/object/opportunity/${RECORD_ID}`,
+      recordUrl: `${WORKSPACE_BASE_URL}/object/opportunity/${RECORD_ID}`,
       objectNameSingular: 'opportunity',
       recordId: RECORD_ID,
     });
@@ -30,14 +31,15 @@ describe('parseSlackRecordLink', () => {
     expect(parsed?.recordId).toBe(RECORD_ID);
   });
 
-  it('should not unescape entities twice', () => {
-    // &amp;lt; decodes to the literal text &lt; — not to <
+  it('should build a canonical record url without the query string', () => {
     const parsed = parseSlackRecordLink({
-      linkUrl: `${WORKSPACE_BASE_URL}/object/person/${RECORD_ID}?q=&amp;lt;x`,
+      linkUrl: `${WORKSPACE_BASE_URL}/object/person/${RECORD_ID}?view=${'x'.repeat(5000)}#tab`,
       workspaceBaseUrl: WORKSPACE_BASE_URL,
     });
 
-    expect(parsed?.recordId).toBe(RECORD_ID);
+    expect(parsed?.recordUrl).toBe(
+      `${WORKSPACE_BASE_URL}/object/person/${RECORD_ID}`,
+    );
   });
 
   it('should ignore links on another origin', () => {
