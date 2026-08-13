@@ -8,12 +8,17 @@ import { slackEventsResolverHandler } from 'src/logic-functions/slack-events-res
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 import { Response } from 'twenty-sdk/logic-function';
 
-const { getSlackWebhookSecretMock, verifySignatureMock, resolveWorkspaceMock } =
-  vi.hoisted(() => ({
-    getSlackWebhookSecretMock: vi.fn(),
-    verifySignatureMock: vi.fn(),
-    resolveWorkspaceMock: vi.fn(),
-  }));
+const {
+  getSlackWebhookSecretMock,
+  verifySignatureMock,
+  resolveWorkspaceMock,
+  findClaimedWorkspaceMock,
+} = vi.hoisted(() => ({
+  getSlackWebhookSecretMock: vi.fn(),
+  verifySignatureMock: vi.fn(),
+  resolveWorkspaceMock: vi.fn(),
+  findClaimedWorkspaceMock: vi.fn(),
+}));
 
 vi.mock('src/logic-functions/utils/get-slack-webhook-secret', () => ({
   getSlackWebhookSecret: getSlackWebhookSecretMock,
@@ -25,6 +30,7 @@ vi.mock('src/logic-functions/utils/verify-slack-request-signature', () => ({
 
 vi.mock('src/logic-functions/utils/resolve-target-workspace-id', () => ({
   resolveTargetWorkspaceId: resolveWorkspaceMock,
+  findClaimedWorkspaceId: findClaimedWorkspaceMock,
 }));
 
 const buildRoutePayload = (body: SlackEventsRequestBody) => ({
@@ -51,8 +57,8 @@ describe('slackEventsResolverHandler', () => {
     verifySignatureMock.mockReturnValue(true);
   });
 
-  it('should route app_uninstalled to the install-revoked function in the claimed workspace', async () => {
-    resolveWorkspaceMock.mockResolvedValue('workspace-1');
+  it('should route app_uninstalled to the install-revoked function with the claim holder on the payload', async () => {
+    findClaimedWorkspaceMock.mockResolvedValue('workspace-1');
 
     const body: SlackEventsRequestBody = {
       type: 'event_callback',
@@ -66,20 +72,20 @@ describe('slackEventsResolverHandler', () => {
       workspaceId: 'workspace-1',
       targetLogicFunctionUniversalIdentifier:
         SLACK_INSTALL_REVOKED_UNIVERSAL_IDENTIFIER,
-      payload: body,
+      payload: { ...body, claimedWorkspaceId: 'workspace-1' },
     });
   });
 
   it('should route tokens_revoked to the install-revoked function', async () => {
-    resolveWorkspaceMock.mockResolvedValue('workspace-1');
+    findClaimedWorkspaceMock.mockResolvedValue('workspace-1');
 
-    const body: SlackEventsRequestBody = {
-      type: 'event_callback',
-      team_id: 'T123',
-      event: { type: 'tokens_revoked', tokens: { bot: ['B123'] } },
-    };
-
-    const result = await slackEventsResolverHandler(buildRoutePayload(body));
+    const result = await slackEventsResolverHandler(
+      buildRoutePayload({
+        type: 'event_callback',
+        team_id: 'T123',
+        event: { type: 'tokens_revoked', tokens: { bot: ['B123'] } },
+      }),
+    );
 
     expect(result).toMatchObject({
       targetLogicFunctionUniversalIdentifier:
@@ -88,9 +94,7 @@ describe('slackEventsResolverHandler', () => {
   });
 
   it('should ack a removal event for an unclaimed team instead of erroring into a retry', async () => {
-    resolveWorkspaceMock.mockRejectedValue(
-      new Error('No workspace has claimed Slack team T123'),
-    );
+    findClaimedWorkspaceMock.mockResolvedValue(null);
 
     const result = await slackEventsResolverHandler(
       buildRoutePayload({
@@ -105,6 +109,32 @@ describe('slackEventsResolverHandler', () => {
       ok: true,
       skipped: 'No workspace claims this Slack team',
     });
+  });
+
+  it('should keep a removal event retryable when the claim lookup fails', async () => {
+    findClaimedWorkspaceMock.mockRejectedValue(new Error('kv unavailable'));
+
+    await expect(
+      slackEventsResolverHandler(
+        buildRoutePayload({
+          type: 'event_callback',
+          team_id: 'T123',
+          event: { type: 'app_uninstalled' },
+        }),
+      ),
+    ).rejects.toThrow('kv unavailable');
+  });
+
+  it('should throw on a removal event with no team_id', async () => {
+    await expect(
+      slackEventsResolverHandler(
+        buildRoutePayload({
+          type: 'event_callback',
+          event: { type: 'app_uninstalled' },
+        }),
+      ),
+    ).rejects.toThrow('no team_id');
+    expect(findClaimedWorkspaceMock).not.toHaveBeenCalled();
   });
 
   it('should keep failing loudly when a message event targets an unclaimed team', async () => {
@@ -138,5 +168,6 @@ describe('slackEventsResolverHandler', () => {
       targetLogicFunctionUniversalIdentifier:
         SLACK_EVENTS_ENQUEUE_UNIVERSAL_IDENTIFIER,
     });
+    expect(findClaimedWorkspaceMock).not.toHaveBeenCalled();
   });
 });

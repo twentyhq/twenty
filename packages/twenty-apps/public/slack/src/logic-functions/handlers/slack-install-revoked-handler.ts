@@ -1,10 +1,10 @@
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 
-import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
+import { type SlackInstallRevokedPayload } from 'src/logic-functions/types/slack-install-revoked-payload.type';
 import { releaseSlackTeamOnInstallRevoked } from 'src/logic-functions/utils/release-slack-team-on-install-revoked';
 
 export const slackInstallRevokedHandler = async (
-  body: SlackEventsRequestBody,
+  body: SlackInstallRevokedPayload,
 ) => {
   // The app only holds a bot token, so a revocation that spares it leaves the
   // install working.
@@ -21,5 +21,8 @@ export const slackInstallRevokedHandler = async (
     );
   }
 
-  return releaseSlackTeamOnInstallRevoked(body.team_id);
+  return releaseSlackTeamOnInstallRevoked({
+    teamId: body.team_id,
+    claimedWorkspaceId: body.claimedWorkspaceId,
+  });
 };

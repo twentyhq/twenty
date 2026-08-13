@@ -5,43 +5,80 @@ import { getSlackConnectedAccountTeam } from 'src/logic-functions/utils/get-slac
 import { getSlackConnectedAccountTeamKvKey } from 'src/logic-functions/utils/get-slack-connected-account-team-kv-key';
 import { getSlackTeamKvKey } from 'src/logic-functions/utils/get-slack-team-kv-key';
 
+type ReleaseSlackTeamOnInstallRevokedArgs = {
+  teamId: string;
+  claimedWorkspaceId: string | undefined;
+};
+
 type ReleaseSlackTeamOnInstallRevokedResult = {
   ok: true;
   releasedTeamId: string | null;
   releasedConnectedAccountIds: string[];
 };
 
-export const releaseSlackTeamOnInstallRevoked = async (
-  teamId: string,
-): Promise<ReleaseSlackTeamOnInstallRevokedResult> => {
+const releaseSlackTeamClaimIfStillOurs = async ({
+  teamId,
+  claimedWorkspaceId,
+}: ReleaseSlackTeamOnInstallRevokedArgs): Promise<boolean> => {
+  // The claim can move between routing and this run: the original workspace
+  // disconnects and another one claims the same team. Only delete while the
+  // claim still points at the workspace the event was routed to, so a stale
+  // removal cannot evict the new holder's claim.
+  const currentClaimHolder = await kv.get<string>(getSlackTeamKvKey(teamId), {
+    scope: 'SERVER',
+  });
+
+  const isClaimHeldByAnotherWorkspace =
+    isNonEmptyString(currentClaimHolder) &&
+    isNonEmptyString(claimedWorkspaceId) &&
+    currentClaimHolder !== claimedWorkspaceId;
+
+  if (isClaimHeldByAnotherWorkspace) {
+    return false;
+  }
+
+  return kv.delete(getSlackTeamKvKey(teamId), { scope: 'SERVER' });
+};
+
+export const releaseSlackTeamOnInstallRevoked = async ({
+  teamId,
+  claimedWorkspaceId,
+}: ReleaseSlackTeamOnInstallRevokedArgs): Promise<ReleaseSlackTeamOnInstallRevokedResult> => {
+  // Freeing the team claim is the point of this function, and the claim can
+  // outlive its connections, so release it first and by team id rather than
+  // through the connections.
+  const hasReleasedTeam = await releaseSlackTeamClaimIfStillOurs({
+    teamId,
+    claimedWorkspaceId,
+  });
+
   const connections = await listConnections({ providerName: 'slack' });
 
   const releasedConnectedAccountIds = (
     await Promise.all(
       connections.map(async (connection) => {
-        const connectionTeamId = await getSlackConnectedAccountTeam(
-          connection.id,
-        );
+        try {
+          const connectionTeamId = await getSlackConnectedAccountTeam(
+            connection.id,
+          );
 
-        if (connectionTeamId !== teamId) {
+          if (connectionTeamId !== teamId) {
+            return null;
+          }
+
+          await kv.delete(getSlackConnectedAccountTeamKvKey(connection.id));
+
+          return connection.id;
+        } catch {
+          // Best-effort: a stale per-connection entry only affects the
+          // disconnect path of a connection that is already dead.
           return null;
         }
-
-        await kv.delete(getSlackConnectedAccountTeamKvKey(connection.id));
-
-        return connection.id;
       }),
     )
   ).filter((connectedAccountId): connectedAccountId is string =>
     isNonEmptyString(connectedAccountId),
   );
-
-  // The claim can outlive its connections, so release it by team id rather
-  // than through them; this workspace was resolved from that claim, so it is
-  // ours to delete.
-  const hasReleasedTeam = await kv.delete(getSlackTeamKvKey(teamId), {
-    scope: 'SERVER',
-  });
 
   return {
     ok: true,

@@ -10,8 +10,12 @@ import {
   SLACK_INSTALL_REVOKED_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
+import { type SlackInstallRevokedPayload } from 'src/logic-functions/types/slack-install-revoked-payload.type';
 import { getSlackWebhookSecret } from 'src/logic-functions/utils/get-slack-webhook-secret';
-import { resolveTargetWorkspaceId } from 'src/logic-functions/utils/resolve-target-workspace-id';
+import {
+  findClaimedWorkspaceId,
+  resolveTargetWorkspaceId,
+} from 'src/logic-functions/utils/resolve-target-workspace-id';
 import { verifySlackRequestSignature } from 'src/logic-functions/utils/verify-slack-request-signature';
 
 type SlackEventsResolverResult =
@@ -19,7 +23,7 @@ type SlackEventsResolverResult =
   | {
       workspaceId: string;
       targetLogicFunctionUniversalIdentifier: string;
-      payload: SlackEventsRequestBody;
+      payload: SlackEventsRequestBody | SlackInstallRevokedPayload;
     };
 
 export const slackEventsResolverHandler = async (
@@ -61,25 +65,35 @@ export const slackEventsResolverHandler = async (
   const targetLogicFunctionUniversalIdentifier =
     resolveTargetLogicFunctionUniversalIdentifier(body);
 
-  // Slack sends app_uninstalled and tokens_revoked in no guaranteed order;
-  // whichever lands first releases the claim, so the other must ack instead
-  // of erroring into Slack's retry cycle.
   if (
     targetLogicFunctionUniversalIdentifier ===
     SLACK_INSTALL_REVOKED_UNIVERSAL_IDENTIFIER
   ) {
-    try {
-      return {
-        workspaceId: await resolveTargetWorkspaceId(body),
-        targetLogicFunctionUniversalIdentifier,
-        payload: body,
-      };
-    } catch {
+    if (!isNonEmptyString(body.team_id)) {
+      throw new Error(
+        'Slack event has no team_id; cannot resolve the target workspace',
+      );
+    }
+
+    // Slack sends app_uninstalled and tokens_revoked in no guaranteed order;
+    // whichever lands first releases the claim, so an absent claim is the
+    // expected second delivery and must ack instead of erroring into Slack's
+    // retry cycle. A failed lookup still throws, so a transient error keeps
+    // the retry.
+    const claimedWorkspaceId = await findClaimedWorkspaceId(body.team_id);
+
+    if (claimedWorkspaceId === null) {
       return new Response({
         ok: true,
         skipped: 'No workspace claims this Slack team',
       });
     }
+
+    return {
+      workspaceId: claimedWorkspaceId,
+      targetLogicFunctionUniversalIdentifier,
+      payload: { ...body, claimedWorkspaceId },
+    };
   }
 
   return {
