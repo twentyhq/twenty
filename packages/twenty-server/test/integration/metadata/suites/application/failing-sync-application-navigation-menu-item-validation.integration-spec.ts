@@ -117,6 +117,30 @@ const failingNavigationMenuItemSyncTestCases: EachTestingContext<TestContext>[] 
       },
     },
     {
+      title:
+        'when syncing a PAGE_LAYOUT item without pageLayoutUniversalIdentifier',
+      context: {
+        navigationMenuItem: {
+          universalIdentifier: TEST_NAVIGATION_MENU_ITEM_ID,
+          type: NavigationMenuItemType.PAGE_LAYOUT,
+          position: 0,
+          name: 'Page layout without identifier',
+        },
+      },
+    },
+    {
+      title:
+        'when syncing a VIEW item without viewUniversalIdentifier',
+      context: {
+        navigationMenuItem: {
+          universalIdentifier: TEST_NAVIGATION_MENU_ITEM_ID,
+          type: NavigationMenuItemType.VIEW,
+          position: 0,
+          name: 'View without identifier',
+        },
+      },
+    },
+    {
       title: 'when syncing an item with an unknown type',
       context: {
         navigationMenuItem: {
