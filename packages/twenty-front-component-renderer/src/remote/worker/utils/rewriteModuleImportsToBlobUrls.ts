@@ -1,4 +1,4 @@
-import { buildModuleImportContextPattern } from '@/utils/buildModuleImportContextPattern';
+import { buildModuleImportContextPattern } from '@/utils/module-imports/buildModuleImportContextPattern';
 
 export const rewriteModuleImportsToBlobUrls = (
   source: string,

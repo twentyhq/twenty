@@ -1,4 +1,4 @@
-import { type PropertySchema } from './PropertySchema';
+import { type PropertySchema } from '@/types/PropertySchema';
 import { SVG_PRESENTATION_PROPERTIES } from './SvgPresentationProperties';
 
 export type AllowedHtmlElement = {

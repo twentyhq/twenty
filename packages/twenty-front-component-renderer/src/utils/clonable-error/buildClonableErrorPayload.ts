@@ -1,7 +1,7 @@
 import { isNonEmptyString, isString } from '@sniptt/guards';
 
 import { type ClonableErrorPayload } from '@/types/ClonableErrorPayload';
-import { isErrorLikeValue } from '@/utils/isErrorLikeValue';
+import { isErrorLikeValue } from '@/utils/clonable-error/isErrorLikeValue';
 
 const FALLBACK_ERROR_NAME = 'Error';
 

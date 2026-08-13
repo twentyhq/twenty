@@ -1,6 +1,6 @@
 import { camelToKebab } from 'twenty-shared/utils';
 
-import { isCssCustomPropertyName } from '@/utils/isCssCustomPropertyName';
+import { isCssCustomPropertyName } from '@/utils/css/isCssCustomPropertyName';
 
 const CSS_PROPERTY_NAME_BY_CSSOM_ALIAS = new Map<string, string>([
   ['cssFloat', 'float'],

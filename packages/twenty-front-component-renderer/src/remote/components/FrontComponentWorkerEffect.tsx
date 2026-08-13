@@ -16,8 +16,8 @@ import { createFrontComponentSandboxMessageHandler } from '@/remote/sandbox/util
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
 import { buildAuthorizationHeadersFromAccessToken } from '@/utils/buildAuthorizationHeadersFromAccessToken';
-import { containsSdkClientImportSpecifier } from '@/utils/containsSdkClientImportSpecifier';
-import { containsSharedDependenciesImportSpecifier } from '@/utils/containsSharedDependenciesImportSpecifier';
+import { containsSdkClientImportSpecifier } from '@/utils/module-imports/containsSdkClientImportSpecifier';
+import { containsSharedDependenciesImportSpecifier } from '@/utils/module-imports/containsSharedDependenciesImportSpecifier';
 
 type FrontComponentWorkerEffectProps = {
   componentUrl: string;

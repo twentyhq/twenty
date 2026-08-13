@@ -6,7 +6,7 @@ import { createSdkClientModuleBlobUrls } from '@/remote/worker/utils/createSdkCl
 import { revokeSdkClientModuleBlobUrls } from '@/remote/worker/utils/revokeSdkClientModuleBlobUrls';
 import { rewriteModuleImportsToBlobUrls } from '@/remote/worker/utils/rewriteModuleImportsToBlobUrls';
 import { type SdkClientSources } from '@/types/SdkClientSources';
-import { containsSharedDependenciesImportSpecifier } from '@/utils/containsSharedDependenciesImportSpecifier';
+import { containsSharedDependenciesImportSpecifier } from '@/utils/module-imports/containsSharedDependenciesImportSpecifier';
 
 type LoadFrontComponentModuleInput = {
   componentSource: string;

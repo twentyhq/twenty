@@ -6,7 +6,7 @@ import { type FrontComponentHostThreadExports } from '@/types/FrontComponentHost
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
 import { type HostFetchFunction } from '@/types/HostFetchFunction';
 import { type WorkerExports } from '@/types/WorkerExports';
-import { createClonableErrorThreadSerialization } from '@/utils/createClonableErrorThreadSerialization';
+import { createClonableErrorThreadSerialization } from '@/utils/clonable-error/createClonableErrorThreadSerialization';
 
 type CreateFrontComponentHostThreadInput = {
   hostMessagePort: MessagePort;

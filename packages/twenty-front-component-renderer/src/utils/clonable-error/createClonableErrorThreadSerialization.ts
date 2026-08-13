@@ -2,10 +2,10 @@ import { ThreadSerializationStructuredClone } from '@quilted/threads';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FRONT_COMPONENT_THREAD_ERROR_MARKER } from '@/constants/FrontComponentThreadErrorMarker';
-import { buildClonableErrorPayload } from '@/utils/buildClonableErrorPayload';
-import { extractClonableErrorPayload } from '@/utils/extractClonableErrorPayload';
-import { isErrorLikeValue } from '@/utils/isErrorLikeValue';
-import { rehydrateClonableError } from '@/utils/rehydrateClonableError';
+import { buildClonableErrorPayload } from '@/utils/clonable-error/buildClonableErrorPayload';
+import { extractClonableErrorPayload } from '@/utils/clonable-error/extractClonableErrorPayload';
+import { isErrorLikeValue } from '@/utils/clonable-error/isErrorLikeValue';
+import { rehydrateClonableError } from '@/utils/clonable-error/rehydrateClonableError';
 
 export const createClonableErrorThreadSerialization =
   (): ThreadSerializationStructuredClone =>

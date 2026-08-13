@@ -1,4 +1,4 @@
-import { isCssCustomPropertyName } from '@/utils/isCssCustomPropertyName';
+import { isCssCustomPropertyName } from '@/utils/css/isCssCustomPropertyName';
 
 export const normalizeCssPropertyName = (cssPropertyName: string): string =>
   isCssCustomPropertyName(cssPropertyName)

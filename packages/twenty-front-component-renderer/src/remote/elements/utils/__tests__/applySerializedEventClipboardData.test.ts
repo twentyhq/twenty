@@ -1,4 +1,4 @@
-import { applySerializedEventClipboardData } from '@/constants/applySerializedEventClipboardData';
+import { applySerializedEventClipboardData } from '@/remote/elements/utils/applySerializedEventClipboardData';
 
 type SynthesizedClipboardData = {
   types: string[];

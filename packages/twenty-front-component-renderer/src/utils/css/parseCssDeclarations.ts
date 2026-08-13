@@ -1,7 +1,7 @@
 import { type CssDeclaration } from '@/types/CssDeclaration';
-import { normalizeCssPropertyName } from '@/utils/normalizeCssPropertyName';
-import { splitCssDeclarations } from '@/utils/splitCssDeclarations';
-import { stripImportantPriorityFromCssValue } from '@/utils/stripImportantPriorityFromCssValue';
+import { normalizeCssPropertyName } from '@/utils/css/normalizeCssPropertyName';
+import { splitCssDeclarations } from '@/utils/css/splitCssDeclarations';
+import { stripImportantPriorityFromCssValue } from '@/utils/css/stripImportantPriorityFromCssValue';
 
 export const parseCssDeclarations = (cssText: string): CssDeclaration[] => {
   const declarationsByNormalizedCssPropertyName = new Map<

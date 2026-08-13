@@ -7,7 +7,7 @@ import { ThreadMessagePort } from '@quilted/threads';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { frontComponentHostCommunicationApi } from '@/constants/frontComponentHostCommunicationApi';
+import { frontComponentHostCommunicationApi } from '@/remote/worker/thread/states/frontComponentHostCommunicationApi';
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToRemoteComponent';
 import { installDocumentGetElementById } from '@/polyfills/dom/utils/installDocumentGetElementById';
 import { installGetComputedStyle } from '@/polyfills/dom/utils/installGetComputedStyle';
@@ -19,7 +19,7 @@ import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/insta
 import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/installWindowGeometryPolyfill';
 import { frontComponentStorageBridges } from '@/polyfills/storage/frontComponentStorageBridges';
 import { installStorageBridge } from '@/polyfills/storage/utils/installStorageBridge';
-import { exposeGlobals } from '@/remote/utils/exposeGlobals';
+import { exposeGlobals } from '@/utils/exposeGlobals';
 import { installStylePropertyOnRemoteElements } from '@/remote/utils/installStylePropertyOnRemoteElements';
 import { patchRemoteElementAttributes } from '@/remote/utils/patchRemoteElementAttributes';
 import { buildFrontComponentHostCommunicationApiFromThreadImports } from '@/remote/worker/utils/buildFrontComponentHostCommunicationApiFromThreadImports';
@@ -30,7 +30,7 @@ import { setFrontComponentExecutionContext } from '@/remote/worker/utils/setFron
 import { type FrontComponentHostThread } from '@/types/FrontComponentHostThread';
 import { type FrontComponentHostThreadExports } from '@/types/FrontComponentHostThreadExports';
 import { type WorkerExports } from '@/types/WorkerExports';
-import { createClonableErrorThreadSerialization } from '@/utils/createClonableErrorThreadSerialization';
+import { createClonableErrorThreadSerialization } from '@/utils/clonable-error/createClonableErrorThreadSerialization';
 
 installStylePropertyOnRemoteElements();
 patchRemoteElementAttributes();

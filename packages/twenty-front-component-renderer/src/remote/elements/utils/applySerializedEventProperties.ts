@@ -1,4 +1,4 @@
-import { applySerializedEventClipboardData } from '@/constants/applySerializedEventClipboardData';
+import { applySerializedEventClipboardData } from '@/remote/elements/utils/applySerializedEventClipboardData';
 import { type SerializedEventData } from '@/types/SerializedEventData';
 
 const SERIALIZED_EVENT_PROPERTY_KEYS = [

@@ -1,5 +1,5 @@
 import { SDK_CLIENT_IMPORT_SPECIFIERS } from '@/constants/SdkClientImportSpecifiers';
-import { buildModuleImportContextPattern } from '@/utils/buildModuleImportContextPattern';
+import { buildModuleImportContextPattern } from '@/utils/module-imports/buildModuleImportContextPattern';
 
 export const containsSdkClientImportSpecifier = (source: string): boolean =>
   SDK_CLIENT_IMPORT_SPECIFIERS.some((specifier) =>

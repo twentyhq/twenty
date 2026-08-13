@@ -2,8 +2,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type CSSProperties } from 'react';
 import { kebabToCamelCase } from 'twenty-shared/utils';
 
-import { isCssCustomPropertyName } from '@/utils/isCssCustomPropertyName';
-import { parseCssDeclarations } from '@/utils/parseCssDeclarations';
+import { isCssCustomPropertyName } from '@/utils/css/isCssCustomPropertyName';
+import { parseCssDeclarations } from '@/utils/css/parseCssDeclarations';
 
 export const parseCssString = (
   styleString: string | undefined,

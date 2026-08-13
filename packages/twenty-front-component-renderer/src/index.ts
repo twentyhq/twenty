@@ -131,7 +131,7 @@ export type {
 } from './remote/generated/remote-elements';
 export { createFrontComponentRemoteWorker } from './remote/worker/utils/createFrontComponentRemoteWorker';
 export { installStyleBridge } from './polyfills/installStyleBridge';
-export { exposeGlobals } from './remote/utils/exposeGlobals';
+export { exposeGlobals } from './utils/exposeGlobals';
 export type { FrontComponentExecutionContext } from 'twenty-sdk/front-component';
 export type { FrontComponentHostCommunicationApi } from './types/FrontComponentHostCommunicationApi';
 export { setFrontComponentStorageItem } from './host/utils/setFrontComponentStorageItem';
@@ -143,5 +143,5 @@ export type { ViewportGeometrySnapshot } from './types/ViewportGeometrySnapshot'
 export type { GeometryUpdateBatch } from './types/GeometryUpdateBatch';
 export type { HostToWorkerRenderContext } from './types/HostToWorkerRenderContext';
 export type { SdkClientUrls } from './types/SdkClientUrls';
-export type { PropertySchema } from './constants/PropertySchema';
+export type { PropertySchema } from './types/PropertySchema';
 export type { WorkerExports } from './types/WorkerExports';
