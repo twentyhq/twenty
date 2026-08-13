@@ -1,3 +1,4 @@
+import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -126,7 +127,7 @@ export const StandalonePageCommandMenu = () => {
     <CommandMenuContext.Provider
       value={{
         displayType: 'button',
-        containerType: 'standalone-page-header',
+        containerType: CommandMenuItemContainerType.StandalonePageHeader,
         commandMenuItems: filteredCommandMenuItems,
         commandMenuContextApi,
         isInPreviewMode: false,

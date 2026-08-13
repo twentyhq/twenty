@@ -1,3 +1,4 @@
+import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { PinnedCommandMenuItemsInlineMeasurements } from '@/command-menu-item/display/components/PinnedCommandMenuItemsInlineMeasurements';
@@ -51,12 +52,14 @@ export const PinnedCommandMenuItemButtons = () => {
 
   // The footer keeps its label rightmost. Headers reverse the row so labels sit
   // left of the icons.
-  const isSidePanelFooter = containerType === 'side-panel-footer';
+  const isSidePanelFooter =
+    containerType === CommandMenuItemContainerType.SidePanelFooter;
 
   // A record header keeps its breadcrumb on mobile, so its actions stay icons
   // and leave the record name room. Index and standalone headers drop their
   // title there, which frees the width for one label.
-  const isRecordPageHeader = containerType === 'show-page-header';
+  const isRecordPageHeader =
+    containerType === CommandMenuItemContainerType.ShowPageHeader;
 
   const shouldLabelSingleCommandMenuItem =
     isSidePanelFooter || (isMobile && !isRecordPageHeader);
