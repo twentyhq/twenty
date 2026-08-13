@@ -12,6 +12,7 @@ import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 const INSTANCE_ID = 'useHasReachedAiChatCreditsCapTest';
 const THREAD_ID = 'thread-1';
@@ -38,10 +39,18 @@ const setThreadError = (error: Error | CombinedGraphQLErrors) => {
 
 const setWorkspaceCap = (hasReachedCurrentPeriodCap: boolean) => {
   jotaiStore.set(currentWorkspaceState.atom, {
+    ...mockCurrentWorkspace,
     currentBillingSubscription: {
-      billingSubscriptionItems: [{ hasReachedCurrentPeriodCap }],
+      ...mockCurrentWorkspace.currentBillingSubscription,
+      billingSubscriptionItems:
+        mockCurrentWorkspace.currentBillingSubscription.billingSubscriptionItems.map(
+          (billingSubscriptionItem) => ({
+            ...billingSubscriptionItem,
+            hasReachedCurrentPeriodCap,
+          }),
+        ),
     },
-  } as never);
+  });
 };
 
 const renderHasReachedAiChatCreditsCap = () =>
