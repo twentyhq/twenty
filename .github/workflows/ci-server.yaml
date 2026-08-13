@@ -311,7 +311,7 @@ jobs:
       SHARD_COUNTER: 16
       AUTH_COOKIE_SESSIONS_ENABLED: ${{ contains(github.event.pull_request.labels.*.name, 'ci:auth-cookie-sessions') }}
       TEST_FORCED_FEATURE_FLAGS: ${{ matrix.orm-v2 && 'IS_ORM_V2_READ_PATH_ENABLED' || '' }}
-      ORM_V2_TEST_PATH_PATTERN: '(find-many|find-one|find-duplicates|group-by|composite-field-pagination|filter-by-relation-field|order-by-relation-field|nested-relation|soft-deleted-relation|relation-join-rls)'
+      ORM_V2_TEST_PATH_PATTERN: '(find-many|find-one|find-duplicates|group-by|composite-field-pagination|filter-by-relation-field|order-by-relation-field|nested-relation|soft-deleted-relation|relation-join-rls|object-records-permissions|merge-many)'
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1

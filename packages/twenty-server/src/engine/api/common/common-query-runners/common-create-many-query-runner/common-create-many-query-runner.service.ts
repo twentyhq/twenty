@@ -115,6 +115,8 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       authContext,
       workspaceDataSource,
       rolePermissionConfig,
+      nestedRelationsReadPathOptions:
+        this.getNestedRelationsReadPathOptions(queryRunnerContext),
     });
 
     return upsertedRecords;
@@ -129,6 +131,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     authContext,
     workspaceDataSource,
     rolePermissionConfig,
+    nestedRelationsReadPathOptions,
   }: {
     args: CommonExtendedInput<CreateManyQueryArgs>;
     records: ObjectRecord[];
@@ -138,6 +141,10 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     authContext: WorkspaceAuthContext;
     workspaceDataSource: GlobalWorkspaceDataSource;
     rolePermissionConfig?: RolePermissionConfig;
+    nestedRelationsReadPathOptions: {
+      isOrmV2ReadPathEnabled: boolean;
+      useReplica: boolean;
+    };
   }): Promise<void> {
     if (!args.selectedFieldsResult.relations) {
       return;
@@ -157,6 +164,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       workspaceDataSource,
       rolePermissionConfig,
       selectedFields: args.selectedFieldsResult.select,
+      ...nestedRelationsReadPathOptions,
     });
   }
 
