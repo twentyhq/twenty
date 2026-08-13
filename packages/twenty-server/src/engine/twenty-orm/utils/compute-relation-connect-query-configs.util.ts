@@ -13,7 +13,7 @@ import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type LiteFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/lite-flat-field-metadata.type';
 import {
   buildFieldMapsFromFlatObjectMetadata,
   type FieldMapsForObject,
@@ -38,7 +38,7 @@ export const computeRelationConnectQueryConfigs = (
   entities: Record<string, unknown>[],
   flatObjectMetadata: FlatObjectMetadata,
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  flatFieldMetadataMaps: FlatEntityMaps<LiteFlatFieldMetadata>,
   flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>,
   relationConnectQueryFieldsByEntityIndex: RelationConnectQueryFieldsByEntityIndex,
 ) => {
@@ -122,7 +122,7 @@ const updateConnectQueryConfigs = (
 const createConnectQueryConfig = (
   connectFieldName: string,
   recordToConnectCondition: UniqueConstraintCondition,
-  uniqueConstraintFields: FlatFieldMetadata<FieldMetadataType>[],
+  uniqueConstraintFields: LiteFlatFieldMetadata<FieldMetadataType>[],
   targetObjectNameSingular: string,
   entityIndex: number,
 ) => {
@@ -143,13 +143,13 @@ const computeRecordToConnectCondition = (
   connectObject: ConnectObject,
   flatObjectMetadata: FlatObjectMetadata,
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  flatFieldMetadataMaps: FlatEntityMaps<LiteFlatFieldMetadata>,
   flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>,
   entity: Record<string, unknown>,
   fieldMaps: FieldMapsForObject,
 ): {
   recordToConnectCondition: UniqueConstraintCondition;
-  uniqueConstraintFields: FlatFieldMetadata<FieldMetadataType>[];
+  uniqueConstraintFields: LiteFlatFieldMetadata<FieldMetadataType>[];
   targetObjectNameSingular: string;
 } => {
   const field = findFlatEntityByIdInFlatEntityMaps({
@@ -212,7 +212,7 @@ const computeRecordToConnectCondition = (
 
 const checkUniqueConstraintFullyPopulated = (
   flatObjectMetadata: FlatObjectMetadata,
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  flatFieldMetadataMaps: FlatEntityMaps<LiteFlatFieldMetadata>,
   flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>,
   connectObject: ConnectObject,
   connectFieldName: string,
@@ -234,11 +234,11 @@ const checkUniqueConstraintFullyPopulated = (
   }));
 
   const uniqueConstraintsFields = getUniqueConstraintsFields<
-    FlatFieldMetadata,
+    LiteFlatFieldMetadata,
     {
       id: string;
       indexMetadatas: typeof indexMetadatas;
-      fields: FlatFieldMetadata[];
+      fields: LiteFlatFieldMetadata[];
     }
   >({
     id: flatObjectMetadata.id,
@@ -298,7 +298,7 @@ const checkNoRelationFieldConflictOrThrow = (
 };
 
 const computeUniqueConstraintCondition = (
-  uniqueConstraintFields: FlatFieldMetadata<FieldMetadataType>[],
+  uniqueConstraintFields: LiteFlatFieldMetadata<FieldMetadataType>[],
   connectObject: ConnectObject,
 ): UniqueConstraintCondition => {
   return uniqueConstraintFields.reduce((acc, uniqueConstraintField) => {
@@ -326,7 +326,7 @@ const computeUniqueConstraintCondition = (
 
 const checkUniqueConstraintsAreSameOrThrow = (
   relationConnectQueryConfig: RelationConnectQueryConfig,
-  uniqueConstraintFields: FlatFieldMetadata<FieldMetadataType>[],
+  uniqueConstraintFields: LiteFlatFieldMetadata<FieldMetadataType>[],
 ) => {
   if (
     !fastDeepEqual(

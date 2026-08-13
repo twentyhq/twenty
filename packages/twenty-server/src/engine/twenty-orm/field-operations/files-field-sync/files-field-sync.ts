@@ -21,7 +21,7 @@ import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/work
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type LiteFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/lite-flat-field-metadata.type';
 import {
   TwentyORMException,
   TwentyORMExceptionCode,
@@ -268,7 +268,7 @@ export class FilesFieldSync {
   }
 
   private validateFilesFieldMaxValues(
-    filesField: FlatFieldMetadata,
+    filesField: LiteFlatFieldMetadata,
     newFilesValue: FileItem[],
   ): void {
     const filesFieldMaxNumberOfValues = (
@@ -310,7 +310,7 @@ export class FilesFieldSync {
 
   private validateAndComputeFilesFieldDiff(
     entity: Record<string, unknown>,
-    filesField: FlatFieldMetadata,
+    filesField: LiteFlatFieldMetadata,
     existingFilesValue: FileItem[],
   ): FilesFieldDiff | null {
     const newFilesValue = entity[filesField.name] as
@@ -635,7 +635,7 @@ export class FilesFieldSync {
     });
   }
 
-  private getFilesFields(objectMetadataId: string): FlatFieldMetadata[] {
+  private getFilesFields(objectMetadataId: string): LiteFlatFieldMetadata[] {
     const objectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: objectMetadataId,
       flatEntityMaps: this.internalContext.flatObjectMetadataMaps,

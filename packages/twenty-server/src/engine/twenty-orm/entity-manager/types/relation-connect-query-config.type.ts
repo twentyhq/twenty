@@ -1,4 +1,4 @@
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type LiteFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/lite-flat-field-metadata.type';
 
 export type UniqueFieldCondition = [field: string, value: string];
 
@@ -9,7 +9,7 @@ export type RelationConnectQueryConfig = {
   recordToConnectConditions: UniqueConstraintCondition[];
   relationFieldName: string;
   connectFieldName: string;
-  uniqueConstraintFields: FlatFieldMetadata[];
+  uniqueConstraintFields: LiteFlatFieldMetadata[];
   recordToConnectConditionByEntityIndex: {
     [entityIndex: number]: UniqueConstraintCondition;
   };

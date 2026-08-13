@@ -17,7 +17,7 @@ import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/fie
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type LiteFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/lite-flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -32,7 +32,7 @@ import { type RecordQueryBuilder } from 'src/engine/api/graphql/graphql-query-ru
 
 export class GraphqlQueryFilterFieldParser {
   private flatObjectMetadata: FlatObjectMetadata;
-  private flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  private flatFieldMetadataMaps: FlatEntityMaps<LiteFlatFieldMetadata>;
   private flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>;
   private fieldIdByName: Record<string, string>;
   private fieldIdByJoinColumnName: Record<string, string>;
@@ -40,7 +40,7 @@ export class GraphqlQueryFilterFieldParser {
 
   constructor(
     flatObjectMetadata: FlatObjectMetadata,
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<LiteFlatFieldMetadata>,
     flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>,
     depth = 0,
   ) {
@@ -142,7 +142,7 @@ export class GraphqlQueryFilterFieldParser {
     queryBuilder: WhereExpressionBuilder,
     outerQueryBuilder: RecordQueryBuilder,
     parentAlias: string,
-    fieldMetadata: FlatFieldMetadata,
+    fieldMetadata: LiteFlatFieldMetadata,
     filterValue: Partial<ObjectRecordFilter>,
     isFirst: boolean,
   ): void {
@@ -219,7 +219,7 @@ export class GraphqlQueryFilterFieldParser {
 
   private parseCompositeFieldForFilter(
     queryBuilder: WhereExpressionBuilder,
-    fieldMetadata: FlatFieldMetadata,
+    fieldMetadata: LiteFlatFieldMetadata,
     objectNameSingular: string,
     // oxlint-disable-next-line typescript/no-explicit-any
     fieldValue: any,

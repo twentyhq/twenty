@@ -12,7 +12,7 @@ import { InternalServerError } from 'src/engine/core-modules/graphql/utils/graph
 import { extractColumnNamesFromAggregateExpression } from 'src/utils/extract-column-names-from-aggregate-expression.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type LiteFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/lite-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   PermissionsException,
@@ -74,7 +74,7 @@ type ValidateOperationIsPermittedOrThrowArgs = {
   operationType: OperationType;
   objectsPermissions: ObjectsPermissions;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<LiteFlatFieldMetadata>;
   objectIdByNameSingular: Record<string, string>;
   selectedColumns: string[] | '*';
   allFieldsSelected: boolean;
@@ -262,7 +262,7 @@ type ValidateQueryIsPermittedOrThrowArgs = {
   expressionMap: QueryExpressionMap;
   objectsPermissions: ObjectsPermissions;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<LiteFlatFieldMetadata>;
   objectIdByNameSingular: Record<string, string>;
   shouldBypassPermissionChecks: boolean;
 };
@@ -366,7 +366,7 @@ const validatePermissionsForJoinsAndReturnSelectsWithoutJoins = ({
   expressionMap: QueryExpressionMap;
   objectsPermissions: ObjectsPermissions;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<LiteFlatFieldMetadata>;
   objectIdByNameSingular: Record<string, string>;
 }) => {
   const joinAttributesAliases = new Set(
@@ -429,7 +429,7 @@ const validateJoinedOrderByColumnsArePermittedOrThrow = ({
   expressionMap: QueryExpressionMap;
   objectsPermissions: ObjectsPermissions;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<LiteFlatFieldMetadata>;
   objectIdByNameSingular: Record<string, string>;
 }) => {
   const columnsByJoinedAlias = new Map<string, Set<string>>();
@@ -487,7 +487,7 @@ const buildFieldPermissionDeniedMessage = ({
   column: string;
   fieldMetadataId: string;
   entityName: string;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<LiteFlatFieldMetadata>;
 }): string => {
   const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: fieldMetadataId,
@@ -510,7 +510,7 @@ const validateReadFieldPermissionOrThrow = ({
   selectedColumns: string[] | '*';
   columnNameToFieldMetadataIdMap: Record<string, string>;
   entityName: string;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<LiteFlatFieldMetadata>;
   allFieldsSelected?: boolean;
 }) => {
   const noReadRestrictions =
@@ -563,7 +563,7 @@ const validateUpdateFieldPermissionOrThrow = ({
   updatedColumns: string[];
   columnNameToFieldMetadataIdMap: Record<string, string>;
   entityName: string;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<LiteFlatFieldMetadata>;
 }) => {
   if (isEmpty(restrictedFields)) {
     return;

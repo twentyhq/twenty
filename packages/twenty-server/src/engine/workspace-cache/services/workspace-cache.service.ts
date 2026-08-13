@@ -67,7 +67,15 @@ const MIN_IDLE_BEFORE_PACKING_MS = 60 * 1000;
 const MAX_LOCAL_ENTRIES_BY_KEY_NAME = new Map<string, number>([
   ['ORMEntityMetadatas', 128],
   ['flatFieldMetadataMaps', 512],
+  ['flatFieldMetadataMapsLite', 512],
 ]);
+// Derived caches that must be flushed/recomputed whenever their source key is invalidated. Keeps
+// the projection coherent from a single place instead of every metadata-mutation call site.
+const DERIVED_SIBLING_CACHE_KEYS: Partial<
+  Record<WorkspaceCacheKeyName, WorkspaceCacheKeyName[]>
+> = {
+  flatFieldMetadataMaps: ['flatFieldMetadataMapsLite'],
+};
 type CacheDataType = WorkspaceCacheDataMap[WorkspaceCacheKeyName];
 type StoredCacheDataType = WorkspaceCacheStoredDataMap[WorkspaceCacheKeyName];
 
@@ -300,10 +308,12 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         attributes: { 'cache.key_count': cacheKeyNames.length },
       },
       async () => {
+        const keysWithSiblings = this.expandWithDerivedSiblings(cacheKeyNames);
+
         await this.memoizer.clearKeys(`${workspaceId}-`);
 
-        await this.flush(workspaceId, cacheKeyNames);
-        await this.recomputeDataFromProvider(workspaceId, cacheKeyNames, {
+        await this.flush(workspaceId, keysWithSiblings);
+        await this.recomputeDataFromProvider(workspaceId, keysWithSiblings, {
           strategy: 'mint',
         });
 
@@ -343,9 +353,25 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
   ): Promise<void> {
-    await this.deleteFromRedis(workspaceId, cacheKeyNames);
+    const keysWithSiblings = this.expandWithDerivedSiblings(cacheKeyNames);
 
-    this.deleteFromLocalCache(workspaceId, cacheKeyNames);
+    await this.deleteFromRedis(workspaceId, keysWithSiblings);
+
+    this.deleteFromLocalCache(workspaceId, keysWithSiblings);
+  }
+
+  private expandWithDerivedSiblings(
+    cacheKeyNames: WorkspaceCacheKeyName[],
+  ): WorkspaceCacheKeyName[] {
+    const keys = new Set(cacheKeyNames);
+
+    for (const cacheKeyName of cacheKeyNames) {
+      for (const siblingKey of DERIVED_SIBLING_CACHE_KEYS[cacheKeyName] ?? []) {
+        keys.add(siblingKey);
+      }
+    }
+
+    return [...keys];
   }
 
   private assertValidCacheParameters(

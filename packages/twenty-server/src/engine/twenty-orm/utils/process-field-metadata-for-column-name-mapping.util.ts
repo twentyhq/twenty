@@ -10,7 +10,7 @@ import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/ut
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type LiteFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/lite-flat-field-metadata.type';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
@@ -25,7 +25,7 @@ export type ColumnNameProcessor = {
     compositeType,
   }: {
     fieldMetadataId: string;
-    fieldMetadata: FlatFieldMetadata;
+    fieldMetadata: LiteFlatFieldMetadata;
     compositeType: CompositeType;
   }) => void;
   processRelationField: ({
@@ -35,7 +35,7 @@ export type ColumnNameProcessor = {
     connectFieldName,
   }: {
     fieldMetadataId: string;
-    fieldMetadata: FlatFieldMetadata;
+    fieldMetadata: LiteFlatFieldMetadata;
     joinColumnName: string;
     connectFieldName?: string;
   }) => void;
@@ -45,14 +45,14 @@ export type ColumnNameProcessor = {
     columnName,
   }: {
     fieldMetadataId: string;
-    fieldMetadata: FlatFieldMetadata;
+    fieldMetadata: LiteFlatFieldMetadata;
     columnName: string;
   }) => void;
 };
 
 export function processFieldMetadataForColumnNameMapping(
   flatObjectMetadata: FlatObjectMetadata,
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  flatFieldMetadataMaps: FlatEntityMaps<LiteFlatFieldMetadata>,
   processor: ColumnNameProcessor,
 ) {
   for (const fieldMetadataId of flatObjectMetadata.fieldIds) {
