@@ -72,6 +72,14 @@ describe('parseSlackLinkSharedEvent', () => {
     expect(parsed.linkShared).toBeNull();
   });
 
+  it('should skip composer previews even when they carry a message timestamp', () => {
+    const parsed = parseSlackLinkSharedEvent(
+      buildLinkSharedBody({ source: 'composer' }),
+    );
+
+    expect(parsed.linkShared).toBeNull();
+  });
+
   it('should skip when the event has no links', () => {
     const parsed = parseSlackLinkSharedEvent(
       buildLinkSharedBody({ links: [] }),

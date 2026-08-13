@@ -36,6 +36,10 @@ export const parseSlackLinkSharedEvent = (
   }
 
   // Composer previews have no posted message to attach an unfurl to
+  if (event.source === 'composer') {
+    return { linkShared: null, skipReason: 'Composer previews are skipped' };
+  }
+
   if (
     !isNonEmptyString(event.channel) ||
     !isNonEmptyString(event.message_ts)

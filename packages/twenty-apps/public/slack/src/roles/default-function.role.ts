@@ -24,7 +24,7 @@ export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Twenty Slack tools role',
   description:
-    'Tools forward requests to Slack using the configured connected account, track assistant requests, and run the assistant agent. Read-only CRM access (people, companies, opportunities, notes, tasks) powers record link unfurls in Slack; write access is granted separately through the role assigned to the agent.',
+    'Tools forward requests to Slack using the configured connected account, track assistant requests, and run the assistant agent. Read-only CRM access (people, companies, opportunities, notes, tasks, plus workspace members for assignee names) powers record link unfurls in Slack; write access is granted separately through the role assigned to the agent.',
   canReadAllObjectRecords: false,
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,
