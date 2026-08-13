@@ -285,7 +285,7 @@ export const FrontComponentMediaCaptureModal = ({
               onClick={handleUseRecording}
               variant="primary"
               accent="blue"
-              title={step === 'uploading' ? t`Uploading…` : t`Use recording`}
+              title={step === 'uploading' ? t`Uploading...` : t`Use recording`}
               disabled={step === 'uploading'}
               fullWidth
               justify="center"

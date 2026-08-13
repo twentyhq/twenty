@@ -20317,14 +20317,10 @@ msgstr "Uploaded content is too large."
 
 #. js-lingui-id: GxkJXS
 #: src/modules/advanced-text-editor/components/AdvancedTextEditorInsertRail.tsx
+#: src/modules/front-components/media-capture/components/FrontComponentMediaCaptureModal.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
 msgid "Uploading..."
 msgstr "Uploading..."
-
-#. js-lingui-id: gANddk
-#: src/modules/front-components/media-capture/components/FrontComponentMediaCaptureModal.tsx
-msgid "Uploading…"
-msgstr "Uploading…"
 
 #. js-lingui-id: PZd7QF
 #: src/modules/ai/constants/crud-tool-operation-verbs.constant.ts
