@@ -32,6 +32,7 @@ import {
 import { type MutationKind } from 'src/engine/twenty-orm-v2/sql/utils/build-mutation-statement.util';
 import { WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-select-query-builder-v2';
 import { compileNamedParameters } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
+import { serializeJsonbWriteValue } from 'src/engine/twenty-orm-v2/sql/utils/serialize-jsonb-write-value.util';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm-v2/table-shape/types/workspace-table-shape.type';
 
 const MUTATION_EVENT_ACTIONS_BY_KIND: Record<
@@ -361,7 +362,10 @@ export class WorkspaceRepositoryV2 {
 
         const parameterName = `ormV2Insert_${parameterSequence++}`;
 
-        parameters[parameterName] = valueByColumnName[columnName];
+        parameters[parameterName] = serializeJsonbWriteValue(
+          this.options.tableShape.columnShapeByColumnName[columnName],
+          valueByColumnName[columnName],
+        );
 
         return { kind: 'parameter', parameterName };
       });
