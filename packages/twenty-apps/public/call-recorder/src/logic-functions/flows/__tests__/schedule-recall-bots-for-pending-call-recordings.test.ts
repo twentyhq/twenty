@@ -46,10 +46,11 @@ type CalendarEventNode = {
 class FakeCoreApiClient {
   callRecordings: CallRecordingNode[];
   calendarEvents: CalendarEventNode[];
-  externalBotIdWriteFailure?: Error;
-  deleteCallRecordingBeforeExternalBotIdWriteFailure = false;
-  callRecordingReadFailureAfterExternalBotIdWriteFailure?: Error;
-  hasExternalBotIdWriteFailed = false;
+  externalBotIdAttachFailure?: Error;
+  externalBotIdAttachFailureCallRecordingId?: string;
+  deleteCallRecordingBeforeExternalBotIdAttach = false;
+  callRecordingReadFailureAfterExternalBotIdAttachFailure?: Error;
+  hasExternalBotIdAttachFailed = false;
 
   constructor({
     callRecordings = [],
@@ -65,11 +66,11 @@ class FakeCoreApiClient {
   async query(query: any): Promise<any> {
     if (query.callRecordings !== undefined) {
       if (
-        this.hasExternalBotIdWriteFailed &&
-        this.callRecordingReadFailureAfterExternalBotIdWriteFailure !==
+        this.hasExternalBotIdAttachFailed &&
+        this.callRecordingReadFailureAfterExternalBotIdAttachFailure !==
           undefined
       ) {
-        throw this.callRecordingReadFailureAfterExternalBotIdWriteFailure;
+        throw this.callRecordingReadFailureAfterExternalBotIdAttachFailure;
       }
 
       const filter = query.callRecordings.__args.filter;
@@ -104,23 +105,59 @@ class FakeCoreApiClient {
   }
 
   async mutation(mutation: any): Promise<any> {
-    if (mutation.updateCallRecording !== undefined) {
-      const { id, data } = mutation.updateCallRecording.__args;
+    if (mutation.updateCallRecordings !== undefined) {
+      const { filter, data } = mutation.updateCallRecordings.__args;
 
-      if (
-        data.externalBotId !== undefined &&
-        this.externalBotIdWriteFailure !== undefined
-      ) {
-        this.hasExternalBotIdWriteFailed = true;
-
-        if (this.deleteCallRecordingBeforeExternalBotIdWriteFailure) {
+      if (typeof data.externalBotId === 'string') {
+        if (this.deleteCallRecordingBeforeExternalBotIdAttach) {
           this.callRecordings = this.callRecordings.filter(
-            (callRecording) => callRecording.id !== id,
+            (callRecording) => callRecording.id !== filter.id.eq,
           );
         }
 
-        throw this.externalBotIdWriteFailure;
+        if (
+          this.externalBotIdAttachFailure !== undefined &&
+          (this.externalBotIdAttachFailureCallRecordingId === undefined ||
+            this.externalBotIdAttachFailureCallRecordingId === filter.id.eq)
+        ) {
+          this.hasExternalBotIdAttachFailed = true;
+          throw this.externalBotIdAttachFailure;
+        }
       }
+
+      const matchingCallRecordings = this.callRecordings.filter(
+        (callRecording) =>
+          callRecording.id === filter.id.eq &&
+          matchesNullableFilter(
+            callRecording.externalBotId,
+            filter.externalBotId,
+          ) &&
+          matchesNullableFilter(
+            callRecording.botScheduleAttemptedAt,
+            filter.botScheduleAttemptedAt,
+          ) &&
+          matchesNullableFilter(
+            callRecording.botScheduleIdempotencyKey,
+            filter.botScheduleIdempotencyKey,
+          ) &&
+          (filter.recordingRequestStatus === undefined ||
+            callRecording.recordingRequestStatus ===
+              filter.recordingRequestStatus.eq) &&
+          (filter.status === undefined ||
+            callRecording.status === filter.status.eq),
+      );
+
+      matchingCallRecordings.forEach((callRecording) => {
+        Object.assign(callRecording, data);
+      });
+
+      return {
+        updateCallRecordings: matchingCallRecordings.map(({ id }) => ({ id })),
+      };
+    }
+
+    if (mutation.updateCallRecording !== undefined) {
+      const { id, data } = mutation.updateCallRecording.__args;
 
       const callRecording = this.callRecordings.find(
         (candidate) => candidate.id === id,
@@ -136,6 +173,19 @@ class FakeCoreApiClient {
     throw new Error(`Unhandled mutation: ${JSON.stringify(mutation)}`);
   }
 }
+
+const matchesNullableFilter = (
+  value: string | null | undefined,
+  filter: { eq?: string; is?: string } | undefined,
+): boolean => {
+  if (filter === undefined) {
+    return true;
+  }
+
+  return filter.is === 'NULL'
+    ? value === null || value === undefined
+    : value === filter.eq;
+};
 
 const buildConnection = <Node>(nodes: Node[]) => ({
   pageInfo: { hasNextPage: false, endCursor: undefined },
@@ -168,11 +218,17 @@ const stubRecallApi = ({
   listedBots = [],
   listStatus = 200,
   createBotStatus = 201,
+  createdBotId = 'recall-bot-1',
+  createdBotIds,
 }: {
   listedBots?: unknown[];
   listStatus?: number;
   createBotStatus?: number;
+  createdBotId?: string;
+  createdBotIds?: string[];
 } = {}) => {
+  let createBotCallIndex = 0;
+
   fetchMock.mockImplementation(
     async (requestUrl: string, requestInit?: { method?: string }) => {
       const method = requestInit?.method ?? 'GET';
@@ -188,14 +244,19 @@ const stubRecallApi = ({
       }
 
       if (method === 'POST' && requestUrl === RECALL_CREATE_BOT_URL) {
-        return new Response(JSON.stringify({ id: 'recall-bot-1' }), {
+        const responseBotId =
+          createdBotIds?.[createBotCallIndex] ?? createdBotId;
+
+        createBotCallIndex += 1;
+
+        return new Response(JSON.stringify({ id: responseBotId }), {
           status: createBotStatus,
         });
       }
 
       if (
         method === 'DELETE' &&
-        requestUrl === `${RECALL_BASE_URL}/bot/recall-bot-1/`
+        requestUrl.startsWith(`${RECALL_BASE_URL}/bot/`)
       ) {
         return new Response(null, { status: 204 });
       }
@@ -288,8 +349,7 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
       callRecordings: [buildPendingCallRecording()],
       calendarEvents: [buildCalendarEvent()],
     });
-    client.externalBotIdWriteFailure = new Error('call recording not found');
-    client.deleteCallRecordingBeforeExternalBotIdWriteFailure = true;
+    client.deleteCallRecordingBeforeExternalBotIdAttach = true;
 
     const result = await scheduleRecallBotsForPendingCallRecordings({
       client: client as unknown as CoreApiClient,
@@ -302,44 +362,71 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     expect(client.callRecordings).toEqual([]);
   });
 
-  it('propagates an id write-back failure when the call recording still exists', async () => {
+  it('isolates an id write-back failure when the call recording still exists', async () => {
     const client = new FakeCoreApiClient({
       callRecordings: [buildPendingCallRecording()],
       calendarEvents: [buildCalendarEvent()],
     });
-    client.externalBotIdWriteFailure = new Error('database unavailable');
+    client.externalBotIdAttachFailure = new Error('database unavailable');
 
-    await expect(
-      scheduleRecallBotsForPendingCallRecordings({
-        client: client as unknown as CoreApiClient,
-        now: NOW,
-      }),
-    ).rejects.toThrow('database unavailable');
+    const result = await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
 
     expect(createBotCalls()).toHaveLength(1);
     expect(cancelBotCalls()).toHaveLength(0);
     expect(client.callRecordings[0].externalBotId).toBeNull();
+    expect(result.failedCallRecordingIds).toEqual(['call-recording-1']);
   });
 
-  it('propagates an id write-back failure when the call recording cannot be re-read', async () => {
+  it('continues scheduling the batch after one recording fails', async () => {
+    stubRecallApi({ createdBotIds: ['recall-bot-1', 'recall-bot-2'] });
+    const client = new FakeCoreApiClient({
+      callRecordings: [
+        buildPendingCallRecording(),
+        buildPendingCallRecording({
+          id: 'call-recording-2',
+          calendarEventId: 'calendar-event-2',
+        }),
+      ],
+      calendarEvents: [
+        buildCalendarEvent(),
+        buildCalendarEvent({ id: 'calendar-event-2' }),
+      ],
+    });
+    client.externalBotIdAttachFailure = new Error('database unavailable');
+    client.externalBotIdAttachFailureCallRecordingId = 'call-recording-1';
+
+    const result = await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(createBotCalls()).toHaveLength(2);
+    expect(result.failedCallRecordingIds).toEqual(['call-recording-1']);
+    expect(result.scheduledCallRecordingIds).toEqual(['call-recording-2']);
+    expect(client.callRecordings[1].externalBotId).toBe('recall-bot-2');
+  });
+
+  it('isolates an id write-back failure when the call recording cannot be re-read', async () => {
     const client = new FakeCoreApiClient({
       callRecordings: [buildPendingCallRecording()],
       calendarEvents: [buildCalendarEvent()],
     });
-    client.externalBotIdWriteFailure = new Error('write unavailable');
-    client.callRecordingReadFailureAfterExternalBotIdWriteFailure = new Error(
+    client.externalBotIdAttachFailure = new Error('write unavailable');
+    client.callRecordingReadFailureAfterExternalBotIdAttachFailure = new Error(
       'read unavailable',
     );
 
-    await expect(
-      scheduleRecallBotsForPendingCallRecordings({
-        client: client as unknown as CoreApiClient,
-        now: NOW,
-      }),
-    ).rejects.toThrow('write unavailable');
+    const result = await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
 
     expect(createBotCalls()).toHaveLength(1);
     expect(cancelBotCalls()).toHaveLength(0);
+    expect(result.failedCallRecordingIds).toEqual(['call-recording-1']);
   });
 
   it('attaches an existing bot claiming the recording instead of scheduling a duplicate', async () => {
@@ -388,6 +475,101 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
       'in_call_recording',
     ]);
     expect(client.callRecordings[0].externalBotId).toBe('recall-bot-existing');
+  });
+
+  it('removes duplicate bots before attaching the recovered owner', async () => {
+    const attemptedAt = '2025-12-30T12:00:00.000Z';
+    const idempotencyKey = computeRecallBotCreationIdempotencyKey({
+      meetingUrl: 'https://meet.example.com/customer-sync',
+      joinAt: computeRecallBotJoinAt(UPCOMING_STARTS_AT),
+      botScheduleAttemptedAt: attemptedAt,
+      metadata: {
+        twentyWorkspaceId: WORKSPACE_ID,
+        twentyCallRecordingId: 'call-recording-1',
+      },
+    });
+    stubRecallApi({
+      listedBots: ['recall-bot-a', 'recall-bot-b'].map((id) => ({
+        id,
+        metadata: {
+          twentyWorkspaceId: WORKSPACE_ID,
+          twentyCallRecordingId: 'call-recording-1',
+          twentyBotScheduleIdempotencyKey: idempotencyKey,
+        },
+      })),
+    });
+    const client = new FakeCoreApiClient({
+      callRecordings: [
+        buildPendingCallRecording({
+          botScheduleAttemptedAt: attemptedAt,
+          botScheduleIdempotencyKey: idempotencyKey,
+        }),
+      ],
+      calendarEvents: [buildCalendarEvent()],
+    });
+
+    const result = await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(result.attachedCallRecordingIds).toEqual(['call-recording-1']);
+    expect(cancelBotCalls()).toEqual([
+      expect.arrayContaining([
+        `${RECALL_BASE_URL}/bot/recall-bot-b/`,
+        expect.objectContaining({ method: 'DELETE' }),
+      ]),
+    ]);
+    expect(client.callRecordings[0].externalBotId).toBe('recall-bot-a');
+  });
+
+  it('removes the stale generation before scheduling a moved meeting', async () => {
+    const attemptedAt = '2026-01-01T11:55:00.000Z';
+    const staleIdempotencyKey = computeRecallBotCreationIdempotencyKey({
+      meetingUrl: 'https://meet.example.com/customer-sync',
+      joinAt: computeRecallBotJoinAt('2026-01-01T09:00:00.000Z'),
+      botScheduleAttemptedAt: attemptedAt,
+      metadata: {
+        twentyWorkspaceId: WORKSPACE_ID,
+        twentyCallRecordingId: 'call-recording-1',
+      },
+    });
+    stubRecallApi({
+      createdBotId: 'recall-bot-new',
+      listedBots: [
+        {
+          id: 'recall-bot-old',
+          metadata: {
+            twentyWorkspaceId: WORKSPACE_ID,
+            twentyCallRecordingId: 'call-recording-1',
+            twentyBotScheduleIdempotencyKey: staleIdempotencyKey,
+          },
+        },
+      ],
+    });
+    const client = new FakeCoreApiClient({
+      callRecordings: [
+        buildPendingCallRecording({
+          botScheduleAttemptedAt: attemptedAt,
+          botScheduleIdempotencyKey: staleIdempotencyKey,
+        }),
+      ],
+      calendarEvents: [buildCalendarEvent()],
+    });
+
+    const result = await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(cancelBotCalls()).toEqual([
+      expect.arrayContaining([
+        `${RECALL_BASE_URL}/bot/recall-bot-old/`,
+        expect.objectContaining({ method: 'DELETE' }),
+      ]),
+    ]);
+    expect(result.scheduledCallRecordingIds).toEqual(['call-recording-1']);
+    expect(client.callRecordings[0].externalBotId).toBe('recall-bot-new');
   });
 
   it('looks up existing bots once for the whole run instead of per recording', async () => {
@@ -456,6 +638,7 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     const unchangedIdempotencyKey = computeRecallBotCreationIdempotencyKey({
       meetingUrl: 'https://meet.example.com/customer-sync',
       joinAt: computeRecallBotJoinAt(UPCOMING_STARTS_AT),
+      botScheduleAttemptedAt: '2026-01-01T11:55:00.000Z',
       metadata: {
         twentyWorkspaceId: WORKSPACE_ID,
         twentyCallRecordingId: 'call-recording-1',
@@ -494,6 +677,7 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     const unchangedIdempotencyKey = computeRecallBotCreationIdempotencyKey({
       meetingUrl: 'https://meet.example.com/customer-sync',
       joinAt: computeRecallBotJoinAt(UPCOMING_STARTS_AT),
+      botScheduleAttemptedAt: '2025-12-30T12:00:00.000Z',
       metadata: {
         twentyWorkspaceId: WORKSPACE_ID,
         twentyCallRecordingId: 'call-recording-1',
@@ -522,6 +706,7 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     const staleIdempotencyKey = computeRecallBotCreationIdempotencyKey({
       meetingUrl: 'https://meet.example.com/customer-sync',
       joinAt: computeRecallBotJoinAt('2026-01-01T09:00:00.000Z'),
+      botScheduleAttemptedAt: '2026-01-01T11:55:00.000Z',
       metadata: {
         twentyWorkspaceId: WORKSPACE_ID,
         twentyCallRecordingId: 'call-recording-1',

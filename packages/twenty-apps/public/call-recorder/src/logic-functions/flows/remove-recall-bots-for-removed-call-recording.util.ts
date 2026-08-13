@@ -1,37 +1,59 @@
 import { isUndefined } from '@sniptt/guards';
+import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { ACTIVE_RECALL_BOT_STATUSES } from 'src/logic-functions/constants/active-recall-bot-statuses';
+import { RECALL_BOT_ACTIVE_CALL_RECORDING_STATUSES } from 'src/logic-functions/constants/recall-bot-active-call-recording-statuses';
+import { clearCallRecordingBotOwnership } from 'src/logic-functions/data/clear-call-recording-bot-ownership.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
-import { cancelOrEjectRecallBot } from 'src/logic-functions/recall-api/cancel-or-eject-recall-bot.util';
+import { hasRecallBotScheduleAttemptSettled } from 'src/logic-functions/domain/has-recall-bot-schedule-attempt-settled.util';
 import { listScheduledRecallBots } from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
+import { removeRecallBotOrThrow } from 'src/logic-functions/recall-api/remove-recall-bot-or-throw.util';
+import { type RemovedCallRecordingRecallFields } from 'src/logic-functions/types/removed-call-recording-recall-fields.type';
+import { type RemoveRecallBotsForRemovedCallRecordingResult } from 'src/logic-functions/types/remove-recall-bots-for-removed-call-recording-result.type';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { normalizeOptionalString } from 'src/logic-functions/utils/normalize-optional-string.util';
 
-export type RemovedCallRecordingRecallFields = {
-  externalBotId?: string | null;
-  botScheduleAttemptedAt?: string | null;
-};
-
-export type RemoveRecallBotsForRemovedCallRecordingResult = {
-  removedExternalBotIds: string[];
-};
-
 export const removeRecallBotsForRemovedCallRecording = async ({
+  client,
   callRecordingId,
+  status,
   externalBotId: rawExternalBotId,
   botScheduleAttemptedAt,
+  botScheduleIdempotencyKey: rawBotScheduleIdempotencyKey,
 }: RemovedCallRecordingRecallFields & {
+  client: CoreApiClient;
   callRecordingId: string;
 }): Promise<RemoveRecallBotsForRemovedCallRecordingResult> => {
+  if (
+    !isUndefined(status) &&
+    !RECALL_BOT_ACTIVE_CALL_RECORDING_STATUSES.some(
+      (activeStatus) => activeStatus === status,
+    )
+  ) {
+    return { removedExternalBotIds: [] };
+  }
+
   const externalBotId = normalizeOptionalString(rawExternalBotId);
+  const botScheduleIdempotencyKey = normalizeOptionalString(
+    rawBotScheduleIdempotencyKey,
+  );
 
   if (!isUndefined(externalBotId)) {
     await removeRecallBotOrThrow(externalBotId);
+    await clearCallRecordingBotOwnership(client, {
+      callRecordingId,
+      expectedExternalBotId: externalBotId,
+      expectedBotScheduleIdempotencyKey: botScheduleIdempotencyKey,
+    });
 
     return { removedExternalBotIds: [externalBotId] };
   }
 
-  if (isUndefined(normalizeOptionalString(botScheduleAttemptedAt))) {
+  const normalizedBotScheduleAttemptedAt = normalizeOptionalString(
+    botScheduleAttemptedAt,
+  );
+
+  if (isUndefined(normalizedBotScheduleAttemptedAt)) {
     return { removedExternalBotIds: [] };
   }
 
@@ -62,7 +84,13 @@ export const removeRecallBotsForRemovedCallRecording = async ({
       .filter(
         (bot) =>
           bot.metadata.twentyWorkspaceId === workspaceId &&
-          bot.metadata.twentyCallRecordingId === callRecordingId,
+          bot.metadata.twentyCallRecordingId === callRecordingId &&
+          matchesBotScheduleGeneration({
+            botScheduleIdempotencyKey: normalizeOptionalString(
+              bot.metadata.twentyBotScheduleIdempotencyKey,
+            ),
+            expectedBotScheduleIdempotencyKey: botScheduleIdempotencyKey,
+          }),
       )
       .map((bot) => bot.id),
   );
@@ -77,13 +105,30 @@ export const removeRecallBotsForRemovedCallRecording = async ({
     );
   }
 
+  if (
+    matchingExternalBotIds.length === 0 &&
+    !hasRecallBotScheduleAttemptSettled(normalizedBotScheduleAttemptedAt)
+  ) {
+    throw new Error(
+      `Recall bot creation is still settling for removed CallRecording ${callRecordingId}`,
+    );
+  }
+
+  await clearCallRecordingBotOwnership(client, {
+    callRecordingId,
+    expectedExternalBotId: null,
+    expectedBotScheduleIdempotencyKey: botScheduleIdempotencyKey,
+  });
+
   return { removedExternalBotIds: matchingExternalBotIds };
 };
 
-const removeRecallBotOrThrow = async (externalBotId: string): Promise<void> => {
-  if (await cancelOrEjectRecallBot(externalBotId)) {
-    return;
-  }
-
-  throw new Error(`Failed to remove Recall bot ${externalBotId}`);
-};
+const matchesBotScheduleGeneration = ({
+  botScheduleIdempotencyKey,
+  expectedBotScheduleIdempotencyKey,
+}: {
+  botScheduleIdempotencyKey: string | undefined;
+  expectedBotScheduleIdempotencyKey: string | undefined;
+}): boolean =>
+  isUndefined(botScheduleIdempotencyKey) ||
+  botScheduleIdempotencyKey === expectedBotScheduleIdempotencyKey;

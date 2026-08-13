@@ -10,8 +10,9 @@ import { buildRecallRoutingMetadata } from 'src/logic-functions/domain/build-rec
 import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
-import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
-import { cancelOrEjectRecallBot } from 'src/logic-functions/recall-api/cancel-or-eject-recall-bot.util';
+import { attachRecallBotToCallRecording } from 'src/logic-functions/data/attach-recall-bot-to-call-recording.util';
+import { claimCallRecordingBotScheduleAttempt } from 'src/logic-functions/data/claim-call-recording-bot-schedule-attempt.util';
+import { removeRecallBotOrThrow } from 'src/logic-functions/recall-api/remove-recall-bot-or-throw.util';
 import {
   computeRecallBotCreationIdempotencyKey,
   scheduleRecallBot,
@@ -56,35 +57,42 @@ export const scheduleRecallBotForCallRecording = async (
   }
 
   const automaticVideoOutput = await buildRecallBotAutomaticVideoOutput();
-  const metadata = buildRecallRoutingMetadata({
+  const routingMetadata = buildRecallRoutingMetadata({
     callRecordingId: callRecording.id,
     workspaceId,
   });
-  const idempotencyKey = computeRecallBotCreationIdempotencyKey({
+  const botScheduleAttemptedAt = resolveBotScheduleAttemptedAt({
+    callRecording: freshCallRecording,
     meetingUrl,
     joinAt,
-    metadata,
+    routingMetadata,
   });
-
-  // Persisted before the POST so a crash leaves proof that a bot creation may
-  // have reached Recall; while the stored key still matches the scheduling
-  // inputs, recovery can re-send the creation idempotently instead of asking
-  // Recall whether a bot already exists. Re-sends of the same key keep the
-  // first attempt's timestamp so repeated unknown outcomes age out of the
-  // resend window instead of staying trusted forever.
-  const recordedAttemptTimestamp =
-    freshCallRecording.botScheduleIdempotencyKey === idempotencyKey
-      ? freshCallRecording.botScheduleAttemptedAt
-      : undefined;
-
-  await updateCallRecording(client, {
-    id: callRecording.id,
-    data: {
-      botScheduleAttemptedAt:
-        recordedAttemptTimestamp ?? new Date().toISOString(),
-      botScheduleIdempotencyKey: idempotencyKey,
+  const botScheduleIdempotencyKey = computeRecallBotCreationIdempotencyKey({
+    meetingUrl,
+    joinAt,
+    metadata: routingMetadata,
+    botScheduleAttemptedAt,
+  });
+  const didClaimScheduleAttempt = await claimCallRecordingBotScheduleAttempt(
+    client,
+    {
+      callRecordingId: callRecording.id,
+      expectedBotScheduleAttemptedAt: freshCallRecording.botScheduleAttemptedAt,
+      expectedBotScheduleIdempotencyKey:
+        freshCallRecording.botScheduleIdempotencyKey,
+      botScheduleAttemptedAt,
+      botScheduleIdempotencyKey,
     },
-  });
+  );
+
+  if (!didClaimScheduleAttempt) {
+    return false;
+  }
+
+  const metadata = {
+    ...routingMetadata,
+    twentyBotScheduleIdempotencyKey: botScheduleIdempotencyKey,
+  };
 
   const scheduleResult = await scheduleRecallBot({
     meetingUrl,
@@ -92,7 +100,7 @@ export const scheduleRecallBotForCallRecording = async (
     joinAt,
     metadata,
     automaticVideoOutput,
-    idempotencyKey,
+    idempotencyKey: botScheduleIdempotencyKey,
   });
 
   if (!scheduleResult.ok) {
@@ -103,50 +111,111 @@ export const scheduleRecallBotForCallRecording = async (
     return false;
   }
 
-  return saveExternalBotIdOrCancelBotAfterCallRecordingDeletion({
+  return attachRecallBotOrRemoveAfterOwnershipLoss({
     client,
     callRecordingId: callRecording.id,
     externalBotId: scheduleResult.externalBotId,
+    botScheduleIdempotencyKey,
   });
 };
 
-const saveExternalBotIdOrCancelBotAfterCallRecordingDeletion = async ({
+const resolveBotScheduleAttemptedAt = ({
+  callRecording,
+  meetingUrl,
+  joinAt,
+  routingMetadata,
+}: {
+  callRecording: CallRecordingRecord;
+  meetingUrl: string;
+  joinAt: string;
+  routingMetadata: ReturnType<typeof buildRecallRoutingMetadata>;
+}): string => {
+  const recordedAttemptTimestamp = callRecording.botScheduleAttemptedAt;
+  const recordedIdempotencyKey = callRecording.botScheduleIdempotencyKey;
+
+  if (
+    !isUndefined(recordedAttemptTimestamp) &&
+    !isUndefined(recordedIdempotencyKey) &&
+    recordedIdempotencyKey ===
+      computeRecallBotCreationIdempotencyKey({
+        meetingUrl,
+        joinAt,
+        metadata: routingMetadata,
+        botScheduleAttemptedAt: recordedAttemptTimestamp,
+      })
+  ) {
+    return recordedAttemptTimestamp;
+  }
+
+  return new Date().toISOString();
+};
+
+const attachRecallBotOrRemoveAfterOwnershipLoss = async ({
   client,
   callRecordingId,
   externalBotId,
+  botScheduleIdempotencyKey,
 }: {
   client: CoreApiClient;
   callRecordingId: string;
   externalBotId: string;
+  botScheduleIdempotencyKey: string;
 }): Promise<boolean> => {
+  let didAttachRecallBot = false;
+
   try {
-    await updateCallRecording(client, {
-      id: callRecordingId,
-      data: { externalBotId },
+    didAttachRecallBot = await attachRecallBotToCallRecording(client, {
+      callRecordingId,
+      externalBotId,
+      botScheduleIdempotencyKey,
     });
-
-    return true;
   } catch (writeBackError) {
-    let callRecordingAfterWriteBackFailure: CallRecordingRecord | undefined;
-
     try {
-      callRecordingAfterWriteBackFailure = (
+      const callRecordingAfterWriteBackFailure = (
         await findCallRecordingsByIds(client, [callRecordingId])
       )[0];
+
+      if (
+        callRecordingAfterWriteBackFailure?.externalBotId === externalBotId &&
+        callRecordingAfterWriteBackFailure.botScheduleIdempotencyKey ===
+          botScheduleIdempotencyKey
+      ) {
+        return true;
+      }
+
+      if (
+        callRecordingAfterWriteBackFailure?.recordingRequestStatus ===
+          CallRecordingRequestStatus.REQUESTED &&
+        callRecordingAfterWriteBackFailure.status ===
+          CallRecordingStatus.SCHEDULED &&
+        isUndefined(callRecordingAfterWriteBackFailure.externalBotId) &&
+        callRecordingAfterWriteBackFailure.botScheduleIdempotencyKey ===
+          botScheduleIdempotencyKey
+      ) {
+        throw writeBackError;
+      }
     } catch {
       throw writeBackError;
     }
-
-    if (!isUndefined(callRecordingAfterWriteBackFailure)) {
-      throw writeBackError;
-    }
-
-    if (!(await cancelOrEjectRecallBot(externalBotId))) {
-      throw new Error(
-        `Failed to remove Recall bot ${externalBotId} after CallRecording ${callRecordingId} was deleted`,
-      );
-    }
-
-    return false;
   }
+
+  if (didAttachRecallBot) {
+    return true;
+  }
+
+  const callRecordingAfterOwnershipLoss = (
+    await findCallRecordingsByIds(client, [callRecordingId])
+  )[0];
+
+  if (
+    callRecordingAfterOwnershipLoss?.externalBotId === externalBotId &&
+    callRecordingAfterOwnershipLoss.botScheduleIdempotencyKey ===
+      botScheduleIdempotencyKey
+  ) {
+    return true;
+  }
+
+  await removeRecallBotOrThrow(externalBotId);
+
+  return false;
 };

@@ -96,7 +96,10 @@ export const computeRecallBotCreationIdempotencyKey = ({
   meetingUrl,
   joinAt,
   metadata,
-}: Pick<ScheduleRecallBotArgs, 'meetingUrl' | 'joinAt' | 'metadata'>): string =>
+  botScheduleAttemptedAt,
+}: Pick<ScheduleRecallBotArgs, 'meetingUrl' | 'joinAt' | 'metadata'> & {
+  botScheduleAttemptedAt?: string;
+}): string =>
   createHash('sha256')
     .update(
       JSON.stringify({
@@ -104,6 +107,7 @@ export const computeRecallBotCreationIdempotencyKey = ({
         callRecordingId: metadata.twentyCallRecordingId,
         meetingUrl,
         joinAt,
+        botScheduleAttemptedAt,
       }),
     )
     .digest('hex');

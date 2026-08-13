@@ -5,7 +5,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vite
 
 import { cancelCallRecordingRequest } from 'src/logic-functions/flows/cancel-call-recording-request.util';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
-import { retryFailedRecallCancellations } from 'src/logic-functions/flows/retry-failed-recall-cancellations.util';
+import { retryUnresolvedRecallBotRemovals } from 'src/logic-functions/flows/retry-unresolved-recall-bot-removals.util';
 import { scheduleRecallBotsForPendingCallRecordings } from 'src/logic-functions/flows/schedule-recall-bots-for-pending-call-recordings.util';
 import { processRecallWebhookHandler } from 'src/logic-functions/process-recall-webhook';
 
@@ -554,7 +554,7 @@ describe('call recorder app lifecycle (integration)', () => {
   const runPendingRecoveryCron = () =>
     scheduleRecallBotsForPendingCallRecordings({ client, now: new Date() });
   const runCancellationRetryCron = () =>
-    retryFailedRecallCancellations({ client, now: new Date() });
+    retryUnresolvedRecallBotRemovals({ client });
 
   describe('scheduling from calendar changes', () => {
     it('creates a recording and schedules a Recall bot for a meeting with recording enabled', async () => {

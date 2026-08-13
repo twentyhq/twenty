@@ -28,6 +28,7 @@ type RecallBotApiRequestResult<TData> =
   | {
       ok: false;
       status: number | null;
+      errorCode?: string;
       errorMessage: string;
     };
 
@@ -128,6 +129,8 @@ const performRecallBotApiRequestAttempt = async <TData>({
   }
 
   if (!response.ok) {
+    const recallApiError = await extractRecallApiError(response);
+
     return {
       isRetryable: isRetryableRecallApiStatus(response.status),
       retryAfterMs: parseRecallRetryAfterMs(
@@ -137,7 +140,10 @@ const performRecallBotApiRequestAttempt = async <TData>({
       result: {
         ok: false,
         status: response.status,
-        errorMessage: await extractRecallApiErrorMessage(response),
+        ...(isUndefined(recallApiError.errorCode)
+          ? {}
+          : { errorCode: recallApiError.errorCode }),
+        errorMessage: recallApiError.errorMessage,
       },
     };
   }
@@ -178,16 +184,26 @@ const buildRecallApiAuthorizationHeader = (apiKey: string): string => {
     : `Token ${trimmedApiKey}`;
 };
 
-const extractRecallApiErrorMessage = async (
+const extractRecallApiError = async (
   response: Response,
-): Promise<string> => {
+): Promise<{ errorCode?: string; errorMessage: string }> => {
   const fallback = `Recall API responded with HTTP ${response.status}`;
 
   try {
     const body = (await response.json()) as unknown;
+    const errorCode =
+      typeof body === 'object' &&
+      body !== null &&
+      'code' in body &&
+      typeof body.code === 'string'
+        ? body.code
+        : undefined;
 
-    return `${fallback}: ${JSON.stringify(body)}`;
+    return {
+      ...(isUndefined(errorCode) ? {} : { errorCode }),
+      errorMessage: `${fallback}: ${JSON.stringify(body)}`,
+    };
   } catch {
-    return fallback;
+    return { errorMessage: fallback };
   }
 };

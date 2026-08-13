@@ -2,22 +2,19 @@ import { isUndefined } from '@sniptt/guards';
 
 import { ACTIVE_RECALL_BOT_STATUSES } from 'src/logic-functions/constants/active-recall-bot-statuses';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
-import { listScheduledRecallBots } from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
+import {
+  listScheduledRecallBots,
+  type RecallScheduledBot,
+} from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
+import { type FindScheduledRecallBotsByCallRecordingIdResult } from 'src/logic-functions/types/find-scheduled-recall-bots-by-call-recording-id-result.type';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
-export type FindScheduledRecallBotIdsByCallRecordingIdResult =
-  | { ok: true; externalBotIdByCallRecordingId: Map<string, string> }
-  | { ok: false };
-
-// One workspace-wide list request covers every pending recording; Recall's
-// list endpoint has the tightest rate budget, so per-recording lookups must
-// not fan out.
-export const findScheduledRecallBotIdsByCallRecordingId =
-  async (): Promise<FindScheduledRecallBotIdsByCallRecordingIdResult> => {
+export const findScheduledRecallBotsByCallRecordingId =
+  async (): Promise<FindScheduledRecallBotsByCallRecordingIdResult> => {
     const workspaceId = getCurrentWorkspaceId();
 
     if (isUndefined(workspaceId)) {
-      return { ok: true, externalBotIdByCallRecordingId: new Map() };
+      return { ok: true, recallBotsByCallRecordingId: new Map() };
     }
 
     const listResult = await listScheduledRecallBots({
@@ -33,8 +30,6 @@ export const findScheduledRecallBotIdsByCallRecordingId =
       return { ok: false };
     }
 
-    // A truncated list can hide existing bots; callers treat a map miss as
-    // permission to create, so an incomplete map must read as a failed lookup.
     if (listResult.truncated) {
       console.warn(
         '[call-recorder] Recall bot list was truncated; deferring bot recovery to the next run',
@@ -43,20 +38,20 @@ export const findScheduledRecallBotIdsByCallRecordingId =
       return { ok: false };
     }
 
-    const externalBotIdByCallRecordingId = new Map<string, string>();
+    const recallBotsByCallRecordingId = new Map<string, RecallScheduledBot[]>();
 
     for (const bot of listResult.bots) {
       const callRecordingId = bot.metadata.twentyCallRecordingId;
 
-      if (
-        !isNonEmptyString(callRecordingId) ||
-        externalBotIdByCallRecordingId.has(callRecordingId)
-      ) {
+      if (!isNonEmptyString(callRecordingId)) {
         continue;
       }
 
-      externalBotIdByCallRecordingId.set(callRecordingId, bot.id);
+      recallBotsByCallRecordingId.set(callRecordingId, [
+        ...(recallBotsByCallRecordingId.get(callRecordingId) ?? []),
+        bot,
+      ]);
     }
 
-    return { ok: true, externalBotIdByCallRecordingId };
+    return { ok: true, recallBotsByCallRecordingId };
   };

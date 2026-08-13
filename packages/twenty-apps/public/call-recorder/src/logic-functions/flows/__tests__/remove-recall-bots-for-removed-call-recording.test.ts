@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { removeRecallBotsForRemovedCallRecording } from 'src/logic-functions/flows/remove-recall-bots-for-removed-call-recording.util';
 
@@ -15,6 +16,9 @@ const buildAccessToken = (payload: Record<string, unknown>): string =>
 
 describe('removeRecallBotsForRemovedCallRecording', () => {
   const fetchMock = vi.fn();
+  const client = {
+    mutation: vi.fn(async () => ({ updateCallRecordings: [] })),
+  } as unknown as CoreApiClient;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -32,12 +36,14 @@ describe('removeRecallBotsForRemovedCallRecording', () => {
     vi.unstubAllGlobals();
     vi.unstubAllEnvs();
     vi.restoreAllMocks();
+    vi.useRealTimers();
   });
 
   it('removes the exact bot without listing workspace bots', async () => {
     fetchMock.mockResolvedValue(new Response(null, { status: 204 }));
 
     const result = await removeRecallBotsForRemovedCallRecording({
+      client,
       callRecordingId: CALL_RECORDING_ID,
       externalBotId: 'recall-bot-1',
       botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
@@ -53,6 +59,7 @@ describe('removeRecallBotsForRemovedCallRecording', () => {
 
   it('does nothing when bot scheduling was never attempted', async () => {
     const result = await removeRecallBotsForRemovedCallRecording({
+      client,
       callRecordingId: CALL_RECORDING_ID,
     });
 
@@ -64,6 +71,7 @@ describe('removeRecallBotsForRemovedCallRecording', () => {
     fetchMock.mockResolvedValue(new Response(null, { status: 204 }));
 
     const result = await removeRecallBotsForRemovedCallRecording({
+      client,
       callRecordingId: CALL_RECORDING_ID,
       externalBotId: 'recall-bot-1',
     });
@@ -113,6 +121,7 @@ describe('removeRecallBotsForRemovedCallRecording', () => {
     );
 
     const result = await removeRecallBotsForRemovedCallRecording({
+      client,
       callRecordingId: CALL_RECORDING_ID,
       botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
     });
@@ -156,6 +165,7 @@ describe('removeRecallBotsForRemovedCallRecording', () => {
 
     await expect(
       removeRecallBotsForRemovedCallRecording({
+        client,
         callRecordingId: CALL_RECORDING_ID,
         externalBotId: 'recall-bot-1',
       }),
@@ -171,12 +181,33 @@ describe('removeRecallBotsForRemovedCallRecording', () => {
 
     await expect(
       removeRecallBotsForRemovedCallRecording({
+        client,
         callRecordingId: CALL_RECORDING_ID,
         botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
       }),
     ).rejects.toThrow(
       `Failed to find Recall bots for removed CallRecording ${CALL_RECORDING_ID}`,
     );
+  });
+
+  it('keeps a recent unresolved attempt retryable when no bot is visible yet', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-01-01T10:01:00.000Z'));
+    fetchMock.mockResolvedValue(
+      new Response(JSON.stringify({ next: null, results: [] }), {
+        status: 200,
+      }),
+    );
+
+    await expect(
+      removeRecallBotsForRemovedCallRecording({
+        client,
+        callRecordingId: CALL_RECORDING_ID,
+        botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
+      }),
+    ).rejects.toThrow('Recall bot creation is still settling');
+
+    expect(client.mutation).not.toHaveBeenCalled();
   });
 
   it('removes fetched bots before reporting a truncated exact lookup', async () => {
@@ -217,6 +248,7 @@ describe('removeRecallBotsForRemovedCallRecording', () => {
 
     await expect(
       removeRecallBotsForRemovedCallRecording({
+        client,
         callRecordingId: CALL_RECORDING_ID,
         botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
       }),
@@ -229,5 +261,19 @@ describe('removeRecallBotsForRemovedCallRecording', () => {
       `${BASE_URL}/bot/recall-bot-fetched/`,
       expect.objectContaining({ method: 'DELETE' }),
     );
+  });
+
+  it('does not command Recall after the bot lifecycle has finished', async () => {
+    const result = await removeRecallBotsForRemovedCallRecording({
+      client,
+      callRecordingId: CALL_RECORDING_ID,
+      status: 'COMPLETED',
+      externalBotId: 'recall-bot-1',
+      botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
+    });
+
+    expect(result).toEqual({ removedExternalBotIds: [] });
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(client.mutation).not.toHaveBeenCalled();
   });
 });

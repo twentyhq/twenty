@@ -3,10 +3,8 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { PENDING_CALL_RECORDING_REQUESTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/pending-call-recording-requests-logic-function-universal-identifier';
 import { PENDING_CALL_RECORDING_REQUESTS_CRON_PATTERN } from 'src/logic-functions/constants/pending-call-recording-requests-cron-pattern';
-import {
-  retryFailedRecallCancellations,
-  type RetryFailedRecallCancellationsResult,
-} from 'src/logic-functions/flows/retry-failed-recall-cancellations.util';
+import { retryUnresolvedRecallBotRemovals } from 'src/logic-functions/flows/retry-unresolved-recall-bot-removals.util';
+import { type RetryUnresolvedRecallBotRemovalsResult } from 'src/logic-functions/types/retry-unresolved-recall-bot-removals-result.type';
 import {
   scheduleRecallBotsForPendingCallRecordings,
   type ScheduleRecallBotsForPendingCallRecordingsResult,
@@ -23,12 +21,12 @@ const processPendingCallRecordingRequestsHandler =
 
     const pendingCallRecordingScheduleResult =
       await scheduleRecallBotsForPendingCallRecordingsSafely(client, now);
-    const failedCancellationResult =
-      await retryFailedRecallCancellationsSafely(client, now);
+    const unresolvedRemovalResult =
+      await retryUnresolvedRecallBotRemovalsSafely(client);
 
     return {
       pendingCallRecordingScheduleResult,
-      failedCancellationResult,
+      unresolvedRemovalResult,
     };
   };
 
@@ -43,14 +41,13 @@ const scheduleRecallBotsForPendingCallRecordingsSafely = async (
   }
 };
 
-const retryFailedRecallCancellationsSafely = async (
+const retryUnresolvedRecallBotRemovalsSafely = async (
   client: CoreApiClient,
-  now: Date,
-): Promise<RetryFailedRecallCancellationsResult | StepFailure> => {
+): Promise<RetryUnresolvedRecallBotRemovalsResult | StepFailure> => {
   try {
-    return await retryFailedRecallCancellations({ client, now });
+    return await retryUnresolvedRecallBotRemovals({ client });
   } catch (error) {
-    return buildStepFailure('failed cancellation retry', error);
+    return buildStepFailure('unresolved Recall bot removal retry', error);
   }
 };
 
@@ -59,7 +56,7 @@ export default defineLogicFunction({
     PENDING_CALL_RECORDING_REQUESTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'process-pending-call-recording-requests',
   description:
-    'Processes pending CallRecording requests by attaching or scheduling missing Recall bots and retrying incomplete cancellations.',
+    'Processes pending CallRecording requests and retries unresolved Recall bot ownership.',
   timeoutSeconds: 250,
   handler: processPendingCallRecordingRequestsHandler,
   cronTriggerSettings: {

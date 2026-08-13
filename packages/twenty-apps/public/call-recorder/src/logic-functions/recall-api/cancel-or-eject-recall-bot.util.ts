@@ -1,14 +1,19 @@
-import { isNull } from '@sniptt/guards';
+import { isNull, isUndefined } from '@sniptt/guards';
 
 import { cancelRecallBot } from 'src/logic-functions/recall-api/cancel-recall-bot.util';
 import { ejectRecallBot } from 'src/logic-functions/recall-api/eject-recall-bot.util';
+
+const RECALL_BOT_ALREADY_INACTIVE_ERROR_CODES = new Set([
+  'cannot_command_completed_bot',
+  'cannot_command_unstarted_bot',
+]);
 
 export const cancelOrEjectRecallBot = async (
   externalBotId: string,
 ): Promise<boolean> => {
   const cancelResult = await cancelRecallBot({ externalBotId });
 
-  if (cancelResult.ok) {
+  if (cancelResult.ok || isRecallBotAlreadyInactive(cancelResult.errorCode)) {
     return true;
   }
 
@@ -18,7 +23,7 @@ export const cancelOrEjectRecallBot = async (
   if (!isNull(cancelResult.status)) {
     const ejectResult = await ejectRecallBot({ externalBotId });
 
-    if (ejectResult.ok) {
+    if (ejectResult.ok || isRecallBotAlreadyInactive(ejectResult.errorCode)) {
       return true;
     }
 
@@ -31,3 +36,7 @@ export const cancelOrEjectRecallBot = async (
 
   return false;
 };
+
+const isRecallBotAlreadyInactive = (errorCode: string | undefined): boolean =>
+  !isUndefined(errorCode) &&
+  RECALL_BOT_ALREADY_INACTIVE_ERROR_CODES.has(errorCode);

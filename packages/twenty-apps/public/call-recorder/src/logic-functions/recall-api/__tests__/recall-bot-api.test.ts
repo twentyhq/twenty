@@ -906,6 +906,20 @@ describe('recall bot api', () => {
       warnSpy.mockRestore();
     });
 
+    it('treats a completed provider bot as already removed', async () => {
+      fetchMock.mockResolvedValue({
+        ok: false,
+        status: 400,
+        json: async () => ({
+          code: 'cannot_command_completed_bot',
+          detail: 'The bot has already completed.',
+        }),
+      });
+
+      expect(await cancelOrEjectRecallBot('recall-bot-id')).toBe(true);
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
     it('defers 507 adhoc pool exhaustion instead of sleeping in-process', async () => {
       fetchMock.mockResolvedValue({
         ok: false,

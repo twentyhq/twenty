@@ -68,6 +68,9 @@ type CallRecordingNode = {
   externalBotId?: string | null;
   externalRecordingId?: string | null;
   callRecorderFailureReason?: string | null;
+  botScheduleAttemptedAt?: string | null;
+  botScheduleIdempotencyKey?: string | null;
+  deletedAt?: string | null;
 };
 
 type FakeCoreApiClientFixture = {
@@ -168,6 +171,25 @@ class FakeCoreApiClient {
       };
     }
 
+    if (mutation.updateCallRecordings !== undefined) {
+      const { filter, data } = mutation.updateCallRecordings.__args;
+      const matchingCallRecordings = this.callRecordings.filter(
+        (callRecording) => matchesCallRecordingFilter(callRecording, filter),
+      );
+
+      matchingCallRecordings.forEach((callRecording) => {
+        Object.assign(callRecording, data);
+      });
+      this.mutations.push({
+        name: 'updateCallRecordings',
+        args: { filter, data },
+      });
+
+      return {
+        updateCallRecordings: matchingCallRecordings.map(({ id }) => ({ id })),
+      };
+    }
+
     throw new Error(`Unhandled mutation: ${JSON.stringify(mutation)}`);
   }
 
@@ -189,6 +211,18 @@ class FakeCoreApiClient {
     );
   }
 }
+
+const matchesCallRecordingFilter = (
+  callRecording: CallRecordingNode,
+  filter: Record<string, { eq?: string; is?: string }>,
+): boolean =>
+  Object.entries(filter).every(([fieldName, fieldFilter]) => {
+    const value = callRecording[fieldName as keyof CallRecordingNode];
+
+    return fieldFilter.is === 'NULL'
+      ? value === null || value === undefined
+      : value === fieldFilter.eq;
+  });
 
 const buildConnection = <Node>(nodes: Node[]) => ({
   pageInfo: {
@@ -296,10 +330,11 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
       expect.objectContaining({
         meeting_url: 'https://meet.google.com/customer-sync',
         join_at: FUTURE_RECALL_BOT_JOIN_AT,
-        metadata: {
+        metadata: expect.objectContaining({
           twentyWorkspaceId: WORKSPACE_ID,
           twentyCallRecordingId: buildCustomerSyncCallRecordingId(),
-        },
+          twentyBotScheduleIdempotencyKey: expect.any(String),
+        }),
       }),
     );
   });
@@ -881,8 +916,8 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     class CancelCleanupFailureFakeCoreApiClient extends FakeCoreApiClient {
       override async mutation(mutation: any): Promise<any> {
         if (
-          mutation.updateCallRecording !== undefined &&
-          mutation.updateCallRecording.__args.data.externalBotId === null
+          mutation.updateCallRecordings !== undefined &&
+          mutation.updateCallRecordings.__args.data.externalBotId === null
         ) {
           throw new Error('recall exploded');
         }
