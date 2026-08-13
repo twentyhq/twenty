@@ -11,6 +11,7 @@ import { In } from 'typeorm';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { FilesFieldSync } from 'src/engine/twenty-orm/field-operations/files-field-sync/files-field-sync';
 import { validateOperationIsPermittedOrThrow } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
@@ -64,9 +65,17 @@ export class WorkspaceRepositoryV2 {
 
   private readonly options: WorkspaceRepositoryV2Options;
 
+  private _filesFieldSync?: FilesFieldSync;
+
   constructor(options: WorkspaceRepositoryV2Options) {
     this.options = options;
     this.objectRecordsPermissions = options.objectRecordsPermissions;
+  }
+
+  private get filesFieldSync(): FilesFieldSync {
+    return (this._filesFieldSync ??= new FilesFieldSync(
+      this.options.internalContext,
+    ));
   }
 
   async executeRaw<T extends Record<string, unknown>>(
@@ -122,8 +131,33 @@ export class WorkspaceRepositoryV2 {
     generatedMaps: ObjectRecord[];
     raw: ObjectRecord[];
   }> {
+    if (records.length === 0) {
+      return { identifiers: [], generatedMaps: [], raw: [] };
+    }
+
+    const filesFieldDiff =
+      this.filesFieldSync.computeFilesFieldDiffBeforeInsert(
+        records,
+        this.options.tableShape.nameSingular,
+      );
+
+    let filesFieldFileIds = null;
+    let recordsToInsert = records;
+
+    if (isDefined(filesFieldDiff)) {
+      const enriched = await this.filesFieldSync.enrichFilesFields({
+        entities: records,
+        filesFieldDiffByEntityIndex: filesFieldDiff,
+        workspaceId: this.options.internalContext.workspaceId,
+        target: this.options.tableShape.nameSingular,
+      });
+
+      filesFieldFileIds = enriched.fileIds;
+      recordsToInsert = enriched.entities as Partial<ObjectRecord>[];
+    }
+
     const { columnNames, rows, parameters, insertedColumns, formattedRecords } =
-      this.buildInsertRows(records);
+      this.buildInsertRows(recordsToInsert);
 
     this.validateWriteIsPermitted({
       operationType: 'insert',
@@ -143,6 +177,10 @@ export class WorkspaceRepositoryV2 {
     });
 
     const rawRows = await this.executeRaw<ObjectRecord>(sql, parameters);
+
+    if (isDefined(filesFieldFileIds)) {
+      await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
+    }
 
     const generatedMaps = this.formatResult<ObjectRecord[]>(rawRows);
     const insertedIds = rawRows.map((row) => row.id).filter(isNonEmptyString);
@@ -167,13 +205,58 @@ export class WorkspaceRepositoryV2 {
     generatedMaps: ObjectRecord[];
     raw: ObjectRecord[];
   }> {
+    if (inputs.length === 0) {
+      return { identifiers: [], generatedMaps: [], raw: [] };
+    }
+
     const recordsBefore: ObjectRecord[] = [];
     const recordsAfter: ObjectRecord[] = [];
     const generatedMaps: ObjectRecord[] = [];
 
+    const rawBeforeByInputIndex: ObjectRecord[][] = [];
+    const existingRecordsMapById: Record<string, ObjectRecord> = {};
+
     for (const input of inputs) {
+      const rawBefore = await this.buildIdsEventSnapshotQueryBuilder([
+        input.id,
+      ]).getMany<ObjectRecord>({ noFormatting: true });
+
+      rawBeforeByInputIndex.push(rawBefore);
+
+      for (const formattedRecord of this.formatResult<ObjectRecord[]>(
+        rawBefore,
+      )) {
+        if (isDefined(formattedRecord.id)) {
+          existingRecordsMapById[formattedRecord.id] = formattedRecord;
+        }
+      }
+    }
+
+    let dataByInputIndex = inputs.map((input) => input.data);
+    let filesFieldFileIds = null;
+
+    const filesFieldDiff =
+      this.filesFieldSync.computeFilesFieldDiffBeforeUpsert(
+        dataByInputIndex,
+        this.options.tableShape.nameSingular,
+        existingRecordsMapById,
+      );
+
+    if (isDefined(filesFieldDiff)) {
+      const enriched = await this.filesFieldSync.enrichFilesFields({
+        entities: dataByInputIndex,
+        filesFieldDiffByEntityIndex: filesFieldDiff,
+        workspaceId: this.options.internalContext.workspaceId,
+        target: this.options.tableShape.nameSingular,
+      });
+
+      filesFieldFileIds = enriched.fileIds;
+      dataByInputIndex = enriched.entities as Partial<ObjectRecord>[];
+    }
+
+    for (const [index, input] of inputs.entries()) {
       const setColumns = formatData(
-        input.data,
+        dataByInputIndex[index],
         this.options.flatObjectMetadata,
         this.options.internalContext.flatFieldMetadataMaps,
       );
@@ -186,20 +269,13 @@ export class WorkspaceRepositoryV2 {
         updatedColumns: Object.keys(setColumns),
       });
 
-      const eventSelectQueryBuilder = this.buildIdsEventSnapshotQueryBuilder([
-        input.id,
-      ]);
+      const rawBeforeForInput = rawBeforeByInputIndex[index];
 
-      const recordsBeforeForInput =
-        await eventSelectQueryBuilder.getMany<ObjectRecord>({
-          noFormatting: true,
-        });
-
-      recordsBefore.push(...recordsBeforeForInput);
+      recordsBefore.push(...rawBeforeForInput);
 
       this.validateRLSPredicatesForWrittenRecords(
         this.formatResult<ObjectRecord[]>(
-          recordsBeforeForInput.map((record) => ({ ...record, ...setColumns })),
+          rawBeforeForInput.map((record) => ({ ...record, ...setColumns })),
         ),
         'Updated record does not satisfy row-level security constraints of your current role',
       );
@@ -219,10 +295,16 @@ export class WorkspaceRepositoryV2 {
       generatedMaps.push(...(result.generatedMaps as ObjectRecord[]));
 
       recordsAfter.push(
-        ...(await eventSelectQueryBuilder.getMany<ObjectRecord>({
+        ...(await this.buildIdsEventSnapshotQueryBuilder([
+          input.id,
+        ]).getMany<ObjectRecord>({
           noFormatting: true,
         })),
       );
+    }
+
+    if (isDefined(filesFieldFileIds)) {
+      await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
     }
 
     this.emitMutationEvent({ kind: 'update', recordsBefore, recordsAfter });
@@ -369,21 +451,6 @@ export class WorkspaceRepositoryV2 {
       this.applyRowLevelPermissionPredicates(selectQueryBuilder);
     }
 
-    const setColumns =
-      kind === 'update' && isDefined(data)
-        ? formatData(
-            data,
-            this.options.flatObjectMetadata,
-            this.options.internalContext.flatFieldMetadataMaps,
-          )
-        : undefined;
-
-    this.validateWriteIsPermitted({
-      operationType: kind,
-      columnsToReturn,
-      updatedColumns: isDefined(setColumns) ? Object.keys(setColumns) : [],
-    });
-
     const eventSelectQueryBuilder =
       this.buildEventSnapshotQueryBuilder(selectQueryBuilder);
 
@@ -406,6 +473,46 @@ export class WorkspaceRepositoryV2 {
       );
     }
 
+    let filesFieldFileIds = null;
+    let dataToWrite = data;
+
+    if (kind === 'update' && isDefined(data)) {
+      const formattedBefore = this.formatResult<ObjectRecord[]>(recordsBefore);
+      const filesFieldDiff =
+        this.filesFieldSync.computeFilesFieldDiffBeforeUpdateOne(
+          data,
+          this.options.tableShape.nameSingular,
+          formattedBefore,
+        );
+
+      if (isDefined(filesFieldDiff)) {
+        const enriched = await this.filesFieldSync.enrichFilesFields({
+          entities: formattedBefore.map(() => data),
+          filesFieldDiffByEntityIndex: filesFieldDiff,
+          workspaceId: this.options.internalContext.workspaceId,
+          target: this.options.tableShape.nameSingular,
+        });
+
+        filesFieldFileIds = enriched.fileIds;
+        dataToWrite = enriched.entities[0] as Partial<ObjectRecord>;
+      }
+    }
+
+    const setColumns =
+      kind === 'update' && isDefined(dataToWrite)
+        ? formatData(
+            dataToWrite,
+            this.options.flatObjectMetadata,
+            this.options.internalContext.flatFieldMetadataMaps,
+          )
+        : undefined;
+
+    this.validateWriteIsPermitted({
+      operationType: kind,
+      columnsToReturn,
+      updatedColumns: isDefined(setColumns) ? Object.keys(setColumns) : [],
+    });
+
     if (kind === 'update' && isDefined(setColumns)) {
       this.validateRLSPredicatesForWrittenRecords(
         this.formatResult<ObjectRecord[]>(
@@ -421,6 +528,10 @@ export class WorkspaceRepositoryV2 {
       columnsToReturn,
       setColumns,
     });
+
+    if (isDefined(filesFieldFileIds)) {
+      await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
+    }
 
     const recordsAfter =
       kind === 'delete'

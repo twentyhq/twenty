@@ -146,10 +146,14 @@ validates the field-level write permission over the resulting column set. Relati
 `{connect}` / `{disconnect}` input is resolved to plain join-column values before the write
 by `resolveNestedRelationsForOrmV2` on the base runner, which runs the unchanged v1
 `RelationNestedQueries` (its lookup select stays on v1) and then drops the relation
-field-name keys it leaves behind so only columns reach the v2 statement. Only files-field
-input still carves back to v1, because `FilesFieldSync` is coupled to the TypeORM builder
-and not yet reproduced here; `writeDataIsSupportedByOrmV2` makes that call, and both
-branches match their v1 counterpart byte for byte.
+field-name keys it leaves behind so only columns reach the v2 statement. Files-field input
+is synced through the same v1 `FilesFieldSync` the write query builders use: the repository
+computes the file diff against the before-image, enriches the record, and re-points the
+`File` rows after the statement runs. `FilesFieldSync` only needs the object name and the
+`coreDataSource`, both already on the v2 repository's `internalContext`, so no TypeORM entity
+is built. Nothing on the write path carves back to v1 any more: with the flag on, every
+create / update / upsert / delete / merge runs entirely on v2 regardless of the field types
+it touches.
 
 Row-level security is enforced on two layers, matching v1: the WHERE predicate (same
 resolver and renderer as the read path) bounds which rows a mutation can touch, and the
@@ -189,8 +193,8 @@ columns a given row omits so Postgres column defaults apply), validate the inser
 permission over the inserted columns, and emit `CREATED` then `UPSERTED` from an
 all-columns re-select of the inserted ids — matching the v1 insert builder. Relation
 `{connect}` / `{disconnect}` input is resolved to join columns by
-`resolveNestedRelationsForOrmV2` before the write, exactly as on the update path; only
-records that set a files field carve back to v1.
+`resolveNestedRelationsForOrmV2` before the write, and files-field input is synced through
+`FilesFieldSync` inside `runInsert`, exactly as on the update path.
 
 ## Transactions and merge
 
@@ -203,8 +207,9 @@ so every statement and event snapshot inside runs on the one connection.
 records' foreign keys to the survivor across each related object, hard-deletes the losers,
 and updates the survivor with the merged data — each step a `runMutation` on a
 transaction-scoped repository, so the same `UPDATED`/`DESTROYED`/`UPSERTED` events fire as
-v1. A merge whose merged data would set a relation-by-name or files field carves back to v1
-(`isMergeSupportedByOrmV2`); relation join columns are plain FK writes and stay on v2. Its
+v1. A merge whose merged data sets a relation by name carves back to v1
+(`isMergeSupportedByOrmV2`), because the merge path does not resolve `{connect}` input;
+relation join columns and files fields are handled on v2 like any other update. Its
 object-literal `where` support grew to cover scalar equality, `Equal`, and `IS NULL`
 alongside `In`.
 
@@ -221,12 +226,12 @@ read-then-split and conflict-target derivation are unchanged.
 
 ## Not covered yet
 
-- Files-field input on writes, resolved by `FilesFieldSync`, which is coupled to the
-  TypeORM builder. Update, create and upsert carve a records-set-a-files-field request back
-  to v1; merge additionally carves back when its merged data sets a relation by name.
-  Relation `{connect}` / `{disconnect}` input on create, update and upsert is resolved to
-  join columns before the v2 write, so it no longer forces v1. Relation *join columns* are
-  plain FK writes and stay on v2 throughout.
+- Merge whose merged data sets a relation *by name* (`{connect}`), because the merge
+  transaction does not run the nested-relation resolution the other write paths do; it
+  carves back to v1 (`isMergeSupportedByOrmV2`). Every other write — create, update, upsert,
+  delete, and the rest of merge — runs entirely on v2 when the flag is on, whatever field
+  types it touches (scalars, composites, relation join columns, relation `{connect}` /
+  `{disconnect}`, and files fields).
 - `find` / `findOne` / `findBy` and the rest of the repository surface used by
   `src/modules`.
 - DDL.

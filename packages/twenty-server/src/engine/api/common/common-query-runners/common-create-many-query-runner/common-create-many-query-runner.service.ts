@@ -25,7 +25,6 @@ import {
   CommonQueryNames,
   CreateManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
-import { writeDataIsSupportedByOrmV2 } from 'src/engine/api/common/common-query-runners/utils/write-data-is-supported-by-orm-v2.util';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type NestedRelationsReadPathOptions } from 'src/engine/api/common/types/nested-relations-read-path-options.type';
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
@@ -240,14 +239,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       const ormV2CanHandle =
         queryRunnerContext.featureFlagsMap[
           FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED
-        ] &&
-        args.data.every((record) =>
-          writeDataIsSupportedByOrmV2({
-            data: record,
-            flatObjectMetadata,
-            flatFieldMetadataMaps,
-          }),
-        );
+        ];
 
       if (ormV2CanHandle) {
         const writeRepository = this.getWriteRepository(queryRunnerContext);
@@ -356,8 +348,6 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       repository,
       result,
       columnsToReturn,
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
       queryRunnerContext,
     });
 
@@ -479,14 +469,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     const ormV2CanHandle =
       queryRunnerContext.featureFlagsMap[
         FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED
-      ] &&
-      updateInputs.every((input) =>
-        writeDataIsSupportedByOrmV2({
-          data: input.data,
-          flatObjectMetadata,
-          flatFieldMetadataMaps,
-        }),
-      );
+      ];
 
     let savedRecords;
 
@@ -529,16 +512,12 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     repository,
     result,
     columnsToReturn,
-    flatObjectMetadata,
-    flatFieldMetadataMaps,
     queryRunnerContext,
   }: {
     recordsToInsert: Partial<ObjectRecord>[];
     repository: WorkspaceRepository<ObjectLiteral>;
     result: InsertResult;
     columnsToReturn: string[];
-    flatObjectMetadata: FlatObjectMetadata;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     queryRunnerContext: CommonExtendedQueryRunnerContext;
   }): Promise<void> {
     if (recordsToInsert.length === 0) {
@@ -548,14 +527,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     const ormV2CanHandle =
       queryRunnerContext.featureFlagsMap[
         FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED
-      ] &&
-      recordsToInsert.every((record) =>
-        writeDataIsSupportedByOrmV2({
-          data: record,
-          flatObjectMetadata,
-          flatFieldMetadataMaps,
-        }),
-      );
+      ];
 
     let insertResult;
 

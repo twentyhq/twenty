@@ -421,8 +421,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
 
       return (
         fieldMetadata.type !== FieldMetadataType.RELATION &&
-        fieldMetadata.type !== FieldMetadataType.MORPH_RELATION &&
-        fieldMetadata.type !== FieldMetadataType.FILES
+        fieldMetadata.type !== FieldMetadataType.MORPH_RELATION
       );
     });
   }
