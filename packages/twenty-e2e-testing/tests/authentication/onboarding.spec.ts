@@ -1,10 +1,8 @@
 import { randomUUID } from 'crypto';
 import { expect, test } from './fixture';
 
-// Creating a workspace has to start from the workspace-agnostic base domain.
-// The shared fixture points baseURL at the workspace subdomain the login setup
-// landed on, where the server resolves an existing workspace and refuses to
-// sign a new user up to it.
+// Signing up on the workspace subdomain the shared fixture points at is
+// refused, so create the workspace from the base domain instead.
 test.use({
   storageState: { cookies: [], origins: [] },
   baseURL: process.env.FRONTEND_BASE_URL ?? 'http://localhost:3001',
@@ -45,9 +43,8 @@ test('New workspace signup goes through every onboarding stage', async ({
   const installAppsHeading = page.getByText('Install your first apps');
   const createProfileHeading = page.getByText('Create profile');
 
-  // Both stages auto-skip themselves when the instance offers nothing to do
-  // there: no connected-account provider, no vetted marketplace app. That is
-  // how the e2e server is configured, so onboarding lands on the profile stage.
+  // Both stages auto-skip when the instance has no connected-account provider
+  // and no vetted marketplace app, which is how the e2e server is configured.
   await test.step('Sync-email stage (when shown)', async () => {
     await expect(
       syncEmailsHeading.or(installAppsHeading).or(createProfileHeading),

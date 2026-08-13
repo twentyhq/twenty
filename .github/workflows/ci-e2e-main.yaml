@@ -98,11 +98,8 @@ jobs:
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
           npx nx run twenty-server:database:reset
 
-      # The server serves the front so the browser origin always matches the API
-      # origin, workspace subdomains included. Cookie sessions are credentialed
-      # and only the exact SERVER_URL / FRONTEND_URL origins are allowlisted, so
-      # a front served on its own port cannot authenticate. This is also how the
-      # twenty docker image ships the front.
+      # Cookie sessions are credentialed, so the front only authenticates from
+      # the API's own origin, workspace subdomains included.
       - name: Serve the frontend from the server
         run: cp -r packages/twenty-front/build packages/twenty-server/dist/front
 
