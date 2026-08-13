@@ -73,8 +73,6 @@ export const DOCUMENTATION_PATHS = {
     '/developers/extend/apps/operations/cli',
   DEVELOPERS_EXTEND_APPS_OPERATIONS_OVERVIEW:
     '/developers/extend/apps/operations/overview',
-  DEVELOPERS_EXTEND_APPS_OPERATIONS_PREVIEW_DEPLOYMENTS:
-    '/developers/extend/apps/operations/preview-deployments',
   DEVELOPERS_EXTEND_APPS_OPERATIONS_PUBLISHING:
     '/developers/extend/apps/operations/publishing',
   DEVELOPERS_EXTEND_APPS_OPERATIONS_SYNC_AND_RECOVERY:

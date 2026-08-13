@@ -9,16 +9,11 @@ on:
       - packages/twenty-docker/**
       - packages/twenty-server/**
       - packages/twenty-front/**
-      # App PRs get the same env: the changed apps are installed on it, so the
-      # preview always shows the app on this PR's platform build — the only
-      # build that can exercise SDK capabilities landing in the same PR.
       - packages/twenty-apps/examples/**
       - packages/twenty-apps/internal/**
       - packages/twenty-apps/public/**
       - .github/workflows/preview-env-dispatch.yaml
 
-# Keyed by PR number: under pull_request_target github.ref is the BASE ref,
-# which would put every PR in one group and let them cancel each other.
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
   cancel-in-progress: true
@@ -44,9 +39,8 @@ jobs:
       contents: read
       pull-requests: read
     steps:
-      # Changed apps come from the PR files API rather than a checkout: under
-      # pull_request_target nothing from the PR head may be checked out here.
-      # ci-public installs each one on the preview env after it boots.
+      # Files API, not a checkout: under pull_request_target nothing from the
+      # PR head may be checked out here.
       - name: List changed apps
         id: apps
         env:
@@ -55,8 +49,6 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           set -euo pipefail
-          # Two steps so a gh api failure (rate limit, network) still fails the
-          # job loudly; only grep finding no app paths is a legitimate no-op.
           changed_files=$(gh api "repos/${REPOSITORY}/pulls/${PR_NUMBER}/files" --paginate --jq '.[].filename')
           app_paths=$(printf '%s\n' "$changed_files" \
             | grep -oE '^packages/twenty-apps/(examples|internal|public)/[a-z0-9][a-z0-9-]*' \
