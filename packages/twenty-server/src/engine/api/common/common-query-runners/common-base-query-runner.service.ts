@@ -67,7 +67,10 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { RelationNestedQueries } from 'src/engine/twenty-orm/field-operations/relation-nested-queries/relation-nested-queries';
+import {
+  type ConnectQueryRunner,
+  RelationNestedQueries,
+} from 'src/engine/twenty-orm/field-operations/relation-nested-queries/relation-nested-queries';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
@@ -518,7 +521,7 @@ export abstract class CommonBaseQueryRunnerService<
     queryRunnerContext: CommonExtendedQueryRunnerContext;
     writeRepository: WorkspaceRepositoryV2;
   }): Promise<Partial<ObjectRecord>[]> {
-    const { repository, flatObjectMetadata, flatFieldMetadataMaps } =
+    const { flatObjectMetadata, flatFieldMetadataMaps, rolePermissionConfig } =
       queryRunnerContext;
     const nameSingular = flatObjectMetadata.nameSingular;
 
@@ -533,11 +536,37 @@ export abstract class CommonBaseQueryRunnerService<
       return records;
     }
 
+    const workspaceDataSource = this.workspaceDataSourceV2Service.getDataSource(
+      {
+        useReplica: false,
+      },
+    );
+
+    const connectQueryRunner: ConnectQueryRunner = async ({
+      connectQueryConfig,
+      clause,
+      parameters,
+    }) => {
+      const targetObjectName = connectQueryConfig.targetObjectName;
+      const targetQueryBuilder = workspaceDataSource
+        .getRepository(targetObjectName, rolePermissionConfig)
+        .createQueryBuilder(targetObjectName);
+
+      targetQueryBuilder.select([]);
+      targetQueryBuilder.addSelect(`"${targetObjectName}"."id"`, 'id');
+
+      for (const [field] of connectQueryConfig.recordToConnectConditions[0]) {
+        targetQueryBuilder.addSelect(`"${targetObjectName}"."${field}"`, field);
+      }
+
+      return targetQueryBuilder.where(clause, parameters).getRawMany();
+    };
+
     const resolvedRecords =
       await relationNestedQueries.processRelationNestedQueries({
         entities: records,
         relationNestedConfig,
-        queryBuilder: repository.createQueryBuilder(nameSingular),
+        connectQueryRunner,
       });
 
     const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
