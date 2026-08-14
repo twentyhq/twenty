@@ -3,6 +3,7 @@ import { createContext, useLayoutEffect, useRef, useState } from 'react';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
+import { MOBILE_VIEWPORT } from './constants';
 import { ThemeScopeContext } from './ThemeScopeContext';
 import { themeCssVariables } from './themeCssVariables';
 
@@ -145,6 +146,34 @@ export const ThemeProvider = ({
     );
     setScopeContainer(isScoped ? wrapperRef.current : null);
   }, [colorScheme, applyToRoot, isScoped, overridesKey]);
+
+  // The theme CSS gives some tokens a different value below the mobile
+  // breakpoint. Those resolve through getComputedStyle, so crossing the
+  // breakpoint has to recompute or the JS theme keeps serving the old values
+  // while the CSS consumers have already switched.
+  useLayoutEffect(() => {
+    if (typeof window === 'undefined' || !isDefined(window.matchMedia)) {
+      return;
+    }
+
+    const mobileMediaQuery = window.matchMedia(
+      `(max-width: ${MOBILE_VIEWPORT}px)`,
+    );
+
+    const handleBreakpointChange = () => {
+      setTheme(
+        computeThemeFromCss(
+          isScoped ? (wrapperRef.current ?? undefined) : undefined,
+        ),
+      );
+    };
+
+    mobileMediaQuery.addEventListener('change', handleBreakpointChange);
+
+    return () => {
+      mobileMediaQuery.removeEventListener('change', handleBreakpointChange);
+    };
+  }, [isScoped]);
 
   const contextValue = { theme, colorScheme };
 

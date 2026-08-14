@@ -1046,3 +1046,19 @@
     corner-shape: var(--t-corner-shape, squircle);
   }
 }
+
+/* Touch targets and glyphs need more presence on a phone than a 14px cursor
+   does. ThemeProvider derives theme.icon.size.* from these variables at
+   runtime, so this one block moves both the CSS consumers and the ~300 JS
+   reads. Breakpoint mirrors MOBILE_VIEWPORT; CSS custom properties cannot be
+   used in media queries, so the number is repeated here. */
+@media (max-width: 768px) {
+  .light {
+    --t-icon-size-sm: 16;
+    --t-icon-size-md: 18;
+    --t-icon-size-lg: 22;
+    --t-icon-size-xl: 26;
+    --t-text-icon-size-medium: 18;
+    --t-text-icon-size-small: 16;
+  }
+}

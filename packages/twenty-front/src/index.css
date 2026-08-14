@@ -17,6 +17,24 @@ button {
   font-size: 13px;
 }
 
+/* Breakpoint mirrors MOBILE_VIEWPORT, which media queries cannot read from a
+   custom property. The type scale is rem-based, so the root carries all of it. */
+@media (max-width: 768px) {
+  html,
+  button {
+    font-size: 14px;
+  }
+
+  /* iOS Safari zooms the viewport whenever a focused field is under 16px.
+     Fields inherit the rem scale, so this has to beat their own rule, and it
+     has to keep winning as new inputs are added. */
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
 form {
   display: contents;
 }
