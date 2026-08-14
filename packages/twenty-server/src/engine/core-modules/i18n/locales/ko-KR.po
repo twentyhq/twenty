@@ -37,6 +37,11 @@ msgstr "\"{0}\"은(는) 복합 필드가 아닙니다. 하위 필드 선택을 �
 msgid "\"{0}\" is not a valid sub-field of \"{1}\"."
 msgstr "\"{0}\"은(는) \"{1}\"의 올바른 하위 필드가 아닙니다."
 
+#. js-lingui-id: gKGO2f
+#: src/engine/core-modules/user/utils/assert-workspace-member-update-values-are-valid.util.ts
+msgid "\"{fieldName}\" received an invalid value."
+msgstr ""
+
 #. js-lingui-id: SsRDX3
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
 msgid "\"{payloadKey}\" is not a valid workspace member field."

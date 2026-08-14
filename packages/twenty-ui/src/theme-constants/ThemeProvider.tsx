@@ -165,8 +165,10 @@ export const ThemeProvider = ({
 
   // The interface scale preference multiplies every scaled theme token
   // through --t-scale-user; writing it inline beats the stylesheet default.
+  // The provider owns the property on its target while mounted, so it is
+  // removed again on unmount or when the scale prop goes back to undefined.
   useLayoutEffect(() => {
-    if (!isDefined(scale) || typeof document === 'undefined') {
+    if (typeof document === 'undefined') {
       return;
     }
 
@@ -174,8 +176,20 @@ export const ThemeProvider = ({
       ? wrapperRef.current
       : document.documentElement;
 
-    scaleTarget?.style.setProperty('--t-scale-user', String(scale));
+    if (!isDefined(scaleTarget)) {
+      return;
+    }
+
+    if (isDefined(scale)) {
+      scaleTarget.style.setProperty('--t-scale-user', String(scale));
+    } else {
+      scaleTarget.style.removeProperty('--t-scale-user');
+    }
     recomputeTheme();
+
+    return () => {
+      scaleTarget.style.removeProperty('--t-scale-user');
+    };
   }, [scale, isScoped, recomputeTheme]);
 
   // The theme CSS gives some tokens a different value below the mobile

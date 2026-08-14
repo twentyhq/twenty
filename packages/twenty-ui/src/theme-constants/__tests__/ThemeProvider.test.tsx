@@ -167,6 +167,42 @@ describe('ThemeProvider', () => {
     ).toBe('');
   });
 
+  it('should remove the scale from the root element on unmount', () => {
+    setIconSizeMd(DESKTOP_ICON_SIZE_MD);
+    stubMatchMedia();
+
+    const { unmount } = renderProvider(1.25);
+    expect(
+      document.documentElement.style.getPropertyValue('--t-scale-user'),
+    ).toBe('1.25');
+
+    unmount();
+
+    expect(
+      document.documentElement.style.getPropertyValue('--t-scale-user'),
+    ).toBe('');
+  });
+
+  it('should remove the scale when the scale prop goes back to undefined', () => {
+    setIconSizeMd(DESKTOP_ICON_SIZE_MD);
+    stubMatchMedia();
+
+    const { rerender } = renderProvider(1.25);
+    expect(
+      document.documentElement.style.getPropertyValue('--t-scale-user'),
+    ).toBe('1.25');
+
+    rerender(
+      <ThemeProvider colorScheme="light">
+        <IconSizeProbe />
+      </ThemeProvider>,
+    );
+
+    expect(
+      document.documentElement.style.getPropertyValue('--t-scale-user'),
+    ).toBe('');
+  });
+
   it('should render without a matchMedia implementation', () => {
     setIconSizeMd(DESKTOP_ICON_SIZE_MD);
 
