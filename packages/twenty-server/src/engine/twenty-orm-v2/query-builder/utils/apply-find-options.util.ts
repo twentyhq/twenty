@@ -16,10 +16,16 @@ export type FindOptionsRelationsV2 = {
 
 export type FindOptionsSelectV2 = FindOptionsSelectLike | string[];
 
+// An order entry keyed by a relation field carries the column orders of the
+// related records, as TypeORM's nested find order does.
+export type FindOptionsOrderV2 = {
+  [key: string]: OrderByValueLike | OrderByConditionLike;
+};
+
 export type FindOptionsV2 = {
   where?: ObjectWhereLike | ObjectWhereLike[];
   select?: FindOptionsSelectV2;
-  order?: OrderByConditionLike;
+  order?: FindOptionsOrderV2;
   take?: number;
   skip?: number;
   withDeleted?: boolean;
@@ -86,19 +92,25 @@ const applyWhere = (
   });
 };
 
-const isRelationOrderValue = (
-  value: unknown,
-): value is Record<string, OrderByValueLike> =>
+const isRelationOrderValue = (value: unknown): value is OrderByConditionLike =>
   isDefined(value) &&
   typeof value === 'object' &&
   !('order' in value) &&
   !('nulls' in value);
 
+const isRelationOrderEntry = (
+  tableShape: WorkspaceTableShape,
+  key: string,
+  value: OrderByValueLike | OrderByConditionLike,
+): value is OrderByConditionLike =>
+  isDefined(tableShape.relationShapeByFieldName[key]) &&
+  isRelationOrderValue(value);
+
 // An order entry keyed by a relation field orders parents through the relation
 // and sorts the loaded child records; every other entry is a plain column order.
 export const splitFindOptionsOrder = (
   tableShape: WorkspaceTableShape,
-  order?: OrderByConditionLike,
+  order?: FindOptionsOrderV2,
 ): {
   columnOrder: OrderByConditionLike;
   orderByRelationFieldName: Record<string, OrderByConditionLike>;
@@ -107,15 +119,12 @@ export const splitFindOptionsOrder = (
   const orderByRelationFieldName: Record<string, OrderByConditionLike> = {};
 
   for (const [key, value] of Object.entries(order ?? {})) {
-    if (
-      isDefined(tableShape.relationShapeByFieldName[key]) &&
-      isRelationOrderValue(value)
-    ) {
+    if (isRelationOrderEntry(tableShape, key, value)) {
       orderByRelationFieldName[key] = value;
       continue;
     }
 
-    columnOrder[key] = value;
+    columnOrder[key] = value as OrderByValueLike;
   }
 
   return { columnOrder, orderByRelationFieldName };
@@ -159,18 +168,17 @@ const applyRelationOrderEntry = (
 
 const applyOrder = (
   queryBuilder: WorkspaceSelectQueryBuilderV2,
-  order: OrderByConditionLike,
+  order: FindOptionsOrderV2,
 ): void => {
   for (const [key, value] of Object.entries(order)) {
-    if (
-      isDefined(queryBuilder.tableShape.relationShapeByFieldName[key]) &&
-      isRelationOrderValue(value)
-    ) {
+    if (isRelationOrderEntry(queryBuilder.tableShape, key, value)) {
       applyRelationOrderEntry(queryBuilder, key, value);
       continue;
     }
 
-    queryBuilder.addOrderBy(...toOrderByArguments(key, value));
+    queryBuilder.addOrderBy(
+      ...toOrderByArguments(key, value as OrderByValueLike),
+    );
   }
 };
 
