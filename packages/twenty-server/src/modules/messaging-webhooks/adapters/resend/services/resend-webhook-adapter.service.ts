@@ -10,6 +10,7 @@ import {
   ResendWebhookVerifierService,
 } from 'src/modules/messaging-webhooks/adapters/resend/services/resend-webhook-verifier.service';
 import { type ResendWebhookEvent } from 'src/modules/messaging-webhooks/adapters/resend/types/resend-webhook-event.type';
+import { getResendEventTagValue } from 'src/modules/messaging-webhooks/adapters/resend/utils/get-resend-event-tag-value.util';
 import { InboundMailHandlerService } from 'src/modules/messaging-webhooks/handlers/inbound-mail-handler.service';
 import { OutboundSuppressionHandlerService } from 'src/modules/messaging-webhooks/handlers/outbound-suppression-handler.service';
 import { MessagingWebhookExceptionCode } from 'src/modules/messaging-webhooks/messaging-webhook-exception-code.enum';
@@ -71,7 +72,10 @@ export class ResendWebhookAdapterService {
       | MessageSuppressionReason.BOUNCE
       | MessageSuppressionReason.COMPLAINT,
   ): Promise<void> {
-    const workspaceId = event.data?.tags?.[RESEND_WORKSPACE_TAG_NAME];
+    const workspaceId = getResendEventTagValue(
+      event.data?.tags,
+      RESEND_WORKSPACE_TAG_NAME,
+    );
 
     if (!isNonEmptyString(workspaceId)) {
       this.logger.warn(

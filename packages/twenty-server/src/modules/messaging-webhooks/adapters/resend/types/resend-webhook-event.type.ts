@@ -1,14 +1,11 @@
-type ResendWebhookEventType =
-  | 'email.sent'
-  | 'email.delivered'
-  | 'email.bounced'
-  | 'email.complained'
-  | 'email.failed'
-  | 'email.delivery_delayed'
-  | 'email.received';
+// tags are documented as an object map but have historically also appeared
+// as { name, value } entries, so both shapes are accepted
+export type ResendWebhookEventTags =
+  | Record<string, string>
+  | { name?: string; value?: string }[];
 
 export type ResendWebhookEvent = {
-  type: ResendWebhookEventType | string;
+  type: string;
   created_at?: string;
   data?: {
     email_id?: string;
@@ -19,7 +16,7 @@ export type ResendWebhookEvent = {
     received_for?: string[];
     subject?: string;
     message_id?: string;
-    tags?: Record<string, string>;
+    tags?: ResendWebhookEventTags;
     bounce?: {
       type?: 'Permanent' | 'Transient' | 'Undetermined';
       subType?: string;
