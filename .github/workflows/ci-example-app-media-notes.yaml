@@ -83,6 +83,14 @@ jobs:
           npx nx reset:env twenty-front
           npx nx reset:env:e2e-testing-server twenty-server
 
+      # The shipped image compiles catalogs before building the front, so the
+      # generated ones are never committed. Without this the e2e would run
+      # against a build that shows message ids where the docker image shows text.
+      - name: Compile translations
+        run: |
+          npx nx run twenty-front:lingui:extract
+          npx nx run twenty-front:lingui:compile
+
       - name: Build frontend
         run: NODE_ENV=production npx nx build twenty-front
 
