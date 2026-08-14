@@ -475,7 +475,7 @@ Front components can trigger navigation, modals, and notifications using functio
 | `enqueueSnackbar(params)` | Show a toast notification |
 | `unmountFrontComponent()` | Unmount the component |
 | `updateProgress(progress)` | Update a progress indicator |
-| `uploadFile(file, { fieldMetadataId, fileName? })` | Upload a `Blob` into a FILES field; resolves to `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` or `{ status: 'failed', reason }` |
+| `uploadFile(file, { fieldMetadataId, fileName? })` | Upload a `Blob` into a FILES field; resolves to `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` or `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` |
 
 Here is an example that uses the host API to show a snackbar and close the side panel after an action completes:
 
