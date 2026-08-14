@@ -1,3 +1,4 @@
+import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
@@ -82,7 +83,7 @@ export const SidePanelRouter = () => {
           <CommandMenuContextProvider
             isInSidePanel={true}
             displayType="listItem"
-            containerType="command-menu-list"
+            containerType={CommandMenuItemContainerType.CommandMenuList}
           >
             <SidePanelSubPageRouter>
               {sidePanelPageComponent}

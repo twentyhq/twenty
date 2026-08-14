@@ -7,6 +7,7 @@ import { ClickHouseModule } from 'src/database/clickHouse/clickHouse.module';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { BillingGaugeService } from 'src/engine/core-modules/billing/billing-gauge.service';
+import { BillingSubscriptionItemResolver } from 'src/engine/core-modules/billing/billing-subscription-item.resolver';
 import { BillingResolver } from 'src/engine/core-modules/billing/billing.resolver';
 import { BillingSyncCustomerDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-customer-data.command';
 import { BillingSyncPlansDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-plans-data.command';
@@ -33,7 +34,6 @@ import { BillingSubscriptionPhaseService } from 'src/engine/core-modules/billing
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
-import { BillingUsageCapService } from 'src/engine/core-modules/billing/services/billing-usage-cap.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { ResourceCreditService } from 'src/engine/core-modules/billing/services/resource-credit.service';
@@ -88,6 +88,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingProductService,
     BillingSubscriptionPhaseService,
     BillingResolver,
+    BillingSubscriptionItemResolver,
     BillingPlanService,
     BillingWorkspaceMemberListener,
     BillingService,
@@ -97,7 +98,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingSyncPlansDataCommand,
     BillingUsageService,
     BillingUsageCacheService,
-    BillingUsageCapService,
     BillingPriceService,
     BillingCreditRolloverService,
     BillingCreditGrantService,
@@ -119,7 +119,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingService,
     BillingUsageService,
     BillingUsageCacheService,
-    BillingUsageCapService,
     BillingCreditRolloverService,
     BillingCreditGrantService,
     BillingCreditService,

@@ -8,7 +8,9 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { ClientQueryExecutor } from 'src/engine/twenty-orm-v2/executor/client-query-executor';
 import { PoolQueryExecutor } from 'src/engine/twenty-orm-v2/executor/pool-query-executor';
+import { type QueryExecutorV2 } from 'src/engine/twenty-orm-v2/executor/types/query-executor-v2.type';
 import {
   TwentyOrmV2Exception,
   TwentyOrmV2ExceptionCode,
@@ -22,6 +24,13 @@ const tableShapeCacheByFlatObjectMetadataMaps = new WeakMap<
   object,
   Map<string, WorkspaceTableShape>
 >();
+
+export type WorkspaceTransactionScopeV2 = {
+  getRepository: (
+    nameSingular: string,
+    rolePermissionConfig?: RolePermissionConfig,
+  ) => WorkspaceRepositoryV2;
+};
 
 export class WorkspaceDataSourceV2 {
   private readonly pool: Pool;
@@ -50,6 +59,62 @@ export class WorkspaceDataSourceV2 {
     nameSingular: string,
     rolePermissionConfig?: RolePermissionConfig,
   ): WorkspaceRepositoryV2 {
+    return this.buildRepository({
+      nameSingular,
+      rolePermissionConfig,
+      executor: new PoolQueryExecutor({ pool: this.pool }),
+    });
+  }
+
+  async transaction<T>(
+    work: (transactionScope: WorkspaceTransactionScopeV2) => Promise<T>,
+  ): Promise<T> {
+    return this.runInClientTransaction((executor) =>
+      work({
+        getRepository: (nameSingular, rolePermissionConfig) =>
+          this.buildRepository({
+            nameSingular,
+            rolePermissionConfig,
+            executor,
+            isTransactional: true,
+          }),
+      }),
+    );
+  }
+
+  private async runInClientTransaction<T>(
+    work: (executor: QueryExecutorV2) => Promise<T>,
+  ): Promise<T> {
+    const client = await this.pool.connect();
+
+    try {
+      await client.query('BEGIN');
+
+      const result = await work(new ClientQueryExecutor({ client }));
+
+      await client.query('COMMIT');
+
+      return result;
+    } catch (error) {
+      await client.query('ROLLBACK');
+
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
+  private buildRepository({
+    nameSingular,
+    rolePermissionConfig,
+    executor,
+    isTransactional = false,
+  }: {
+    nameSingular: string;
+    rolePermissionConfig?: RolePermissionConfig;
+    executor: QueryExecutorV2;
+    isTransactional?: boolean;
+  }): WorkspaceRepositoryV2 {
     const objectMetadataId =
       this.internalContext.objectIdByNameSingular[nameSingular];
 
@@ -60,6 +125,25 @@ export class WorkspaceDataSourceV2 {
       );
     }
 
+    return this.buildRepositoryForObjectMetadataId({
+      objectMetadataId,
+      rolePermissionConfig,
+      executor,
+      isTransactional,
+    });
+  }
+
+  private buildRepositoryForObjectMetadataId({
+    objectMetadataId,
+    rolePermissionConfig,
+    executor,
+    isTransactional = false,
+  }: {
+    objectMetadataId: string;
+    rolePermissionConfig?: RolePermissionConfig;
+    executor: QueryExecutorV2;
+    isTransactional?: boolean;
+  }): WorkspaceRepositoryV2 {
     const flatObjectMetadata =
       this.getFlatObjectMetadataOrThrow(objectMetadataId);
 
@@ -74,13 +158,32 @@ export class WorkspaceDataSourceV2 {
       flatObjectMetadata,
       internalContext: this.internalContext,
       authContext: this.authContext,
-      executor: new PoolQueryExecutor({ pool: this.pool }),
+      executor,
       objectRecordsPermissions,
       shouldBypassPermissionChecks,
       tableShapeByObjectMetadataId: (targetObjectMetadataId) =>
         this.getTableShape(targetObjectMetadataId),
       flatObjectMetadataByObjectMetadataId: (targetObjectMetadataId) =>
         this.getFlatObjectMetadataOrThrow(targetObjectMetadataId),
+      getRepositoryForObjectMetadataId: (targetObjectMetadataId) =>
+        this.buildRepositoryForObjectMetadataId({
+          objectMetadataId: targetObjectMetadataId,
+          rolePermissionConfig,
+          executor,
+          isTransactional,
+        }),
+      isTransactional,
+      runInNewTransaction: (work) =>
+        this.runInClientTransaction((transactionExecutor) =>
+          work(
+            this.buildRepositoryForObjectMetadataId({
+              objectMetadataId,
+              rolePermissionConfig,
+              executor: transactionExecutor,
+              isTransactional: true,
+            }),
+          ),
+        ),
     });
   }
 

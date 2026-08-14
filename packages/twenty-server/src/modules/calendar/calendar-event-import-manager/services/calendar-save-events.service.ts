@@ -37,19 +37,19 @@ export class CalendarSaveEventsService {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const calendarEventRepository =
-          await this.globalWorkspaceOrmManager.getRepository<CalendarEventWorkspaceEntity>(
+          await this.globalWorkspaceOrmManager.getV1Repository<CalendarEventWorkspaceEntity>(
             workspaceId,
             'calendarEvent',
           );
 
         const calendarChannelEventAssociationRepository =
-          await this.globalWorkspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+          await this.globalWorkspaceOrmManager.getV1Repository<CalendarChannelEventAssociationWorkspaceEntity>(
             workspaceId,
             'calendarChannelEventAssociation',
           );
 
         const workspaceDataSource =
-          await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+          await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSourceWithEntityMetadatas();
 
         await workspaceDataSource.transaction(
           async (transactionManager: WorkspaceEntityManager) => {

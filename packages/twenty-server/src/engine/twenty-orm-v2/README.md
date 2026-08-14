@@ -120,7 +120,7 @@ table-shape builder cannot represent. `GroupByWithRecordsV2Service` builds the i
 subquery with the v2 builder and runs the composed outer query through
 `repository.executeRaw`; the runner flag-branches between it and the v1 service.
 
-## Writes: delete, destroy and restore route through v2
+## Writes: delete, destroy, restore and (most) update route through v2
 
 `WorkspaceMutationQueryBuilderV2` generates `UPDATE` / `DELETE` / soft-delete / restore
 statements with `RETURNING`, reusing the same primitives as the select builder
@@ -129,16 +129,39 @@ generator. The select builder morphs into it: `.update()` / `.delete()` / `.soft
 / `.restore()` carry the current where clauses and parameters into the mutation, matching
 the TypeORM surface the mutation runners already call.
 
-`deleteMany`, `destroyMany` and `restoreMany` (and their `...One` delegates) flag-branch to
-this path. Each runner builds the filtered v2 select builder with
-`buildMutationQueryBuilderV2` (which rewrites a relation-traversal filter into an
-`id IN (subquery)` predicate, RLS inside the subquery) and hands it to
-`WorkspaceRepositoryV2.runMutation`, which owns the choreography the v1 mutation builders
-own: apply the row-level predicate, validate the write with the matching operation type,
-snapshot the affected rows before and after through a permission-bypassing all-columns
-select, run the statement, and emit the `DELETED` / `RESTORED` / `DESTROYED` batch event
-through the shared `formatTwentyOrmEventToDatabaseBatchEvent`. `getWriteRepository` on the
-base runner pins the primary and counts `orm-v2/write-path-used`.
+`deleteMany`, `destroyMany`, `restoreMany` and `updateMany` (and their `...One` delegates)
+flag-branch to this path through the shared `runFilteredMutation` on the base runner. Each
+builds the filtered v2 select builder with `buildMutationQueryBuilderV2` (which rewrites a
+relation-traversal filter into an `id IN (subquery)` predicate, RLS inside the subquery)
+and hands it to `WorkspaceRepositoryV2.runMutation`, which owns the choreography the v1
+mutation builders own: apply the row-level predicate, validate the write with the matching
+operation type, snapshot the affected rows before and after through a permission-bypassing
+all-columns select, run the statement, and emit the batch event(s) through the shared
+`formatTwentyOrmEventToDatabaseBatchEvent` — `DELETED` / `RESTORED` / `DESTROYED` for the
+soft ones, `UPDATED` then `UPSERTED` for update. `getWriteRepository` on the base runner
+pins the primary and counts `orm-v2/write-path-used`.
+
+Update flattens its input with the shared `formatData` (composite fields to columns) and
+validates the field-level write permission over the resulting column set. Relation
+`{connect}` / `{disconnect}` input is resolved to plain join-column values before the write
+by `resolveNestedRelationsForOrmV2` on the base runner, which runs the unchanged v1
+`RelationNestedQueries` (its lookup select stays on v1) and then drops the relation
+field-name keys it leaves behind so only columns reach the v2 statement. Files-field input
+is synced through the same v1 `FilesFieldSync` the write query builders use: the repository
+computes the file diff against the before-image, enriches the record, and re-points the
+`File` rows after the statement runs. `FilesFieldSync` only needs the object name and the
+`coreDataSource`, both already on the v2 repository's `internalContext`, so no TypeORM entity
+is built. Nothing on the write path carves back to v1 any more: with the flag on, every
+create / update / upsert / delete / merge runs entirely on v2 regardless of the field types
+it touches.
+
+Row-level security is enforced on two layers, matching v1: the WHERE predicate (same
+resolver and renderer as the read path) bounds which rows a mutation can touch, and the
+shared `validateRLSPredicatesForRecords` re-checks the written image in JS so a create
+cannot insert, nor an update move a row into, a state the role's predicate forbids. Insert
+validates the formatted input image, update the projected after-image (before-image merged
+with the SET values), exactly as `WorkspaceInsertQueryBuilder` / `WorkspaceUpdateQueryBuilder`
+do.
 
 Deliberate choices, the SQL ones asserted by exact-SQL unit tests:
 
@@ -161,19 +184,73 @@ Deliberate choices, the SQL ones asserted by exact-SQL unit tests:
   user-input error the read path already produces (v2 refuses to render a to-many join),
   rather than the row-multiplying join v1 would emit.
 
-Update, insert and upsert still keep `repository` (v1).
+## Writes: create (non-upsert insert) routes through v2
+
+`createMany` (and `createOne`) route their non-upsert insert through
+`WorkspaceRepositoryV2.runInsert`: records flatten through `formatData`, insert with
+`buildInsertStatement` (a multi-row `INSERT ... VALUES ... RETURNING`, `DEFAULT` for the
+columns a given row omits so Postgres column defaults apply), validate the insert
+permission over the inserted columns, and emit `CREATED` then `UPSERTED` from an
+all-columns re-select of the inserted ids — matching the v1 insert builder. Relation
+`{connect}` / `{disconnect}` input is resolved to join columns by
+`resolveNestedRelationsForOrmV2` before the write, and files-field input is synced through
+`FilesFieldSync` inside `runInsert`, exactly as on the update path.
+
+## Transactions and merge
+
+`WorkspaceDataSourceV2.transaction(work)` checks a client out of the pool, wraps `work` in
+`BEGIN` / `COMMIT` (rolling back and rethrowing on error), and hands `work` a scope whose
+`getRepository` returns repositories bound to that client through a `ClientQueryExecutor`,
+so every statement and event snapshot inside runs on the one connection.
+
+`mergeMany` routes through it with the flag on, always: `executeMergeWithinTransactionV2`
+re-points the losing records' foreign keys to the survivor across each related object,
+hard-deletes the losers, and updates the survivor with the merged data — each step a
+`runMutation` on a transaction-scoped repository, so the same `UPDATED`/`DESTROYED`/
+`UPSERTED` events fire as v1. Before the survivor update the merged data goes through
+`resolveNestedRelationsForOrmV2`, the same relation resolution the other write paths use, so
+a relation set by name resolves to its join column instead of forcing v1. In practice the
+merged data only ever carries columns and join columns: the write path selects columns
+(`buildColumnsToSelect` maps relations to their join columns) and loads relations by name
+only on the dry-run branch, so the resolution is a no-op on real merges and the old
+`isMergeSupportedByOrmV2` carve-out was dead. Its object-literal `where` support grew to
+cover scalar equality, `Equal`, and `IS NULL` alongside `In`.
+
+## Upsert
+
+`createMany` with `upsert: true` reads the existing records by their conflict fields,
+splits the input into inserts and updates, then inserts the new records and updates the
+matched ones. The insert half routes through `runInsert`; the update half through
+`runBatchUpdate`, which runs each per-id update as its own statement but emits one batch
+`UPDATED` + `UPSERTED` over the collected before/after images, matching v1's `updateMany`.
+Both halves resolve relation `{connect}` / `{disconnect}` input to join columns through
+`resolveNestedRelationsForOrmV2` first, just like the plain create and update paths. The
+read-then-split and conflict-target derivation are unchanged.
+
+## Coverage
+
+Every write the API layer can reach runs entirely on v2 when the flag is on — create,
+update, upsert, delete, and merge — whatever field types it touches (scalars, composites,
+relation join columns, relation `{connect}` / `{disconnect}`, and files fields). Nothing on
+the write path falls back to v1 on the value of its input.
+
+`WorkspaceSelectQueryBuilderV2.leftJoin` can render a to-many join when the caller passes
+`allowToManyJoin`. It renders as a `DISTINCT ON (foreignKey)` derived table ordered by
+`foreignKey, id`, so each parent keeps exactly one representative child row (its lowest-id
+live child) and the join never multiplies parent rows — record ranking and paging stay
+correct. The soft-delete predicate runs inside that derived table, before the row is picked.
+Only group-by "with records" record-ordering opts in; every other join site (filter
+traversal, relation loading) leaves it off, so a to-many relation there still surfaces the
+standard `UNSUPPORTED_OPERATION` error. This capability is currently latent: the GraphQL
+order-by input excludes to-many relations (`generateSimpleRelationFieldOrderByInputType`
+returns `{}` for `ONE_TO_MANY`), so no API query can order by one today. The join is
+unit-tested against its exact SQL and activates automatically if that input is ever exposed.
 
 ## Not covered yet
 
-- Update, insert and upsert. `UPDATE ... SET` from caller data, `INSERT` and
-  `ON CONFLICT` still go through v1, which is where composite flattening of the input and
-  the column defaults / conflict-target derivation live.
 - `find` / `findOne` / `findBy` and the rest of the repository surface used by
   `src/modules`.
-- Transactions and DDL.
-- Ordering group-by "with records" by a to-many relation: v2 refuses to-many joins, so
-  it surfaces the standard "unsupported" user error rather than the row-multiplying join
-  v1 would emit.
+- DDL.
 - The read runners hand the v2 builder to the shared parsers with a cast, because they
   are typed against the TypeORM class rather than an interface. Giving the parsers a
   structural `SelectQueryBuilderLike` type removes it and is the next cleanup.

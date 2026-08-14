@@ -1,7 +1,8 @@
-import { DragDropProvider } from '@dnd-kit/react';
+import { DragDropProvider, DragOverlay } from '@dnd-kit/react';
 import type { ReactNode } from 'react';
 
 import { useRecordCalendarMonthDndKit } from '@/object-record/record-calendar/month/hooks/useRecordCalendarMonthDndKit';
+import { RecordCalendarCardDragOverlayContent } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCardDragOverlayContent';
 import { DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION } from '@/ui/utilities/drag-and-drop/constants/DndKitProviderPluginsWithoutDropAnimation';
 import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
 import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
@@ -26,6 +27,9 @@ export const RecordCalendarMonthDragDropContext = ({
         onDragEnd={handlers.onDragEnd}
       >
         {children}
+        <DragOverlay>
+          {(source) => <RecordCalendarCardDragOverlayContent source={source} />}
+        </DragOverlay>
       </DragDropProvider>
     </DragDropItemDndContext.Provider>
   );

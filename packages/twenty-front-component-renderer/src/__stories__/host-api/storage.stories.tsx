@@ -2,10 +2,10 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
-import { buildFrontComponentStorageNamespace } from '@/host/utils/buildFrontComponentStorageNamespace';
-import { clearFrontComponentStorage } from '@/host/utils/clearFrontComponentStorage';
-import { deleteFrontComponentStorageItem } from '@/host/utils/deleteFrontComponentStorageItem';
-import { setFrontComponentStorageItem } from '@/host/utils/setFrontComponentStorageItem';
+import { buildFrontComponentStorageNamespace } from '@/host/storage/utils/buildFrontComponentStorageNamespace';
+import { clearFrontComponentStorage } from '@/host/storage/utils/clearFrontComponentStorage';
+import { deleteFrontComponentStorageItem } from '@/host/storage/utils/deleteFrontComponentStorageItem';
+import { setFrontComponentStorageItem } from '@/host/storage/utils/setFrontComponentStorageItem';
 import {
   FRONT_COMPONENT_STORY_DEFAULT_ARGS,
   hostApiMocks,

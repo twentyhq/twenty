@@ -79,6 +79,7 @@ export default defineObject({
 * `universalIdentifier` 必须在各次部署间保持唯一且稳定。
 * 每个字段都需要 `name`、`type`、`label` 以及其自身稳定的 `universalIdentifier`。
 * `fields` 数组是可选的——你可以定义没有自定义字段的对象。
+* `openRecordIn` 设置在点击此对象的记录时，它们会在何处打开：`ObjectOpenRecordIn.USER_CHOICE`（默认，遵循每位工作区成员在 Settings → Experience 中的个人偏好）、`ObjectOpenRecordIn.SIDE_PANEL`，或 `ObjectOpenRecordIn.RECORD_PAGE`。 将其固定为 `RECORD_PAGE`，用于那些需要完整页面才能正常使用的记录（就像工作流和仪表盘那样），或者固定为 `SIDE_PANEL`，用于那些只适合作为快速面板显示的记录（就像日历事件那样）。
 * 此处定义的内联字段**不**需要 `objectUniversalIdentifier`——它会从父对象继承。 使用[`defineField()`](/l/zh/developers/extend/apps/data/extending-objects)为你不拥有的对象添加字段。
 * 你可以使用 `yarn twenty dev:add object` 脚手架创建新对象，它会引导你完成命名、字段和关系。 参见 [Architecture → Scaffolding entities](/l/zh/developers/extend/apps/getting-started/scaffolding)。
 
@@ -138,4 +139,4 @@ export default defineObject({
 
 * **将此对象与其他对象关联**——关于双向关系模式，参见 [Relations](/l/zh/developers/extend/apps/data/relations)。
 * **为其他应用的对象添加字段**——关于 `defineField()`，参见 [Extending Objects](/l/zh/developers/extend/apps/data/extending-objects)。
-* **在 UI 中展示此对象**——参见 [Views](/l/zh/developers/extend/apps/layout/views) 和 [Navigation Menu Items](/l/zh/developers/extend/apps/layout/navigation-menu-items)，将其放入侧边栏。
+* **在界面中显示此对象** — 请参阅 [导航菜单项](/l/zh/developers/extend/apps/layout/navigation-menu-items) 以添加侧边栏条目；请参阅 [视图](/l/zh/developers/extend/apps/layout/views) 以添加自定义列表配置。
