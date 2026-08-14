@@ -1,6 +1,7 @@
 import { Injectable, type Type } from '@nestjs/common';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
@@ -9,6 +10,7 @@ import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object
 import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 import { GlobalWorkspaceDataSourceService } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.service';
 import { ExecuteInWorkspaceContextOptions } from 'src/engine/twenty-orm/global-workspace-datasource/types/execute-in-workspace-context-options.type';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/global-workspace-datasource/types/workspace-transaction-scope.type';
 import type { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import {
   getWorkspaceContext,
@@ -49,11 +51,7 @@ export class GlobalWorkspaceOrmManager {
       workspaceEntityOrObjectMetadataName,
     );
 
-    if (
-      getWorkspaceContext().featureFlagsMap[
-        FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED
-      ]
-    ) {
+    if (await this.isOrmV2ReadPathEnabled()) {
       return this.workspaceDataSourceV2Service
         .getDataSource({ useReplica: false })
         .getRepository(
@@ -106,47 +104,85 @@ export class GlobalWorkspaceOrmManager {
     );
   }
 
-  async getV1Repository<T extends ObjectLiteral>(
-    workspaceId: string,
-    workspaceEntity: Type<T>,
-    permissionOptions?: RolePermissionConfig,
-  ): Promise<WorkspaceRepository<T>>;
+  private async isOrmV2ReadPathEnabled(): Promise<boolean> {
+    const context = getWorkspaceContext();
+    const contextFlag =
+      context.featureFlagsMap[FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED];
 
-  async getV1Repository<T extends ObjectLiteral>(
-    workspaceId: string,
-    objectMetadataName: string,
-    permissionOptions?: RolePermissionConfig,
-  ): Promise<WorkspaceRepository<T>>;
+    if (isDefined(contextFlag)) {
+      return contextFlag;
+    }
 
-  async getV1Repository<T extends ObjectLiteral>(
-    _workspaceId: string,
-    workspaceEntityOrObjectMetadataName: Type<T> | string,
-    permissionOptions?: RolePermissionConfig,
-  ): Promise<WorkspaceRepository<T>> {
-    const objectMetadataName = this.resolveObjectMetadataName(
-      workspaceEntityOrObjectMetadataName,
+    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
+      context.authContext.workspace.id,
+      ['featureFlagsMap'],
     );
+
+    return featureFlagsMap[FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED] ?? false;
+  }
+
+  async runInWorkspaceTransaction<T>(
+    work: (transactionScope: WorkspaceTransactionScope) => Promise<T>,
+  ): Promise<T> {
+    if (await this.isOrmV2ReadPathEnabled()) {
+      return this.workspaceDataSourceV2Service
+        .getDataSource({ useReplica: false })
+        .transaction((transactionScope) =>
+          work({
+            getRepository: <Entity extends ObjectLiteral>(
+              objectMetadataName: string,
+              rolePermissionConfig?: RolePermissionConfig,
+            ): WorkspaceRepository<Entity> =>
+              transactionScope.getRepository(
+                objectMetadataName,
+                rolePermissionConfig,
+              ) as unknown as WorkspaceRepository<Entity>,
+            executeRawQuery: (sql, parameters) =>
+              transactionScope.executeRawQuery(sql, parameters),
+          }),
+        );
+    }
 
     await this.ensureEntityMetadatasLoaded();
 
+    const { authContext } = getWorkspaceContext();
     const globalDataSource = await this.getGlobalWorkspaceDataSource();
+    const queryRunner = globalDataSource.createQueryRunner();
 
-    return globalDataSource.getRepository<T>(
-      objectMetadataName,
-      permissionOptions,
-    );
-  }
+    try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
 
-  async getGlobalWorkspaceDataSourceWithEntityMetadatas(): Promise<GlobalWorkspaceDataSource> {
-    await this.ensureEntityMetadatasLoaded();
+      try {
+        const result = await work({
+          getRepository: <Entity extends ObjectLiteral>(
+            objectMetadataName: string,
+            rolePermissionConfig?: RolePermissionConfig,
+          ): WorkspaceRepository<Entity> =>
+            queryRunner.manager.getRepository<Entity>(
+              objectMetadataName,
+              rolePermissionConfig,
+              authContext,
+            ),
+          executeRawQuery: (sql, parameters = []) =>
+            queryRunner.query(sql, parameters) as Promise<
+              Record<string, unknown>[]
+            >,
+        });
 
-    return this.getGlobalWorkspaceDataSource();
-  }
+        await queryRunner.commitTransaction();
 
-  async getGlobalWorkspaceDataSourceReplicaWithEntityMetadatas(): Promise<GlobalWorkspaceDataSource> {
-    await this.ensureEntityMetadatasLoaded();
+        return result;
+      } catch (error) {
+        if (queryRunner.isTransactionActive) {
+          await queryRunner.rollbackTransaction();
+        }
 
-    return this.getGlobalWorkspaceDataSourceReplica();
+        throw error;
+      }
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async executeInWorkspaceContext<T>(
@@ -223,15 +259,22 @@ export class GlobalWorkspaceOrmManager {
   ): Promise<ORMWorkspaceContext> {
     const workspaceId = authContext.workspace.id;
 
-    const {
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      ORMEntityMetadatas: entityMetadatas,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'flatObjectMetadataMaps',
-      'flatFieldMetadataMaps',
-      'ORMEntityMetadatas',
-    ]);
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps, featureFlagsMap } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
+        'featureFlagsMap',
+      ]);
+
+    const entityMetadatas = featureFlagsMap[
+      FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED
+    ]
+      ? []
+      : (
+          await this.workspaceCacheService.getOrRecompute(workspaceId, [
+            'ORMEntityMetadatas',
+          ])
+        ).ORMEntityMetadatas;
 
     const { idByNameSingular: objectIdByNameSingular } =
       buildObjectIdByNameMaps(flatObjectMetadataMaps);
