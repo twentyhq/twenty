@@ -1,8 +1,7 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useId, useState } from 'react';
+import { useId } from 'react';
 import { enqueueSnackbar } from 'twenty-sdk/front-component';
-import { IconEye, IconEyeOff } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -12,37 +11,17 @@ import { useUpdateApplicationVariable } from 'src/front-components/hooks/use-upd
 import { type FirefliesApplicationVariable } from 'src/front-components/types/fireflies-application-variable.type';
 
 const APPLICATION_VARIABLE_SAVE_DEBOUNCE_MILLISECONDS = 250;
-const APPLICATION_VARIABLE_REVEAL_ICON_SIZE = 16;
 
 const StyledRow = styled.div`
   display: flex;
   flex-direction: column;
 `;
 
-const StyledInputContainer = styled.div`
-  align-items: center;
-  display: flex;
-  position: relative;
-`;
-
-const StyledRevealButton = styled.button`
-  align-items: center;
-  background: none;
-  border: none;
-  bottom: 0;
-  color: ${() => themeCssVariables.font.color.light};
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  margin: auto 0;
-  padding: 0 ${() => themeCssVariables.spacing[2]};
-  position: absolute;
-  right: 0;
-  top: 0;
-
-  &:hover {
-    color: ${() => themeCssVariables.font.color.secondary};
-  }
+const StyledDescription = styled.span`
+  color: ${() => themeCssVariables.font.color.tertiary};
+  font-family: ${() => themeCssVariables.font.family};
+  font-size: ${() => themeCssVariables.font.size.xs};
+  margin-bottom: ${() => themeCssVariables.spacing[1]};
 `;
 
 type ApplicationVariableRowProps = {
@@ -59,7 +38,6 @@ export const ApplicationVariableRow = ({
   onValueChange,
 }: ApplicationVariableRowProps) => {
   const inputId = useId();
-  const [isSecretRevealed, setIsSecretRevealed] = useState(false);
 
   const { updateApplicationVariable } =
     useUpdateApplicationVariable(applicationId);
@@ -87,45 +65,27 @@ export const ApplicationVariableRow = ({
     <StyledRow>
       <ApplicationVariableLabelRow
         variableKey={variable.key}
-        description={variable.description}
         isDeprecated={variable.isDeprecated}
         inputId={inputId}
-        tooltipId={`application-variable-description-${variable.key}`}
       />
-      <StyledInputContainer>
-        <StyledSettingsTextInput
-          id={inputId}
-          type={variable.isSecret && !isSecretRevealed ? 'password' : 'text'}
-          data-has-trailing-icon={variable.isSecret ? 'true' : undefined}
-          autoComplete="off"
-          placeholder={isSecretStored ? variable.value : 'Value'}
-          value={draftValue}
-          onChange={(event) => {
-            onValueChange({
-              variableKey: variable.key,
-              value: event.target.value,
-            });
-            saveDebounced(event.target.value);
-          }}
-          onBlur={() => saveDebounced.flush()}
-        />
-        {variable.isSecret && (
-          <StyledRevealButton
-            type="button"
-            tabIndex={-1}
-            aria-label={
-              isSecretRevealed ? `Hide ${variable.key}` : `Show ${variable.key}`
-            }
-            onClick={() => setIsSecretRevealed(!isSecretRevealed)}
-          >
-            {isSecretRevealed ? (
-              <IconEyeOff size={APPLICATION_VARIABLE_REVEAL_ICON_SIZE} />
-            ) : (
-              <IconEye size={APPLICATION_VARIABLE_REVEAL_ICON_SIZE} />
-            )}
-          </StyledRevealButton>
-        )}
-      </StyledInputContainer>
+      {isNonEmptyString(variable.description) && (
+        <StyledDescription>{variable.description}</StyledDescription>
+      )}
+      <StyledSettingsTextInput
+        id={inputId}
+        type={variable.isSecret ? 'password' : 'text'}
+        autoComplete="off"
+        placeholder={isSecretStored ? variable.value : 'Value'}
+        value={draftValue}
+        onChange={(event) => {
+          onValueChange({
+            variableKey: variable.key,
+            value: event.target.value,
+          });
+          saveDebounced(event.target.value);
+        }}
+        onBlur={() => saveDebounced.flush()}
+      />
     </StyledRow>
   );
 };
