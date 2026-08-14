@@ -32,7 +32,7 @@ export class MessagingMessageFolderAssociationService {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const repository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationMessageFolderWorkspaceEntity>(
+          await this.globalWorkspaceOrmManager.getV1Repository<MessageChannelMessageAssociationMessageFolderWorkspaceEntity>(
             workspaceId,
             'messageChannelMessageAssociationMessageFolder',
           );

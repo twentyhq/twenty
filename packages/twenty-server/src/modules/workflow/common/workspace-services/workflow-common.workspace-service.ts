@@ -82,7 +82,7 @@ export class WorkflowCommonWorkspaceService {
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const workflowVersionRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+          await this.globalWorkspaceOrmManager.getV1Repository<WorkflowVersionWorkspaceEntity>(
             workspaceId,
             'workflowVersion',
             { shouldBypassPermissionChecks: true },
@@ -167,7 +167,7 @@ export class WorkflowCommonWorkspaceService {
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const workflowRepository =
-            await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+            await this.globalWorkspaceOrmManager.getV1Repository<WorkflowWorkspaceEntity>(
               workspaceId,
               'workflow',
               { shouldBypassPermissionChecks: true },
@@ -320,21 +320,21 @@ export class WorkflowCommonWorkspaceService {
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowVersionRepository =
-        await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+        await this.globalWorkspaceOrmManager.getV1Repository<WorkflowVersionWorkspaceEntity>(
           workspaceId,
           'workflowVersion',
           { shouldBypassPermissionChecks: true },
         );
 
       const workflowRunRepository =
-        await this.globalWorkspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
+        await this.globalWorkspaceOrmManager.getV1Repository<WorkflowRunWorkspaceEntity>(
           workspaceId,
           'workflowRun',
           { shouldBypassPermissionChecks: true },
         );
 
       const workflowAutomatedTriggerRepository =
-        await this.globalWorkspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
+        await this.globalWorkspaceOrmManager.getV1Repository<WorkflowAutomatedTriggerWorkspaceEntity>(
           workspaceId,
           'workflowAutomatedTrigger',
           { shouldBypassPermissionChecks: true },
@@ -415,7 +415,7 @@ export class WorkflowCommonWorkspaceService {
     }
 
     const workflowRepository =
-      await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+      await this.globalWorkspaceOrmManager.getV1Repository<WorkflowWorkspaceEntity>(
         workspaceId,
         'workflow',
         { shouldBypassPermissionChecks: true },
@@ -427,7 +427,7 @@ export class WorkflowCommonWorkspaceService {
     });
 
     const workspaceDataSource =
-      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSourceWithEntityMetadatas();
 
     const queryRunner = workspaceDataSource.createQueryRunner();
 

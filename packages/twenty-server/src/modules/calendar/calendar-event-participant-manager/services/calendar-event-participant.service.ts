@@ -63,7 +63,7 @@ export class CalendarEventParticipantService {
         const chunkedParticipantsToUpdate = chunk(participantsToUpdate, 200);
 
         const calendarEventParticipantRepository =
-          await this.globalWorkspaceOrmManager.getRepository<CalendarEventParticipantWorkspaceEntity>(
+          await this.globalWorkspaceOrmManager.getV1Repository<CalendarEventParticipantWorkspaceEntity>(
             workspaceId,
             'calendarEventParticipant',
           );
