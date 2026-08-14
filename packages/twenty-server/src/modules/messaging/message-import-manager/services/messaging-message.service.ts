@@ -137,6 +137,13 @@ export class MessagingMessageService {
           messageAccumulatorMap,
         );
 
+        const associationToCreateByMessageId = new Map<
+          string,
+          NonNullable<
+            MessageAccumulator['messageChannelMessageAssociationToCreate']
+          >
+        >();
+
         for (const message of messages) {
           const messageAccumulator = messageAccumulatorMap.get(
             message.externalId,
@@ -183,7 +190,9 @@ export class MessagingMessageService {
               messageAccumulator.existingMessageChannelMessageAssociationInDB,
             )
           ) {
-            messageAccumulator.messageChannelMessageAssociationToCreate = {
+            const associationToCreate = associationToCreateByMessageId.get(
+              newOrExistingMessageId,
+            ) ?? {
               id: v4(),
               messageChannelId,
               messageId: newOrExistingMessageId,
@@ -191,6 +200,14 @@ export class MessagingMessageService {
               messageThreadExternalId: message.messageThreadExternalId,
               direction: message.direction,
             };
+
+            associationToCreateByMessageId.set(
+              newOrExistingMessageId,
+              associationToCreate,
+            );
+
+            messageAccumulator.messageChannelMessageAssociationToCreate =
+              associationToCreate;
           }
 
           messageAccumulatorMap.set(message.externalId, messageAccumulator);
@@ -258,13 +275,8 @@ export class MessagingMessageService {
         await messageRepository.insert(messagesToCreate, transactionManager);
 
         const messageChannelMessageAssociationsToCreate = Array.from(
-          messageAccumulatorMap.values(),
-        )
-          .map(
-            (accumulator) =>
-              accumulator.messageChannelMessageAssociationToCreate,
-          )
-          .filter(isDefined);
+          associationToCreateByMessageId.values(),
+        );
 
         await messageChannelMessageAssociationRepository.insert(
           messageChannelMessageAssociationsToCreate,
