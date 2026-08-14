@@ -147,4 +147,11 @@ export const CONFIG_VARIABLES_GROUP_METADATA: Record<
     isHiddenOnLoad: true,
     isHiddenInAdminPanel: true,
   },
+  [ConfigVariablesGroup.MAILGUN_SETTINGS]: {
+    position: 2300,
+    description:
+      'Configure Mailgun settings for emailing domains (mass outbound and email group inbound)',
+    isHiddenOnLoad: true,
+    isHiddenInAdminPanel: true,
+  },
 };

@@ -14,6 +14,8 @@ import { AwsSesDriver } from 'src/engine/core-modules/emailing-domain/drivers/aw
 import { AwsSesHandleErrorService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-handle-error.service';
 import { AwsSesSendEmailService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-send-email.service';
 import { LogEmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/log/services/log-emailing-domain-driver.service';
+import { MailgunApiClientService } from 'src/engine/core-modules/emailing-domain/drivers/mailgun/services/mailgun-api-client.service';
+import { MailgunDriver } from 'src/engine/core-modules/emailing-domain/drivers/mailgun/services/mailgun-driver.service';
 import { ResendApiClientService } from 'src/engine/core-modules/emailing-domain/drivers/resend/services/resend-api-client.service';
 import { ResendDriver } from 'src/engine/core-modules/emailing-domain/drivers/resend/services/resend-driver.service';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
@@ -34,6 +36,7 @@ export class EmailingDomainDriverFactory extends DriverFactoryBase<EmailingDomai
     private readonly awsSesSendEmailService: AwsSesSendEmailService,
     private readonly logEmailingDomainDriver: LogEmailingDomainDriver,
     private readonly resendApiClientService: ResendApiClientService,
+    private readonly mailgunApiClientService: MailgunApiClientService,
     private readonly unsubscribeContentService: UnsubscribeContentService,
   ) {
     super(twentyConfigService, configGroupHashService);
@@ -56,6 +59,13 @@ export class EmailingDomainDriverFactory extends DriverFactoryBase<EmailingDomai
         );
 
         return `resend|${resendConfigHash}`;
+      }
+      case EmailingDomainDriver.MAILGUN: {
+        const mailgunConfigHash = this.configGroupHashService.computeHash(
+          ConfigVariablesGroup.MAILGUN_SETTINGS,
+        );
+
+        return `mailgun|${mailgunConfigHash}`;
       }
       case EmailingDomainDriver.LOG:
         return 'log';
@@ -116,6 +126,12 @@ export class EmailingDomainDriverFactory extends DriverFactoryBase<EmailingDomai
           this.unsubscribeContentService,
         );
       }
+
+      case EmailingDomainDriver.MAILGUN:
+        return new MailgunDriver(
+          this.mailgunApiClientService,
+          this.unsubscribeContentService,
+        );
 
       case EmailingDomainDriver.LOG:
         return this.logEmailingDomainDriver;

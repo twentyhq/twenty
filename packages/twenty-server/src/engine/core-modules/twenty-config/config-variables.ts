@@ -2213,6 +2213,34 @@ export class ConfigVariables {
   RESEND_DOMAIN_REGION: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.MAILGUN_SETTINGS,
+    isSensitive: true,
+    description: 'Mailgun API key used when EMAILING_DOMAIN_DRIVER is MAILGUN',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  MAILGUN_API_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.MAILGUN_SETTINGS,
+    isSensitive: true,
+    description:
+      'Mailgun HTTP webhook signing key used to verify /webhooks/messaging/mailgun endpoints',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  MAILGUN_WEBHOOK_SIGNING_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.MAILGUN_SETTINGS,
+    description:
+      'Mailgun API base URL (https://api.mailgun.net, or https://api.eu.mailgun.net for EU accounts)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  MAILGUN_API_BASE_URL: string = 'https://api.mailgun.net';
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description: 'Timeout in milliseconds for primary database queries',
     type: ConfigVariableType.NUMBER,
