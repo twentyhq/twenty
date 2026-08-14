@@ -512,8 +512,10 @@ A few environment specifics to be aware of:
   not cross the sandbox; the host indicator shows a self-view while a camera
   is live. Recorded files play back normally from their uploaded URL.
 - **Uploads target a FILES field.** `uploadFile(file, { fieldMetadataId,
-  fileName? })` stores the blob and returns `{ fileId, path, url, size,
-  mimeType }`; attach the `fileId` to a record to make it permanent.
+  fileName? })` stores the blob and returns `{ status: 'uploaded', file:
+  { fileId, path, url, size, mimeType } }`, or `{ status: 'failed', reason }`
+  on invalid parameters or upload errors; attach the `fileId` to a record to
+  make it permanent.
 
 See the [media-notes example app](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/media-notes)
 for a complete recording flow, including cancel paths and attaching the
