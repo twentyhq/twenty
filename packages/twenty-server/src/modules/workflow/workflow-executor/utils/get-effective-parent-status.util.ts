@@ -5,9 +5,6 @@ import { isWorkflowIfElseAction } from 'src/modules/workflow/workflow-executor/w
 import { type WorkflowIfElseResult } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/types/workflow-if-else-result.type';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
-// An if/else succeeds as a step but only one of its branches is live. Seen from
-// a child on a branch that was not taken, the if/else reads as SKIPPED, so the
-// regular parent-status rules skip that child without anything being forced.
 export const getEffectiveParentStatus = ({
   parentStep,
   childStepId,
@@ -35,7 +32,7 @@ export const getEffectiveParentStatus = ({
     (branch) => branch.id === matchingBranchId,
   );
 
-  return matchingBranch?.nextStepIds?.includes(childStepId)
+  return matchingBranch?.nextStepIds.includes(childStepId)
     ? parentStatus
     : StepStatus.SKIPPED;
 };
