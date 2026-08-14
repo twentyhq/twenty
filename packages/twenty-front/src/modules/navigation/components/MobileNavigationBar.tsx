@@ -3,44 +3,40 @@ import { useLingui } from '@lingui/react/macro';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
+import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
-import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { AppPath } from 'twenty-shared/types';
 import {
   type IconComponent,
-  IconList,
+  IconHome,
   IconMessageCirclePlus,
   IconSearch,
 } from 'twenty-ui/icon';
 import { NavigationBar } from 'twenty-ui/navigation';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
-type NavigationBarItemName = 'main' | 'search' | 'newAiChat';
+type NavigationBarItemName = 'home' | 'search' | 'newAiChat';
 
 export const MobileNavigationBar = () => {
   const { t } = useLingui();
   const navigate = useNavigate();
-  const { defaultHomePagePath } = useDefaultHomePagePath();
+  const { pathname } = useLocation();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
-  const navigationMemorizedUrl = useAtomStateValue(navigationMemorizedUrlState);
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
   const isSettingsPage = useIsSettingsPage();
-  const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
-    useAtomState(isNavigationDrawerExpandedState);
-  const [currentMobileNavigationDrawer, setCurrentMobileNavigationDrawer] =
-    useAtomState(currentMobileNavigationDrawerState);
+  const isSettingsDrawer = useIsSettingsDrawer();
   const { switchToNewChat } = useSwitchToNewAiChat();
   const { alphaSortedActiveNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
@@ -50,12 +46,33 @@ export const MobileNavigationBar = () => {
     contextStoreCurrentObjectMetadataItemIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
+  const setCurrentMobileNavigationDrawer = useSetAtomState(
+    currentMobileNavigationDrawerState,
+  );
+  const setIsNavigationDrawerExpanded = useSetAtomState(
+    isNavigationDrawerExpandedState,
+  );
 
-  const activeItemName = isNavigationDrawerExpanded
-    ? currentMobileNavigationDrawer
-    : isSidePanelOpened
-      ? 'search'
-      : 'main';
+  // Settings is the one drawer left on mobile, and it stays open across
+  // navigation, so it would cover whatever the bottom bar goes to. Guarded so a
+  // tap outside settings leaves the persisted expansion alone: it is shared with
+  // the desktop drawer, which every tap would otherwise collapse.
+  const closeSettingsDrawer = () => {
+    if (!isSettingsDrawer) {
+      return;
+    }
+
+    setCurrentMobileNavigationDrawer('main');
+    setIsNavigationDrawerExpanded(false);
+  };
+
+  const isHomePage = pathname === AppPath.Home;
+
+  const activeItemName: NavigationBarItemName | undefined = isSidePanelOpened
+    ? 'search'
+    : isHomePage
+      ? 'home'
+      : undefined;
 
   const items: {
     name: NavigationBarItemName;
@@ -64,23 +81,13 @@ export const MobileNavigationBar = () => {
     onClick: () => void;
   }[] = [
     {
-      name: 'main',
-      label: t`Main navigation`,
-      Icon: IconList,
+      name: 'home',
+      label: t`Home`,
+      Icon: IconHome,
       onClick: () => {
         closeSidePanelMenu();
-        setIsNavigationDrawerExpanded(
-          (previousIsOpen) => activeItemName !== 'main' || !previousIsOpen,
-        );
-        setCurrentMobileNavigationDrawer('main');
-
-        if (isSettingsPage) {
-          navigate(
-            navigationMemorizedUrl !== '/'
-              ? navigationMemorizedUrl
-              : defaultHomePagePath,
-          );
-        }
+        closeSettingsDrawer();
+        navigate(AppPath.Home);
       },
     },
     {
@@ -88,8 +95,8 @@ export const MobileNavigationBar = () => {
       label: t`Search`,
       Icon: IconSearch,
       onClick: () => {
-        setIsNavigationDrawerExpanded(false);
         closeSidePanelMenu();
+        closeSettingsDrawer();
 
         if (isSettingsPage) {
           const firstObjectMetadataItem =
@@ -111,8 +118,8 @@ export const MobileNavigationBar = () => {
             label: t`New AI chat`,
             Icon: IconMessageCirclePlus,
             onClick: () => {
-              setIsNavigationDrawerExpanded(false);
               closeSidePanelMenu();
+              closeSettingsDrawer();
               switchToNewChat();
             },
           },
@@ -120,5 +127,5 @@ export const MobileNavigationBar = () => {
       : []),
   ];
 
-  return <NavigationBar activeItemName={activeItemName} items={items} />;
+  return <NavigationBar activeItemName={activeItemName ?? ''} items={items} />;
 };

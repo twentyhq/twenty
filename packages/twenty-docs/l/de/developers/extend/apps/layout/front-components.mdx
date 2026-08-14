@@ -806,22 +806,22 @@ Ein `ref` gibt dir ein Sandbox-Element, kein `HTMLElement`.
 | `element.classList.add(...)`                                                                                | Löst eine Exception aus (`classList` ist `undefined`) | Erstelle den `className`-String selbst                                                                |
 | `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | Löst eine Exception aus                               | `querySelector()` / `querySelectorAll()`, die funktionieren                                           |
 | `document.activeElement`                                                                                    | Immer `undefined`                                     | Fokus mit `onFocus` / `onBlur` verfolgen                                                              |
-| `\<canvas>`                                                                                | Rendert nichts, keine Fehlermeldung                   | SVG verwenden oder Offscreen zeichnen und ein `<img src={dataUrl}>` anzeigen                          |
+| `canvas`                                                                                                    | Rendert nichts, keine Fehlermeldung                   | SVG oder außerhalb des Bildschirms zeichnen und das Ergebnis in einem `img`-Element anzeigen          |
 | `createPortal(node, document.body)`                                                                         | Rendert nichts, während `isConnected` Erfolg meldet   | Overlays inline mit `position: absolute` oder der Bibliothek dein eigenes Container-Element übergeben |
 
 Diese Portal-Lücke ist der Grund, warum Radix-, Headless-UI-, MUI- und react-select-Popover standardmäßig nichts rendern. Die meisten akzeptieren eine Container-Prop; verweise sie auf ein Element, das du gerendert hast.
 
 ### Ereignisse
 
-Maus, Zeiger, Touch, Drag, Tastatur, Fokus, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` und `animationend`/`transitionend` werden an den Host durchgereicht, plus ein paar pro Element: `load`/`error` auf `<img>`, Zwischenablage und Composition auf `<input>`/`\<textarea>`, Medien auf `\<video>`/`\<audio>`, `toggle` auf `\<details>`/`\<dialog>`. Alles andere (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, Pointer-Capture, `onLoad` von `<img>`) wird ohne Warnung verworfen.
+Maus, Zeiger, Touch, Drag, Tastatur, Fokus, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` und `animationend`/`transitionend` werden an den Host durchgereicht, plus ein paar pro Element: `load`/`error` auf `img`, Zwischenablage und Komposition auf `input`/`textarea`, Medien auf `video`/`audio`, `toggle` auf `details`/`dialog`. Alles andere (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, Pointer-Capture, `onLoad` von `img`) wird ohne Warnung verworfen.
 
 `document.addEventListener()` und `window.addEventListener()` werden ohne Fehler registriert und feuern nie, weshalb ein Drag aufhört, sobald der Zeiger das Element verlässt, auf dem er begonnen hat. `event.preventDefault()` wird ebenfalls nicht durchgereicht; Formularübermittlung, `dragover`/`drop` und Link-Klicks sind bereits für dich abgesichert.
 
 ### Attribute und Styling
 
-Jedes Element leitet seine eigenen Eigenschaften an den Host-DOM weiter (`href` auf `\<a>`, `src`/`alt` auf `<img>`, `value`/`placeholder`/`disabled` auf `<input>` usw.), plus einen gemeinsamen Satz auf jedem Element: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` und jedes `aria-*`-/`data-*`-Attribut (mit Bindestrich, daher wird `ariaLabel` verworfen). Alles außerhalb davon wird stillschweigend verworfen, daher solltest du benutzerdefinierte Zustände als `data-*` ausdrücken.
+Jedes Element leitet seine eigenen Eigenschaften an den Host-DOM weiter (`href` auf `a`, `src`/`alt` auf `img`, `value`/`placeholder`/`disabled` auf `input` usw.), plus einen gemeinsamen Satz auf jedem Element: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` und jedes `aria-*`-/`data-*`-Attribut (mit Bindestrich, daher wird `ariaLabel` verworfen). Alles außerhalb davon wird stillschweigend verworfen, daher solltest du benutzerdefinierte Zustände als `data-*` ausdrücken.
 
-Component-CSS, egal ob aus `import './styles.css'`, CSS-in-JS oder einem `\<style>`-Element, wird **unscoped** in den `\<head>` der Host-Seite injiziert. Dadurch kollidieren Klassennamen mit denen von Twenty (präfixe sie und schreibe niemals nacktes `div { ... }`-Selektoren), und `@media` bezieht sich auf das Browserfenster statt auf dein Widget (verwende `@container` mit deinem eigenen `container-type`). Inline-`style`-Props sind nicht betroffen.
+Component-CSS, egal ob aus `import './styles.css'`, CSS-in-JS oder einem `style`-Element, wird **unscoped** in den `head` der Host-Seite injiziert. Dadurch kollidieren Klassennamen mit denen von Twenty (präfixe sie und schreibe niemals nacktes `div { ... }`-Selektoren), und `@media` bezieht sich auf das Browserfenster statt auf dein Widget (verwende `@container` mit deinem eigenen `container-type`). Inline-`style`-Props sind nicht betroffen.
 
 ### Speicher und Netzwerk
 
@@ -835,7 +835,7 @@ Component-CSS, egal ob aus `import './styles.css'`, CSS-in-JS oder einem `\<styl
 
 ### Weitere Lücken
 
-* **Dateiinhalt.** `<input type="file">` gibt deinem Handler nur Dateimetadaten, nicht die Bytes, daher sind `FileReader` und Uploads noch nicht möglich.
+* **Dateiinhalt.** Ein `input` des Typs `file` gibt deinem Handler nur Dateimetadaten, nicht die Bytes, daher sind `FileReader` und Uploads noch nicht möglich.
 * **Drag-and-drop-Nutzlasten.** Drag-Events werden ausgelöst, aber `event.dataTransfer` ist `undefined`.
 * **Node-Built-ins.** `fs`, `path` und `node:crypto` führen zu einem Build-Fehler, daher solltest du diese Arbeit in eine [Logic Function](/l/de/developers/extend/apps/logic/logic-functions) auslagern. Web Crypto, `fetch`, `TextEncoder` und `URL` sind verfügbar.
-* **`\<iframe>`** wird immer erneut ohne `allow-same-origin` sandboxed, sodass ein Embed, das von seiner eigenen Session abhängt, als ausgeloggt gerendert wird. Es hat auch kein `onLoad`.
+* **`iframe`** wird immer erneut ohne `allow-same-origin` in einer Sandbox ausgeführt, sodass eine Einbettung, die auf ihre eigene Sitzung angewiesen ist, als abgemeldet gerendert wird. Es hat auch kein `onLoad`.

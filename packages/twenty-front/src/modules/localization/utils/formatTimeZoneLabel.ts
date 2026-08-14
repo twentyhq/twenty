@@ -3,12 +3,18 @@ import { enUS as defaultLocale } from 'date-fns/locale/en-US';
 
 // 'Europe/Paris' => '(GMT+01:00) Central European Time - Paris'
 export const formatTimeZoneLabel = (ianaTimeZone: string) => {
-  const timeZoneWithGmtOffset = formatInTimeZone(
-    Date.now(),
-    ianaTimeZone,
-    `(OOOO) zzzz`,
-    { locale: defaultLocale },
-  );
+  let timeZoneWithGmtOffset: string;
+
+  try {
+    timeZoneWithGmtOffset = formatInTimeZone(
+      Date.now(),
+      ianaTimeZone,
+      `(OOOO) zzzz`,
+      { locale: defaultLocale },
+    );
+  } catch {
+    return ianaTimeZone;
+  }
   const ianaTimeZoneParts = ianaTimeZone.split('/');
   const location =
     ianaTimeZoneParts.length > 1

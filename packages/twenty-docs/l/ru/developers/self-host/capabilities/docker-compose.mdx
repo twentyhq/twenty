@@ -109,7 +109,7 @@ curl http://localhost:3000
 
 ### Открыть доступ к Twenty из внешней сети
 
-По умолчанию Twenty работает на `localhost` на порту `3000`. Чтобы получить доступ через внешний домен или IP-адрес, необходимо настроить `SERVER_URL` в вашем `.env` файле.
+По умолчанию Twenty работает на `localhost` на порту `3000`. Пользовательский интерфейс определяет API из источника самого браузера, поэтому он загружается с любого имени хоста, который обращается к контейнеру, — но всё равно укажите `SERVER_URL` как ваш публичный URL: сервер использует его для сгенерированных ссылок (email‑сообщений, OAuth‑обратных вызовов) и для определения HTTPS для защищённых cookie.
 
 #### Понимание `SERVER_URL`
 
@@ -229,7 +229,7 @@ docker exec twenty-postgres pg_dump -U postgres twenty > backup_$(date +%Y%m%d).
 1. Остановите приложение:
 
 ```bash
-docker compose stop twenty-server twenty-front
+docker compose stop server worker
 ```
 
 2. Восстановите базу данных:
@@ -254,3 +254,9 @@ docker compose up -d
 ## Устранение неполадок
 
 Если у вас возникли проблемы, проверьте [Устранение неполадок](/l/ru/developers/self-host/capabilities/troubleshooting) для получения решений.
+
+## Управляемый хостинг
+
+<Tip>
+  Не хотите запускать и поддерживать Twenty самостоятельно? [Найдите сертифицированного партнёра по хостингу Twenty](https://twenty.com/partners/list?categories=HOSTING\&ref=docs-docker-compose), который развернёт, разместит и полностью возьмёт на себя управление вашим экземпляром. *(Или свяжитесь с нашей командой: [contact@twenty.com](mailto:contact@twenty.com).)*
+</Tip>

@@ -26,7 +26,7 @@ export class MessagingMessageParticipantService {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const messageParticipantRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageParticipantWorkspaceEntity>(
+          await this.globalWorkspaceOrmManager.getV1Repository<MessageParticipantWorkspaceEntity>(
             workspaceId,
             'messageParticipant',
           );

@@ -8497,6 +8497,11 @@ msgstr "Den här versionen är inte nyare än den för närvarande driftsatta ve
 msgid "This version of the application is already installed in this workspace."
 msgstr "Den här versionen av applikationen är redan installerad i den här arbetsytan."
 
+#. js-lingui-id: o/Kt/Y
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This workspace already has a subscription."
+msgstr ""
+
 #. js-lingui-id: IdEnkZ
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This workspace's upgrade state could not be determined. Please try again once the workspace has finished upgrading."
@@ -9967,6 +9972,8 @@ msgid "You can only update one record with files field at once."
 msgstr "Du kan bara uppdatera fältet filer för en post i taget."
 
 #. js-lingui-id: 4ysDL0
+#: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
+#: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
 #: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr ""
