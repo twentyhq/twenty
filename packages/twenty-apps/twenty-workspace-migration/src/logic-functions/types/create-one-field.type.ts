@@ -23,10 +23,10 @@ type CreateOneFieldBaseType = {
   isUIReadOnly: boolean;
   isUnique: boolean;
   label: string;
-  morphRelationsCreationPayload: RelationCreationPayload[] | null;
+  morphRelationsCreationPayload?: RelationCreationPayload[];
   name: string;
   objectMetadataId: string;
-  relationCreationPayload: RelationCreationPayload | null;
+  relationCreationPayload?: RelationCreationPayload;
 };
 
 export type CreateOneFieldType = {

@@ -2,7 +2,6 @@ import { type AxiosInstance } from "axios";
 import { FindObjectsFieldsType } from "src/logic-functions/types/find-objects-fields.type";
 import { postGraphql } from "src/logic-functions/data/targetWorkspace/graphql-client.util";
 
-// TODO: add morphRelations
 const QUERY = `query findObjectsAndFields {
   objects(paging: {first: 1000}) {
     edges {
@@ -15,6 +14,7 @@ const QUERY = `query findObjectsAndFields {
         id
         isActive
         isLabelSyncedWithName
+        isSystem
         labelIdentifierFieldMetadataId
         labelPlural
         labelSingular
@@ -36,6 +36,16 @@ const QUERY = `query findObjectsAndFields {
           isUIReadOnly
           label
           morphId
+          morphRelations {
+            type
+            targetFieldMetadata {
+              label
+              icon
+            }
+            targetObjectMetadata {
+              nameSingular
+            }
+          }
           name
           objectMetadataId
           options

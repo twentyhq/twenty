@@ -49,7 +49,7 @@ export const buildRecordFieldPlan = (
     }
 
     if (field.type === FieldMetadataType.RELATION) {
-      if (field.relation?.type !== RelationType.MANY_TO_ONE) {
+      if (field.relation.type !== RelationType.MANY_TO_ONE) {
         continue;
       }
       const foreignKeyName = `${field.name}Id`;

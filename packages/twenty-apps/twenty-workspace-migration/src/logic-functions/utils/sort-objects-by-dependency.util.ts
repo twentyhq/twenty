@@ -8,8 +8,8 @@ import { ObjectType, RelationType } from "src/logic-functions/types/find-objects
 // they impose no ordering constraint here. Circular dependencies are broken arbitrarily
 // at whichever edge closes the loop, since a true cycle can't be fully satisfied up front.
 export const sortObjectsByDependency = (objects: ObjectType[]): ObjectType[] => {
-  const byUniversalIdentifier = new Map(
-    objects.map((object) => [object.universalIdentifier, object]),
+  const byNameSingular = new Map(
+    objects.map((object) => [object.nameSingular, object]),
   );
   const visited = new Set<string>();
   const visiting = new Set<string>();
@@ -29,8 +29,8 @@ export const sortObjectsByDependency = (objects: ObjectType[]): ObjectType[] => 
         continue;
       }
 
-      const target = byUniversalIdentifier.get(
-        field.relation.targetObjectMetadata.universalIdentifier,
+      const target = byNameSingular.get(
+        field.relation.targetObjectMetadata.nameSingular,
       );
 
       if (target !== undefined && target.universalIdentifier !== object.universalIdentifier) {

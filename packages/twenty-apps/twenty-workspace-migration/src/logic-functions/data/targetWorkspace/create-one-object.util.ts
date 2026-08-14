@@ -5,19 +5,15 @@ import { postGraphql } from "src/logic-functions/data/targetWorkspace/graphql-cl
 const MUTATION = `mutation createOneObject($input: CreateOneObjectInput!) {
   createOneObject(input: $input) {
     id
+    nameSingular
     universalIdentifier
-    fieldsList {
-      id
-      name
-      universalIdentifier
-    }
   }
 }`;
 
 export type CreatedObjectType = {
   id: string;
+  nameSingular: string;
   universalIdentifier: string;
-  fieldsList: { id: string; name: string; universalIdentifier: string }[];
 };
 
 // Only the fields CreateObjectInput actually accepts are sent, regardless of what
@@ -33,17 +29,7 @@ export const createOneObject = async (
     MUTATION,
     {
       input: {
-        object: {
-          nameSingular: object.nameSingular,
-          namePlural: object.namePlural,
-          labelSingular: object.labelSingular,
-          labelPlural: object.labelPlural,
-          description: object.description,
-          icon: object.icon,
-          color: object.color,
-          isLabelSyncedWithName: object.isLabelSyncedWithName,
-          skipNameField: object.skipNameField,
-        },
+        object,
       },
     },
   );

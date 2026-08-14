@@ -7,7 +7,7 @@ export type RecordsPage = {
   pageInfo: { hasNextPage: boolean; endCursor: string | null };
 };
 
-const PAGE_SIZE = 100;
+const PAGE_SIZE = 200;
 
 // Generic paginated record reader, used against both source and target workspaces.
 // `after` is inlined as a string literal rather than a $variable so callers don't need to

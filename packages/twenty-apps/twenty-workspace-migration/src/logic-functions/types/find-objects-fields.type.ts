@@ -10,6 +10,12 @@ export type FindObjectsFieldsType = {
   }
 };
 
+export enum ObjectOpenRecordIn {
+  SIDE_PANEL = "SIDE_PANEL",
+  RECORD_PAGE = "RECORD_PAGE",
+  USER_CHOICE = "USER_CHOICE",
+}
+
 export type ObjectType = {
   applicationId: string;
   color: string;
@@ -25,7 +31,7 @@ export type ObjectType = {
   labelSingular: string;
   namePlural: string;
   nameSingular: string;
-  openRecordIn: string;
+  openRecordIn: ObjectOpenRecordIn;
   universalIdentifier: string;
 }
 
@@ -247,6 +253,18 @@ export type DefaultValueForFieldMetadataType<T extends FieldMetadataType> =
     ? FieldMetadataDefaultValueMapping[T]
     : null;
 
+type FieldRelationInfo = {
+  type: RelationType;
+  targetObjectMetadata: { nameSingular: string };
+  targetFieldMetadata: { icon: string, label: string };
+};
+
+type RelationForFieldMetadataType<T extends FieldMetadataType> =
+  T extends FieldMetadataType.RELATION ? FieldRelationInfo : null;
+
+type MorphRelationsForFieldMetadataType<T extends FieldMetadataType> =
+  T extends FieldMetadataType.MORPH_RELATION ? FieldRelationInfo[] : null;
+
 type FieldsListBaseType = {
   applicationId: string;
   description: string;
@@ -260,14 +278,9 @@ type FieldsListBaseType = {
   isUIReadOnly: boolean;
   isUnique: boolean;
   label: string;
-  morphId?: string; // TODO
-  morphRelations?: {} // TODO
+  morphId: string | null;
   name: string;
   objectMetadataId: string;
-  relation: {
-    type: RelationType;
-    targetObjectMetadata: { universalIdentifier: string };
-  } | null;
   universalIdentifier: string;
 };
 
@@ -277,5 +290,7 @@ export type FieldsListType = {
     defaultValue: DefaultValueForFieldMetadataType<T>;
     settings: SettingsForFieldMetadataType<T>;
     options: OptionsForFieldMetadataType<T>;
+    relation: RelationForFieldMetadataType<T>;
+    morphRelations: MorphRelationsForFieldMetadataType<T>;
   };
 }[FieldMetadataType];
