@@ -27,17 +27,19 @@ import { collectReferencedColumnNames } from 'src/engine/twenty-orm-v2/sql/utils
 import { compileNamedParameters } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
 import {
   RESERVED_PARAMETER_NAMES,
-  buildColumnNameByResultAlias,
   buildCountStatement,
+  buildHydrationPathByResultAlias,
   buildPaginationParameters,
   buildProjection,
   buildSelectStatement,
   buildWhereExpression,
+  collectJoinedColumnProjections,
   collectStatementAliases,
   mapRowToEntity,
   normaliseColumnExpression,
   quoteColumn,
   quoteQualifiedAliasReferences,
+  type ColumnSelection,
   type JoinClause,
   type OrderByClause,
   type SelectClause,
@@ -69,6 +71,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
   private readonly whereClauses: WhereClause[] = [];
   private readonly joinClauses: JoinClause[] = [];
   private readonly extraSelectClauses: SelectClause[] = [];
+  private readonly pendingColumnSelections: string[] = [];
   private orderByClauses: OrderByClause[] = [];
   private groupByExpressions: string[] = [];
   private distinctOnExpressions: string[] = [];
@@ -111,6 +114,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       })),
     );
     cloned.extraSelectClauses.push(...this.extraSelectClauses);
+    cloned.pendingColumnSelections.push(...this.pendingColumnSelections);
     cloned.orderByClauses = [...this.orderByClauses];
     cloned.groupByExpressions = [...this.groupByExpressions];
     cloned.distinctOnExpressions = [...this.distinctOnExpressions];
@@ -197,6 +201,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
 
   select(selection?: string | string[], alias?: string): this {
     this.extraSelectClauses.length = 0;
+    this.pendingColumnSelections.length = 0;
 
     if (selection === undefined) {
       this.explicitSelection = undefined;
@@ -210,6 +215,13 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       return this;
     }
 
+    // Selecting the main alias by name means "every column of the main entity".
+    if (selection === this.alias && alias === undefined) {
+      this.explicitSelection = undefined;
+
+      return this;
+    }
+
     this.explicitSelection = [];
     this.extraSelectClauses.push({
       expression: this.normaliseColumnExpression(selection),
@@ -219,8 +231,23 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     return this;
   }
 
-  addSelect(expression: string, alias: string): this {
-    this.extraSelectClauses.push({ expression, alias });
+  addSelect(expression: string, alias?: string): this {
+    if (isDefined(alias)) {
+      this.extraSelectClauses.push({ expression, alias });
+
+      return this;
+    }
+
+    // Without an output alias, an "<alias>.<column>" selection projects that
+    // column and hydrates it into the entity like TypeORM does; anything else
+    // is a raw expression selected under its own text.
+    if (/^\w+\.\w+$/.test(expression)) {
+      this.pendingColumnSelections.push(expression);
+
+      return this;
+    }
+
+    this.extraSelectClauses.push({ expression, alias: expression });
 
     return this;
   }
@@ -281,12 +308,32 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     return this.addJoin('INNER', relationPath, alias, condition, options);
   }
 
+  leftJoinAndSelect(
+    relationPath: string,
+    alias: string,
+    condition?: string,
+  ): this {
+    return this.addJoin('LEFT', relationPath, alias, condition, {
+      select: true,
+    });
+  }
+
+  innerJoinAndSelect(
+    relationPath: string,
+    alias: string,
+    condition?: string,
+  ): this {
+    return this.addJoin('INNER', relationPath, alias, condition, {
+      select: true,
+    });
+  }
+
   private addJoin(
     joinType: 'INNER' | 'LEFT',
     relationPath: string,
     alias: string,
     condition?: string,
-    options?: { allowToManyJoin?: boolean },
+    options?: { allowToManyJoin?: boolean; select?: boolean },
   ): this {
     const [parentAlias, relationFieldName] = relationPath.split('.');
 
@@ -350,6 +397,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       targetTableShape,
       relationType: relationShape.relationType,
       joinType,
+      isSelected: options?.select === true,
       condition: isDefined(joinColumnName)
         ? (condition ??
           `${this.quoteColumn(parentAlias, joinColumnName)} = ${this.quoteColumn(alias, 'id')}`)
@@ -374,6 +422,31 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
 
     return this.joinClauses.find((joinClause) => joinClause.alias === alias)
       ?.targetTableShape;
+  }
+
+  // Resolved lazily so an addSelect('<alias>.<column>') may precede the join
+  // that introduces the alias, as it can with TypeORM.
+  private resolveColumnSelections(): ColumnSelection[] {
+    return this.pendingColumnSelections.map((expression) => {
+      const [alias, columnName] = expression.split('.');
+      const tableShape = this.getTableShapeForAlias(alias);
+
+      if (!isDefined(tableShape)) {
+        throw new TwentyOrmV2Exception(
+          `Selection "${expression}" references "${alias}", which is neither the main alias nor a joined alias`,
+          TwentyOrmV2ExceptionCode.UNKNOWN_RELATION,
+        );
+      }
+
+      if (!isDefined(tableShape.columnShapeByColumnName[columnName])) {
+        throw new TwentyOrmV2Exception(
+          `Column "${columnName}" does not exist on "${tableShape.nameSingular}"`,
+          TwentyOrmV2ExceptionCode.UNKNOWN_COLUMN,
+        );
+      }
+
+      return { alias, columnName };
+    });
   }
 
   private buildToManyJoin({
@@ -560,11 +633,35 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
   }
 
   getReferencedColumnNamesByAlias(): Record<string, string[]> {
-    const aliases = collectStatementAliases(this.toSelectStatementState());
+    const state = this.toSelectStatementState();
+    const aliases = collectStatementAliases(state);
+
+    // Every joined alias is reported, even with no referenced column, so
+    // object-level select permission is validated for each joined object;
+    // projected joined columns then feed field-level checks.
+    const additionalColumnNamesByAlias: Record<string, string[]> =
+      Object.fromEntries(
+        this.joinClauses.map((joinClause) => [joinClause.alias, []]),
+      );
+
+    for (const joinedProjection of collectJoinedColumnProjections(state)) {
+      additionalColumnNamesByAlias[joinedProjection.joinAlias].push(
+        joinedProjection.columnName,
+      );
+    }
+
+    for (const columnSelection of state.columnSelections) {
+      if (columnSelection.alias === this.alias) {
+        (additionalColumnNamesByAlias[this.alias] ??= []).push(
+          columnSelection.columnName,
+        );
+      }
+    }
 
     return collectReferencedColumnNames({
       mainAlias: this.alias,
       mainAliasColumnNames: this.buildProjection().mainAliasColumnNames,
+      additionalColumnNamesByAlias,
       extraSelectClauses: this.extraSelectClauses.map((selectClause) => ({
         ...selectClause,
         expression: quoteQualifiedAliasReferences(
@@ -930,10 +1027,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
   }
 
   private buildColumnNameByResultAlias(): Record<string, string> {
-    return buildColumnNameByResultAlias(
-      this.alias,
-      this.buildProjection().mainAliasColumnNames,
-    );
+    return buildHydrationPathByResultAlias(this.toSelectStatementState());
   }
 
   private buildWhereExpression(options?: {
@@ -959,6 +1053,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       findOptions: this.findOptions,
       explicitSelection: this.explicitSelection,
       extraSelectClauses: this.extraSelectClauses,
+      columnSelections: this.resolveColumnSelections(),
       joinClauses: this.joinClauses,
       whereClauses: this.whereClauses,
       groupByExpressions: this.groupByExpressions,

@@ -23,10 +23,19 @@ export type JoinClause = {
   targetTableShape: WorkspaceTableShape;
   relationType: RelationType;
   joinType: 'INNER' | 'LEFT';
+  // A joinAndSelect projects every column of the joined table and hydrates them
+  // into the relation property of the parent entity.
+  isSelected?: boolean;
   condition?: string;
   toManyForeignKeyColumnName?: string;
   toManyPlainCondition?: string;
   additionalOnConditions: string[];
+};
+
+// A single joined column projected through addSelect('<alias>.<column>').
+export type ColumnSelection = {
+  alias: string;
+  columnName: string;
 };
 
 export type SelectClause = {
@@ -46,6 +55,7 @@ export type SelectStatementState = {
   findOptions: FindOptionsLike;
   explicitSelection?: string[];
   extraSelectClauses: SelectClause[];
+  columnSelections: ColumnSelection[];
   joinClauses: JoinClause[];
   whereClauses: WhereClause[];
   groupByExpressions: string[];
@@ -105,6 +115,85 @@ export const collectStatementAliases = (
   ...state.joinClauses.map((joinClause) => joinClause.alias),
 ];
 
+// The dotted property chain a joined alias hydrates into, e.g. a join of
+// "company.owner" aliased "owner" under a join of "person.company" aliased
+// "company" resolves to "company.owner".
+const buildJoinPropertyPath = (
+  state: SelectStatementState,
+  joinAlias: string,
+): string => {
+  const propertySegments: string[] = [];
+  let currentAlias = joinAlias;
+
+  while (currentAlias !== state.alias) {
+    const joinClause = state.joinClauses.find(
+      (candidate) => candidate.alias === currentAlias,
+    );
+
+    if (!isDefined(joinClause)) {
+      throw new TwentyOrmV2Exception(
+        `Alias "${currentAlias}" does not belong to this statement`,
+        TwentyOrmV2ExceptionCode.UNKNOWN_RELATION,
+      );
+    }
+
+    propertySegments.unshift(joinClause.relationFieldName);
+    currentAlias = joinClause.parentAlias;
+  }
+
+  return propertySegments.join('.');
+};
+
+export type JoinedColumnProjection = {
+  joinAlias: string;
+  columnName: string;
+  resultAlias: string;
+  propertyPath: string;
+};
+
+export const collectJoinedColumnProjections = (
+  state: SelectStatementState,
+): JoinedColumnProjection[] => {
+  const projections: JoinedColumnProjection[] = [];
+  const seenResultAliases = new Set<string>();
+
+  const addProjection = (joinAlias: string, columnName: string) => {
+    const resultAlias = buildColumnResultAlias(joinAlias, columnName);
+
+    if (seenResultAliases.has(resultAlias)) {
+      return;
+    }
+
+    seenResultAliases.add(resultAlias);
+    projections.push({
+      joinAlias,
+      columnName,
+      resultAlias,
+      propertyPath: buildJoinPropertyPath(state, joinAlias),
+    });
+  };
+
+  for (const joinClause of state.joinClauses) {
+    if (joinClause.isSelected !== true) {
+      continue;
+    }
+
+    for (const columnName of joinClause.targetTableShape.columnNames) {
+      addProjection(joinClause.alias, columnName);
+    }
+  }
+
+  for (const columnSelection of state.columnSelections) {
+    if (columnSelection.alias === state.alias) {
+      continue;
+    }
+
+    addProjection(columnSelection.alias, columnSelection.columnName);
+  }
+
+  return projections;
+};
+
 export const buildProjection = (
   state: SelectStatementState,
 ): { expressions: string[]; mainAliasColumnNames: string[] } => {
@@ -133,6 +222,33 @@ export const buildProjection = (
         buildColumnResultAlias(state.alias, columnName),
       )}`,
   );
+
+  const projectedMainColumnNames = new Set(mainAliasColumnNames);
+
+  for (const columnSelection of state.columnSelections) {
+    if (
+      columnSelection.alias !== state.alias ||
+      projectedMainColumnNames.has(columnSelection.columnName)
+    ) {
+      continue;
+    }
+
+    projectedMainColumnNames.add(columnSelection.columnName);
+    expressions.push(
+      `${quoteColumn(state.alias, columnSelection.columnName)} AS ${escapeIdentifier(
+        buildColumnResultAlias(state.alias, columnSelection.columnName),
+      )}`,
+    );
+  }
+
+  for (const joinedProjection of collectJoinedColumnProjections(state)) {
+    expressions.push(
+      `${quoteColumn(
+        joinedProjection.joinAlias,
+        joinedProjection.columnName,
+      )} AS ${escapeIdentifier(joinedProjection.resultAlias)}`,
+    );
+  }
 
   const aliases = collectStatementAliases(state);
 
@@ -361,20 +477,78 @@ export const buildCountStatement = (state: SelectStatementState): string => {
     .join(' ');
 };
 
-// Only the projected columns of the main alias become entity properties: anything else
-// in the row, such as a relation order-by column, is raw join output.
+type RelationColumnLeaf = {
+  propertySegments: string[];
+  value: unknown;
+};
+
+// A LEFT JOIN with no matching row projects only NULLs for the joined alias;
+// TypeORM maps that relation to null rather than a shell object of nulls.
+const buildRelationValue = (leaves: RelationColumnLeaf[]): unknown => {
+  if (leaves.every((leaf) => leaf.value === null)) {
+    return null;
+  }
+
+  const relationValue: Record<string, unknown> = {};
+  const nestedLeavesByProperty = new Map<string, RelationColumnLeaf[]>();
+
+  for (const leaf of leaves) {
+    const [propertyName, ...remainingSegments] = leaf.propertySegments;
+
+    if (remainingSegments.length === 0) {
+      relationValue[propertyName] = leaf.value;
+      continue;
+    }
+
+    const nestedLeaves = nestedLeavesByProperty.get(propertyName) ?? [];
+
+    nestedLeaves.push({ propertySegments: remainingSegments, value: leaf.value });
+    nestedLeavesByProperty.set(propertyName, nestedLeaves);
+  }
+
+  for (const [propertyName, nestedLeaves] of nestedLeavesByProperty) {
+    relationValue[propertyName] = buildRelationValue(nestedLeaves);
+  }
+
+  return relationValue;
+};
+
+// Only projected columns become entity properties: a plain path maps onto the main
+// entity, a dotted path nests under the relation property chain it was joined
+// through, and anything else in the row is raw join output that gets dropped.
 export const mapRowToEntity = <T extends Record<string, unknown>>(
   row: Record<string, unknown>,
   columnNameByResultAlias: Record<string, string>,
 ): T => {
   const entity: Record<string, unknown> = {};
+  const relationLeavesByProperty = new Map<string, RelationColumnLeaf[]>();
 
-  for (const [resultAlias, columnName] of Object.entries(
+  for (const [resultAlias, propertyPath] of Object.entries(
     columnNameByResultAlias,
   )) {
-    if (resultAlias in row) {
-      entity[columnName] = row[resultAlias];
+    if (!(resultAlias in row)) {
+      continue;
     }
+
+    const propertySegments = propertyPath.split('.');
+
+    if (propertySegments.length === 1) {
+      entity[propertyPath] = row[resultAlias];
+      continue;
+    }
+
+    const [relationProperty, ...remainingSegments] = propertySegments;
+    const relationLeaves = relationLeavesByProperty.get(relationProperty) ?? [];
+
+    relationLeaves.push({
+      propertySegments: remainingSegments,
+      value: row[resultAlias],
+    });
+    relationLeavesByProperty.set(relationProperty, relationLeaves);
+  }
+
+  for (const [relationProperty, relationLeaves] of relationLeavesByProperty) {
+    entity[relationProperty] = buildRelationValue(relationLeaves);
   }
 
   return entity as T;
@@ -390,3 +564,29 @@ export const buildColumnNameByResultAlias = (
       columnName,
     ]),
   );
+
+// Maps every projected result alias of a select back to the property path it
+// hydrates: a main column maps to its name, a joined column to the dotted
+// relation chain it was joined through.
+export const buildHydrationPathByResultAlias = (
+  state: SelectStatementState,
+): Record<string, string> => {
+  const { mainAliasColumnNames } = buildProjection(state);
+
+  const mainColumnNames = [
+    ...mainAliasColumnNames,
+    ...state.columnSelections
+      .filter((columnSelection) => columnSelection.alias === state.alias)
+      .map((columnSelection) => columnSelection.columnName),
+  ];
+
+  return {
+    ...buildColumnNameByResultAlias(state.alias, mainColumnNames),
+    ...Object.fromEntries(
+      collectJoinedColumnProjections(state).map((joinedProjection) => [
+        joinedProjection.resultAlias,
+        `${joinedProjection.propertyPath}.${joinedProjection.columnName}`,
+      ]),
+    ),
+  };
+};
