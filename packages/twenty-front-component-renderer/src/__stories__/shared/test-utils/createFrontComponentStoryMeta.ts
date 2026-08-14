@@ -15,7 +15,12 @@ export const hostApiMocks = {
   requestAccessTokenRefresh: fn().mockResolvedValue('refreshed-token'),
   openCommandConfirmationModal: fn().mockResolvedValue(undefined),
   copyToClipboard: fn().mockResolvedValue(undefined),
-  captureMedia: fn().mockResolvedValue({ status: 'cancelled' }),
+  startMediaRecording: fn().mockResolvedValue({
+    status: 'started',
+    recordingId: 'story-recording-id',
+  }),
+  stopMediaRecording: fn().mockResolvedValue({ status: 'cancelled' }),
+  cancelMediaRecording: fn().mockResolvedValue(undefined),
   storageSet: fn().mockResolvedValue(undefined),
   storageDelete: fn().mockResolvedValue(undefined),
   storageClear: fn().mockResolvedValue(undefined),
@@ -48,7 +53,9 @@ export const resetFrontComponentStoryMocks = () => {
   hostApiMocks.requestAccessTokenRefresh.mockClear();
   hostApiMocks.openCommandConfirmationModal.mockClear();
   hostApiMocks.copyToClipboard.mockClear();
-  hostApiMocks.captureMedia.mockClear();
+  hostApiMocks.startMediaRecording.mockClear();
+  hostApiMocks.stopMediaRecording.mockClear();
+  hostApiMocks.cancelMediaRecording.mockClear();
   hostApiMocks.storageSet.mockClear();
   hostApiMocks.storageDelete.mockClear();
   hostApiMocks.storageClear.mockClear();

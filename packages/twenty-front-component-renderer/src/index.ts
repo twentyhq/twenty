@@ -133,12 +133,13 @@ export { createFrontComponentRemoteWorker } from './remote/worker/utils/createFr
 export { installStyleBridge } from './polyfills/installStyleBridge';
 export { exposeGlobals } from './remote/utils/exposeGlobals';
 export type {
-  CaptureMediaFailureReason,
-  CaptureMediaMediaType,
-  CaptureMediaParams,
-  CaptureMediaResult,
-  CapturedMediaFile,
   FrontComponentExecutionContext,
+  MediaRecordingFailureReason,
+  MediaRecordingMediaType,
+  RecordedMediaFile,
+  StartMediaRecordingParams,
+  StartMediaRecordingResult,
+  StopMediaRecordingResult,
 } from 'twenty-sdk/front-component';
 export type { FrontComponentHostCommunicationApi } from './types/FrontComponentHostCommunicationApi';
 export { setFrontComponentStorageItem } from './host/utils/setFrontComponentStorageItem';

@@ -3,10 +3,12 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
-  type CaptureMediaResult,
-  type CapturedMediaFile,
-  recordAudio,
-  recordVideo,
+  type RecordedMediaFile,
+  type StopMediaRecordingResult,
+  cancelRecording,
+  startAudioRecording,
+  startVideoRecording,
+  stopRecording,
 } from 'twenty-sdk/front-component';
 
 import { RECORDING_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/media-note.object';
@@ -58,7 +60,7 @@ const fetchObjectsPage = async (after: string | null): Promise<ObjectsPage> => {
 };
 
 // An app declares its fields by universalIdentifier; the per-instance
-// fieldMetadataId that captureMedia needs is resolved at runtime. The
+// fieldMetadataId the recording upload needs is resolved at runtime. The
 // metadata API cannot filter on universalIdentifier, so page through the
 // object list until the field turns up.
 const fetchRecordingFieldMetadataId = async (): Promise<string | null> => {
@@ -84,21 +86,29 @@ const fetchRecordingFieldMetadataId = async (): Promise<string | null> => {
   }
 };
 
-const describeResult = (result: CaptureMediaResult): string =>
+const describeResult = (result: StopMediaRecordingResult): string =>
   result.status === 'failed' ? `failed:${result.reason}` : result.status;
 
 type PendingAttach = {
   mediaType: 'audio' | 'video';
-  file: CapturedMediaFile;
+  file: RecordedMediaFile;
+};
+
+type ActiveRecording = {
+  recordingId: string;
+  mediaType: 'audio' | 'video';
+  startedAt: number;
 };
 
 const MediaNotes = () => {
   const [recordingFieldMetadataId, setRecordingFieldMetadataId] = useState<
     string | null
   >(null);
-  const [captureResult, setCaptureResult] = useState<CaptureMediaResult | null>(
-    null,
-  );
+  const [captureResult, setCaptureResult] =
+    useState<StopMediaRecordingResult | null>(null);
+  const [activeRecording, setActiveRecording] =
+    useState<ActiveRecording | null>(null);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [savedRecordId, setSavedRecordId] = useState<string | null>(null);
   // Set only when attaching failed, so it doubles as the retry payload.
   const [failedAttach, setFailedAttach] = useState<PendingAttach | null>(null);
@@ -109,6 +119,24 @@ const MediaNotes = () => {
       .then(setRecordingFieldMetadataId)
       .catch(() => setRecordingFieldMetadataId(null));
   }, []);
+
+  // The recording UX is the app's own: this timer is rendered and styled
+  // here, not by a host modal. The host only shows its recording indicator.
+  useEffect(() => {
+    if (activeRecording === null) {
+      return;
+    }
+
+    setElapsedSeconds(0);
+
+    const elapsedInterval = setInterval(() => {
+      setElapsedSeconds(
+        Math.floor((Date.now() - activeRecording.startedAt) / 1000),
+      );
+    }, 1000);
+
+    return () => clearInterval(elapsedInterval);
+  }, [activeRecording]);
 
   // Attaching the uploaded file to a record is what makes it permanent: until
   // then it is a temporary file owned by the FILES field, so a failure here
@@ -143,11 +171,15 @@ const MediaNotes = () => {
     }
   };
 
-  const handleCapture = async (mediaType: 'audio' | 'video') => {
-    // Starting a new capture mid-attach would let the in-flight attach settle
-    // against a recording the UI has already replaced, offering a retry for
-    // the wrong file.
-    if (recordingFieldMetadataId === null || isAttaching) {
+  const handleStartRecording = async (mediaType: 'audio' | 'video') => {
+    // Starting a new recording mid-attach would let the in-flight attach
+    // settle against a recording the UI has already replaced, offering a
+    // retry for the wrong file.
+    if (
+      recordingFieldMetadataId === null ||
+      isAttaching ||
+      activeRecording !== null
+    ) {
       return;
     }
 
@@ -160,10 +192,34 @@ const MediaNotes = () => {
       maxDurationSeconds: 60,
     };
 
-    const result =
+    const startResult =
       mediaType === 'audio'
-        ? await recordAudio(params)
-        : await recordVideo(params);
+        ? await startAudioRecording(params)
+        : await startVideoRecording(params);
+
+    if (startResult.status === 'failed') {
+      setCaptureResult(startResult);
+
+      return;
+    }
+
+    setActiveRecording({
+      recordingId: startResult.recordingId,
+      mediaType,
+      startedAt: Date.now(),
+    });
+  };
+
+  const handleStopRecording = async () => {
+    if (activeRecording === null) {
+      return;
+    }
+
+    const { recordingId, mediaType } = activeRecording;
+
+    setActiveRecording(null);
+
+    const result = await stopRecording({ recordingId });
 
     setCaptureResult(result);
 
@@ -172,6 +228,19 @@ const MediaNotes = () => {
     }
 
     await attachToNewMediaNote({ mediaType, file: result.file });
+  };
+
+  const handleCancelRecording = async () => {
+    if (activeRecording === null) {
+      return;
+    }
+
+    const { recordingId } = activeRecording;
+
+    setActiveRecording(null);
+
+    await cancelRecording({ recordingId });
+    setCaptureResult({ status: 'cancelled' });
   };
 
   return (
@@ -185,24 +254,58 @@ const MediaNotes = () => {
         Twenty and attached to a Media note record.
       </p>
 
-      <div style={{ marginBottom: '16px' }}>
-        <button
-          data-testid={MEDIA_NOTES_TEST_IDS.recordAudioButton}
-          style={buttonStyle}
-          disabled={recordingFieldMetadataId === null || isAttaching}
-          onClick={() => handleCapture('audio')}
-        >
-          Record a voice note
-        </button>
-        <button
-          data-testid={MEDIA_NOTES_TEST_IDS.recordVideoButton}
-          style={buttonStyle}
-          disabled={recordingFieldMetadataId === null || isAttaching}
-          onClick={() => handleCapture('video')}
-        >
-          Record a video note
-        </button>
-      </div>
+      {activeRecording === null ? (
+        <div style={{ marginBottom: '16px' }}>
+          <button
+            data-testid={MEDIA_NOTES_TEST_IDS.recordAudioButton}
+            style={buttonStyle}
+            disabled={recordingFieldMetadataId === null || isAttaching}
+            onClick={() => handleStartRecording('audio')}
+          >
+            Record a voice note
+          </button>
+          <button
+            data-testid={MEDIA_NOTES_TEST_IDS.recordVideoButton}
+            style={buttonStyle}
+            disabled={recordingFieldMetadataId === null || isAttaching}
+            onClick={() => handleStartRecording('video')}
+          >
+            Record a video note
+          </button>
+        </div>
+      ) : (
+        <div style={{ alignItems: 'center', display: 'flex', gap: '8px', marginBottom: '16px' }}>
+          <span
+            style={{
+              backgroundColor: '#b42318',
+              borderRadius: '50%',
+              display: 'inline-block',
+              height: '10px',
+              width: '10px',
+            }}
+          />
+          <span
+            data-testid={MEDIA_NOTES_TEST_IDS.recordingTimer}
+            style={{ fontSize: '13px', fontVariantNumeric: 'tabular-nums' }}
+          >
+            Recording {activeRecording.mediaType}… {elapsedSeconds}s
+          </span>
+          <button
+            data-testid={MEDIA_NOTES_TEST_IDS.stopRecordingButton}
+            style={buttonStyle}
+            onClick={handleStopRecording}
+          >
+            Stop and save
+          </button>
+          <button
+            data-testid={MEDIA_NOTES_TEST_IDS.cancelRecordingButton}
+            style={{ ...buttonStyle, backgroundColor: '#666' }}
+            onClick={handleCancelRecording}
+          >
+            Cancel
+          </button>
+        </div>
+      )}
 
       {captureResult !== null && (
         <div
@@ -278,6 +381,6 @@ const MediaNotes = () => {
 export default defineFrontComponent({
   universalIdentifier: MEDIA_NOTES_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
   name: 'media-notes-component',
-  description: 'Record audio or video notes with the captureMedia capability',
+  description: 'Record audio or video notes with the media recording API',
   component: MediaNotes,
 });

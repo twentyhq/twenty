@@ -475,38 +475,47 @@ Front components can trigger navigation, modals, and notifications using functio
 | `enqueueSnackbar(params)` | Show a toast notification |
 | `unmountFrontComponent()` | Unmount the component |
 | `updateProgress(progress)` | Update a progress indicator |
-| `recordAudio(params)` | Record audio with the device microphone and upload the result |
-| `recordVideo(params)` | Record video with the device camera and microphone and upload the result |
+| `startAudioRecording(params)` | Start recording with the device microphone |
+| `startVideoRecording(params)` | Start recording with the device camera and microphone |
+| `stopRecording({ recordingId })` | Stop the recording, upload it, and return the file reference |
+| `cancelRecording({ recordingId })` | Discard the recording without uploading |
 
 ### Recording audio or video
 
-`recordAudio` and `recordVideo` open a host-owned recorder: the user consents, records, reviews the result, and only then is the file uploaded. The component never touches the raw media stream.
+Your component owns the recording experience — its own buttons, timer, and styling. The host runs only the parts a sandboxed worker cannot: device access, the recorder itself, and the upload. While a device is live, the host shows a recording indicator naming your application, with a stop control that discards the recording; that indicator is the one piece of the experience your component does not render.
 
 `fieldMetadataId` is required and must point at a FILES field — the recording is uploaded *for* that field, and attaching it to a record is what makes the file permanent. A file uploaded outside a field could never be attached, so it is not allowed.
 
 ```tsx
-import { recordAudio } from 'twenty-sdk/front-component';
+import { startAudioRecording, stopRecording } from 'twenty-sdk/front-component';
 
-const result = await recordAudio({
+const startResult = await startAudioRecording({
   fieldMetadataId,
   maxDurationSeconds: 120,
 });
 
-if (result.status === 'captured') {
-  // result.file: { fileId, path, url, size, mimeType, durationSeconds }
-  // Attach it to a record to keep it:
-  await new CoreApiClient().mutation({
-    createMediaNote: {
-      __args: {
-        data: { recording: [{ fileId: result.file.fileId, label: result.file.path }] },
+if (startResult.status === 'started') {
+  // Render your own recording UI, then when the user is done:
+  const result = await stopRecording({ recordingId: startResult.recordingId });
+
+  if (result.status === 'captured') {
+    // result.file: { fileId, path, url, size, mimeType, durationSeconds }
+    // Attach it to a record to keep it:
+    await new CoreApiClient().mutation({
+      createMediaNote: {
+        __args: {
+          data: { recording: [{ fileId: result.file.fileId, label: result.file.path }] },
+        },
+        id: true,
       },
-      id: true,
-    },
-  });
+    });
+  }
 }
 ```
 
-The result is `captured`, `cancelled`, or `failed` with a reason (`invalid-params`, `permission-denied`, `no-device`, `device-in-use`, `blocked`, `busy`, `upload-failed`, or `unknown`).
+`startAudioRecording` / `startVideoRecording` return `started` with a `recordingId`, or `failed` with a reason (`invalid-params`, `permission-denied`, `no-device`, `device-in-use`, `blocked`, `busy`, or `unknown`). `stopRecording` uploads the recording and returns `captured` with the file, `cancelled` if the recording is already gone (your cancel, the host indicator's stop, or the max-duration ceiling followed by a cancel), or `failed` (`upload-failed`, `unknown`). Recordings auto-stop at the duration ceiling; the recorded result stays available to `stopRecording` until the component unmounts.
+
+One recording runs at a time; a second start returns `busy`. A component that unmounts mid-recording has its recording discarded — a destroyed component never leaves a device live.
 
 Your app declares fields by `universalIdentifier`; resolve the instance-specific `fieldMetadataId` at runtime with the metadata client:
 

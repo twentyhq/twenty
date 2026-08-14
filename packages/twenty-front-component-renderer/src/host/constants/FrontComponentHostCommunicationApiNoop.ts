@@ -13,7 +13,12 @@ export const FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP: FrontComponentHostComm
     closeSidePanel: noopAsync,
     updateProgress: noopAsync,
     copyToClipboard: noopAsync,
-    captureMedia: async () => ({ status: 'cancelled' }),
+    startMediaRecording: async () => ({
+      status: 'failed',
+      reason: 'blocked',
+    }),
+    stopMediaRecording: async () => ({ status: 'cancelled' }),
+    cancelMediaRecording: noopAsync,
     storageSet: noopAsync,
     storageDelete: noopAsync,
     storageClear: noopAsync,

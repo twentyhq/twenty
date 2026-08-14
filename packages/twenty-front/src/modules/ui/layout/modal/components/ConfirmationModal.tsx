@@ -43,11 +43,11 @@ export const StyledCenteredButton = (
   </StyledCenteredButtonContainer>
 );
 
-export const StyledCenteredTitle = styled.div`
+const StyledCenteredTitle = styled.div`
   text-align: center;
 `;
 
-export const StyledSectionContainer = styled.div`
+const StyledSectionContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[6]};
 `;
 

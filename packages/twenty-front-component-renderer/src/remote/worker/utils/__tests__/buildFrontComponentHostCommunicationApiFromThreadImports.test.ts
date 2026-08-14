@@ -13,7 +13,9 @@ const createHostThreadImportsStub = () =>
     closeSidePanel: jest.fn(),
     updateProgress: jest.fn(),
     copyToClipboard: jest.fn(),
-    captureMedia: jest.fn(),
+    startMediaRecording: jest.fn(),
+    stopMediaRecording: jest.fn(),
+    cancelMediaRecording: jest.fn(),
     storageSet: jest.fn(),
     storageDelete: jest.fn(),
     storageClear: jest.fn(),
@@ -34,7 +36,7 @@ describe('buildFrontComponentHostCommunicationApiFromThreadImports', () => {
       );
 
     expect(Object.keys(hostCommunicationApi).sort()).toEqual([
-      'captureMedia',
+      'cancelMediaRecording',
       'closeSidePanel',
       'copyToClipboard',
       'enqueueSnackbar',
@@ -42,6 +44,8 @@ describe('buildFrontComponentHostCommunicationApiFromThreadImports', () => {
       'openCommandConfirmationModal',
       'openSidePanelPage',
       'requestAccessTokenRefresh',
+      'startMediaRecording',
+      'stopMediaRecording',
       'storageClear',
       'storageDelete',
       'storageSet',
@@ -70,8 +74,14 @@ describe('buildFrontComponentHostCommunicationApiFromThreadImports', () => {
     expect(hostCommunicationApi.copyToClipboard).toBe(
       hostThreadImports.copyToClipboard,
     );
-    expect(hostCommunicationApi.captureMedia).toBe(
-      hostThreadImports.captureMedia,
+    expect(hostCommunicationApi.startMediaRecording).toBe(
+      hostThreadImports.startMediaRecording,
+    );
+    expect(hostCommunicationApi.stopMediaRecording).toBe(
+      hostThreadImports.stopMediaRecording,
+    );
+    expect(hostCommunicationApi.cancelMediaRecording).toBe(
+      hostThreadImports.cancelMediaRecording,
     );
     expect(hostCommunicationApi.storageSet).toBe(hostThreadImports.storageSet);
     expect(hostCommunicationApi.storageDelete).toBe(

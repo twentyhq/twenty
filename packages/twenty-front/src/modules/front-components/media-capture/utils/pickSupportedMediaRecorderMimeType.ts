@@ -1,4 +1,4 @@
-import { type CaptureMediaMediaType } from 'twenty-front-component-renderer';
+import { type MediaRecordingMediaType } from 'twenty-front-component-renderer';
 
 // Ordered by preference: opus-in-webm is the best supported recording format
 // in Chromium and Firefox; mp4 covers Safari, which records AAC natively.
@@ -21,7 +21,7 @@ export const pickSupportedMediaRecorderMimeType = ({
   mediaType,
   isMimeTypeSupported,
 }: {
-  mediaType: CaptureMediaMediaType;
+  mediaType: MediaRecordingMediaType;
   isMimeTypeSupported: (mimeType: string) => boolean;
 }): string | undefined => {
   const mimeTypePreferences =

@@ -102,17 +102,17 @@ export type RequestAccessTokenRefreshFunction = () => Promise<string>;
 
 export type CopyToClipboardFunction = (text: string) => Promise<void>;
 
-export type CaptureMediaMediaType = 'audio' | 'video';
+export type MediaRecordingMediaType = 'audio' | 'video';
 
-export type CaptureMediaParams = {
-  mediaType: CaptureMediaMediaType;
+export type StartMediaRecordingParams = {
+  mediaType: MediaRecordingMediaType;
   // The FILES field the recording is uploaded for. Required: a file uploaded
   // outside a field can never be attached to a record and would be orphaned.
   fieldMetadataId: string;
   maxDurationSeconds?: number;
 };
 
-export type CapturedMediaFile = {
+export type RecordedMediaFile = {
   fileId: string;
   path: string;
   url: string;
@@ -121,7 +121,7 @@ export type CapturedMediaFile = {
   durationSeconds: number;
 };
 
-export type CaptureMediaFailureReason =
+export type MediaRecordingFailureReason =
   | 'invalid-params'
   | 'permission-denied'
   | 'no-device'
@@ -131,14 +131,29 @@ export type CaptureMediaFailureReason =
   | 'upload-failed'
   | 'unknown';
 
-export type CaptureMediaResult =
-  | { status: 'captured'; file: CapturedMediaFile }
-  | { status: 'cancelled' }
-  | { status: 'failed'; reason: CaptureMediaFailureReason };
+export type StartMediaRecordingResult =
+  | { status: 'started'; recordingId: string }
+  | { status: 'failed'; reason: MediaRecordingFailureReason };
 
-export type CaptureMediaFunction = (
-  params: CaptureMediaParams,
-) => Promise<CaptureMediaResult>;
+// 'cancelled' covers every way the recording can be gone by the time stop
+// arrives: the app cancelled, the user pressed stop on the host indicator,
+// or the id is stale.
+export type StopMediaRecordingResult =
+  | { status: 'captured'; file: RecordedMediaFile }
+  | { status: 'cancelled' }
+  | { status: 'failed'; reason: MediaRecordingFailureReason };
+
+export type StartMediaRecordingFunction = (
+  params: StartMediaRecordingParams,
+) => Promise<StartMediaRecordingResult>;
+
+export type StopMediaRecordingFunction = (params: {
+  recordingId: string;
+}) => Promise<StopMediaRecordingResult>;
+
+export type CancelMediaRecordingFunction = (params: {
+  recordingId: string;
+}) => Promise<void>;
 
 export type OpenCommandConfirmationModalHostFunction = (
   params: Parameters<OpenCommandConfirmationModalFunction>[0],
@@ -169,7 +184,9 @@ export type FrontComponentHostCommunicationApiStore = {
   closeSidePanel?: CloseSidePanelFunction;
   updateProgress?: UpdateProgressFunction;
   copyToClipboard?: CopyToClipboardFunction;
-  captureMedia?: CaptureMediaFunction;
+  startMediaRecording?: StartMediaRecordingFunction;
+  stopMediaRecording?: StopMediaRecordingFunction;
+  cancelMediaRecording?: CancelMediaRecordingFunction;
   storageSet?: StorageSetFunction;
   storageDelete?: StorageDeleteFunction;
   storageClear?: StorageClearFunction;

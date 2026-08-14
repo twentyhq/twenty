@@ -1,5 +1,5 @@
 import {
-  type CaptureMediaFunction,
+  type CancelMediaRecordingFunction,
   type CloseSidePanelFunction,
   type CopyToClipboardFunction,
   type EnqueueSnackbarFunction,
@@ -7,6 +7,8 @@ import {
   type OpenCommandConfirmationModalHostFunction,
   type OpenSidePanelPageFunction,
   type RequestAccessTokenRefreshFunction,
+  type StartMediaRecordingFunction,
+  type StopMediaRecordingFunction,
   type StorageClearFunction,
   type StorageDeleteFunction,
   type StorageSetFunction,
@@ -24,7 +26,9 @@ export type FrontComponentHostCommunicationApi = {
   closeSidePanel: CloseSidePanelFunction;
   updateProgress: UpdateProgressFunction;
   copyToClipboard: CopyToClipboardFunction;
-  captureMedia: CaptureMediaFunction;
+  startMediaRecording: StartMediaRecordingFunction;
+  stopMediaRecording: StopMediaRecordingFunction;
+  cancelMediaRecording: CancelMediaRecordingFunction;
   storageSet: StorageSetFunction;
   storageDelete: StorageDeleteFunction;
   storageClear: StorageClearFunction;

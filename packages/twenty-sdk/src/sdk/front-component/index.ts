@@ -7,10 +7,12 @@ export { enqueueSnackbar } from './functions/enqueueSnackbar';
 export { navigate } from './functions/navigate';
 export { openCommandConfirmationModal } from './functions/openCommandConfirmationModal';
 export { openSidePanelPage } from './functions/openSidePanelPage';
-export { recordAudio } from './functions/recordAudio';
-export type { RecordAudioParams } from './functions/recordAudio';
-export { recordVideo } from './functions/recordVideo';
-export type { RecordVideoParams } from './functions/recordVideo';
+export { startAudioRecording } from './functions/startAudioRecording';
+export type { StartAudioRecordingParams } from './functions/startAudioRecording';
+export { startVideoRecording } from './functions/startVideoRecording';
+export type { StartVideoRecordingParams } from './functions/startVideoRecording';
+export { stopRecording } from './functions/stopRecording';
+export { cancelRecording } from './functions/cancelRecording';
 export { unmountFrontComponent } from './functions/unmountFrontComponent';
 export { updateProgress } from './functions/updateProgress';
 export { useColorScheme } from './hooks/useColorScheme';
@@ -32,23 +34,26 @@ export type { FrontComponentExecutionContext } from './types/FrontComponentExecu
 export type { FrontComponentStorageType } from './types/FrontComponentStorageType';
 export { getFrontComponentCommandErrorDedupeKey } from './utils/getFrontComponentCommandErrorDedupeKey';
 export type {
-  CaptureMediaFailureReason,
-  CaptureMediaFunction,
-  CaptureMediaMediaType,
-  CaptureMediaParams,
-  CaptureMediaResult,
-  CapturedMediaFile,
+  CancelMediaRecordingFunction,
   CloseSidePanelFunction,
   CommandConfirmationModalAccent,
   CommandConfirmationModalResult,
   CopyToClipboardFunction,
   EnqueueSnackbarFunction,
+  MediaRecordingFailureReason,
+  MediaRecordingMediaType,
   NavigateFunction,
   OpenCommandConfirmationModalFunction,
   OpenCommandConfirmationModalHostFunction,
   OpenSidePanelPageFunction,
   OpenSidePanelPageParams,
+  RecordedMediaFile,
   RequestAccessTokenRefreshFunction,
+  StartMediaRecordingFunction,
+  StartMediaRecordingParams,
+  StartMediaRecordingResult,
+  StopMediaRecordingFunction,
+  StopMediaRecordingResult,
   StorageClearFunction,
   StorageDeleteFunction,
   StorageSetFunction,

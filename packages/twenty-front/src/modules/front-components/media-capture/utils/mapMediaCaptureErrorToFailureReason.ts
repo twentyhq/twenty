@@ -1,8 +1,8 @@
-import { type CaptureMediaFailureReason } from 'twenty-front-component-renderer';
+import { type MediaRecordingFailureReason } from 'twenty-front-component-renderer';
 
 export const mapMediaCaptureErrorToFailureReason = (
   error: unknown,
-): CaptureMediaFailureReason => {
+): MediaRecordingFailureReason => {
   if (!(error instanceof DOMException)) {
     return 'unknown';
   }

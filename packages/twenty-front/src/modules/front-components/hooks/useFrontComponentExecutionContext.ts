@@ -30,7 +30,8 @@ import { useUnmountCommand } from '@/command-menu-item/engine-command/hooks/useU
 import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/commandMenuItemProgressFamilyState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
-import { useFrontComponentMediaCapture } from '@/front-components/media-capture/hooks/useFrontComponentMediaCapture';
+import { useFrontComponentMediaRecording } from '@/front-components/media-capture/hooks/useFrontComponentMediaRecording';
+import { normalizeMediaCaptureMaxDurationSeconds } from '@/front-components/media-capture/utils/normalizeMediaCaptureMaxDurationSeconds';
 import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useRequestApplicationTokenRefresh';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useOpenComposeEmailInSidePanel } from '@/side-panel/hooks/useOpenComposeEmailInSidePanel';
@@ -98,7 +99,8 @@ export const useFrontComponentExecutionContext = ({
   } = useSnackBar();
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { copyToClipboard: copyToClipboardWithSnackbar } = useCopyToClipboard();
-  const { requestMediaCapture } = useFrontComponentMediaCapture();
+  const { startMediaRecording, stopMediaRecording, cancelMediaRecording } =
+    useFrontComponentMediaRecording({ applicationId });
   const { t, i18n } = useLingui();
   // oxlint-disable-next-line twenty/no-state-useref
   const lastCopyToClipboardCallAtRef = useRef<number>(Number.NEGATIVE_INFINITY);
@@ -372,7 +374,7 @@ export const useFrontComponentExecutionContext = ({
       );
     };
 
-  const captureMedia: FrontComponentHostCommunicationApi['captureMedia'] =
+  const hostStartMediaRecording: FrontComponentHostCommunicationApi['startMediaRecording'] =
     async (params) => {
       // Params come from sandboxed application code: reject malformed shapes
       // here; numeric normalization is owned by the media-capture module.
@@ -397,14 +399,33 @@ export const useFrontComponentExecutionContext = ({
         return { status: 'failed', reason: 'invalid-params' };
       }
 
-      return await requestMediaCapture({
-        applicationId,
+      return await startMediaRecording({
         mediaType: params.mediaType,
         fieldMetadataId: params.fieldMetadataId,
-        maxDurationSeconds: isNumber(params.maxDurationSeconds)
-          ? params.maxDurationSeconds
-          : undefined,
+        maxDurationSeconds: normalizeMediaCaptureMaxDurationSeconds(
+          isNumber(params.maxDurationSeconds)
+            ? params.maxDurationSeconds
+            : undefined,
+        ),
       });
+    };
+
+  const hostStopMediaRecording: FrontComponentHostCommunicationApi['stopMediaRecording'] =
+    async (params) => {
+      if (!isDefined(params) || !isNonEmptyString(params.recordingId)) {
+        return { status: 'failed', reason: 'invalid-params' };
+      }
+
+      return await stopMediaRecording({ recordingId: params.recordingId });
+    };
+
+  const hostCancelMediaRecording: FrontComponentHostCommunicationApi['cancelMediaRecording'] =
+    async (params) => {
+      if (!isDefined(params) || !isNonEmptyString(params.recordingId)) {
+        return;
+      }
+
+      await cancelMediaRecording({ recordingId: params.recordingId });
     };
 
   const currentUserId = currentUser?.id;
@@ -468,7 +489,9 @@ export const useFrontComponentExecutionContext = ({
       closeSidePanel,
       updateProgress,
       copyToClipboard,
-      captureMedia,
+      startMediaRecording: hostStartMediaRecording,
+      stopMediaRecording: hostStopMediaRecording,
+      cancelMediaRecording: hostCancelMediaRecording,
       storageSet,
       storageDelete,
       storageClear,

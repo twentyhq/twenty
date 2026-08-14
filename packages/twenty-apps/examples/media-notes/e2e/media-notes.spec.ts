@@ -70,39 +70,33 @@ test.describe('Media notes capture flow', () => {
 
     await page.getByTestId(MEDIA_NOTES_TEST_IDS.recordAudioButton).click();
 
-    // Consent step: recording must not start before explicit confirmation.
-    const startButton = page.getByTestId('media-capture-modal-start-button');
-    await expect(startButton).toBeVisible();
-    await expect(
-      page.getByText('asking to record audio with your microphone', {
-        exact: false,
-      }),
-    ).toBeVisible();
-    await page.screenshot({
-      path: path.join(SCREENSHOT_DIR, '01-consent.png'),
-    });
-
-    await startButton.click();
-
-    // Recording step: stop control + live timer.
-    const stopButton = page.getByTestId('media-capture-modal-stop-button');
+    // The recording UX is the app's own UI: its timer and stop control.
+    const stopButton = page.getByTestId(
+      MEDIA_NOTES_TEST_IDS.stopRecordingButton,
+    );
     await expect(stopButton).toBeVisible();
+    await expect(
+      page.getByTestId(MEDIA_NOTES_TEST_IDS.recordingTimer),
+    ).toBeVisible();
+
+    // The host contributes the one piece the app cannot spoof or remove:
+    // an indicator naming the recording application while a device is live.
+    await expect(page.getByTestId('media-recording-indicator')).toBeVisible();
+    await expect(page.getByTestId('media-recording-indicator')).toContainText(
+      'is recording audio',
+    );
+
     await page.waitForTimeout(2500);
     await page.screenshot({
-      path: path.join(SCREENSHOT_DIR, '02-recording.png'),
+      path: path.join(SCREENSHOT_DIR, '01-recording.png'),
     });
 
     await stopButton.click();
 
-    // Preview step: playback before anything is shared.
-    const useButton = page.getByTestId('media-capture-modal-use-button');
-    await expect(useButton).toBeVisible();
-    await expect(page.locator('audio')).toBeVisible();
-    await page.screenshot({
-      path: path.join(SCREENSHOT_DIR, '03-preview.png'),
-    });
-
-    await useButton.click();
+    // Stopping releases the device, so the host indicator disappears.
+    await expect(
+      page.getByTestId('media-recording-indicator'),
+    ).not.toBeVisible();
 
     // Uploaded: the component receives a playable file reference.
     await expect(
@@ -131,19 +125,49 @@ test.describe('Media notes capture flow', () => {
     ).toContainText('Attached to media note');
 
     await page.screenshot({
-      path: path.join(SCREENSHOT_DIR, '04-captured.png'),
+      path: path.join(SCREENSHOT_DIR, '02-captured.png'),
     });
   });
 
-  test('cancelling the consent step resolves as cancelled', async ({
-    page,
-  }) => {
+  test('cancelling a recording resolves as cancelled', async ({ page }) => {
     await openMediaNotesComponent(page);
 
     await page.getByTestId(MEDIA_NOTES_TEST_IDS.recordAudioButton).click();
 
-    await page.getByTestId('media-capture-modal-cancel-button').click();
+    await expect(page.getByTestId('media-recording-indicator')).toBeVisible();
 
+    await page
+      .getByTestId(MEDIA_NOTES_TEST_IDS.cancelRecordingButton)
+      .click();
+
+    await expect(
+      page.getByTestId(MEDIA_NOTES_TEST_IDS.captureStatus),
+    ).toHaveText('cancelled');
+    await expect(
+      page.getByTestId('media-recording-indicator'),
+    ).not.toBeVisible();
+  });
+
+  test('the host indicator stop discards the recording', async ({ page }) => {
+    await openMediaNotesComponent(page);
+
+    await page.getByTestId(MEDIA_NOTES_TEST_IDS.recordAudioButton).click();
+
+    await expect(page.getByTestId('media-recording-indicator')).toBeVisible();
+
+    await page
+      .getByTestId('media-recording-indicator-stop-button')
+      .click();
+
+    await expect(
+      page.getByTestId('media-recording-indicator'),
+    ).not.toBeVisible();
+
+    // The app discovers the host stop on its next call: stop returns
+    // cancelled and nothing was uploaded.
+    await page
+      .getByTestId(MEDIA_NOTES_TEST_IDS.stopRecordingButton)
+      .click();
     await expect(
       page.getByTestId(MEDIA_NOTES_TEST_IDS.captureStatus),
     ).toHaveText('cancelled');

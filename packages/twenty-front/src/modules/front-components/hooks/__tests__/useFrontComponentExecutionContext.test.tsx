@@ -44,7 +44,9 @@ const mockCloseSidePanelMenu = jest.fn();
 const mockSetCommandMenuItemProgress = jest.fn();
 const mockCopyToClipboard = jest.fn();
 const mockSetRecordPageActiveTabId = jest.fn();
-const mockRequestMediaCapture = jest.fn();
+const mockStartMediaRecording = jest.fn();
+const mockStopMediaRecording = jest.fn();
+const mockCancelMediaRecording = jest.fn();
 const mockStorageSet = jest.fn();
 const mockStorageDelete = jest.fn();
 const mockStorageClear = jest.fn();
@@ -166,10 +168,12 @@ jest.mock('twenty-front-component-renderer', () => ({
 }));
 
 jest.mock(
-  '@/front-components/media-capture/hooks/useFrontComponentMediaCapture',
+  '@/front-components/media-capture/hooks/useFrontComponentMediaRecording',
   () => ({
-    useFrontComponentMediaCapture: () => ({
-      requestMediaCapture: mockRequestMediaCapture,
+    useFrontComponentMediaRecording: () => ({
+      startMediaRecording: mockStartMediaRecording,
+      stopMediaRecording: mockStopMediaRecording,
+      cancelMediaRecording: mockCancelMediaRecording,
     }),
   }),
 );
@@ -1031,104 +1035,57 @@ describe('useFrontComponentExecutionContext', () => {
     });
   });
 
-  describe('captureMedia', () => {
-    it('should fail without opening the capture flow when mediaType is invalid', async () => {
+  describe('media recording', () => {
+    it('should fail without starting when mediaType is invalid', async () => {
       const { result } = renderUseFrontComponentExecutionContext({
         frontComponentId: FRONT_COMPONENT_ID,
       });
 
-      const captureResult = await act(async () => {
-        return await result.current.frontComponentHostCommunicationApi.captureMedia(
+      const startResult = await act(async () => {
+        return await result.current.frontComponentHostCommunicationApi.startMediaRecording(
           {
             mediaType: 'screen',
             fieldMetadataId: FIELD_METADATA_ID,
           } as unknown as Parameters<
-            typeof result.current.frontComponentHostCommunicationApi.captureMedia
+            typeof result.current.frontComponentHostCommunicationApi.startMediaRecording
           >[0],
         );
       });
 
-      expect(captureResult).toEqual({
+      expect(startResult).toEqual({
         status: 'failed',
         reason: 'invalid-params',
       });
-      expect(mockRequestMediaCapture).not.toHaveBeenCalled();
+      expect(mockStartMediaRecording).not.toHaveBeenCalled();
     });
 
-    it('should fail without opening the capture flow when fieldMetadataId is missing', async () => {
+    it('should fail without starting when fieldMetadataId is missing', async () => {
       const { result } = renderUseFrontComponentExecutionContext({
         frontComponentId: FRONT_COMPONENT_ID,
       });
 
-      const captureResult = await act(async () => {
-        return await result.current.frontComponentHostCommunicationApi.captureMedia(
+      const startResult = await act(async () => {
+        return await result.current.frontComponentHostCommunicationApi.startMediaRecording(
           { mediaType: 'audio' } as unknown as Parameters<
-            typeof result.current.frontComponentHostCommunicationApi.captureMedia
+            typeof result.current.frontComponentHostCommunicationApi.startMediaRecording
           >[0],
         );
       });
 
-      expect(captureResult).toEqual({
+      expect(startResult).toEqual({
         status: 'failed',
         reason: 'invalid-params',
       });
-      expect(mockRequestMediaCapture).not.toHaveBeenCalled();
+      expect(mockStartMediaRecording).not.toHaveBeenCalled();
     });
 
-    it('should forward a valid request to the media capture module', async () => {
-      mockRequestMediaCapture.mockResolvedValue({ status: 'cancelled' });
-
+    it('should fail without starting when the target is not a FILES field', async () => {
       const { result } = renderUseFrontComponentExecutionContext({
         frontComponentId: FRONT_COMPONENT_ID,
       });
 
-      const captureResult = await act(async () => {
-        return await result.current.frontComponentHostCommunicationApi.captureMedia(
-          { mediaType: 'audio', fieldMetadataId: FIELD_METADATA_ID },
-        );
-      });
-
-      expect(mockRequestMediaCapture).toHaveBeenCalledWith({
-        applicationId: APPLICATION_ID,
-        mediaType: 'audio',
-        fieldMetadataId: FIELD_METADATA_ID,
-        maxDurationSeconds: undefined,
-      });
-      expect(captureResult).toEqual({ status: 'cancelled' });
-    });
-
-    it('should drop a non-numeric max duration', async () => {
-      mockRequestMediaCapture.mockResolvedValue({ status: 'cancelled' });
-
-      const { result } = renderUseFrontComponentExecutionContext({
-        frontComponentId: FRONT_COMPONENT_ID,
-      });
-
-      await act(async () => {
-        await result.current.frontComponentHostCommunicationApi.captureMedia({
-          mediaType: 'video',
-          fieldMetadataId: FIELD_METADATA_ID,
-          maxDurationSeconds: '120',
-        } as unknown as Parameters<
-          typeof result.current.frontComponentHostCommunicationApi.captureMedia
-        >[0]);
-      });
-
-      expect(mockRequestMediaCapture).toHaveBeenCalledWith(
-        expect.objectContaining({
-          mediaType: 'video',
-          maxDurationSeconds: undefined,
-        }),
-      );
-    });
-
-    it('should fail without opening the capture flow when the target is not a FILES field', async () => {
-      const { result } = renderUseFrontComponentExecutionContext({
-        frontComponentId: FRONT_COMPONENT_ID,
-      });
-
-      const captureResult = await act(async () => {
-        return await result.current.frontComponentHostCommunicationApi.captureMedia(
+      const startResult = await act(async () => {
+        return await result.current.frontComponentHostCommunicationApi.startMediaRecording(
           {
             mediaType: 'audio',
             fieldMetadataId: '20202020-1111-4444-8888-000000000002',
@@ -1136,52 +1093,150 @@ describe('useFrontComponentExecutionContext', () => {
         );
       });
 
-      expect(captureResult).toEqual({
+      expect(startResult).toEqual({
         status: 'failed',
         reason: 'invalid-params',
       });
-      expect(mockRequestMediaCapture).not.toHaveBeenCalled();
+      expect(mockStartMediaRecording).not.toHaveBeenCalled();
     });
 
-    it('should fail without opening the capture flow when the field does not exist', async () => {
+    it('should fail without starting when the field does not exist', async () => {
       const { result } = renderUseFrontComponentExecutionContext({
         frontComponentId: FRONT_COMPONENT_ID,
       });
 
-      const captureResult = await act(async () => {
-        return await result.current.frontComponentHostCommunicationApi.captureMedia(
+      const startResult = await act(async () => {
+        return await result.current.frontComponentHostCommunicationApi.startMediaRecording(
           { mediaType: 'audio', fieldMetadataId: 'not-a-known-field' },
         );
       });
 
-      expect(captureResult).toEqual({
+      expect(startResult).toEqual({
         status: 'failed',
         reason: 'invalid-params',
       });
-      expect(mockRequestMediaCapture).not.toHaveBeenCalled();
+      expect(mockStartMediaRecording).not.toHaveBeenCalled();
     });
 
-    it('should fail without opening the capture flow when fieldMetadataId is not a string', async () => {
+    it('should forward a valid start with a normalized max duration', async () => {
+      mockStartMediaRecording.mockResolvedValue({
+        status: 'started',
+        recordingId: 'recording-id',
+      });
+
       const { result } = renderUseFrontComponentExecutionContext({
         frontComponentId: FRONT_COMPONENT_ID,
       });
 
-      const captureResult = await act(async () => {
-        return await result.current.frontComponentHostCommunicationApi.captureMedia(
+      const startResult = await act(async () => {
+        return await result.current.frontComponentHostCommunicationApi.startMediaRecording(
+          { mediaType: 'audio', fieldMetadataId: FIELD_METADATA_ID },
+        );
+      });
+
+      expect(mockStartMediaRecording).toHaveBeenCalledWith({
+        mediaType: 'audio',
+        fieldMetadataId: FIELD_METADATA_ID,
+        maxDurationSeconds: expect.any(Number),
+      });
+      expect(startResult).toEqual({
+        status: 'started',
+        recordingId: 'recording-id',
+      });
+    });
+
+    it('should clamp a non-numeric max duration to the default', async () => {
+      mockStartMediaRecording.mockResolvedValue({
+        status: 'started',
+        recordingId: 'recording-id',
+      });
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.startMediaRecording(
           {
-            mediaType: 'audio',
-            fieldMetadataId: 42,
+            mediaType: 'video',
+            fieldMetadataId: FIELD_METADATA_ID,
+            maxDurationSeconds: '120',
           } as unknown as Parameters<
-            typeof result.current.frontComponentHostCommunicationApi.captureMedia
+            typeof result.current.frontComponentHostCommunicationApi.startMediaRecording
           >[0],
         );
       });
 
-      expect(captureResult).toEqual({
+      expect(mockStartMediaRecording).toHaveBeenCalledWith(
+        expect.objectContaining({
+          mediaType: 'video',
+          maxDurationSeconds: expect.any(Number),
+        }),
+      );
+    });
+
+    it('should fail a stop with a malformed recordingId without forwarding', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      const stopResult = await act(async () => {
+        return await result.current.frontComponentHostCommunicationApi.stopMediaRecording(
+          { recordingId: 42 } as unknown as Parameters<
+            typeof result.current.frontComponentHostCommunicationApi.stopMediaRecording
+          >[0],
+        );
+      });
+
+      expect(stopResult).toEqual({
         status: 'failed',
         reason: 'invalid-params',
       });
-      expect(mockRequestMediaCapture).not.toHaveBeenCalled();
+      expect(mockStopMediaRecording).not.toHaveBeenCalled();
+    });
+
+    it('should forward stop and cancel for a valid recordingId', async () => {
+      mockStopMediaRecording.mockResolvedValue({ status: 'cancelled' });
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      const stopResult = await act(async () => {
+        return await result.current.frontComponentHostCommunicationApi.stopMediaRecording(
+          { recordingId: 'recording-id' },
+        );
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.cancelMediaRecording(
+          { recordingId: 'recording-id' },
+        );
+      });
+
+      expect(mockStopMediaRecording).toHaveBeenCalledWith({
+        recordingId: 'recording-id',
+      });
+      expect(mockCancelMediaRecording).toHaveBeenCalledWith({
+        recordingId: 'recording-id',
+      });
+      expect(stopResult).toEqual({ status: 'cancelled' });
+    });
+
+    it('should ignore a cancel with a malformed recordingId', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.cancelMediaRecording(
+          { recordingId: 42 } as unknown as Parameters<
+            typeof result.current.frontComponentHostCommunicationApi.cancelMediaRecording
+          >[0],
+        );
+      });
+
+      expect(mockCancelMediaRecording).not.toHaveBeenCalled();
     });
   });
 });
