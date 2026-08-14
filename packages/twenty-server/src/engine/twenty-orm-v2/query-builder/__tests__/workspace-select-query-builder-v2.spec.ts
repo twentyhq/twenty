@@ -215,6 +215,85 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
     expect(() => queryBuilder.getQuery()).toThrow(TwentyOrmV2Exception);
   });
 
+  it('should render a plain to-many join for a raw read', async () => {
+    const { queryBuilder, executedStatements } = buildQueryBuilder();
+
+    queryBuilder.select([]);
+    queryBuilder.addSelect('person.id', 'id');
+    queryBuilder.innerJoin('person.people', 'people');
+
+    await queryBuilder.getRawMany();
+
+    expect(executedStatements[0].text).toContain(
+      `INNER JOIN "${SCHEMA_NAME}"."company" AS "people" ` +
+        'ON ("people"."personId" = "person"."id") AND ("people"."deletedAt" IS NULL)',
+    );
+  });
+
+  it('should render a plain to-many left join for a raw read', async () => {
+    const { queryBuilder, executedStatements } = buildQueryBuilder();
+
+    queryBuilder.select([]);
+    queryBuilder.addSelect('person.id', 'id');
+    queryBuilder.leftJoin('person.people', 'people');
+
+    await queryBuilder.getRawMany();
+
+    expect(executedStatements[0].text).toContain(
+      `LEFT JOIN "${SCHEMA_NAME}"."company" AS "people" ` +
+        'ON ("people"."personId" = "person"."id")',
+    );
+  });
+
+  it('should still reject a plain to-many join for an entity-hydrating read', async () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.setFindOptions({ select: { id: true } });
+    queryBuilder.leftJoin('person.people', 'people');
+
+    await expect(queryBuilder.getMany()).rejects.toThrow(
+      TwentyOrmV2Exception,
+    );
+    await expect(queryBuilder.getOne()).rejects.toThrow(TwentyOrmV2Exception);
+  });
+
+  it('should count distinct main records when a to-many join multiplies rows', async () => {
+    const { queryBuilder, executedStatements } = buildQueryBuilder({
+      rows: [{ count: '3' }],
+    });
+
+    queryBuilder.innerJoin('person.people', 'people');
+    queryBuilder.where('people.name = :name', { name: 'Acme' });
+    queryBuilder.groupBy('person.id');
+
+    const count = await queryBuilder.getCount();
+
+    expect(count).toBe(3);
+    expect(executedStatements[0].text).toContain(
+      'SELECT COUNT(DISTINCT "person"."id") AS "count"',
+    );
+    expect(executedStatements[0].text).toContain(
+      `INNER JOIN "${SCHEMA_NAME}"."company" AS "people"`,
+    );
+    expect(executedStatements[0].text).not.toContain('GROUP BY');
+  });
+
+  it('should render an added join condition on a plain to-many join', async () => {
+    const { queryBuilder, executedStatements } = buildQueryBuilder();
+
+    queryBuilder.select([]);
+    queryBuilder.addSelect('person.id', 'id');
+    queryBuilder.innerJoin('person.people', 'people');
+    queryBuilder.addJoinCondition('people', '"people"."name" = :ownerName');
+    queryBuilder.setParameters({ ownerName: 'Acme' });
+
+    await queryBuilder.getRawMany();
+
+    expect(executedStatements[0].text).toContain(
+      '("people"."personId" = "person"."id") AND ("people"."name" = $1)',
+    );
+  });
+
   it('should render a deduped to-many join on the inverse foreign key when the caller opts in', () => {
     const { queryBuilder } = buildQueryBuilder();
 

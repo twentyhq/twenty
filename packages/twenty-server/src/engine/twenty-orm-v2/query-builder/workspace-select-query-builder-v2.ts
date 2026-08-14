@@ -328,18 +328,20 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
 
     // A to-one relation carries its join column on the current table, so the condition
     // is always renderable. A to-many relation carries the foreign key on the target
-    // table; it is only built when the caller opts in (group-by "with records" ordering)
-    // and renders as a DISTINCT ON derived table so it stays one row per parent.
-    // Otherwise the condition is left undefined and the shared to-one guard rejects it.
-    const toManyJoin =
-      options?.allowToManyJoin === true
-        ? this.buildToManyJoin({
-            parentAlias,
-            alias,
-            targetTableShape,
-            targetFieldMetadataId: relationShape.targetFieldMetadataId,
-          })
-        : undefined;
+    // table; when the caller opts in (group-by "with records" ordering) it renders as
+    // a DISTINCT ON derived table so it stays one row per parent. Otherwise the
+    // condition is kept aside as a plain row-multiplying join that only raw and
+    // aggregation reads may render; entity-hydrating reads still reject it.
+    const toManyJoin = isDefined(joinColumnName)
+      ? undefined
+      : this.buildToManyJoin({
+          parentAlias,
+          alias,
+          targetTableShape,
+          targetFieldMetadataId: relationShape.targetFieldMetadataId,
+        });
+
+    const shouldJoinDedupedToMany = options?.allowToManyJoin === true;
 
     this.joinClauses.push({
       alias,
@@ -351,8 +353,12 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       condition: isDefined(joinColumnName)
         ? (condition ??
           `${this.quoteColumn(parentAlias, joinColumnName)} = ${this.quoteColumn(alias, 'id')}`)
-        : (condition ?? toManyJoin?.condition),
-      toManyForeignKeyColumnName: toManyJoin?.foreignKeyColumnName,
+        : (condition ??
+          (shouldJoinDedupedToMany ? toManyJoin?.condition : undefined)),
+      toManyForeignKeyColumnName: shouldJoinDedupedToMany
+        ? toManyJoin?.foreignKeyColumnName
+        : undefined,
+      toManyPlainCondition: toManyJoin?.condition,
       additionalOnConditions: [],
     });
 
@@ -494,7 +500,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     this.limitValue = this.limitValue ?? 1;
 
     try {
-      const rows = await this.executeSelect();
+      const rows = await this.executeSelect({ allowPlainToManyJoins: true });
 
       return rows[0] as T | undefined;
     } finally {
@@ -503,7 +509,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
   }
 
   async getRawMany<T extends Record<string, unknown>>(): Promise<T[]> {
-    const rows = await this.executeSelect();
+    const rows = await this.executeSelect({ allowPlainToManyJoins: true });
 
     return rows as T[];
   }
@@ -517,7 +523,9 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
   async getCount(): Promise<number> {
     this.context.onBeforeExecute(this);
 
-    const sql = buildCountStatement(this.toSelectStatementState());
+    const sql = buildCountStatement(
+      this.toSelectStatementState({ allowPlainToManyJoins: true }),
+    );
     const compiled = compileNamedParameters(sql, this.parameters);
     const rows = await this.context.executor.execute(compiled);
 
@@ -891,20 +899,22 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     return this.normaliseColumnExpression(expression);
   }
 
-  private async executeSelect(): Promise<Record<string, unknown>[]> {
+  private async executeSelect(options?: {
+    allowPlainToManyJoins?: boolean;
+  }): Promise<Record<string, unknown>[]> {
     this.context.onBeforeExecute(this);
 
-    const { sql, parameters } = this.buildSelectStatement();
+    const { sql, parameters } = this.buildSelectStatement(options);
     const compiled = compileNamedParameters(sql, parameters);
 
     return this.context.executor.execute(compiled);
   }
 
-  private buildSelectStatement(): {
+  private buildSelectStatement(options?: { allowPlainToManyJoins?: boolean }): {
     sql: string;
     parameters: Record<string, unknown>;
   } {
-    const state = this.toSelectStatementState();
+    const state = this.toSelectStatementState(options);
 
     return {
       sql: buildSelectStatement(state),
@@ -940,7 +950,9 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     return quoteColumn(alias, columnName);
   }
 
-  private toSelectStatementState(): SelectStatementState {
+  private toSelectStatementState(options?: {
+    allowPlainToManyJoins?: boolean;
+  }): SelectStatementState {
     return {
       alias: this.alias,
       tableShape: this.tableShape,
@@ -953,6 +965,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       orderByClauses: this.orderByClauses,
       distinctOnExpressions: this.distinctOnExpressions,
       includeDeleted: this.includeDeleted,
+      allowPlainToManyJoins: options?.allowPlainToManyJoins ?? false,
       limitValue: this.limitValue,
       offsetValue: this.offsetValue,
     };

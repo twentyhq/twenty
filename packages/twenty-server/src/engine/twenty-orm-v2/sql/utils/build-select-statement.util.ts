@@ -25,6 +25,7 @@ export type JoinClause = {
   joinType: 'INNER' | 'LEFT';
   condition?: string;
   toManyForeignKeyColumnName?: string;
+  toManyPlainCondition?: string;
   additionalOnConditions: string[];
 };
 
@@ -51,6 +52,9 @@ export type SelectStatementState = {
   orderByClauses: OrderByClause[];
   distinctOnExpressions: string[];
   includeDeleted: boolean;
+  // A raw or aggregation read tolerates row multiplication, so it may render a
+  // plain to-many join; an entity-hydrating read must stay one row per entity.
+  allowPlainToManyJoins: boolean;
   limitValue?: number;
   offsetValue?: number;
 };
@@ -209,7 +213,13 @@ const buildToManyDedupedJoinSource = ({
 export const buildJoinClause = (state: SelectStatementState): string =>
   state.joinClauses
     .map((joinClause) => {
-      if (!isDefined(joinClause.condition)) {
+      const condition =
+        joinClause.condition ??
+        (state.allowPlainToManyJoins
+          ? joinClause.toManyPlainCondition
+          : undefined);
+
+      if (!isDefined(condition)) {
         throw new TwentyOrmV2Exception(
           `Only to-one relations can be joined; "${joinClause.alias}" is to-many and must be loaded as a separate query`,
           TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
@@ -224,10 +234,7 @@ export const buildJoinClause = (state: SelectStatementState): string =>
           ? joinClause.toManyForeignKeyColumnName
           : undefined;
 
-      const onConditions = [
-        joinClause.condition,
-        ...joinClause.additionalOnConditions,
-      ];
+      const onConditions = [condition, ...joinClause.additionalOnConditions];
 
       // A to-one join filters soft-deleted rows in its ON clause. The deduped
       // to-many join picks one representative row per parent, so its soft-delete
@@ -337,8 +344,15 @@ export const buildSelectStatement = (state: SelectStatementState): string => {
 export const buildCountStatement = (state: SelectStatementState): string => {
   const whereExpression = buildWhereExpression(state);
 
+  // A join can multiply rows, so counting mirrors TypeORM's getCount and counts
+  // distinct main-alias records instead of result rows.
+  const countExpression =
+    state.joinClauses.length > 0
+      ? `COUNT(DISTINCT ${quoteColumn(state.alias, 'id')})`
+      : 'COUNT(1)';
+
   return [
-    'SELECT COUNT(1) AS "count"',
+    `SELECT ${countExpression} AS "count"`,
     buildFromClause(state),
     buildJoinClause(state),
     whereExpression.length > 0 ? `WHERE ${whereExpression}` : '',
