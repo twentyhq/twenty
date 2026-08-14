@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   createFrontComponentMediaSessionHost,
   type FrontComponentMediaSessionHost,
@@ -68,12 +68,6 @@ export const useFrontComponentMediaSession = (): {
       },
     });
   });
-
-  useEffect(() => {
-    return () => {
-      mediaSessionHost.stopAllSessions();
-    };
-  }, [mediaSessionHost]);
 
   return { mediaSessionHost };
 };

@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { type WorkerMediaStreamTrackInstance } from '@/polyfills/media/utils/createMediaStreamTrackClass';
 import { generateRandomId } from '@/utils/generateRandomId';
 
@@ -51,7 +53,7 @@ export const createMediaStreamClass = () => {
         // constructor which keeps the same source tracks.
         const sourceCapturedStreamId = capturedStreamIds.get(streamOrTracks);
 
-        if (sourceCapturedStreamId !== undefined) {
+        if (isDefined(sourceCapturedStreamId)) {
           capturedStreamIds.set(this, sourceCapturedStreamId);
         }
       } else if (Array.isArray(streamOrTracks)) {

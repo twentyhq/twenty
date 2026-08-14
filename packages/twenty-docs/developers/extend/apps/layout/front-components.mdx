@@ -834,9 +834,13 @@ Component CSS, whether from `import './styles.css'`, CSS-in-JS or a `style` elem
 - Other origins leave the sandbox with `Origin: null`, so a third-party API answers only if it sends `Access-Control-Allow-Origin: *`. Call it from a logic function instead.
 - `fetch('/rest/people')` is never matched to the Twenty API, because the sandbox has no page URL to resolve a relative path against.
 
+### Media capture
+
+`navigator.mediaDevices.getUserMedia()` and `MediaRecorder` work inside front components through sandbox polyfills, so standard recording code runs unchanged and `MediaRecorder.isTypeSupported` answers for common container/codec combinations. Detailed `getUserMedia` constraint objects are accepted but not forwarded — the host captures with its defaults for the requested kinds — and only one capture can be live at a time across applications. Store a recorded `Blob` with the `uploadFile` host function.
+
 ### Other gaps
 
-- **File contents.** An `input` of type `file` gives your handler file metadata only, not the bytes, so `FileReader` and uploads are not possible yet.
+- **File contents.** An `input` of type `file` gives your handler file metadata only, not the bytes, so `FileReader` is not available. To upload a `Blob` your code already holds — e.g. one produced by `MediaRecorder` — use the `uploadFile` host function.
 - **Drag-and-drop payloads.** Drag events fire, but `event.dataTransfer` is `undefined`.
 - **Node built-ins.** `fs`, `path` and `node:crypto` fail the build, so move that work into a [logic function](/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` and `URL` are available.
 - **`iframe`** is always re-sandboxed without `allow-same-origin`, so an embed relying on its own session renders logged out. It has no `onLoad` either.
