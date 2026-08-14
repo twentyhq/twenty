@@ -9,6 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { frontComponentHostCommunicationApi } from '@/remote/worker/thread/states/frontComponentHostCommunicationApi';
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToCustomElementTag';
+import { installClipboardPolyfill } from '@/polyfills/clipboard/utils/installClipboardPolyfill';
 import { installDocumentGetElementById } from '@/polyfills/dom/utils/installDocumentGetElementById';
 import { installGetComputedStyle } from '@/polyfills/dom/utils/installGetComputedStyle';
 import { installGetElementsByClassName } from '@/polyfills/dom/utils/installGetElementsByClassName';
@@ -61,6 +62,22 @@ installWindowGeometryPolyfill({
 installStorageBridge({
   globalScope: globalThis as unknown as Record<string, unknown>,
   storageBridges: frontComponentStorageBridges,
+});
+
+installClipboardPolyfill({
+  globalScope: globalThis as unknown as Record<string, unknown>,
+  // Resolved lazily: the host communication api is populated after worker
+  // boot, so the polyfill must not capture the function at install time.
+  copyToClipboard: (text) => {
+    const copyToClipboardFunction =
+      frontComponentHostCommunicationApi.copyToClipboard;
+
+    if (!isDefined(copyToClipboardFunction)) {
+      return Promise.reject(new Error('copyToClipboardFunction is not set'));
+    }
+
+    return copyToClipboardFunction(text);
+  },
 });
 
 exposeGlobals({
