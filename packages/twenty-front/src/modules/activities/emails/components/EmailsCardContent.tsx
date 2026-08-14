@@ -9,6 +9,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type TimelineThread } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[6]};

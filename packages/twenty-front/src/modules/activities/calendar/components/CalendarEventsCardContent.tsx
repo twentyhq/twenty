@@ -25,7 +25,7 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[8]};
-  overflow: scroll;
+  overflow: auto;
   padding: ${themeCssVariables.spacing[6]};
   width: 100%;
 `;
