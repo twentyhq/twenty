@@ -5,7 +5,7 @@ import { SLACK_ASSISTANT_FEEDBACK_UNIVERSAL_IDENTIFIER } from 'src/constants/uni
 import { SLACK_ASSISTANT_FEEDBACK_ACTION_ID } from 'src/logic-functions/constants/slack-assistant-feedback-action-id';
 import { type SlackInteractivityPayload } from 'src/logic-functions/types/slack-interactivity-payload.type';
 import { type SlackInteractivityRequestBody } from 'src/logic-functions/types/slack-interactivity-request-body.type';
-import { parseSlackInteractivityPayload } from 'src/logic-functions/utils/parse-slack-interactivity-payload';
+import { parseSlackInteractivityPayloadOrThrow } from 'src/logic-functions/utils/parse-slack-interactivity-payload-or-throw';
 import { resolveTargetWorkspaceId } from 'src/logic-functions/utils/resolve-target-workspace-id';
 import { verifySlackWebhookRequestOrThrow } from 'src/logic-functions/utils/verify-slack-webhook-request-or-throw';
 
@@ -22,7 +22,7 @@ export const slackInteractivityResolverHandler = async (
 ): Promise<SlackInteractivityResolverResult> => {
   verifySlackWebhookRequestOrThrow(routePayload);
 
-  const payload = parseSlackInteractivityPayload(routePayload.body);
+  const payload = parseSlackInteractivityPayloadOrThrow(routePayload.body);
 
   const hasAssistantFeedbackAction =
     payload.type === 'block_actions' &&
