@@ -20,6 +20,7 @@
     "**/*.spec.ts",
     "**/*.e2e-spec.ts",
     "**/__tests__/**",
+    "src/testing/**",
     "**/__stories__/**",
     "**/*.stories.ts",
     "**/*.stories.tsx"

@@ -50,7 +50,7 @@ const Card = ({ count, name }: { count: number; name: string }) => {
 
 ### متى تستخدم أيًّا منها
 
-* **`<Trans>…</Trans>`** — نص ثابت في JSX. استخدم الخاصيتين `message` و`values` من أجل الاستبدال (interpolation) (`<Trans message="Hi {name}" values={{ name }} />`); لا يمكن استخراج الاستبدال مباشرة في العناصر الفرعية (children) بشكل ثابت.
+* **`Trans`** — نص ثابت في JSX. استخدم الخاصيتين `message` و`values` من أجل الاستبدال (interpolation)، كما في `Trans message="Hi {name}" values={{ name }}`؛ لا يمكن استخراج الاستبدال مباشرة في العناصر الفرعية (children) بشكل ثابت.
 * **`useTranslate().t`** — سلاسل ديناميكية داخل المكوّن. يُعيد التصيير عندما يغيّر المستخدم اللغة. يفضّل استخدامه داخل التصيير (render).
 * **`t(...)`** (مستوردة مباشرة) — ترجمة فورية (eager) يمكن استخدامها **في أي مكان**،
   بما في ذلك معالجات الأحداث (event handlers)، والبرامج المساعدة (helpers)، ونطاق الوحدة (module scope) — وليس فقط داخل التصيير.
@@ -75,7 +75,8 @@ twenty dev:translations-extract                  # collect strings into locales/
 twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 ```
 
-يقوم الاستخراج بجمع كل من تسميات ملف البيان (manifest labels) وسلاسل `t()`/`msg()`/`\<Trans>` من شفرة الواجهة الأمامية (front-component) في `locales/\<locale>.json`، مفهرسة حسب سلسلة المصدر. املأ الترجمات:
+يقوم الاستخراج بجمع كل من تسميات ملف البيان (manifest labels) وسلاسل `t()`/`msg()`/`Trans`
+من شفرة الواجهة الأمامية (front-component) في `locales/\<locale>.json`، مفهرسة حسب سلسلة المصدر. املأ الترجمات:
 
 ```json
 // locales/fr-FR.json
@@ -94,7 +95,7 @@ twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 يقوم `twenty dev:build` بتجميع الكتالوجات وتقديم اللغة الصحيحة للمستخدم
 الحالي: يتم حل تسميات ملف البيان (manifest labels) على جانب الخادم، ويتم تضمين كتالوجات الواجهة الأمامية (front-component)
 داخل كل حزمة مكوّن. وقت التشغيل يقرأ المكوّن
-اللغة (locale) من سياق التنفيذ الخاص به (لغة المضيف الحالية) ويحل كل سلسلة مقابل كتالوجه، مع الرجوع إلى المصدر عندما تكون الترجمة مفقودة. تغيير اللغة في المضيف يعيد تصيير سلاسل `\<Trans>` و
+اللغة (locale) من سياق التنفيذ الخاص به (لغة المضيف الحالية) ويحل كل سلسلة مقابل كتالوجه، مع الرجوع إلى المصدر عندما تكون الترجمة مفقودة. تغيير اللغة في المضيف يعيد تصيير سلاسل `Trans` و
 `useTranslate().t` مباشرة.
 
 نظرًا إلى أنّ الكتالوجات تُجمَّع في وقت البناء، فإن تحديث ترجمة ما يعني
@@ -105,6 +106,13 @@ twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 يعرض سلاسل المصدر، لذا اختبر المخرجات المترجمة ببناء (build) لمرة واحدة.
 </Note>
 
-قد تمتد عناصر النص التابعة لـ `<Trans>` على عدة أسطر — يتم ضغط المسافات
-بنفس الطريقة التي يقوم JSX بضغطها، لذلك كل من `<Trans>Welcome\n  back</Trans>`
-ومفتاح الاستخراج يصبحان `Welcome back`.
+قد تمتد عناصر النص التابعة لـ `Trans` على عدة أسطر — يتم ضغط المسافات
+بنفس الطريقة التي يقوم JSX بضغطها، لذلك كلاهما يتم استخلاصه إلى المفتاح `Welcome back`:
+
+```tsx
+<Trans>Welcome back</Trans>
+<Trans>
+  Welcome
+  back
+</Trans>
+```

@@ -100,7 +100,7 @@ Observações sobre o esquema:
 </Accordion>
 <Accordion title="runAgent" description="Executar um agente a partir de uma função de lógica">
 
-`runAgent()` permite que uma função de lógica execute um dos agentes do seu app (com suas habilidades e ferramentas). Identifique o agente pelo `universalIdentifier` que você passou para `defineAgent()`:
+`runAgent()` permite que uma função de lógica execute um dos agentes do seu app (com suas habilidades e ferramentas). Identifique o agente pelo `universalIdentifier` que você passou para `defineAgent()`. Passe uma string `prompt` ou um histórico de conversas como `messages` — não ambos:
 
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
@@ -111,7 +111,24 @@ const { result, error, success } = await runAgent({
 });
 ```
 
+Para bots de múltiplas interações (Slack, Discord, Teams, …), passe o histórico do tópico como `messages` em vez de um único `prompt`:
+
+```ts src/logic-functions/reply-in-thread.ts
+import { runAgent } from 'twenty-sdk/logic-function';
+
+const { result, error, success } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  messages: [
+    { role: 'user', content: 'Who owns Acme?' },
+    { role: 'assistant', content: 'Sarah owns the Acme account.' },
+    { role: 'user', content: 'What was the last touchpoint?' },
+  ],
+});
+```
+
 Pontos-chave:
+* Forneça **exatamente um** de `prompt` (string) ou `messages` (de 1 a 100 entradas
+  de `{ role: 'user' | 'assistant', content: string }`).
 * O agente é executado sincronamente e pode ler/atualizar registros por conta própria por meio de suas próprias ferramentas — `runAgent()` é resolvido quando a execução é concluída.
 * Um app só pode executar os seus próprios agentes.
 * O [papel padrão](/l/pt/developers/extend/apps/config/roles) do app deve conceder o sinalizador de permissão `AI` — adicione `SystemPermissionFlag.AI` ao seu `permissionFlagUniversalIdentifiers` (ou defina `canAccessAllTools: true`).
@@ -132,6 +149,44 @@ export default defineApplicationRole({
 
 <Warning>
   **Evite loops:** se você chamar `runAgent()` a partir de um gatilho de evento de banco de dados `*.updated` e o agente atualizar o mesmo registro, delimite o gatilho com `updatedFields` para um campo que o agente nunca escreve (por exemplo, a URL de origem) ou verifique se algum campo de destino ainda está vazio antes de chamar `runAgent()`.
+</Warning>
+
+### Executando em nome de um membro do workspace
+
+Passe `runAsWorkspaceMemberId` quando a execução for acionada por uma pessoa — por exemplo, um chatbot respondendo a uma mensagem — para que o agente atue como esse membro em vez de como o app:
+
+```ts src/logic-functions/answer-question.ts
+const { result } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  prompt: 'How many open opportunities do we have?',
+  runAsWorkspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
+});
+```
+
+A execução então atua com a **própria função do membro**: ela pode fazer tudo o que esse
+membro pode fazer e nada além disso, os registros que cria são atribuídos a ele, e
+as permissões em nível de linha dele se aplicam. A função do agente não participa — ela
+é o padrão do aplicativo para execuções sem ninguém por trás delas. Omita o campo para
+execuções autônomas (jobs agendados, gatilhos de eventos de banco de dados): essas mantêm a
+própria função do agente. O aplicativo atuante permanece vinculado ao contexto da execução
+para rastreabilidade, sem restringir as permissões do membro.
+
+Seu app é responsável por mapear a pessoa que acionou a execução para um membro do workspace. Nomear um requer um token de acesso do app, e o que um token pode
+nomear depende de o token estar associado a um usuário ou não:
+
+* Um token **sem nenhum usuário associado** pode nomear qualquer membro. Uma função lógica é executada
+  com um, assim como tokens criados por meio de `client_credentials` ou a partir de uma API
+  key.
+* Um token emitido **em nome de um usuário**, como um front component recebe, só pode
+  nomear o próprio membro desse usuário.
+
+Qualquer outra coisa — uma sessão simples de usuário, uma API key sem um app token — não pode
+nomear nenhum membro.
+
+<Warning>
+  `runAgent()` gera uma exceção quando o membro do workspace não pode ser resolvido — um
+  membro desconhecido ou removido, ou um sem função. Ele nunca recorre à
+  própria função do agente, pois isso concederia mais acesso do que o requisitante pediu.
 </Warning>
 
 </Accordion>

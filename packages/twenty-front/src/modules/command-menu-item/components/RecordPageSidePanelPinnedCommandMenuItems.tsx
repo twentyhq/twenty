@@ -1,3 +1,4 @@
+import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
@@ -18,7 +19,7 @@ export const RecordPageSidePanelPinnedCommandMenuItems = () => {
     <CommandMenuContextProvider
       isInSidePanel={true}
       displayType="button"
-      containerType="side-panel-footer"
+      containerType={CommandMenuItemContainerType.SidePanelFooter}
     >
       <PinnedCommandMenuItemButtons />
     </CommandMenuContextProvider>

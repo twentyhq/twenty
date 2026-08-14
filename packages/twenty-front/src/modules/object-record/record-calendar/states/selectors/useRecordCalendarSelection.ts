@@ -35,7 +35,7 @@ export const useRecordCalendarSelection = (recordCalendarId?: string) => {
     getCommandMenuIdFromRecordIndexId(instanceIdFromProps),
   );
 
-  const resetRecordSelection = useCallback(() => {
+  const resetRecordCalendarSelection = useCallback(() => {
     closeDropdown(dropdownId);
 
     const recordIds = store.get(recordCalendarSelectedRecordIds);
@@ -52,6 +52,6 @@ export const useRecordCalendarSelection = (recordCalendarId?: string) => {
   ]);
 
   return {
-    resetRecordSelection,
+    resetRecordCalendarSelection,
   };
 };

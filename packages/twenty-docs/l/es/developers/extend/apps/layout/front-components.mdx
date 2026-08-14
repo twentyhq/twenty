@@ -806,22 +806,22 @@ Un `ref` te da un elemento sandbox, no un `HTMLElement`.
 | `element.classList.add(...)`                                                                                | Lanza una excepción (`classList` es `undefined`)               | Construye tú mismo la cadena `className`                                                                |
 | `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | Lanza una excepción                                            | `querySelector()` / `querySelectorAll()`, que sí funcionan                                              |
 | `document.activeElement`                                                                                    | Siempre `undefined`                                            | Controla el foco con `onFocus` / `onBlur`                                                               |
-| `\<canvas>`                                                                                | No renderiza nada, sin error                                   | SVG, o dibuja fuera de pantalla y muestra un `<img src={dataUrl}>`                                      |
+| `canvas`                                                                                                    | No renderiza nada, sin error                                   | SVG, o dibujar fuera de pantalla y mostrar el resultado en un elemento `img`                            |
 | `createPortal(node, document.body)`                                                                         | No renderiza nada, mientras que `isConnected` informa de éxito | Superposiciones en línea con `position: absolute`, o pasa a la biblioteca tu propio elemento contenedor |
 
 La brecha del portal es la razón por la que los popovers de Radix, Headless UI, MUI y react-select no renderizan nada de forma predeterminada. La mayoría acepta una prop de contenedor; apúntala a un elemento que hayas renderizado.
 
 ### Eventos
 
-Eventos de ratón, puntero, tacto, arrastre, teclado, foco, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` y `animationend`/`transitionend` pasan al host, además de algunos específicos por elemento: `load`/`error` en `<img>`, portapapeles y composición en `<input>`/`\<textarea>`, medios en `\<video>`/`\<audio>`, `toggle` en `\<details>`/`\<dialog>`. Cualquier otra cosa (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, captura de puntero, `onLoad` fuera de `<img>`) se descarta sin aviso.
+Eventos de ratón, puntero, tacto, arrastre, teclado, foco, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` y `animationend`/`transitionend` pasan al host, además de algunos específicos por elemento: `load`/`error` en `img`, portapapeles y composición en `input`/`textarea`, medios en `video`/`audio`, `toggle` en `details`/`dialog`. Cualquier otra cosa (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, captura de puntero, `onLoad` fuera de `img`) se descarta sin aviso.
 
 `document.addEventListener()` y `window.addEventListener()` se registran sin error y nunca se disparan, lo que explica por qué un arrastre se detiene tan pronto como el puntero sale del elemento en el que comenzó. `event.preventDefault()` tampoco cruza; el envío de formularios, `dragover`/`drop` y los clics en enlaces ya están protegidos por ti.
 
 ### Atributos y estilos
 
-Cada elemento reenvía sus propias propiedades al DOM del host (`href` en `\<a>`, `src`/`alt` en `<img>`, `value`/`placeholder`/`disabled` en `<input>`, etc.), además de un conjunto común en cada elemento: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` y cualquier atributo `aria-*` / `data-*` (con guiones, por lo que `ariaLabel` se descarta). Cualquier cosa fuera de eso se descarta silenciosamente, así que expresa el estado personalizado como `data-*`.
+Cada elemento reenvía sus propias propiedades al DOM del host (`href` en `a`, `src`/`alt` en `img`, `value`/`placeholder`/`disabled` en `input`, etc.), además de un conjunto común en cada elemento: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` y cualquier atributo `aria-*` / `data-*` (con guiones, por lo que `ariaLabel` se descarta). Cualquier cosa fuera de eso se descarta silenciosamente, así que expresa el estado personalizado como `data-*`.
 
-El CSS del componente, ya sea desde `import './styles.css'`, CSS-in-JS o un elemento `\<style>`, se inyecta en el `\<head>` de la página del host **sin ámbito**. Así que los nombres de clase colisionan con los de Twenty (ponles un prefijo y nunca escribas `div { ... }` como selectores), y `@media` coincide con la ventana del navegador en lugar de con tu widget (usa `@container` con tu propio `container-type`). Las props de `style` en línea no se ven afectadas.
+El CSS del componente, ya sea desde `import './styles.css'`, CSS-in-JS o un elemento `style`, se inyecta en el `head` de la página del host **sin ámbito**. Así que los nombres de clase colisionan con los de Twenty (ponles un prefijo y nunca escribas `div { ... }` como selectores), y `@media` coincide con la ventana del navegador en lugar de con tu widget (usa `@container` con tu propio `container-type`). Las props de `style` en línea no se ven afectadas.
 
 ### Almacenamiento y red
 
@@ -835,7 +835,7 @@ El CSS del componente, ya sea desde `import './styles.css'`, CSS-in-JS o un elem
 
 ### Otras carencias
 
-* **Contenido de archivos.** `<input type="file">` solo proporciona a tu manejador los metadatos del archivo, no los bytes, por lo que `FileReader` y las subidas no son posibles todavía.
+* **Contenido de archivos.** Un `input` de tipo `file` solo proporciona a tu manejador los metadatos del archivo, no los bytes, por lo que `FileReader` y las subidas no son posibles todavía.
 * **Cargas útiles de arrastrar y soltar.** Los eventos de arrastre se disparan, pero `event.dataTransfer` es `undefined`.
 * **Integraciones nativas de Node.** `fs`, `path` y `node:crypto` hacen que la compilación falle, así que mueve ese trabajo a una [función de lógica](/l/es/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` y `URL` están disponibles.
-* **`\<iframe>`** siempre se vuelve a aislar sin `allow-same-origin`, por lo que un embed que depende de su propia sesión se renderiza como desconectado. Tampoco tiene `onLoad`.
+* **`iframe`** siempre se vuelve a aislar sin `allow-same-origin`, por lo que un embed que depende de su propia sesión se renderiza como desconectado. Tampoco tiene `onLoad`.

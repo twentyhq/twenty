@@ -108,6 +108,7 @@ export class AgentRunService {
       requestUserWorkspaceId,
       requestWorkspaceMemberId,
       workspaceId: workspace.id,
+      application,
     });
 
     const authContext: WorkspaceAuthContext = runAsContext?.authContext ?? {
@@ -166,12 +167,14 @@ export class AgentRunService {
     requestUserWorkspaceId,
     requestWorkspaceMemberId,
     workspaceId,
+    application,
   }: {
     runAsWorkspaceMemberId?: string;
     callerApplication?: FlatApplication;
     requestUserWorkspaceId: string | null;
     requestWorkspaceMemberId: string | null;
     workspaceId: string;
+    application: FlatApplication;
   }): Promise<RunAsWorkspaceMemberContext | undefined> {
     if (!isDefined(runAsWorkspaceMemberId)) {
       return undefined;
@@ -197,6 +200,7 @@ export class AgentRunService {
     return this.agentActorContextService.buildRunAsWorkspaceMemberContext({
       workspaceMemberId: runAsWorkspaceMemberId,
       workspaceId,
+      viaApplication: application,
     });
   }
 }

@@ -12,7 +12,6 @@ import { type BillingCreditGrantType } from 'src/engine/core-modules/billing/enu
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
-import { BillingUsageCapService } from 'src/engine/core-modules/billing/services/billing-usage-cap.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { buildBillingCreditStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-credit-state-lock-key.util';
 import { getBillingSubscriptionPeriod } from 'src/engine/core-modules/billing/utils/get-billing-subscription-period.util';
@@ -47,7 +46,6 @@ export class BillingCreditService {
     private readonly billingCreditGrantService: BillingCreditGrantService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingUsageCacheService: BillingUsageCacheService,
-    private readonly billingUsageCapService: BillingUsageCapService,
     private readonly cacheLockService: CacheLockService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectWorkspaceScopedRepository(BillingCustomerEntity)
@@ -120,12 +118,10 @@ export class BillingCreditService {
       // usage ClickHouse has not ingested yet, and that value then stands for
       // the period. Accepted here because the alternative is a grant that
       // stays invisible for the whole period, and erring high is the direction
-      // the grant intended. The cap is left to be derived from the rebuilt
-      // balance, since the replayed grant may since have been revoked.
+      // the grant intended.
       await this.refreshWorkspaceCreditState({
         workspaceId,
         availableDeltaMicro: 0,
-        addsCredits: true,
         isReplay: true,
         subscription,
       });
@@ -136,7 +132,6 @@ export class BillingCreditService {
     await this.refreshWorkspaceCreditState({
       workspaceId,
       availableDeltaMicro: amountMicro,
-      addsCredits: true,
       subscription,
     });
 
@@ -194,7 +189,6 @@ export class BillingCreditService {
       await this.refreshWorkspaceCreditState({
         workspaceId,
         availableDeltaMicro: 0,
-        addsCredits: false,
         isReplay: true,
         adjustmentKey,
       });
@@ -215,7 +209,6 @@ export class BillingCreditService {
     await this.refreshWorkspaceCreditState({
       workspaceId,
       availableDeltaMicro: wasActiveWhenRevoked ? -grant.amountMicro : 0,
-      addsCredits: false,
       adjustmentKey,
     });
 
@@ -262,25 +255,20 @@ export class BillingCreditService {
   }
 
   // Keeps everything that reads a credit balance consistent with the ledger:
-  // the mirror column, the Redis counter that gates usage, the flag that drives
-  // the "no more credits" banner, and the cached subscription the front reads.
-  // Public so a caller writing several grants at once pays for this once; such
-  // a caller must hold buildBillingCreditStateLockKey for its own ledger writes
-  // and this refresh together, which is why this does not take the lock itself.
+  // the mirror column, the Redis counter that gates usage, and the cached
+  // subscription the front reads. Public so a caller writing several grants at
+  // once pays for this once; such a caller must hold
+  // buildBillingCreditStateLockKey for its own ledger writes and this refresh
+  // together, which is why this does not take the lock itself.
   async refreshWorkspaceCreditState({
     workspaceId,
     availableDeltaMicro,
-    addsCredits,
     isReplay = false,
     adjustmentKey,
     subscription: knownSubscription,
   }: {
     workspaceId: string;
     availableDeltaMicro: number;
-    // Whether the write that led here could have made credits spendable. Only
-    // the caller knows: a replay of either a grant or a revocation carries a
-    // delta of zero, and the sign cannot tell them apart.
-    addsCredits: boolean;
     // A replay cannot know how far the original attempt got, so the counter is
     // recomputed from the ledger unless adjustmentKey says it already moved.
     isReplay?: boolean;
@@ -289,7 +277,7 @@ export class BillingCreditService {
     // Saves a re-read for a caller that already has it in hand.
     subscription?: BillingSubscriptionEntity;
   }): Promise<void> {
-    const activeCreditsMicro = await this.syncMirrorBalance(workspaceId);
+    await this.syncMirrorBalance(workspaceId);
 
     const subscription =
       knownSubscription ??
@@ -315,7 +303,7 @@ export class BillingCreditService {
           adjustmentKey,
         )));
 
-    const counterAfterWriteMicro = await this.applyCounterWrite({
+    await this.applyCounterWrite({
       workspaceId,
       periodStart,
       availableDeltaMicro,
@@ -330,27 +318,9 @@ export class BillingCreditService {
       );
     }
 
-    // The banner may only come down when this write actually put something
-    // spendable in front of the workspace: the caller says whether it could,
-    // the counter says whether it did, and what is left decides. A replay that
-    // finds the counter already moved did nothing, and its grants may well
-    // have been spent since, so it leaves the banner alone, while a replay
-    // that rebuilt the counter is the repair that lifts it.
-    //
-    // With no counter to speak for the workspace the ledger stands in, which
-    // ignores usage. Erring towards lifting the banner is deliberate there:
-    // the counter is cold exactly after a period transition or a cache flush,
-    // which is when grants land, and leaving it up would hide credits someone
-    // deliberately gave for the rest of the period.
-    const spendableAfterWriteMicro =
-      counterAfterWriteMicro ?? activeCreditsMicro;
-
-    return this.clearCapAndSubscriptionCache(workspaceId, {
-      shouldClearCap:
-        addsCredits &&
-        spendableAfterWriteMicro > 0 &&
-        (rebuildCounter || availableDeltaMicro > 0),
-    });
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'currentBillingSubscription',
+    ]);
   }
 
   // Returns what the counter holds afterwards, or null when there is no warm
@@ -402,21 +372,6 @@ export class BillingCreditService {
     );
 
     return cachedAvailableCredits + availableDeltaMicro;
-  }
-
-  private async clearCapAndSubscriptionCache(
-    workspaceId: string,
-    { shouldClearCap }: { shouldClearCap: boolean },
-  ): Promise<void> {
-    if (shouldClearCap) {
-      await this.billingUsageCapService.clearHasReachedCapForWorkspace(
-        workspaceId,
-      );
-    }
-
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'currentBillingSubscription',
-    ]);
   }
 }
 
