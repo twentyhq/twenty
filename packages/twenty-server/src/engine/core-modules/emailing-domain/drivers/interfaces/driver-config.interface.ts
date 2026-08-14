@@ -17,3 +17,7 @@ export interface ResendDriverConfig extends BaseDriverConfig {
   driver: EmailingDomainDriver.RESEND;
   domainRegion?: string;
 }
+
+export interface MailgunDriverConfig extends BaseDriverConfig {
+  driver: EmailingDomainDriver.MAILGUN;
+}

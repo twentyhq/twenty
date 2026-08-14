@@ -14,6 +14,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
+import { MailgunInboundWebhookAdapterService } from 'src/modules/messaging-webhooks/adapters/mailgun/services/mailgun-inbound-webhook-adapter.service';
+import { MailgunOutboundWebhookAdapterService } from 'src/modules/messaging-webhooks/adapters/mailgun/services/mailgun-outbound-webhook-adapter.service';
 import { ResendWebhookDriverService } from 'src/modules/messaging-webhooks/drivers/resend/services/resend-webhook-driver.service';
 import { SesInboundWebhookDriverService } from 'src/modules/messaging-webhooks/drivers/aws-ses/services/ses-inbound-webhook-driver.service';
 import { SesOutboundWebhookDriverService } from 'src/modules/messaging-webhooks/drivers/aws-ses/services/ses-outbound-webhook-driver.service';
@@ -28,6 +30,8 @@ export class MessagingWebhooksController {
     private readonly sesInboundWebhookDriverService: SesInboundWebhookDriverService,
     private readonly sesOutboundWebhookDriverService: SesOutboundWebhookDriverService,
     private readonly resendWebhookDriverService: ResendWebhookDriverService,
+    private readonly mailgunInboundWebhookAdapterService: MailgunInboundWebhookAdapterService,
+    private readonly mailgunOutboundWebhookAdapterService: MailgunOutboundWebhookAdapterService,
   ) {}
 
   @Post(`${ApiPath.Webhooks}/messaging/ses/inbound`)
@@ -80,6 +84,41 @@ export class MessagingWebhooksController {
       svixTimestamp: this.getHeader(request, 'svix-timestamp'),
       svixSignature: this.getHeader(request, 'svix-signature'),
     });
+  }
+
+  @Post(`${ApiPath.Webhooks}/messaging/mailgun/outbound`)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+  @HttpCode(200)
+  async handleMailgunOutboundWebhook(
+    @Req() request: RawBodyRequest<Request>,
+  ): Promise<void> {
+    if (!isDefined(request.rawBody)) {
+      throw new MessagingWebhookException(
+        'Missing Mailgun payload',
+        MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_MISSING_REQUEST_BODY,
+      );
+    }
+
+    await this.mailgunOutboundWebhookAdapterService.handle(request.rawBody);
+  }
+
+  @Post(`${ApiPath.Webhooks}/messaging/mailgun/inbound`)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+  @HttpCode(200)
+  async handleMailgunInboundWebhook(
+    @Req() request: RawBodyRequest<Request>,
+  ): Promise<void> {
+    if (!isDefined(request.body)) {
+      throw new MessagingWebhookException(
+        'Missing Mailgun payload',
+        MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_MISSING_REQUEST_BODY,
+      );
+    }
+
+    await this.mailgunInboundWebhookAdapterService.handle(
+      request.body,
+      this.getHeader(request, 'content-type'),
+    );
   }
 
   private getHeader(request: Request, name: string): string | undefined {
