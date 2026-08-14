@@ -2,10 +2,11 @@ import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { FrontComponentMediaRecordingTimerEffect } from '@/front-components/media-capture/components/FrontComponentMediaRecordingTimerEffect';
 import { frontComponentMediaRecordingState } from '@/front-components/media-capture/states/frontComponentMediaRecordingState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { FindOneApplicationNameDocument } from '~/generated-metadata/graphql';
@@ -64,25 +65,11 @@ const StyledLiveVideoPreview = styled.video`
 
 export const FrontComponentMediaRecordingIndicator = () => {
   const { t } = useLingui();
-  const mediaRecording = useAtomStateValue(frontComponentMediaRecordingState);
+  const frontComponentMediaRecording = useAtomStateValue(
+    frontComponentMediaRecordingState,
+  );
 
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
-
-  const startedAt = mediaRecording?.startedAt;
-
-  useEffect(() => {
-    if (!isDefined(startedAt)) {
-      return;
-    }
-
-    setElapsedSeconds(0);
-
-    const elapsedInterval = setInterval(() => {
-      setElapsedSeconds(Math.floor((Date.now() - startedAt) / 1000));
-    }, 1000);
-
-    return () => clearInterval(elapsedInterval);
-  }, [startedAt]);
 
   const { data: applicationNameData } = useQuery(
     FindOneApplicationNameDocument,
@@ -119,6 +106,10 @@ export const FrontComponentMediaRecordingIndicator = () => {
 
   return (
     <StyledIndicatorContainer data-testid="media-recording-indicator">
+      <FrontComponentMediaRecordingTimerEffect
+        startedAt={mediaRecording.startedAt}
+        onElapsedSecondsChange={setElapsedSeconds}
+      />
       <StyledRecordingDot />
       {!isAudioRecording && (
         <StyledLiveVideoPreview

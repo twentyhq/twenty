@@ -113,6 +113,9 @@ const MediaNotes = () => {
   // Set only when attaching failed, so it doubles as the retry payload.
   const [failedAttach, setFailedAttach] = useState<PendingAttach | null>(null);
   const [isAttaching, setIsAttaching] = useState(false);
+  // Covers the stop-and-upload window: without it the record buttons come
+  // back while the previous recording is still uploading, and two flows race.
+  const [isStopping, setIsStopping] = useState(false);
 
   useEffect(() => {
     fetchRecordingFieldMetadataId()
@@ -178,6 +181,7 @@ const MediaNotes = () => {
     if (
       recordingFieldMetadataId === null ||
       isAttaching ||
+      isStopping ||
       activeRecording !== null
     ) {
       return;
@@ -218,16 +222,21 @@ const MediaNotes = () => {
     const { recordingId, mediaType } = activeRecording;
 
     setActiveRecording(null);
+    setIsStopping(true);
 
-    const result = await stopRecording({ recordingId });
+    try {
+      const result = await stopRecording({ recordingId });
 
-    setCaptureResult(result);
+      setCaptureResult(result);
 
-    if (result.status !== 'captured') {
-      return;
+      if (result.status !== 'captured') {
+        return;
+      }
+
+      await attachToNewMediaNote({ mediaType, file: result.file });
+    } finally {
+      setIsStopping(false);
     }
-
-    await attachToNewMediaNote({ mediaType, file: result.file });
   };
 
   const handleCancelRecording = async () => {
@@ -259,7 +268,9 @@ const MediaNotes = () => {
           <button
             data-testid={MEDIA_NOTES_TEST_IDS.recordAudioButton}
             style={buttonStyle}
-            disabled={recordingFieldMetadataId === null || isAttaching}
+            disabled={
+              recordingFieldMetadataId === null || isAttaching || isStopping
+            }
             onClick={() => handleStartRecording('audio')}
           >
             Record a voice note
@@ -267,7 +278,9 @@ const MediaNotes = () => {
           <button
             data-testid={MEDIA_NOTES_TEST_IDS.recordVideoButton}
             style={buttonStyle}
-            disabled={recordingFieldMetadataId === null || isAttaching}
+            disabled={
+              recordingFieldMetadataId === null || isAttaching || isStopping
+            }
             onClick={() => handleStartRecording('video')}
           >
             Record a video note

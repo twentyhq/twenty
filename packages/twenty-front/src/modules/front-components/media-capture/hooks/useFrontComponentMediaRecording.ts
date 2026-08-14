@@ -1,4 +1,3 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { useEffect, useRef } from 'react';
 import {
@@ -10,23 +9,28 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { frontComponentMediaRecordingState } from '@/front-components/media-capture/states/frontComponentMediaRecordingState';
-import { getMediaCaptureFileExtension } from '@/front-components/media-capture/utils/getMediaCaptureFileExtension';
+import { attachMediaRecorderLifecycleListeners } from '@/front-components/media-capture/utils/attachMediaRecorderLifecycleListeners';
 import { mapMediaCaptureErrorToFailureReason } from '@/front-components/media-capture/utils/mapMediaCaptureErrorToFailureReason';
 import { pickSupportedMediaRecorderMimeType } from '@/front-components/media-capture/utils/pickSupportedMediaRecorderMimeType';
+import { uploadRecordedMediaBlob } from '@/front-components/media-capture/utils/uploadRecordedMediaBlob';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { FileFolder } from '~/generated-metadata/graphql';
 
-// One recording owned by one front component instance. All recorder state
-// lives in a per-recording closure so late recorder events can never touch
-// a newer recording's state.
+// One recording owned by one front component instance. Every resource the
+// recording holds — stream, recorder, timeout, chunks — lives on this
+// closure object, so a late event from an old recording can never release
+// a newer recording's resources.
 type ActiveMediaRecording = {
   recordingId: string;
   mediaType: StartMediaRecordingParams['mediaType'];
   fieldMetadataId: string;
+  mediaStream: MediaStream;
+  mediaRecorder: MediaRecorder;
+  maxDurationTimeoutId: ReturnType<typeof setTimeout> | null;
   recordedChunks: Blob[];
   heldBlob: Blob | null;
-  pendingStopResolve: ((blob: Blob | null) => void) | null;
+  pendingStopResolve: ((recordedBlob: Blob | null) => void) | null;
+  hasStopHandlerRun: boolean;
   wasCancelled: boolean;
   hasRecorderErrored: boolean;
   finalDurationSeconds: number;
@@ -50,15 +54,7 @@ export const useFrontComponentMediaRecording = ({
   );
 
   // oxlint-disable-next-line twenty/no-state-useref
-  const mediaStreamRef = useRef<MediaStream | null>(null);
-  // oxlint-disable-next-line twenty/no-state-useref
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  // oxlint-disable-next-line twenty/no-state-useref
   const activeRecordingRef = useRef<ActiveMediaRecording | null>(null);
-  // oxlint-disable-next-line twenty/no-state-useref
-  const maxDurationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
   // Guarded through a ref: a second start during the permission prompt would
   // otherwise acquire a second stream and orphan the first one still live.
   // oxlint-disable-next-line twenty/no-state-useref
@@ -66,24 +62,24 @@ export const useFrontComponentMediaRecording = ({
   // oxlint-disable-next-line twenty/no-state-useref
   const isDisposedRef = useRef(false);
 
-  const stopMediaStream = () => {
-    mediaStreamRef.current?.getTracks().forEach((track) => track.stop());
-    mediaStreamRef.current = null;
-  };
-
-  const clearMaxDurationTimeout = () => {
-    if (isDefined(maxDurationTimeoutRef.current)) {
-      clearTimeout(maxDurationTimeoutRef.current);
-      maxDurationTimeoutRef.current = null;
-    }
-  };
-
   const clearRecordingIndicator = (recordingId: string) => {
     const currentRecording = store.get(frontComponentMediaRecordingState.atom);
 
     if (currentRecording?.recordingId === recordingId) {
       setFrontComponentMediaRecording(null);
     }
+  };
+
+  // Releases the recording's own resources only — never the shared refs of
+  // whatever recording is active by the time this runs.
+  const releaseRecordingResources = (recording: ActiveMediaRecording) => {
+    if (isDefined(recording.maxDurationTimeoutId)) {
+      clearTimeout(recording.maxDurationTimeoutId);
+      recording.maxDurationTimeoutId = null;
+    }
+
+    recording.mediaStream.getTracks().forEach((track) => track.stop());
+    clearRecordingIndicator(recording.recordingId);
   };
 
   const cancelActiveRecording = () => {
@@ -96,16 +92,13 @@ export const useFrontComponentMediaRecording = ({
     activeRecording.wasCancelled = true;
     activeRecording.heldBlob = null;
     activeRecording.recordedChunks = [];
+    activeRecordingRef.current = null;
 
-    clearMaxDurationTimeout();
-
-    if (mediaRecorderRef.current?.state === 'recording') {
-      mediaRecorderRef.current.stop();
+    if (activeRecording.mediaRecorder.state === 'recording') {
+      activeRecording.mediaRecorder.stop();
     }
 
-    stopMediaStream();
-    clearRecordingIndicator(activeRecording.recordingId);
-    activeRecordingRef.current = null;
+    releaseRecordingResources(activeRecording);
   };
 
   useEffect(() => {
@@ -143,6 +136,8 @@ export const useFrontComponentMediaRecording = ({
 
     isStartingRecordingRef.current = true;
 
+    let recording: ActiveMediaRecording | null = null;
+
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia(
         params.mediaType === 'audio'
@@ -158,9 +153,6 @@ export const useFrontComponentMediaRecording = ({
         return { status: 'failed', reason: 'unknown' };
       }
 
-      stopMediaStream();
-      mediaStreamRef.current = mediaStream;
-
       const preferredMimeType = pickSupportedMediaRecorderMimeType({
         mediaType: params.mediaType,
         isMimeTypeSupported: (mimeType) =>
@@ -174,82 +166,30 @@ export const useFrontComponentMediaRecording = ({
           : undefined,
       );
 
-      const recording: ActiveMediaRecording = {
+      const startedRecording: ActiveMediaRecording = {
         recordingId: v4(),
         mediaType: params.mediaType,
         fieldMetadataId: params.fieldMetadataId,
+        mediaStream,
+        mediaRecorder,
+        maxDurationTimeoutId: null,
         recordedChunks: [],
         heldBlob: null,
         pendingStopResolve: null,
+        hasStopHandlerRun: false,
         wasCancelled: false,
         hasRecorderErrored: false,
         finalDurationSeconds: 0,
         startedAt: Date.now(),
       };
 
-      mediaRecorderRef.current = mediaRecorder;
-      activeRecordingRef.current = recording;
+      recording = startedRecording;
+      activeRecordingRef.current = startedRecording;
 
-      mediaRecorder.addEventListener('dataavailable', (event) => {
-        if (event.data.size > 0) {
-          recording.recordedChunks.push(event.data);
-        }
-      });
-
-      // Without this a recorder failure would leave the device open and the
-      // application's stop call hanging on a recording that can never end.
-      mediaRecorder.addEventListener('error', () => {
-        recording.hasRecorderErrored = true;
-
-        if (mediaRecorder.state === 'recording') {
-          mediaRecorder.stop();
-        } else {
-          stopMediaStream();
-          clearRecordingIndicator(recording.recordingId);
-          recording.pendingStopResolve?.(null);
-        }
-      });
-
-      mediaRecorder.addEventListener('stop', () => {
-        // The single point where the recording ends, whichever path stopped
-        // it (application stop, host indicator, max duration, track ending).
-        recording.finalDurationSeconds = Math.max(
-          1,
-          Math.round((Date.now() - recording.startedAt) / 1000),
-        );
-
-        clearMaxDurationTimeout();
-        stopMediaStream();
-        clearRecordingIndicator(recording.recordingId);
-
-        if (
-          isDisposedRef.current ||
-          recording.wasCancelled ||
-          recording.hasRecorderErrored
-        ) {
-          // Dropping the chunks matters: they alone pin the discarded
-          // recording's bytes (tens of MB for video).
-          recording.recordedChunks = [];
-          recording.pendingStopResolve?.(null);
-
-          return;
-        }
-
-        const recordedBlob = new Blob(recording.recordedChunks, {
-          type: isNonEmptyString(mediaRecorder.mimeType)
-            ? mediaRecorder.mimeType
-            : `${params.mediaType}/webm`,
-        });
-
-        recording.recordedChunks = [];
-
-        if (isDefined(recording.pendingStopResolve)) {
-          recording.pendingStopResolve(recordedBlob);
-        } else {
-          // Stopped without an awaiting stop call (max duration): hold the
-          // blob so the application's later stop can still upload it.
-          recording.heldBlob = recordedBlob;
-        }
+      attachMediaRecorderLifecycleListeners({
+        recording: startedRecording,
+        isDisposed: () => isDisposedRef.current,
+        releaseRecordingResources,
       });
 
       // A one second timeslice bounds how much recording is lost if the
@@ -258,24 +198,32 @@ export const useFrontComponentMediaRecording = ({
 
       // The ceiling stops the device, not the flow: the blob is held until
       // the application calls stop, which uploads it as usual.
-      maxDurationTimeoutRef.current = setTimeout(() => {
+      startedRecording.maxDurationTimeoutId = setTimeout(() => {
         if (mediaRecorder.state === 'recording') {
           mediaRecorder.stop();
         }
       }, params.maxDurationSeconds * 1000);
 
       setFrontComponentMediaRecording({
-        recordingId: recording.recordingId,
+        recordingId: startedRecording.recordingId,
         applicationId,
         mediaType: params.mediaType,
-        startedAt: recording.startedAt,
+        startedAt: startedRecording.startedAt,
         requestCancel: cancelActiveRecording,
-        getLiveMediaStream: () => mediaStreamRef.current,
+        getLiveMediaStream: () => startedRecording.mediaStream,
       });
 
-      return { status: 'started', recordingId: recording.recordingId };
+      return { status: 'started', recordingId: startedRecording.recordingId };
     } catch (error) {
-      stopMediaStream();
+      // Recorder setup can fail after the recording was registered; leaving
+      // it active would keep this component busy until unmount.
+      if (isDefined(recording)) {
+        releaseRecordingResources(recording);
+
+        if (activeRecordingRef.current === recording) {
+          activeRecordingRef.current = null;
+        }
+      }
 
       return {
         status: 'failed',
@@ -303,13 +251,16 @@ export const useFrontComponentMediaRecording = ({
 
     let recordedBlob = activeRecording.heldBlob;
 
-    if (
-      !isDefined(recordedBlob) &&
-      mediaRecorderRef.current?.state === 'recording'
-    ) {
+    // Await the stop event even when the recorder is already inactive: the
+    // max-duration ceiling stops it asynchronously, and the blob only exists
+    // once the stop handler has run.
+    if (!isDefined(recordedBlob) && !activeRecording.hasStopHandlerRun) {
       recordedBlob = await new Promise<Blob | null>((resolve) => {
         activeRecording.pendingStopResolve = resolve;
-        mediaRecorderRef.current?.stop();
+
+        if (activeRecording.mediaRecorder.state === 'recording') {
+          activeRecording.mediaRecorder.stop();
+        }
       });
     }
 
@@ -324,33 +275,13 @@ export const useFrontComponentMediaRecording = ({
       return { status: 'cancelled' };
     }
 
-    try {
-      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-      const filename = `${activeRecording.mediaType}-recording-${timestamp}.${getMediaCaptureFileExtension(recordedBlob.type)}`;
-
-      const recordedFile = new File([recordedBlob], filename, {
-        type: recordedBlob.type,
-      });
-
-      const uploadedFile = await uploadFile(recordedFile, {
-        fileFolder: FileFolder.FilesField,
-        fieldMetadataId: activeRecording.fieldMetadataId,
-      });
-
-      return {
-        status: 'captured',
-        file: {
-          fileId: uploadedFile.id,
-          path: uploadedFile.path,
-          url: uploadedFile.url,
-          size: uploadedFile.size,
-          mimeType: recordedBlob.type.split(';')[0],
-          durationSeconds: activeRecording.finalDurationSeconds,
-        },
-      };
-    } catch {
-      return { status: 'failed', reason: 'upload-failed' };
-    }
+    return await uploadRecordedMediaBlob({
+      recordedBlob,
+      mediaType: activeRecording.mediaType,
+      fieldMetadataId: activeRecording.fieldMetadataId,
+      durationSeconds: activeRecording.finalDurationSeconds,
+      uploadFile,
+    });
   };
 
   const cancelMediaRecording = async (params: {
