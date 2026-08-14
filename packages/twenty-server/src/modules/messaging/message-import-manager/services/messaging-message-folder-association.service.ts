@@ -6,11 +6,8 @@ import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manage
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type MessageChannelMessageAssociationMessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association-message-folder.workspace-entity';
-
-export type MessageChannelMessageAssociationFolderAssociation = {
-  messageChannelMessageAssociationId: string;
-  messageFolderIds: string[];
-};
+import { type MessageChannelMessageAssociationFolderAssociation } from 'src/modules/messaging/message-import-manager/types/message-channel-message-association-folder-association.type';
+import { buildMessageFolderAssociationsToInsert } from 'src/modules/messaging/message-import-manager/utils/build-message-folder-associations-to-insert.util';
 
 @Injectable()
 export class MessagingMessageFolderAssociationService {
@@ -23,7 +20,15 @@ export class MessagingMessageFolderAssociationService {
     workspaceId: string,
     transactionManager?: WorkspaceEntityManager,
   ): Promise<void> {
-    if (associations.length === 0) {
+    const associationIds = [
+      ...new Set(
+        associations
+          .filter((association) => association.messageFolderIds.length > 0)
+          .map((association) => association.messageChannelMessageAssociationId),
+      ),
+    ];
+
+    if (associationIds.length === 0) {
       return;
     }
 
@@ -37,24 +42,6 @@ export class MessagingMessageFolderAssociationService {
             'messageChannelMessageAssociationMessageFolder',
           );
 
-        const records = associations.flatMap((association) =>
-          association.messageFolderIds.map((folderId) => ({
-            messageChannelMessageAssociationId:
-              association.messageChannelMessageAssociationId,
-            messageFolderId: folderId,
-          })),
-        );
-
-        if (records.length === 0) {
-          return;
-        }
-
-        const associationIds = [
-          ...new Set(
-            records.map((record) => record.messageChannelMessageAssociationId),
-          ),
-        ];
-
         const existingRecords = await repository.find(
           {
             where: {
@@ -64,25 +51,9 @@ export class MessagingMessageFolderAssociationService {
           transactionManager,
         );
 
-        const existingKeys = new Set(
-          existingRecords.map(
-            (record) =>
-              `${record.messageChannelMessageAssociationId}:${record.messageFolderId}`,
-          ),
-        );
-
-        const seenKeys = new Set<string>();
-
-        const recordsToInsert = records.filter((record) => {
-          const key = `${record.messageChannelMessageAssociationId}:${record.messageFolderId}`;
-
-          if (existingKeys.has(key) || seenKeys.has(key)) {
-            return false;
-          }
-
-          seenKeys.add(key);
-
-          return true;
+        const recordsToInsert = buildMessageFolderAssociationsToInsert({
+          associations,
+          existingRecords,
         });
 
         if (recordsToInsert.length > 0) {
