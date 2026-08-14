@@ -4,12 +4,13 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_ASSISTANT_FEEDBACK_ACTION_ID } from 'src/logic-functions/constants/slack-assistant-feedback-action-id';
 import { updateSlackAssistantRequestFeedback } from 'src/logic-functions/data/update-slack-assistant-request-feedback';
+import { type SlackAssistantFeedbackResult } from 'src/logic-functions/types/slack-assistant-feedback-result.type';
 import { type SlackInteractivityPayload } from 'src/logic-functions/types/slack-interactivity-payload.type';
 import { parseSlackAssistantFeedbackRating } from 'src/logic-functions/utils/parse-slack-assistant-feedback-rating';
 
 export const slackAssistantFeedbackHandler = async (
   payload: SlackInteractivityPayload,
-): Promise<object> => {
+): Promise<SlackAssistantFeedbackResult> => {
   const feedbackAction = payload.actions?.find(
     (action) => action.action_id === SLACK_ASSISTANT_FEEDBACK_ACTION_ID,
   );
