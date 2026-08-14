@@ -1,8 +1,6 @@
 import styled from '@emotion/styled';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-// Mirrors the `lg` size variant of twenty-front's TextInput, which the native
-// application settings tab renders.
 export const StyledSettingsTextInput = styled.input`
   background-color: ${() => themeCssVariables.background.transparent.lighter};
   border: 1px solid ${() => themeCssVariables.border.color.medium};

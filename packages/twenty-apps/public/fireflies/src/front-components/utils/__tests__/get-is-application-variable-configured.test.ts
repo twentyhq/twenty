@@ -30,9 +30,7 @@ describe('getIsApplicationVariableConfigured', () => {
     ).toBe(true);
   });
 
-  // Guards the backfill gate against a cleared field whose save is still in
-  // flight: the stored credential is still present but must not count.
-  it('is not configured once a stored value is cleared', () => {
+  it('is not configured once a stored value is cleared, even while the stored value is still present', () => {
     expect(
       getIsApplicationVariableConfigured({
         draftValue: '',

@@ -42,8 +42,6 @@ export const ApplicationVariableRow = ({
   const { updateApplicationVariable } =
     useUpdateApplicationVariable(applicationId);
 
-  // A stored secret reads back masked, so the field starts empty and shows the
-  // mask as a placeholder rather than echoing it back as an editable value.
   const isSecretStored = variable.isSecret && isNonEmptyString(variable.value);
   const draftValue = value ?? (isSecretStored ? '' : variable.value);
 

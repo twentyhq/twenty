@@ -52,8 +52,6 @@ export const FirefliesSettings = () => {
     Record<string, string>
   >({});
 
-  // Gating reads the value currently in the field, not the last saved one, so
-  // clearing the key disables the backfill before the debounced save lands.
   const isApiKeyConfigured = getIsApplicationVariableConfigured({
     draftValue: draftValueByVariableKey[FIREFLIES_API_KEY_VARIABLE_KEY],
     storedValue: applicationVariables.find(
