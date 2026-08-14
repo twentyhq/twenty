@@ -167,6 +167,18 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
     );
   });
 
+  it('should render an inner join for a to-one relation', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.setFindOptions({ select: { id: true } });
+    queryBuilder.innerJoin('person.company', 'company');
+
+    expect(queryBuilder.getQuery()).toContain(
+      `INNER JOIN "${SCHEMA_NAME}"."company" AS "company" ` +
+        'ON ("person"."companyId" = "company"."id")',
+    );
+  });
+
   it('should report a to-many join to the shared guard rather than rendering it', () => {
     const { queryBuilder } = buildQueryBuilder();
 

@@ -256,6 +256,25 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     condition?: string,
     options?: { allowToManyJoin?: boolean },
   ): this {
+    return this.addJoin('LEFT', relationPath, alias, condition, options);
+  }
+
+  innerJoin(
+    relationPath: string,
+    alias: string,
+    condition?: string,
+    options?: { allowToManyJoin?: boolean },
+  ): this {
+    return this.addJoin('INNER', relationPath, alias, condition, options);
+  }
+
+  private addJoin(
+    joinType: 'INNER' | 'LEFT',
+    relationPath: string,
+    alias: string,
+    condition?: string,
+    options?: { allowToManyJoin?: boolean },
+  ): this {
     const [parentAlias, relationFieldName] = relationPath.split('.');
 
     if (!isDefined(relationFieldName)) {
@@ -304,6 +323,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       alias,
       targetTableShape,
       relationType: relationShape.relationType,
+      joinType,
       condition: isDefined(joinColumnName)
         ? (condition ??
           `${this.quoteColumn(parentAlias, joinColumnName)} = ${this.quoteColumn(alias, 'id')}`)

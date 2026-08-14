@@ -20,6 +20,7 @@ export type JoinClause = {
   alias: string;
   targetTableShape: WorkspaceTableShape;
   relationType: RelationType;
+  joinType: 'INNER' | 'LEFT';
   condition?: string;
   toManyForeignKeyColumnName?: string;
   additionalOnConditions: string[];
@@ -215,7 +216,7 @@ export const buildJoinClause = (state: SelectStatementState): string =>
           })
         : tableExpression;
 
-      return `LEFT JOIN ${joinSource} AS ${escapeIdentifier(
+      return `${joinClause.joinType} JOIN ${joinSource} AS ${escapeIdentifier(
         joinClause.alias,
       )} ON ${onConditions.map((condition) => `(${condition})`).join(' AND ')}`;
     })
