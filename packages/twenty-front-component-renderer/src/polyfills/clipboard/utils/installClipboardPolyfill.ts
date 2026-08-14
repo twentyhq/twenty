@@ -23,9 +23,8 @@ export const installClipboardPolyfill = ({
   };
 
   for (const installTarget of resolveGlobalScopeInstallTargets(globalScope)) {
-    const targetNavigator = (installTarget.navigator ?? globalScope.navigator) as
-      | NavigatorWithClipboard
-      | undefined;
+    const targetNavigator = (installTarget.navigator ??
+      globalScope.navigator) as NavigatorWithClipboard | undefined;
 
     if (!isDefined(targetNavigator)) {
       installTarget.navigator = { clipboard };

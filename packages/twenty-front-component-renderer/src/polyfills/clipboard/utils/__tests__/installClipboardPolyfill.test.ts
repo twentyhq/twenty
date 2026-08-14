@@ -3,13 +3,16 @@ import { installClipboardPolyfill } from '@/polyfills/clipboard/utils/installCli
 describe('installClipboardPolyfill', () => {
   it('should delegate writeText to the host copyToClipboard', async () => {
     const copyToClipboard = jest.fn().mockResolvedValue(undefined);
-    const targetNavigator = {} as { clipboard?: { writeText: (text: string) => Promise<void> } };
+    const targetNavigator = {} as {
+      clipboard?: { writeText: (text: string) => Promise<void> };
+    };
     const globalScope: Record<string, unknown> = { navigator: targetNavigator };
 
     installClipboardPolyfill({ globalScope, copyToClipboard });
 
     await targetNavigator.clipboard?.writeText('copied text');
 
+    expect(copyToClipboard).toHaveBeenCalledTimes(1);
     expect(copyToClipboard).toHaveBeenCalledWith('copied text');
   });
 
@@ -24,9 +27,9 @@ describe('installClipboardPolyfill', () => {
       copyToClipboard: jest.fn(),
     });
 
-    expect(
-      (globalScope.navigator as { clipboard: unknown }).clipboard,
-    ).toBe(nativeClipboard);
+    expect((globalScope.navigator as { clipboard: unknown }).clipboard).toBe(
+      nativeClipboard,
+    );
   });
 
   it('should install a navigator on the polyfill window when it has none', async () => {
@@ -42,6 +45,7 @@ describe('installClipboardPolyfill', () => {
 
     await installedNavigator.clipboard.writeText('from the window');
 
+    expect(copyToClipboard).toHaveBeenCalledTimes(1);
     expect(copyToClipboard).toHaveBeenCalledWith('from the window');
   });
 });
