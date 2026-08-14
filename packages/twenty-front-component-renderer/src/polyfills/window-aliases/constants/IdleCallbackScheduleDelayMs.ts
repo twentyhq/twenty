@@ -1,0 +1,1 @@
+export const IDLE_CALLBACK_SCHEDULE_DELAY_MS = 1;

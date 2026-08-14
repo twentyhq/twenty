@@ -19,6 +19,7 @@ import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/insta
 import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/installWindowGeometryPolyfill';
 import { frontComponentStorageBridges } from '@/polyfills/storage/states/frontComponentStorageBridges';
 import { installStorageBridge } from '@/polyfills/storage/utils/installStorageBridge';
+import { installWindowAliasesPolyfill } from '@/polyfills/window-aliases/utils/installWindowAliasesPolyfill';
 import { exposeGlobals } from '@/utils/exposeGlobals';
 import { installStylePropertyOnRemoteElements } from '@/remote/elements/utils/installStylePropertyOnRemoteElements';
 import { patchRemoteElementAttributes } from '@/remote/elements/utils/patchRemoteElementAttributes';
@@ -56,6 +57,10 @@ installElementGeometryPolyfill({
 installWindowGeometryPolyfill({
   globalScope: globalThis as unknown as Record<string, unknown>,
   geometryStore: workerGeometryStore,
+});
+
+installWindowAliasesPolyfill({
+  globalScope: globalThis as unknown as Record<string, unknown>,
 });
 
 installStorageBridge({
