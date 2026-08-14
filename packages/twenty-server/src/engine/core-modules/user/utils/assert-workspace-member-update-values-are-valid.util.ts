@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { UI_SCALE_VALUES } from 'twenty-shared/constants';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
@@ -8,7 +9,7 @@ const WORKSPACE_MEMBER_FIELD_ALLOWED_VALUES: Record<
   string,
   ReadonlySet<string>
 > = {
-  uiScale: new Set(['Smaller', 'Default', 'Large', 'Larger']),
+  uiScale: new Set(UI_SCALE_VALUES),
 };
 
 export const assertWorkspaceMemberUpdateValuesAreValid = ({

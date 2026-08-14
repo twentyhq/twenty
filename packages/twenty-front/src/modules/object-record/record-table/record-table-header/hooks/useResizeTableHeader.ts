@@ -80,9 +80,14 @@ export const useResizeTableHeader = () => {
   const isRecordTableCheckboxColumnHidden =
     useIsRecordTableCheckboxColumnHidden(recordTableId);
 
+  // captured once per drag: reading computed style on every move would
+  // force a synchronous style recalc, and the zoom cannot change mid-drag
+  const [dragUiZoom, setDragUiZoom] = useState(1);
+
   const handleResizeHandlerStart = useCallback<PointerEventListener>(
     ({ x }) => {
       resetTableRowSelection();
+      setDragUiZoom(getUiZoom());
       setInitialPointerPositionX(x);
     },
     [resetTableRowSelection],
@@ -94,7 +99,7 @@ export const useResizeTableHeader = () => {
 
       throwIfNotDefined(recordField, 'recordField');
 
-      const newResizeOffset = (x - initialPointerPositionX) / getUiZoom();
+      const newResizeOffset = (x - initialPointerPositionX) / dragUiZoom;
 
       const newRecordFieldSizeWithOffset = recordField.size + newResizeOffset;
 
@@ -141,9 +146,10 @@ export const useResizeTableHeader = () => {
         `${newGroupSectionLastColumnWidth}px`,
       );
 
-      setResizeFieldOffset((x - initialPointerPositionX) / getUiZoom());
+      setResizeFieldOffset((x - initialPointerPositionX) / dragUiZoom);
     },
     [
+      dragUiZoom,
       initialPointerPositionX,
       recordField,
       recordTableId,
