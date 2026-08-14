@@ -1,5 +1,6 @@
 import {
   FieldMetadataType,
+  MetadataWritability,
   ObjectOpenRecordIn,
   RelationType,
 } from 'twenty-shared/types';
@@ -42,6 +43,7 @@ const mockObjectMetadata: FlatObjectMetadata = {
   description: null,
   overrides: null,
   isUIEditable: true,
+  writability: MetadataWritability.OPEN,
   isUICreatable: true,
   openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
   labelIdentifierFieldMetadataId: null,

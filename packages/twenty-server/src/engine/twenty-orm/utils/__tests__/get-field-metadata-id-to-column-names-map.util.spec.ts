@@ -1,4 +1,8 @@
-import { FieldMetadataType, ObjectOpenRecordIn } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  MetadataWritability,
+  ObjectOpenRecordIn,
+} from 'twenty-shared/types';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -38,6 +42,7 @@ describe('getFieldMetadataIdToColumnNamesMap', () => {
     description: null,
     overrides: null,
     isUIEditable: true,
+    writability: MetadataWritability.OPEN,
     isUICreatable: true,
     openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
     labelIdentifierFieldMetadataId: null,

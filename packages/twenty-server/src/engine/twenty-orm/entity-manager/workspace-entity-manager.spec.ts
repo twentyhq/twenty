@@ -1,7 +1,8 @@
 import {
+  MetadataWritability,
+  ObjectOpenRecordIn,
   type FieldMetadataType,
   type ObjectsPermissions,
-  ObjectOpenRecordIn,
 } from 'twenty-shared/types';
 import { EntityManager } from 'typeorm';
 import { EntityPersistExecutor } from 'typeorm/persistence/EntityPersistExecutor';
@@ -124,6 +125,7 @@ describe('WorkspaceEntityManager', () => {
       applicationId: 'test-application-id',
       isLabelSyncedWithName: false,
       isUIEditable: true,
+      writability: MetadataWritability.OPEN,
       isUICreatable: true,
       openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
       duplicateCriteria: null,
@@ -162,6 +164,7 @@ describe('WorkspaceEntityManager', () => {
       isActive: true,
       isSystem: false,
       isUIEditable: true,
+      writability: MetadataWritability.OPEN,
       isUnique: false,
       options: null,
       settings: null,
@@ -475,6 +478,7 @@ describe('WorkspaceEntityManager', () => {
         selectedColumns: [],
         allFieldsSelected: false,
         updatedColumns: [],
+        authContext: mockWorkspaceContext.authContext,
       });
     });
 
@@ -584,6 +588,7 @@ describe('WorkspaceEntityManager', () => {
         selectedColumns: [],
         allFieldsSelected: false,
         updatedColumns: [],
+        authContext: mockWorkspaceContext.authContext,
       });
     });
   });

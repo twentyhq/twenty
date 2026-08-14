@@ -19,6 +19,8 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { validateWritabilityOrThrow } from 'src/engine/twenty-orm/repository/validate-writability-or-throw.util';
 import { getColumnNameToFieldMetadataIdMap } from 'src/engine/twenty-orm/utils/get-column-name-to-field-metadata-id.util';
 
 const WORKSPACE_MEMBER_OBJECT_UNIVERSAL_IDENTIFIER =
@@ -79,6 +81,7 @@ type ValidateOperationIsPermittedOrThrowArgs = {
   selectedColumns: string[] | '*';
   allFieldsSelected: boolean;
   updatedColumns: string[];
+  authContext?: WorkspaceAuthContext;
 };
 
 export const validateOperationIsPermittedOrThrow = ({
@@ -91,6 +94,7 @@ export const validateOperationIsPermittedOrThrow = ({
   selectedColumns,
   allFieldsSelected,
   updatedColumns,
+  authContext,
 }: ValidateOperationIsPermittedOrThrowArgs) => {
   const objectMetadataIdForEntity = objectIdByNameSingular[entityName];
 
@@ -113,6 +117,22 @@ export const validateOperationIsPermittedOrThrow = ({
     );
   }
 
+  const columnNameToFieldMetadataIdMap = getColumnNameToFieldMetadataIdMap(
+    objectMetadata,
+    flatFieldMetadataMaps,
+  );
+
+  // writability is structural ownership, checked before role permissions and
+  // before the system-object bypass so it applies to system objects too
+  validateWritabilityOrThrow({
+    operationType,
+    objectMetadata,
+    updatedColumns,
+    columnNameToFieldMetadataIdMap,
+    flatFieldMetadataMaps,
+    authContext,
+  });
+
   const objectMetadataIsSystem = objectMetadata.isSystem === true;
   const isWorkspaceMemberObject =
     objectMetadata.universalIdentifier ===
@@ -122,11 +142,6 @@ export const validateOperationIsPermittedOrThrow = ({
   if (objectMetadataIsSystem && !isWorkspaceMemberObject) {
     return;
   }
-
-  const columnNameToFieldMetadataIdMap = getColumnNameToFieldMetadataIdMap(
-    objectMetadata,
-    flatFieldMetadataMaps,
-  );
 
   const permissionsForEntity = objectsPermissions[objectMetadataIdForEntity];
 
@@ -265,6 +280,7 @@ type ValidateQueryIsPermittedOrThrowArgs = {
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   objectIdByNameSingular: Record<string, string>;
   shouldBypassPermissionChecks: boolean;
+  authContext?: WorkspaceAuthContext;
 };
 
 export const validateQueryIsPermittedOrThrow = ({
@@ -274,6 +290,7 @@ export const validateQueryIsPermittedOrThrow = ({
   flatFieldMetadataMaps,
   objectIdByNameSingular,
   shouldBypassPermissionChecks,
+  authContext,
 }: ValidateQueryIsPermittedOrThrowArgs) => {
   if (shouldBypassPermissionChecks) {
     return;
@@ -353,6 +370,7 @@ export const validateQueryIsPermittedOrThrow = ({
     selectedColumns,
     allFieldsSelected,
     updatedColumns,
+    authContext,
   });
 };
 

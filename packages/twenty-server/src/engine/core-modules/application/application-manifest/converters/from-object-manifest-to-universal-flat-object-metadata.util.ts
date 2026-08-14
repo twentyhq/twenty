@@ -1,5 +1,5 @@
 import { type ObjectManifest } from 'twenty-shared/application';
-import { ObjectOpenRecordIn } from 'twenty-shared/types';
+import { MetadataWritability, ObjectOpenRecordIn } from 'twenty-shared/types';
 
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 
@@ -29,6 +29,7 @@ export const fromObjectManifestToUniversalFlatObjectMetadata = ({
     isActive: true,
     isSystem: false,
     isUIEditable: objectManifest.isUIEditable ?? true,
+    writability: MetadataWritability.OPEN,
     isUICreatable: objectManifest.isUICreatable ?? true,
     isAuditLogged: true,
     isSearchable: objectManifest.isSearchable ?? true,

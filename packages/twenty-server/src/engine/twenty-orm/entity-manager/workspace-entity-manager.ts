@@ -485,6 +485,7 @@ export class WorkspaceEntityManager extends EntityManager {
       selectedColumns,
       allFieldsSelected: false,
       updatedColumns,
+      authContext: this.authContext,
     });
   }
 
