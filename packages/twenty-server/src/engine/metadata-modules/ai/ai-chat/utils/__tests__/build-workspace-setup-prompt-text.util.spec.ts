@@ -140,6 +140,22 @@ describe('buildWorkspaceSetupPromptText', () => {
     },
   );
 
+  it.each([
+    ['a full enrichment', companyEnrichment],
+    ['a null enrichment', null],
+  ])(
+    'should leave an unlisted CRM to the free-text answer when %s is provided',
+    (_label, enrichment) => {
+      const result = buildWorkspaceSetupPromptText({
+        companyEnrichment: enrichment,
+        locale: 'en',
+      });
+
+      expect(result).toContain('leaving any other CRM to the free-text answer');
+      expect(result).not.toContain('another CRM, and starting fresh');
+    },
+  );
+
   it('should request the CRM export in plain text so the upload composer stays available', () => {
     const result = buildWorkspaceSetupPromptText({
       companyEnrichment,
