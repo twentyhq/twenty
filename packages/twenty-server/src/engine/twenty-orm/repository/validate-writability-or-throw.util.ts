@@ -12,6 +12,7 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { type OperationType } from 'src/engine/twenty-orm/repository/permissions.utils';
 
 const isWritePermittedByWritability = ({
   writability,
@@ -39,8 +40,11 @@ const isWritePermittedByWritability = ({
 };
 
 type ValidateWritabilityOrThrowArgs = {
-  operationType: string;
-  objectMetadata: FlatObjectMetadata;
+  operationType: OperationType;
+  objectMetadata: Pick<
+    FlatObjectMetadata,
+    'writability' | 'applicationId' | 'nameSingular'
+  >;
   updatedColumns: string[];
   columnNameToFieldMetadataIdMap: Record<string, string>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;

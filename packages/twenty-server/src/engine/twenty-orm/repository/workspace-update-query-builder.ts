@@ -113,6 +113,7 @@ export class WorkspaceUpdateQueryBuilder<
         flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
         objectIdByNameSingular: this.internalContext.objectIdByNameSingular,
         shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+        authContext: this.authContext,
       });
 
       const mainAliasTarget = this.getMainAliasTarget();
@@ -210,6 +211,18 @@ export class WorkspaceUpdateQueryBuilder<
 
         this.expressionMap.valuesSet =
           updatedValues.length === 1 ? updatedValues[0] : updatedValues;
+
+        // nested relation processing adds join columns, so the written
+        // columns must be validated again on the final values
+        validateQueryIsPermittedOrThrow({
+          expressionMap: this.expressionMap,
+          objectsPermissions: this.objectRecordsPermissions,
+          flatObjectMetadataMaps: this.internalContext.flatObjectMetadataMaps,
+          flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
+          objectIdByNameSingular: this.internalContext.objectIdByNameSingular,
+          shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+          authContext: this.authContext,
+        });
       }
 
       this.applyRowLevelPermissionPredicates();
@@ -316,6 +329,7 @@ export class WorkspaceUpdateQueryBuilder<
           flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
           objectIdByNameSingular: this.internalContext.objectIdByNameSingular,
           shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+          authContext: this.authContext,
         });
       }
 

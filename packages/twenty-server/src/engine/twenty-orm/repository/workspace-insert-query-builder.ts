@@ -124,6 +124,7 @@ export class WorkspaceInsertQueryBuilder<
         flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
         objectIdByNameSingular: this.internalContext.objectIdByNameSingular,
         shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+        authContext: this.authContext,
       });
 
       // Fix overwrites for composite fields - valuesSet contains formatted/flattened column names
@@ -217,6 +218,18 @@ export class WorkspaceInsertQueryBuilder<
           });
 
         this.expressionMap.valuesSet = updatedValues;
+
+        // nested relation processing adds join columns, so the written
+        // columns must be validated again on the final values
+        validateQueryIsPermittedOrThrow({
+          expressionMap: this.expressionMap,
+          objectsPermissions: this.objectRecordsPermissions,
+          flatObjectMetadataMaps: this.internalContext.flatObjectMetadataMaps,
+          flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
+          objectIdByNameSingular: this.internalContext.objectIdByNameSingular,
+          shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+          authContext: this.authContext,
+        });
       }
 
       this.validateRLSPredicatesForInsert();
