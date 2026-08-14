@@ -9,13 +9,13 @@ export class AddUninstallLogicFunctionIdToApplicationFastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."application" ADD "uninstallLogicFunctionId" uuid',
+      'ALTER TABLE "core"."application" ADD COLUMN IF NOT EXISTS "uninstallLogicFunctionId" uuid',
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."application" DROP COLUMN "uninstallLogicFunctionId"',
+      'ALTER TABLE "core"."application" DROP COLUMN IF EXISTS "uninstallLogicFunctionId"',
     );
   }
 }
