@@ -15,6 +15,7 @@ export const UiScalePicker = () => {
   return (
     <Select
       dropdownId="ui-scale-picker"
+      label={t`Scale`}
       dropdownWidth={218}
       dropdownWidthAuto
       fullWidth
