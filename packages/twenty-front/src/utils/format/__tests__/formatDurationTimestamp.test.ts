@@ -8,8 +8,6 @@ describe('formatDurationTimestamp', () => {
     [3661, '1:01:01'],
     [-10, '0:00'],
   ])('formats %s seconds as %s', (seconds, expectedTimestamp) => {
-    expect(formatDurationTimestamp(seconds)).toBe(
-      expectedTimestamp,
-    );
+    expect(formatDurationTimestamp(seconds)).toBe(expectedTimestamp);
   });
 });

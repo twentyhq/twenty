@@ -12,8 +12,10 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FRONT_COMPONENT_MEDIA_CAPTURE_MODAL_INSTANCE_ID } from '@/front-components/media-capture/constants/FrontComponentMediaCaptureModalInstanceId';
 import { useFrontComponentMediaRecorder } from '@/front-components/media-capture/hooks/useFrontComponentMediaRecorder';
 import { type FrontComponentMediaCaptureRequest } from '@/front-components/media-capture/states/frontComponentMediaCaptureRequestState';
+import { frontComponentMediaCaptureIsUploadingState } from '@/front-components/media-capture/states/frontComponentMediaCaptureIsUploadingState';
 import { getMediaCaptureFileExtension } from '@/front-components/media-capture/utils/getMediaCaptureFileExtension';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
   StyledCenteredButton,
   StyledCenteredTitle,
@@ -81,6 +83,10 @@ export const FrontComponentMediaCaptureModal = ({
   );
   const applicationName = applicationNameData?.findOneApplication?.name;
 
+  const setFrontComponentMediaCaptureIsUploading = useSetAtomState(
+    frontComponentMediaCaptureIsUploadingState,
+  );
+
   const [step, setStep] = useState<MediaCaptureStep>('consent');
 
   // The capture result must be emitted exactly once: a cancel racing an
@@ -141,6 +147,10 @@ export const FrontComponentMediaCaptureModal = ({
     }
 
     setStep('uploading');
+    // Shields the request from the external-close effect: past this point a
+    // closed modal must not resolve 'cancelled' under an in-flight upload,
+    // or the uploaded file would be stranded with no reference holder.
+    setFrontComponentMediaCaptureIsUploading(true);
 
     try {
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');

@@ -1,6 +1,4 @@
-export const formatDurationTimestamp = (
-  seconds: number,
-): string => {
+export const formatDurationTimestamp = (seconds: number): string => {
   const wholeSeconds = Math.max(0, Math.floor(seconds));
   const hours = Math.floor(wholeSeconds / 3600);
   const minutes = Math.floor((wholeSeconds % 3600) / 60);

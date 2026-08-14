@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { FrontComponentMediaCaptureExternalCloseEffect } from '@/front-components/media-capture/components/FrontComponentMediaCaptureExternalCloseEffect';
 import { FrontComponentMediaCaptureModal } from '@/front-components/media-capture/components/FrontComponentMediaCaptureModal';
 import { FRONT_COMPONENT_MEDIA_CAPTURE_MODAL_INSTANCE_ID } from '@/front-components/media-capture/constants/FrontComponentMediaCaptureModalInstanceId';
+import { frontComponentMediaCaptureIsUploadingState } from '@/front-components/media-capture/states/frontComponentMediaCaptureIsUploadingState';
 import { frontComponentMediaCaptureRequestState } from '@/front-components/media-capture/states/frontComponentMediaCaptureRequestState';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
@@ -22,6 +23,9 @@ export const FrontComponentMediaCaptureModalManager = () => {
   const setFrontComponentMediaCaptureRequest = useSetAtomState(
     frontComponentMediaCaptureRequestState,
   );
+  const setFrontComponentMediaCaptureIsUploading = useSetAtomState(
+    frontComponentMediaCaptureIsUploadingState,
+  );
   const { closeModal } = useModal();
 
   if (!isDefined(frontComponentMediaCaptureRequest) || !isModalOpened) {
@@ -30,6 +34,7 @@ export const FrontComponentMediaCaptureModalManager = () => {
 
   const emitCaptureResult = (result: CaptureMediaResult) => {
     closeModal(FRONT_COMPONENT_MEDIA_CAPTURE_MODAL_INSTANCE_ID);
+    setFrontComponentMediaCaptureIsUploading(false);
     setFrontComponentMediaCaptureRequest(null);
     frontComponentMediaCaptureRequest.onResult(result);
   };
