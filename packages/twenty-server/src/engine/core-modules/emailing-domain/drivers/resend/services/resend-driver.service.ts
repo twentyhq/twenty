@@ -17,7 +17,7 @@ import { type ResendApiClientService } from 'src/engine/core-modules/emailing-do
 import { type ResendDomain } from 'src/engine/core-modules/emailing-domain/drivers/resend/types/resend-domain.type';
 import { type ResendSendEmailPayload } from 'src/engine/core-modules/emailing-domain/drivers/resend/types/resend-send-email-payload.type';
 import { mapResendDomainRecords } from 'src/engine/core-modules/emailing-domain/drivers/resend/utils/map-resend-domain-records.util';
-import { mapResendDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/resend/utils/map-resend-domain-status.util';
+import { mapResendSendingStatus } from 'src/engine/core-modules/emailing-domain/drivers/resend/utils/map-resend-sending-status.util';
 import { RESEND_WORKSPACE_TAG_NAME } from 'src/engine/core-modules/emailing-domain/drivers/resend/constants/resend-workspace-tag-name.constant';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { type EmailingDomainSendEmailRequest } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-input.type';
@@ -188,7 +188,7 @@ export class ResendDriver implements EmailingDomainDriverInterface {
     domain: ResendDomain,
   ): EmailingDomainVerificationResult {
     return {
-      status: mapResendDomainStatus(domain.status),
+      status: mapResendSendingStatus(domain),
       verificationRecords: mapResendDomainRecords(domain.records),
     };
   }
