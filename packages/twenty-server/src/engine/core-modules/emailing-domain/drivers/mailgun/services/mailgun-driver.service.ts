@@ -14,11 +14,9 @@ import {
 } from 'src/engine/core-modules/emailing-domain/drivers/interfaces/emailing-domain-driver.interface';
 import { MAILGUN_WORKSPACE_VARIABLE_NAME } from 'src/engine/core-modules/emailing-domain/drivers/mailgun/constants/mailgun-workspace-variable-name.constant';
 import { type MailgunApiClientService } from 'src/engine/core-modules/emailing-domain/drivers/mailgun/services/mailgun-api-client.service';
-import { type MailgunDomainResponse } from 'src/engine/core-modules/emailing-domain/drivers/mailgun/types/mailgun-api.type';
-import {
-  mapMailgunDnsRecords,
-  mapMailgunDomainState,
-} from 'src/engine/core-modules/emailing-domain/drivers/mailgun/utils/map-mailgun-domain-verification.util';
+import { type MailgunDomainResponse } from 'src/engine/core-modules/emailing-domain/drivers/mailgun/types/mailgun-domain-response.type';
+import { mapMailgunDnsRecords } from 'src/engine/core-modules/emailing-domain/drivers/mailgun/utils/map-mailgun-dns-records.util';
+import { mapMailgunDomainState } from 'src/engine/core-modules/emailing-domain/drivers/mailgun/utils/map-mailgun-domain-state.util';
 import { type EmailingDomainSendEmailRequest } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-input.type';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
 import { getUnsubscribeBaseUrl } from 'src/engine/core-modules/emailing-domain/drivers/utils/get-unsubscribe-base-url.util';

@@ -1,22 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type MailgunDnsRecord } from 'src/engine/core-modules/emailing-domain/drivers/mailgun/types/mailgun-api.type';
-import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
+import { type MailgunDnsRecord } from 'src/engine/core-modules/emailing-domain/drivers/mailgun/types/mailgun-dns-record.type';
 import { type VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record';
-
-export const mapMailgunDomainState = (
-  state: string | undefined,
-): EmailingDomainStatus => {
-  switch (state) {
-    case 'active':
-      return EmailingDomainStatus.VERIFIED;
-    case 'disabled':
-      return EmailingDomainStatus.FAILED;
-    default:
-      return EmailingDomainStatus.PENDING;
-  }
-};
 
 const mapMailgunRecordStatus = (valid: string | undefined): string => {
   switch (valid) {

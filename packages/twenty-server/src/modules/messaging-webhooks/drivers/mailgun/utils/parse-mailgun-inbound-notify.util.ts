@@ -1,13 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-export type MailgunInboundNotifyFields = {
-  timestamp: string | undefined;
-  token: string | undefined;
-  signature: string | undefined;
-  recipient: string | undefined;
-  subject: string | undefined;
-  messageUrl: string | undefined;
-};
+import { type MailgunInboundNotifyFields } from 'src/modules/messaging-webhooks/drivers/mailgun/types/mailgun-inbound-notify-fields.type';
 
 // Mailgun store(notify) posts application/x-www-form-urlencoded when the
 // stored email has no attachments and multipart/form-data when it does.

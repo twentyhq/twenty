@@ -1,4 +1,4 @@
-import { parseMailgunInboundNotify } from 'src/modules/messaging-webhooks/adapters/mailgun/utils/parse-mailgun-inbound-notify.util';
+import { parseMailgunInboundNotify } from 'src/modules/messaging-webhooks/drivers/mailgun/utils/parse-mailgun-inbound-notify.util';
 
 describe('parseMailgunInboundNotify', () => {
   it('should read fields from a parsed urlencoded body', () => {

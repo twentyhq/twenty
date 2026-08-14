@@ -11,9 +11,9 @@ import { ApiPath } from 'twenty-shared/types';
 import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { EmailingModule } from 'src/modules/emailing/emailing.module';
-import { MailgunInboundWebhookAdapterService } from 'src/modules/messaging-webhooks/adapters/mailgun/services/mailgun-inbound-webhook-adapter.service';
-import { MailgunOutboundWebhookAdapterService } from 'src/modules/messaging-webhooks/adapters/mailgun/services/mailgun-outbound-webhook-adapter.service';
-import { MailgunWebhookVerifierService } from 'src/modules/messaging-webhooks/adapters/mailgun/services/mailgun-webhook-verifier.service';
+import { MailgunInboundWebhookDriverService } from 'src/modules/messaging-webhooks/drivers/mailgun/services/mailgun-inbound-webhook-driver.service';
+import { MailgunOutboundWebhookDriverService } from 'src/modules/messaging-webhooks/drivers/mailgun/services/mailgun-outbound-webhook-driver.service';
+import { MailgunWebhookVerifierService } from 'src/modules/messaging-webhooks/drivers/mailgun/services/mailgun-webhook-verifier.service';
 import { ResendWebhookDriverService } from 'src/modules/messaging-webhooks/drivers/resend/services/resend-webhook-driver.service';
 import { ResendWebhookVerifierService } from 'src/modules/messaging-webhooks/drivers/resend/services/resend-webhook-verifier.service';
 import { SesInboundWebhookDriverService } from 'src/modules/messaging-webhooks/drivers/aws-ses/services/ses-inbound-webhook-driver.service';
@@ -41,8 +41,8 @@ import { MessagingWebhooksController } from 'src/modules/messaging-webhooks/mess
     ResendWebhookVerifierService,
     ResendWebhookDriverService,
     MailgunWebhookVerifierService,
-    MailgunInboundWebhookAdapterService,
-    MailgunOutboundWebhookAdapterService,
+    MailgunInboundWebhookDriverService,
+    MailgunOutboundWebhookDriverService,
   ],
 })
 export class MessagingWebhooksModule implements NestModule {
@@ -50,9 +50,11 @@ export class MessagingWebhooksModule implements NestModule {
     // Mailgun store(notify) posts multipart/form-data when the stored email
     // has attachments; the global body parsers skip multipart, so capture it
     // raw for this route only. Urlencoded posts stay parsed by the global
-    // parser and reach the controller as an object.
+    // parser and reach the controller as an object. The limit leaves
+    // headroom above Mailgun's 25MB message size cap so large inbound
+    // emails are not rejected before signature verification.
     consumer
-      .apply(raw({ type: 'multipart/form-data', limit: '10mb' }))
+      .apply(raw({ type: 'multipart/form-data', limit: '50mb' }))
       .forRoutes({
         path: `${ApiPath.Webhooks}/messaging/mailgun/inbound`,
         method: RequestMethod.POST,
