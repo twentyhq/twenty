@@ -4,9 +4,9 @@
 }
 
 .default {
-  font-size: 11px;
+  font-size: calc(11px * var(--t-scale, 1));
 }
 
 .small {
-  font-size: 9px;
+  font-size: calc(9px * var(--t-scale, 1));
 }

@@ -1,4 +1,3 @@
-import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { RecordTableRowVirtualizedDebugRowHelper } from '@/object-record/record-table/virtualization/components/RecordTableRowVirtualizedDebugRowHelper';
 import { RecordTableRowVirtualizedRouterLevel1 } from '@/object-record/record-table/virtualization/components/RecordTableRowVirtualizedRouterLevel1';
 import { TABLE_VIRTUALIZATION_DEBUG_ACTIVATED } from '@/object-record/record-table/virtualization/constants/TableVirtualizationDebugActivated';
@@ -10,6 +9,7 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
+import { useRecordTableRowPitch } from '@/object-record/record-table/hooks/useRecordTableRowPitch';
 
 const StyledVirtualizedRowContainer = styled.div<{
   pixelsFromTop: number;
@@ -26,6 +26,8 @@ type RecordTableRowVirtualizedContainerProps = {
 export const RecordTableRowVirtualizedContainer = ({
   virtualIndex,
 }: RecordTableRowVirtualizedContainerProps) => {
+  const { rowPitch } = useRecordTableRowPitch();
+
   const realIndexByVirtualIndex = useAtomComponentFamilyStateValue(
     realIndexByVirtualIndexComponentFamilyState,
     { virtualIndex },
@@ -43,9 +45,7 @@ export const RecordTableRowVirtualizedContainer = ({
     return null;
   }
 
-  const pixelsFromTop =
-    realIndexByVirtualIndex * (RECORD_TABLE_ROW_HEIGHT + 1) +
-    (RECORD_TABLE_ROW_HEIGHT + 1);
+  const pixelsFromTop = realIndexByVirtualIndex * rowPitch + rowPitch;
 
   return (
     <StyledVirtualizedRowContainer

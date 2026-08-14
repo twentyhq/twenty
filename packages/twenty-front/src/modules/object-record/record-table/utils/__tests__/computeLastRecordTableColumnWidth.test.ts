@@ -10,6 +10,7 @@ describe('computeLastRecordTableColumnWidth', () => {
       shouldCompactFirstColumn: false,
       isDragColumnHidden: false,
       isCheckboxColumnHidden: false,
+      uiScale: 1,
     });
 
     expect(lastColumnWidth).toBe(0);
@@ -24,6 +25,7 @@ describe('computeLastRecordTableColumnWidth', () => {
       shouldCompactFirstColumn: false,
       isDragColumnHidden: false,
       isCheckboxColumnHidden: false,
+      uiScale: 1,
     });
 
     expect(lastColumnWidth).toBe(25);
@@ -38,9 +40,27 @@ describe('computeLastRecordTableColumnWidth', () => {
       shouldCompactFirstColumn: false,
       isDragColumnHidden: true,
       isCheckboxColumnHidden: true,
+      uiScale: 1,
     });
 
     expect(lastColumnWidth).toBe(65);
+  });
+
+  it('scales gutters and field sizes but not the cell borders', () => {
+    const recordFields = [{ size: 100 }, { size: 100 }];
+
+    // at 1.25: drag 15 + checkbox 35 + add-column 40 = 90 of gutters,
+    // fields render at 250, and the 3px of borders stay unscaled
+    const { lastColumnWidth } = computeLastRecordTableColumnWidth({
+      recordFields,
+      tableWidth: 400,
+      shouldCompactFirstColumn: false,
+      isDragColumnHidden: false,
+      isCheckboxColumnHidden: false,
+      uiScale: 1.25,
+    });
+
+    expect(lastColumnWidth).toBe(400 - 90 - 250 - 3);
   });
 
   it('uses the compact first column width when shouldCompactFirstColumn is true', () => {
@@ -53,6 +73,7 @@ describe('computeLastRecordTableColumnWidth', () => {
         shouldCompactFirstColumn: true,
         isDragColumnHidden: false,
         isCheckboxColumnHidden: false,
+        uiScale: 1,
       });
 
     const { lastColumnWidth: lastColumnWidthWithoutCompact } =
@@ -62,6 +83,7 @@ describe('computeLastRecordTableColumnWidth', () => {
         shouldCompactFirstColumn: false,
         isDragColumnHidden: false,
         isCheckboxColumnHidden: false,
+        uiScale: 1,
       });
 
     expect(lastColumnWidthWithCompact).toBe(37);

@@ -20,8 +20,8 @@
   );
   border-radius: var(--t-border-radius-pill);
   corner-shape: round;
-  height: 8px;
-  width: 8px;
+  height: calc(8px * var(--t-scale, 1));
+  width: calc(8px * var(--t-scale, 1));
   animation: loaderDot 0.8s ease-in-out infinite;
 }
 
@@ -30,20 +30,20 @@
 @keyframes loaderDot {
   0% {
     transform: translateX(-16px);
-    width: 8px;
-    height: 8px;
+    width: calc(8px * var(--t-scale, 1));
+    height: calc(8px * var(--t-scale, 1));
   }
 
   15% {
     transform: translateX(0);
-    width: 12px;
+    width: calc(12px * var(--t-scale, 1));
     height: 2px;
   }
 
   30%,
   100% {
     transform: translateX(16px);
-    width: 8px;
-    height: 8px;
+    width: calc(8px * var(--t-scale, 1));
+    height: calc(8px * var(--t-scale, 1));
   }
 }

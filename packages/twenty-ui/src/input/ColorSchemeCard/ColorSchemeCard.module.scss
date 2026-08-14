@@ -1,6 +1,6 @@
 .container {
   position: relative;
-  width: 160px;
+  width: calc(160px * var(--t-scale, 1));
 }
 
 .colorSchemeBackground {
@@ -9,7 +9,7 @@
   justify-content: flex-end;
   box-sizing: border-box;
   width: 100%;
-  height: 80px;
+  height: calc(80px * var(--t-scale, 1));
   padding-top: var(--t-spacing-6);
   padding-left: var(--t-spacing-6);
   border: 1px solid var(--color-scheme-card-border-color);
@@ -23,7 +23,7 @@
   display: flex;
   flex: 1;
   box-sizing: border-box;
-  height: 56px;
+  height: calc(56px * var(--t-scale, 1));
   padding-top: var(--t-spacing-2);
   padding-left: var(--t-spacing-2);
   border-top: 1px solid var(--color-scheme-card-border-color);
@@ -31,7 +31,7 @@
   border-radius: var(--t-border-radius-md) 0px 0px 0px;
   background: var(--color-scheme-card-content-background);
   color: var(--color-scheme-card-content-color);
-  font-size: 20px;
+  font-size: calc(20px * var(--t-scale, 1));
   // Replaces the framer-motion hover animation from the deprecated component.
   transition:
     height 0.1s ease-in-out,
@@ -40,15 +40,15 @@
 
 .colorSchemeBackground:hover .colorSchemeContent,
 .mixedColorSchemeSegment:hover .colorSchemeContent {
-  height: 61px;
-  font-size: 22px;
+  height: calc(61px * var(--t-scale, 1));
+  font-size: calc(22px * var(--t-scale, 1));
 }
 
 .mixedColorSchemeSegment {
   position: relative;
   display: flex;
   width: 100%;
-  height: 80px;
+  height: calc(80px * var(--t-scale, 1));
   border-radius: var(--t-border-radius-md);
   overflow: hidden;
   cursor: pointer;

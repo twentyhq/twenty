@@ -19,10 +19,13 @@ import { RECORD_TABLE_VIRTUALIZATION_BODY_PLACEHOLDER_WIDTH_CSS_VARIABLE_NAME } 
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
-import { useEffect } from 'react';
+import { useEffect, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const RecordTableColumnWidthEffect = () => {
+  const { theme } = useContext(ThemeContext);
+
   const [resizedFieldMetadataId] = useAtomComponentState(
     resizedFieldMetadataIdComponentState,
   );
@@ -55,12 +58,14 @@ export const RecordTableColumnWidthEffect = () => {
       tableWidth: recordTableWidth,
       isDragColumnHidden: isRecordTableDragColumnHidden,
       isCheckboxColumnHidden: isRecordTableCheckboxColumnHidden,
+      uiScale: theme.scale,
     });
 
     const { visibleRecordFieldsWidth } = computeVisibleRecordFieldsWidthOnTable(
       {
         shouldCompactFirstColumn: shouldCompactRecordTableFirstColumn,
         visibleRecordFields,
+        uiScale: theme.scale,
       },
     );
 
@@ -103,7 +108,7 @@ export const RecordTableColumnWidthEffect = () => {
       updateRecordTableCSSVariable(
         recordTableId,
         getRecordTableColumnFieldWidthCSSVariableName(index),
-        `${recordField.size}px`,
+        `calc(${recordField.size}px * var(--t-scale, 1))`,
       );
     }
 
@@ -111,7 +116,7 @@ export const RecordTableColumnWidthEffect = () => {
       updateRecordTableCSSVariable(
         recordTableId,
         getRecordTableColumnFieldWidthCSSVariableName(0),
-        `${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px`,
+        `calc(${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px * var(--t-scale, 1))`,
       );
     } else {
       const firstColumnWidth =
@@ -120,7 +125,7 @@ export const RecordTableColumnWidthEffect = () => {
       updateRecordTableCSSVariable(
         recordTableId,
         getRecordTableColumnFieldWidthCSSVariableName(0),
-        `${firstColumnWidth}px`,
+        `calc(${firstColumnWidth}px * var(--t-scale, 1))`,
       );
     }
   }, [
@@ -131,6 +136,7 @@ export const RecordTableColumnWidthEffect = () => {
     isRecordTableDragColumnHidden,
     isRecordTableCheckboxColumnHidden,
     recordTableId,
+    theme.scale,
   ]);
 
   return null;

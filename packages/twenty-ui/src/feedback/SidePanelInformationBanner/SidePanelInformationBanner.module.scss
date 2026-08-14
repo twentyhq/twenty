@@ -14,9 +14,9 @@
   color: var(--t-color-blue);
   display: flex;
   flex-shrink: 0;
-  height: 16px;
+  height: calc(16px * var(--t-scale, 1));
   justify-content: center;
-  width: 16px;
+  width: calc(16px * var(--t-scale, 1));
 }
 
 .message {

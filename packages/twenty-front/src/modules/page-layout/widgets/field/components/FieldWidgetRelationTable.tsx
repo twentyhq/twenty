@@ -33,7 +33,9 @@ const StyledContainer = styled.div`
   border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   flex-direction: column;
-  max-height: ${FIELD_WIDGET_RELATION_TABLE_MAX_HEIGHT_IN_PX}px;
+  max-height: calc(
+    ${FIELD_WIDGET_RELATION_TABLE_MAX_HEIGHT_IN_PX}px * var(--t-scale, 1)
+  );
   min-height: 0;
   overflow: hidden;
 `;

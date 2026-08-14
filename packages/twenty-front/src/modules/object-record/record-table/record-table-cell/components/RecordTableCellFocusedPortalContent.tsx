@@ -26,7 +26,7 @@ const StyledRecordTableCellFocusPortalContent = styled.div<{
   box-sizing: border-box;
   display: flex;
 
-  height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  height: calc(${RECORD_TABLE_ROW_HEIGHT}px * var(--t-scale, 1));
 
   outline: 1px solid ${themeCssVariables.color.blue8};
   outline-offset: -1px;

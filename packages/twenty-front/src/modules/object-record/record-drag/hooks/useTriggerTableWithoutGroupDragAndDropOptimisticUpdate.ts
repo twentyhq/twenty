@@ -14,8 +14,11 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { useAtomComponentFamilySelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorCallbackState';
 import { findById, isDefined } from 'twenty-shared/utils';
 import { sortByProperty } from '~/utils/array/sortByProperty';
+import { useRecordTableRowPitch } from '@/object-record/record-table/hooks/useRecordTableRowPitch';
 
 export const useTriggerTableWithoutGroupDragAndDropOptimisticUpdate = () => {
+  const { rowPitch } = useRecordTableRowPitch();
+
   const store = useStore();
   const recordIdByRealIndexCallbackSelector =
     useAtomComponentFamilySelectorCallbackState(
@@ -48,6 +51,7 @@ export const useTriggerTableWithoutGroupDragAndDropOptimisticUpdate = () => {
           lastScrollPosition,
           tableScrollWrapperHeight,
           totalNumberOfRecordsToVirtualize,
+          rowPitch,
         );
 
       const recordsInOverscanWindowToReorder: RecordWithPosition[] = [];
@@ -112,6 +116,7 @@ export const useTriggerTableWithoutGroupDragAndDropOptimisticUpdate = () => {
       scrollWrapperHTMLElement?.clientHeight,
       store,
       totalNumberOfRecordsToVirtualizeCallbackState,
+      rowPitch,
     ],
   );
 

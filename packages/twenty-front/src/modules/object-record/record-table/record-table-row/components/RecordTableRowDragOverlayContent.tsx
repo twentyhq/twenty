@@ -53,9 +53,9 @@ const cloneColumnFieldWidthRules = Array.from(
       return `${baseRule}
   div.${className} {
     @media (max-width: ${MOBILE_VIEWPORT}px) {
-      width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
-      max-width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
-      min-width: ${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px;
+      width: calc(${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px * var(--t-scale, 1));
+      max-width: calc(${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px * var(--t-scale, 1));
+      min-width: calc(${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px * var(--t-scale, 1));
     }
   }`;
     }
@@ -115,9 +115,15 @@ const StyledRowDragOverlayCSSBridge = styled.div`
   }
 
   div.${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH_CLASS_NAME} {
-    max-width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
-    min-width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
-    width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
+    max-width: calc(
+      ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px * var(--t-scale, 1)
+    );
+    min-width: calc(
+      ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px * var(--t-scale, 1)
+    );
+    width: calc(
+      ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px * var(--t-scale, 1)
+    );
   }
 
   ${cloneColumnFieldWidthRules}

@@ -1,6 +1,5 @@
 import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/states/lastShowPageRecordId';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
-import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useScrollTableToPosition } from '@/object-record/record-table/hooks/useScrollTableToPosition';
 import { useProcessTreadmillScrollTop } from '@/object-record/record-table/virtualization/hooks/useProcessTreadmillScrollTop';
 import { useTriggerFetchPages } from '@/object-record/record-table/virtualization/hooks/useTriggerFetchPages';
@@ -10,8 +9,11 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { useEffect, useState } from 'react';
+import { useRecordTableRowPitch } from '@/object-record/record-table/hooks/useRecordTableRowPitch';
 
 export const RecordTableNoRecordGroupScrollToPreviousRecordEffect = () => {
+  const { rowPitch } = useRecordTableRowPitch();
+
   const store = useStore();
 
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
@@ -54,7 +56,7 @@ export const RecordTableNoRecordGroupScrollToPreviousRecordEffect = () => {
       const tableScrollWrapperHeight = scrollWrapperElement?.clientHeight ?? 0;
 
       const numberOfRowsDisplayedInTable = Math.min(
-        Math.floor(tableScrollWrapperHeight / (RECORD_TABLE_ROW_HEIGHT + 1)),
+        Math.floor(tableScrollWrapperHeight / rowPitch),
         30,
       );
 
@@ -62,12 +64,11 @@ export const RecordTableNoRecordGroupScrollToPreviousRecordEffect = () => {
         numberOfRowsDisplayedInTable / 2,
       );
 
-      const recordPositionInPx = recordPosition * (RECORD_TABLE_ROW_HEIGHT + 1);
+      const recordPositionInPx = recordPosition * rowPitch;
 
       const targetScrollPositionInPx = Math.max(
         0,
-        recordPositionInPx -
-          halfNumberOfRowsVisible * (RECORD_TABLE_ROW_HEIGHT + 1),
+        recordPositionInPx - halfNumberOfRowsVisible * rowPitch,
       );
 
       scrollTableToPosition({
@@ -92,6 +93,7 @@ export const RecordTableNoRecordGroupScrollToPreviousRecordEffect = () => {
     processTreadmillScrollTop,
     getScrollWrapperElement,
     triggerFetchPagesWithoutDebounce,
+    rowPitch,
   ]);
 
   return <></>;

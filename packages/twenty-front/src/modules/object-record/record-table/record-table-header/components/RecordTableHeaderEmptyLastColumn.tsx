@@ -21,9 +21,11 @@ const StyledEmptyHeaderCell = styled.div<{
     shouldDisplayBorderBottom
       ? `1px solid ${themeCssVariables.border.color.light}`
       : 'none'};
-  height: ${RECORD_TABLE_ROW_HEIGHT}px;
-  max-height: ${RECORD_TABLE_ROW_HEIGHT}px;
-  width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
+  height: calc(${RECORD_TABLE_ROW_HEIGHT}px * var(--t-scale, 1));
+  max-height: calc(${RECORD_TABLE_ROW_HEIGHT}px * var(--t-scale, 1));
+  width: calc(
+    ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px * var(--t-scale, 1)
+  );
   z-index: 1;
 `;
 

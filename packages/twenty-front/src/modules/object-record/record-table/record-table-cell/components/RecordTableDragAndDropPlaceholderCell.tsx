@@ -7,7 +7,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledPlaceholderDragAndDropCell = styled.div`
   background-color: ${themeCssVariables.background.primary};
   border-bottom: 1px solid ${themeCssVariables.background.primary};
-  height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  height: calc(${RECORD_TABLE_ROW_HEIGHT}px * var(--t-scale, 1));
   left: 0;
   overflow: hidden;
   position: sticky;

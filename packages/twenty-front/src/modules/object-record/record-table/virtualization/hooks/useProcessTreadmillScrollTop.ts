@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
 
-import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { NUMBER_OF_VIRTUALIZED_ROWS } from '@/object-record/record-table/virtualization/constants/NumberOfVirtualizedRows';
 import { lastRealIndexSetComponentState } from '@/object-record/record-table/virtualization/states/lastRealIndexSetComponentState';
 import { lastScrollPositionComponentState } from '@/object-record/record-table/virtualization/states/lastScrollPositionComponentState';
@@ -10,8 +9,11 @@ import { scrollAtRealIndexComponentState } from '@/object-record/record-table/vi
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useRecordTableRowPitch } from '@/object-record/record-table/hooks/useRecordTableRowPitch';
 
 export const useProcessTreadmillScrollTop = () => {
+  const { rowPitch } = useRecordTableRowPitch();
+
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement();
 
   const lastScrollPositionCallbackState = useAtomComponentStateCallbackState(
@@ -49,7 +51,7 @@ export const useProcessTreadmillScrollTop = () => {
         distanceFromTop > lastScrollPosition ? 'downward' : 'upward';
 
       const numberOfRowsDisplayedInTable = Math.min(
-        Math.floor(tableScrollWrapperHeight / (RECORD_TABLE_ROW_HEIGHT + 1)),
+        Math.floor(tableScrollWrapperHeight / rowPitch),
         40,
       );
 
@@ -58,8 +60,7 @@ export const useProcessTreadmillScrollTop = () => {
       );
 
       const realIndexAtTheMiddleOfTheTable =
-        Math.floor(distanceFromTop / (RECORD_TABLE_ROW_HEIGHT + 1)) +
-        halfNumberOfRowsVisible;
+        Math.floor(distanceFromTop / rowPitch) + halfNumberOfRowsVisible;
 
       const lastCorrectlySetRealIndex =
         store.get(lastRealIndexSetCallbackState) ??
@@ -140,6 +141,7 @@ export const useProcessTreadmillScrollTop = () => {
       scrollAtRealIndexCallbackState,
       getScrollWrapperElement,
       store,
+      rowPitch,
     ],
   );
 

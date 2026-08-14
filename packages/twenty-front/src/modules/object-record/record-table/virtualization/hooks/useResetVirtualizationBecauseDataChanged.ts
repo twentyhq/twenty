@@ -17,10 +17,13 @@ import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScro
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { isDefined } from 'twenty-shared/utils';
 import { sleep } from '~/utils/sleep';
+import { useRecordTableRowPitch } from '@/object-record/record-table/hooks/useRecordTableRowPitch';
 
 export const useResetVirtualizationBecauseDataChanged = (
   objectNameSingular: string,
 ) => {
+  const { rowPitch } = useRecordTableRowPitch();
+
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
@@ -83,6 +86,7 @@ export const useResetVirtualizationBecauseDataChanged = (
         lastScrollPosition,
         tableScrollWrapperHeight,
         totalNumberOfRecordsToVirtualize,
+        rowPitch,
       );
 
     const recordIdByRealIndex = store.get(recordIdByRealIndexCallbackState);
@@ -137,6 +141,7 @@ export const useResetVirtualizationBecauseDataChanged = (
     dataLoadingStatusByRealIndexCallbackState,
     recordIdByRealIndexCallbackState,
     store,
+    rowPitch,
   ]);
 
   const resetVirtualizationBecauseDataChanged = useCallback(async () => {

@@ -61,15 +61,15 @@
 }
 
 .small {
-  height: 24px;
-  min-width: 24px;
-  width: 24px;
+  height: calc(24px * var(--t-scale, 1));
+  min-width: calc(24px * var(--t-scale, 1));
+  width: calc(24px * var(--t-scale, 1));
 }
 
 .medium {
-  height: 32px;
-  min-width: 32px;
-  width: 32px;
+  height: calc(32px * var(--t-scale, 1));
+  min-width: calc(32px * var(--t-scale, 1));
+  width: calc(32px * var(--t-scale, 1));
 }
 
 .iconContainer {

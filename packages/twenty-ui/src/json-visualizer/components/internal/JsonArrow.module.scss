@@ -8,8 +8,8 @@
   display: flex;
   justify-content: center;
   padding-inline: var(--t-spacing-1);
-  height: 24px;
-  width: 24px;
+  height: calc(24px * var(--t-scale, 1));
+  width: calc(24px * var(--t-scale, 1));
   box-sizing: border-box;
   cursor: pointer;
 }

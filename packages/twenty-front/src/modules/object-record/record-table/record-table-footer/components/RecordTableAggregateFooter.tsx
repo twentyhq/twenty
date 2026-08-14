@@ -30,7 +30,9 @@ const StyledPlaceholderAddButtonPlaceholderFooterCell = styled.div`
   background-color: ${themeCssVariables.background.primary};
   bottom: 0;
   position: sticky;
-  width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
+  width: calc(
+    ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px * var(--t-scale, 1)
+  );
   z-index: ${TABLE_Z_INDEX.footer.default};
 `;
 

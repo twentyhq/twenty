@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { RecordGroupAggregateDropdown } from '@/object-record/record-group/components/RecordGroupAggregateDropdown';
@@ -36,6 +36,7 @@ import {
   sumByProperty,
 } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
+import { useContext } from 'react';
 
 const StyledTrContainer = styled.div`
   display: flex;
@@ -52,12 +53,12 @@ const StyledRecordGroupHeaderContainer = styled.div<{ width: number }>`
   display: flex;
   flex-direction: row;
   gap: ${themeCssVariables.spacing[1]};
-  height: ${RECORD_TABLE_ROW_HEIGHT}px;
-  left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
-  min-width: ${({ width }) => width + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
+  height: calc(${RECORD_TABLE_ROW_HEIGHT}px * var(--t-scale, 1));
+  left: calc(${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px * var(--t-scale, 1));
+  min-width: ${({ width }) => width}px;
 
   position: sticky;
-  width: ${({ width }) => width + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
+  width: ${({ width }) => width}px;
 
   z-index: ${TABLE_Z_INDEX.groupSection.stickyCell};
 `;
@@ -71,7 +72,7 @@ const StyledAggregateDropdownContainer = styled.div<{
 `;
 
 const StyledFieldPlaceholderCell = styled.div<{ widthOfFields: number }>`
-  height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  height: calc(${RECORD_TABLE_ROW_HEIGHT}px * var(--t-scale, 1));
   min-width: ${({ widthOfFields }) => widthOfFields}px;
   width: ${({ widthOfFields }) => widthOfFields}px;
 
@@ -81,18 +82,22 @@ const StyledFieldPlaceholderCell = styled.div<{ widthOfFields: number }>`
 const StyledRecordTableDragAndDropPlaceholderCell = styled.div`
   background-color: ${themeCssVariables.background.primary};
   border-bottom: 1px solid ${themeCssVariables.background.primary};
-  height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  height: calc(${RECORD_TABLE_ROW_HEIGHT}px * var(--t-scale, 1));
 
   left: 0;
 
-  min-width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+  min-width: calc(
+    ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px * var(--t-scale, 1)
+  );
 
   position: sticky;
-  width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+  width: calc(${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px * var(--t-scale, 1));
   z-index: ${TABLE_Z_INDEX.groupSection.stickyCell};
 `;
 
 export const RecordTableRecordGroupSection = () => {
+  const { theme } = useContext(ThemeContext);
+
   const currentRecordGroupId = useCurrentRecordGroupId();
 
   const shouldHide = useShouldHideRecordGroup(currentRecordGroupId);
@@ -126,14 +131,17 @@ export const RecordTableRecordGroupSection = () => {
 
   const isMobile = useIsMobile();
 
-  const widthOfLabelIdentifierRecordField = isMobile
-    ? RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE
-    : (visibleRecordFields.find(
-        findByProperty(
-          'fieldMetadataItemId',
-          labelIdentifierFieldMetadataItem?.id ?? '',
-        ),
-      )?.size ?? RECORD_TABLE_COLUMN_MIN_WIDTH);
+  const widthOfLabelIdentifierRecordField =
+    (isMobile
+      ? RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE
+      : (visibleRecordFields.find(
+          findByProperty(
+            'fieldMetadataItemId',
+            labelIdentifierFieldMetadataItem?.id ?? '',
+          ),
+        )?.size ?? RECORD_TABLE_COLUMN_MIN_WIDTH)) * theme.scale;
+
+  const checkboxColumnWidth = RECORD_TABLE_COLUMN_CHECKBOX_WIDTH * theme.scale;
 
   const [
     isRecordGroupTableSectionToggled,
@@ -176,7 +184,7 @@ export const RecordTableRecordGroupSection = () => {
       <StyledRecordTableDragAndDropPlaceholderCell />
       <StyledRecordGroupHeaderContainer
         className="disable-shadow"
-        width={widthOfLabelIdentifierRecordField}
+        width={widthOfLabelIdentifierRecordField + checkboxColumnWidth}
       >
         <RecordGroupSectionHeader
           recordGroupDefinition={recordGroupDefinition}
@@ -185,7 +193,7 @@ export const RecordTableRecordGroupSection = () => {
           onToggle={() =>
             setIsRecordGroupTableSectionToggled((prevState) => !prevState)
           }
-          chevronWidth={RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}
+          chevronWidth={checkboxColumnWidth}
         />
         <StyledAggregateDropdownContainer
           isNonInteractive={isRecordTableCellsNonEditable}

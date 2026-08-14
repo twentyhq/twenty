@@ -30,7 +30,7 @@ const StyledValueContainer = styled.div`
     display: none;
   }
 
-  height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  height: calc(${RECORD_TABLE_ROW_HEIGHT}px * var(--t-scale, 1));
   justify-content: flex-end;
   overflow-x: auto;
   padding: 0 8px;

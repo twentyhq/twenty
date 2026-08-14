@@ -5,8 +5,12 @@ import { recordTableWidthComponentState } from '@/object-record/record-table/sta
 import { shouldCompactRecordTableFirstColumnComponentState } from '@/object-record/record-table/states/shouldCompactRecordTableFirstColumnComponentState';
 import { computeLastRecordTableColumnWidth } from '@/object-record/record-table/utils/computeLastRecordTableColumnWidth';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
 
 export const useRecordTableLastColumnWidthToFill = () => {
+  const { theme } = useContext(ThemeContext);
+
   const { visibleRecordFields } = useRecordTableContextOrThrow();
 
   const recordTableWidth = useAtomComponentStateValue(
@@ -30,6 +34,7 @@ export const useRecordTableLastColumnWidthToFill = () => {
     shouldCompactFirstColumn: shouldCompactRecordTableFirstColumn,
     isDragColumnHidden: isRecordTableDragColumnHidden,
     isCheckboxColumnHidden: isRecordTableCheckboxColumnHidden,
+    uiScale: theme.scale,
   });
 
   return {

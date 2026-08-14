@@ -6,7 +6,6 @@ import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useC
 import { useRecordIndexTableQuery } from '@/object-record/record-index/hooks/useRecordIndexTableQuery';
 import { recordIndexHasFetchedAllRecordsByGroupComponentState } from '@/object-record/record-index/states/recordIndexHasFetchedAllRecordsByGroupComponentState';
 
-import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useSetRecordTableData } from '@/object-record/record-table/hooks/internal/useSetRecordTableData';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
@@ -14,8 +13,11 @@ import { useScrollToPosition } from '@/ui/utilities/scroll/hooks/useScrollToPosi
 import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useRecordTableRowPitch } from '@/object-record/record-table/hooks/useRecordTableRowPitch';
 
 export const RecordTableRecordGroupBodyEffect = () => {
+  const { scaledRowHeight } = useRecordTableRowPitch();
+
   const { objectNameSingular } = useRecordTableContextOrThrow();
   const { recordTableId } = useRecordTableContextOrThrow();
 
@@ -68,12 +70,12 @@ export const RecordTableRecordGroupBodyEffect = () => {
       );
 
       if (recordPosition !== -1) {
-        const positionInPx = recordPosition * RECORD_TABLE_ROW_HEIGHT;
+        const positionInPx = recordPosition * scaledRowHeight;
 
         scrollToPosition(positionInPx);
       }
     }
-  }, [lastShowPageRecordId, records, scrollToPosition]);
+  }, [lastShowPageRecordId, records, scrollToPosition, scaledRowHeight]);
 
   return <></>;
 };

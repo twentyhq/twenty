@@ -27,24 +27,24 @@
 }
 
 .small {
-  height: 24px;
-  width: 24px;
+  height: calc(24px * var(--t-scale, 1));
+  width: calc(24px * var(--t-scale, 1));
 }
 
 .medium {
-  height: 32px;
-  width: 32px;
+  height: calc(32px * var(--t-scale, 1));
+  width: calc(32px * var(--t-scale, 1));
 }
 
 // Grouped buttons (any non-standalone position) are 4px smaller.
 .small:not([data-position='standalone']) {
-  height: 20px;
-  width: 20px;
+  height: calc(20px * var(--t-scale, 1));
+  width: calc(20px * var(--t-scale, 1));
 }
 
 .medium:not([data-position='standalone']) {
-  height: 28px;
-  width: 28px;
+  height: calc(28px * var(--t-scale, 1));
+  width: calc(28px * var(--t-scale, 1));
 }
 
 // Grouped edges stay concentric with the FloatingIconButtonGroup container:

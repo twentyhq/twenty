@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--t-spacing-2);
-  max-width: 512px;
+  max-width: calc(512px * var(--t-scale, 1));
   padding: var(--t-spacing-3) var(--t-spacing-3) var(--t-spacing-2);
   width: 100%;
 }

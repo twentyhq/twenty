@@ -70,11 +70,11 @@ $gray-scale-light-gray1: color(display-p3 1 1 1);
 }
 
 .small {
-  height: 24px;
+  height: calc(24px * var(--t-scale, 1));
 }
 
 .medium {
-  height: 32px;
+  height: calc(32px * var(--t-scale, 1));
 }
 
 // Applied to both the wrapper and the button; declared after them so the

@@ -50,8 +50,8 @@ export const RecordTableScrollToFocusedRowEffect = () => {
       return;
     }
 
-    focusElement.style.scrollMarginBottom = `${RECORD_TABLE_ROW_HEIGHT}px`;
-    focusElement.style.scrollMarginTop = `${RECORD_TABLE_ROW_HEIGHT}px`;
+    focusElement.style.scrollMarginBottom = `calc(${RECORD_TABLE_ROW_HEIGHT}px * var(--t-scale, 1))`;
+    focusElement.style.scrollMarginTop = `calc(${RECORD_TABLE_ROW_HEIGHT}px * var(--t-scale, 1))`;
 
     focusElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 

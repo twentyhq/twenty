@@ -8,13 +8,15 @@ body {
   touch-action: manipulation;
 }
 
+/* The rem type scale and the px theme tokens both multiply by --t-scale,
+   so text and layout stay in step at every step of the interface scale. */
 html {
-  font-size: 13px;
+  font-size: calc(13px * var(--t-scale, 1));
   background: var(--t-background-tertiary);
 }
 
 button {
-  font-size: 13px;
+  font-size: 1rem;
 }
 
 form {

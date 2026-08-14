@@ -14,7 +14,7 @@
   display: flex;
   flex: 1;
   gap: var(--t-spacing-1);
-  height: 32px;
+  height: calc(32px * var(--t-scale, 1));
   padding: 0 var(--t-spacing-2);
 }
 

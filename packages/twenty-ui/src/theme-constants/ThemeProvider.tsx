@@ -1,8 +1,16 @@
 import { clsx } from 'clsx';
-import { createContext, useLayoutEffect, useRef, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
+import { MOBILE_VIEWPORT } from './constants';
+import { registerScaledThemeProperties } from './scaledThemeProperties';
 import { ThemeScopeContext } from './ThemeScopeContext';
 import { themeCssVariables } from './themeCssVariables';
 
@@ -38,6 +46,7 @@ type NumericOverrides = {
     iconStrikeBold: number;
   };
   spacingMultiplicator: number;
+  scale: number;
   lastLayerZIndex: number;
 };
 
@@ -110,13 +119,17 @@ export const ThemeProvider = ({
   applyToRoot = true,
   overrides,
   className,
+  scale,
 }: {
   children: React.ReactNode;
   colorScheme: 'light' | 'dark';
   applyToRoot?: boolean;
   overrides?: ThemeOverrides;
   className?: string;
+  scale?: number;
 }) => {
+  registerScaledThemeProperties();
+
   const isScoped = isDefined(overrides) || !applyToRoot;
 
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -133,18 +146,57 @@ export const ThemeProvider = ({
 
   const overridesKey = isDefined(overrides) ? JSON.stringify(overrides) : '';
 
-  useLayoutEffect(() => {
-    if (applyToRoot) {
-      applyColorSchemeClass(colorScheme);
-    }
-
+  const recomputeTheme = useCallback(() => {
     setTheme(
       computeThemeFromCss(
         isScoped ? (wrapperRef.current ?? undefined) : undefined,
       ),
     );
+  }, [isScoped]);
+
+  useLayoutEffect(() => {
+    if (applyToRoot) {
+      applyColorSchemeClass(colorScheme);
+    }
+
+    recomputeTheme();
     setScopeContainer(isScoped ? wrapperRef.current : null);
-  }, [colorScheme, applyToRoot, isScoped, overridesKey]);
+  }, [colorScheme, applyToRoot, isScoped, overridesKey, recomputeTheme]);
+
+  // The interface scale preference multiplies every scaled theme token
+  // through --t-scale-user; writing it inline beats the stylesheet default.
+  useLayoutEffect(() => {
+    if (!isDefined(scale) || typeof document === 'undefined') {
+      return;
+    }
+
+    const scaleTarget = isScoped
+      ? wrapperRef.current
+      : document.documentElement;
+
+    scaleTarget?.style.setProperty('--t-scale-user', String(scale));
+    recomputeTheme();
+  }, [scale, isScoped, recomputeTheme]);
+
+  // The theme CSS gives some tokens a different value below the mobile
+  // breakpoint. Those resolve through getComputedStyle, so crossing the
+  // breakpoint has to recompute or the JS theme keeps serving the old values
+  // while the CSS consumers have already switched.
+  useLayoutEffect(() => {
+    if (typeof window === 'undefined' || !isDefined(window.matchMedia)) {
+      return;
+    }
+
+    const mobileMediaQuery = window.matchMedia(
+      `(max-width: ${MOBILE_VIEWPORT}px)`,
+    );
+
+    mobileMediaQuery.addEventListener('change', recomputeTheme);
+
+    return () => {
+      mobileMediaQuery.removeEventListener('change', recomputeTheme);
+    };
+  }, [recomputeTheme]);
 
   const contextValue = { theme, colorScheme };
 

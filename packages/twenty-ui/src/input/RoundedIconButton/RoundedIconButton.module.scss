@@ -28,11 +28,11 @@
 }
 
 .small {
-  height: 20px;
-  width: 20px;
+  height: calc(20px * var(--t-scale, 1));
+  width: calc(20px * var(--t-scale, 1));
 }
 
 .medium {
-  height: 24px;
-  width: 24px;
+  height: calc(24px * var(--t-scale, 1));
+  width: calc(24px * var(--t-scale, 1));
 }

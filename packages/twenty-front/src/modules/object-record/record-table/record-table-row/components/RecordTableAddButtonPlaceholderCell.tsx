@@ -4,8 +4,10 @@ import { styled } from '@linaria/react';
 import { cx } from '@linaria/core';
 
 const StyledPlaceholderAddButtonCell = styled.div`
-  height: ${RECORD_TABLE_ROW_HEIGHT}px;
-  width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
+  height: calc(${RECORD_TABLE_ROW_HEIGHT}px * var(--t-scale, 1));
+  width: calc(
+    ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px * var(--t-scale, 1)
+  );
 `;
 
 export const RecordTableAddButtonPlaceholderCell = ({

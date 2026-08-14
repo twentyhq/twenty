@@ -14,7 +14,7 @@ const StyledContainer = styled.div`
   border-color: transparent;
   cursor: grab;
   display: flex;
-  height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  height: calc(${RECORD_TABLE_ROW_HEIGHT}px * var(--t-scale, 1));
 
   @media (hover: hover) {
     &:hover .icon {

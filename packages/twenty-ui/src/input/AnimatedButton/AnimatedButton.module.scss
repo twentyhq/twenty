@@ -63,13 +63,13 @@
 .small {
   --abtn-square-size: 24px;
 
-  height: 24px;
+  height: calc(24px * var(--t-scale, 1));
 }
 
 .medium {
   --abtn-square-size: 32px;
 
-  height: 32px;
+  height: calc(32px * var(--t-scale, 1));
 }
 
 .fullWidth {

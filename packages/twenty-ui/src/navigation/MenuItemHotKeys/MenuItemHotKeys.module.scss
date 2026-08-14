@@ -22,7 +22,7 @@
   box-shadow: var(--t-box-shadow-underline);
   display: flex;
   flex-direction: column;
-  height: 18px;
+  height: calc(18px * var(--t-scale, 1));
   justify-content: center;
   text-align: center;
   width: var(--t-spacing-4);

@@ -1,6 +1,6 @@
 .notificationCounter {
-  width: 14px;
-  height: 14px;
+  width: calc(14px * var(--t-scale, 1));
+  height: calc(14px * var(--t-scale, 1));
   border-radius: 50%;
   corner-shape: round;
   display: flex;

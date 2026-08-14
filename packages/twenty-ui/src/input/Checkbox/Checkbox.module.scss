@@ -1,6 +1,6 @@
 .root {
-  --checkbox-box-size: 12px;
-  --checkbox-icon-size: 14px;
+  --checkbox-box-size: calc(12px * var(--t-scale, 1));
+  --checkbox-icon-size: calc(14px * var(--t-scale, 1));
   --checkbox-border-width: 1px;
   --checkbox-bg: transparent;
   --checkbox-border-color: var(--t-border-color-secondary-inverted);
@@ -29,13 +29,13 @@
 }
 
 .small {
-  --checkbox-box-size: 12px;
-  --checkbox-icon-size: 14px;
+  --checkbox-box-size: calc(12px * var(--t-scale, 1));
+  --checkbox-icon-size: calc(14px * var(--t-scale, 1));
 }
 
 .large {
-  --checkbox-box-size: 18px;
-  --checkbox-icon-size: 20px;
+  --checkbox-box-size: calc(18px * var(--t-scale, 1));
+  --checkbox-icon-size: calc(20px * var(--t-scale, 1));
   --checkbox-border-width: 1.43px;
 }
 
@@ -66,11 +66,11 @@
 }
 
 .hoverable {
-  padding: 5px;
+  padding: calc(5px * var(--t-scale, 1));
 }
 
 .hoverable.large {
-  padding: 6px;
+  padding: calc(6px * var(--t-scale, 1));
 }
 
 .hoverable:hover {

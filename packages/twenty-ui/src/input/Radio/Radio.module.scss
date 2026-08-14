@@ -24,13 +24,13 @@
 }
 
 .small {
-  height: 16px;
-  width: 16px;
+  height: calc(16px * var(--t-scale, 1));
+  width: calc(16px * var(--t-scale, 1));
 }
 
 .large {
-  height: 18px;
-  width: 18px;
+  height: calc(18px * var(--t-scale, 1));
+  width: calc(18px * var(--t-scale, 1));
 }
 
 .radio:hover {
@@ -62,8 +62,8 @@
 }
 
 .large[data-checked]::after {
-  height: 8px;
-  width: 8px;
+  height: calc(8px * var(--t-scale, 1));
+  width: calc(8px * var(--t-scale, 1));
 }
 
 .radio[data-disabled] {

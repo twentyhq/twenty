@@ -8,7 +8,7 @@
   column-gap: var(--t-spacing-2);
   display: inline-flex;
   align-items: center;
-  height: 24px;
+  height: calc(24px * var(--t-scale, 1));
   box-sizing: border-box;
   font-size: var(--t-font-size-md);
   white-space: nowrap;

@@ -18,6 +18,7 @@ import {
   type MiddlewareState,
 } from '@floating-ui/react';
 import { useContext, type ReactElement } from 'react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledEditableCellEditModeContainer = styled.div<{
   isFieldInputOnly: boolean;
@@ -34,7 +35,7 @@ const StyledInputModeOnlyContainer = styled.div`
   display: flex;
   height: 100%;
   overflow: hidden;
-  padding-left: 8px;
+  padding-left: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 

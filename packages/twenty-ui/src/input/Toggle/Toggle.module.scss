@@ -25,13 +25,13 @@
 }
 
 .small {
-  width: 24px;
-  height: 16px;
+  width: calc(24px * var(--t-scale, 1));
+  height: calc(16px * var(--t-scale, 1));
 }
 
 .medium {
-  width: 32px;
-  height: 20px;
+  width: calc(32px * var(--t-scale, 1));
+  height: calc(20px * var(--t-scale, 1));
 }
 
 .thumb {
@@ -46,21 +46,21 @@
 }
 
 .small .thumb {
-  width: 12px;
-  height: 12px;
-  transform: translate(2px, -50%);
+  width: calc(12px * var(--t-scale, 1));
+  height: calc(12px * var(--t-scale, 1));
+  transform: translate(calc(2px * var(--t-scale, 1)), -50%);
 }
 
 .medium .thumb {
-  width: 16px;
-  height: 16px;
-  transform: translate(2px, -50%);
+  width: calc(16px * var(--t-scale, 1));
+  height: calc(16px * var(--t-scale, 1));
+  transform: translate(calc(2px * var(--t-scale, 1)), -50%);
 }
 
 .small[data-checked] .thumb {
-  transform: translate(10px, -50%);
+  transform: translate(calc(10px * var(--t-scale, 1)), -50%);
 }
 
 .medium[data-checked] .thumb {
-  transform: translate(14px, -50%);
+  transform: translate(calc(14px * var(--t-scale, 1)), -50%);
 }

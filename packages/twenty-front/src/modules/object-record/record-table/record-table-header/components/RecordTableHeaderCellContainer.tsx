@@ -19,9 +19,9 @@ const StyledHeaderCell = styled.div<{
 
   cursor: ${({ isResizing, isReadOnly }) =>
     isReadOnly ? 'default' : isResizing ? 'col-resize' : 'pointer'};
-  height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  height: calc(${RECORD_TABLE_ROW_HEIGHT}px * var(--t-scale, 1));
 
-  max-height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  max-height: calc(${RECORD_TABLE_ROW_HEIGHT}px * var(--t-scale, 1));
   padding: 0;
 
   position: relative;

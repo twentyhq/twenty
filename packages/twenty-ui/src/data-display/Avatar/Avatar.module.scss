@@ -33,33 +33,33 @@
 }
 
 .xl {
-  font-size: 16px;
-  height: 40px;
-  width: 40px;
+  font-size: calc(16px * var(--t-scale, 1));
+  height: calc(40px * var(--t-scale, 1));
+  width: calc(40px * var(--t-scale, 1));
 }
 
 .lg {
-  font-size: 13px;
-  height: 24px;
-  width: 24px;
+  font-size: calc(13px * var(--t-scale, 1));
+  height: calc(24px * var(--t-scale, 1));
+  width: calc(24px * var(--t-scale, 1));
 }
 
 .md {
-  font-size: 12px;
-  height: 16px;
-  width: 16px;
+  font-size: calc(12px * var(--t-scale, 1));
+  height: calc(16px * var(--t-scale, 1));
+  width: calc(16px * var(--t-scale, 1));
 }
 
 .sm {
-  font-size: 10px;
-  height: 14px;
-  width: 14px;
+  font-size: calc(10px * var(--t-scale, 1));
+  height: calc(14px * var(--t-scale, 1));
+  width: calc(14px * var(--t-scale, 1));
 }
 
 .xs {
-  font-size: 8px;
-  height: 12px;
-  width: 12px;
+  font-size: calc(8px * var(--t-scale, 1));
+  height: calc(12px * var(--t-scale, 1));
+  width: calc(12px * var(--t-scale, 1));
 }
 
 .pulsing {

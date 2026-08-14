@@ -2,7 +2,6 @@ import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/get
 import { getLabelIdentifierFieldValue } from '@/object-metadata/utils/getLabelIdentifierFieldValue';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { dataLoadingStatusByRealIndexComponentFamilySelector } from '@/object-record/record-table/virtualization/states/dataLoadingStatusByRealIndexComponentFamilySelector';
 import { realIndexByVirtualIndexComponentFamilyState } from '@/object-record/record-table/virtualization/states/realIndexByVirtualIndexComponentFamilyState';
@@ -13,6 +12,7 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useRecordTableRowPitch } from '@/object-record/record-table/hooks/useRecordTableRowPitch';
 
 const StyledDebugRow = styled.div`
   background-color: ${themeCssVariables.color.gray3};
@@ -47,6 +47,8 @@ type RecordTableRowVirtualizedDebugRowHelperProps = {
 export const RecordTableRowVirtualizedDebugRowHelper = ({
   virtualIndex,
 }: RecordTableRowVirtualizedDebugRowHelperProps) => {
+  const { rowPitch } = useRecordTableRowPitch();
+
   const realIndexByVirtualIndex = useAtomComponentFamilyStateValue(
     realIndexByVirtualIndexComponentFamilyState,
     { virtualIndex },
@@ -62,9 +64,7 @@ export const RecordTableRowVirtualizedDebugRowHelper = ({
     realIndexByVirtualIndex,
   );
 
-  const pixelsFromTop =
-    (realIndexByVirtualIndex ?? 0) * (RECORD_TABLE_ROW_HEIGHT + 1) +
-    (RECORD_TABLE_ROW_HEIGHT + 1);
+  const pixelsFromTop = (realIndexByVirtualIndex ?? 0) * rowPitch + rowPitch;
 
   const recordStore = useAtomFamilyStateValue(
     recordStoreFamilyState,

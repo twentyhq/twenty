@@ -2,8 +2,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 14px;
-  height: 14px;
+  width: calc(14px * var(--t-scale, 1));
+  height: calc(14px * var(--t-scale, 1));
   border-radius: var(--t-border-radius-sm);
   background-color: var(
     --avatar-or-icon-background,

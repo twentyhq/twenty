@@ -49,12 +49,12 @@ export const getRecordTableColumnWidthInlineStyles = ({
 
   for (let i = 0; i < visibleRecordFields.length; i++) {
     style[`--record-table-column-field-${i}`] =
-      `${visibleRecordFields[i].size}px`;
+      `calc(${visibleRecordFields[i].size}px * var(--t-scale, 1))`;
   }
 
   style[RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR] = isDragColumnHidden
     ? '0px'
-    : `${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px`;
+    : `calc(${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px * var(--t-scale, 1))`;
 
   style[RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR] = isCheckboxColumnHidden
     ? '0px'
@@ -155,9 +155,15 @@ const StyledTable = styled.div<{
   }
 
   div.${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH_CLASS_NAME} {
-    max-width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
-    min-width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
-    width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
+    max-width: calc(
+      ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px * var(--t-scale, 1)
+    );
+    min-width: calc(
+      ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px * var(--t-scale, 1)
+    );
+    width: calc(
+      ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px * var(--t-scale, 1)
+    );
   }
 
   ${columnFieldWidthRules}

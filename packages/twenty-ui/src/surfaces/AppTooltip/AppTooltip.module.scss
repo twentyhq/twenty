@@ -39,8 +39,8 @@
 
 .arrow {
   position: absolute;
-  width: 8px;
-  height: 8px;
+  width: calc(8px * var(--t-scale, 1));
+  height: calc(8px * var(--t-scale, 1));
   background: inherit;
   transform: rotate(45deg);
 

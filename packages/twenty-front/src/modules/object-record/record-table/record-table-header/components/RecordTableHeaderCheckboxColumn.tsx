@@ -22,7 +22,7 @@ const StyledContainer = styled.div`
   background-color: ${themeCssVariables.background.primary};
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
-  height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  height: calc(${RECORD_TABLE_ROW_HEIGHT}px * var(--t-scale, 1));
   justify-content: center;
   min-width: 24px;
   padding-right: ${themeCssVariables.spacing[1]};
@@ -33,7 +33,7 @@ const StyledColumnHeaderCell = styled.div`
 
   cursor: pointer;
 
-  max-height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  max-height: calc(${RECORD_TABLE_ROW_HEIGHT}px * var(--t-scale, 1));
 
   min-width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
 `;

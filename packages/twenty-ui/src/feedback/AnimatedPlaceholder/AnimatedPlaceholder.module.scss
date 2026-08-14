@@ -3,30 +3,30 @@
   align-items: center;
   justify-content: center;
   position: relative;
-  min-height: 100px;
+  min-height: calc(100px * var(--t-scale, 1));
 }
 
 .backgroundImage {
-  max-height: 160px;
-  max-width: 160px;
+  max-height: calc(160px * var(--t-scale, 1));
+  max-width: calc(160px * var(--t-scale, 1));
 }
 
 // error404 and error500 placeholders use a larger background illustration
 .backgroundImageLarge {
-  max-height: 245px;
-  max-width: 245px;
+  max-height: calc(245px * var(--t-scale, 1));
+  max-width: calc(245px * var(--t-scale, 1));
 }
 
 .movingImage {
   position: absolute;
   z-index: 2;
-  max-width: 130px;
-  max-height: 130px;
+  max-width: calc(130px * var(--t-scale, 1));
+  max-height: calc(130px * var(--t-scale, 1));
   transform: translate(var(--parallax-x, 0), var(--parallax-y, 0));
   transition: transform duration(normal) ease-out;
 }
 
 .movingImageLarge {
-  max-width: 185px;
-  max-height: 185px;
+  max-width: calc(185px * var(--t-scale, 1));
+  max-height: calc(185px * var(--t-scale, 1));
 }

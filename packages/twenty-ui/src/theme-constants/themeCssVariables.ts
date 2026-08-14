@@ -55,6 +55,7 @@ export const themeCssVariables = {
     },
   },
   spacingMultiplicator: 'var(--t-spacing-multiplicator)',
+  scale: 'var(--t-scale)',
   spacing: {
     '0': 'var(--t-spacing-0)',
     '1': 'var(--t-spacing-1)',

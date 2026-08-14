@@ -34,7 +34,7 @@ const StyledColumnFooterCell = styled.div<{
   color: ${themeCssVariables.font.color.tertiary};
 
   cursor: ${({ isReadOnly }) => (isReadOnly ? 'default' : 'pointer')};
-  height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  height: calc(${RECORD_TABLE_ROW_HEIGHT}px * var(--t-scale, 1));
 
   left: ${({ isFirstCell }) =>
     isFirstCell
@@ -69,15 +69,15 @@ const StyledColumnFooterCell = styled.div<{
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     max-width: ${({ isFirstCell }) =>
       isFirstCell
-        ? `${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px`
+        ? `calc(${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px * var(--t-scale, 1))`
         : 'none'};
     min-width: ${({ isFirstCell }) =>
       isFirstCell
-        ? `${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px`
+        ? `calc(${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px * var(--t-scale, 1))`
         : '0'};
     width: ${({ isFirstCell }) =>
       isFirstCell
-        ? `${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px`
+        ? `calc(${RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE}px * var(--t-scale, 1))`
         : 'auto'};
   }
 `;

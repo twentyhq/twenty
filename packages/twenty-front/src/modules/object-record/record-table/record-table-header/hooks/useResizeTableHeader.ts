@@ -24,14 +24,17 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useSaveRecordFields } from '@/views/hooks/useSaveRecordFields';
 import { useStore } from 'jotai';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useContext } from 'react';
 import {
   findById,
   findByProperty,
   throwIfNotDefined,
 } from 'twenty-shared/utils';
+import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const useResizeTableHeader = () => {
+  const { theme } = useContext(ThemeContext);
+
   const { recordTableId, visibleRecordFields } = useRecordTableContextOrThrow();
 
   const resizeFieldOffset = useAtomComponentStateCallbackState(
@@ -95,13 +98,17 @@ export const useResizeTableHeader = () => {
 
       const newResizeOffset = x - initialPointerPositionX;
 
-      const newRecordFieldSizeWithOffset = recordField.size + newResizeOffset;
+      // Pointer offsets are rendered pixels while stored sizes are design
+      // pixels, so the offset divides by the scale before entering the
+      // stored-size domain.
+      const newRecordFieldSizeWithOffset =
+        recordField.size + newResizeOffset / theme.scale;
 
       if (newRecordFieldSizeWithOffset < RECORD_TABLE_COLUMN_MIN_WIDTH) {
         return;
       }
 
-      const newWidth = recordField.size + newResizeOffset;
+      const newWidth = recordField.size * theme.scale + newResizeOffset;
 
       const recordFieldIndex = visibleRecordFields.findIndex(
         findById(recordField.id),
@@ -119,6 +126,7 @@ export const useResizeTableHeader = () => {
         tableWidth: recordTableWidth,
         isDragColumnHidden: isRecordTableDragColumnHidden,
         isCheckboxColumnHidden: isRecordTableCheckboxColumnHidden,
+        uiScale: theme.scale,
       });
 
       const newLastColumnWidth = lastColumnWidth - newResizeOffset;
@@ -152,6 +160,7 @@ export const useResizeTableHeader = () => {
       isRecordTableDragColumnHidden,
       isRecordTableCheckboxColumnHidden,
       setResizeFieldOffset,
+      theme.scale,
     ],
   );
 
@@ -168,7 +177,7 @@ export const useResizeTableHeader = () => {
 
     const nextWidth = Math.round(
       Math.max(
-        recordField.size + currentResizeFieldOffset,
+        recordField.size + currentResizeFieldOffset / theme.scale,
         RECORD_TABLE_COLUMN_MIN_WIDTH,
       ),
     );
@@ -195,6 +204,7 @@ export const useResizeTableHeader = () => {
     updateRecordField,
     setDragSelectionStartEnabled,
     recordField,
+    theme.scale,
   ]);
 
   useTrackPointer({

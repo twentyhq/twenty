@@ -48,11 +48,11 @@
 }
 
 .small {
-  height: 24px;
+  height: calc(24px * var(--t-scale, 1));
 }
 
 .medium {
-  height: 32px;
+  height: calc(32px * var(--t-scale, 1));
 }
 
 // position only reshapes the radius; standalone keeps the .button default.

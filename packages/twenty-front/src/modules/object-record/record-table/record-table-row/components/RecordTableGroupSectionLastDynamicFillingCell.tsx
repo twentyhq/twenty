@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 import { cx } from '@linaria/core';
 
 const StyledPlaceholderLastDynamicFillingCell = styled.div`
-  height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  height: calc(${RECORD_TABLE_ROW_HEIGHT}px * var(--t-scale, 1));
 `;
 
 export const RecordTableGroupSectionLastDynamicFillingCell = ({

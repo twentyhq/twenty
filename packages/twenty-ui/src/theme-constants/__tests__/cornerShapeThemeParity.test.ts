@@ -37,7 +37,12 @@ const extractSquircleBlock = (css: string) => {
 };
 
 const extractRadiusPx = (css: string, token: string) => {
-  const match = css.match(new RegExp(`--t-border-radius-${token}: (\\d+)px;`));
+  // Radius tokens multiply by the interface scale; the base is inside calc().
+  const match = css.match(
+    new RegExp(
+      `--t-border-radius-${token}: calc\\((\\d+)px \\* var\\(--t-scale\\)\\);`,
+    ),
+  );
 
   if (match === null) {
     throw new Error(`Missing --t-border-radius-${token} declaration`);

@@ -12,7 +12,7 @@ const StyledContainer = styled.div`
   align-items: center;
   cursor: pointer;
   display: flex;
-  height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  height: calc(${RECORD_TABLE_ROW_HEIGHT}px * var(--t-scale, 1));
   justify-content: center;
   min-width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH};
   padding-right: ${themeCssVariables.spacing[1]};

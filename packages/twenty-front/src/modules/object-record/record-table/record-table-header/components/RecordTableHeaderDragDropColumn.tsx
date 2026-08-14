@@ -24,13 +24,17 @@ const StyledDragDropHeaderCell = styled.div<{
       ? `1px solid ${themeCssVariables.background.primary}`
       : 'none'};
   cursor: pointer;
-  max-height: ${RECORD_TABLE_ROW_HEIGHT}px;
-  max-width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
-  min-height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  max-height: calc(${RECORD_TABLE_ROW_HEIGHT}px * var(--t-scale, 1));
+  max-width: calc(
+    ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px * var(--t-scale, 1)
+  );
+  min-height: calc(${RECORD_TABLE_ROW_HEIGHT}px * var(--t-scale, 1));
 
-  min-width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+  min-width: calc(
+    ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px * var(--t-scale, 1)
+  );
 
-  width: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+  width: calc(${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px * var(--t-scale, 1));
 `;
 
 export const RecordTableHeaderDragDropColumn = () => {

@@ -2,24 +2,31 @@
    Kept in sync by the theme parity test (src/theme-constants/__tests__). */
 
 .light {
-  --t-icon-size-sm: 14;
-  --t-icon-size-md: 16;
-  --t-icon-size-lg: 20;
-  --t-icon-size-xl: 24;
+  /* Uniform UI scale. --t-scale-user is written by the interface scale
+     preference (inline on the root element); --t-scale-base carries the
+     responsive default. Every dimension token below multiplies by the
+     product, so text, icons, chips and layout move together. */
+  --t-scale-user: 1;
+  --t-scale-base: 1;
+  --t-scale: calc(var(--t-scale-user) * var(--t-scale-base));
+  --t-icon-size-sm: calc(14 * var(--t-scale));
+  --t-icon-size-md: calc(16 * var(--t-scale));
+  --t-icon-size-lg: calc(20 * var(--t-scale));
+  --t-icon-size-xl: calc(24 * var(--t-scale));
   --t-icon-stroke-sm: 1.6;
   --t-icon-stroke-md: 2;
   --t-icon-stroke-lg: 2.5;
-  --t-modal-size-sm-width: 300px;
-  --t-modal-size-md-width: 400px;
+  --t-modal-size-sm-width: calc(300px * var(--t-scale));
+  --t-modal-size-md-width: calc(400px * var(--t-scale));
   --t-modal-size-lg-width: 53%;
-  --t-modal-size-xl-width: 1200px;
-  --t-modal-size-xl-height: 800px;
+  --t-modal-size-xl-width: calc(1200px * var(--t-scale));
+  --t-modal-size-xl-height: calc(800px * var(--t-scale));
   --t-modal-size-fullscreen-width: 100dvw;
   --t-modal-size-fullscreen-height: 100dvh;
   --t-text-line-height-lg: 1.5;
   --t-text-line-height-md: 1.1;
-  --t-text-icon-size-medium: 16;
-  --t-text-icon-size-small: 14;
+  --t-text-icon-size-medium: calc(16 * var(--t-scale));
+  --t-text-icon-size-small: calc(14 * var(--t-scale));
   --t-text-icon-strike-light: 1.6;
   --t-text-icon-strike-medium: 2;
   --t-text-icon-strike-bold: 2.5;
@@ -27,47 +34,47 @@
   --t-animation-duration-fast: 0.15;
   --t-animation-duration-normal: 0.3;
   --t-animation-duration-slow: 1.5;
-  --t-spacing-multiplicator: 4;
-  --t-spacing-0: 0px;
-  --t-spacing-1: 4px;
-  --t-spacing-2: 8px;
-  --t-spacing-3: 12px;
-  --t-spacing-4: 16px;
-  --t-spacing-5: 20px;
-  --t-spacing-6: 24px;
-  --t-spacing-7: 28px;
-  --t-spacing-8: 32px;
-  --t-spacing-9: 36px;
-  --t-spacing-10: 40px;
-  --t-spacing-11: 44px;
-  --t-spacing-12: 48px;
-  --t-spacing-13: 52px;
-  --t-spacing-14: 56px;
-  --t-spacing-15: 60px;
-  --t-spacing-16: 64px;
-  --t-spacing-17: 68px;
-  --t-spacing-18: 72px;
-  --t-spacing-19: 76px;
-  --t-spacing-20: 80px;
-  --t-spacing-21: 84px;
-  --t-spacing-22: 88px;
-  --t-spacing-23: 92px;
-  --t-spacing-24: 96px;
-  --t-spacing-25: 100px;
-  --t-spacing-26: 104px;
-  --t-spacing-27: 108px;
-  --t-spacing-28: 112px;
-  --t-spacing-29: 116px;
-  --t-spacing-30: 120px;
-  --t-spacing-31: 124px;
-  --t-spacing-32: 128px;
-  --t-spacing-0_5: 2px;
-  --t-spacing-1_5: 6px;
-  --t-between-siblings-gap: 2px;
-  --t-table-horizontal-cell-margin: 8px;
-  --t-table-checkbox-column-width: 32px;
-  --t-table-horizontal-cell-padding: 8px;
-  --t-side-panel-width: 500px;
+  --t-spacing-multiplicator: calc(4 * var(--t-scale));
+  --t-spacing-0: calc(0px * var(--t-scale));
+  --t-spacing-1: calc(4px * var(--t-scale));
+  --t-spacing-2: calc(8px * var(--t-scale));
+  --t-spacing-3: calc(12px * var(--t-scale));
+  --t-spacing-4: calc(16px * var(--t-scale));
+  --t-spacing-5: calc(20px * var(--t-scale));
+  --t-spacing-6: calc(24px * var(--t-scale));
+  --t-spacing-7: calc(28px * var(--t-scale));
+  --t-spacing-8: calc(32px * var(--t-scale));
+  --t-spacing-9: calc(36px * var(--t-scale));
+  --t-spacing-10: calc(40px * var(--t-scale));
+  --t-spacing-11: calc(44px * var(--t-scale));
+  --t-spacing-12: calc(48px * var(--t-scale));
+  --t-spacing-13: calc(52px * var(--t-scale));
+  --t-spacing-14: calc(56px * var(--t-scale));
+  --t-spacing-15: calc(60px * var(--t-scale));
+  --t-spacing-16: calc(64px * var(--t-scale));
+  --t-spacing-17: calc(68px * var(--t-scale));
+  --t-spacing-18: calc(72px * var(--t-scale));
+  --t-spacing-19: calc(76px * var(--t-scale));
+  --t-spacing-20: calc(80px * var(--t-scale));
+  --t-spacing-21: calc(84px * var(--t-scale));
+  --t-spacing-22: calc(88px * var(--t-scale));
+  --t-spacing-23: calc(92px * var(--t-scale));
+  --t-spacing-24: calc(96px * var(--t-scale));
+  --t-spacing-25: calc(100px * var(--t-scale));
+  --t-spacing-26: calc(104px * var(--t-scale));
+  --t-spacing-27: calc(108px * var(--t-scale));
+  --t-spacing-28: calc(112px * var(--t-scale));
+  --t-spacing-29: calc(116px * var(--t-scale));
+  --t-spacing-30: calc(120px * var(--t-scale));
+  --t-spacing-31: calc(124px * var(--t-scale));
+  --t-spacing-32: calc(128px * var(--t-scale));
+  --t-spacing-0_5: calc(2px * var(--t-scale));
+  --t-spacing-1_5: calc(6px * var(--t-scale));
+  --t-between-siblings-gap: calc(2px * var(--t-scale));
+  --t-table-horizontal-cell-margin: calc(8px * var(--t-scale));
+  --t-table-checkbox-column-width: calc(32px * var(--t-scale));
+  --t-table-horizontal-cell-padding: calc(8px * var(--t-scale));
+  --t-side-panel-width: calc(500px * var(--t-scale));
   --t-clickable-element-background-transition: background 0.1s ease;
   --t-last-layer-z-index: 2147483647;
   --t-buttons-secondary-text-color: color(display-p3 0.63 0.69 1);
@@ -133,16 +140,16 @@
   --t-border-color-danger: color(display-p3 0.984 0.812 0.811);
   --t-border-color-blue: color(display-p3 0.685 0.74 0.957);
   --t-border-color-transparent-strong: color(display-p3 0 0 0 / 0.071);
-  --t-border-radius-xs: 2px;
-  --t-border-radius-sm: 4px;
-  --t-border-radius-md: 8px;
-  --t-border-radius-lg: 16px;
-  --t-border-radius-xl: 20px;
-  --t-border-radius-xxl: 40px;
+  --t-border-radius-xs: calc(2px * var(--t-scale));
+  --t-border-radius-sm: calc(4px * var(--t-scale));
+  --t-border-radius-md: calc(8px * var(--t-scale));
+  --t-border-radius-lg: calc(16px * var(--t-scale));
+  --t-border-radius-xl: calc(20px * var(--t-scale));
+  --t-border-radius-xxl: calc(40px * var(--t-scale));
   --t-border-radius-pill: 999px;
   --t-border-radius-rounded: 100%;
-  --t-border-radius-sm-round: 4px;
-  --t-border-radius-md-round: 8px;
+  --t-border-radius-sm-round: calc(4px * var(--t-scale));
+  --t-border-radius-md-round: calc(8px * var(--t-scale));
   --t-box-shadow-color: color(display-p3 0 0 0 / 0.039);
   --t-box-shadow-light:
     0px 2px 4px 0px color(display-p3 0 0 0 / 0.039),
@@ -1031,12 +1038,12 @@
      exactly what concentricity requires. */
 @supports (corner-shape: squircle) {
   .light {
-    --t-border-radius-xs: 4px;
-    --t-border-radius-sm: 8px;
-    --t-border-radius-md: 16px;
-    --t-border-radius-lg: 32px;
-    --t-border-radius-xl: 40px;
-    --t-border-radius-xxl: 80px;
+    --t-border-radius-xs: calc(4px * var(--t-scale));
+    --t-border-radius-sm: calc(8px * var(--t-scale));
+    --t-border-radius-md: calc(16px * var(--t-scale));
+    --t-border-radius-lg: calc(32px * var(--t-scale));
+    --t-border-radius-xl: calc(40px * var(--t-scale));
+    --t-border-radius-xxl: calc(80px * var(--t-scale));
   }
 
   /* Zero specificity on purpose: any component rule can override it. */
@@ -1044,5 +1051,15 @@
   *::before,
   *::after {
     corner-shape: var(--t-corner-shape, squircle);
+  }
+}
+
+/* Mobile reads at arm's length: platform base type runs larger there
+   (macOS 13pt against iOS 17pt), so the default scale steps up to land
+   the 13px root at 14px. Breakpoint mirrors MOBILE_VIEWPORT, which media
+   queries cannot read from a custom property. */
+@media (max-width: 768px) {
+  .light {
+    --t-scale-base: calc(14 / 13);
   }
 }

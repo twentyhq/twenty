@@ -1,22 +1,22 @@
 export const AVATAR_PROPERTIES_BY_SIZE = {
   xl: {
-    fontSize: '16px',
-    width: '40px',
+    fontSize: 'calc(16px * var(--t-scale, 1))',
+    width: 'calc(40px * var(--t-scale, 1))',
   },
   lg: {
-    fontSize: '13px',
-    width: '24px',
+    fontSize: 'calc(13px * var(--t-scale, 1))',
+    width: 'calc(24px * var(--t-scale, 1))',
   },
   md: {
-    fontSize: '12px',
-    width: '16px',
+    fontSize: 'calc(12px * var(--t-scale, 1))',
+    width: 'calc(16px * var(--t-scale, 1))',
   },
   sm: {
-    fontSize: '10px',
-    width: '14px',
+    fontSize: 'calc(10px * var(--t-scale, 1))',
+    width: 'calc(14px * var(--t-scale, 1))',
   },
   xs: {
-    fontSize: '8px',
-    width: '12px',
+    fontSize: 'calc(8px * var(--t-scale, 1))',
+    width: 'calc(12px * var(--t-scale, 1))',
   },
 };

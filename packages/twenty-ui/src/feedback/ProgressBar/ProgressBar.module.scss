@@ -30,7 +30,7 @@
   }
 
   &[data-nonzero] {
-    min-width: 12px;
+    min-width: calc(12px * var(--t-scale, 1));
   }
 }
 

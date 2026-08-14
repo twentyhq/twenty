@@ -1,7 +1,6 @@
 import { useCallback, useEffect } from 'react';
 import { useStore } from 'jotai';
 
-import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { NUMBER_OF_VIRTUALIZED_ROWS } from '@/object-record/record-table/virtualization/constants/NumberOfVirtualizedRows';
 import { useProcessTreadmillScrollTop } from '@/object-record/record-table/virtualization/hooks/useProcessTreadmillScrollTop';
 import { useTriggerFetchPages } from '@/object-record/record-table/virtualization/hooks/useTriggerFetchPages';
@@ -12,6 +11,7 @@ import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useDebouncedCallback } from 'use-debounce';
+import { useRecordTableRowPitch } from '@/object-record/record-table/hooks/useRecordTableRowPitch';
 
 export const SCROLL_SPEED_THRESHOLD_IN_ROWS_PER_SECOND_TO_ACTIVATE_LOW_DETAILS = 200;
 export const SCROLL_SPEED_THRESHOLD_IN_ROWS_PER_SECOND_TO_DEACTIVATE_LOW_DETAILS = 50;
@@ -23,6 +23,8 @@ const TIME_BETWEEN_TWO_SCROLL_HANDLING = 20;
 const LAST_SCROLL_DEBOUNCE_TIME = 300;
 
 export const RecordTableVirtualizedRowTreadmillEffect = () => {
+  const { rowPitch } = useRecordTableRowPitch();
+
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 
   const scrollAtRealIndexCallbackState = useAtomComponentStateCallbackState(
@@ -182,7 +184,7 @@ export const RecordTableVirtualizedRowTreadmillEffect = () => {
           scrollSpeedInPixelsPerSecondSum / scrollMeasurementsForAverage.length;
 
         const averageScrollSpeedInRowsPerSecond =
-          averageScrollSpeedInPixelsPerSecond / (RECORD_TABLE_ROW_HEIGHT + 1);
+          averageScrollSpeedInPixelsPerSecond / rowPitch;
 
         if (
           averageScrollSpeedInRowsPerSecond >
@@ -209,6 +211,7 @@ export const RecordTableVirtualizedRowTreadmillEffect = () => {
       deactivateLowDetailsDebounced,
       handleAfterLastScrollDebounced,
       store,
+      rowPitch,
     ],
   );
 

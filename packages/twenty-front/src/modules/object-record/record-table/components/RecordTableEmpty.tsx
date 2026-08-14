@@ -21,9 +21,9 @@ import { computeVisibleRecordFieldsWidthOnTable } from '@/object-record/record-t
 import { RecordTableVirtualizedDataChangedEffect } from '@/object-record/record-table/virtualization/components/RecordTableVirtualizedDataChangedEffect';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
-import { useMemo } from 'react';
+import { useMemo, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
+import { ThemeContext, MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledEmptyStateContainer = styled.div<{ width: number }>`
@@ -41,6 +41,8 @@ export interface RecordTableEmptyProps {
 }
 
 export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
+  const { theme } = useContext(ThemeContext);
+
   const { visibleRecordFields, recordTableId } = useRecordTableContextOrThrow();
 
   const isMobile = useIsMobile();
@@ -81,22 +83,23 @@ export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
   const { visibleRecordFieldsWidth } = computeVisibleRecordFieldsWidthOnTable({
     shouldCompactFirstColumn: shouldCompactRecordTableFirstColumn,
     visibleRecordFields,
+    uiScale: theme.scale,
   });
 
   const dragColumnWidth = isRecordTableDragColumnHidden
     ? 0
-    : RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH;
+    : RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH * theme.scale;
 
   const checkboxColumnWidth = isRecordTableCheckboxColumnHidden
     ? 0
-    : RECORD_TABLE_COLUMN_CHECKBOX_WIDTH;
+    : RECORD_TABLE_COLUMN_CHECKBOX_WIDTH * theme.scale;
 
   const leftColumnsWidth = dragColumnWidth + checkboxColumnWidth;
 
   const emptyTableContainerComputedWidth =
     visibleRecordFieldsWidth +
     leftColumnsWidth +
-    RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH +
+    RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH * theme.scale +
     totalColumnsBorderWidth +
     resizeOffsetToAddOnlyIfItMakesTableContainerGrow;
 

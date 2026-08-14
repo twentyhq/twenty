@@ -21,7 +21,7 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledFieldPlaceholderCell = styled.div<{ widthOfFields: number }>`
-  height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  height: calc(${RECORD_TABLE_ROW_HEIGHT}px * var(--t-scale, 1));
   min-width: ${({ widthOfFields }) => widthOfFields}px;
   width: ${({ widthOfFields }) => widthOfFields}px;
 `;
@@ -57,9 +57,9 @@ const StyledIconContainer = styled.div`
   border-right: none;
   color: ${themeCssVariables.font.color.secondary};
   display: flex;
-  height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  height: calc(${RECORD_TABLE_ROW_HEIGHT}px * var(--t-scale, 1));
   justify-content: center;
-  left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+  left: calc(${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px * var(--t-scale, 1));
 
   position: sticky;
   width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
@@ -71,7 +71,7 @@ const StyledActionTextContainer = styled.div<{ width: number }>`
   border-right: none;
   display: flex;
 
-  height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  height: calc(${RECORD_TABLE_ROW_HEIGHT}px * var(--t-scale, 1));
   justify-content: start;
 
   left: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
@@ -119,9 +119,11 @@ export const RecordTableActionRow = ({
     findByProperty('fieldMetadataItemId', labelIdentifierFieldMetadataItem?.id),
   );
 
-  const firstColumnWidth = isMobile
-    ? RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE
-    : (labelIdentifierRecordField?.size ?? RECORD_TABLE_COLUMN_MIN_WIDTH);
+  const firstColumnWidth =
+    (isMobile
+      ? RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE
+      : (labelIdentifierRecordField?.size ?? RECORD_TABLE_COLUMN_MIN_WIDTH)) *
+    theme.scale;
 
   const sumOfWidthOfVisibleRecordFieldsAfterLabelIdentifierField =
     visibleRecordFieldsWithoutLabelIdentifier.reduce(sumByProperty('size'), 0);
@@ -144,7 +146,8 @@ export const RecordTableActionRow = ({
       </StyledActionTextContainer>
       <StyledFieldPlaceholderCell
         widthOfFields={
-          sumOfWidthOfVisibleRecordFieldsAfterLabelIdentifierField +
+          sumOfWidthOfVisibleRecordFieldsAfterLabelIdentifierField *
+            theme.scale +
           sumOfBorderWidthForFields
         }
       />

@@ -35,7 +35,7 @@ const StyledRecordTableCellHoveredPortalContent = styled.div<{
     showInteractiveStyle ? 'pointer' : 'default'};
   display: flex;
 
-  height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  height: calc(${RECORD_TABLE_ROW_HEIGHT}px * var(--t-scale, 1));
 
   outline: ${({ showInteractiveStyle, isRecordTableRowActive }) =>
     isRecordTableRowActive

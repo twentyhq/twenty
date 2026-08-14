@@ -2,7 +2,7 @@
   align-items: center;
   cursor: ns-resize;
   display: flex;
-  height: 8px;
+  height: calc(8px * var(--t-scale, 1));
   justify-content: center;
   user-select: none;
 }
@@ -13,7 +13,7 @@
   corner-shape: round;
   height: 3px;
   transition: background-color duration(fast);
-  width: 32px;
+  width: calc(32px * var(--t-scale, 1));
 }
 
 .area:hover > .bar {

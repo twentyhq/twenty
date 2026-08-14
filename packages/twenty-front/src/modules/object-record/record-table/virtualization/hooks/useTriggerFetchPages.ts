@@ -16,12 +16,15 @@ import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScro
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { getContiguousIncrementalValues, isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
+import { useRecordTableRowPitch } from '@/object-record/record-table/hooks/useRecordTableRowPitch';
 
 const TIME_BETWEEN_UI_BATCH_UPDATE = 25;
 const PAGING_FOR_UI_UPDATE = 10;
 const TIME_BETWEEN_TWO_REQUETS = 25;
 
 export const useTriggerFetchPages = () => {
+  const { rowPitch } = useRecordTableRowPitch();
+
   const { objectNameSingular } = useRecordTableContextOrThrow();
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement();
 
@@ -72,6 +75,7 @@ export const useTriggerFetchPages = () => {
         lastScrollPosition,
         tableScrollWrapperHeight,
         totalNumberOfRecordsToVirtualize,
+        rowPitch,
       );
 
     const pagesAlreadyLoaded = store.get(dataPagesLoadedCallbackState);
@@ -178,6 +182,7 @@ export const useTriggerFetchPages = () => {
     scrollWrapperHTMLElement,
     lowDetailsActivatedCallbackState,
     store,
+    rowPitch,
   ]);
 
   const triggerFetchPages = useDebouncedCallback(

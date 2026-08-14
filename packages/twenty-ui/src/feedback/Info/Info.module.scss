@@ -4,7 +4,7 @@
   display: flex;
   font-weight: var(--t-font-weight-medium);
   justify-content: space-between;
-  max-width: 512px;
+  max-width: calc(512px * var(--t-scale, 1));
   gap: var(--t-spacing-2);
   padding: var(--t-spacing-2);
   background: transparent;
