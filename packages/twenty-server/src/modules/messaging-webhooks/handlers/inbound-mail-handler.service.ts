@@ -41,7 +41,8 @@ export class InboundMailHandlerService {
     await this.messageQueueService.add<MessagingInboundEmailImportJobData>(
       MessagingInboundEmailImportJob.name,
       {
-        s3Key: notification.message.reference,
+        source: notification.message.source,
+        reference: notification.message.reference,
         envelopeRecipients: notification.recipients,
       },
       { id: notification.dedupeKey },
