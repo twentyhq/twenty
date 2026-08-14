@@ -1,4 +1,4 @@
-import { type FrontComponentHostCommunicationApiStore } from '@/types/FrontComponentHostCommunicationApiStore';
+import { type WorkerFrontComponentHostCommunicationApi } from '@/types/WorkerFrontComponentHostCommunicationApi';
 
 export type FrontComponentStorageBridge = {
   getItem: (key: string) => string | null;
@@ -9,6 +9,6 @@ export type FrontComponentStorageBridge = {
   clear: () => void;
   seed: (seededEntries: Record<string, string>) => void;
   connectHostCommunicationApi: (
-    hostCommunicationApi: FrontComponentHostCommunicationApiStore,
+    hostCommunicationApi: WorkerFrontComponentHostCommunicationApi,
   ) => void;
 };
