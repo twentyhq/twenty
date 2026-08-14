@@ -1,5 +1,6 @@
 import { type RoutePayload } from 'twenty-sdk/define';
 import { Response } from 'twenty-sdk/logic-function';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_ASSISTANT_FEEDBACK_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { SLACK_ASSISTANT_FEEDBACK_ACTION_ID } from 'src/logic-functions/constants/slack-assistant-feedback-action-id';
@@ -27,20 +28,20 @@ export const slackInteractivityResolverHandler = async (
     throw new Error(secretResult.error);
   }
 
-  if (routePayload.rawBody === undefined) {
+  if (!isDefined(routePayload.rawBody)) {
     throw new Error(
       'Raw request body was not forwarded by the server; cannot verify the webhook signature',
     );
   }
 
-  if (
-    !verifySlackRequestSignature({
-      rawBody: routePayload.rawBody,
-      signatureHeader: routePayload.headers['x-slack-signature'],
-      timestampHeader: routePayload.headers['x-slack-request-timestamp'],
-      secret: secretResult.secret,
-    })
-  ) {
+  const hasValidSignature = verifySlackRequestSignature({
+    rawBody: routePayload.rawBody,
+    signatureHeader: routePayload.headers['x-slack-signature'],
+    timestampHeader: routePayload.headers['x-slack-request-timestamp'],
+    secret: secretResult.secret,
+  });
+
+  if (!hasValidSignature) {
     throw new Error('Invalid Slack signature');
   }
 
