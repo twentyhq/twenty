@@ -117,26 +117,33 @@ export const PageLayoutRecordPageRenderer = ({
 
         {isInSidePanel && (
           <SidePanelFooter
-            actions={[
-              <RecordPageSidePanelCommandMenu key="options" />,
-              ...(hasPinnedWidgetCommandMenuItems
-                ? pinnedWidgetCommandMenuItems.map((commandMenuItem) => (
-                    <Button
-                      key={commandMenuItem.id}
-                      size="small"
-                      variant={
-                        commandMenuItem.isPrimaryCTA ? 'primary' : 'secondary'
-                      }
-                      accent={commandMenuItem.isPrimaryCTA ? 'blue' : 'default'}
-                      title={commandMenuItem.label}
-                      Icon={commandMenuItem.Icon}
-                      hotkeys={commandMenuItem.hotkeys}
-                      onClick={commandMenuItem.onClick}
-                      disabled={commandMenuItem.disabled}
-                    />
-                  ))
-                : [<RecordPageSidePanelPinnedCommandMenuItems key="pinned" />]),
-            ]}
+            actions={
+              hasPinnedWidgetCommandMenuItems
+                ? [
+                    <RecordPageSidePanelCommandMenu key="options" />,
+                    ...pinnedWidgetCommandMenuItems.map((commandMenuItem) => (
+                      <Button
+                        key={commandMenuItem.id}
+                        size="small"
+                        variant="primary"
+                        accent={
+                          commandMenuItem.isPrimaryCTA ? 'blue' : 'default'
+                        }
+                        title={commandMenuItem.label}
+                        Icon={commandMenuItem.Icon}
+                        hotkeys={commandMenuItem.hotkeys}
+                        onClick={commandMenuItem.onClick}
+                        disabled={commandMenuItem.disabled}
+                      />
+                    )),
+                  ]
+                : [
+                    <RecordPageSidePanelPinnedCommandMenuItems
+                      key="pinned"
+                      leadingAction={<RecordPageSidePanelCommandMenu />}
+                    />,
+                  ]
+            }
           />
         )}
       </StyledShowPageRightContainer>

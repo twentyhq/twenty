@@ -30,7 +30,9 @@ const StyledWrapper = styled.div`
 `;
 
 const StyledContainer = styled.div`
+  align-items: center;
   display: flex;
+  gap: ${PINNED_COMMAND_MENU_ITEMS_GAP}px;
   justify-content: flex-end;
   min-width: 0;
   width: 100%;
@@ -45,7 +47,14 @@ const StyledItemsContainer = styled.div<{ shouldReverse: boolean }>`
   overflow: hidden;
 `;
 
-export const PinnedCommandMenuItemButtons = () => {
+export const PinnedCommandMenuItemButtons = ({
+  leadingAction,
+}: {
+  // Rendered inside the right-aligned cluster, before the pinned buttons, so
+  // an options menu can sit leftmost of the group instead of being pushed to
+  // the far side by the measurement wrapper stretching over the free space.
+  leadingAction?: React.ReactNode;
+}) => {
   const { theme } = useContext(ThemeContext);
   const { commandMenuItems, containerType } = useContext(CommandMenuContext);
   const isMobile = useIsMobile();
@@ -118,6 +127,7 @@ export const PinnedCommandMenuItemButtons = () => {
       <StyledWrapper>
         <NodeDimension onDimensionChange={onContainerDimensionChange}>
           <StyledContainer>
+            {leadingAction}
             <StyledItemsContainer shouldReverse={!isSidePanelFooter}>
               {displayedInlineCommandMenuItems.map((item) => (
                 <StyledCommandMenuItemContainer

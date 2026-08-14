@@ -6,7 +6,11 @@ import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/compon
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
-export const RecordPageSidePanelPinnedCommandMenuItems = () => {
+export const RecordPageSidePanelPinnedCommandMenuItems = ({
+  leadingAction,
+}: {
+  leadingAction?: React.ReactNode;
+}) => {
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
@@ -21,7 +25,7 @@ export const RecordPageSidePanelPinnedCommandMenuItems = () => {
       displayType="button"
       containerType={CommandMenuItemContainerType.SidePanelFooter}
     >
-      <PinnedCommandMenuItemButtons />
+      <PinnedCommandMenuItemButtons leadingAction={leadingAction} />
     </CommandMenuContextProvider>
   );
 };
