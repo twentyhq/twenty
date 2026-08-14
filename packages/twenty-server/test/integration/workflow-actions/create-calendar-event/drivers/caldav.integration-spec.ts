@@ -12,14 +12,14 @@ import {
   startRadicaleContainer,
 } from 'test/integration/utils/start-radicale-container.util';
 
-const HANDLE = `caldav-workflow-${randomUUID()}@acme.test`;
+const HANDLE = `caldav-create-event-action-${randomUUID()}@acme.test`;
 const COLLECTION = 'personal';
 const PASSWORD = 'radicale-password';
 const ATTENDEE = 'attendee@example.com';
 
 const authorizationHeader = `Basic ${Buffer.from(`${HANDLE}:${PASSWORD}`).toString('base64')}`;
 
-describe('CalDAV workflow calendar event action (integration)', () => {
+describe('CREATE_CALENDAR_EVENT workflow action on CalDAV (integration)', () => {
   let radicale: RadicaleServer;
   let connectedAccountId: string;
 
@@ -87,7 +87,7 @@ describe('CalDAV workflow calendar event action (integration)', () => {
     await radicale?.stop().catch(() => undefined);
   });
 
-  it('creates an event in the CalDAV collection from a CREATE_CALENDAR_EVENT step', async () => {
+  it('creates an event in the CalDAV collection with a title resolved from the trigger payload', async () => {
     const title = `CalDAV workflow calendar ${randomUUID()}`;
 
     const workflowRun = await runWorkflowActionStep({

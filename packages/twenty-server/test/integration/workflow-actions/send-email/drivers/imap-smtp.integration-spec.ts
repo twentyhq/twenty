@@ -1,7 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { ImapFlow } from 'imapflow';
 
 import { EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/enums/email-connection-security.enum';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -19,46 +18,12 @@ import {
 } from 'test/integration/utils/start-greenmail-container.util';
 
 const PASSWORD = 'greenmail-password';
-const HANDLE = `imap-smtp-workflow-${randomUUID()}@acme.test`;
+const HANDLE = `smtp-send-email-action-${randomUUID()}@acme.test`;
 
-describe('IMAP/SMTP workflow email actions (integration)', () => {
+describe('SEND_EMAIL workflow action on SMTP (integration)', () => {
   let greenmail: GreenmailServer;
   let connectedAccountId: string;
   let messageChannelId: string;
-
-  const findDraftSubjects = async (): Promise<string[]> => {
-    const client = new ImapFlow({
-      host: greenmail.host,
-      port: greenmail.imapPort,
-      secure: false,
-      auth: { user: HANDLE.split('@')[0], pass: PASSWORD },
-      logger: false,
-    });
-
-    await client.connect();
-
-    try {
-      const { exists } = await client.mailboxOpen('Drafts');
-
-      if (exists === 0) {
-        return [];
-      }
-
-      const subjects: string[] = [];
-
-      for await (const message of client.fetch('1:*', { envelope: true })) {
-        const subject = message.envelope?.subject;
-
-        if (isNonEmptyString(subject)) {
-          subjects.push(subject);
-        }
-      }
-
-      return subjects;
-    } finally {
-      await client.logout();
-    }
-  };
 
   beforeAll(async () => {
     await updateConfigVariable({
@@ -118,7 +83,7 @@ describe('IMAP/SMTP workflow email actions (integration)', () => {
     await greenmail?.stop().catch(() => undefined);
   });
 
-  it('sends an email over SMTP from a SEND_EMAIL step and persists it', async () => {
+  it('sends an email over SMTP and persists it', async () => {
     const subject = `IMAP/SMTP workflow send ${randomUUID()}`;
 
     const workflowRun = await runWorkflowActionStep({
@@ -185,40 +150,5 @@ describe('IMAP/SMTP workflow email actions (integration)', () => {
         expect.objectContaining({ handle: HANDLE, role: 'BCC' }),
       ]),
     );
-  }, 300000);
-
-  it('appends a draft to the IMAP drafts folder from a DRAFT_EMAIL step without persisting it', async () => {
-    const subject = `IMAP/SMTP workflow draft ${randomUUID()}`;
-
-    const workflowRun = await runWorkflowActionStep({
-      name: 'IMAP/SMTP draft email workflow',
-      stepType: 'DRAFT_EMAIL',
-      input: {
-        connectedAccountId,
-        recipients: { to: '{{trigger.to}}' },
-        subject: '{{trigger.subject}}',
-        body: '<p>SMTP workflow draft body</p>',
-      },
-      payload: { to: HANDLE, subject },
-    });
-
-    expect(workflowRun).toMatchObject({
-      status: 'COMPLETED',
-      stepStatus: 'SUCCESS',
-    });
-    expect(workflowRun.stepResult).toMatchObject({
-      recipients: [HANDLE],
-      subject,
-      connectedAccountId,
-    });
-    expect(await findDraftSubjects()).toContain(subject);
-    expect(
-      await findRecordNodesByFilter<{ id: string }>(
-        'message',
-        'messages',
-        'id',
-        { subject: { eq: subject } },
-      ),
-    ).toEqual([]);
   }, 300000);
 });
