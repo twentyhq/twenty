@@ -56,17 +56,17 @@ export class MailgunOutboundWebhookAdapterService {
     }
 
     const workspaceId =
-      eventData?.['user-variables']?.[MAILGUN_WORKSPACE_VARIABLE_NAME];
+      eventData['user-variables']?.[MAILGUN_WORKSPACE_VARIABLE_NAME];
 
     if (!isNonEmptyString(workspaceId)) {
       this.logger.warn(
-        `Ignoring Mailgun ${eventData?.event} event without a ${MAILGUN_WORKSPACE_VARIABLE_NAME} variable`,
+        `Ignoring Mailgun ${eventData.event} event without a ${MAILGUN_WORKSPACE_VARIABLE_NAME} variable`,
       );
 
       return;
     }
 
-    const recipient = eventData?.recipient;
+    const recipient = eventData.recipient;
 
     if (!isNonEmptyString(recipient)) {
       return;
@@ -76,8 +76,8 @@ export class MailgunOutboundWebhookAdapterService {
       workspaceId,
       reason: suppressionReason,
       emailAddresses: [recipient],
-      providerMessageId: eventData?.message?.headers?.['message-id'] ?? null,
-      providerEventId: eventData?.id ?? null,
+      providerMessageId: eventData.message?.headers?.['message-id'] ?? null,
+      providerEventId: eventData.id ?? null,
     });
   }
 

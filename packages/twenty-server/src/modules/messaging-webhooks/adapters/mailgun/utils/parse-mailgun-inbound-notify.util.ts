@@ -44,7 +44,7 @@ const pickNotifyFields = (
 };
 
 const asString = (value: unknown): string | undefined => {
-  return typeof value === 'string' && value.length > 0 ? value : undefined;
+  return isNonEmptyString(value) ? value : undefined;
 };
 
 const parseMultipartTextFields = (
