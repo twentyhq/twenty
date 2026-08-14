@@ -1,4 +1,10 @@
-import { defineObject, FieldType } from 'twenty-sdk/define';
+import {
+  defineObject,
+  FieldType,
+  OnDeleteAction,
+  RelationType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
 
 import {
   SLACK_ASSISTANT_REQUEST_CHANNEL_ID_FIELD_UNIVERSAL_IDENTIFIER,
@@ -13,6 +19,8 @@ import {
   SLACK_ASSISTANT_REQUEST_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
   SLACK_ASSISTANT_REQUEST_THREAD_TS_FIELD_UNIVERSAL_IDENTIFIER,
   SLACK_ASSISTANT_REQUEST_USER_ID_FIELD_UNIVERSAL_IDENTIFIER,
+  SLACK_ASSISTANT_REQUEST_WORKSPACE_MEMBER_FIELD_UNIVERSAL_IDENTIFIER,
+  SLACK_ASSISTANT_REQUESTS_ON_WORKSPACE_MEMBER_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 
@@ -89,6 +97,27 @@ export default defineObject({
       description: 'Slack user who sent the request',
       icon: 'IconUser',
       name: 'slackUserId',
+    },
+    {
+      universalIdentifier:
+        SLACK_ASSISTANT_REQUEST_WORKSPACE_MEMBER_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.RELATION,
+      label: 'Ran as',
+      description:
+        'Workspace member the assistant acted as; empty when the Slack account is not mapped',
+      icon: 'IconUserCircle',
+      name: 'workspaceMember',
+      isNullable: true,
+      relationTargetObjectMetadataUniversalIdentifier:
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember
+          .universalIdentifier,
+      relationTargetFieldMetadataUniversalIdentifier:
+        SLACK_ASSISTANT_REQUESTS_ON_WORKSPACE_MEMBER_FIELD_UNIVERSAL_IDENTIFIER,
+      universalSettings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: OnDeleteAction.SET_NULL,
+        joinColumnName: 'workspaceMemberId',
+      },
     },
     {
       universalIdentifier: SLACK_ASSISTANT_REQUEST_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
