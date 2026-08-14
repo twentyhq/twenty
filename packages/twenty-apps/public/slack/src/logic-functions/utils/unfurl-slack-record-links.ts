@@ -56,7 +56,7 @@ export const unfurlSlackRecordLinks = async (
     }
 
     unfurls[recordLink.linkUrl] = buildSlackRecordUnfurlAttachment({
-      linkUrl: recordLink.recordUrl,
+      recordUrl: recordLink.recordUrl,
       card,
     });
   }

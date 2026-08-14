@@ -32,10 +32,12 @@ const encodeSlackLinkUrl = (url: string): string =>
   url.replace(/</g, '%3C').replace(/>/g, '%3E').replace(/\|/g, '%7C');
 
 export const buildSlackRecordUnfurlAttachment = ({
-  linkUrl,
+  recordUrl,
   card,
 }: {
-  linkUrl: string;
+  // Canonical origin + /object/<name>/<id> url from parseSlackRecordLink —
+  // never the raw event url, whose query string is unbounded
+  recordUrl: string;
   card: SlackRecordUnfurlCard;
 }): MessageAttachment => {
   const recordTitle = escapeSlackMrkdwn(
@@ -47,7 +49,7 @@ export const buildSlackRecordUnfurlAttachment = ({
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: `*<${encodeSlackLinkUrl(linkUrl)}|${recordTitle}>*`,
+        text: `*<${encodeSlackLinkUrl(recordUrl)}|${recordTitle}>*`,
       },
     },
   ];

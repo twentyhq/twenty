@@ -5,7 +5,7 @@ import { buildSlackRecordUnfurlAttachment } from 'src/logic-functions/utils/buil
 describe('buildSlackRecordUnfurlAttachment', () => {
   it('should build a title, fields and context blocks', () => {
     const attachment = buildSlackRecordUnfurlAttachment({
-      linkUrl: 'https://acme.twenty.com/object/opportunity/id-1',
+      recordUrl: 'https://acme.twenty.com/object/opportunity/id-1',
       card: {
         recordTitle: 'Big deal',
         objectLabel: 'Opportunity',
@@ -40,7 +40,7 @@ describe('buildSlackRecordUnfurlAttachment', () => {
 
   it('should omit the fields block when there are no fields', () => {
     const attachment = buildSlackRecordUnfurlAttachment({
-      linkUrl: 'https://acme.twenty.com/object/note/id-1',
+      recordUrl: 'https://acme.twenty.com/object/note/id-1',
       card: { recordTitle: 'A note', objectLabel: 'Note', fields: [] },
     });
 
@@ -50,7 +50,7 @@ describe('buildSlackRecordUnfurlAttachment', () => {
 
   it('should encode mrkdwn link delimiters in the embedded url', () => {
     const attachment = buildSlackRecordUnfurlAttachment({
-      linkUrl: 'https://acme.twenty.com/object/person/id-1?view=a|b<c>',
+      recordUrl: 'https://acme.twenty.com/object/person/id-1?view=a|b<c>',
       card: { recordTitle: 'Jane Doe', objectLabel: 'Person', fields: [] },
     });
 
@@ -65,7 +65,7 @@ describe('buildSlackRecordUnfurlAttachment', () => {
 
   it('should truncate oversized titles and field values under Slack limits', () => {
     const attachment = buildSlackRecordUnfurlAttachment({
-      linkUrl: 'https://acme.twenty.com/object/note/id-1',
+      recordUrl: 'https://acme.twenty.com/object/note/id-1',
       card: {
         recordTitle: 'a'.repeat(5000),
         objectLabel: 'Note',
@@ -88,7 +88,7 @@ describe('buildSlackRecordUnfurlAttachment', () => {
 
   it('should not split surrogate pairs when truncating', () => {
     const attachment = buildSlackRecordUnfurlAttachment({
-      linkUrl: 'https://acme.twenty.com/object/note/id-1',
+      recordUrl: 'https://acme.twenty.com/object/note/id-1',
       card: {
         recordTitle: '😀'.repeat(400),
         objectLabel: 'Note',
@@ -107,7 +107,7 @@ describe('buildSlackRecordUnfurlAttachment', () => {
 
   it('should escape mrkdwn control characters in titles and values', () => {
     const attachment = buildSlackRecordUnfurlAttachment({
-      linkUrl: 'https://acme.twenty.com/object/company/id-1',
+      recordUrl: 'https://acme.twenty.com/object/company/id-1',
       card: {
         recordTitle: 'Tom & Jerry <Corp>',
         objectLabel: 'Company',
