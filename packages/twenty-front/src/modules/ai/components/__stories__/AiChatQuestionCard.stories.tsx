@@ -152,17 +152,20 @@ export const MultiSelectQuestion: Story = {
     await userEvent.click(emailOption);
 
     const otherOption = await canvas.findByRole('button', { name: 'Other' });
-    await userEvent.click(otherOption);
-    expect(otherOption).toHaveAttribute('aria-pressed', 'true');
+    expect(otherOption).toHaveAttribute('aria-pressed', 'false');
 
     const otherTextArea = canvas.getByPlaceholderText(
       'Type your own answer here',
     );
-    await userEvent.type(otherTextArea, 'Carrier pigeon');
+    otherTextArea.focus();
+    await userEvent.type(otherTextArea, 'Carrier pigeon', { skipClick: true });
     expect(otherOption).toHaveAttribute('aria-pressed', 'true');
 
     await userEvent.click(otherOption);
     expect(otherOption).toHaveAttribute('aria-pressed', 'false');
     expect(otherTextArea).toHaveValue('Carrier pigeon');
+
+    await userEvent.click(otherOption);
+    expect(otherOption).toHaveAttribute('aria-pressed', 'true');
   },
 };
