@@ -8,9 +8,8 @@ import { WidgetHeaderInfoEffect } from '@/page-layout/widgets/components/WidgetH
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 
 type TaskGroupsProps = {
@@ -37,18 +36,24 @@ export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
     activityObjectNameSingular: CoreObjectNameSingular.Task,
   });
 
-  const newTaskAction = useMemo(
+  const handleCreateTask = useCallback(
+    () => openCreateActivity({ targetableObjects: [targetableObject] }),
+    [openCreateActivity, targetableObject],
+  );
+
+  const headerActions = useMemo(
     () =>
       hasObjectUpdatePermissions
-        ? {
-            id: 'new-task',
-            Icon: IconPlus,
-            label: t`New task`,
-            onClick: () =>
-              openCreateActivity({ targetableObjects: [targetableObject] }),
-          }
+        ? [
+            {
+              id: 'new-task',
+              Icon: IconPlus,
+              label: t`New task`,
+              onClick: handleCreateTask,
+            },
+          ]
         : undefined,
-    [hasObjectUpdatePermissions, openCreateActivity, targetableObject],
+    [hasObjectUpdatePermissions, handleCreateTask],
   );
 
   const activeTabId = useAtomComponentStateValue(activeTabIdComponentState);
@@ -59,13 +64,10 @@ export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
 
   return (
     <>
-      <WidgetHeaderInfoEffect
-        count={totalCountTasks}
-        actions={isDefined(newTaskAction) ? [newTaskAction] : undefined}
-      />
+      <WidgetHeaderInfoEffect count={totalCountTasks} actions={headerActions} />
       <TaskGroupsContent
         isLoading={isLoading}
-        onCreateTask={newTaskAction?.onClick}
+        onCreateTask={hasObjectUpdatePermissions ? handleCreateTask : undefined}
         tasks={tasks}
       />
     </>

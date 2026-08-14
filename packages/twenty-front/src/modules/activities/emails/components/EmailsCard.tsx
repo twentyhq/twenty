@@ -38,14 +38,16 @@ export const EmailsCard = () => {
   const { totalNumberOfThreads, timelineThreads } =
     data?.getTimelineThreadsFromObjectRecord ?? {};
 
-  const composeAction = useMemo(
-    () => ({
-      id: 'compose',
-      Icon: IconPlus,
-      label: t`Compose`,
-      onClick: openComposer,
-      disabled: composerLoading,
-    }),
+  const headerActions = useMemo(
+    () => [
+      {
+        id: 'compose',
+        Icon: IconPlus,
+        label: t`Compose`,
+        onClick: openComposer,
+        disabled: composerLoading,
+      },
+    ],
     [openComposer, composerLoading],
   );
 
@@ -64,7 +66,7 @@ export const EmailsCard = () => {
     <>
       <WidgetHeaderInfoEffect
         count={totalNumberOfThreads}
-        actions={[composeAction]}
+        actions={headerActions}
       />
       <EmailsCardContent
         firstQueryLoading={firstQueryLoading}

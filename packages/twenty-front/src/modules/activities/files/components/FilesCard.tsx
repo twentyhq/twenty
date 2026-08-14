@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { type ChangeEvent, useCallback, useMemo, useRef } from 'react';
 
 import { FilesCardContent } from '@/activities/files/components/FilesCardContent';
 import { useAttachments } from '@/activities/files/hooks/useAttachments';
@@ -8,10 +8,15 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { WidgetHeaderInfoEffect } from '@/page-layout/widgets/components/WidgetHeaderInfoEffect';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
+
+const StyledFileInput = styled.input`
+  display: none;
+`;
 
 export const FilesCard = () => {
   const targetRecord = useTargetRecord();
@@ -32,6 +37,12 @@ export const FilesCard = () => {
     }
   };
 
+  const handleFileInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (isDefined(event.target.files)) {
+      onUploadFiles(Array.from(event.target.files));
+    }
+  };
+
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetRecord.targetObjectNameSingular,
   });
@@ -48,30 +59,41 @@ export const FilesCard = () => {
 
   const canUploadFiles = hasObjectUpdatePermissions && hasUploadPermission;
 
-  const addFileAction = useMemo(
+  const handleAddFileClick = useCallback(() => {
+    inputFileRef.current?.click();
+  }, []);
+
+  const headerActions = useMemo(
     () =>
       canUploadFiles
-        ? {
-            id: 'add-file',
-            Icon: IconPlus,
-            label: t`Add file`,
-            onClick: () => inputFileRef?.current?.click?.(),
-          }
+        ? [
+            {
+              id: 'add-file',
+              Icon: IconPlus,
+              label: t`Add file`,
+              onClick: handleAddFileClick,
+            },
+          ]
         : undefined,
-    [canUploadFiles, t],
+    [canUploadFiles, t, handleAddFileClick],
   );
 
   return (
     <>
       <WidgetHeaderInfoEffect
         count={totalCountAttachments}
-        actions={isDefined(addFileAction) ? [addFileAction] : undefined}
+        actions={headerActions}
+      />
+      <StyledFileInput
+        ref={inputFileRef}
+        onChange={handleFileInputChange}
+        type="file"
+        multiple
       />
       <FilesCardContent
         attachments={attachments}
-        canUploadFiles={canUploadFiles}
-        inputFileRef={inputFileRef}
         loading={loading}
+        onAddFile={canUploadFiles ? handleAddFileClick : undefined}
         onUploadFiles={onUploadFiles}
         targetRecord={targetRecord}
       />

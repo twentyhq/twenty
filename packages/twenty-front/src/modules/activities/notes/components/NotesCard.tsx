@@ -3,12 +3,11 @@ import { NotesCardContent } from '@/activities/notes/components/NotesCardContent
 import { useNotes } from '@/activities/notes/hooks/useNotes';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { WidgetHeaderInfoEffect } from '@/page-layout/widgets/components/WidgetHeaderInfoEffect';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { t } from '@lingui/core/macro';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { IconPlus } from 'twenty-ui/icon';
 
 export const NotesCard = () => {
@@ -36,30 +35,33 @@ export const NotesCard = () => {
 
   const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
-  const newNoteAction = useMemo(
+  const handleCreateNote = useCallback(
+    () => openCreateActivity({ targetableObjects: [targetRecord] }),
+    [openCreateActivity, targetRecord],
+  );
+
+  const headerActions = useMemo(
     () =>
       hasObjectUpdatePermissions
-        ? {
-            id: 'new-note',
-            Icon: IconPlus,
-            label: t`New note`,
-            onClick: () =>
-              openCreateActivity({ targetableObjects: [targetRecord] }),
-          }
+        ? [
+            {
+              id: 'new-note',
+              Icon: IconPlus,
+              label: t`New note`,
+              onClick: handleCreateNote,
+            },
+          ]
         : undefined,
-    [hasObjectUpdatePermissions, openCreateActivity, targetRecord],
+    [hasObjectUpdatePermissions, handleCreateNote],
   );
 
   return (
     <>
-      <WidgetHeaderInfoEffect
-        count={totalCountNotes}
-        actions={isDefined(newNoteAction) ? [newNoteAction] : undefined}
-      />
+      <WidgetHeaderInfoEffect count={totalCountNotes} actions={headerActions} />
       <NotesCardContent
         loading={loading}
         notes={notes}
-        onCreateNote={newNoteAction?.onClick}
+        onCreateNote={hasObjectUpdatePermissions ? handleCreateNote : undefined}
         onLastRowVisible={handleLastRowVisible}
       />
     </>

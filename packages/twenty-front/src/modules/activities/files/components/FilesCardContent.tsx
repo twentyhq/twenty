@@ -5,7 +5,7 @@ import { type Attachment } from '@/activities/files/types/Attachment';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { type ChangeEvent, type RefObject, useState } from 'react';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   AnimatedPlaceholder,
@@ -25,39 +25,29 @@ const StyledAttachmentsContainer = styled.div`
   overflow: auto;
 `;
 
-const StyledFileInput = styled.input`
-  display: none;
-`;
-
 const StyledDropZoneContainer = styled.div`
   height: 100%;
 `;
 
 type FilesCardContentProps = {
   attachments: Attachment[];
-  canUploadFiles: boolean;
-  inputFileRef: RefObject<HTMLInputElement | null>;
   loading: boolean;
+  onAddFile: (() => void) | undefined;
   onUploadFiles: (files: File[]) => Promise<void>;
   targetRecord: ActivityTargetableObject;
 };
 
 export const FilesCardContent = ({
   attachments,
-  canUploadFiles,
-  inputFileRef,
   loading,
+  onAddFile,
   onUploadFiles,
   targetRecord,
 }: FilesCardContentProps) => {
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const { t } = useLingui();
 
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (isDefined(event.target.files)) {
-      onUploadFiles(Array.from(event.target.files));
-    }
-  };
+  const canUploadFiles = isDefined(onAddFile);
 
   const isAttachmentsEmpty = attachments.length === 0;
 
@@ -86,18 +76,12 @@ export const FilesCardContent = ({
                 <Trans>There are no associated files with this record.</Trans>
               </AnimatedPlaceholderEmptySubTitle>
             </AnimatedPlaceholderEmptyTextContainer>
-            <StyledFileInput
-              ref={inputFileRef}
-              onChange={handleFileChange}
-              type="file"
-              multiple
-            />
             {canUploadFiles && (
               <Button
                 Icon={IconPlus}
                 title={t`Add file`}
                 variant="secondary"
-                onClick={() => inputFileRef.current?.click()}
+                onClick={onAddFile}
               />
             )}
           </AnimatedPlaceholderEmptyContainer>
@@ -108,15 +92,9 @@ export const FilesCardContent = ({
 
   return (
     <StyledAttachmentsContainer>
-      <StyledFileInput
-        ref={inputFileRef}
-        onChange={handleFileChange}
-        type="file"
-        multiple
-      />
       <AttachmentList
         targetableObject={targetRecord}
-        attachments={attachments ?? []}
+        attachments={attachments}
       />
     </StyledAttachmentsContainer>
   );

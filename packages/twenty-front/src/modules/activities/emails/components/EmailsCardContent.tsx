@@ -52,7 +52,7 @@ export const EmailsCardContent = ({
           ))}
         </ActivityList>
         <CustomResolverFetchMoreLoader
-          loading={isFetchingMore || firstQueryLoading}
+          loading={isFetchingMore}
           onLastRowVisible={onLastRowVisible}
         />
       </Section>

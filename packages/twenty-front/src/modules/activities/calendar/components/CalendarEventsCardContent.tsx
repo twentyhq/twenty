@@ -117,7 +117,7 @@ export const CalendarEventsCardContent = ({
           );
         })}
         <CustomResolverFetchMoreLoader
-          loading={isFetchingMore || firstQueryLoading}
+          loading={isFetchingMore}
           onLastRowVisible={onLastRowVisible}
         />
       </StyledContainer>

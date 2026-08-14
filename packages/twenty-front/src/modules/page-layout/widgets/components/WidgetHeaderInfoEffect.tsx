@@ -8,7 +8,43 @@ import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-const OUTSIDE_WIDGET_INSTANCE_ID = 'widget-header-info-outside-widget';
+type WidgetHeaderInfoPublisherEffectProps = WidgetHeaderInfo & {
+  pageLayoutInstanceId: string;
+  widgetInstanceId: string;
+};
+
+const WidgetHeaderInfoPublisherEffect = ({
+  count,
+  actions,
+  pageLayoutInstanceId,
+  widgetInstanceId,
+}: WidgetHeaderInfoPublisherEffectProps) => {
+  const setWidgetHeaderInfo = useSetAtomComponentFamilyState(
+    widgetHeaderInfoComponentFamilyState,
+    widgetInstanceId,
+    pageLayoutInstanceId,
+  );
+
+  useEffect(() => {
+    const nextWidgetHeaderInfo: WidgetHeaderInfo = { count, actions };
+
+    setWidgetHeaderInfo((currentWidgetHeaderInfo) =>
+      isDeeplyEqual(currentWidgetHeaderInfo, nextWidgetHeaderInfo, {
+        strict: true,
+      })
+        ? currentWidgetHeaderInfo
+        : nextWidgetHeaderInfo,
+    );
+  }, [actions, count, setWidgetHeaderInfo]);
+
+  useEffect(() => {
+    return () => {
+      setWidgetHeaderInfo(null);
+    };
+  }, [setWidgetHeaderInfo]);
+
+  return null;
+};
 
 type WidgetHeaderInfoEffectProps = WidgetHeaderInfo;
 
@@ -23,40 +59,16 @@ export const WidgetHeaderInfoEffect = ({
     WidgetComponentInstanceContext,
   );
 
-  const isInsideWidget =
-    isDefined(pageLayoutInstanceId) && isDefined(widgetInstanceId);
-
-  const setWidgetHeaderInfo = useSetAtomComponentFamilyState(
-    widgetHeaderInfoComponentFamilyState,
-    widgetInstanceId ?? OUTSIDE_WIDGET_INSTANCE_ID,
-    pageLayoutInstanceId ?? OUTSIDE_WIDGET_INSTANCE_ID,
-  );
-
-  useEffect(() => {
-    if (!isInsideWidget) {
-      return;
-    }
-
-    const nextWidgetHeaderInfo: WidgetHeaderInfo = { count, actions };
-
-    setWidgetHeaderInfo((currentWidgetHeaderInfo) =>
-      isDeeplyEqual(currentWidgetHeaderInfo, nextWidgetHeaderInfo, {
-        strict: true,
-      })
-        ? currentWidgetHeaderInfo
-        : nextWidgetHeaderInfo,
+  if (isDefined(pageLayoutInstanceId) && isDefined(widgetInstanceId)) {
+    return (
+      <WidgetHeaderInfoPublisherEffect
+        count={count}
+        actions={actions}
+        pageLayoutInstanceId={pageLayoutInstanceId}
+        widgetInstanceId={widgetInstanceId}
+      />
     );
-  }, [actions, count, isInsideWidget, setWidgetHeaderInfo]);
-
-  useEffect(() => {
-    if (!isInsideWidget) {
-      return;
-    }
-
-    return () => {
-      setWidgetHeaderInfo(null);
-    };
-  }, [isInsideWidget, setWidgetHeaderInfo]);
+  }
 
   return null;
 };
