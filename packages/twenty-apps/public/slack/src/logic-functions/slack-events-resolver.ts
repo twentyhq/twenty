@@ -9,9 +9,8 @@ import {
   SLACK_HOME_OPENED_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
-import { getSlackWebhookSecret } from 'src/logic-functions/utils/get-slack-webhook-secret';
 import { resolveTargetWorkspaceId } from 'src/logic-functions/utils/resolve-target-workspace-id';
-import { verifySlackRequestSignature } from 'src/logic-functions/utils/verify-slack-request-signature';
+import { verifySlackWebhookRequestOrThrow } from 'src/logic-functions/utils/verify-slack-webhook-request-or-throw';
 
 type SlackEventsResolverResult =
   | Response
@@ -24,28 +23,7 @@ type SlackEventsResolverResult =
 export const slackEventsResolverHandler = async (
   routePayload: RoutePayload<SlackEventsRequestBody>,
 ): Promise<SlackEventsResolverResult> => {
-  const secretResult = getSlackWebhookSecret();
-
-  if (!secretResult.success) {
-    throw new Error(secretResult.error);
-  }
-
-  if (routePayload.rawBody === undefined) {
-    throw new Error(
-      'Raw request body was not forwarded by the server; cannot verify the webhook signature',
-    );
-  }
-
-  if (
-    !verifySlackRequestSignature({
-      rawBody: routePayload.rawBody,
-      signatureHeader: routePayload.headers['x-slack-signature'],
-      timestampHeader: routePayload.headers['x-slack-request-timestamp'],
-      secret: secretResult.secret,
-    })
-  ) {
-    throw new Error('Invalid Slack signature');
-  }
+  verifySlackWebhookRequestOrThrow(routePayload);
 
   const body = routePayload.body;
 

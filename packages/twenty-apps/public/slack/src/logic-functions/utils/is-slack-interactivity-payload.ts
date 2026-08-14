@@ -5,18 +5,16 @@ import { type SlackInteractivityPayload } from 'src/logic-functions/types/slack-
 const isOptionalString = (value: unknown): value is string | undefined =>
   isUndefined(value) || isString(value);
 
-const isOptionalIdentifiedObject = (value: unknown): boolean =>
+const isTeam = (value: unknown): boolean =>
   isUndefined(value) ||
   (isObject<Record<string, unknown>, unknown>(value) &&
     isOptionalString(value.id));
 
 const isInteractionAction = (value: unknown): boolean =>
   isObject<Record<string, unknown>, unknown>(value) &&
-  isOptionalString(value.type) &&
   isOptionalString(value.action_id) &&
   isOptionalString(value.block_id) &&
-  isOptionalString(value.value) &&
-  isOptionalString(value.action_ts);
+  isOptionalString(value.value);
 
 export const isSlackInteractivityPayload = (
   value: unknown,
@@ -27,8 +25,7 @@ export const isSlackInteractivityPayload = (
 
   return (
     isOptionalString(value.type) &&
-    isOptionalIdentifiedObject(value.team) &&
-    isOptionalIdentifiedObject(value.user) &&
+    isTeam(value.team) &&
     (isUndefined(value.actions) ||
       (isArray(value.actions) && value.actions.every(isInteractionAction)))
   );
