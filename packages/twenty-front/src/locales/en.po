@@ -14215,6 +14215,7 @@ msgid "Organize"
 msgstr "Organize"
 
 #. js-lingui-id: /IX/7x
+#: src/modules/ai/components/internal/AiChatQuestionOtherOption.tsx
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
@@ -19628,11 +19629,6 @@ msgstr "Type"
 msgid "Type '/' for commands, '@' for mentions"
 msgstr "Type '/' for commands, '@' for mentions"
 
-#. js-lingui-id: vf2PjH
-#: src/modules/ai/components/AiChatQuestionCard.tsx
-msgid "Type anything to do differently."
-msgstr "Type anything to do differently."
-
 #. js-lingui-id: qzD6hf
 #: src/modules/side-panel/components/SidePanelTopBar.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
@@ -19649,6 +19645,11 @@ msgstr "Type something or press \"/\" to see commands"
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemRecordSubPage.tsx
 msgid "Type to search records"
 msgstr "Type to search records"
+
+#. js-lingui-id: SILT51
+#: src/modules/ai/components/internal/AiChatQuestionOtherOption.tsx
+msgid "Type your own answer here"
+msgstr "Type your own answer here"
 
 #. js-lingui-id: D38O1A
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx

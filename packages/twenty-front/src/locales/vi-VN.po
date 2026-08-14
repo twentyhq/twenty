@@ -14220,6 +14220,7 @@ msgid "Organize"
 msgstr "Sắp xếp"
 
 #. js-lingui-id: /IX/7x
+#: src/modules/ai/components/internal/AiChatQuestionOtherOption.tsx
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
@@ -19631,11 +19632,6 @@ msgstr "Loại"
 msgid "Type '/' for commands, '@' for mentions"
 msgstr "Nhập '/' để dùng lệnh, '@' để nhắc đến"
 
-#. js-lingui-id: vf2PjH
-#: src/modules/ai/components/AiChatQuestionCard.tsx
-msgid "Type anything to do differently."
-msgstr "Nhập bất kỳ điều gì để làm khác đi."
-
 #. js-lingui-id: qzD6hf
 #: src/modules/side-panel/components/SidePanelTopBar.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
@@ -19652,6 +19648,11 @@ msgstr "Nhập nội dung hoặc nhấn \"/\" để xem các lệnh"
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemRecordSubPage.tsx
 msgid "Type to search records"
 msgstr "Nhập để tìm kiếm bản ghi"
+
+#. js-lingui-id: SILT51
+#: src/modules/ai/components/internal/AiChatQuestionOtherOption.tsx
+msgid "Type your own answer here"
+msgstr ""
 
 #. js-lingui-id: D38O1A
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
