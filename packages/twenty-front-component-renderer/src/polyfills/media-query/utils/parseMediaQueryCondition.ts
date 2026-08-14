@@ -6,6 +6,12 @@ import { parseMediaQueryResolutionToDevicePixelRatio } from '@/polyfills/media-q
 
 const WEBKIT_FEATURE_PREFIX = '-webkit-';
 
+const WEBKIT_DEVICE_PIXEL_RATIO_FEATURES = new Set([
+  '-webkit-device-pixel-ratio',
+  '-webkit-min-device-pixel-ratio',
+  '-webkit-max-device-pixel-ratio',
+]);
+
 export const parseMediaQueryCondition = (
   conditionString: string,
 ): ParsedMediaQueryCondition | null => {
@@ -41,7 +47,7 @@ export const parseMediaQueryCondition = (
     return null;
   }
 
-  let remainingFeatureName = featureName.startsWith(WEBKIT_FEATURE_PREFIX)
+  let remainingFeatureName = WEBKIT_DEVICE_PIXEL_RATIO_FEATURES.has(featureName)
     ? featureName.slice(WEBKIT_FEATURE_PREFIX.length)
     : featureName;
 
@@ -72,7 +78,7 @@ export const parseMediaQueryCondition = (
   }
 
   if (remainingFeatureName === 'device-pixel-ratio') {
-    if (!/^\d+(\.\d+)?$/.test(featureValue)) {
+    if (!/^(\d+(\.\d+)?|\.\d+)$/.test(featureValue)) {
       return null;
     }
 

@@ -5,7 +5,7 @@ import { MEDIA_QUERY_LENGTH_UNIT_TO_PIXELS } from '@/polyfills/media-query/const
 export const parseMediaQueryLengthToPixels = (
   lengthString: string,
 ): number | null => {
-  const lengthMatch = lengthString.match(/^(\d+(?:\.\d+)?)([a-z%]*)$/);
+  const lengthMatch = lengthString.match(/^(\d+(?:\.\d+)?|\.\d+)([a-z%]*)$/);
 
   if (!isDefined(lengthMatch)) {
     return null;

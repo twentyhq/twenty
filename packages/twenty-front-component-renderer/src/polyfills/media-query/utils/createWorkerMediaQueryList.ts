@@ -44,6 +44,14 @@ export const createWorkerMediaQueryList = ({
     }
 
     for (const listenerToNotify of listenersToNotify) {
+      const isStillRegistered =
+        changeListeners.has(listenerToNotify) ||
+        listenerToNotify === onchangeListener;
+
+      if (!isStillRegistered) {
+        continue;
+      }
+
       try {
         listenerToNotify(changeEvent);
       } catch (error) {

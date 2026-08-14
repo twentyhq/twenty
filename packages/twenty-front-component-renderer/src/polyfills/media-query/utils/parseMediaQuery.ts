@@ -23,17 +23,23 @@ export const parseMediaQuery = (
 
   for (const [partIndex, queryPart] of queryParts.entries()) {
     let currentPart = queryPart.trim();
+    let requiresMediaType = false;
 
     if (partIndex === 0) {
       if (currentPart.startsWith('not ')) {
         isNegated = true;
         currentPart = currentPart.slice('not '.length).trim();
       } else if (currentPart.startsWith('only ')) {
+        requiresMediaType = true;
         currentPart = currentPart.slice('only '.length).trim();
       }
     }
 
     if (currentPart.startsWith('(')) {
+      if (requiresMediaType) {
+        return null;
+      }
+
       const parsedCondition = parseMediaQueryCondition(currentPart);
 
       if (!isDefined(parsedCondition)) {

@@ -123,6 +123,38 @@ describe('parseMediaQuery', () => {
     expect(parseMediaQuery('(min-width: 600px) and screen')).toBeNull();
   });
 
+  it('should reject only when it is not followed by a media type', () => {
+    expect(parseMediaQuery('only (min-width: 600px)')).toBeNull();
+  });
+
+  it('should reject webkit-prefixed features other than device pixel ratio', () => {
+    expect(parseMediaQuery('(-webkit-min-width: 600px)')).toBeNull();
+  });
+
+  it('should parse values with a leading decimal point', () => {
+    expect(
+      parseMediaQuery('(-webkit-min-device-pixel-ratio: .5)')?.conditions,
+    ).toEqual([
+      {
+        kind: 'numeric',
+        source: 'devicePixelRatio',
+        comparison: 'min',
+        value: 0.5,
+      },
+    ]);
+    expect(parseMediaQuery('(min-width: .5em)')?.conditions).toEqual([
+      { kind: 'numeric', source: 'viewportWidth', comparison: 'min', value: 8 },
+    ]);
+    expect(parseMediaQuery('(min-resolution: .5dppx)')?.conditions).toEqual([
+      {
+        kind: 'numeric',
+        source: 'devicePixelRatio',
+        comparison: 'min',
+        value: 0.5,
+      },
+    ]);
+  });
+
   it('should accept a zero length without a unit', () => {
     expect(parseMediaQuery('(min-width: 0)')?.conditions).toEqual([
       { kind: 'numeric', source: 'viewportWidth', comparison: 'min', value: 0 },

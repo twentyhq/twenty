@@ -5,7 +5,9 @@ import { MEDIA_QUERY_RESOLUTION_UNIT_TO_DEVICE_PIXEL_RATIO } from '@/polyfills/m
 export const parseMediaQueryResolutionToDevicePixelRatio = (
   resolutionString: string,
 ): number | null => {
-  const resolutionMatch = resolutionString.match(/^(\d+(?:\.\d+)?)([a-z]+)$/);
+  const resolutionMatch = resolutionString.match(
+    /^(\d+(?:\.\d+)?|\.\d+)([a-z]+)$/,
+  );
 
   if (!isDefined(resolutionMatch)) {
     return null;
