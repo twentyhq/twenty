@@ -167,6 +167,39 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
     );
   });
 
+  it('should render an inner join for a to-one relation', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.setFindOptions({ select: { id: true } });
+    queryBuilder.innerJoin('person.company', 'company');
+
+    expect(queryBuilder.getQuery()).toContain(
+      `INNER JOIN "${SCHEMA_NAME}"."company" AS "company" ` +
+        'ON ("person"."companyId" = "company"."id")',
+    );
+  });
+
+  it('should resolve a join path rooted on a joined alias', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.setFindOptions({ select: { id: true } });
+    queryBuilder.leftJoin('person.company', 'company');
+    queryBuilder.leftJoin('company.person', 'companyPerson');
+
+    expect(queryBuilder.getQuery()).toContain(
+      `LEFT JOIN "${SCHEMA_NAME}"."company" AS "companyPerson" ` +
+        'ON ("company"."personId" = "companyPerson"."id")',
+    );
+  });
+
+  it('should reject a join path rooted on an unknown alias', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    expect(() => queryBuilder.leftJoin('unknown.company', 'company')).toThrow(
+      TwentyOrmV2Exception,
+    );
+  });
+
   it('should report a to-many join to the shared guard rather than rendering it', () => {
     const { queryBuilder } = buildQueryBuilder();
 

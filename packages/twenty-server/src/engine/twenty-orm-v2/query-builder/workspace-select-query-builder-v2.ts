@@ -256,6 +256,25 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     condition?: string,
     options?: { allowToManyJoin?: boolean },
   ): this {
+    return this.addJoin('LEFT', relationPath, alias, condition, options);
+  }
+
+  innerJoin(
+    relationPath: string,
+    alias: string,
+    condition?: string,
+    options?: { allowToManyJoin?: boolean },
+  ): this {
+    return this.addJoin('INNER', relationPath, alias, condition, options);
+  }
+
+  private addJoin(
+    joinType: 'INNER' | 'LEFT',
+    relationPath: string,
+    alias: string,
+    condition?: string,
+    options?: { allowToManyJoin?: boolean },
+  ): this {
     const [parentAlias, relationFieldName] = relationPath.split('.');
 
     if (!isDefined(relationFieldName)) {
@@ -269,12 +288,21 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       return this;
     }
 
+    const parentTableShape = this.getTableShapeForAlias(parentAlias);
+
+    if (!isDefined(parentTableShape)) {
+      throw new TwentyOrmV2Exception(
+        `Join path "${relationPath}" references "${parentAlias}", which is neither the main alias nor a joined alias`,
+        TwentyOrmV2ExceptionCode.UNKNOWN_RELATION,
+      );
+    }
+
     const relationShape =
-      this.tableShape.relationShapeByFieldName[relationFieldName];
+      parentTableShape.relationShapeByFieldName[relationFieldName];
 
     if (!isDefined(relationShape)) {
       throw new TwentyOrmV2Exception(
-        `Relation "${relationFieldName}" does not exist on "${this.tableShape.nameSingular}"`,
+        `Relation "${relationFieldName}" does not exist on "${parentTableShape.nameSingular}"`,
         TwentyOrmV2ExceptionCode.UNKNOWN_RELATION,
       );
     }
@@ -302,8 +330,11 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
 
     this.joinClauses.push({
       alias,
+      parentAlias,
+      relationFieldName,
       targetTableShape,
       relationType: relationShape.relationType,
+      joinType,
       condition: isDefined(joinColumnName)
         ? (condition ??
           `${this.quoteColumn(parentAlias, joinColumnName)} = ${this.quoteColumn(alias, 'id')}`)
@@ -313,6 +344,17 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     });
 
     return this;
+  }
+
+  private getTableShapeForAlias(
+    alias: string,
+  ): WorkspaceTableShape | undefined {
+    if (alias === this.alias) {
+      return this.tableShape;
+    }
+
+    return this.joinClauses.find((joinClause) => joinClause.alias === alias)
+      ?.targetTableShape;
   }
 
   private buildToManyJoin({
