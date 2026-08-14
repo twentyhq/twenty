@@ -4,13 +4,18 @@ import { type MediaQueryEnvironment } from '@/polyfills/media-query/types/MediaQ
 import { type ParsedMediaQuery } from '@/polyfills/media-query/types/ParsedMediaQuery';
 import { evaluateParsedMediaQuery } from '@/polyfills/media-query/utils/evaluateParsedMediaQuery';
 
-export const evaluateParsedMediaQueryList = (
-  parsedMediaQueryList: (ParsedMediaQuery | null)[],
-  environment: MediaQueryEnvironment,
-): boolean => {
+type EvaluateParsedMediaQueryListInput = {
+  parsedMediaQueryList: (ParsedMediaQuery | null)[];
+  environment: MediaQueryEnvironment;
+};
+
+export const evaluateParsedMediaQueryList = ({
+  parsedMediaQueryList,
+  environment,
+}: EvaluateParsedMediaQueryListInput): boolean => {
   return parsedMediaQueryList.some(
     (parsedMediaQuery) =>
       isDefined(parsedMediaQuery) &&
-      evaluateParsedMediaQuery(parsedMediaQuery, environment),
+      evaluateParsedMediaQuery({ parsedMediaQuery, environment }),
   );
 };

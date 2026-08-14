@@ -2,14 +2,19 @@ import { type MediaQueryEnvironment } from '@/polyfills/media-query/types/MediaQ
 import { type ParsedMediaQuery } from '@/polyfills/media-query/types/ParsedMediaQuery';
 import { evaluateParsedMediaQueryCondition } from '@/polyfills/media-query/utils/evaluateParsedMediaQueryCondition';
 
-export const evaluateParsedMediaQuery = (
-  parsedMediaQuery: ParsedMediaQuery,
-  environment: MediaQueryEnvironment,
-): boolean => {
+type EvaluateParsedMediaQueryInput = {
+  parsedMediaQuery: ParsedMediaQuery;
+  environment: MediaQueryEnvironment;
+};
+
+export const evaluateParsedMediaQuery = ({
+  parsedMediaQuery,
+  environment,
+}: EvaluateParsedMediaQueryInput): boolean => {
   const matchesWithoutNegation =
     parsedMediaQuery.matchesMediaType &&
     parsedMediaQuery.conditions.every((condition) =>
-      evaluateParsedMediaQueryCondition(condition, environment),
+      evaluateParsedMediaQueryCondition({ condition, environment }),
     );
 
   return parsedMediaQuery.isNegated
