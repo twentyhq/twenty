@@ -337,9 +337,7 @@ export const PageLayoutTabList = ({
 
   const canReorderTabs = isReorderEnabled;
 
-  // A dropdown costs a tap to discover what is behind it. Touch surfaces can
-  // swipe the row instead, so mobile keeps every tab and scrolls. Reordering
-  // drags along the same axis, so that mode keeps the dropdown.
+  // Reordering drags along the same axis as the scroll, so it keeps the dropdown.
   const shouldScrollTabs = isMobile && !canReorderTabs;
 
   const shouldRenderReorderableDropdown = hasHiddenTabs && canReorderTabs;

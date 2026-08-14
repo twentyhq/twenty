@@ -2,7 +2,9 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { TabListHiddenMeasurements } from '@/ui/layout/tab-list/components/TabListHiddenMeasurements';
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
 import { TAB_LIST_HEIGHT } from '@/ui/layout/tab-list/constants/TabListHeight';
+import { useScrollActiveTabIntoView } from '@/ui/layout/tab-list/hooks/useScrollActiveTabIntoView';
 import { useTabListMeasurements } from '@/ui/layout/tab-list/hooks/useTabListMeasurements';
+import { SCROLLABLE_TAB_ROW_CSS } from '@/ui/layout/tab-list/styles/ScrollableTabRowCSS';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
@@ -55,17 +57,8 @@ const StyledTabContainer = styled.div<{ isScrollable: boolean }>`
   gap: ${TAB_LIST_GAP}px;
   max-width: 100%;
   overflow-x: ${({ isScrollable }) => (isScrollable ? 'auto' : 'hidden')};
-  overflow-y: hidden;
   position: relative;
-  scrollbar-width: none;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
-
-  > * {
-    flex-shrink: 0;
-  }
+  ${SCROLLABLE_TAB_ROW_CSS}
 `;
 
 const StyledNodeDimension = styled(NodeDimension)`
@@ -116,13 +109,16 @@ export const TabList = ({
     hasAddButton: false,
   });
 
-  // A dropdown costs a tap to discover what is behind it. Touch surfaces can
-  // swipe the row instead, so mobile keeps every tab and scrolls.
   const shouldScrollTabs = isMobile;
   const renderedTabs = shouldScrollTabs
     ? visibleTabs
     : visibleTabs.slice(0, visibleTabCount);
   const shouldShowOverflowDropdown = hasHiddenTabs && !shouldScrollTabs;
+
+  const { tabRowRef } = useScrollActiveTabIntoView({
+    activeTabId,
+    isScrollable: shouldScrollTabs,
+  });
 
   const dropdownId = `tab-overflow-${componentInstanceId}`;
   const { closeDropdown } = useCloseDropdown();
@@ -184,7 +180,10 @@ export const TabList = ({
         <StyledContainer className={className}>
           <StyledNodeDimension onDimensionChange={onContainerWidthChange}>
             <StyledInnerContainer $centerTabs={centerTabs && !shouldScrollTabs}>
-              <StyledTabContainer isScrollable={shouldScrollTabs}>
+              <StyledTabContainer
+                ref={tabRowRef}
+                isScrollable={shouldScrollTabs}
+              >
                 {renderedTabs.map((tab) => (
                   <TabButton
                     key={tab.id}
