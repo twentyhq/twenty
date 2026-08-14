@@ -2,6 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 
+import {
+  EmailingDomainDriverException,
+  EmailingDomainDriverExceptionCode,
+} from 'src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception';
 import { ResendApiClientService } from 'src/engine/core-modules/emailing-domain/drivers/resend/services/resend-api-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { InboundEmailParserService } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/services/inbound-email-parser.service';
@@ -30,8 +34,9 @@ export class ResendInboundEmailMessageSourceService implements InboundEmailMessa
     const downloadUrl = receivedEmail.raw?.download_url;
 
     if (!isNonEmptyString(downloadUrl)) {
-      throw new Error(
+      throw new EmailingDomainDriverException(
         `Received email ${reference} has no raw content download URL`,
+        EmailingDomainDriverExceptionCode.NOT_FOUND,
       );
     }
 

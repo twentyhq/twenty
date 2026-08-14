@@ -32,18 +32,25 @@ const mapResendRecordStatus = (status: string | undefined): string => {
   }
 };
 
+const isVerificationRecordType = (
+  type: string,
+): type is VerificationRecord['type'] => {
+  return type === 'TXT' || type === 'CNAME' || type === 'MX';
+};
+
 export const mapResendDomainRecords = (
   records: ResendDomainRecord[] | undefined,
 ): VerificationRecord[] => {
   return (records ?? [])
     .filter(
-      (record) =>
-        record.type === 'TXT' ||
-        record.type === 'CNAME' ||
-        record.type === 'MX',
+      (
+        record,
+      ): record is ResendDomainRecord & {
+        type: VerificationRecord['type'];
+      } => isVerificationRecordType(record.type),
     )
     .map((record) => ({
-      type: record.type as VerificationRecord['type'],
+      type: record.type,
       key: record.name,
       value: record.value,
       ...(isDefined(record.priority) ? { priority: record.priority } : {}),
