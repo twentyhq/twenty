@@ -49,6 +49,7 @@ export type SelectStatementState = {
   whereClauses: WhereClause[];
   groupByExpressions: string[];
   orderByClauses: OrderByClause[];
+  distinctOnExpressions: string[];
   includeDeleted: boolean;
   limitValue?: number;
   offsetValue?: number;
@@ -304,11 +305,23 @@ export const buildPaginationParameters = (
     : {}),
 });
 
+const buildDistinctOnClause = (state: SelectStatementState): string => {
+  if (state.distinctOnExpressions.length === 0) {
+    return '';
+  }
+
+  const aliases = collectStatementAliases(state);
+
+  return `DISTINCT ON (${state.distinctOnExpressions
+    .map((expression) => quoteQualifiedAliasReferences(expression, aliases))
+    .join(', ')}) `;
+};
+
 export const buildSelectStatement = (state: SelectStatementState): string => {
   const whereExpression = buildWhereExpression(state);
 
   return [
-    `SELECT ${buildProjection(state).expressions.join(', ')}`,
+    `SELECT ${buildDistinctOnClause(state)}${buildProjection(state).expressions.join(', ')}`,
     buildFromClause(state),
     buildJoinClause(state),
     whereExpression.length > 0 ? `WHERE ${whereExpression}` : '',

@@ -45,6 +45,7 @@ import {
   type WhereClause,
 } from 'src/engine/twenty-orm-v2/sql/utils/build-select-statement.util';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm-v2/table-shape/types/workspace-table-shape.type';
+import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 let objectWhereParameterSequence = 0;
 
@@ -70,6 +71,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
   private readonly extraSelectClauses: SelectClause[] = [];
   private orderByClauses: OrderByClause[] = [];
   private groupByExpressions: string[] = [];
+  private distinctOnExpressions: string[] = [];
   private parameters: Record<string, unknown> = {};
   private findOptions: FindOptionsLike = {};
   private limitValue?: number;
@@ -111,6 +113,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     cloned.extraSelectClauses.push(...this.extraSelectClauses);
     cloned.orderByClauses = [...this.orderByClauses];
     cloned.groupByExpressions = [...this.groupByExpressions];
+    cloned.distinctOnExpressions = [...this.distinctOnExpressions];
     cloned.parameters = { ...this.parameters };
     cloned.findOptions = { ...this.findOptions };
     cloned.limitValue = this.limitValue;
@@ -238,6 +241,14 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     nulls?: 'NULLS FIRST' | 'NULLS LAST',
   ): this {
     return this.appendOrderBy(orderByOrExpression, direction, nulls);
+  }
+
+  distinctOn(columns: string[]): this {
+    this.distinctOnExpressions = columns.map((column) =>
+      this.normaliseColumnExpression(column),
+    );
+
+    return this;
   }
 
   groupBy(expression: string): this {
@@ -553,13 +564,25 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
           aliases,
         ),
       })),
-      orderByClauses: this.orderByClauses.map((orderByClause) => ({
-        ...orderByClause,
-        expression: quoteQualifiedAliasReferences(
-          orderByClause.expression,
-          aliases,
-        ),
-      })),
+      // An order by that targets an added-select alias references an output
+      // column, and the columns feeding it are collected from the select itself.
+      orderByClauses: this.orderByClauses
+        .filter(
+          (orderByClause) =>
+            !this.extraSelectClauses.some(
+              (selectClause) =>
+                escapeIdentifier(selectClause.alias) ===
+                orderByClause.expression,
+            ),
+        )
+        .map((orderByClause) => ({
+          ...orderByClause,
+          expression: quoteQualifiedAliasReferences(
+            orderByClause.expression,
+            aliases,
+          ),
+        })),
+      distinctOnExpressions: this.distinctOnExpressions,
     });
   }
 
@@ -844,11 +867,28 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
         direction,
         nulls,
         normaliseColumnExpression: (expression) =>
-          this.normaliseColumnExpression(expression),
+          this.normaliseOrderByExpression(expression),
       }),
     );
 
     return this;
+  }
+
+  // Ordering by the alias of an added select (e.g. MAX(...) AS "max_received_at")
+  // must reference the output column unqualified, not a main-alias column.
+  private normaliseOrderByExpression(expression: string): string {
+    const isBareIdentifier = /^\w+$/.test(expression);
+
+    if (
+      isBareIdentifier &&
+      this.extraSelectClauses.some(
+        (selectClause) => selectClause.alias === expression,
+      )
+    ) {
+      return escapeIdentifier(expression);
+    }
+
+    return this.normaliseColumnExpression(expression);
   }
 
   private async executeSelect(): Promise<Record<string, unknown>[]> {
@@ -911,6 +951,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       whereClauses: this.whereClauses,
       groupByExpressions: this.groupByExpressions,
       orderByClauses: this.orderByClauses,
+      distinctOnExpressions: this.distinctOnExpressions,
       includeDeleted: this.includeDeleted,
       limitValue: this.limitValue,
       offsetValue: this.offsetValue,

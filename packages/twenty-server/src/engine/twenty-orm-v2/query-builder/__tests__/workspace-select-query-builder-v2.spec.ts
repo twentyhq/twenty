@@ -279,6 +279,56 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
     );
   });
 
+  it('should render a DISTINCT ON clause with normalised columns', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.setFindOptions({ select: { id: true } });
+    queryBuilder.leftJoin('person.company', 'company');
+    queryBuilder.distinctOn(['company.name', 'nameFirstName']);
+
+    expect(queryBuilder.getQuery()).toContain(
+      'SELECT DISTINCT ON ("company"."name", "person"."nameFirstName") ',
+    );
+  });
+
+  it('should order by an added-select alias without qualifying it', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.select([]);
+    queryBuilder.addSelect('MAX("person"."nameFirstName")', 'max_first_name');
+    queryBuilder.groupBy('person.companyId');
+    queryBuilder.orderBy('max_first_name', 'DESC');
+
+    const sql = queryBuilder.getQuery();
+
+    expect(sql).toContain('ORDER BY "max_first_name" DESC');
+    expect(sql).not.toContain('"person"."max_first_name"');
+  });
+
+  it('should not report an added-select order-by alias as a selected column', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.select([]);
+    queryBuilder.addSelect('MAX("person"."nameFirstName")', 'max_first_name');
+    queryBuilder.orderBy('max_first_name', 'DESC');
+
+    expect(queryBuilder.getReferencedColumnNamesByAlias()['person']).toEqual([
+      'nameFirstName',
+    ]);
+  });
+
+  it('should report distinct-on columns as referenced for permissions', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.setFindOptions({ select: { id: true } });
+    queryBuilder.leftJoin('person.company', 'company');
+    queryBuilder.distinctOn(['company.name']);
+
+    expect(queryBuilder.getReferencedColumnNamesByAlias()['company']).toEqual([
+      'name',
+    ]);
+  });
+
   it('should reject a column that does not exist on the object', () => {
     const { queryBuilder } = buildQueryBuilder();
 
