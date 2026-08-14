@@ -502,7 +502,10 @@ const buildRelationValue = (leaves: RelationColumnLeaf[]): unknown => {
 
     const nestedLeaves = nestedLeavesByProperty.get(propertyName) ?? [];
 
-    nestedLeaves.push({ propertySegments: remainingSegments, value: leaf.value });
+    nestedLeaves.push({
+      propertySegments: remainingSegments,
+      value: leaf.value,
+    });
     nestedLeavesByProperty.set(propertyName, nestedLeaves);
   }
 

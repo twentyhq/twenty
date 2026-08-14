@@ -317,9 +317,7 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
     expect(queryBuilder.getQuery()).toContain(
       '"company"."name" AS "companyName"',
     );
-    await expect(queryBuilder.getMany()).resolves.toEqual([
-      { id: 'person-1' },
-    ]);
+    await expect(queryBuilder.getMany()).resolves.toEqual([{ id: 'person-1' }]);
   });
 
   it('should reject a partial selection on an unknown alias or column', () => {
@@ -352,11 +350,7 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
 
     const columnNamesByAlias = queryBuilder.getReferencedColumnNamesByAlias();
 
-    expect(columnNamesByAlias['company']).toEqual([
-      'id',
-      'name',
-      'deletedAt',
-    ]);
+    expect(columnNamesByAlias['company']).toEqual(['id', 'name', 'deletedAt']);
     expect(columnNamesByAlias['people']).toEqual([]);
   });
 
@@ -366,9 +360,7 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
     queryBuilder.setFindOptions({ select: { id: true } });
     queryBuilder.leftJoinAndSelect('person.people', 'people');
 
-    await expect(queryBuilder.getMany()).rejects.toThrow(
-      TwentyOrmV2Exception,
-    );
+    await expect(queryBuilder.getMany()).rejects.toThrow(TwentyOrmV2Exception);
   });
 
   it('should render an added join condition on a selected inner join', () => {
@@ -423,9 +415,7 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
     queryBuilder.setFindOptions({ select: { id: true } });
     queryBuilder.leftJoin('person.people', 'people');
 
-    await expect(queryBuilder.getMany()).rejects.toThrow(
-      TwentyOrmV2Exception,
-    );
+    await expect(queryBuilder.getMany()).rejects.toThrow(TwentyOrmV2Exception);
     await expect(queryBuilder.getOne()).rejects.toThrow(TwentyOrmV2Exception);
   });
 
