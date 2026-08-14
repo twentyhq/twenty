@@ -466,15 +466,16 @@ const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_AP
 
 Frontendové komponenty mohou pomocí funkcí z `twenty-sdk` vyvolávat navigaci, modály a oznámení:
 
-| Funkce                                          | Popis                          |
-| ----------------------------------------------- | ------------------------------ |
-| `navigate(to, params?, queryParams?, options?)` | Přejít na stránku v aplikaci   |
-| `openSidePanelPage(params)`                     | Otevřít postranní panel        |
-| `closeSidePanel()`                              | Zavřít postranní panel         |
-| `openCommandConfirmationModal(params)`          | Zobrazit potvrzovací dialog    |
-| `enqueueSnackbar(params)`                       | Zobrazit oznámení typu toast   |
-| `unmountFrontComponent()`                       | Odpojit komponentu             |
-| `updateProgress(progress)`                      | Aktualizovat indikátor průběhu |
+| Funkce                                             | Popis                                                                                                                                                                              |
+| -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `navigate(to, params?, queryParams?, options?)`    | Přejít na stránku v aplikaci                                                                                                                                                       |
+| `openSidePanelPage(params)`                        | Otevřít postranní panel                                                                                                                                                            |
+| `closeSidePanel()`                                 | Zavřít postranní panel                                                                                                                                                             |
+| `openCommandConfirmationModal(params)`             | Zobrazit potvrzovací dialog                                                                                                                                                        |
+| `enqueueSnackbar(params)`                          | Zobrazit oznámení typu toast                                                                                                                                                       |
+| `unmountFrontComponent()`                          | Odpojit komponentu                                                                                                                                                                 |
+| `updateProgress(progress)`                         | Aktualizovat indikátor průběhu                                                                                                                                                     |
+| `uploadFile(file, { fieldMetadataId, fileName? })` | Nahraje `Blob` do pole FILES; vrátí `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` nebo `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` |
 
 Zde je příklad, který používá hostitelské API k zobrazení snackbaru a zavření postranního panelu po dokončení akce:
 
@@ -833,9 +834,13 @@ Komponentové CSS, ať už z `import './styles.css'`, CSS-in-JS nebo z prvku `st
 * Jiné původy opouštějí sandbox s `Origin: null`, takže API třetí strany odpoví jen tehdy, pokud posílá `Access-Control-Allow-Origin: *`. Místo toho jej volejte z logické funkce.
 * `fetch('/rest/people')` se nikdy nespáruje s Twenty API, protože sandbox nemá URL stránky, podle které by vyhodnotil relativní cestu.
 
+### Zachytávání médií
+
+`navigator.mediaDevices.getUserMedia()` a `MediaRecorder` fungují uvnitř frontendových komponent díky sandboxovým polyfillům, takže standardní kód pro nahrávání běží beze změn a `MediaRecorder.isTypeSupported` udává, zda jsou podporovány běžné kombinace kontejneru/kodeku. Detailní objekty omezení `getUserMedia` jsou akceptovány, ale nejsou předávány dál — hostitel zachytává s výchozím nastavením pro požadované druhy — a napříč aplikacemi může být v daný čas aktivní pouze jedno zachytávání. Uložte zaznamenaný `Blob` pomocí hostitelské funkce `uploadFile`.
+
 ### Další omezení
 
-* **Obsah souborů.** `input` typu `file` poskytuje vašemu handleru pouze metadata souboru, nikoli samotné bajty, takže `FileReader` a nahrávání zatím nejsou možná.
+* **Obsah souborů.** `input` typu `file` poskytuje vašemu handleru pouze metadata souboru, nikoli samotné bajty, takže `FileReader` není k dispozici. Chcete-li nahrát `Blob`, který váš kód již má k dispozici — např. jeden vytvořený pomocí `MediaRecorder` — použijte hostitelskou funkci `uploadFile`.
 * **Payloady drag-and-drop.** Události tažení se spouštějí, ale `event.dataTransfer` je `undefined`.
 * **Vestavěné moduly Node.** `fs`, `path` a `node:crypto` způsobí chybu při sestavení, takže tuto práci přesuňte do [logické funkce](/l/cs/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` a `URL` jsou k dispozici.
 * **`iframe`** je vždy znovu zasandboxováno bez `allow-same-origin`, takže vložený obsah spoléhající se na vlastní relaci se vykreslí jako odhlášený. Nemá ani `onLoad`.

@@ -466,15 +466,16 @@ const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_AP
 
 Ön uç bileşenleri, `twenty-sdk`'deki işlevleri kullanarak gezinmeyi, modalları ve bildirimleri tetikleyebilir:
 
-| Fonksiyon                                       | Açıklama                           |
-| ----------------------------------------------- | ---------------------------------- |
-| `navigate(to, params?, queryParams?, options?)` | Uygulamada bir sayfaya git         |
-| `openSidePanelPage(params)`                     | Bir yan panel aç                   |
-| `closeSidePanel()`                              | Yan paneli kapat                   |
-| `openCommandConfirmationModal(params)`          | Bir onay iletişim kutusu göster    |
-| `enqueueSnackbar(params)`                       | Bir toast bildirimi göster         |
-| `unmountFrontComponent()`                       | Bileşeni kaldır (unmount)          |
-| `updateProgress(progress)`                      | Bir ilerleme göstergesini güncelle |
+| Fonksiyon                                          | Açıklama                                                                                                                                                                                                     |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `navigate(to, params?, queryParams?, options?)`    | Uygulamada bir sayfaya git                                                                                                                                                                                   |
+| `openSidePanelPage(params)`                        | Bir yan panel aç                                                                                                                                                                                             |
+| `closeSidePanel()`                                 | Yan paneli kapat                                                                                                                                                                                             |
+| `openCommandConfirmationModal(params)`             | Bir onay iletişim kutusu göster                                                                                                                                                                              |
+| `enqueueSnackbar(params)`                          | Bir toast bildirimi göster                                                                                                                                                                                   |
+| `unmountFrontComponent()`                          | Bileşeni kaldır (unmount)                                                                                                                                                                                    |
+| `updateProgress(progress)`                         | Bir ilerleme göstergesini güncelle                                                                                                                                                                           |
+| `uploadFile(file, { fieldMetadataId, fileName? })` | Bir `Blob` dosyasını FILES alanına yükler; `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` veya `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` sonucunu döndürür. |
 
 Bir eylem tamamlandıktan sonra bir snackbar göstermek ve yan paneli kapatmak için host API'sini kullanan bir örnek:
 
@@ -833,9 +834,13 @@ Bileşen CSS’i, ister `import './styles.css'` ile, ister CSS-in-JS ile ya da b
 * Diğer origin’ler sandbox’tan `Origin: null` ile çıkar, bu yüzden üçüncü taraf bir API yalnızca `Access-Control-Allow-Origin: *` gönderirse yanıt verir. Bunun yerine onu bir mantık fonksiyonundan çağırın.
 * `fetch('/rest/people')` hiçbir zaman Twenty API’siyle eşleştirilmez, çünkü sandbox’un göreli yolu çözecek bir sayfa URL’si yoktur.
 
+### Ortam yakalama
+
+`navigator.mediaDevices.getUserMedia()` ve `MediaRecorder`, sandbox polyfill’leri aracılığıyla front bileşenleri içinde çalışır; böylece standart kayıt kodu değişmeden çalışır ve `MediaRecorder.isTypeSupported`, yaygın kapsayıcı/kodek kombinasyonları için yanıt verir. Ayrıntılı `getUserMedia` kısıtlama nesneleri kabul edilir ancak iletilmez — ana makine, istenen türler için varsayılanlarıyla yakalama yapar — ve uygulamalar genelinde aynı anda yalnızca bir yakalama etkin olabilir. Kaydedilmiş bir `Blob`’u `uploadFile` host fonksiyonu ile saklayın.
+
 ### Diğer eksikler
 
-* **Dosya içerikleri.** `file` türünde bir `input`, handler’ınıza yalnızca dosya meta verilerini verir, baytları vermez, bu yüzden `FileReader` ve yüklemeler henüz mümkün değildir.
+* **Dosya içerikleri.** `file` türünde bir `input`, handler’ınıza yalnızca dosya meta verilerini verir, baytları vermez, bu yüzden `FileReader` kullanılamaz. Kodunuzun zaten elinde bulunan bir `Blob`’u — örneğin `MediaRecorder` tarafından üretilen bir tane — yüklemek için `uploadFile` host fonksiyonunu kullanın.
 * **Sürükle-bırak yükleri.** Sürükleme olayları tetiklenir, ancak `event.dataTransfer` `undefined` durumundadır.
 * **Node yerleşikleri.** `fs`, `path` ve `node:crypto` build aşamasında başarısız olur; bu nedenle bu işi bir [mantık fonksiyonuna](/l/tr/developers/extend/apps/logic/logic-functions) taşıyın. Web Crypto, `fetch`, `TextEncoder` ve `URL` kullanılabilir durumdadır.
 * **`iframe`** her zaman `allow-same-origin` olmadan yeniden sandbox’a alınır, bu nedenle kendi oturumuna güvenen bir yerleştirme, oturum kapalı olarak işlenir. `onLoad`’u da yoktur.

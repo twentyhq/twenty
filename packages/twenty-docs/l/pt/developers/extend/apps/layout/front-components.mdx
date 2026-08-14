@@ -466,15 +466,16 @@ const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_AP
 
 Componentes de front-end podem acionar navegação, modais e notificações usando funções de `twenty-sdk`:
 
-| Função                                          | Descrição                             |
-| ----------------------------------------------- | ------------------------------------- |
-| `navigate(to, params?, queryParams?, options?)` | Navegar para uma página no app        |
-| `openSidePanelPage(params)`                     | Abrir um painel lateral               |
-| `closeSidePanel()`                              | Fechar o painel lateral               |
-| `openCommandConfirmationModal(params)`          | Mostrar um diálogo de confirmação     |
-| `enqueueSnackbar(params)`                       | Mostrar uma notificação do tipo toast |
-| `unmountFrontComponent()`                       | Desmontar o componente                |
-| `updateProgress(progress)`                      | Atualizar um indicador de progresso   |
+| Função                                             | Descrição                                                                                                                                                                                    |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `navigate(to, params?, queryParams?, options?)`    | Navegar para uma página no app                                                                                                                                                               |
+| `openSidePanelPage(params)`                        | Abrir um painel lateral                                                                                                                                                                      |
+| `closeSidePanel()`                                 | Fechar o painel lateral                                                                                                                                                                      |
+| `openCommandConfirmationModal(params)`             | Mostrar um diálogo de confirmação                                                                                                                                                            |
+| `enqueueSnackbar(params)`                          | Mostrar uma notificação do tipo toast                                                                                                                                                        |
+| `unmountFrontComponent()`                          | Desmontar o componente                                                                                                                                                                       |
+| `updateProgress(progress)`                         | Atualizar um indicador de progresso                                                                                                                                                          |
+| `uploadFile(file, { fieldMetadataId, fileName? })` | Carrega um `Blob` em um campo FILES; resulta em `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` ou `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` |
 
 Aqui está um exemplo que usa a API do host para exibir um snackbar e fechar o painel lateral após a conclusão de uma ação:
 
@@ -833,9 +834,13 @@ O CSS do componente, seja de `import './styles.css'`, CSS-in-JS ou um elemento `
 * Outras origens deixam o sandbox com `Origin: null`, então uma API de terceiros responde apenas se envia `Access-Control-Allow-Origin: *`. Chame-a de uma função lógica.
 * `fetch('/rest/people')` nunca corresponde a 20 API, porque o sandbox não tem URL de página para resolver um caminho relativo contra.
 
+### Captura de mídia
+
+`navigator.mediaDevices.getUserMedia()` e `MediaRecorder` funcionam dentro de front components por meio de sandbox polyfills, portanto o código padrão de gravação é executado sem alterações e `MediaRecorder.isTypeSupported` responde para combinações comuns de contêiner/codec. Objetos detalhados de restrição de `getUserMedia` são aceitos, mas não encaminhados — o host captura com seus padrões para os tipos solicitados — e apenas uma captura pode estar ativa por vez entre aplicativos. Armazene um `Blob` gravado com a função host `uploadFile`.
+
 ### Outras lacunas
 
-* **Conteúdo de arquivo.** Um `input` do tipo `file` fornece ao seu manipulador apenas os metadados do arquivo, não os bytes, portanto `FileReader` e uploads ainda não são possíveis.
+* **Conteúdo de arquivo.** Um `input` do tipo `file` fornece ao seu manipulador apenas os metadados do arquivo, não os bytes, portanto `FileReader` não está disponível. Para fazer upload de um `Blob` que seu código já possui — por exemplo, um produzido por `MediaRecorder` — use a função host `uploadFile`.
 * **Arrastar e soltar payloads.** Arraste eventos disparados, mas `event.dataTransfer` é `undefined`.
 * **Node embutidos.** `fs`, `path` and `node:crypto` falham na compilação, então mova o nó para uma [função lógica](/l/pt/developers/extend/apps/logic/logic-functions). Criptografia Web, `fetch`, `TextEncoder` e `URL` estão disponíveis.
 * **`iframe`** é sempre colocado novamente em sandbox sem `allow-same-origin`, portanto uma incorporação que dependa da própria sessão será renderizada como desconectada. Isso também não tem `onLoad`.

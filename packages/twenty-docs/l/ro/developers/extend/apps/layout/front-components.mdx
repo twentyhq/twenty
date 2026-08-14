@@ -466,15 +466,16 @@ const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_AP
 
 Componentele front-end pot declanșa navigare, ferestre modale și notificări folosind funcții din `twenty-sdk`:
 
-| Funcție                                         | Descriere                           |
-| ----------------------------------------------- | ----------------------------------- |
-| `navigate(to, params?, queryParams?, options?)` | Navigați la o pagină din aplicație  |
-| `openSidePanelPage(params)`                     | Deschideți un panou lateral         |
-| `closeSidePanel()`                              | Închideți panoul lateral            |
-| `openCommandConfirmationModal(params)`          | Afișați un dialog de confirmare     |
-| `enqueueSnackbar(params)`                       | Afișați o notificare tip toast      |
-| `unmountFrontComponent()`                       | Demontați componenta                |
-| `updateProgress(progress)`                      | Actualizați un indicator de progres |
+| Funcție                                            | Descriere                                                                                                                                                                                      |
+| -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `navigate(to, params?, queryParams?, options?)`    | Navigați la o pagină din aplicație                                                                                                                                                             |
+| `openSidePanelPage(params)`                        | Deschideți un panou lateral                                                                                                                                                                    |
+| `closeSidePanel()`                                 | Închideți panoul lateral                                                                                                                                                                       |
+| `openCommandConfirmationModal(params)`             | Afișați un dialog de confirmare                                                                                                                                                                |
+| `enqueueSnackbar(params)`                          | Afișați o notificare tip toast                                                                                                                                                                 |
+| `unmountFrontComponent()`                          | Demontați componenta                                                                                                                                                                           |
+| `updateProgress(progress)`                         | Actualizați un indicator de progres                                                                                                                                                            |
+| `uploadFile(file, { fieldMetadataId, fileName? })` | Încarcă un `Blob` într-un câmp FILES; returnează `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` sau `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` |
 
 Iată un exemplu care folosește API-ul gazdei pentru a afișa un snackbar și a închide panoul lateral după finalizarea unei acțiuni:
 
@@ -833,9 +834,13 @@ CSS-ul componentelor, fie din `import './styles.css'`, CSS-in-JS sau un element 
 * Alte origini părăsesc sandbox-ul cu `Origin: null`, astfel încât un API terț răspunde doar dacă trimite `Access-Control-Allow-Origin: *`. Apelează-l dintr-o logic function în schimb.
 * `fetch('/rest/people')` nu este niciodată asociat cu Twenty API, deoarece sandbox-ul nu are un URL de pagină față de care să rezolve o cale relativă.
 
+### Captură media
+
+`navigator.mediaDevices.getUserMedia()` și `MediaRecorder` funcționează în componentele front prin sandbox polyfills, astfel încât codul standard de înregistrare rulează neschimbat, iar `MediaRecorder.isTypeSupported` răspunde pentru combinații obișnuite de container/codec. Obiectele detaliate de constrângeri `getUserMedia` sunt acceptate, dar nu sunt transmise mai departe — gazda capturează cu valorile implicite pentru tipurile solicitate — și doar o singură captură poate fi activă la un moment dat, în toate aplicațiile. Stochează un `Blob` înregistrat cu funcția gazdă `uploadFile`.
+
 ### Alte lacune
 
-* **Conținutul fișierului.** Un `input` de tip `file` oferă handlerului tău doar metadatele fișierului, nu și octeții, astfel încât `FileReader` și încărcările nu sunt încă posibile.
+* **Conținutul fișierului.** Un `input` de tip `file` oferă handlerului tău doar metadatele fișierului, nu și octeții, astfel încât `FileReader` nu este disponibil. Pentru a încărca un `Blob` pe care codul tău îl deține deja — de exemplu, unul produs de `MediaRecorder` — folosește funcția gazdă `uploadFile`.
 * **Payload-uri drag-and-drop.** Evenimentele de tip drag sunt declanșate, dar `event.dataTransfer` este `undefined`.
 * **Built-in-uri Node.** `fs`, `path` și `node:crypto` eșuează la build, așa că mută acea logică într-o [logic function](/l/ro/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` și `URL` sunt disponibile.
 * **`iframe`** este întotdeauna re-sandboxat fără `allow-same-origin`, astfel încât o încorporare care se bazează pe propria sesiune se afișează ca delogat. Nu are nici `onLoad`.
