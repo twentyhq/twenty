@@ -411,6 +411,47 @@ describe('WorkspaceSelectQueryBuilderV2', () => {
     ]);
   });
 
+  it('should quote bare alias.column references in raw where SQL', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.setFindOptions({ select: { id: true } });
+    queryBuilder.leftJoin('person.company', 'company');
+    queryBuilder.where('company.name = :name', { name: 'Acme' });
+    queryBuilder.andWhere('person.id IN (:...ids)', { ids: ['a'] });
+
+    const sql = queryBuilder.getQuery();
+
+    expect(sql).toContain('("company"."name" = :name)');
+    expect(sql).toContain('("person"."id" IN (:...ids))');
+  });
+
+  it('should quote bare alias.column references inside select and order expressions', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.select([]);
+    queryBuilder.leftJoin('person.company', 'company');
+    queryBuilder.addSelect('MAX(company.name)', 'max_name');
+    queryBuilder.groupBy('person.id');
+    queryBuilder.addOrderBy('MIN(company.name)', 'ASC');
+
+    const sql = queryBuilder.getQuery();
+
+    expect(sql).toContain('MAX("company"."name") AS "max_name"');
+    expect(sql).toContain('ORDER BY MIN("company"."name") ASC');
+  });
+
+  it('should attribute aggregate references over a joined alias to that alias', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.select([]);
+    queryBuilder.leftJoin('person.company', 'company');
+    queryBuilder.addSelect('MAX(company.name)', 'max_name');
+
+    expect(queryBuilder.getReferencedColumnNamesByAlias()['company']).toEqual([
+      'name',
+    ]);
+  });
+
   it('should keep the soft-delete predicate outside an OR chain', () => {
     const { queryBuilder } = buildQueryBuilder();
 

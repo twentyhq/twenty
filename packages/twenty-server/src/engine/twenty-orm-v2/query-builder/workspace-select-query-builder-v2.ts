@@ -33,9 +33,11 @@ import {
   buildProjection,
   buildSelectStatement,
   buildWhereExpression,
+  collectStatementAliases,
   mapRowToEntity,
   normaliseColumnExpression,
   quoteColumn,
+  quoteQualifiedAliasReferences,
   type JoinClause,
   type OrderByClause,
   type SelectClause,
@@ -539,11 +541,25 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
   }
 
   getReferencedColumnNamesByAlias(): Record<string, string[]> {
+    const aliases = collectStatementAliases(this.toSelectStatementState());
+
     return collectReferencedColumnNames({
       mainAlias: this.alias,
       mainAliasColumnNames: this.buildProjection().mainAliasColumnNames,
-      extraSelectClauses: this.extraSelectClauses,
-      orderByClauses: this.orderByClauses,
+      extraSelectClauses: this.extraSelectClauses.map((selectClause) => ({
+        ...selectClause,
+        expression: quoteQualifiedAliasReferences(
+          selectClause.expression,
+          aliases,
+        ),
+      })),
+      orderByClauses: this.orderByClauses.map((orderByClause) => ({
+        ...orderByClause,
+        expression: quoteQualifiedAliasReferences(
+          orderByClause.expression,
+          aliases,
+        ),
+      })),
     });
   }
 

@@ -74,6 +74,32 @@ export const normaliseColumnExpression = (
   return quoteColumn(defaultAlias, expression);
 };
 
+// TypeORM lets raw SQL fragments reference columns as <alias>.<column>; Postgres
+// would fold those bare identifiers to lowercase and miss the quoted aliases, so
+// they are quoted here against the aliases the statement knows about.
+export const quoteQualifiedAliasReferences = (
+  expression: string,
+  aliases: string[],
+): string =>
+  aliases.reduce(
+    (quotedExpression, alias) =>
+      quotedExpression.replace(
+        new RegExp(
+          `(?<![\\w".:])${alias.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\.(\\w+)`,
+          'g',
+        ),
+        (_, columnName) => quoteColumn(alias, columnName),
+      ),
+    expression,
+  );
+
+export const collectStatementAliases = (
+  state: SelectStatementState,
+): string[] => [
+  state.alias,
+  ...state.joinClauses.map((joinClause) => joinClause.alias),
+];
+
 export const buildProjection = (
   state: SelectStatementState,
 ): { expressions: string[]; mainAliasColumnNames: string[] } => {
@@ -103,9 +129,14 @@ export const buildProjection = (
       )}`,
   );
 
+  const aliases = collectStatementAliases(state);
+
   for (const extraSelect of state.extraSelectClauses) {
     expressions.push(
-      `${extraSelect.expression} AS ${escapeIdentifier(extraSelect.alias)}`,
+      `${quoteQualifiedAliasReferences(
+        extraSelect.expression,
+        aliases,
+      )} AS ${escapeIdentifier(extraSelect.alias)}`,
     );
   }
 
@@ -129,7 +160,10 @@ export const buildWhereExpression = (
     includeSoftDeletePredicate = true,
   }: { includeSoftDeletePredicate?: boolean } = {},
 ): string => {
-  const userExpression = renderUserWhereExpression(state.whereClauses);
+  const userExpression = quoteQualifiedAliasReferences(
+    renderUserWhereExpression(state.whereClauses),
+    collectStatementAliases(state),
+  );
 
   const shouldAddSoftDeletePredicate =
     includeSoftDeletePredicate &&
@@ -237,12 +271,14 @@ export const buildOrderByClause = (state: SelectStatementState): string => {
     return '';
   }
 
+  const aliases = collectStatementAliases(state);
+
   return `ORDER BY ${state.orderByClauses
     .map(
       (orderByClause) =>
-        `${orderByClause.expression} ${orderByClause.direction}${
-          isDefined(orderByClause.nulls) ? ` ${orderByClause.nulls}` : ''
-        }`,
+        `${quoteQualifiedAliasReferences(orderByClause.expression, aliases)} ${
+          orderByClause.direction
+        }${isDefined(orderByClause.nulls) ? ` ${orderByClause.nulls}` : ''}`,
     )
     .join(', ')}`;
 };
