@@ -22,16 +22,12 @@ export type MediaSessionStartVeto = {
 };
 
 export type CreateFrontComponentMediaSessionHostInput = {
-  // Host page policy hook, called synchronously before any device is
-  // touched: return a veto (as a DOMException name + message) to refuse the
-  // capture. A null return reserves the capture slot, so overlapping starts
-  // cannot both pass.
+  // Extra host page policy, called before any device is touched: return a
+  // veto (as a DOMException name + message) to refuse the capture. The
+  // one-capture-at-a-time slot is enforced internally, before this hook.
   beforeStartStream?: (
     mediaType: MediaSessionMediaType,
   ) => MediaSessionStartVeto | null;
-  // Called when a start that passed beforeStartStream produced no session
-  // (device failure or teardown), so the reservation can be released.
-  onStartStreamFailed?: () => void;
   onActiveSessionsChange?: (
     activeSessions: FrontComponentActiveMediaSession[],
   ) => void;

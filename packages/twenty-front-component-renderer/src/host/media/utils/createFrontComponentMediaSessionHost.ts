@@ -28,6 +28,18 @@ type HostRecorderSession = {
   mediaRecorder: MediaRecorder;
 };
 
+// One capture at a time across every session host on the page. The
+// reservation is scoped to the mediaStartStream call itself (released in
+// its finally), so no callback ordering can leak or double-release it.
+let isCaptureSlotReserved = false;
+let liveCaptureSessionCount = 0;
+
+const CAPTURE_SLOT_BUSY_FAILURE = {
+  status: 'failed',
+  errorName: 'NotReadableError',
+  errorMessage: 'A recording is already in progress',
+} as const;
+
 const toFailure = (
   error: unknown,
 ): { status: 'failed'; errorName: string; errorMessage: string } => ({
@@ -38,7 +50,6 @@ const toFailure = (
 
 export const createFrontComponentMediaSessionHost = ({
   beforeStartStream,
-  onStartStreamFailed,
   onActiveSessionsChange,
 }: CreateFrontComponentMediaSessionHostInput = {}): FrontComponentMediaSessionHost => {
   const streamSessions = new Map<string, HostStreamSession>();
@@ -113,10 +124,31 @@ export const createFrontComponentMediaSessionHost = ({
     }
 
     streamSessions.delete(streamId);
+    liveCaptureSessionCount = Math.max(0, liveCaptureSessionCount - 1);
     notifyActiveSessionsChange();
   };
 
   const mediaStartStream = async ({
+    audio,
+    video,
+  }: {
+    audio: boolean;
+    video: boolean;
+  }): Promise<StartMediaStreamResult> => {
+    if (isCaptureSlotReserved || liveCaptureSessionCount > 0) {
+      return CAPTURE_SLOT_BUSY_FAILURE;
+    }
+
+    isCaptureSlotReserved = true;
+
+    try {
+      return await startStreamWithReservedSlot({ audio, video });
+    } finally {
+      isCaptureSlotReserved = false;
+    }
+  };
+
+  const startStreamWithReservedSlot = async ({
     audio,
     video,
   }: {
@@ -131,8 +163,6 @@ export const createFrontComponentMediaSessionHost = ({
     }
 
     if (typeof navigator === 'undefined' || !navigator.mediaDevices) {
-      onStartStreamFailed?.();
-
       return {
         status: 'failed',
         errorName: 'NotSupportedError',
@@ -150,8 +180,6 @@ export const createFrontComponentMediaSessionHost = ({
         video,
       });
     } catch (error) {
-      onStartStreamFailed?.();
-
       return toFailure(error);
     }
 
@@ -159,8 +187,6 @@ export const createFrontComponentMediaSessionHost = ({
       for (const track of mediaStream.getTracks()) {
         track.stop();
       }
-
-      onStartStreamFailed?.();
 
       return {
         status: 'failed',
@@ -177,6 +203,7 @@ export const createFrontComponentMediaSessionHost = ({
       startedAt: Date.now(),
       mediaStream,
     });
+    liveCaptureSessionCount += 1;
 
     for (const track of mediaStream.getTracks()) {
       // Fires for external endings (device unplugged, permission revoked),
@@ -390,6 +417,10 @@ export const createFrontComponentMediaSessionHost = ({
     }
 
     pushEvents(endedTrackEvents);
+    liveCaptureSessionCount = Math.max(
+      0,
+      liveCaptureSessionCount - streamSessions.size,
+    );
     streamSessions.clear();
     notifyActiveSessionsChange();
   };
