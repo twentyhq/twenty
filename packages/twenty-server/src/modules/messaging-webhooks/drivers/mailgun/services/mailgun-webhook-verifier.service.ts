@@ -1,23 +1,15 @@
-import { createHmac, timingSafeEqual } from 'crypto';
-
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type MailgunSignatureFields } from 'src/modules/messaging-webhooks/drivers/mailgun/types/mailgun-signature-fields.type';
+import { verifyMailgunSignature } from 'src/modules/messaging-webhooks/drivers/mailgun/utils/verify-mailgun-signature.util';
 import { MessagingWebhookExceptionCode } from 'src/modules/messaging-webhooks/messaging-webhook-exception-code.enum';
 import { MessagingWebhookException } from 'src/modules/messaging-webhooks/messaging-webhook.exception';
 
 const TIMESTAMP_TOLERANCE_SECONDS = 5 * 60;
 
-export type MailgunSignatureFields = {
-  timestamp: string | undefined;
-  token: string | undefined;
-  signature: string | undefined;
-};
-
-// Mailgun signs webhooks with an HMAC-SHA256 hex digest over
-// `${timestamp}${token}` keyed with the account's webhook signing key.
 @Injectable()
 export class MailgunWebhookVerifierService {
   private readonly logger = new Logger(MailgunWebhookVerifierService.name);
@@ -51,18 +43,12 @@ export class MailgunWebhookVerifierService {
 
     this.assertTimestampWithinTolerance(timestamp);
 
-    const expectedSignature = createHmac('sha256', signingKey)
-      .update(`${timestamp}${token}`)
-      .digest();
-    // Buffer.from(..., 'hex') silently truncates at the first invalid
-    // character, so a strict shape check has to come first
-    const candidateSignature = /^[0-9a-f]{64}$/i.test(signature)
-      ? Buffer.from(signature, 'hex')
-      : Buffer.alloc(0);
-
-    const isSigned =
-      candidateSignature.length === expectedSignature.length &&
-      timingSafeEqual(candidateSignature, expectedSignature);
+    const isSigned = verifyMailgunSignature({
+      signingKey,
+      timestamp,
+      token,
+      signature,
+    });
 
     if (!isSigned) {
       this.logger.warn('Mailgun webhook signature verification failed');

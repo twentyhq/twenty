@@ -5,16 +5,16 @@ import { isDefined, parseJson } from 'twenty-shared/utils';
 
 import { MAILGUN_WORKSPACE_VARIABLE_NAME } from 'src/engine/core-modules/emailing-domain/drivers/mailgun/constants/mailgun-workspace-variable-name.constant';
 import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
-import { MailgunWebhookVerifierService } from 'src/modules/messaging-webhooks/adapters/mailgun/services/mailgun-webhook-verifier.service';
-import { type MailgunOutboundWebhookPayload } from 'src/modules/messaging-webhooks/adapters/mailgun/types/mailgun-webhook-event.type';
+import { MailgunWebhookVerifierService } from 'src/modules/messaging-webhooks/drivers/mailgun/services/mailgun-webhook-verifier.service';
+import { type MailgunOutboundWebhookPayload } from 'src/modules/messaging-webhooks/drivers/mailgun/types/mailgun-webhook-event.type';
 import { OutboundSuppressionHandlerService } from 'src/modules/messaging-webhooks/handlers/outbound-suppression-handler.service';
 import { MessagingWebhookExceptionCode } from 'src/modules/messaging-webhooks/messaging-webhook-exception-code.enum';
 import { MessagingWebhookException } from 'src/modules/messaging-webhooks/messaging-webhook.exception';
 
 @Injectable()
-export class MailgunOutboundWebhookAdapterService {
+export class MailgunOutboundWebhookDriverService {
   private readonly logger = new Logger(
-    MailgunOutboundWebhookAdapterService.name,
+    MailgunOutboundWebhookDriverService.name,
   );
 
   constructor(

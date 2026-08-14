@@ -14,8 +14,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { MailgunInboundWebhookAdapterService } from 'src/modules/messaging-webhooks/adapters/mailgun/services/mailgun-inbound-webhook-adapter.service';
-import { MailgunOutboundWebhookAdapterService } from 'src/modules/messaging-webhooks/adapters/mailgun/services/mailgun-outbound-webhook-adapter.service';
+import { MailgunInboundWebhookDriverService } from 'src/modules/messaging-webhooks/drivers/mailgun/services/mailgun-inbound-webhook-driver.service';
+import { MailgunOutboundWebhookDriverService } from 'src/modules/messaging-webhooks/drivers/mailgun/services/mailgun-outbound-webhook-driver.service';
 import { ResendWebhookDriverService } from 'src/modules/messaging-webhooks/drivers/resend/services/resend-webhook-driver.service';
 import { SesInboundWebhookDriverService } from 'src/modules/messaging-webhooks/drivers/aws-ses/services/ses-inbound-webhook-driver.service';
 import { SesOutboundWebhookDriverService } from 'src/modules/messaging-webhooks/drivers/aws-ses/services/ses-outbound-webhook-driver.service';
@@ -30,8 +30,8 @@ export class MessagingWebhooksController {
     private readonly sesInboundWebhookDriverService: SesInboundWebhookDriverService,
     private readonly sesOutboundWebhookDriverService: SesOutboundWebhookDriverService,
     private readonly resendWebhookDriverService: ResendWebhookDriverService,
-    private readonly mailgunInboundWebhookAdapterService: MailgunInboundWebhookAdapterService,
-    private readonly mailgunOutboundWebhookAdapterService: MailgunOutboundWebhookAdapterService,
+    private readonly mailgunInboundWebhookDriverService: MailgunInboundWebhookDriverService,
+    private readonly mailgunOutboundWebhookDriverService: MailgunOutboundWebhookDriverService,
   ) {}
 
   @Post(`${ApiPath.Webhooks}/messaging/ses/inbound`)
@@ -99,7 +99,7 @@ export class MessagingWebhooksController {
       );
     }
 
-    await this.mailgunOutboundWebhookAdapterService.handle(request.rawBody);
+    await this.mailgunOutboundWebhookDriverService.handle(request.rawBody);
   }
 
   @Post(`${ApiPath.Webhooks}/messaging/mailgun/inbound`)
@@ -115,7 +115,7 @@ export class MessagingWebhooksController {
       );
     }
 
-    await this.mailgunInboundWebhookAdapterService.handle(
+    await this.mailgunInboundWebhookDriverService.handle(
       request.body,
       this.getHeader(request, 'content-type'),
     );

@@ -3,17 +3,17 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { MailgunWebhookVerifierService } from 'src/modules/messaging-webhooks/adapters/mailgun/services/mailgun-webhook-verifier.service';
-import { parseMailgunInboundNotify } from 'src/modules/messaging-webhooks/adapters/mailgun/utils/parse-mailgun-inbound-notify.util';
+import { MailgunWebhookVerifierService } from 'src/modules/messaging-webhooks/drivers/mailgun/services/mailgun-webhook-verifier.service';
+import { parseMailgunInboundNotify } from 'src/modules/messaging-webhooks/drivers/mailgun/utils/parse-mailgun-inbound-notify.util';
 import { InboundMailHandlerService } from 'src/modules/messaging-webhooks/handlers/inbound-mail-handler.service';
 import { MessagingWebhookExceptionCode } from 'src/modules/messaging-webhooks/messaging-webhook-exception-code.enum';
 import { MessagingWebhookException } from 'src/modules/messaging-webhooks/messaging-webhook.exception';
-import { INBOUND_EMAIL_MESSAGE_SOURCE } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/types/inbound-email-message-source.type';
+import { INBOUND_EMAIL_MESSAGE_SOURCE } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/constants/inbound-email-message-source.constant';
 
 // Handles the notify callback of a Mailgun store() route action: the raw
 // message stays in Mailgun storage and the payload carries its retrieval URL.
 @Injectable()
-export class MailgunInboundWebhookAdapterService {
+export class MailgunInboundWebhookDriverService {
   constructor(
     private readonly mailgunWebhookVerifierService: MailgunWebhookVerifierService,
     private readonly inboundMailHandlerService: InboundMailHandlerService,

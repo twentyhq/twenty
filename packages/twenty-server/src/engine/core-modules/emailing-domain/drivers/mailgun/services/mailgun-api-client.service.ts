@@ -7,11 +7,9 @@ import {
   EmailingDomainDriverException,
   EmailingDomainDriverExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception';
-import {
-  type MailgunDomainResponse,
-  type MailgunErrorBody,
-  type MailgunSendMessageResponse,
-} from 'src/engine/core-modules/emailing-domain/drivers/mailgun/types/mailgun-api.type';
+import { type MailgunDomainResponse } from 'src/engine/core-modules/emailing-domain/drivers/mailgun/types/mailgun-domain-response.type';
+import { type MailgunErrorBody } from 'src/engine/core-modules/emailing-domain/drivers/mailgun/types/mailgun-error-body.type';
+import { type MailgunSendMessageResponse } from 'src/engine/core-modules/emailing-domain/drivers/mailgun/types/mailgun-send-message-response.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
