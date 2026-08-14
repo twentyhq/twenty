@@ -92,6 +92,23 @@ describe('createWorkerMediaQueryList', () => {
     }).not.toThrow();
   });
 
+  it('should not invoke a listener removed by an earlier listener during dispatch', () => {
+    const { mediaQueryList, setMatches } = setupMediaQueryList();
+
+    const secondListener = jest.fn();
+    const firstListener = jest.fn(() => {
+      mediaQueryList.removeEventListener('change', secondListener);
+    });
+
+    mediaQueryList.addEventListener('change', firstListener);
+    mediaQueryList.addEventListener('change', secondListener);
+
+    setMatches(true);
+
+    expect(firstListener).toHaveBeenCalledTimes(1);
+    expect(secondListener).not.toHaveBeenCalled();
+  });
+
   it('should keep notifying remaining listeners when one of them throws', () => {
     const { mediaQueryList, setMatches } = setupMediaQueryList();
     jest.spyOn(console, 'error').mockImplementation(() => {});
