@@ -95,6 +95,24 @@ describe('ResendWebhookAdapterService', () => {
     });
   });
 
+  it('should resolve the workspace tag when tags arrive as entries', async () => {
+    await adapter.handle(
+      buildEvent({
+        type: 'email.complained',
+        data: {
+          email_id: 'email-id-1',
+          to: ['annoyed@example.com'],
+          tags: [{ name: 'workspace_id', value: WORKSPACE_ID }],
+        },
+      }),
+      HEADERS,
+    );
+
+    expect(outboundSuppressionHandlerService.handle).toHaveBeenCalledWith(
+      expect.objectContaining({ workspaceId: WORKSPACE_ID }),
+    );
+  });
+
   it('should skip suppression events without a workspace tag', async () => {
     await adapter.handle(
       buildEvent({
