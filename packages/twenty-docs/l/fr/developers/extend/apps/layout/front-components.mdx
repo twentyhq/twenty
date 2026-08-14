@@ -466,15 +466,16 @@ const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_AP
 
 Les composants frontaux peuvent déclencher la navigation, des modales et des notifications en utilisant des fonctions de `twenty-sdk` :
 
-| Fonction                                        | Description                                    |
-| ----------------------------------------------- | ---------------------------------------------- |
-| `navigate(to, params?, queryParams?, options?)` | Naviguer vers une page de l'application        |
-| `openSidePanelPage(params)`                     | Ouvrir un panneau latéral                      |
-| `closeSidePanel()`                              | Fermer le panneau latéral                      |
-| `openCommandConfirmationModal(params)`          | Afficher une boîte de dialogue de confirmation |
-| `enqueueSnackbar(params)`                       | Afficher une notification toast                |
-| `unmountFrontComponent()`                       | Démonter le composant                          |
-| `updateProgress(progress)`                      | Mettre à jour un indicateur de progression     |
+| Fonction                                           | Description                                                                                                                                                                                     |
+| -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `navigate(to, params?, queryParams?, options?)`    | Naviguer vers une page de l'application                                                                                                                                                         |
+| `openSidePanelPage(params)`                        | Ouvrir un panneau latéral                                                                                                                                                                       |
+| `closeSidePanel()`                                 | Fermer le panneau latéral                                                                                                                                                                       |
+| `openCommandConfirmationModal(params)`             | Afficher une boîte de dialogue de confirmation                                                                                                                                                  |
+| `enqueueSnackbar(params)`                          | Afficher une notification toast                                                                                                                                                                 |
+| `unmountFrontComponent()`                          | Démonter le composant                                                                                                                                                                           |
+| `updateProgress(progress)`                         | Mettre à jour un indicateur de progression                                                                                                                                                      |
+| `uploadFile(file, { fieldMetadataId, fileName? })` | Téléverse un `Blob` dans un champ FILES ; renvoie `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` ou `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }`. |
 
 Voici un exemple qui utilise l'API hôte pour afficher une snackbar et fermer le panneau latéral après la fin d'une action :
 
@@ -833,9 +834,13 @@ Le CSS du composant, qu’il provienne de `import './styles.css'`, de CSS-in-JS 
 * Les autres origines quittent le bac à sable avec `Origin: null`, donc une API tierce répond uniquement si elle envoie `Access-Control-Allow-Origin: *`. Appelez-la plutôt depuis une fonction logique.
 * `fetch('/rest/people')` n’est jamais associé à l’API Twenty, car le bac à sable n’a pas d’URL de page pour résoudre un chemin relatif.
 
+### Capture de médias
+
+`navigator.mediaDevices.getUserMedia()` et `MediaRecorder` fonctionnent à l’intérieur des composants front-end grâce à des polyfills de sandbox, de sorte que le code d’enregistrement standard s’exécute sans modification et que `MediaRecorder.isTypeSupported` indique si les combinaisons courantes de conteneur/codec sont prises en charge. Des objets de contraintes `getUserMedia` détaillés sont acceptés mais non transmis — l’hôte capture avec ses valeurs par défaut pour les types demandés — et une seule capture peut être active à la fois entre les applications. Stockez un `Blob` enregistré avec la fonction hôte `uploadFile`.
+
 ### Autres lacunes
 
-* **Contenu de fichier.** Un `input` de type `file` fournit uniquement à votre gestionnaire les métadonnées du fichier, pas les octets, donc `FileReader` et les téléversements ne sont pas encore possibles.
+* **Contenu de fichier.** Un `input` de type `file` fournit uniquement à votre gestionnaire les métadonnées du fichier, pas les octets, donc `FileReader` n’est pas disponible. Pour téléverser un `Blob` dont votre code dispose déjà — par exemple celui produit par `MediaRecorder` — utilisez la fonction hôte `uploadFile`.
 * **Charges utiles de glisser-déposer.** Les événements de glisser-déposer se déclenchent, mais `event.dataTransfer` est `undefined`.
 * **Modules natifs Node.** `fs`, `path` et `node:crypto` font échouer la construction, donc déplacez ce travail dans une [fonction logique](/l/fr/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` et `URL` sont disponibles.
 * **`iframe`** est toujours à nouveau placé dans un bac à sable sans `allow-same-origin`, donc une intégration qui repose sur sa propre session s’affiche comme déconnectée. Il n’a pas non plus de `onLoad`.

@@ -466,15 +466,16 @@ const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_AP
 
 前端组件可以使用来自 `twenty-sdk` 的函数触发导航、模态框和通知：
 
-| 函数                                              | 描述            |
-| ----------------------------------------------- | ------------- |
-| `navigate(to, params?, queryParams?, options?)` | 在应用中导航到某个页面   |
-| `openSidePanelPage(params)`                     | 打开侧边栏         |
-| `closeSidePanel()`                              | 关闭侧边栏         |
-| `openCommandConfirmationModal(params)`          | 显示确认对话框       |
-| `enqueueSnackbar(params)`                       | 显示一条 Toast 通知 |
-| `unmountFrontComponent()`                       | 卸载该组件         |
-| `updateProgress(progress)`                      | 更新进度指示器       |
+| 函数                                                 | 描述                                                                                                                                                                     |
+| -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `navigate(to, params?, queryParams?, options?)`    | 在应用中导航到某个页面                                                                                                                                                            |
+| `openSidePanelPage(params)`                        | 打开侧边栏                                                                                                                                                                  |
+| `closeSidePanel()`                                 | 关闭侧边栏                                                                                                                                                                  |
+| `openCommandConfirmationModal(params)`             | 显示确认对话框                                                                                                                                                                |
+| `enqueueSnackbar(params)`                          | 显示一条 Toast 通知                                                                                                                                                          |
+| `unmountFrontComponent()`                          | 卸载该组件                                                                                                                                                                  |
+| `updateProgress(progress)`                         | 更新进度指示器                                                                                                                                                                |
+| `uploadFile(file, { fieldMetadataId, fileName? })` | 将一个 `Blob` 上传到 FILES 字段；返回 `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` 或 `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` |
 
 下面是一个示例，使用宿主 API 在操作完成后显示一条 snackbar 并关闭侧边栏：
 
@@ -833,9 +834,13 @@ Portal间隙是为什么Radix、Headless UI、MUI和react-selected popover默认
 * 其它来源将沙盒留给`原始：null`，所以第三方API只有在发送`Access-Control-Allow-ource：*`时才能解答。 从逻辑函数调用它。
 * `fetch('/rest/people)`永远不匹配20个API，因为沙盒没有页面URL解决相对路径。
 
+### 媒体捕获
+
+`navigator.mediaDevices.getUserMedia()` 和 `MediaRecorder` 通过 sandbox polyfill 在 front 组件中运行，因此标准录制代码可以不做修改地运行，并且 `MediaRecorder.isTypeSupported` 会对常见的容器/编解码器组合给出支持情况。 详细的 `getUserMedia` 约束对象会被接受但不会被转发 —— 宿主会使用其针对所请求媒体类型的默认设置进行捕获 —— 并且在应用之间同一时间只能有一个捕获处于活动状态。 使用 `uploadFile` 宿主函数存储已录制的 `Blob`。
+
 ### 其他差距
 
-* **文件内容。** 类型为 `file` 的 `input` 只会向你的处理函数提供文件的元数据，而不是字节本身，因此目前还无法使用 `FileReader` 和上传功能。
+* **文件内容。** 类型为 `file` 的 `input` 只会向你的处理函数提供文件的元数据，而不是字节本身，因此无法使用 `FileReader`。 要上传你的代码已经持有的 `Blob`（例如由 `MediaRecorder` 生成的 `Blob`），请使用 `uploadFile` 宿主函数。
 * **拖放payloads.** 拖动事件触发，但`event.dataTransfer` 是未定义的。
 * **Node 内置。** `fs`、`path` 和 `node:crypto` 失败，所以将其移动到一个[逻辑函数](/l/zh/developers/extend/apps/logic/logic-functions)。 Web Crypto, `fetch`, `TextEncoder` 和 `URL` 都是可用的。
 * **`iframe`** 始终会在没有 `allow-same-origin` 的情况下重新沙箱化，因此依赖其自身会话的嵌入内容会呈现为未登录状态。 它也没有`onLoad`文件。

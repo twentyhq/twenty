@@ -466,15 +466,16 @@ const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_AP
 
 フロントコンポーネントは、`twenty-sdk` の関数を使用してナビゲーション、モーダル、通知をトリガーできます：
 
-| 機能                                              | 説明             |
-| ----------------------------------------------- | -------------- |
-| `navigate(to, params?, queryParams?, options?)` | アプリ内のページに移動    |
-| `openSidePanelPage(params)`                     | サイドパネルを開く      |
-| `closeSidePanel()`                              | サイドパネルを閉じる     |
-| `openCommandConfirmationModal(params)`          | 確認ダイアログを表示     |
-| `enqueueSnackbar(params)`                       | トースト通知を表示      |
-| `unmountFrontComponent()`                       | コンポーネントをアンマウント |
-| `updateProgress(progress)`                      | 進行状況インジケーターを更新 |
+| 機能                                                 | 説明                                                                                                                                                                                    |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `navigate(to, params?, queryParams?, options?)`    | アプリ内のページに移動                                                                                                                                                                           |
+| `openSidePanelPage(params)`                        | サイドパネルを開く                                                                                                                                                                             |
+| `closeSidePanel()`                                 | サイドパネルを閉じる                                                                                                                                                                            |
+| `openCommandConfirmationModal(params)`             | 確認ダイアログを表示                                                                                                                                                                            |
+| `enqueueSnackbar(params)`                          | トースト通知を表示                                                                                                                                                                             |
+| `unmountFrontComponent()`                          | コンポーネントをアンマウント                                                                                                                                                                        |
+| `updateProgress(progress)`                         | 進行状況インジケーターを更新                                                                                                                                                                        |
+| `uploadFile(file, { fieldMetadataId, fileName? })` | `Blob` を FILES フィールドにアップロードします。返り値は `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` または `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` です。 |
 
 アクション完了後にホスト API を使用してスナックバーを表示し、サイドパネルを閉じる例です:
 
@@ -833,9 +834,13 @@ Front components は現在も積極的に開発が進められています。 �
 * その他のオリジンからのリクエストは、`Origin: null` を付けてサンドボックスの外へ送信されるため、サードパーティ API は `Access-Control-Allow-Origin: *` を返す場合にのみ応答します。 代わりにロジック関数から呼び出してください。
 * `fetch('/rest/people')` は、サンドボックスに相対パスを解決するためのページ URL がないため、Twenty API には決してマッチしません。
 
+### メディアキャプチャ
+
+`navigator.mediaDevices.getUserMedia()` と `MediaRecorder` は、サンドボックス polyfill を通じて front コンポーネント内で動作するため、標準的な録画コードは変更なしで実行でき、一般的なコンテナ／コーデックの組み合わせに対しては `MediaRecorder.isTypeSupported` が応答します。 詳細な `getUserMedia` 制約オブジェクトは受け付けられますが転送はされません。ホストは、要求された種類に対してデフォルト設定でキャプチャを行い、アプリケーション全体を通して同時にライブにできるキャプチャは 1 つだけです。 記録された `Blob` を `uploadFile` ホスト関数で保存します。
+
 ### その他のギャップ
 
-* **ファイル内容。** type が `file` の `input` は、ハンドラーにファイルのメタデータのみを渡し、バイト列は渡さないため、`FileReader` やアップロードはまだ利用できません。
+* **ファイル内容。** type が `file` の `input` は、ハンドラーにファイルのメタデータのみを渡し、バイト列は渡さないため、`FileReader` は利用できません。 `MediaRecorder` で生成されたものなど、コードですでに保持している `Blob` をアップロードするには、`uploadFile` ホスト関数を使用します。
 * **ドラッグ＆ドロップのペイロード。** ドラッグイベントは発火しますが、`event.dataTransfer` は `undefined` です。
 * **Node 組み込みモジュール。** `fs`、`path`、`node:crypto` はビルドに失敗するため、その処理は [ロジック関数](/l/ja/developers/extend/apps/logic/logic-functions) に移動してください。 Web Crypto、`fetch`、`TextEncoder`、および `URL` は利用可能です。
 * **`iframe`** は常に `allow-same-origin` なしで再サンドボックス化されるため、独自のセッションに依存する埋め込みは、ログアウト状態としてレンダリングされます。 また、`onLoad` もありません。

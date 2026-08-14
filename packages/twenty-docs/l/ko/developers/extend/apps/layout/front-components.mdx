@@ -466,15 +466,16 @@ const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_AP
 
 프런트 컴포넌트는 `twenty-sdk`의 함수를 사용해 내비게이션, 모달, 알림을 트리거할 수 있습니다:
 
-| 함수                                              | 설명            |
-| ----------------------------------------------- | ------------- |
-| `navigate(to, params?, queryParams?, options?)` | 앱 내 페이지로 이동   |
-| `openSidePanelPage(params)`                     | 사이드 패널 열기     |
-| `closeSidePanel()`                              | 사이드 패널을 닫습니다  |
-| `openCommandConfirmationModal(params)`          | 확인 대화상자 표시    |
-| `enqueueSnackbar(params)`                       | 토스트 알림 표시     |
-| `unmountFrontComponent()`                       | 컴포넌트를 언마운트합니다 |
-| `updateProgress(progress)`                      | 진행률 표시기 업데이트  |
+| 함수                                                 | 설명                                                                                                                                                                                        |
+| -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `navigate(to, params?, queryParams?, options?)`    | 앱 내 페이지로 이동                                                                                                                                                                               |
+| `openSidePanelPage(params)`                        | 사이드 패널 열기                                                                                                                                                                                 |
+| `closeSidePanel()`                                 | 사이드 패널을 닫습니다                                                                                                                                                                              |
+| `openCommandConfirmationModal(params)`             | 확인 대화상자 표시                                                                                                                                                                                |
+| `enqueueSnackbar(params)`                          | 토스트 알림 표시                                                                                                                                                                                 |
+| `unmountFrontComponent()`                          | 컴포넌트를 언마운트합니다                                                                                                                                                                             |
+| `updateProgress(progress)`                         | 진행률 표시기 업데이트                                                                                                                                                                              |
+| `uploadFile(file, { fieldMetadataId, fileName? })` | `Blob`을 FILES 필드에 업로드합니다. 이 함수는 `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` 또는 `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }`로 resolve됩니다. |
 
 호스트 API를 사용하여 동작이 완료된 후 스낵바를 표시하고 사이드 패널을 닫는 예시는 다음과 같습니다:
 
@@ -833,9 +834,13 @@ Front 컴포넌트는 활발히 개발 중입니다. 렌더링, 스타일링, �
 * 다른 오리진으로 나가는 요청은 `Origin: null`을 가진 채 샌드박스를 벗어나므로, 서드파티 API는 `Access-Control-Allow-Origin: *`를 보내는 경우에만 응답합니다. 대신 logic function에서 호출하세요.
 * 샌드박스에는 상대 경로를 해석할 페이지 URL이 없으므로, `fetch('/rest/people')`은 Twenty API와 절대 매칭되지 않습니다.
 
+### 미디어 캡처
+
+`navigator.mediaDevices.getUserMedia()`와 `MediaRecorder`는 샌드박스 폴리필을 통해 front 컴포넌트 내부에서 동작하므로, 표준 녹화 코드는 변경 없이 실행되며 `MediaRecorder.isTypeSupported`는 일반적인 컨테이너/코덱 조합에 대해 응답합니다. 상세한 `getUserMedia` 제약 조건 객체는 허용되지만 전달되지는 않습니다. 호스트가 요청된 종류에 대해 기본값으로 캡처하며, 애플리케이션 전체에서 한 번에 하나의 캡처만 활성 상태일 수 있습니다. 기록된 `Blob`을 `uploadFile` 호스트 함수로 저장합니다.
+
 ### 기타 제약 사항
 
-* **파일 내용.** `file` 타입의 `input`은 핸들러에 바이트가 아닌 파일 메타데이터만 제공하므로, 현재는 `FileReader` 사용과 업로드가 불가능합니다.
+* **파일 내용.** `file` 타입의 `input`은 핸들러에 바이트가 아닌 파일 메타데이터만 제공하므로 `FileReader`는 사용할 수 없습니다. `MediaRecorder`가 생성한 것처럼 코드에서 이미 가지고 있는 `Blob`을 업로드하려면 `uploadFile` 호스트 함수를 사용하세요.
 * **드래그 앤 드롭 페이로드.** 드래그 이벤트는 발생하지만, `event.dataTransfer`는 `undefined`입니다.
 * **Node 내장 모듈.** `fs`, `path` 및 `node:crypto`는 빌드에 실패하므로, 해당 작업은 [logic function](/l/ko/developers/extend/apps/logic/logic-functions)으로 옮기세요. Web Crypto, `fetch`, `TextEncoder` 및 `URL`은 사용할 수 있습니다.
 * \*\*`iframe`\*\*은 항상 `allow-same-origin` 없이 다시 샌드박싱되므로, 자체 세션에 의존하는 임베드는 로그아웃된 상태로 렌더링됩니다. 또한 `onLoad`도 지원되지 않습니다.

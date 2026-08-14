@@ -466,15 +466,16 @@ const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_AP
 
 يمكن للمكوّنات الأمامية تشغيل التنقّل والنوافذ المنبثقة والإشعارات باستخدام دوال من `twenty-sdk`:
 
-| دالة                                            | الوصف                          |
-| ----------------------------------------------- | ------------------------------ |
-| `navigate(to, params?, queryParams?, options?)` | الانتقال إلى صفحة داخل التطبيق |
-| `openSidePanelPage(params)`                     | فتح لوحة جانبية                |
-| `closeSidePanel()`                              | إغلاق اللوحة الجانبية          |
-| `openCommandConfirmationModal(params)`          | عرض مربع حوار تأكيد            |
-| `enqueueSnackbar(params)`                       | عرض إشعار توست                 |
-| `unmountFrontComponent()`                       | إلغاء تركيب المكوّن            |
-| `updateProgress(progress)`                      | تحديث مؤشّر التقدّم            |
+| دالة                                               | الوصف                                                                                                                                                                                                    |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `navigate(to, params?, queryParams?, options?)`    | الانتقال إلى صفحة داخل التطبيق                                                                                                                                                                           |
+| `openSidePanelPage(params)`                        | فتح لوحة جانبية                                                                                                                                                                                          |
+| `closeSidePanel()`                                 | إغلاق اللوحة الجانبية                                                                                                                                                                                    |
+| `openCommandConfirmationModal(params)`             | عرض مربع حوار تأكيد                                                                                                                                                                                      |
+| `enqueueSnackbar(params)`                          | عرض إشعار توست                                                                                                                                                                                           |
+| `unmountFrontComponent()`                          | إلغاء تركيب المكوّن                                                                                                                                                                                      |
+| `updateProgress(progress)`                         | تحديث مؤشّر التقدّم                                                                                                                                                                                      |
+| `uploadFile(file, { fieldMetadataId, fileName? })` | تحميل كائن `Blob` إلى حقل من نوع FILES؛ تُعاد نتيجة على شكل `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` أو `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` |
 
 فيما يلي مثال يستخدم واجهة برمجة تطبيقات المضيف لعرض Snackbar وإغلاق اللوحة الجانبية بعد اكتمال الإجراء:
 
@@ -833,9 +834,13 @@ const Card = () => {
 * تغادر النطاقات (origins) الأخرى صندوق العزل مع `Origin: null`، لذلك يجيب طرف ثالث لواجهة برمجة التطبيقات فقط إذا أرسل `Access-Control-Allow-Origin: *`. استدعِها من دالة منطقية بدلًا من ذلك.
 * `fetch('/rest/people')` لا يتطابق أبدًا مع Twenty API، لأن صندوق العزل ليس لديه عنوان URL للصفحة لحساب مسار نسبي بناءً عليه.
 
+### التقاط الوسائط
+
+تعمل `navigator.mediaDevices.getUserMedia()` و`MediaRecorder` داخل مكوّنات الواجهة الأمامية من خلال sandbox polyfills، لذا يعمل كود التسجيل القياسي دون تغيير، وتُرجِع `MediaRecorder.isTypeSupported` إجابات لأنواع حاويات/ترميزات شائعة. يتم قبول كائنات قيود `getUserMedia` التفصيلية ولكن لا يتم تمريرها إلى المضيف — حيث يقوم المضيف بالالتقاط باستخدام الإعدادات الافتراضية لأنواع الوسائط المطلوبة — ولا يمكن أن يكون هناك أكثر من عملية التقاط واحدة نشطة في الوقت نفسه عبر التطبيقات. خزِّن كائن `Blob` المسجَّل باستخدام دالة المضيف `uploadFile`.
+
 ### فجوات أخرى
 
-* **محتويات الملفات.** يُرجِع `input` من النوع `file` إلى معالجك بيانات تعريف الملف فقط، وليس البايتات، لذلك فإن `FileReader` وعمليات الرفع غير ممكنة بعد.
+* **محتويات الملفات.** يُرجِع `input` من النوع `file` إلى معالجك بيانات تعريف الملف فقط، وليس البايتات، لذا فإن `FileReader` غير متاح. لرفع كائن `Blob` الذي يملكه كودك بالفعل — على سبيل المثال كائن تم إنتاجه بواسطة `MediaRecorder` — استخدم دالة المضيف `uploadFile`.
 * **حمولات السحب والإفلات.** أحداث السحب تُطلق، لكن `event.dataTransfer` هي `undefined`.
 * **الوحدات المدمجة في Node.** `fs` و`path` و`node:crypto` تفشل في عملية البناء، لذا انقل ذلك العمل إلى [دالة منطقية](/l/ar/developers/extend/apps/logic/logic-functions). Web Crypto و `fetch` و `TextEncoder` و `URL` متوفرة.
 * يتم دائمًا إعادة عزل **`iframe`** دون `allow-same-origin`، لذلك يعمل التضمين الذي يعتمد على جلسته الخاصة في وضع "تسجيل الخروج". ليس لديه `onLoad` أيضًا.
