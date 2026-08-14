@@ -1,8 +1,7 @@
 import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
-import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
+import { markUnclaimedCallRecordingFailed } from 'src/logic-functions/data/mark-unclaimed-call-recording-failed.util';
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 
@@ -24,14 +23,12 @@ export const resolveEndedPendingCallRecording = async ({
   now: Date;
 }): Promise<boolean> => {
   if (isUndefined(callRecording.botScheduleAttemptedAt)) {
-    await markCallRecordingFailed({
+    return markCallRecordingFailed({
       client,
       callRecording,
       failureReason: BOT_NEVER_SCHEDULED_FAILURE_REASON,
       logMessage: `call recording ${callRecording.id} never got a Recall bot and its meeting has ended; marking it failed`,
     });
-
-    return true;
   }
 
   if (!hasUnresolvedAttemptAgedOut({ calendarEvent, now })) {
@@ -42,14 +39,12 @@ export const resolveEndedPendingCallRecording = async ({
     return false;
   }
 
-  await markCallRecordingFailed({
+  return markCallRecordingFailed({
     client,
     callRecording,
     failureReason: BOT_SCHEDULE_OUTCOME_UNKNOWN_FAILURE_REASON,
     logMessage: `call recording ${callRecording.id} has an unresolved Recall bot creation attempt older than the convergence lookback; marking it failed`,
   });
-
-  return true;
 };
 
 const hasUnresolvedAttemptAgedOut = ({
@@ -81,14 +76,21 @@ const markCallRecordingFailed = async ({
   callRecording: CallRecordingRecord;
   failureReason: string;
   logMessage: string;
-}): Promise<void> => {
-  console.warn(`[call-recorder] ${logMessage}`);
-
-  await updateCallRecording(client, {
-    id: callRecording.id,
-    data: {
-      status: CallRecordingStatus.FAILED,
-      callRecorderFailureReason: failureReason,
+}): Promise<boolean> => {
+  const didMarkCallRecordingFailed = await markUnclaimedCallRecordingFailed(
+    client,
+    {
+      callRecordingId: callRecording.id,
+      expectedBotScheduleAttemptedAt: callRecording.botScheduleAttemptedAt,
+      expectedBotScheduleIdempotencyKey:
+        callRecording.botScheduleIdempotencyKey,
+      failureReason,
     },
-  });
+  );
+
+  if (didMarkCallRecordingFailed) {
+    console.warn(`[call-recorder] ${logMessage}`);
+  }
+
+  return didMarkCallRecordingFailed;
 };

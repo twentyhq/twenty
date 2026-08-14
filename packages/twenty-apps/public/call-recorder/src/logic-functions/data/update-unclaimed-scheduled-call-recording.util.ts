@@ -4,7 +4,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 
-type UnclaimedCallRecordingBotScheduleAttemptUpdate =
+type UnclaimedScheduledCallRecordingUpdate =
   | {
       externalBotId: string;
     }
@@ -15,9 +15,13 @@ type UnclaimedCallRecordingBotScheduleAttemptUpdate =
   | {
       botScheduleAttemptedAt: null;
       botScheduleIdempotencyKey: null;
+    }
+  | {
+      status: CallRecordingStatus.FAILED;
+      callRecorderFailureReason: string;
     };
 
-export const updateUnclaimedCallRecordingBotScheduleAttempt = async (
+export const updateUnclaimedScheduledCallRecording = async (
   client: CoreApiClient,
   {
     callRecordingId,
@@ -28,7 +32,7 @@ export const updateUnclaimedCallRecordingBotScheduleAttempt = async (
     callRecordingId: string;
     expectedBotScheduleAttemptedAt: string | undefined;
     expectedBotScheduleIdempotencyKey: string | undefined;
-    data: UnclaimedCallRecordingBotScheduleAttemptUpdate;
+    data: UnclaimedScheduledCallRecordingUpdate;
   },
 ): Promise<boolean> => {
   const result = await client.mutation({

@@ -1,6 +1,6 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { updateUnclaimedCallRecordingBotScheduleAttempt } from 'src/logic-functions/data/update-unclaimed-call-recording-bot-schedule-attempt.util';
+import { updateUnclaimedScheduledCallRecording } from 'src/logic-functions/data/update-unclaimed-scheduled-call-recording.util';
 
 export const attachRecallBotToCallRecording = async (
   client: CoreApiClient,
@@ -16,7 +16,7 @@ export const attachRecallBotToCallRecording = async (
     botScheduleIdempotencyKey: string;
   },
 ): Promise<boolean> => {
-  return updateUnclaimedCallRecordingBotScheduleAttempt(client, {
+  return updateUnclaimedScheduledCallRecording(client, {
     callRecordingId,
     expectedBotScheduleAttemptedAt: botScheduleAttemptedAt,
     expectedBotScheduleIdempotencyKey: botScheduleIdempotencyKey,

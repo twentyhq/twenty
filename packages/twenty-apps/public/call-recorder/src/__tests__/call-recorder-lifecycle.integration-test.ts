@@ -567,9 +567,11 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(callRecording.recordingRequestStatus).toBe('REQUESTED');
       expect(callRecording.botScheduleAttemptedAt).toBeTruthy();
       expect(callRecording.botScheduleIdempotencyKey).toBeTruthy();
-      expect(recall.bots.get(botId)?.metadata).toEqual(
-        buildBotMetadata(callRecordingId, workspaceId),
-      );
+      expect(recall.bots.get(botId)?.metadata).toEqual({
+        ...buildBotMetadata(callRecordingId, workspaceId),
+        twentyBotScheduleIdempotencyKey:
+          callRecording.botScheduleIdempotencyKey,
+      });
     });
 
     it('creates nothing for a meeting without a conference link', async () => {
@@ -850,7 +852,7 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(recall.listRequestCount).toBe(0);
     });
 
-    it('attaches an existing bot found by lookup when the recorded attempt drifted', async () => {
+    it('replaces an existing bot when its recorded scheduling inputs drifted', async () => {
       const calendarEventId = await createCalendarEvent();
       const callRecordingId = await createPendingCallRecording({
         calendarEventId,
@@ -866,8 +868,14 @@ describe('call recorder app lifecycle (integration)', () => {
 
       await runPendingRecoveryCron();
 
-      expect((await fetchCallRecording(callRecordingId)).externalBotId).toBe(
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.externalBotId).not.toBe(
         'recall-bot-from-crashed-run',
+      );
+      expect(recall.deletedBotIds).toContain('recall-bot-from-crashed-run');
+      expect(recall.botForCallRecording(callRecordingId)?.id).toBe(
+        callRecording.externalBotId,
       );
       expect(recall.listRequestCount).toBe(1);
     });

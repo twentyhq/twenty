@@ -51,6 +51,10 @@ class FakeCoreApiClient {
   deleteCallRecordingBeforeExternalBotIdAttach = false;
   callRecordingReadFailureAfterExternalBotIdAttachFailure?: Error;
   hasExternalBotIdAttachFailed = false;
+  callRecordingUpdateBeforeNextFilteredMutation?: {
+    callRecordingId: string;
+    data: Partial<CallRecordingNode>;
+  };
 
   constructor({
     callRecordings = [],
@@ -107,6 +111,20 @@ class FakeCoreApiClient {
   async mutation(mutation: any): Promise<any> {
     if (mutation.updateCallRecordings !== undefined) {
       const { filter, data } = mutation.updateCallRecordings.__args;
+      const concurrentCallRecordingUpdate =
+        this.callRecordingUpdateBeforeNextFilteredMutation;
+
+      if (concurrentCallRecordingUpdate !== undefined) {
+        const callRecording = this.callRecordings.find(
+          ({ id }) => id === concurrentCallRecordingUpdate.callRecordingId,
+        );
+
+        if (callRecording !== undefined) {
+          Object.assign(callRecording, concurrentCallRecordingUpdate.data);
+        }
+
+        this.callRecordingUpdateBeforeNextFilteredMutation = undefined;
+      }
 
       if (typeof data.externalBotId === 'string') {
         if (this.deleteCallRecordingBeforeExternalBotIdAttach) {
@@ -342,6 +360,41 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
       },
     });
     expect(client.callRecordings[0].externalBotId).toBe('recall-bot-1');
+  });
+
+  it('defers recovery without changing the attempt when the workspace id is unavailable', async () => {
+    vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', '');
+    const botScheduleAttemptedAt = '2026-01-01T11:55:00.000Z';
+    const botScheduleIdempotencyKey = 'unresolved-attempt-key';
+    const client = new FakeCoreApiClient({
+      callRecordings: [
+        buildPendingCallRecording({
+          botScheduleAttemptedAt,
+          botScheduleIdempotencyKey,
+        }),
+      ],
+      calendarEvents: [buildCalendarEvent()],
+    });
+
+    const result = await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(result).toEqual({
+      attachedCallRecordingIds: [],
+      scheduledCallRecordingIds: [],
+      markedFailedCallRecordingIds: [],
+      failedCallRecordingIds: [],
+    });
+    expect(listBotRequestUrls()).toHaveLength(0);
+    expect(createBotCalls()).toHaveLength(0);
+    expect(client.callRecordings[0].botScheduleAttemptedAt).toBe(
+      botScheduleAttemptedAt,
+    );
+    expect(client.callRecordings[0].botScheduleIdempotencyKey).toBe(
+      botScheduleIdempotencyKey,
+    );
   });
 
   it('cancels a created bot when its call recording was deleted before id write-back', async () => {
@@ -796,6 +849,34 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     expect(client.callRecordings[0].callRecorderFailureReason).toBe(
       'bot_never_scheduled',
     );
+  });
+
+  it('does not mark an ended recording failed when another worker attaches a bot first', async () => {
+    const client = new FakeCoreApiClient({
+      callRecordings: [buildPendingCallRecording()],
+      calendarEvents: [
+        buildCalendarEvent({
+          startsAt: PAST_STARTS_AT,
+          endsAt: PAST_ENDS_AT,
+        }),
+      ],
+    });
+    client.callRecordingUpdateBeforeNextFilteredMutation = {
+      callRecordingId: 'call-recording-1',
+      data: { externalBotId: 'recall-bot-from-concurrent-worker' },
+    };
+
+    const result = await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(result.markedFailedCallRecordingIds).toEqual([]);
+    expect(client.callRecordings[0].status).toBe('SCHEDULED');
+    expect(client.callRecordings[0].externalBotId).toBe(
+      'recall-bot-from-concurrent-worker',
+    );
+    expect(client.callRecordings[0].callRecorderFailureReason).toBeUndefined();
   });
 
   it('keeps an ended recording with an unresolved attempt pending while convergence may still resolve it', async () => {

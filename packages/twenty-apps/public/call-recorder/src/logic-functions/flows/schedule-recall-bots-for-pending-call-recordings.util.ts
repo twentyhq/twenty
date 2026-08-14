@@ -100,6 +100,11 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
   // it. Only attempts whose inputs drifted since the attempt pay for a
   // Recall lookup.
   const workspaceId = getCurrentWorkspaceId();
+
+  if (isUndefined(workspaceId)) {
+    return result;
+  }
+
   const ambiguousCallRecordings = resumableCallRecordings.filter(
     ({ callRecording, calendarEvent }) =>
       !canRescheduleCallRecordingWithoutRecallLookup({
