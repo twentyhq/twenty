@@ -19,13 +19,24 @@ type PageLayoutTabListVisibleTabsProps = {
   canReorder: boolean;
   widgetDropTargetTabIds: Set<string>;
   firstHiddenTabId: string | null;
+  isScrollable: boolean;
 };
 
-const StyledTabContainer = styled.div`
+const StyledTabContainer = styled.div<{ isScrollable: boolean }>`
   display: flex;
   max-width: 100%;
-  overflow: hidden;
+  overflow-x: ${({ isScrollable }) => (isScrollable ? 'auto' : 'hidden')};
+  overflow-y: hidden;
   position: relative;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  > * {
+    flex-shrink: 0;
+  }
 
   > *:not(:last-child) {
     margin-right: ${TAB_LIST_GAP}px;
@@ -53,12 +64,13 @@ export const PageLayoutTabListVisibleTabs = ({
   canReorder,
   widgetDropTargetTabIds,
   firstHiddenTabId,
+  isScrollable,
 }: PageLayoutTabListVisibleTabsProps) => {
   if (canReorder) {
     const shownTabs = visibleTabs.slice(0, visibleTabCount);
 
     return (
-      <StyledTabContainer>
+      <StyledTabContainer isScrollable={isScrollable}>
         {shownTabs.map((tab, index) => (
           <StyledTabSlot key={tab.id}>
             <StyledLeadingDropTarget>
@@ -94,7 +106,7 @@ export const PageLayoutTabListVisibleTabs = ({
   }
 
   return (
-    <StyledTabContainer>
+    <StyledTabContainer isScrollable={isScrollable}>
       {visibleTabs.slice(0, visibleTabCount).map((tab) => (
         <TabButton
           key={tab.id}

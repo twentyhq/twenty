@@ -17,6 +17,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -110,6 +111,7 @@ export const PageLayoutTabList = ({
   }));
 
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const [activeTabId, setActiveTabId] = useAtomComponentState(
     activeTabIdComponentState,
@@ -335,9 +337,15 @@ export const PageLayoutTabList = ({
 
   const canReorderTabs = isReorderEnabled;
 
+  // A dropdown costs a tap to discover what is behind it. Touch surfaces can
+  // swipe the row instead, so mobile keeps every tab and scrolls. Reordering
+  // drags along the same axis, so that mode keeps the dropdown.
+  const shouldScrollTabs = isMobile && !canReorderTabs;
+
   const shouldRenderReorderableDropdown = hasHiddenTabs && canReorderTabs;
 
-  const shouldRenderStaticDropdown = hasHiddenTabs && !canReorderTabs;
+  const shouldRenderStaticDropdown =
+    hasHiddenTabs && !canReorderTabs && !shouldScrollTabs;
 
   // Record pages accept widget drops on vertical-list tabs (dnd-kit drags);
   // dashboards accept them on grid tabs (react-grid-layout drags bridged by
@@ -367,7 +375,7 @@ export const PageLayoutTabList = ({
         tabListIds={tabsWithIcons.map((tab) => tab.id)}
       />
 
-      {tabsWithIcons.length > 1 && (
+      {tabsWithIcons.length > 1 && !shouldScrollTabs && (
         <TabListHiddenMeasurements
           visibleTabs={tabsWithIcons}
           activeTabId={activeTabId}
@@ -396,7 +404,10 @@ export const PageLayoutTabList = ({
         <StyledContainer className={className}>
           <PageLayoutTabListVisibleTabs
             visibleTabs={tabsWithIcons}
-            visibleTabCount={visibleTabCount}
+            visibleTabCount={
+              shouldScrollTabs ? tabsWithIcons.length : visibleTabCount
+            }
+            isScrollable={shouldScrollTabs}
             activeTabId={activeTabId}
             behaveAsLinks={behaveAsLinks}
             loading={loading}
