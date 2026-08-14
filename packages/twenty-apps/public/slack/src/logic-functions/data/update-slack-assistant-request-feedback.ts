@@ -1,6 +1,6 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { type SlackAssistantFeedbackRating } from 'src/logic-functions/constants/slack-assistant-feedback-rating';
+import { type SlackAssistantFeedbackRating } from 'src/logic-functions/types/slack-assistant-feedback-rating.type';
 
 export const updateSlackAssistantRequestFeedback = async (
   client: CoreApiClient,

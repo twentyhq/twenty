@@ -6,7 +6,7 @@ type SlackInteractionUser = {
   id?: string;
 };
 
-export type SlackInteractionAction = {
+type SlackInteractionAction = {
   type?: string;
   action_id?: string;
   block_id?: string;

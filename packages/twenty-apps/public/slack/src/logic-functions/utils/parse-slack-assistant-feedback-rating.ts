@@ -1,8 +1,6 @@
 import { SLACK_ASSISTANT_FEEDBACK_BUTTON_VALUE } from 'src/logic-functions/constants/slack-assistant-feedback-button-value';
-import {
-  SLACK_ASSISTANT_FEEDBACK_RATING,
-  type SlackAssistantFeedbackRating,
-} from 'src/logic-functions/constants/slack-assistant-feedback-rating';
+import { SLACK_ASSISTANT_FEEDBACK_RATING } from 'src/logic-functions/constants/slack-assistant-feedback-rating';
+import { type SlackAssistantFeedbackRating } from 'src/logic-functions/types/slack-assistant-feedback-rating.type';
 
 export const parseSlackAssistantFeedbackRating = (
   buttonValue: string | undefined,

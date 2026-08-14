@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { slackAssistantFeedbackHandler } from 'src/logic-functions/slack-assistant-feedback';
+import { slackAssistantFeedbackHandler } from 'src/logic-functions/handlers/slack-assistant-feedback-handler';
 
 const { updateSlackAssistantRequestFeedbackMock } = vi.hoisted(() => ({
   updateSlackAssistantRequestFeedbackMock: vi.fn(),
