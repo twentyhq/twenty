@@ -1,11 +1,10 @@
-import { useEffect, useRef } from 'react';
+import { type BowtieStage, type HolostaffApi } from '@holostaff/sdk';
+import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { holostaffConfigState } from '@/client-config/states/holostaffConfigState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { scheduleIdleCallback } from '~/utils/scheduleIdleCallback';
-
-type BowtieStage = 'onboarding' | 'adoption' | 'expansion';
 
 // Journey stages, by the route the user is on. First match wins. Covers
 // the routes the copilot actually mounts on: the authenticated app shell
@@ -20,6 +19,33 @@ const STAGE_ROUTES: [RegExp, BowtieStage][] = [
   [/^\/(plan-required|settings\/(members|billing))/, 'expansion'],
   [/./, 'adoption'],
 ];
+
+// The SDK is a browser-global singleton, so its handle and the last
+// reported stage live at module scope rather than in component state.
+let holostaffApiPromise: Promise<HolostaffApi> | null = null;
+let currentStage: BowtieStage | null = null;
+
+const loadHolostaff = (
+  tenantId: string,
+  sourceId: string,
+): Promise<HolostaffApi> => {
+  holostaffApiPromise =
+    holostaffApiPromise ??
+    import('@holostaff/sdk').then(({ holostaff }) => {
+      holostaff.init({
+        tenantId,
+        sourceId,
+        // A CRM screen is full of customer names and emails, so mask the
+        // content of every input in the session capture, not just PII
+        // field types.
+        observe: { maskAllInputs: true },
+      });
+
+      return holostaff;
+    });
+
+  return holostaffApiPromise;
+};
 
 /**
  * Holostaff: an optional in-product success manager for CRM users.
@@ -39,10 +65,6 @@ const STAGE_ROUTES: [RegExp, BowtieStage][] = [
 export const useInstantiateHolostaffCopilot = () => {
   const [holostaffConfig] = useAtomState(holostaffConfigState);
   const { pathname } = useLocation();
-  const sdkRef = useRef<Promise<typeof import('@holostaff/sdk')> | null>(
-    null,
-  );
-  const currentStageRef = useRef<BowtieStage | null>(null);
 
   const { tenantId, sourceId } = holostaffConfig;
 
@@ -62,29 +84,14 @@ export const useInstantiateHolostaffCopilot = () => {
           return;
         }
 
-        sdkRef.current =
-          sdkRef.current ??
-          import('@holostaff/sdk').then((mod) => {
-            mod.holostaff.init({
-              tenantId,
-              sourceId,
-              // A CRM screen is full of customer names and emails, so mask
-              // the content of every input in the session capture, not
-              // just PII field types.
-              observe: { maskAllInputs: true },
-            });
-
-            return mod;
-          });
-
         const stage = STAGE_ROUTES.find(([pattern]) =>
           pattern.test(pathname),
         )?.[1];
 
-        sdkRef.current
-          .then(({ holostaff }) => {
-            if (!cancelled && stage && stage !== currentStageRef.current) {
-              currentStageRef.current = stage;
+        loadHolostaff(tenantId, sourceId)
+          .then((holostaff) => {
+            if (!cancelled && stage && stage !== currentStage) {
+              currentStage = stage;
               holostaff.markStageEntry(stage);
             }
           })
