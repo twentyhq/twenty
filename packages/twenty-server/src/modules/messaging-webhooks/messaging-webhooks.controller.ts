@@ -10,22 +10,22 @@ import {
 
 import { type Request } from 'express';
 import { ApiPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
+import { SesInboundWebhookAdapterService } from 'src/modules/messaging-webhooks/adapters/aws-ses/services/ses-inbound-webhook-adapter.service';
+import { SesOutboundWebhookAdapterService } from 'src/modules/messaging-webhooks/adapters/aws-ses/services/ses-outbound-webhook-adapter.service';
 import { MessagingWebhookApiExceptionFilter } from 'src/modules/messaging-webhooks/filters/messaging-webhook-api-exception.filter';
 import { MessagingWebhookExceptionCode } from 'src/modules/messaging-webhooks/messaging-webhook-exception-code.enum';
 import { MessagingWebhookException } from 'src/modules/messaging-webhooks/messaging-webhook.exception';
-import { SesInboundWebhookRouterService } from 'src/modules/messaging-webhooks/services/ses-inbound-webhook-router.service';
-import { SesOutboundWebhookRouterService } from 'src/modules/messaging-webhooks/services/ses-outbound-webhook-router.service';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { isDefined } from 'twenty-shared/utils';
 
 @Controller()
 @UseFilters(MessagingWebhookApiExceptionFilter)
 export class MessagingWebhooksController {
   constructor(
-    private readonly sesInboundWebhookRouterService: SesInboundWebhookRouterService,
-    private readonly sesOutboundWebhookRouterService: SesOutboundWebhookRouterService,
+    private readonly sesInboundWebhookAdapterService: SesInboundWebhookAdapterService,
+    private readonly sesOutboundWebhookAdapterService: SesOutboundWebhookAdapterService,
   ) {}
 
   @Post(`${ApiPath.Webhooks}/messaging/ses/inbound`)
@@ -41,7 +41,7 @@ export class MessagingWebhooksController {
       );
     }
 
-    await this.sesInboundWebhookRouterService.route(request.rawBody);
+    await this.sesInboundWebhookAdapterService.handle(request.rawBody);
   }
 
   @Post(`${ApiPath.Webhooks}/messaging/ses/outbound`)
@@ -57,6 +57,6 @@ export class MessagingWebhooksController {
       );
     }
 
-    await this.sesOutboundWebhookRouterService.route(request.rawBody);
+    await this.sesOutboundWebhookAdapterService.handle(request.rawBody);
   }
 }

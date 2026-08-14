@@ -1,6 +1,6 @@
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { parseWorkspaceIdFromAwsSesResourceArn } from 'src/modules/messaging-webhooks/utils/parse-workspace-id-from-aws-ses-resource-arn.util';
+import { parseWorkspaceIdFromAwsSesResourceArn } from 'src/modules/messaging-webhooks/adapters/aws-ses/utils/parse-workspace-id-from-aws-ses-resource-arn.util';
 
 export const resolveWorkspaceIdFromAwsSesResources = (
   resources: string[] | undefined,
