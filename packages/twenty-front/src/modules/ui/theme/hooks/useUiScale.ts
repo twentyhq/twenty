@@ -5,6 +5,7 @@ import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUp
 import { persistedUiScaleStepState } from '@/ui/theme/states/persistedUiScaleStepState';
 import { type UiScale } from '@/workspace-member/types/WorkspaceMember';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useUiScale = () => {
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useAtomState(
@@ -21,13 +22,13 @@ export const useUiScale = () => {
 
   const setUiScaleStep = useCallback(
     async (step: UiScale) => {
-      if (!currentWorkspaceMember) {
+      if (!isDefined(currentWorkspaceMember)) {
         return;
       }
 
       setPersistedUiScaleStep(step);
       setCurrentWorkspaceMember((current) => {
-        if (!current) {
+        if (!isDefined(current)) {
           return current;
         }
         return {
