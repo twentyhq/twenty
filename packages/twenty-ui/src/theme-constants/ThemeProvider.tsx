@@ -149,23 +149,18 @@ export const ThemeProvider = ({
   }, [colorScheme, applyToRoot, isScoped, overridesKey]);
 
   // The interface scale preference is consumed by the root zoom rule in the
-  // app stylesheet through --t-scale-user. Computed styles stay unzoomed, so
-  // no theme recompute is needed when the value changes. The provider owns
-  // the property on its target while mounted; the cleanup is only registered
-  // from the branch that set it, so a provider mounted without a scale can
+  // app stylesheet through --t-scale-user, which only reads from the html
+  // element, so scoped providers ignore the prop instead of writing a value
+  // nothing consumes. Computed styles stay unzoomed, so no theme recompute is
+  // needed when the value changes. The cleanup is only registered from the
+  // branch that set the property, so a provider mounted without a scale can
   // never clear a value another provider owns.
   useLayoutEffect(() => {
-    if (typeof document === 'undefined') {
+    if (typeof document === 'undefined' || isScoped || !isDefined(scale)) {
       return;
     }
 
-    const scaleTarget = isScoped
-      ? wrapperRef.current
-      : document.documentElement;
-
-    if (!isDefined(scaleTarget) || !isDefined(scale)) {
-      return;
-    }
+    const scaleTarget = document.documentElement;
 
     scaleTarget.style.setProperty('--t-scale-user', String(scale));
 

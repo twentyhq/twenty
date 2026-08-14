@@ -58,6 +58,16 @@ describe('ThemeProvider scale', () => {
     expect(readInlineScale()).toBe('');
   });
 
+  it('should ignore the scale on a scoped provider', () => {
+    render(
+      <ThemeProvider colorScheme="light" overrides={{}} scale={1.25}>
+        <div />
+      </ThemeProvider>,
+    );
+
+    expect(readInlineScale()).toBe('');
+  });
+
   it('should not remove a scale another provider set when mounted without one', () => {
     document.documentElement.style.setProperty('--t-scale-user', '1.25');
 
