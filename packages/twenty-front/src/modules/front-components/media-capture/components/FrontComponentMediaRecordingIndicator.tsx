@@ -74,17 +74,17 @@ export const FrontComponentMediaRecordingIndicator = () => {
   const { data: applicationNameData } = useQuery(
     FindOneApplicationNameDocument,
     {
-      variables: { id: mediaRecording?.applicationId ?? '' },
-      skip: !isDefined(mediaRecording),
+      variables: { id: frontComponentMediaRecording?.applicationId ?? '' },
+      skip: !isDefined(frontComponentMediaRecording),
     },
   );
   const applicationName = applicationNameData?.findOneApplication?.name;
 
-  if (!isDefined(mediaRecording)) {
+  if (!isDefined(frontComponentMediaRecording)) {
     return null;
   }
 
-  const isAudioRecording = mediaRecording.mediaType === 'audio';
+  const isAudioRecording = frontComponentMediaRecording.mediaType === 'audio';
 
   const recordingLabel = isAudioRecording
     ? isNonEmptyString(applicationName)
@@ -97,7 +97,7 @@ export const FrontComponentMediaRecordingIndicator = () => {
   // Callback ref: binds the live stream once the element mounts, which only
   // happens while a recording is running.
   const liveVideoPreviewRef = (element: HTMLVideoElement | null) => {
-    const liveMediaStream = mediaRecording.getLiveMediaStream();
+    const liveMediaStream = frontComponentMediaRecording.getLiveMediaStream();
 
     if (isDefined(element) && isDefined(liveMediaStream)) {
       element.srcObject = liveMediaStream;
@@ -107,7 +107,7 @@ export const FrontComponentMediaRecordingIndicator = () => {
   return (
     <StyledIndicatorContainer data-testid="media-recording-indicator">
       <FrontComponentMediaRecordingTimerEffect
-        startedAt={mediaRecording.startedAt}
+        startedAt={frontComponentMediaRecording.startedAt}
         onElapsedSecondsChange={setElapsedSeconds}
       />
       <StyledRecordingDot />
@@ -123,7 +123,7 @@ export const FrontComponentMediaRecordingIndicator = () => {
       <StyledTimer>{formatDurationTimestamp(elapsedSeconds)}</StyledTimer>
       <StyledStopButton
         data-testid="media-recording-indicator-stop-button"
-        onClick={mediaRecording.requestCancel}
+        onClick={frontComponentMediaRecording.requestCancel}
       >
         {t`Stop`}
       </StyledStopButton>
