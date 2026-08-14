@@ -1,4 +1,4 @@
-import { formatCallRecordingTranscriptTimestamp } from '@/page-layout/widgets/call-recording-transcript/utils/formatCallRecordingTranscriptTimestamp';
+import { formatDurationTimestamp } from '~/utils/format/formatDurationTimestamp';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Avatar, Chip, ChipVariant } from 'twenty-ui/data-display';
@@ -61,7 +61,7 @@ export const CallRecordingTranscriptEntryListItem = ({
         />
         {isDefined(entry.startSeconds) && (
           <StyledTimestamp>
-            {formatCallRecordingTranscriptTimestamp(entry.startSeconds)}
+            {formatDurationTimestamp(entry.startSeconds)}
           </StyledTimestamp>
         )}
       </StyledEntryHeader>
