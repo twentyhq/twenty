@@ -29,6 +29,7 @@ type ApplicationVariableRowProps = {
   applicationId: string;
   value: string | undefined;
   onValueChange: (params: { variableKey: string; value: string }) => void;
+  onValueSaved: (params: { variableKey: string; value: string }) => void;
 };
 
 export const ApplicationVariableRow = ({
@@ -36,6 +37,7 @@ export const ApplicationVariableRow = ({
   applicationId,
   value,
   onValueChange,
+  onValueSaved,
 }: ApplicationVariableRowProps) => {
   const inputId = useId();
 
@@ -56,7 +58,10 @@ export const ApplicationVariableRow = ({
         message: `Could not save ${variable.key}.`,
         variant: 'error',
       });
+      return;
     }
+
+    onValueSaved({ variableKey: variable.key, value: newValue });
   }, APPLICATION_VARIABLE_SAVE_DEBOUNCE_MILLISECONDS);
 
   return (
