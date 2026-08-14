@@ -476,8 +476,6 @@ Front components can trigger navigation, modals, and notifications using functio
 | `unmountFrontComponent()` | Unmount the component |
 | `updateProgress(progress)` | Update a progress indicator |
 
-The standard `navigator.clipboard.writeText()` also works: the worker polyfills it, so libraries that copy to the clipboard run unchanged.
-
 Here is an example that uses the host API to show a snackbar and close the side panel after an action completes:
 
 ```tsx src/front-components/archive-record.tsx

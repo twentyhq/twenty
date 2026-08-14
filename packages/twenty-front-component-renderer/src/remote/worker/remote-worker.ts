@@ -19,6 +19,7 @@ import { workerGeometryStore } from '@/polyfills/geometry/states/workerGeometryS
 import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
 import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/installWindowGeometryPolyfill';
 import { frontComponentStorageBridges } from '@/polyfills/storage/states/frontComponentStorageBridges';
+import { toGlobalScopeRecord } from '@/polyfills/utils/toGlobalScopeRecord';
 import { installStorageBridge } from '@/polyfills/storage/utils/installStorageBridge';
 import { exposeGlobals } from '@/utils/exposeGlobals';
 import { installStylePropertyOnRemoteElements } from '@/remote/elements/utils/installStylePropertyOnRemoteElements';
@@ -42,10 +43,10 @@ installGetElementsByClassName(Element.prototype);
 installGetElementsByClassName(document);
 installLocalStyleOnBaseElements(Element.prototype);
 
-installGetComputedStyle(globalThis as unknown as Record<string, unknown>);
+installGetComputedStyle(toGlobalScopeRecord(globalThis));
 
 installMutationObserver({
-  globalScope: globalThis as unknown as Record<string, unknown>,
+  globalScope: toGlobalScopeRecord(globalThis),
 });
 
 installElementGeometryPolyfill({
@@ -55,17 +56,17 @@ installElementGeometryPolyfill({
 });
 
 installWindowGeometryPolyfill({
-  globalScope: globalThis as unknown as Record<string, unknown>,
+  globalScope: toGlobalScopeRecord(globalThis),
   geometryStore: workerGeometryStore,
 });
 
 installStorageBridge({
-  globalScope: globalThis as unknown as Record<string, unknown>,
+  globalScope: toGlobalScopeRecord(globalThis),
   storageBridges: frontComponentStorageBridges,
 });
 
 installClipboardPolyfill({
-  globalScope: globalThis as unknown as Record<string, unknown>,
+  globalScope: toGlobalScopeRecord(globalThis),
   // Resolved lazily: the host communication api is populated after worker
   // boot, so the polyfill must not capture the function at install time.
   copyToClipboard: (text) => {
