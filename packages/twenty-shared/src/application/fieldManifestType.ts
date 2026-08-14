@@ -4,6 +4,7 @@ import {
   type FieldMetadataOptions,
   type FieldMetadataType,
   type FieldMetadataUniversalSettings,
+  type MetadataWritability,
   type RelationAndMorphRelationFieldMetadataType,
 } from '@/types';
 
@@ -21,6 +22,9 @@ type BaseRegularFieldManifest<
   options?: FieldMetadataOptions<T>;
   universalSettings?: FieldMetadataUniversalSettings<T>;
   isUIEditable?: boolean;
+  // Who may write this field at all: OPEN (roles decide, default), APPLICATION
+  // (only the owning app acting as itself), SYSTEM (nobody through the API)
+  writability?: MetadataWritability;
   isUnique?: boolean;
   objectUniversalIdentifier: string;
 };
