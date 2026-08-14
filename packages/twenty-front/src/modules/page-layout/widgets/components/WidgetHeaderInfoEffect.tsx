@@ -8,17 +8,17 @@ import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-type WidgetHeaderInfoPublisherEffectProps = WidgetHeaderInfo & {
+type WidgetHeaderInfoSyncEffectProps = WidgetHeaderInfo & {
   pageLayoutInstanceId: string;
   widgetInstanceId: string;
 };
 
-const WidgetHeaderInfoPublisherEffect = ({
+const WidgetHeaderInfoSyncEffect = ({
   count,
   actions,
   pageLayoutInstanceId,
   widgetInstanceId,
-}: WidgetHeaderInfoPublisherEffectProps) => {
+}: WidgetHeaderInfoSyncEffectProps) => {
   const setWidgetHeaderInfo = useSetAtomComponentFamilyState(
     widgetHeaderInfoComponentFamilyState,
     widgetInstanceId,
@@ -61,7 +61,7 @@ export const WidgetHeaderInfoEffect = ({
 
   if (isDefined(pageLayoutInstanceId) && isDefined(widgetInstanceId)) {
     return (
-      <WidgetHeaderInfoPublisherEffect
+      <WidgetHeaderInfoSyncEffect
         count={count}
         actions={actions}
         pageLayoutInstanceId={pageLayoutInstanceId}

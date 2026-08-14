@@ -29,7 +29,7 @@ const getWrapper =
     </PageLayoutTestWrapper>
   );
 
-const getPublishedHeaderInfo = (store: ReturnType<typeof createStore>) =>
+const getStoredWidgetHeaderInfo = (store: ReturnType<typeof createStore>) =>
   store.get(
     widgetHeaderInfoComponentFamilyState.atomFamily({
       instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -38,7 +38,7 @@ const getPublishedHeaderInfo = (store: ReturnType<typeof createStore>) =>
   );
 
 describe('WidgetHeaderInfoEffect', () => {
-  it('publishes count and multiple actions to the widget header', () => {
+  it('syncs count and multiple actions to the widget header state', () => {
     const store = createStore();
 
     render(
@@ -62,35 +62,35 @@ describe('WidgetHeaderInfoEffect', () => {
       { wrapper: getWrapper(store) },
     );
 
-    const publishedHeaderInfo = getPublishedHeaderInfo(store);
+    const storedWidgetHeaderInfo = getStoredWidgetHeaderInfo(store);
 
-    expect(publishedHeaderInfo?.count).toBe(12);
-    expect(publishedHeaderInfo?.actions?.map(({ id }) => id)).toEqual([
+    expect(storedWidgetHeaderInfo?.count).toBe(12);
+    expect(storedWidgetHeaderInfo?.actions?.map(({ id }) => id)).toEqual([
       'compose',
       'see-all',
     ]);
-    expect(publishedHeaderInfo?.actions?.[1].to).toBe('/objects/tasks');
+    expect(storedWidgetHeaderInfo?.actions?.[1].to).toBe('/objects/tasks');
   });
 
-  it('clears the published header info on unmount', () => {
+  it('clears the widget header state on unmount', () => {
     const store = createStore();
 
     const { unmount } = render(<WidgetHeaderInfoEffect count={3} />, {
       wrapper: getWrapper(store),
     });
 
-    expect(getPublishedHeaderInfo(store)?.count).toBe(3);
+    expect(getStoredWidgetHeaderInfo(store)?.count).toBe(3);
 
     unmount();
 
-    expect(getPublishedHeaderInfo(store)).toBeNull();
+    expect(getStoredWidgetHeaderInfo(store)).toBeNull();
   });
 
   it('no-ops without throwing when rendered outside a widget', () => {
     expect(() => render(<WidgetHeaderInfoEffect count={7} />)).not.toThrow();
   });
 
-  it('does not republish equivalent actions', () => {
+  it('does not re-sync equivalent actions', () => {
     const store = createStore();
     const onClick = jest.fn();
 
@@ -109,7 +109,7 @@ describe('WidgetHeaderInfoEffect', () => {
       { wrapper: getWrapper(store) },
     );
 
-    const firstPublishedHeaderInfo = getPublishedHeaderInfo(store);
+    const firstStoredWidgetHeaderInfo = getStoredWidgetHeaderInfo(store);
 
     rerender(
       <WidgetHeaderInfoEffect
@@ -125,10 +125,10 @@ describe('WidgetHeaderInfoEffect', () => {
       />,
     );
 
-    expect(getPublishedHeaderInfo(store)).toBe(firstPublishedHeaderInfo);
+    expect(getStoredWidgetHeaderInfo(store)).toBe(firstStoredWidgetHeaderInfo);
   });
 
-  it('publishes the latest action callback', () => {
+  it('syncs the latest action callback', () => {
     const store = createStore();
     const firstOnClick = jest.fn();
     const secondOnClick = jest.fn();
@@ -160,23 +160,23 @@ describe('WidgetHeaderInfoEffect', () => {
       />,
     );
 
-    expect(getPublishedHeaderInfo(store)?.actions?.[0].onClick).toBe(
+    expect(getStoredWidgetHeaderInfo(store)?.actions?.[0].onClick).toBe(
       secondOnClick,
     );
 
-    getPublishedHeaderInfo(store)?.actions?.[0].onClick?.();
+    getStoredWidgetHeaderInfo(store)?.actions?.[0].onClick?.();
 
     expect(firstOnClick).not.toHaveBeenCalled();
     expect(secondOnClick).toHaveBeenCalledTimes(1);
   });
 
-  it('does not rerender the publisher while the header stays non-empty', () => {
+  it('does not rerender the widget content while the header stays non-empty', () => {
     const store = createStore();
-    let publisherRenderCount = 0;
+    let widgetContentRenderCount = 0;
     let latestOnClick = () => undefined;
 
-    const Publisher = () => {
-      publisherRenderCount++;
+    const WidgetContent = () => {
+      widgetContentRenderCount++;
       latestOnClick = () => undefined;
 
       useAtomComponentFamilySelectorValue(
@@ -198,10 +198,10 @@ describe('WidgetHeaderInfoEffect', () => {
       );
     };
 
-    render(<Publisher />, { wrapper: getWrapper(store) });
+    render(<WidgetContent />, { wrapper: getWrapper(store) });
 
-    expect(publisherRenderCount).toBe(2);
-    expect(getPublishedHeaderInfo(store)?.actions?.[0].onClick).toBe(
+    expect(widgetContentRenderCount).toBe(2);
+    expect(getStoredWidgetHeaderInfo(store)?.actions?.[0].onClick).toBe(
       latestOnClick,
     );
   });

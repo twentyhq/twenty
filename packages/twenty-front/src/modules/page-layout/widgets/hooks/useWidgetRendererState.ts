@@ -71,7 +71,7 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
     isHeaderHiddenInViewMode && !isPageLayoutInEditMode;
 
   // A solo widget owns its tab, and the tab label already names it: the
-  // header only appears when the widget published something to say in it.
+  // header only appears when the widget content set something to show in it.
   const showHeader =
     presentation === 'solo' ? hasWidgetHeaderInfo : !hideHeaderInViewMode;
 
