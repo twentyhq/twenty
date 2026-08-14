@@ -16,7 +16,10 @@ export const getEffectiveParentStatus = ({
 }): StepStatus | undefined => {
   const parentStatus = stepInfos[parentStep.id]?.status;
 
-  if (!isWorkflowIfElseAction(parentStep)) {
+  if (
+    !isWorkflowIfElseAction(parentStep) ||
+    parentStep.nextStepIds?.includes(childStepId)
+  ) {
     return parentStatus;
   }
 
