@@ -9,7 +9,7 @@ import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimensio
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { motion } from 'framer-motion';
-import { useContext, useMemo } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 import {
@@ -97,6 +97,14 @@ export const PinnedCommandMenuItemButtons = ({
     pinnedCommandMenuItems,
     layoutKey: isSidePanelFooter ? 'side-panel-footer' : 'page-header',
   });
+
+  // Without a leading action there is no measuring node left to report a zero
+  // width, so the shared reservation is cleared here instead.
+  useEffect(() => {
+    if (!isDefined(leadingAction)) {
+      onLeadingActionDimensionChange({ width: 0, height: 0 });
+    }
+  }, [leadingAction, onLeadingActionDimensionChange]);
 
   const isCommandMenuItemLabelled = (
     commandMenuItem: CommandMenuItemFieldsFragment,
