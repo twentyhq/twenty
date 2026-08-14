@@ -11,7 +11,6 @@ import {
   IsOptional,
   IsString,
   IsUrl,
-  Max,
   ValidateIf,
   type ValidationError,
   validateSync,
@@ -1208,41 +1207,6 @@ export class ConfigVariables {
   )
   @IsOptional()
   SENTRY_ENVIRONMENT: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LOGGING,
-    description:
-      'Sample rate (0 to 1) applied by Sentry to non-AI traces. AI traces use SENTRY_AI_TRACES_SAMPLE_RATE.',
-    type: ConfigVariableType.NUMBER,
-    isEnvOnly: true,
-  })
-  @CastToPositiveNumber()
-  @Max(1)
-  @IsOptional()
-  SENTRY_TRACES_SAMPLE_RATE = 0.1;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LOGGING,
-    description:
-      'Sample rate (0 to 1) applied by Sentry to AI traces (spans emitted by the AI SDK).',
-    type: ConfigVariableType.NUMBER,
-    isEnvOnly: true,
-  })
-  @CastToPositiveNumber()
-  @Max(1)
-  @IsOptional()
-  SENTRY_AI_TRACES_SAMPLE_RATE = 1;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LOGGING,
-    description: 'Sample rate (0 to 1) applied by Sentry to profiling.',
-    type: ConfigVariableType.NUMBER,
-    isEnvOnly: true,
-  })
-  @CastToPositiveNumber()
-  @Max(1)
-  @IsOptional()
-  SENTRY_PROFILES_SAMPLE_RATE = 0.01;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGGING,

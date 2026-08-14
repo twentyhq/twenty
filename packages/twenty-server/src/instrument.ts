@@ -48,10 +48,6 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
     value: process.env.SENTRY_TRACES_SAMPLE_RATE,
     fallback: 0.1,
   });
-  const aiTracesSampleRate = parseSampleRate({
-    value: process.env.SENTRY_AI_TRACES_SAMPLE_RATE,
-    fallback: 1,
-  });
 
   Sentry.init({
     environment: process.env.SENTRY_ENVIRONMENT,
@@ -88,9 +84,7 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
     ],
     tracesSampleRate,
     tracesSampler: ({ name, inheritOrSampleWith }) =>
-      name.startsWith('ai.')
-        ? aiTracesSampleRate
-        : inheritOrSampleWith(tracesSampleRate),
+      name.startsWith('ai.') ? 1 : inheritOrSampleWith(tracesSampleRate),
     profilesSampleRate: parseSampleRate({
       value: process.env.SENTRY_PROFILES_SAMPLE_RATE,
       fallback: 0.01,
