@@ -50,11 +50,13 @@ export const RecordPageSidePanelCommandMenuDropdown = () => {
   );
 
   // Pinned items are buttons in the footer, so the dropdown only repeats the
-  // ones the footer could not fit.
+  // ones the footer could not fit. This dropdown is itself the footer's
+  // leading action, so the fit keeps its width reserved.
   const { pinnedOverflowCommandMenuItems } =
     usePinnedCommandMenuItemsInlineLayout({
       pinnedCommandMenuItems,
       layoutKey: 'side-panel-footer',
+      hasLeadingAction: true,
     });
 
   // A widget owning the footer suppresses those buttons entirely, and leaves

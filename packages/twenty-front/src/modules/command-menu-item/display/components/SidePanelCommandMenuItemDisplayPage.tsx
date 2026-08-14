@@ -68,8 +68,6 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
       commandMenuItemsContainerWidth:
         commandMenuPinnedInlineLayout.containerWidth,
       commandMenuItemsGapWidth: PINNED_COMMAND_MENU_ITEMS_GAP,
-      commandMenuItemsLeadingActionWidth:
-        commandMenuPinnedInlineLayout.leadingActionWidth,
     });
 
   const hasKnownPinnedInlineLayout =

@@ -15,11 +15,13 @@ type ElementDimensions = {
 type UsePinnedCommandMenuItemsInlineLayoutParams = {
   pinnedCommandMenuItems: CommandMenuItemFieldsFragment[];
   layoutKey: PinnedCommandMenuItemsLayoutKey;
+  hasLeadingAction?: boolean;
 };
 
 export const usePinnedCommandMenuItemsInlineLayout = ({
   pinnedCommandMenuItems,
   layoutKey,
+  hasLeadingAction = false,
 }: UsePinnedCommandMenuItemsInlineLayoutParams) => {
   const [commandMenuPinnedInlineLayout, setCommandMenuPinnedInlineLayout] =
     useAtomFamilyState(commandMenuPinnedInlineLayoutFamilyState, layoutKey);
@@ -53,13 +55,15 @@ export const usePinnedCommandMenuItemsInlineLayout = ({
             commandMenuItemsContainerWidth:
               commandMenuPinnedInlineLayout.containerWidth,
             commandMenuItemsGapWidth: PINNED_COMMAND_MENU_ITEMS_GAP,
-            commandMenuItemsLeadingActionWidth:
-              commandMenuPinnedInlineLayout.leadingActionWidth,
+            commandMenuItemsLeadingActionWidth: hasLeadingAction
+              ? commandMenuPinnedInlineLayout.leadingActionWidth
+              : 0,
           })
         : 0,
     [
       commandMenuPinnedInlineLayout,
       hasKnownPinnedInlineLayout,
+      hasLeadingAction,
       pinnedCommandMenuItemKeysInDisplayOrder,
     ],
   );

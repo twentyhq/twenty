@@ -17,8 +17,6 @@ export const getVisibleCommandMenuItemCountForContainerWidth = ({
     return commandMenuItemKeysInDisplayOrder.length;
   }
 
-  // A leading action shares the container with the items and is separated from
-  // them by one gap, so its footprint is reserved before fitting the items.
   const availableContainerWidth =
     commandMenuItemsLeadingActionWidth > 0
       ? commandMenuItemsContainerWidth -
