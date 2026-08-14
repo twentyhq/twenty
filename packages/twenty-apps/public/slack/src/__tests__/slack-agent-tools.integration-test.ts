@@ -91,6 +91,31 @@ describe('Slack agent tools', () => {
       ]);
     });
 
+    it('should retry an update without blocks in a workspace that rejects them', async () => {
+      slack.addChannel({ id: CHANNEL_ID, name: 'tools' });
+      slack.rejectBlocks();
+      const message = slack.addMessage({
+        channelId: CHANNEL_ID,
+        text: 'first draft',
+      });
+
+      const result = await slackUpdateMessageHandler({
+        slackChannelId: CHANNEL_ID,
+        messageTimestamp: message.timestamp,
+        newMessageText: 'final wording',
+        messageBlocks: [{ type: 'markdown', text: 'final wording' }],
+      });
+
+      expect(result.success).toBe(true);
+      expect(slack.callsTo('chat.update')).toHaveLength(2);
+      expect(slack.messagesIn(CHANNEL_ID)).toEqual([
+        expect.objectContaining({
+          markdownText: 'final wording',
+          blocks: undefined,
+        }),
+      ]);
+    });
+
     it('should delete an existing message', async () => {
       slack.addChannel({ id: CHANNEL_ID, name: 'tools' });
       const message = slack.addMessage({

@@ -63,7 +63,7 @@ describe('Slack connection lifecycle', () => {
     });
 
     it('should refuse to register when another workspace already connected the same Slack team', async () => {
-      appRuntime.setKeyValue(
+      appRuntime.seedKeyValue(
         getSlackTeamKvKey(slack.teamId),
         'another-workspace-id',
         'SERVER',
@@ -207,7 +207,7 @@ describe('Slack connection lifecycle', () => {
 
     it('should reuse the cached bot user id instead of asking Slack again', async () => {
       slack.addChannel({ id: CHANNEL_ID, name: 'sales' });
-      appRuntime.setKeyValue(SLACK_BOT_USER_ID_KV_KEY, {
+      appRuntime.seedKeyValue(SLACK_BOT_USER_ID_KV_KEY, {
         botUserId: slack.botUserId,
         expiresAt: Date.now() + 60_000,
       });

@@ -23,9 +23,15 @@ type SlackIntegrationTestContext = {
 };
 
 const readWorkspaceIdFromToken = (token: string): string => {
-  const payload = JSON.parse(
-    Buffer.from(token.split('.')[1] ?? '', 'base64url').toString('utf8'),
-  ) as { workspaceId?: string };
+  const payload = ((): { workspaceId?: string } => {
+    try {
+      return JSON.parse(
+        Buffer.from(token.split('.')[1] ?? '', 'base64url').toString('utf8'),
+      );
+    } catch {
+      throw new Error('TWENTY_API_KEY is not a readable JWT');
+    }
+  })();
 
   if (payload.workspaceId === undefined) {
     throw new Error('TWENTY_API_KEY carries no workspaceId claim');

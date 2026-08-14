@@ -51,7 +51,7 @@ describe('Slack inbound events', () => {
   };
 
   const claimSlackTeamForThisWorkspace = (): void => {
-    appRuntime.setKeyValue(
+    appRuntime.seedKeyValue(
       getSlackTeamKvKey(slack.teamId),
       workspaceId,
       'SERVER',
@@ -126,10 +126,11 @@ describe('Slack inbound events', () => {
         }),
       );
 
-      expect(result).toBeInstanceOf(Response);
-      expect((result as Response).body).toEqual({
-        challenge: 'challenge-token',
-      });
+      if (!(result instanceof Response)) {
+        throw new Error('The handshake did not answer with an HTTP response');
+      }
+
+      expect(result.body).toEqual({ challenge: 'challenge-token' });
     });
 
     it('should reject a request that is not signed with the workspace signing secret', async () => {
@@ -390,7 +391,7 @@ describe('Slack inbound events', () => {
       const threadTimestamp = '1700000000.000002';
       const slackMessageTimestamp = nextMessageTimestamp();
 
-      appRuntime.setKeyValue(
+      appRuntime.seedKeyValue(
         getSlackThreadKvKey({
           channelId: CHANNEL_ID,
           threadTimestamp,
@@ -431,7 +432,7 @@ describe('Slack inbound events', () => {
       });
       const slackMessageTimestamp = nextMessageTimestamp();
 
-      appRuntime.setKeyValue(threadKey, { expiresAt: Date.now() - 1 });
+      appRuntime.seedKeyValue(threadKey, { expiresAt: Date.now() - 1 });
 
       const result = await enqueueSlackAssistantRequest(
         buildSlackMessageEventBody({

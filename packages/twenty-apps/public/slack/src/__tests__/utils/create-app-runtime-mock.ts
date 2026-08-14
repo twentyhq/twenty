@@ -4,6 +4,7 @@ import {
   type RunAgentInput,
   type RunAgentResult,
 } from 'twenty-sdk/logic-function';
+import { isDefined } from 'twenty-sdk/utils';
 
 // The app runtime services (`kv`, `listConnections`, `getConnection`,
 // `runAgent`) are GraphQL calls the server only answers for an
@@ -33,7 +34,7 @@ export type AppRuntimeMock = {
   readonly agentRuns: RunAgentInput[];
   readonly lastAgentMessages: NonNullable<RunAgentInput['messages']>;
   getKeyValue: (key: string, scope: AppKeyValueScope) => unknown;
-  setKeyValue: (key: string, value: unknown, scope?: AppKeyValueScope) => void;
+  seedKeyValue: (key: string, value: unknown, scope?: AppKeyValueScope) => void;
   reset: () => void;
 };
 
@@ -65,11 +66,7 @@ export const createAppRuntimeMock = ({
   const getKeyValue = (key: string, scope: AppKeyValueScope): unknown => {
     const entry = keyValueStore.get(buildKeyValueStoreKey(key, scope));
 
-    if (entry === undefined) {
-      return null;
-    }
-
-    return entry.value;
+    return isDefined(entry) ? entry.value : null;
   };
 
   // SERVER keys are a cross-workspace claim registry: the stored value is
@@ -79,7 +76,7 @@ export const createAppRuntimeMock = ({
     const storeKey = buildKeyValueStoreKey(key, 'SERVER');
     const existingEntry = keyValueStore.get(storeKey);
 
-    if (existingEntry === undefined) {
+    if (!isDefined(existingEntry)) {
       keyValueStore.set(storeKey, { value: workspaceId, workspaceId: null });
 
       return { key, value: workspaceId, scope: 'SERVER' };
@@ -113,7 +110,7 @@ export const createAppRuntimeMock = ({
     const storeKey = buildKeyValueStoreKey(key, scope);
     const entry = keyValueStore.get(storeKey);
 
-    if (entry === undefined) {
+    if (!isDefined(entry)) {
       return false;
     }
 
@@ -149,7 +146,7 @@ export const createAppRuntimeMock = ({
           (candidate) => candidate.id === variables.id,
         );
 
-        if (connection === undefined) {
+        if (!isDefined(connection)) {
           return graphqlError(`App connection ${variables.id} not found`);
         }
 
@@ -179,7 +176,7 @@ export const createAppRuntimeMock = ({
           input.scope ?? 'WORKSPACE',
         );
 
-        if (result === null) {
+        if (!isDefined(result)) {
           return graphqlError(
             `Server key "${input.key}" is already claimed by another workspace`,
           );
@@ -218,7 +215,7 @@ export const createAppRuntimeMock = ({
       };
       const operationName = readOperationName(body.query ?? '');
 
-      if (operationName === undefined) {
+      if (!isDefined(operationName)) {
         return passthrough();
       }
 
@@ -255,7 +252,11 @@ export const createAppRuntimeMock = ({
 
     getKeyValue,
 
-    setKeyValue: (
+    // Test-only back door that writes the store directly, unlike `kv.set`,
+    // which goes through the claim rules above. Seeding a SERVER key takes the
+    // claiming workspace id as its value, so a test can hand a team claim to
+    // another workspace.
+    seedKeyValue: (
       key: string,
       value: unknown,
       scope: AppKeyValueScope = 'WORKSPACE',

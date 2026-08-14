@@ -1,4 +1,5 @@
 import { http, HttpResponse, type RequestHandler } from 'msw';
+import { isDefined } from 'twenty-sdk/utils';
 
 const SLACK_API_BASE_URL = 'https://slack.com/api';
 
@@ -109,7 +110,17 @@ export const DEFAULT_SLACK_TEAM_ID = 'T0TESTTEAM';
 const slackError = (errorCode: string) =>
   HttpResponse.json({ ok: false, error: errorCode });
 
-const parseSlackArgumentValue = (value: string): unknown => {
+// The arguments @slack/web-api serializes as JSON before form-encoding them.
+// Everything else stays the verbatim string a real workspace would receive,
+// including a message whose text happens to look like JSON.
+const JSON_ENCODED_ARGUMENT_NAMES = new Set([
+  'attachments',
+  'blocks',
+  'metadata',
+  'prompts',
+]);
+
+const parseSlackArgumentValue = (name: string, value: string): unknown => {
   if (value === 'true') {
     return true;
   }
@@ -118,15 +129,15 @@ const parseSlackArgumentValue = (value: string): unknown => {
     return false;
   }
 
-  if (value.startsWith('[') || value.startsWith('{')) {
-    try {
-      return JSON.parse(value);
-    } catch {
-      return value;
-    }
+  if (!JSON_ENCODED_ARGUMENT_NAMES.has(name)) {
+    return value;
   }
 
-  return value;
+  try {
+    return JSON.parse(value);
+  } catch {
+    return value;
+  }
 };
 
 const parseSlackRequestArgs = async (
@@ -135,7 +146,7 @@ const parseSlackRequestArgs = async (
   const args: Record<string, unknown> = {};
 
   new URLSearchParams(await request.text()).forEach((value, key) => {
-    args[key] = parseSlackArgumentValue(value);
+    args[key] = parseSlackArgumentValue(key, value);
   });
 
   return args;
@@ -200,17 +211,17 @@ export const createSlackApiMock = ({
   };
 
   const postMessage = (args: Record<string, unknown>) => {
-    if (rejectsMarkdownText && args.markdown_text !== undefined) {
+    if (rejectsMarkdownText && isDefined(args.markdown_text)) {
       return slackError('invalid_arguments');
     }
 
-    if (rejectsBlocks && args.blocks !== undefined) {
+    if (rejectsBlocks && isDefined(args.blocks)) {
       return slackError('invalid_blocks');
     }
 
     const channel = findChannel(args.channel);
 
-    if (channel === undefined) {
+    if (!isDefined(channel)) {
       return slackError('channel_not_found');
     }
 
@@ -235,13 +246,17 @@ export const createSlackApiMock = ({
   };
 
   const updateMessage = (args: Record<string, unknown>) => {
-    if (rejectsMarkdownText && args.markdown_text !== undefined) {
+    if (rejectsMarkdownText && isDefined(args.markdown_text)) {
       return slackError('invalid_arguments');
+    }
+
+    if (rejectsBlocks && isDefined(args.blocks)) {
+      return slackError('invalid_blocks');
     }
 
     const message = findMessage(args.channel, args.ts);
 
-    if (message === undefined) {
+    if (!isDefined(message)) {
       return slackError('message_not_found');
     }
 
@@ -259,7 +274,7 @@ export const createSlackApiMock = ({
   const deleteMessage = (args: Record<string, unknown>) => {
     const message = findMessage(args.channel, args.ts);
 
-    if (message === undefined) {
+    if (!isDefined(message)) {
       return slackError('message_not_found');
     }
 
@@ -275,7 +290,7 @@ export const createSlackApiMock = ({
   const postEphemeralMessage = (args: Record<string, unknown>) => {
     const channel = findChannel(args.channel);
 
-    if (channel === undefined) {
+    if (!isDefined(channel)) {
       return slackError('channel_not_found');
     }
 
@@ -296,7 +311,7 @@ export const createSlackApiMock = ({
   ) => {
     const message = findMessage(args.channel, args.timestamp);
 
-    if (message === undefined) {
+    if (!isDefined(message)) {
       return slackError('message_not_found');
     }
 
@@ -309,7 +324,7 @@ export const createSlackApiMock = ({
     );
 
     if (operation === 'add') {
-      if (existingReaction !== undefined) {
+      if (isDefined(existingReaction)) {
         return slackError('already_reacted');
       }
 
@@ -322,7 +337,7 @@ export const createSlackApiMock = ({
       return HttpResponse.json({ ok: true });
     }
 
-    if (existingReaction === undefined) {
+    if (!isDefined(existingReaction)) {
       return slackError('no_reaction');
     }
 
@@ -396,7 +411,7 @@ export const createSlackApiMock = ({
   const getUserInfo = (args: Record<string, unknown>) => {
     const user = users.find((candidate) => candidate.id === args.user);
 
-    if (user === undefined) {
+    if (!isDefined(user)) {
       return slackError('users_not_found');
     }
 
@@ -482,7 +497,7 @@ export const createSlackApiMock = ({
 
       const queuedError = takeQueuedError(method);
 
-      if (queuedError !== undefined) {
+      if (isDefined(queuedError)) {
         return slackError(queuedError);
       }
 

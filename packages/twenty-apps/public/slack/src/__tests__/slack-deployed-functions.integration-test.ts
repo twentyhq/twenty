@@ -3,7 +3,7 @@ import * as path from 'path';
 
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { functionExecute } from 'twenty-sdk/cli';
-import { beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { buildSlackRoutePayload } from 'src/__tests__/utils/build-slack-event-payloads';
 import { SLACK_TEST_WEBHOOK_SECRET } from 'src/__tests__/utils/setup-slack-integration-test';
@@ -58,6 +58,25 @@ const readManifestLogicFunctionNames = (): string[] => {
 describe('Slack app deployed functions', () => {
   const metadataClient = new MetadataApiClient();
 
+  let webhookSecretVariableId: string | undefined;
+
+  const writeWebhookSecret = async (value: string): Promise<void> => {
+    await metadataClient.mutation({
+      updateApplicationRegistrationVariable: {
+        __args: {
+          input: {
+            id: requireDefined(
+              webhookSecretVariableId,
+              'The SLACK_WEBHOOK_SECRET variable id',
+            ),
+            update: { value },
+          },
+        },
+        id: true,
+      },
+    });
+  };
+
   beforeAll(async () => {
     const applicationsResult = await metadataClient.query({
       findManyApplications: {
@@ -85,6 +104,7 @@ describe('Slack app deployed functions', () => {
         },
         id: true,
         key: true,
+        isFilled: true,
       },
     });
 
@@ -95,17 +115,24 @@ describe('Slack app deployed functions', () => {
       'The SLACK_WEBHOOK_SECRET application variable',
     );
 
-    await metadataClient.mutation({
-      updateApplicationRegistrationVariable: {
-        __args: {
-          input: {
-            id: webhookSecretVariable.id,
-            update: { value: SLACK_TEST_WEBHOOK_SECRET },
-          },
-        },
-        id: true,
-      },
-    });
+    // The stored secret is write-only, so a real one could not be put back
+    // afterwards: refuse to overwrite it rather than leaving the instance
+    // verifying Slack signatures against a public test value.
+    if (webhookSecretVariable.isFilled === true) {
+      throw new Error(
+        'SLACK_WEBHOOK_SECRET is already set on this instance. Run the integration suite against a disposable Twenty instance.',
+      );
+    }
+
+    webhookSecretVariableId = webhookSecretVariable.id;
+
+    await writeWebhookSecret(SLACK_TEST_WEBHOOK_SECRET);
+  });
+
+  afterAll(async () => {
+    if (webhookSecretVariableId !== undefined) {
+      await writeWebhookSecret('');
+    }
   });
 
   it('should deploy every logic function the manifest declares', async () => {
