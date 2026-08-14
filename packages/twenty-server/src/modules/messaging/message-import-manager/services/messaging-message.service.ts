@@ -274,16 +274,9 @@ export class MessagingMessageService {
 
         await messageRepository.insert(messagesToCreate, transactionManager);
 
-        const messageChannelMessageAssociationsToCreate = [
-          ...new Set(
-            Array.from(messageAccumulatorMap.values())
-              .map(
-                (accumulator) =>
-                  accumulator.messageChannelMessageAssociationToCreate,
-              )
-              .filter(isDefined),
-          ),
-        ];
+        const messageChannelMessageAssociationsToCreate = Array.from(
+          associationToCreateByMessageId.values(),
+        );
 
         await messageChannelMessageAssociationRepository.insert(
           messageChannelMessageAssociationsToCreate,
