@@ -211,11 +211,25 @@ const findMatchingCallRecording = async ({
   webhookEvent: RecallWebhookEvent;
 }): Promise<CallRecordingRecord | undefined> => {
   if (!isUndefined(webhookEvent.callRecordingIdFromMetadata)) {
-    return (
+    const callRecording = (
       await findCallRecordingsByFilter(client, {
         id: { eq: webhookEvent.callRecordingIdFromMetadata },
       })
     )[0];
+
+    // Metadata survives bot replacement. Once a recording owns a newer bot,
+    // ignore delayed events from the old bot instead of moving ownership and
+    // status backwards. An id-less row remains intentionally best effort so
+    // webhooks can still close the normal create/write-back crash window.
+    if (
+      !isUndefined(callRecording?.externalBotId) &&
+      !isUndefined(webhookEvent.externalBotId) &&
+      callRecording.externalBotId !== webhookEvent.externalBotId
+    ) {
+      return undefined;
+    }
+
+    return callRecording;
   }
 
   if (isUndefined(webhookEvent.externalBotId)) {

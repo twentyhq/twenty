@@ -149,7 +149,9 @@ const isWithinCanceledBotRecoveryWindow = ({
     return false;
   }
 
-  // Recovery only closes the crash window right after cancellation; once a row ages out the daily cleanup sweep owns it, so stop the per-run Recall lookup instead of listing forever (notably for rows whose calendar event was deleted and can no longer bound the retry).
+  // Recovery only closes the crash window right after cancellation. Stop the
+  // per-run Recall lookup once that window expires instead of listing forever
+  // for a row whose bot id was never written back.
   // updatedAt tracks the cancellation write, so a request scheduled far ahead but canceled recently still gets its window; createdAt would age it out from scheduling time.
   return !hasCanceledRecoveryWindowElapsed({
     canceledAt: callRecording.updatedAt ?? callRecording.createdAt,

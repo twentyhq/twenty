@@ -895,6 +895,42 @@ describe('handleRecallWebhook', () => {
     expect(client.mutations).toEqual([]);
   });
 
+  it('skips delayed webhooks from a bot that the recording no longer owns', async () => {
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'SCHEDULED',
+        externalBotId: 'recall-bot-new',
+      },
+    ]);
+
+    const result = await handleRecallWebhook({
+      client: client as unknown as CoreApiClient,
+      body: {
+        event: 'bot.status_change',
+        data: {
+          bot: {
+            id: 'recall-bot-old',
+            metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
+              twentyCallRecordingId: 'call-recording-1',
+            },
+          },
+          status: {
+            code: 'call_ended',
+          },
+        },
+      },
+    });
+
+    expect(result).toEqual({
+      status: 'skipped',
+      event: 'bot.status_change',
+      reason: 'no matching call recording',
+    });
+    expect(client.mutations).toEqual([]);
+  });
+
   it('skips events whose metadata points at a missing call recording', async () => {
     const client = new FakeCoreApiClient([]);
 
