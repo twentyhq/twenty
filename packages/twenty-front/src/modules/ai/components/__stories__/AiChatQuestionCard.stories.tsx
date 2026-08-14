@@ -1,6 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useStore } from 'jotai';
 import { type ReactNode, useEffect } from 'react';
+import { expect, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatQuestionCard } from '@/ai/components/AiChatQuestionCard';
@@ -144,4 +145,24 @@ export const LongQuestion: Story = {
 
 export const MultiSelectQuestion: Story = {
   args: { pendingQuestion: multiSelectQuestion },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const emailOption = await canvas.findByRole('button', { name: /Email/ });
+    await userEvent.click(emailOption);
+
+    const otherOption = await canvas.findByRole('button', { name: 'Other' });
+    await userEvent.click(otherOption);
+    expect(otherOption).toHaveAttribute('aria-pressed', 'true');
+
+    const otherTextArea = canvas.getByPlaceholderText(
+      'Type your own answer here',
+    );
+    await userEvent.type(otherTextArea, 'Carrier pigeon');
+    expect(otherOption).toHaveAttribute('aria-pressed', 'true');
+
+    await userEvent.click(otherOption);
+    expect(otherOption).toHaveAttribute('aria-pressed', 'false');
+    expect(otherTextArea).toHaveValue('Carrier pigeon');
+  },
 };
