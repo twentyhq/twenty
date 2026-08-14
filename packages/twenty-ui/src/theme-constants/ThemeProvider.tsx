@@ -1,5 +1,11 @@
 import { clsx } from 'clsx';
-import { createContext, useLayoutEffect, useRef, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
@@ -134,18 +140,22 @@ export const ThemeProvider = ({
 
   const overridesKey = isDefined(overrides) ? JSON.stringify(overrides) : '';
 
-  useLayoutEffect(() => {
-    if (applyToRoot) {
-      applyColorSchemeClass(colorScheme);
-    }
-
+  const recomputeTheme = useCallback(() => {
     setTheme(
       computeThemeFromCss(
         isScoped ? (wrapperRef.current ?? undefined) : undefined,
       ),
     );
+  }, [isScoped]);
+
+  useLayoutEffect(() => {
+    if (applyToRoot) {
+      applyColorSchemeClass(colorScheme);
+    }
+
+    recomputeTheme();
     setScopeContainer(isScoped ? wrapperRef.current : null);
-  }, [colorScheme, applyToRoot, isScoped, overridesKey]);
+  }, [colorScheme, applyToRoot, isScoped, overridesKey, recomputeTheme]);
 
   // The theme CSS gives some tokens a different value below the mobile
   // breakpoint. Those resolve through getComputedStyle, so crossing the
@@ -160,20 +170,12 @@ export const ThemeProvider = ({
       `(max-width: ${MOBILE_VIEWPORT}px)`,
     );
 
-    const handleBreakpointChange = () => {
-      setTheme(
-        computeThemeFromCss(
-          isScoped ? (wrapperRef.current ?? undefined) : undefined,
-        ),
-      );
-    };
-
-    mobileMediaQuery.addEventListener('change', handleBreakpointChange);
+    mobileMediaQuery.addEventListener('change', recomputeTheme);
 
     return () => {
-      mobileMediaQuery.removeEventListener('change', handleBreakpointChange);
+      mobileMediaQuery.removeEventListener('change', recomputeTheme);
     };
-  }, [isScoped]);
+  }, [recomputeTheme]);
 
   const contextValue = { theme, colorScheme };
 
