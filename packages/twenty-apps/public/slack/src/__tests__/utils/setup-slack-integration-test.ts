@@ -28,8 +28,12 @@ const readWorkspaceIdFromToken = (token: string): string => {
       return JSON.parse(
         Buffer.from(token.split('.')[1] ?? '', 'base64url').toString('utf8'),
       );
-    } catch {
-      throw new Error('TWENTY_API_KEY is not a readable JWT');
+    } catch (error) {
+      throw new Error(
+        `TWENTY_API_KEY is not a readable JWT: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
     }
   })();
 

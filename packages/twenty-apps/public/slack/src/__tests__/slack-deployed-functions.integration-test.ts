@@ -118,7 +118,7 @@ describe('Slack app deployed functions', () => {
     // The stored secret is write-only, so a real one could not be put back
     // afterwards: refuse to overwrite it rather than leaving the instance
     // verifying Slack signatures against a public test value.
-    if (webhookSecretVariable.isFilled === true) {
+    if (webhookSecretVariable.isFilled) {
       throw new Error(
         'SLACK_WEBHOOK_SECRET is already set on this instance. Run the integration suite against a disposable Twenty instance.',
       );
