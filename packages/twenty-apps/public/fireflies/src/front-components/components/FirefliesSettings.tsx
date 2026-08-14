@@ -64,11 +64,7 @@ export const FirefliesSettings = () => {
   }
 
   if (isUndefined(applicationId)) {
-    return (
-      <StyledCenteredState>
-        {errorMessage ?? 'Please try again later.'}
-      </StyledCenteredState>
-    );
+    return <StyledCenteredState>{errorMessage}</StyledCenteredState>;
   }
 
   return (

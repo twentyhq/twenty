@@ -1,7 +1,7 @@
-import { FIREFLIES_BACKFILL_MAX_WINDOW_DAYS } from 'src/logic-functions/constants/fireflies-backfill-max-window-days.constant';
+import { FIREFLIES_BACKFILL_MAX_WINDOW_DAYS } from 'src/constants/fireflies-backfill-max-window-days.constant';
 
 export const parseBackfillDays = (rawValue: string): number | undefined => {
-  const parsedValue = Number(rawValue.trim());
+  const parsedValue = Number(rawValue);
 
   if (
     !Number.isInteger(parsedValue) ||

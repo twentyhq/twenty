@@ -1,6 +1,6 @@
 import { isUndefined } from '@sniptt/guards';
 
-import { FIREFLIES_BACKFILL_OUTCOME } from 'src/logic-functions/constants/fireflies-backfill-outcome.constant';
+import { FIREFLIES_BACKFILL_OUTCOME } from 'src/constants/fireflies-backfill-outcome.constant';
 import { type FirefliesBackfillFeedback } from 'src/front-components/types/fireflies-backfill-feedback.type';
 
 const BACKFILL_FEEDBACK_BY_OUTCOME: Record<string, FirefliesBackfillFeedback> =
