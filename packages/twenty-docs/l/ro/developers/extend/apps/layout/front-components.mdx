@@ -773,24 +773,24 @@ Pentru a ramifica explicit în funcție de schema activă, citește-o cu `useCol
 
 ## Limitări actuale
 
-Componentele Front sunt în curs de dezvoltare activă. Redarea, stilizarea și gestionarea evenimentelor funcționează bine. Orice ajunge *dincolo de* redare (măsurarea unui element, apelarea unei metode DOM pe un ref, crearea unui portal în afara arborelui tău, accesarea spațiului de stocare al browserului) lipsește sau este incomplet astăzi, iar majoritatea eșuează în tăcere: fără excepție și fără eroare TypeScript, deoarece scheletul este tipizat pentru întregul DOM al browserului.
+Componentele Front sunt în curs de dezvoltare activă. Redarea, stilizarea, gestionarea evenimentelor, măsurarea elementelor și spațiul de stocare al browserului funcționează bine. Orice ajunge *dincolo de* acestea (apelarea unei metode DOM pe un ref, observarea redimensionărilor elementelor, crearea unui portal în afara arborelui tău) lipsește sau este incomplet astăzi, iar majoritatea eșuează în tăcere: fără excepție și fără eroare TypeScript, deoarece scheletul este tipizat pentru întregul DOM al browserului.
 
 Dacă unul dintre aceste lucruri te blochează, [deschide un tichet](https://github.com/twentyhq/twenty/issues/new/choose) ca să fie prioritar.
 
 ### Layout și măsurare
 
-Nimic nu se poate măsura singur încă.
+Elementele se pot măsura singure: gazda reflectă geometria în sandbox, astfel încât citirile sunt efectuate local, dar pot avea un decalaj de până la un cadru, iar prima citire a unui element nemăsurat anterior returnează zerouri. După scriere, recitește într-un callback `requestAnimationFrame` sau într-un efect.
 
-| API                                                           | Ce se întâmplă                                                                                                    |
-| ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `getBoundingClientRect()`, `getClientRects()`                 | Aruncă o excepție                                                                                                 |
-| `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Este în mod silențios `undefined`, astfel încât `width ?? 0` produce `0`, iar `width > 600` este întotdeauna fals |
-| `ResizeObserver`, `IntersectionObserver`                      | `ReferenceError` (verificările cu `typeof` funcționează)                                                          |
-| `window.matchMedia()`, `window.getComputedStyle()`            | Aruncă o excepție                                                                                                 |
-| `window.innerWidth`, `innerHeight`, `devicePixelRatio`        | Este în mod silențios `undefined`                                                                                 |
-| `new MutationObserver(fn)`                                    | Se construiește, apoi `.observe()` aruncă o excepție                                                              |
+| API                                                                                      | Ce se întâmplă                                                                                                                      |
+| ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Funcționează, din oglindă; setarea `scrollTop` / `scrollLeft` nu are efect                                                          |
+| `getClientRects()`, `window.matchMedia()`                                                | Aruncă o excepție                                                                                                                   |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY`             | Funcționează, raportând **viewportul browserului**; dimensiunea propriului widget este `document.body.clientWidth` / `clientHeight` |
+| `window.getComputedStyle()`                                                              | Returnează doar stilurile inline ale elementului, niciodată cascada calculată la nivel de gazdă                                     |
+| `ResizeObserver`, `IntersectionObserver`                                                 | `ReferenceError` (verificările cu `typeof` funcționează)                                                                            |
+| `MutationObserver`                                                                       | Funcționează, inclusiv `subtree`, `attributeFilter`, valorile vechi și `takeRecords()`                                              |
 
-Prin urmare, `ResponsiveContainer` din recharts, Floating UI / Popper, virtualizarea listelor și redimensionarea prin tragere nu funcționează încă. Fă layout-ul în CSS în schimb: fișierul tău de stiluri ajunge la pagina reală, astfel încât flexbox, grid, `aspect-ratio`, `clamp()` și `@container` se comportă toate normal.
+Poziționarea prin `getBoundingClientRect` funcționează acum, dar orice urmărește modificările de dimensiune prin `ResizeObserver` (recharts `ResponsiveContainer`, `autoUpdate` din Floating UI) tot nu funcționează. Oricum, preferă CSS pentru layout: stylesheet-ul tău ajunge la pagina reală, astfel încât flexbox, grid, `aspect-ratio`, `clamp()` și `@container` se comportă normal, fără întârziere de cadru.
 
 <Note>
 `requestAnimationFrame`, `fetch`, `setTimeout` și `queueMicrotask` funcționează fără prefixul `window.`. Numai `window.requestAnimationFrame(...)` și cele similare aruncă o excepție.
@@ -800,14 +800,14 @@ Prin urmare, `ResponsiveContainer` din recharts, Floating UI / Popper, virtualiz
 
 Un `ref` îți oferă un element din sandbox, nu un `HTMLElement`.
 
-| Ce scrii                                                                                                    | Ce se întâmplă                                            | Folosește în schimb                                                                                 |
-| ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Aruncă o excepție                                         | Componente controlate; citește valorile din `event.target`                                          |
-| `element.classList.add(...)`                                                                                | Aruncă o excepție (`classList` este `undefined`)          | Construiește singur șirul `className`                                                               |
-| `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | Aruncă o excepție                                         | `querySelector()` / `querySelectorAll()`, care funcționează                                         |
-| `document.activeElement`                                                                                    | Întotdeauna `undefined`                                   | Urmărește focusul cu `onFocus` / `onBlur`                                                           |
-| `canvas`                                                                                                    | Nu redă nimic, fără eroare                                | SVG sau desenează în afara ecranului și afișează rezultatul într-un element `img`                   |
-| `createPortal(node, document.body)`                                                                         | Nu redă nimic, în timp ce `isConnected` raportează succes | Suprapuneri inline cu `position: absolute` sau transmite bibliotecii propriul tău element container |
+| Ce scrii                                                                                                    | Ce se întâmplă                                            | Folosește în schimb                                                                                                                                                                       |
+| ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Aruncă o excepție                                         | Componente controlate; citește valorile din `event.target`                                                                                                                                |
+| `element.classList.add(...)`                                                                                | Aruncă o excepție (`classList` este `undefined`)          | Construiește singur șirul `className`                                                                                                                                                     |
+| `document.createTreeWalker()`                                                                               | Aruncă o excepție                                         | `querySelector()` / `querySelectorAll()` și `getElementById()` funcționează; `getElementsByClassName()` funcționează și el, dar returnează o colecție statică, nu o `HTMLCollection` live |
+| `document.activeElement`                                                                                    | Întotdeauna `undefined`                                   | Urmărește focusul cu `onFocus` / `onBlur`                                                                                                                                                 |
+| `canvas`                                                                                                    | Nu redă nimic, fără eroare                                | SVG sau desenează în afara ecranului și afișează rezultatul într-un element `img`                                                                                                         |
+| `createPortal(node, document.body)`                                                                         | Nu redă nimic, în timp ce `isConnected` raportează succes | Suprapuneri inline cu `position: absolute` sau transmite bibliotecii propriul tău element container                                                                                       |
 
 Golul portalului este motivul pentru care popover-urile Radix, Headless UI, MUI și react-select nu redau nimic în mod implicit. Majoritatea acceptă o proprietate de tip container; indică-i un element pe care l-ai redat.
 

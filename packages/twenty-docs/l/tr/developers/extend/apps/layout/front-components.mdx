@@ -773,24 +773,24 @@ Etkin şemaya açıkça dallanmak için, `twenty-sdk/front-component` içindeki 
 
 ## Mevcut sınırlamalar
 
-Front bileşenleri aktif geliştirme aşamasındadır. Render etme, stil verme ve olayları işleme iyi çalışıyor. Render işleminin *ötesine* geçen her şey (bir öğeyi ölçmek, bir ref üzerinde bir DOM yöntemini çağırmak, ağacınızın dışına portal oluşturmak, tarayıcı depolamasına erişmek) bugün eksik ya da tamamlanmamış durumda ve çoğu sessizce başarısız olur: ne bir istisna fırlatılır ne de TypeScript hatası görülür; çünkü iskeletin türleri tam tarayıcı DOM’una göre tanımlanmıştır.
+Front bileşenleri aktif geliştirme aşamasındadır. Oluşturma, stillendirme, olayları işleme, öğeleri ölçme ve tarayıcı depolaması iyi çalışır. Bu sınırların *ötesine* geçen her şey (bir ref üzerinde bir DOM yöntemi çağırmak, öğe yeniden boyutlandırmalarını gözlemlemek, ağacınızın dışına portal oluşturmak) bugün eksik ya da tamamlanmamış durumda ve çoğu sessizce başarısız oluyor: ne bir istisna fırlatılıyor ne de TypeScript hatası görülüyor; çünkü iskeletin türleri tam tarayıcı DOM’una göre tanımlanmıştır.
 
 Bunlardan biri sizi engelliyorsa, önceliklendirilmesi için [bir issue açın](https://github.com/twentyhq/twenty/issues/new/choose).
 
 ### Yerleşim ve ölçüm
 
-Henüz hiçbir şey kendisini ölçemiyor.
+Öğeler kendilerini ölçebilir: ana bilgisayar geometriyi sandbox’a yansıtır; bu nedenle okumalar yerel olarak yanıtlanır ancak bir kareye kadar eski olabilir ve hiç ölçülmemiş bir öğenin ilk okunması sıfırlar döndürür. Yazdıktan sonra, `requestAnimationFrame` geri çağrısında veya bir effect içinde yeniden okuyun.
 
-| API                                                           | Ne olur                                                                                      |
-| ------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `getBoundingClientRect()`, `getClientRects()`                 | Fırlatır                                                                                     |
-| `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Sessizce `undefined`, bu yüzden `width ?? 0` `0` döner ve `width > 600` her zaman false olur |
-| `ResizeObserver`, `IntersectionObserver`                      | `ReferenceError` (`typeof` kontrolleri çalışır)                                              |
-| `window.matchMedia()`, `window.getComputedStyle()`            | Fırlatır                                                                                     |
-| `window.innerWidth`, `innerHeight`, `devicePixelRatio`        | Sessizce `undefined`                                                                         |
-| `new MutationObserver(fn)`                                    | Oluşturulur, ardından `.observe()` fırlatır                                                  |
+| API                                                                                      | Ne olur                                                                                                                                   |
+| ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Ayna üzerinden çalışır; `scrollTop` / `scrollLeft` atamak etkisizdir                                                                      |
+| `getClientRects()`, `window.matchMedia()`                                                | Fırlatır                                                                                                                                  |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY`             | Çalışır ve **tarayıcı görünüm alanını** raporlar; bileşeninizin kendi boyutları `document.body.clientWidth` / `clientHeight` değerleridir |
+| `window.getComputedStyle()`                                                              | Yalnızca öğenin satır içi stillerini döndürür, hiçbir zaman ana bilgisayar tarafından hesaplanan kaskadı döndürmez                        |
+| `ResizeObserver`, `IntersectionObserver`                                                 | `ReferenceError` (`typeof` kontrolleri çalışır)                                                                                           |
+| `MutationObserver`                                                                       | Çalışır, `subtree`, `attributeFilter`, eski değerler ve `takeRecords()` dahil                                                             |
 
-Bu nedenle recharts `ResponsiveContainer`, Floating UI / Popper, liste sanallaştırma ve sürükleyerek yeniden boyutlandırma henüz çalışmıyor. Bunun yerine yerleşimi CSS ile yapın: stil sayfanız gerçek sayfaya erişir, bu nedenle flexbox, grid, `aspect-ratio`, `clamp()` ve `@container` normal şekilde davranır.
+`getBoundingClientRect` ile konumlandırma artık çalışıyor, ancak boyut değişikliklerini `ResizeObserver` aracılığıyla izleyen her şey (recharts `ResponsiveContainer`, Floating UI'nin `autoUpdate`) hâlâ çalışmıyor. Yerleşim için yine de CSS'i tercih edin: stil sayfanız gerçek sayfaya erişir, bu nedenle flexbox, grid, `aspect-ratio`, `clamp()` ve `@container` gecikme olmadan normal şekilde davranır.
 
 <Note>
 `requestAnimationFrame`, `fetch`, `setTimeout` ve `queueMicrotask` `window.` öneki olmadan çalışır. Yalnızca `window.requestAnimationFrame(...)` ve benzerleri fırlatır.
@@ -800,14 +800,14 @@ Bu nedenle recharts `ResponsiveContainer`, Floating UI / Popper, liste sanallaş
 
 Bir `ref` size bir `HTMLElement` değil, bir sandbox öğesi verir.
 
-| Ne yazarsınız                                                                                               | Ne olur                                                          | Bunun yerine şunu kullanın                                                                                  |
-| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Fırlatır                                                         | Kontrollü bileşenler; değerleri `event.target` üzerinden okuyun                                             |
-| `element.classList.add(...)`                                                                                | Fırlatır (`classList` `undefined` durumundadır)                  | `className` dizgisini kendiniz oluşturun                                                                    |
-| `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | Fırlatır                                                         | Çalışan `querySelector()` / `querySelectorAll()`                                                            |
-| `document.activeElement`                                                                                    | Her zaman `undefined`                                            | Odağı `onFocus` / `onBlur` ile takip edin                                                                   |
-| `canvas`                                                                                                    | Hiçbir şey render etmez, hata yoktur                             | SVG veya ekranda olmayan bir alanda çizim yapıp sonucu bir `img` öğesinde gösterin                          |
-| `createPortal(node, document.body)`                                                                         | `isConnected` başarı bildirmesine rağmen hiçbir şey render etmez | `position: absolute` ile satır içi yerleştirilmiş bindirmeler veya kitaplığa kendi konteyner öğenizi iletin |
+| Ne yazarsınız                                                                                               | Ne olur                                                          | Bunun yerine şunu kullanın                                                                                                                                                            |
+| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Fırlatır                                                         | Kontrollü bileşenler; değerleri `event.target` üzerinden okuyun                                                                                                                       |
+| `element.classList.add(...)`                                                                                | Fırlatır (`classList` `undefined` durumundadır)                  | `className` dizgisini kendiniz oluşturun                                                                                                                                              |
+| `document.createTreeWalker()`                                                                               | Fırlatır                                                         | `querySelector()` / `querySelectorAll()` ve `getElementById()` çalışır; `getElementsByClassName()` de çalışır, ancak canlı bir `HTMLCollection` yerine statik bir koleksiyon döndürür |
+| `document.activeElement`                                                                                    | Her zaman `undefined`                                            | Odağı `onFocus` / `onBlur` ile takip edin                                                                                                                                             |
+| `canvas`                                                                                                    | Hiçbir şey render etmez, hata yoktur                             | SVG veya ekranda olmayan bir alanda çizim yapıp sonucu bir `img` öğesinde gösterin                                                                                                    |
+| `createPortal(node, document.body)`                                                                         | `isConnected` başarı bildirmesine rağmen hiçbir şey render etmez | `position: absolute` ile satır içi yerleştirilmiş bindirmeler veya kitaplığa kendi konteyner öğenizi iletin                                                                           |
 
 Portal boşluğu, Radix, Headless UI, MUI ve react-select popover’larının varsayılan olarak hiçbir şey render etmemesinin nedenidir. Çoğu bir container prop kabul eder; onu render ettiğiniz bir öğeye yönlendirin.
 
