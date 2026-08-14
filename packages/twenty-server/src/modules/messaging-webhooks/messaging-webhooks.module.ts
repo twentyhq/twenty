@@ -3,8 +3,8 @@ import { Module } from '@nestjs/common';
 import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { EmailingModule } from 'src/modules/emailing/emailing.module';
-import { ResendWebhookAdapterService } from 'src/modules/messaging-webhooks/adapters/resend/services/resend-webhook-adapter.service';
-import { ResendWebhookVerifierService } from 'src/modules/messaging-webhooks/adapters/resend/services/resend-webhook-verifier.service';
+import { ResendWebhookDriverService } from 'src/modules/messaging-webhooks/drivers/resend/services/resend-webhook-driver.service';
+import { ResendWebhookVerifierService } from 'src/modules/messaging-webhooks/drivers/resend/services/resend-webhook-verifier.service';
 import { SesInboundWebhookDriverService } from 'src/modules/messaging-webhooks/drivers/aws-ses/services/ses-inbound-webhook-driver.service';
 import { SesOutboundWebhookDriverService } from 'src/modules/messaging-webhooks/drivers/aws-ses/services/ses-outbound-webhook-driver.service';
 import { SnsSignatureVerifierService } from 'src/modules/messaging-webhooks/drivers/aws-ses/services/sns-signature-verifier.service';
@@ -28,7 +28,7 @@ import { MessagingWebhooksController } from 'src/modules/messaging-webhooks/mess
     SesInboundWebhookDriverService,
     SesOutboundWebhookDriverService,
     ResendWebhookVerifierService,
-    ResendWebhookAdapterService,
+    ResendWebhookDriverService,
   ],
 })
 export class MessagingWebhooksModule {}

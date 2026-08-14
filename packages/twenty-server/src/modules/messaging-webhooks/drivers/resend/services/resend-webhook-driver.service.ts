@@ -5,21 +5,19 @@ import { isDefined, isNonEmptyArray, parseJson } from 'twenty-shared/utils';
 
 import { RESEND_WORKSPACE_TAG_NAME } from 'src/engine/core-modules/emailing-domain/drivers/resend/constants/resend-workspace-tag-name.constant';
 import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
-import {
-  type ResendWebhookHeaders,
-  ResendWebhookVerifierService,
-} from 'src/modules/messaging-webhooks/adapters/resend/services/resend-webhook-verifier.service';
-import { type ResendWebhookEvent } from 'src/modules/messaging-webhooks/adapters/resend/types/resend-webhook-event.type';
-import { getResendEventTagValue } from 'src/modules/messaging-webhooks/adapters/resend/utils/get-resend-event-tag-value.util';
+import { ResendWebhookVerifierService } from 'src/modules/messaging-webhooks/drivers/resend/services/resend-webhook-verifier.service';
+import { type ResendWebhookHeaders } from 'src/modules/messaging-webhooks/drivers/resend/types/resend-webhook-headers.type';
+import { type ResendWebhookEvent } from 'src/modules/messaging-webhooks/drivers/resend/types/resend-webhook-event.type';
+import { getResendEventTagValue } from 'src/modules/messaging-webhooks/drivers/resend/utils/get-resend-event-tag-value.util';
 import { InboundMailHandlerService } from 'src/modules/messaging-webhooks/handlers/inbound-mail-handler.service';
 import { OutboundSuppressionHandlerService } from 'src/modules/messaging-webhooks/handlers/outbound-suppression-handler.service';
 import { MessagingWebhookExceptionCode } from 'src/modules/messaging-webhooks/messaging-webhook-exception-code.enum';
 import { MessagingWebhookException } from 'src/modules/messaging-webhooks/messaging-webhook.exception';
-import { INBOUND_EMAIL_MESSAGE_SOURCE } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/types/inbound-email-message-source.type';
+import { INBOUND_EMAIL_MESSAGE_SOURCE } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/constants/inbound-email-message-source.constant';
 
 @Injectable()
-export class ResendWebhookAdapterService {
-  private readonly logger = new Logger(ResendWebhookAdapterService.name);
+export class ResendWebhookDriverService {
+  private readonly logger = new Logger(ResendWebhookDriverService.name);
 
   constructor(
     private readonly resendWebhookVerifierService: ResendWebhookVerifierService,

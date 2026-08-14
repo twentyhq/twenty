@@ -1,26 +1,4 @@
-import {
-  mapResendDomainRecords,
-  mapResendDomainStatus,
-} from 'src/engine/core-modules/emailing-domain/drivers/resend/utils/map-resend-domain-verification.util';
-import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
-
-describe('mapResendDomainStatus', () => {
-  it('should map provider statuses to emailing domain statuses', () => {
-    expect(mapResendDomainStatus('verified')).toBe(
-      EmailingDomainStatus.VERIFIED,
-    );
-    expect(mapResendDomainStatus('failure')).toBe(EmailingDomainStatus.FAILED);
-    expect(mapResendDomainStatus('failed')).toBe(EmailingDomainStatus.FAILED);
-    expect(mapResendDomainStatus('temporary_failure')).toBe(
-      EmailingDomainStatus.TEMPORARY_FAILURE,
-    );
-    expect(mapResendDomainStatus('not_started')).toBe(
-      EmailingDomainStatus.PENDING,
-    );
-    expect(mapResendDomainStatus('pending')).toBe(EmailingDomainStatus.PENDING);
-    expect(mapResendDomainStatus(undefined)).toBe(EmailingDomainStatus.PENDING);
-  });
-});
+import { mapResendDomainRecords } from 'src/engine/core-modules/emailing-domain/drivers/resend/utils/map-resend-domain-records.util';
 
 describe('mapResendDomainRecords', () => {
   it('should map DNS records with per-record statuses and MX priority', () => {
