@@ -5,10 +5,10 @@ import { isDefined, isNonEmptyArray, parseJson } from 'twenty-shared/utils';
 
 import { EmailingDomainTenantStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-tenant-status.type';
 import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
-import { SnsSignatureVerifierService } from 'src/modules/messaging-webhooks/adapters/aws-ses/services/sns-signature-verifier.service';
-import { SnsSubscriptionConfirmerService } from 'src/modules/messaging-webhooks/adapters/aws-ses/services/sns-subscription-confirmer.service';
-import { type SesEventBridgeNotification } from 'src/modules/messaging-webhooks/adapters/aws-ses/types/ses-event-bridge-notification.type';
-import { resolveWorkspaceIdFromAwsSesResources } from 'src/modules/messaging-webhooks/adapters/aws-ses/utils/resolve-workspace-id-from-aws-ses-resources.util';
+import { SnsSignatureVerifierService } from 'src/modules/messaging-webhooks/drivers/aws-ses/services/sns-signature-verifier.service';
+import { SnsSubscriptionConfirmerService } from 'src/modules/messaging-webhooks/drivers/aws-ses/services/sns-subscription-confirmer.service';
+import { type SesEventBridgeNotification } from 'src/modules/messaging-webhooks/drivers/aws-ses/types/ses-event-bridge-notification.type';
+import { resolveWorkspaceIdFromAwsSesResources } from 'src/modules/messaging-webhooks/drivers/aws-ses/utils/resolve-workspace-id-from-aws-ses-resources.util';
 import { OutboundSendingStateHandlerService } from 'src/modules/messaging-webhooks/handlers/outbound-sending-state-handler.service';
 import { OutboundSuppressionHandlerService } from 'src/modules/messaging-webhooks/handlers/outbound-suppression-handler.service';
 import { MessagingWebhookExceptionCode } from 'src/modules/messaging-webhooks/messaging-webhook-exception-code.enum';
@@ -17,8 +17,8 @@ import { MessagingWebhookException } from 'src/modules/messaging-webhooks/messag
 type SnsPayload = SnsPayloadValidator.SnsPayload;
 
 @Injectable()
-export class SesOutboundWebhookAdapterService {
-  private readonly logger = new Logger(SesOutboundWebhookAdapterService.name);
+export class SesOutboundWebhookDriverService {
+  private readonly logger = new Logger(SesOutboundWebhookDriverService.name);
 
   constructor(
     private readonly snsSignatureVerifierService: SnsSignatureVerifierService,

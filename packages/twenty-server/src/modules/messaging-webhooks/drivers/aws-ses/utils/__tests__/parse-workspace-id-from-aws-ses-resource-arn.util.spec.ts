@@ -1,4 +1,4 @@
-import { parseWorkspaceIdFromAwsSesResourceArn } from 'src/modules/messaging-webhooks/adapters/aws-ses/utils/parse-workspace-id-from-aws-ses-resource-arn.util';
+import { parseWorkspaceIdFromAwsSesResourceArn } from 'src/modules/messaging-webhooks/drivers/aws-ses/utils/parse-workspace-id-from-aws-ses-resource-arn.util';
 
 describe('parseWorkspaceIdFromAwsSesResourceArn', () => {
   // Tenant ARNs have an AWS-assigned opaque id segment after the tenant name

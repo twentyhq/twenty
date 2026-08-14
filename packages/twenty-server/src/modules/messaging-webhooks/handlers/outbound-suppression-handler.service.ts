@@ -7,7 +7,7 @@ import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domai
 import { MessageSuppressionSource } from 'src/engine/core-modules/emailing-domain/types/message-suppression-source.type';
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
-import { type NormalizedOutboundSuppressionEvent } from 'src/modules/messaging-webhooks/types/normalized-outbound-email-event.type';
+import { type NormalizedOutboundSuppressionEvent } from 'src/modules/messaging-webhooks/types/normalized-outbound-suppression-event.type';
 
 @Injectable()
 export class OutboundSuppressionHandlerService {

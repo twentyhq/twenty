@@ -1,4 +1,4 @@
-import { type InboundEmailMessageReference } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/types/inbound-email-message-source.type';
+import { type InboundEmailMessageReference } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/types/inbound-email-message-reference.type';
 
 export type NormalizedInboundMailNotification = {
   recipients: string[];

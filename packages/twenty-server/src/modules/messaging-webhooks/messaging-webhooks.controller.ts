@@ -14,8 +14,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { SesInboundWebhookAdapterService } from 'src/modules/messaging-webhooks/adapters/aws-ses/services/ses-inbound-webhook-adapter.service';
-import { SesOutboundWebhookAdapterService } from 'src/modules/messaging-webhooks/adapters/aws-ses/services/ses-outbound-webhook-adapter.service';
+import { SesInboundWebhookDriverService } from 'src/modules/messaging-webhooks/drivers/aws-ses/services/ses-inbound-webhook-driver.service';
+import { SesOutboundWebhookDriverService } from 'src/modules/messaging-webhooks/drivers/aws-ses/services/ses-outbound-webhook-driver.service';
 import { MessagingWebhookApiExceptionFilter } from 'src/modules/messaging-webhooks/filters/messaging-webhook-api-exception.filter';
 import { MessagingWebhookExceptionCode } from 'src/modules/messaging-webhooks/messaging-webhook-exception-code.enum';
 import { MessagingWebhookException } from 'src/modules/messaging-webhooks/messaging-webhook.exception';
@@ -24,8 +24,8 @@ import { MessagingWebhookException } from 'src/modules/messaging-webhooks/messag
 @UseFilters(MessagingWebhookApiExceptionFilter)
 export class MessagingWebhooksController {
   constructor(
-    private readonly sesInboundWebhookAdapterService: SesInboundWebhookAdapterService,
-    private readonly sesOutboundWebhookAdapterService: SesOutboundWebhookAdapterService,
+    private readonly sesInboundWebhookDriverService: SesInboundWebhookDriverService,
+    private readonly sesOutboundWebhookDriverService: SesOutboundWebhookDriverService,
   ) {}
 
   @Post(`${ApiPath.Webhooks}/messaging/ses/inbound`)
@@ -41,7 +41,7 @@ export class MessagingWebhooksController {
       );
     }
 
-    await this.sesInboundWebhookAdapterService.handle(request.rawBody);
+    await this.sesInboundWebhookDriverService.handle(request.rawBody);
   }
 
   @Post(`${ApiPath.Webhooks}/messaging/ses/outbound`)
@@ -57,6 +57,6 @@ export class MessagingWebhooksController {
       );
     }
 
-    await this.sesOutboundWebhookAdapterService.handle(request.rawBody);
+    await this.sesOutboundWebhookDriverService.handle(request.rawBody);
   }
 }
