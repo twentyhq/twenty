@@ -179,44 +179,29 @@ describe('Relation field permission grant-back', () => {
   });
 
   it('should delete the mirrored inverse field permission when the relation field is granted back', async () => {
-    await upsertFieldPermissions({
-      expectToFail: false,
-      input: {
-        roleId: createdRoleId,
-        fieldPermissions: [
-          {
-            objectMetadataId: sourceObjectMetadataId,
-            fieldMetadataId: relationFieldMetadataId,
-            canReadFieldValue: null,
-            canUpdateFieldValue: null,
-          },
-        ],
-      },
-    });
+    const grantBackRelationField = () =>
+      upsertFieldPermissions({
+        expectToFail: false,
+        input: {
+          roleId: createdRoleId,
+          fieldPermissions: [
+            {
+              objectMetadataId: sourceObjectMetadataId,
+              fieldMetadataId: relationFieldMetadataId,
+              canReadFieldValue: null,
+              canUpdateFieldValue: null,
+            },
+          ],
+        },
+      });
 
-    const fieldPermissions = await findFieldPermissionsForRole();
+    await grantBackRelationField();
 
-    expect(fieldPermissions).toHaveLength(0);
-  });
+    expect(await findFieldPermissionsForRole()).toHaveLength(0);
 
-  it('should not create empty rows when granting back a relation field that has no permissions', async () => {
-    await upsertFieldPermissions({
-      expectToFail: false,
-      input: {
-        roleId: createdRoleId,
-        fieldPermissions: [
-          {
-            objectMetadataId: sourceObjectMetadataId,
-            fieldMetadataId: relationFieldMetadataId,
-            canReadFieldValue: null,
-            canUpdateFieldValue: null,
-          },
-        ],
-      },
-    });
+    // Granting back a field that has no rows left must not create empty ones
+    await grantBackRelationField();
 
-    const fieldPermissions = await findFieldPermissionsForRole();
-
-    expect(fieldPermissions).toHaveLength(0);
+    expect(await findFieldPermissionsForRole()).toHaveLength(0);
   });
 });
