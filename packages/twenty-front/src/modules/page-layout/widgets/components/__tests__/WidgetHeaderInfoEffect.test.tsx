@@ -2,12 +2,12 @@ import {
   PAGE_LAYOUT_TEST_INSTANCE_ID,
   PageLayoutTestWrapper,
 } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
-import { usePublishWidgetHeaderInfo } from '@/page-layout/widgets/hooks/usePublishWidgetHeaderInfo';
+import { WidgetHeaderInfoEffect } from '@/page-layout/widgets/components/WidgetHeaderInfoEffect';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { widgetHasHeaderInfoComponentFamilySelector } from '@/page-layout/widgets/states/selectors/widgetHasHeaderInfoComponentFamilySelector';
 import { widgetHeaderInfoComponentFamilyState } from '@/page-layout/widgets/states/widgetHeaderInfoComponentFamilyState';
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
-import { renderHook } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { createStore } from 'jotai';
 import { type ReactNode } from 'react';
 import { IconArrowUpRight, IconPlus } from 'twenty-ui/icon';
@@ -37,29 +37,28 @@ const getPublishedHeaderInfo = (store: ReturnType<typeof createStore>) =>
     }),
   );
 
-describe('usePublishWidgetHeaderInfo', () => {
+describe('WidgetHeaderInfoEffect', () => {
   it('publishes count and multiple actions to the widget header', () => {
     const store = createStore();
 
-    renderHook(
-      () =>
-        usePublishWidgetHeaderInfo({
-          count: 12,
-          actions: [
-            {
-              id: 'compose',
-              Icon: IconPlus,
-              label: 'Compose',
-              onClick: jest.fn(),
-            },
-            {
-              id: 'see-all',
-              Icon: IconArrowUpRight,
-              label: 'See all',
-              to: '/objects/tasks',
-            },
-          ],
-        }),
+    render(
+      <WidgetHeaderInfoEffect
+        count={12}
+        actions={[
+          {
+            id: 'compose',
+            Icon: IconPlus,
+            label: 'Compose',
+            onClick: jest.fn(),
+          },
+          {
+            id: 'see-all',
+            Icon: IconArrowUpRight,
+            label: 'See all',
+            to: '/objects/tasks',
+          },
+        ]}
+      />,
       { wrapper: getWrapper(store) },
     );
 
@@ -76,10 +75,9 @@ describe('usePublishWidgetHeaderInfo', () => {
   it('clears the published header info on unmount', () => {
     const store = createStore();
 
-    const { unmount } = renderHook(
-      () => usePublishWidgetHeaderInfo({ count: 3 }),
-      { wrapper: getWrapper(store) },
-    );
+    const { unmount } = render(<WidgetHeaderInfoEffect count={3} />, {
+      wrapper: getWrapper(store),
+    });
 
     expect(getPublishedHeaderInfo(store)?.count).toBe(3);
 
@@ -89,67 +87,84 @@ describe('usePublishWidgetHeaderInfo', () => {
   });
 
   it('no-ops without throwing when rendered outside a widget', () => {
-    expect(() =>
-      renderHook(() => usePublishWidgetHeaderInfo({ count: 7 })),
-    ).not.toThrow();
+    expect(() => render(<WidgetHeaderInfoEffect count={7} />)).not.toThrow();
   });
 
-  it('keeps the published state stable across inline action rerenders', () => {
+  it('does not republish equivalent actions', () => {
     const store = createStore();
+    const onClick = jest.fn();
 
-    const { rerender } = renderHook(
-      () =>
-        usePublishWidgetHeaderInfo({
-          count: 5,
-          actions: [
-            {
-              id: 'new-task',
-              Icon: IconPlus,
-              label: 'New task',
-              onClick: () => undefined,
-            },
-          ],
-        }),
+    const { rerender } = render(
+      <WidgetHeaderInfoEffect
+        count={5}
+        actions={[
+          {
+            id: 'new-task',
+            Icon: IconPlus,
+            label: 'New task',
+            onClick,
+          },
+        ]}
+      />,
       { wrapper: getWrapper(store) },
     );
 
     const firstPublishedHeaderInfo = getPublishedHeaderInfo(store);
 
-    rerender();
-    rerender();
+    rerender(
+      <WidgetHeaderInfoEffect
+        count={5}
+        actions={[
+          {
+            id: 'new-task',
+            Icon: IconPlus,
+            label: 'New task',
+            onClick,
+          },
+        ]}
+      />,
+    );
 
     expect(getPublishedHeaderInfo(store)).toBe(firstPublishedHeaderInfo);
   });
 
-  it('calls the latest action callback through the stable published action', () => {
+  it('publishes the latest action callback', () => {
     const store = createStore();
     const firstOnClick = jest.fn();
     const secondOnClick = jest.fn();
 
-    const { rerender } = renderHook(
-      ({ onClick }: { onClick: () => void }) =>
-        usePublishWidgetHeaderInfo({
-          actions: [
-            {
-              id: 'compose',
-              Icon: IconPlus,
-              label: 'Compose',
-              onClick,
-            },
-          ],
-        }),
-      { wrapper: getWrapper(store), initialProps: { onClick: firstOnClick } },
+    const { rerender } = render(
+      <WidgetHeaderInfoEffect
+        actions={[
+          {
+            id: 'compose',
+            Icon: IconPlus,
+            label: 'Compose',
+            onClick: firstOnClick,
+          },
+        ]}
+      />,
+      { wrapper: getWrapper(store) },
     );
 
-    const firstPublishedHeaderInfo = getPublishedHeaderInfo(store);
+    rerender(
+      <WidgetHeaderInfoEffect
+        actions={[
+          {
+            id: 'compose',
+            Icon: IconPlus,
+            label: 'Compose',
+            onClick: secondOnClick,
+          },
+        ]}
+      />,
+    );
 
-    rerender({ onClick: secondOnClick });
+    expect(getPublishedHeaderInfo(store)?.actions?.[0].onClick).toBe(
+      secondOnClick,
+    );
 
-    const secondPublishedHeaderInfo = getPublishedHeaderInfo(store);
-
-    expect(secondPublishedHeaderInfo).toBe(firstPublishedHeaderInfo);
-
-    secondPublishedHeaderInfo?.actions?.[0].onClick?.();
+    getPublishedHeaderInfo(store)?.actions?.[0].onClick?.();
 
     expect(firstOnClick).not.toHaveBeenCalled();
     expect(secondOnClick).toHaveBeenCalledTimes(1);
@@ -158,33 +173,36 @@ describe('usePublishWidgetHeaderInfo', () => {
   it('does not rerender the publisher while the header stays non-empty', () => {
     const store = createStore();
     let publisherRenderCount = 0;
+    let latestOnClick = () => undefined;
 
-    const { result } = renderHook(
-      () => {
-        publisherRenderCount++;
+    const Publisher = () => {
+      publisherRenderCount++;
+      latestOnClick = () => undefined;
 
-        const hasWidgetHeaderInfo = useAtomComponentFamilySelectorValue(
-          widgetHasHeaderInfoComponentFamilySelector,
-          WIDGET_ID,
-        );
+      useAtomComponentFamilySelectorValue(
+        widgetHasHeaderInfoComponentFamilySelector,
+        WIDGET_ID,
+      );
 
-        usePublishWidgetHeaderInfo({
-          actions: [
+      return (
+        <WidgetHeaderInfoEffect
+          actions={[
             {
               id: 'compose',
               Icon: IconPlus,
               label: 'Compose',
-              onClick: () => undefined,
+              onClick: latestOnClick,
             },
-          ],
-        });
+          ]}
+        />
+      );
+    };
 
-        return hasWidgetHeaderInfo;
-      },
-      { wrapper: getWrapper(store) },
-    );
+    render(<Publisher />, { wrapper: getWrapper(store) });
 
-    expect(result.current).toBe(true);
     expect(publisherRenderCount).toBe(2);
+    expect(getPublishedHeaderInfo(store)?.actions?.[0].onClick).toBe(
+      latestOnClick,
+    );
   });
 });
