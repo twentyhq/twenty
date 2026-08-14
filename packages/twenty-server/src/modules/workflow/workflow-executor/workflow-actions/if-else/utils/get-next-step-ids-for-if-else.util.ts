@@ -14,7 +14,11 @@ export const getNextStepIdsForIfElse = ({
   nextStepIdsToSkip?: string[];
   nextStepIdsToFailSafely?: string[];
 } => ({
-  nextStepIdsToExecute: executedStep.settings.input.branches.flatMap(
-    (branch) => branch.nextStepIds,
-  ),
+  nextStepIdsToExecute: [
+    ...new Set(
+      executedStep.settings.input.branches.flatMap(
+        (branch) => branch.nextStepIds,
+      ),
+    ),
+  ],
 });
