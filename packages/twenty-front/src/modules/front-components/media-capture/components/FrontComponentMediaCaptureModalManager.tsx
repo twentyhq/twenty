@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
 import { type CaptureMediaResult } from 'twenty-front-component-renderer';
 import { isDefined } from 'twenty-shared/utils';
 
+import { FrontComponentMediaCaptureExternalCloseEffect } from '@/front-components/media-capture/components/FrontComponentMediaCaptureExternalCloseEffect';
 import { FrontComponentMediaCaptureModal } from '@/front-components/media-capture/components/FrontComponentMediaCaptureModal';
 import { FRONT_COMPONENT_MEDIA_CAPTURE_MODAL_INSTANCE_ID } from '@/front-components/media-capture/constants/FrontComponentMediaCaptureModalInstanceId';
 import { frontComponentMediaCaptureRequestState } from '@/front-components/media-capture/states/frontComponentMediaCaptureRequestState';
@@ -24,23 +24,8 @@ export const FrontComponentMediaCaptureModalManager = () => {
   );
   const { closeModal } = useModal();
 
-  useEffect(() => {
-    // The modal can be closed by actors outside the capture flow (e.g. a
-    // global close-all). Resolve the pending request when that happens so a
-    // stale lock cannot turn every later captureMedia call into a busy
-    // failure until the next reload.
-    if (isDefined(frontComponentMediaCaptureRequest) && !isModalOpened) {
-      setFrontComponentMediaCaptureRequest(null);
-      frontComponentMediaCaptureRequest.onResult({ status: 'cancelled' });
-    }
-  }, [
-    frontComponentMediaCaptureRequest,
-    isModalOpened,
-    setFrontComponentMediaCaptureRequest,
-  ]);
-
   if (!isDefined(frontComponentMediaCaptureRequest) || !isModalOpened) {
-    return null;
+    return <FrontComponentMediaCaptureExternalCloseEffect />;
   }
 
   const emitCaptureResult = (result: CaptureMediaResult) => {
@@ -50,9 +35,12 @@ export const FrontComponentMediaCaptureModalManager = () => {
   };
 
   return (
-    <FrontComponentMediaCaptureModal
-      mediaCaptureRequest={frontComponentMediaCaptureRequest}
-      onResult={emitCaptureResult}
-    />
+    <>
+      <FrontComponentMediaCaptureExternalCloseEffect />
+      <FrontComponentMediaCaptureModal
+        mediaCaptureRequest={frontComponentMediaCaptureRequest}
+        onResult={emitCaptureResult}
+      />
+    </>
   );
 };

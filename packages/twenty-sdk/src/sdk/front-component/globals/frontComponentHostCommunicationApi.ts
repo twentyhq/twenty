@@ -122,6 +122,7 @@ export type CapturedMediaFile = {
 };
 
 export type CaptureMediaFailureReason =
+  | 'invalid-params'
   | 'permission-denied'
   | 'no-device'
   | 'device-in-use'

@@ -1048,7 +1048,10 @@ describe('useFrontComponentExecutionContext', () => {
         );
       });
 
-      expect(captureResult).toEqual({ status: 'failed', reason: 'unknown' });
+      expect(captureResult).toEqual({
+        status: 'failed',
+        reason: 'invalid-params',
+      });
       expect(mockRequestMediaCapture).not.toHaveBeenCalled();
     });
 
@@ -1065,7 +1068,10 @@ describe('useFrontComponentExecutionContext', () => {
         );
       });
 
-      expect(captureResult).toEqual({ status: 'failed', reason: 'unknown' });
+      expect(captureResult).toEqual({
+        status: 'failed',
+        reason: 'invalid-params',
+      });
       expect(mockRequestMediaCapture).not.toHaveBeenCalled();
     });
 
@@ -1083,7 +1089,7 @@ describe('useFrontComponentExecutionContext', () => {
       });
 
       expect(mockRequestMediaCapture).toHaveBeenCalledWith({
-        frontComponentId: FRONT_COMPONENT_ID,
+        applicationId: APPLICATION_ID,
         mediaType: 'audio',
         fieldMetadataId: FIELD_METADATA_ID,
         maxDurationSeconds: undefined,
@@ -1130,7 +1136,10 @@ describe('useFrontComponentExecutionContext', () => {
         );
       });
 
-      expect(captureResult).toEqual({ status: 'failed', reason: 'unknown' });
+      expect(captureResult).toEqual({
+        status: 'failed',
+        reason: 'invalid-params',
+      });
       expect(mockRequestMediaCapture).not.toHaveBeenCalled();
     });
 
@@ -1145,7 +1154,10 @@ describe('useFrontComponentExecutionContext', () => {
         );
       });
 
-      expect(captureResult).toEqual({ status: 'failed', reason: 'unknown' });
+      expect(captureResult).toEqual({
+        status: 'failed',
+        reason: 'invalid-params',
+      });
       expect(mockRequestMediaCapture).not.toHaveBeenCalled();
     });
 
@@ -1165,7 +1177,10 @@ describe('useFrontComponentExecutionContext', () => {
         );
       });
 
-      expect(captureResult).toEqual({ status: 'failed', reason: 'unknown' });
+      expect(captureResult).toEqual({
+        status: 'failed',
+        reason: 'invalid-params',
+      });
       expect(mockRequestMediaCapture).not.toHaveBeenCalled();
     });
   });

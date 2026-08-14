@@ -1,5 +1,4 @@
 import { useStore } from 'jotai';
-import { useCallback } from 'react';
 import { type CaptureMediaResult } from 'twenty-front-component-renderer';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -19,43 +18,40 @@ export const useFrontComponentMediaCapture = () => {
   );
   const { openModal } = useModal();
 
-  const requestMediaCapture = useCallback(
-    (
-      request: Omit<
-        FrontComponentMediaCaptureRequest,
-        'onResult' | 'maxDurationSeconds'
-      > & { maxDurationSeconds?: number },
-    ): Promise<CaptureMediaResult> => {
-      const pendingMediaCaptureRequest = store.get(
-        frontComponentMediaCaptureRequestState.atom,
-      );
+  const requestMediaCapture = (
+    request: Omit<
+      FrontComponentMediaCaptureRequest,
+      'onResult' | 'maxDurationSeconds'
+    > & { maxDurationSeconds?: number },
+  ): Promise<CaptureMediaResult> => {
+    const pendingMediaCaptureRequest = store.get(
+      frontComponentMediaCaptureRequestState.atom,
+    );
 
-      if (isDefined(pendingMediaCaptureRequest)) {
-        return Promise.resolve({ status: 'failed', reason: 'busy' });
-      }
+    if (isDefined(pendingMediaCaptureRequest)) {
+      return Promise.resolve({ status: 'failed', reason: 'busy' });
+    }
 
-      // getUserMedia only exists in secure contexts; without it the capture
-      // modal could never record anything, so fail before showing it.
-      if (
-        !window.isSecureContext ||
-        !isDefined(navigator.mediaDevices?.getUserMedia)
-      ) {
-        return Promise.resolve({ status: 'failed', reason: 'blocked' });
-      }
+    // getUserMedia only exists in secure contexts; without it the capture
+    // modal could never record anything, so fail before showing it.
+    if (
+      !window.isSecureContext ||
+      !isDefined(navigator.mediaDevices?.getUserMedia)
+    ) {
+      return Promise.resolve({ status: 'failed', reason: 'blocked' });
+    }
 
-      return new Promise<CaptureMediaResult>((resolve) => {
-        setFrontComponentMediaCaptureRequest({
-          ...request,
-          maxDurationSeconds: normalizeMediaCaptureMaxDurationSeconds(
-            request.maxDurationSeconds,
-          ),
-          onResult: resolve,
-        });
-        openModal(FRONT_COMPONENT_MEDIA_CAPTURE_MODAL_INSTANCE_ID);
+    return new Promise<CaptureMediaResult>((resolve) => {
+      setFrontComponentMediaCaptureRequest({
+        ...request,
+        maxDurationSeconds: normalizeMediaCaptureMaxDurationSeconds(
+          request.maxDurationSeconds,
+        ),
+        onResult: resolve,
       });
-    },
-    [store, setFrontComponentMediaCaptureRequest, openModal],
-  );
+      openModal(FRONT_COMPONENT_MEDIA_CAPTURE_MODAL_INSTANCE_ID);
+    });
+  };
 
   return { requestMediaCapture };
 };

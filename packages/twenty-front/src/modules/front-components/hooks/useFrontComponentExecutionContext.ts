@@ -1,4 +1,5 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { resolveOpenRecordIn } from '@/object-record/record-index/utils/resolveOpenRecordIn';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isNonEmptyString, isNumber } from '@sniptt/guards';
@@ -382,26 +383,22 @@ export const useFrontComponentExecutionContext = ({
         (params.mediaType !== 'audio' && params.mediaType !== 'video') ||
         !isNonEmptyString(params.fieldMetadataId)
       ) {
-        return { status: 'failed', reason: 'unknown' };
+        return { status: 'failed', reason: 'invalid-params' };
       }
 
       // A non-FILES target would upload fine and then fail at attach time,
       // stranding the file; reject it before recording anything.
-      const isFilesFieldTarget = objectMetadataItems.some(
-        (objectMetadataItem) =>
-          objectMetadataItem.fields.some(
-            (field) =>
-              field.id === params.fieldMetadataId &&
-              field.type === FieldMetadataType.FILES,
-          ),
-      );
+      const { fieldMetadataItem } = getFieldMetadataItemById({
+        fieldMetadataId: params.fieldMetadataId,
+        objectMetadataItems,
+      });
 
-      if (!isFilesFieldTarget) {
-        return { status: 'failed', reason: 'unknown' };
+      if (fieldMetadataItem?.type !== FieldMetadataType.FILES) {
+        return { status: 'failed', reason: 'invalid-params' };
       }
 
       return await requestMediaCapture({
-        frontComponentId,
+        applicationId,
         mediaType: params.mediaType,
         fieldMetadataId: params.fieldMetadataId,
         maxDurationSeconds: isNumber(params.maxDurationSeconds)

@@ -6,7 +6,8 @@ import {
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
 export type FrontComponentMediaCaptureRequest = {
-  frontComponentId: string;
+  // Resolves the requesting application's name in the consent modal.
+  applicationId: string;
   mediaType: CaptureMediaMediaType;
   fieldMetadataId: string;
   maxDurationSeconds: number;

@@ -506,7 +506,7 @@ if (result.status === 'captured') {
 }
 ```
 
-The result is `captured`, `cancelled`, or `failed` with a reason (`permission-denied`, `no-device`, `device-in-use`, `blocked`, `busy`, `upload-failed`, or `unknown`).
+The result is `captured`, `cancelled`, or `failed` with a reason (`invalid-params`, `permission-denied`, `no-device`, `device-in-use`, `blocked`, `busy`, `upload-failed`, or `unknown`).
 
 Your app declares fields by `universalIdentifier`; resolve the instance-specific `fieldMetadataId` at runtime with the metadata client:
 

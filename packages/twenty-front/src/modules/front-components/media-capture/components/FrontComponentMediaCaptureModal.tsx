@@ -1,5 +1,7 @@
+import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRef, useState } from 'react';
 import { type CaptureMediaResult } from 'twenty-front-component-renderer';
 import { isDefined } from 'twenty-shared/utils';
@@ -12,14 +14,17 @@ import { useFrontComponentMediaRecorder } from '@/front-components/media-capture
 import { type FrontComponentMediaCaptureRequest } from '@/front-components/media-capture/states/frontComponentMediaCaptureRequestState';
 import { getMediaCaptureFileExtension } from '@/front-components/media-capture/utils/getMediaCaptureFileExtension';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
-import { formatCallRecordingTranscriptTimestamp } from '@/page-layout/widgets/call-recording-transcript/utils/formatCallRecordingTranscriptTimestamp';
 import {
   StyledCenteredButton,
   StyledCenteredTitle,
   StyledSectionContainer,
 } from '@/ui/layout/modal/components/ConfirmationModal';
 import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
-import { FileFolder } from '~/generated-metadata/graphql';
+import {
+  FileFolder,
+  FindOneApplicationNameDocument,
+} from '~/generated-metadata/graphql';
+import { formatDurationTimestamp } from '~/utils/format/formatDurationTimestamp';
 
 type FrontComponentMediaCaptureModalProps = {
   mediaCaptureRequest: FrontComponentMediaCaptureRequest;
@@ -69,6 +74,12 @@ export const FrontComponentMediaCaptureModal = ({
 }: FrontComponentMediaCaptureModalProps) => {
   const { t } = useLingui();
   const { uploadFile } = useDirectFileUpload();
+
+  const { data: applicationNameData } = useQuery(
+    FindOneApplicationNameDocument,
+    { variables: { id: mediaCaptureRequest.applicationId } },
+  );
+  const applicationName = applicationNameData?.findOneApplication?.name;
 
   const [step, setStep] = useState<MediaCaptureStep>('consent');
 
@@ -172,9 +183,15 @@ export const FrontComponentMediaCaptureModal = ({
 
   const title = isAudioCapture ? t`Record audio` : t`Record video`;
 
+  // Full sentences per variant: composing "<name> is asking…" from fragments
+  // would break in languages that inflect around the subject.
   const consentText = isAudioCapture
-    ? t`An application in this workspace is asking to record audio with your microphone. Recording starts only after you click Start recording, and you review the result before it is shared.`
-    : t`An application in this workspace is asking to record video with your camera and microphone. Recording starts only after you click Start recording, and you review the result before it is shared.`;
+    ? isNonEmptyString(applicationName)
+      ? t`${applicationName} is asking to record audio with your microphone. Recording starts only after you click Start recording, and you review the result before it is shared.`
+      : t`An application in this workspace is asking to record audio with your microphone. Recording starts only after you click Start recording, and you review the result before it is shared.`
+    : isNonEmptyString(applicationName)
+      ? t`${applicationName} is asking to record video with your camera and microphone. Recording starts only after you click Start recording, and you review the result before it is shared.`
+      : t`An application in this workspace is asking to record video with your camera and microphone. Recording starts only after you click Start recording, and you review the result before it is shared.`;
 
   const cancelButton = (
     <StyledCenteredButton
@@ -241,10 +258,8 @@ export const FrontComponentMediaCaptureModal = ({
           <StyledRecordingRow>
             <StyledRecordingDot />
             <StyledTimer>
-              {formatCallRecordingTranscriptTimestamp(elapsedSeconds)} /{' '}
-              {formatCallRecordingTranscriptTimestamp(
-                mediaCaptureRequest.maxDurationSeconds,
-              )}
+              {formatDurationTimestamp(elapsedSeconds)} /{' '}
+              {formatDurationTimestamp(mediaCaptureRequest.maxDurationSeconds)}
             </StyledTimer>
           </StyledRecordingRow>
           {cancelButton}
