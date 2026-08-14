@@ -16,6 +16,7 @@ import { FieldMetadataType } from "src/logic-functions/types/field-metadata-type
 import { buildRecordFieldPlan } from "src/logic-functions/utils/build-record-field-plan.util";
 import { sortObjectsByDependency } from "src/logic-functions/utils/sort-objects-by-dependency.util";
 import { executeWithRetry } from "src/logic-functions/utils/execute-with-retry.util";
+import { FindWorkspaceMembers } from "src/logic-functions/data/targetWorkspace/find-workspace-members.util";
 
 // Logic:
 // Read all apps
@@ -296,6 +297,25 @@ const handler = async () => {
   }
   if (diffVerApps.length > 0) {
     console.error('Update following apps to latest version: '.concat(...diffVerApps.map(id => sourceApps[id].name)));
+  }
+
+  // Check for workspace members to prevent data loss with X object to workspace members relation
+  const sourceWorkspaceMembers = extractNodes((await FindWorkspaceMembers(sourceWorkspace)).data.workspaceMembers);
+  const targetWorkspaceMembers = extractNodes((await FindWorkspaceMembers(targetWorkspace)).data.workspaceMembers);
+  const missingWorkspaceMembers = sourceWorkspaceMembers.filter(mem => targetWorkspaceMembers.find(mem2 => mem2.userEmail === mem.userEmail) === undefined);
+  if (missingWorkspaceMembers.length > 0) {
+    console.error("Add missing workspace members before proceeding:", ...missingWorkspaceMembers.filter(mem => mem.userEmail));
+    return;
+  }
+  // merge both workspaceMembers arrays into one
+  const mergedWorkspaceMembers: {oldId: string, email: string, newId: string}[] = [];
+  for (const sourceMember of sourceWorkspaceMembers) {
+    const targetMember = targetWorkspaceMembers.find(mem => mem.userEmail === sourceMember.userEmail);
+    if (targetMember === undefined) {
+      console.warn(`Skipping workspace member "${sourceMember.userEmail}": no matching member found in target workspace`);
+      continue;
+    }
+    mergedWorkspaceMembers.push({ oldId: sourceMember.id, email: sourceMember.userEmail, newId: targetMember.id });
   }
 
   // Stage 2: compare objects and fields between 2 workspaces
