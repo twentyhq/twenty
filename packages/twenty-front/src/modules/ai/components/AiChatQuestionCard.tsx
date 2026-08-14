@@ -196,7 +196,7 @@ const areAllQuestionsAnswered = (
   questions.every(
     (_, index) =>
       (selectedByQuestion[index]?.length ?? 0) > 0 ||
-      (otherSelectedByQuestion[index] === true &&
+      (otherSelectedByQuestion[index] &&
         (freeTextByQuestion[index] ?? '').trim().length > 0),
   );
 
@@ -248,7 +248,7 @@ export const AiChatQuestionCard = ({
     questions.map((_, index) => {
       const trimmedFreeText = (freeTextByQuestion[index] ?? '').trim();
       const shouldIncludeFreeText =
-        otherSelected[index] === true && trimmedFreeText.length > 0;
+        (otherSelected[index] ?? false) && trimmedFreeText.length > 0;
 
       return {
         questionIndex: index,
@@ -328,7 +328,7 @@ export const AiChatQuestionCard = ({
   const handleToggleOther = () => {
     if (
       currentQuestion.allowMultiSelect === true &&
-      otherSelectedByQuestion[currentIndex] === true
+      otherSelectedByQuestion[currentIndex]
     ) {
       setOtherSelectedByQuestion((previous) => ({
         ...previous,
@@ -434,7 +434,7 @@ export const AiChatQuestionCard = ({
             ).includes(optionIndex);
             const hasSelection =
               (selectedByQuestion[currentIndex] ?? []).length > 0 ||
-              otherSelectedByQuestion[currentIndex] === true;
+              (otherSelectedByQuestion[currentIndex] ?? false);
             const isHighlighted =
               isSelected || (!hasSelection && option.isRecommended === true);
             const tooltipId = `ask-question-option-${toolCallId}-${currentIndex}-${optionIndex}`;
@@ -497,7 +497,7 @@ export const AiChatQuestionCard = ({
               NUMBER_ICONS[currentQuestion.options.length] ??
               NUMBER_ICONS[NUMBER_ICONS.length - 1]
             }
-            isHighlighted={otherSelectedByQuestion[currentIndex] === true}
+            isHighlighted={otherSelectedByQuestion[currentIndex] ?? false}
             value={freeTextByQuestion[currentIndex] ?? ''}
             onChange={handleOtherTextChange}
             onSelect={handleToggleOther}
