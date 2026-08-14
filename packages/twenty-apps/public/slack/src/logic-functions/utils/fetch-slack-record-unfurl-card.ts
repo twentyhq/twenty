@@ -269,7 +269,9 @@ const fetchTaskUnfurlCard = async (
 export const fetchSlackRecordUnfurlCard = async ({
   objectNameSingular,
   recordId,
-}: SlackRecordLink): Promise<SlackRecordUnfurlCard | undefined> => {
+}: Pick<SlackRecordLink, 'objectNameSingular' | 'recordId'>): Promise<
+  SlackRecordUnfurlCard | undefined
+> => {
   try {
     switch (objectNameSingular) {
       case 'person':
