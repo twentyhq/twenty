@@ -79,24 +79,12 @@ test.describe('Media notes capture flow', () => {
       page.getByTestId(MEDIA_NOTES_TEST_IDS.recordingTimer),
     ).toBeVisible();
 
-    // The host contributes the one piece the app cannot spoof or remove:
-    // an indicator naming the recording application while a device is live.
-    await expect(page.getByTestId('media-recording-indicator')).toBeVisible();
-    await expect(page.getByTestId('media-recording-indicator')).toContainText(
-      'is recording audio',
-    );
-
     await page.waitForTimeout(2500);
     await page.screenshot({
       path: path.join(SCREENSHOT_DIR, '01-recording.png'),
     });
 
     await stopButton.click();
-
-    // Stopping releases the device, so the host indicator disappears.
-    await expect(
-      page.getByTestId('media-recording-indicator'),
-    ).not.toBeVisible();
 
     // Uploaded: the component receives a playable file reference.
     await expect(
@@ -134,39 +122,14 @@ test.describe('Media notes capture flow', () => {
 
     await page.getByTestId(MEDIA_NOTES_TEST_IDS.recordAudioButton).click();
 
-    await expect(page.getByTestId('media-recording-indicator')).toBeVisible();
+    await expect(
+      page.getByTestId(MEDIA_NOTES_TEST_IDS.recordingTimer),
+    ).toBeVisible();
 
     await page.getByTestId(MEDIA_NOTES_TEST_IDS.cancelRecordingButton).click();
 
     await expect(
       page.getByTestId(MEDIA_NOTES_TEST_IDS.captureStatus),
     ).toHaveText('cancelled');
-    await expect(
-      page.getByTestId('media-recording-indicator'),
-    ).not.toBeVisible();
-  });
-
-  test('the host indicator stop discards the recording', async ({ page }) => {
-    await openMediaNotesComponent(page);
-
-    await page.getByTestId(MEDIA_NOTES_TEST_IDS.recordAudioButton).click();
-
-    await expect(page.getByTestId('media-recording-indicator')).toBeVisible();
-
-    await page.getByTestId('media-recording-indicator-stop-button').click();
-
-    await expect(
-      page.getByTestId('media-recording-indicator'),
-    ).not.toBeVisible();
-
-    // The host stop reaches the app as standard track ended events, so the
-    // app cancels itself without any further interaction — the same signal
-    // a revoked device would produce in a regular page.
-    await expect(
-      page.getByTestId(MEDIA_NOTES_TEST_IDS.captureStatus),
-    ).toHaveText('cancelled');
-    await expect(
-      page.getByTestId(MEDIA_NOTES_TEST_IDS.recordAudioButton),
-    ).toBeVisible();
   });
 });

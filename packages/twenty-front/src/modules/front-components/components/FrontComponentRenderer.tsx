@@ -101,9 +101,7 @@ const FrontComponentRendererContent = ({
     colorScheme,
   });
 
-  const { mediaSessionHost } = useFrontComponentMediaSession({
-    applicationId,
-  });
+  const { mediaSessionHost } = useFrontComponentMediaSession();
 
   const handleError = useCallback(
     (error?: Error) => {

@@ -462,65 +462,6 @@ You rarely need to read it directly. Call your routes through `RestApiClient` wi
 const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_API_URL}/s`}/documents/generate`;
 ```
 
-## Recording audio or video
-
-Media capture uses the standard web APIs. The sandbox provides
-`navigator.mediaDevices.getUserMedia`, `MediaStream`, and `MediaRecorder`,
-so recording code looks exactly like it would in a regular page — including
-third-party libraries built on those APIs:
-
-```tsx
-const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-const recorder = new MediaRecorder(stream);
-const chunks: Blob[] = [];
-
-recorder.ondataavailable = (event) => chunks.push(event.data);
-recorder.onstop = async () => {
-  const blob = new Blob(chunks, { type: recorder.mimeType });
-
-  const result = await uploadFile(blob, {
-    fieldMetadataId,
-    fileName: 'voice-note.webm',
-  });
-
-  if (result.status === 'uploaded') {
-    // Attach result.file.fileId to a record via the core API.
-  }
-};
-
-recorder.start();
-```
-
-A few environment specifics to be aware of:
-
-- **The consent experience is yours.** The browser asks for device
-  permission the first time; your component owns everything else — timers,
-  waveforms, stop and cancel controls.
-- **The host shows a recording indicator** naming your application whenever
-  a device is live. Its stop button ends your capture tracks; your code
-  observes this as standard track `ended` events, the same signal a revoked
-  device produces.
-- **One capture at a time.** While any application records, another
-  `getUserMedia` call rejects with a `NotReadableError`, as if the device
-  were held by another program.
-- **`MediaRecorder.isTypeSupported`** answers for common container/codec
-  combinations; uncommon types report as unsupported.
-- **Track mute states are not forwarded.** `track.enabled` reaches the real
-  device, but the `muted` property and `mute`/`unmute` events are not
-  implemented.
-- **Live preview inside the component is not available.** `srcObject` does
-  not cross the sandbox; the host indicator shows a self-view while a camera
-  is live. Recorded files play back normally from their uploaded URL.
-- **Uploads target a FILES field.** `uploadFile(file, { fieldMetadataId,
-  fileName? })` stores the blob and returns `{ status: 'uploaded', file:
-  { fileId, path, url, size, mimeType } }`, or `{ status: 'failed', reason }`
-  on invalid parameters or upload errors; attach the `fileId` to a record to
-  make it permanent.
-
-See the [media-notes example app](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/media-notes)
-for a complete recording flow, including cancel paths and attaching the
-uploaded file to a record.
-
 ## Host communication API
 
 Front components can trigger navigation, modals, and notifications using functions from `twenty-sdk`:
@@ -534,7 +475,7 @@ Front components can trigger navigation, modals, and notifications using functio
 | `enqueueSnackbar(params)` | Show a toast notification |
 | `unmountFrontComponent()` | Unmount the component |
 | `updateProgress(progress)` | Update a progress indicator |
-| `uploadFile(file, params)` | Upload a `Blob` into a FILES field so it can be attached to a record |
+| `uploadFile(file, { fieldMetadataId, fileName? })` | Upload a `Blob` into a FILES field; resolves to `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` or `{ status: 'failed', reason }` |
 
 Here is an example that uses the host API to show a snackbar and close the side panel after an action completes:
 

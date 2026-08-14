@@ -10,9 +10,7 @@ field.
 A pinned global command ("Record media note") opens a front component that
 records a voice or video note with its own UI, uploads it on stop, attaches
 it to a Media note record, then plays the stored file back from its signed
-URL. While a device is live the host shows a recording indicator naming the
-app; its stop button ends the capture tracks, which the app observes as
-standard track `ended` events.
+URL.
 
 ## Run the e2e regression test
 
@@ -39,7 +37,6 @@ node packages/twenty-sdk/dist/cli.cjs app:publish --private && node packages/twe
 FRONT_BASE_URL=http://localhost:3000 npx playwright test --project=setup --project=chromium
 ```
 
-It asserts the app-owned recording timer, the host recording indicator, the
-playback preview, the uploaded file reference received by the component, and
-both cancel paths (the app's own cancel and the host indicator's stop) —
-screenshots of each step land in `e2e/.results/screenshots/`.
+It asserts the app-owned recording timer, the playback preview, the uploaded
+file reference received by the component, and the cancel path — screenshots
+of each step land in `e2e/.results/screenshots/`.
