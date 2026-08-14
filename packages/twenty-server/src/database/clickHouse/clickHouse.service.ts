@@ -167,7 +167,10 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
 
       return {
         success: false,
-        error: err instanceof Error ? err : new Error(String(err)),
+        error:
+          err instanceof Error
+            ? err
+            : Object.assign(new Error(String(err)), { cause: err }),
       };
     }
   }
