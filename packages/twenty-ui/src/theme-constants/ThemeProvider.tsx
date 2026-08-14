@@ -180,11 +180,17 @@ export const ThemeProvider = ({
       return;
     }
 
-    if (isDefined(scale)) {
-      scaleTarget.style.setProperty('--t-scale-user', String(scale));
-    } else {
-      scaleTarget.style.removeProperty('--t-scale-user');
+    if (!isDefined(scale)) {
+      // No cleanup is registered from this branch, so a provider that never
+      // set the property cannot remove a value another provider owns; the
+      // recompute still refreshes the JS theme after a defined-to-undefined
+      // transition, whose cleanup below just removed the property.
+      recomputeTheme();
+
+      return;
     }
+
+    scaleTarget.style.setProperty('--t-scale-user', String(scale));
     recomputeTheme();
 
     return () => {

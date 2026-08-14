@@ -167,6 +167,24 @@ describe('ThemeProvider', () => {
     ).toBe('');
   });
 
+  it('should not remove a scale another provider set when mounted without one', () => {
+    setIconSizeMd(DESKTOP_ICON_SIZE_MD);
+    stubMatchMedia();
+    document.documentElement.style.setProperty('--t-scale-user', '1.25');
+
+    const { unmount } = renderProvider();
+
+    expect(
+      document.documentElement.style.getPropertyValue('--t-scale-user'),
+    ).toBe('1.25');
+
+    unmount();
+
+    expect(
+      document.documentElement.style.getPropertyValue('--t-scale-user'),
+    ).toBe('1.25');
+  });
+
   it('should remove the scale from the root element on unmount', () => {
     setIconSizeMd(DESKTOP_ICON_SIZE_MD);
     stubMatchMedia();
