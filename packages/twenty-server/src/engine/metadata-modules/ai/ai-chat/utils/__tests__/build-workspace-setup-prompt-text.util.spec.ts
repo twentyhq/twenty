@@ -54,9 +54,8 @@ describe('buildWorkspaceSetupPromptText', () => {
     });
 
     expect(result).toContain('required ask_questions call');
-    expect(result).toContain('A written question does not count');
     expect(result).toContain(
-      'a heading with nothing under it is not an ending',
+      'reply is unfinished until the ask_questions call is made',
     );
     expect(result).toContain('needs no skill and no learn_tools step');
     expect(result).toContain(
@@ -118,6 +117,26 @@ describe('buildWorkspaceSetupPromptText', () => {
         'moving over from another CRM or starting fresh',
       );
       expect(result).toContain('follow the migration path below');
+    },
+  );
+
+  it.each([
+    ['a full enrichment', companyEnrichment],
+    ['a null enrichment', null],
+  ])(
+    'should make the migration-or-scratch question a tool call rather than text when %s is provided',
+    (_label, enrichment) => {
+      const result = buildWorkspaceSetupPromptText({
+        companyEnrichment: enrichment,
+        locale: 'en',
+      });
+
+      expect(result).toContain(
+        'Then stop writing and make the ask_questions call',
+      );
+      expect(result).toContain('its options');
+      expect(result).toContain('never give that question a title of its own');
+      expect(result).not.toContain('Close this reply with an ask_questions');
     },
   );
 
@@ -262,6 +281,17 @@ describe('buildWorkspaceSetupPromptText', () => {
 
     expect(result).toContain('ask_questions is for new decisions');
     expect(result).toContain('Load a skill before proposing what it builds');
+  });
+
+  it('should name the plain-text question as the failure mode to avoid', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain(
+      'a question mark in your text means the call is missing',
+    );
   });
 
   it('should keep ask_questions options within the single-recommended limit', () => {
