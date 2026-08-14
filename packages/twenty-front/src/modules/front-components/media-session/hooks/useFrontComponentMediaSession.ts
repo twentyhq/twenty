@@ -51,8 +51,11 @@ export const useFrontComponentMediaSession = (): {
         }
       },
       onActiveSessionsChange: (activeSessions) => {
-        if (activeSessions.length > 0 && captureSlotOwnerToken === hostToken) {
-          // The live session carries the slot from here on.
+        // Any notification for this host settles its reservation: either a
+        // live session carries the slot from here on, or the start produced
+        // nothing and holding the slot would brick future captures. The
+        // token guard keeps other hosts' notifications from touching it.
+        if (captureSlotOwnerToken === hostToken) {
           captureSlotOwnerToken = null;
         }
 
