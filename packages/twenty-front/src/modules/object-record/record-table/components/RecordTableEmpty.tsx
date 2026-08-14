@@ -23,12 +23,17 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { styled } from '@linaria/react';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-const StyledEmptyStateContainer = styled.div<{ width: string }>`
+const StyledEmptyStateContainer = styled.div<{ width: number }>`
   height: 100%;
   overflow: hidden;
-  width: ${({ width }) => width};
+  width: ${({ width }) => width}px;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    width: 100%;
+  }
 `;
 
 export interface RecordTableEmptyProps {
@@ -95,11 +100,10 @@ export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
     totalColumnsBorderWidth +
     resizeOffsetToAddOnlyIfItMakesTableContainerGrow;
 
-  // An empty table has no cells to reveal, so on mobile the header would only
-  // add a horizontal scroll to a screen that has nothing to scroll to.
-  const tableContainerWidth = isMobile
-    ? '100%'
-    : `${Math.max(recordTableWidth, emptyTableContainerComputedWidth)}px`;
+  const tableContainerWidth = Math.max(
+    recordTableWidth,
+    emptyTableContainerComputedWidth,
+  );
 
   const columnWidthStyles = useMemo(
     () =>
@@ -122,6 +126,8 @@ export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
         style={columnWidthStyles}
         id={getRecordTableHtmlId(recordTableId)}
       >
+        {/* An empty table has no cells to reveal, so the header would only add
+            a horizontal scroll to a screen with nothing to scroll to. */}
         {!isMobile && <RecordTableHeader />}
       </RecordTableStyleWrapper>
       <RecordTableEmptyState />
