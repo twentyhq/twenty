@@ -28,6 +28,50 @@ describe('SesInboundWebhookAdapterService', () => {
     );
   });
 
+  it('should confirm SNS subscription requests without importing mail', async () => {
+    await adapter.handle(
+      Buffer.from(
+        JSON.stringify({
+          Type: 'SubscriptionConfirmation',
+          MessageId: 'sns-message-id',
+          SubscribeURL: 'https://sns.us-east-1.amazonaws.com/confirm',
+        }),
+      ),
+    );
+
+    expect(snsSubscriptionConfirmerService.confirm).toHaveBeenCalledWith(
+      'https://sns.us-east-1.amazonaws.com/confirm',
+    );
+    expect(inboundMailHandlerService.handle).not.toHaveBeenCalled();
+  });
+
+  it('should ignore payloads that are not notifications', async () => {
+    await adapter.handle(
+      Buffer.from(
+        JSON.stringify({ Type: 'Unknown', MessageId: 'sns-message-id' }),
+      ),
+    );
+
+    expect(snsSubscriptionConfirmerService.confirm).not.toHaveBeenCalled();
+    expect(inboundMailHandlerService.handle).not.toHaveBeenCalled();
+  });
+
+  it('should reject notifications whose inner message is unparsable', async () => {
+    await expect(
+      adapter.handle(
+        Buffer.from(
+          JSON.stringify({
+            Type: 'Notification',
+            MessageId: 'sns-message-id',
+            Message: 'not json',
+          }),
+        ),
+      ),
+    ).rejects.toThrow('Invalid SNS notification message');
+
+    expect(inboundMailHandlerService.handle).not.toHaveBeenCalled();
+  });
+
   it('should normalize S3 receipt notifications', async () => {
     await adapter.handle(
       Buffer.from(

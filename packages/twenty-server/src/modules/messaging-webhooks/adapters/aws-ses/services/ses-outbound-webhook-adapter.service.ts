@@ -70,7 +70,18 @@ export class SesOutboundWebhookAdapterService {
       return;
     }
 
-    await this.handleSendingStateEvent(event);
+    if (
+      event['detail-type'] === 'Sending Status Enabled' ||
+      event['detail-type'] === 'Sending Status Disabled'
+    ) {
+      await this.handleSendingStateEvent(event);
+
+      return;
+    }
+
+    this.logger.warn(
+      `Ignoring SES event with unsupported detail-type: ${event['detail-type']}`,
+    );
   }
 
   private async handleSuppressionEvent(

@@ -155,6 +155,19 @@ describe('SesOutboundWebhookAdapterService', () => {
     });
   });
 
+  it('should ignore events with unsupported detail types', async () => {
+    await adapter.handle(
+      buildSnsEnvelope({
+        source: 'aws.ses',
+        'detail-type': 'Email Delivered',
+        resources: [CONFIGURATION_SET_ARN],
+      }),
+    );
+
+    expect(outboundSuppressionHandlerService.handle).not.toHaveBeenCalled();
+    expect(outboundSendingStateHandlerService.handle).not.toHaveBeenCalled();
+  });
+
   it('should skip events whose workspace cannot be resolved', async () => {
     await adapter.handle(
       buildSnsEnvelope({
