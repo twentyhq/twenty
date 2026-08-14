@@ -773,24 +773,24 @@ Para diferenciar explicitamente com base no esquema ativo, leia-o com `useColorS
 
 ## Limitações atuais
 
-Componentes frontais estão em desenvolvimento ativo. Eventos de renderização, estilo e manipulação funcionam bem. Tudo que alcance *passado* renderização (medindo um elemento, chamando um método DOM em um ref, portátil fora de sua árvore, tocando no armazenamento do navegador) está ausente ou incompleto hoje, e a maioria falha silenciosamente: nenhuma exceção e nenhum erro no TypeScript, uma vez que o scaffold é digitado contra o navegador completo DOM.
+Componentes frontais estão em desenvolvimento ativo. Renderização, estilização, tratamento de eventos, medição de elementos e armazenamento no navegador funcionam bem. Qualquer coisa que vá além disso (chamar um método do DOM em uma ref, observar redimensionamentos de elementos, criar um portal para fora da sua árvore) está ausente ou incompleta hoje, e a maioria falha silenciosamente: sem exceção nem erro de TypeScript, já que o arcabouço é tipado com base no DOM completo do navegador.
 
 Se um desses blocos, [abra um issue](https://github.com/twentyhq/twenty/issues/new/choose) para que seja priorizado.
 
 ### Layout e medição
 
-Nada se pode medir por si mesmo.
+Os elementos podem se medir: o host espelha a geometria no sandbox, então as leituras são respondidas localmente, mas podem estar defasadas em até um quadro, e a primeira leitura de um elemento nunca medido retorna zeros. Depois de escrever, releia em um callback de `requestAnimationFrame` ou em um efeito.
 
-| API                                                           | O que acontece                                                                                |
-| ------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| `getBoundingClientRect()`, `getClientRects()`                 | Lançamento                                                                                    |
-| `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Silenciosamente `indefinido`, então `largura ?? 0` renda `0` e `largura > 600` é sempre falso |
-| `ResizeObserver`, `IntersectionObserver`                      | `ReferenceError` (`typeof` guardas fazem trabalho)                                            |
-| `window.matchMedia()`, `window.getComputedStyle()`            | Lançamento                                                                                    |
-| `window.innerWidth`, `innerHeight`, `devicePixelRatio`        | Silenciosamente `undefined`                                                                   |
-| `new MutationObserver(fn)`                                    | Construtora, então `.observe()` lançamentos                                                   |
+| API                                                                                      | O que acontece                                                                                                                  |
+| ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Funciona, a partir do espelho; atribuir `scrollTop` / `scrollLeft` não faz nada (no-op)                                         |
+| `getClientRects()`, `window.matchMedia()`                                                | Lançamento                                                                                                                      |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY`             | Funciona, relatando o **viewport do navegador**; o tamanho próprio do seu widget é `document.body.clientWidth` / `clientHeight` |
+| `window.getComputedStyle()`                                                              | Retorna apenas os estilos inline do elemento, nunca a cascata calculada pelo host                                               |
+| `ResizeObserver`, `IntersectionObserver`                                                 | `ReferenceError` (`typeof` guardas fazem trabalho)                                                                              |
+| `MutationObserver`                                                                       | Funciona, incluindo `subtree`, `attributeFilter`, valores antigos e `takeRecords()`                                             |
 
-Então, remapeia `ResponsiveContainer`, Interface flutuante / Popper, virtualização de lista e arrastar para redimensionar ainda não funcionam. Faça o layout no CSS: sua folha de estilos atinge a página real, então flexbox, grade, `aspect-ratio`, `clamp()` e `@container` todos se comportam normalmente.
+O posicionamento a partir de `getBoundingClientRect` agora funciona, mas qualquer coisa que observe mudanças de tamanho por meio de `ResizeObserver` (o `ResponsiveContainer` do recharts, o `autoUpdate` do Floating UI) ainda não funciona. Ainda assim, prefira CSS para layout: sua folha de estilos alcança a página real, então flexbox, grid, `aspect-ratio`, `clamp()` e `@container` se comportam normalmente, sem atraso de frame.
 
 <Note>
 `requestAnimationFrame`, `fetch`, `setTimeout` and `queueMicrotask` trabalham sem o prefixo `window.`. Apenas `window.requestAnimationFrame(...)` e amigos lançam.
@@ -800,14 +800,14 @@ Então, remapeia `ResponsiveContainer`, Interface flutuante / Popper, virtualiza
 
 Um `ref` fornece um elemento da sandbox, não um `HTMLElement`.
 
-| O que você escreve                                                                                          | O que acontece                                             | Usar em vez disso                                                                                  |
-| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Lançamento                                                 | Componentes controlados; leia valores de `event.target`                                            |
-| `element.classList.add(...)`                                                                                | Lança (`classList` é `undefined`)                          | Construa a string `className`                                                                      |
-| `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | Lançamento                                                 | `querySelector()` / `querySelectorAll()`, que funcionam                                            |
-| `document.activeElement`                                                                                    | Sempre `indefinido`                                        | Rastreie o foco com `onFocus` / `onBlur`                                                           |
-| `canvas`                                                                                                    | Não renderiza nada, sem erro                               | SVG ou desenhar fora da tela e mostrar o resultado em um elemento `img`                            |
-| `createPortal(node, document.body)`                                                                         | Não renderiza nada, enquanto `isConnected` reporta sucesso | Sobrepõe em linha com `posição: absoluto`, ou passa a biblioteca seu próprio elemento de contêiner |
+| O que você escreve                                                                                          | O que acontece                                             | Usar em vez disso                                                                                                                                                                        |
+| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Lançamento                                                 | Componentes controlados; leia valores de `event.target`                                                                                                                                  |
+| `element.classList.add(...)`                                                                                | Lança (`classList` é `undefined`)                          | Construa a string `className`                                                                                                                                                            |
+| `document.createTreeWalker()`                                                                               | Lançamento                                                 | `querySelector()` / `querySelectorAll()` e `getElementById()` funcionam; `getElementsByClassName()` também funciona, mas retorna uma coleção estática, não uma `HTMLCollection` dinâmica |
+| `document.activeElement`                                                                                    | Sempre `indefinido`                                        | Rastreie o foco com `onFocus` / `onBlur`                                                                                                                                                 |
+| `canvas`                                                                                                    | Não renderiza nada, sem erro                               | SVG ou desenhar fora da tela e mostrar o resultado em um elemento `img`                                                                                                                  |
+| `createPortal(node, document.body)`                                                                         | Não renderiza nada, enquanto `isConnected` reporta sucesso | Sobrepõe em linha com `posição: absoluto`, ou passa a biblioteca seu próprio elemento de contêiner                                                                                       |
 
 A lacuna do portal é o motivo da Radix, da interface do usuário, MUI e da interface de reacção, que não tornam nada por padrão. A maioria aceita uma propriedade de container; aponta-a para um elemento que você renderizou.
 
