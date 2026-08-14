@@ -1393,8 +1393,8 @@ __metadata:
     oxlint: "npm:^0.16.0"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
-    twenty-client-sdk: "npm:2.31.0-alpha.1"
-    twenty-sdk: "npm:2.31.0-alpha.1"
+    twenty-client-sdk: "npm:2.31.0"
+    twenty-sdk: "npm:2.31.0"
     twenty-ui: "npm:^1.0.0-alpha.1"
     typescript: "npm:^5.9.3"
     use-debounce: "npm:^10.0.0"
@@ -3668,22 +3668,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-client-sdk@npm:2.31.0-alpha.1":
-  version: 2.31.0-alpha.1
-  resolution: "twenty-client-sdk@npm:2.31.0-alpha.1"
+"twenty-client-sdk@npm:2.31.0":
+  version: 2.31.0
+  resolution: "twenty-client-sdk@npm:2.31.0"
   dependencies:
     "@genql/runtime": "npm:^2.10.0"
     esbuild: "npm:^0.28.1"
     graphql: "npm:^16.8.1"
     lodash: "npm:^4.17.21"
     prettier: "npm:^3.8.3"
-  checksum: 10c0/f396b04dc99eb7e224de2a6295a326fdf274a17a49db5398ee74026d9ead0202e02090cd81e95e5e3c8987268beee9de273d68fc194e5c046d6274f7ddb16c4d
+  checksum: 10c0/03a476db2dd6092875d6929a7f96a72d79c17d95fd9e42963ba2530b3f5ceec3760a96946ec032144976c75004ee2bbbb5791bb2583dd69f7f91c6ac20cd0337
   languageName: node
   linkType: hard
 
-"twenty-sdk@npm:2.31.0-alpha.1":
-  version: 2.31.0-alpha.1
-  resolution: "twenty-sdk@npm:2.31.0-alpha.1"
+"twenty-sdk@npm:2.31.0":
+  version: 2.31.0
+  resolution: "twenty-sdk@npm:2.31.0"
   dependencies:
     "@sniptt/guards": "npm:^0.2.0"
     axios: "npm:^1.16.0"
@@ -3702,12 +3702,12 @@ __metadata:
     semver: "npm:7.6.3"
     sharp: "npm:^0.35.3"
     tinyglobby: "npm:^0.2.15"
-    twenty-client-sdk: "npm:2.31.0-alpha.1"
+    twenty-client-sdk: "npm:2.31.0"
     typescript: "npm:^5.9.3"
     uuid: "npm:^13.0.2"
   bin:
     twenty: dist/cli.cjs
-  checksum: 10c0/a66ad73824532886b2cca1afe096698b226201d92bcb20eacdfb2f739d34e0a13d45fe75f5272e0dec309c2b6bbe06ee1eaa0196cd2126af19d0a44e50e821a2
+  checksum: 10c0/ceb42a2abb29b43243c1db41b8de6ef5a5c3140cafc1cd663026d034b9aa010aa140f656af742d5804b89ace2be9e7eea63b3c4279959aad86253f59c1b95da0
   languageName: node
   linkType: hard
 

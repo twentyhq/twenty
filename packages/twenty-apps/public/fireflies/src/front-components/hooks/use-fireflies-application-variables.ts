@@ -77,16 +77,10 @@ export const useFirefliesApplicationVariables =
             return;
           }
 
-          // twenty-client-sdk 2.31 predates isDeprecated on ApplicationVariable,
-          // so the selected field comes back typed as unknown.
           const applicationVariables = [
             ...(applicationResult.findOneApplication?.applicationVariables ??
               []),
           ]
-            .map((variable) => ({
-              ...variable,
-              isDeprecated: variable.isDeprecated === true,
-            }))
             .filter(shouldDisplayApplicationVariable)
             .sort((left, right) => left.key.localeCompare(right.key));
 
