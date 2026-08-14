@@ -20,32 +20,48 @@ const setIconSizeMd = (value: string) => {
   document.documentElement.style.setProperty('--t-icon-size-md', value);
 };
 
-const stubMatchMedia = () => {
-  const changeListeners: (() => void)[] = [];
+// jsdom ships no matchMedia, so there is nothing to spy on and it has to be
+// defined outright. defineProperty rather than assignment because Window types
+// it as required, which leaves no way to put the absence back afterwards.
+const setMatchMedia = (matchMedia: Window['matchMedia'] | undefined) => {
+  Object.defineProperty(window, 'matchMedia', {
+    configurable: true,
+    writable: true,
+    value: matchMedia,
+  });
+};
 
-  const mediaQueryList = {
+const stubMatchMedia = () => {
+  const changeListeners: EventListener[] = [];
+
+  const addEventListener = jest.fn((_type: string, listener: EventListener) => {
+    changeListeners.push(listener);
+  });
+  const removeEventListener = jest.fn();
+
+  const mediaQueryList: MediaQueryList = {
     matches: false,
     media: '',
-    addEventListener: jest.fn((_type: string, listener: () => void) => {
-      changeListeners.push(listener);
-    }),
-    removeEventListener: jest.fn(),
+    onchange: null,
+    addListener: () => {},
+    removeListener: () => {},
+    addEventListener,
+    removeEventListener,
+    dispatchEvent: () => false,
   };
 
-  const matchMedia = jest.fn((media: string) => {
-    mediaQueryList.media = media;
-    return mediaQueryList;
-  });
+  const matchMedia = jest.fn(() => mediaQueryList);
 
-  window.matchMedia = matchMedia as unknown as typeof window.matchMedia;
+  setMatchMedia(matchMedia);
 
   return {
     matchMedia,
-    mediaQueryList,
+    addEventListener,
+    removeEventListener,
     crossBreakpoint: () => {
       act(() => {
         for (const listener of changeListeners) {
-          listener();
+          listener(new Event('change'));
         }
       });
     },
@@ -64,7 +80,7 @@ const readIconSizeMd = () => screen.getByTestId('icon-size-md').textContent;
 describe('ThemeProvider', () => {
   afterEach(() => {
     document.documentElement.style.removeProperty('--t-icon-size-md');
-    delete (window as Partial<Window>).matchMedia;
+    setMatchMedia(undefined);
   });
 
   it('should derive the theme from the CSS variables on mount', () => {
@@ -78,14 +94,14 @@ describe('ThemeProvider', () => {
 
   it('should watch the mobile breakpoint', () => {
     setIconSizeMd(DESKTOP_ICON_SIZE_MD);
-    const { matchMedia, mediaQueryList } = stubMatchMedia();
+    const { matchMedia, addEventListener } = stubMatchMedia();
 
     renderProvider();
 
     expect(matchMedia).toHaveBeenCalledWith(
       `(max-width: ${MOBILE_VIEWPORT}px)`,
     );
-    expect(mediaQueryList.addEventListener).toHaveBeenCalledWith(
+    expect(addEventListener).toHaveBeenCalledWith(
       'change',
       expect.any(Function),
     );
@@ -106,12 +122,12 @@ describe('ThemeProvider', () => {
 
   it('should stop watching the breakpoint on unmount', () => {
     setIconSizeMd(DESKTOP_ICON_SIZE_MD);
-    const { mediaQueryList } = stubMatchMedia();
+    const { removeEventListener } = stubMatchMedia();
 
     const { unmount } = renderProvider();
     unmount();
 
-    expect(mediaQueryList.removeEventListener).toHaveBeenCalledWith(
+    expect(removeEventListener).toHaveBeenCalledWith(
       'change',
       expect.any(Function),
     );
