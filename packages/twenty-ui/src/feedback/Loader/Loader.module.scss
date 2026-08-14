@@ -29,7 +29,7 @@
 // height [8, 2, 8] with times [0, 0.15, 0.3] over a 0.8s loop.
 @keyframes loaderDot {
   0% {
-    transform: translateX(-16px);
+    transform: translateX(calc(-16px * var(--t-scale, 1)));
     width: calc(8px * var(--t-scale, 1));
     height: calc(8px * var(--t-scale, 1));
   }
@@ -37,12 +37,12 @@
   15% {
     transform: translateX(0);
     width: calc(12px * var(--t-scale, 1));
-    height: 2px;
+    height: calc(2px * var(--t-scale, 1));
   }
 
   30%,
   100% {
-    transform: translateX(16px);
+    transform: translateX(calc(16px * var(--t-scale, 1)));
     width: calc(8px * var(--t-scale, 1));
     height: calc(8px * var(--t-scale, 1));
   }

@@ -53,12 +53,12 @@
   border-radius: 50%;
   corner-shape: round;
   content: '';
-  height: 6px;
+  height: calc(6px * var(--t-scale, 1));
   left: 50%;
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 6px;
+  width: calc(6px * var(--t-scale, 1));
 }
 
 .large[data-checked]::after {

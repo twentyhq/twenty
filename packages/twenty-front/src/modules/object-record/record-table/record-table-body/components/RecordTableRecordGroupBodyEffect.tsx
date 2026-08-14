@@ -16,7 +16,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useRecordTableRowPitch } from '@/object-record/record-table/hooks/useRecordTableRowPitch';
 
 export const RecordTableRecordGroupBodyEffect = () => {
-  const { scaledRowHeight } = useRecordTableRowPitch();
+  const { rowPitch } = useRecordTableRowPitch();
 
   const { objectNameSingular } = useRecordTableContextOrThrow();
   const { recordTableId } = useRecordTableContextOrThrow();
@@ -70,12 +70,12 @@ export const RecordTableRecordGroupBodyEffect = () => {
       );
 
       if (recordPosition !== -1) {
-        const positionInPx = recordPosition * scaledRowHeight;
+        const positionInPx = recordPosition * rowPitch;
 
         scrollToPosition(positionInPx);
       }
     }
-  }, [lastShowPageRecordId, records, scrollToPosition, scaledRowHeight]);
+  }, [lastShowPageRecordId, records, scrollToPosition, rowPitch]);
 
   return <></>;
 };

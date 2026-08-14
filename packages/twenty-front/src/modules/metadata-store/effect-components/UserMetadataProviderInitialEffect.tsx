@@ -136,7 +136,7 @@ export const UserMetadataProviderInitialEffect = () => {
       return {
         ...workspaceMember,
         colorScheme: (workspaceMember.colorScheme as ColorScheme) ?? 'System',
-        uiScale: (workspaceMember.uiScale ?? null) as UiScale | null,
+        uiScale: (workspaceMember.uiScale as UiScale) ?? 'Default',
         openRecordIn: toOpenRecordInPreference(workspaceMember.openRecordIn),
         locale:
           (workspaceMember.locale as keyof typeof APP_LOCALES) ?? SOURCE_LOCALE,

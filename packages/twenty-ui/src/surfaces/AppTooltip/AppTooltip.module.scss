@@ -45,18 +45,18 @@
   transform: rotate(45deg);
 
   &[data-side='top'] {
-    bottom: -4px;
+    bottom: calc(-4px * var(--t-scale, 1));
   }
 
   &[data-side='bottom'] {
-    top: -4px;
+    top: calc(-4px * var(--t-scale, 1));
   }
 
   &[data-side='left'] {
-    right: -4px;
+    right: calc(-4px * var(--t-scale, 1));
   }
 
   &[data-side='right'] {
-    left: -4px;
+    left: calc(-4px * var(--t-scale, 1));
   }
 }

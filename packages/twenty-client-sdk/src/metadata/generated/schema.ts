@@ -211,7 +211,7 @@ export interface WorkspaceMember {
     name: FullName
     userEmail: Scalars['String']
     colorScheme: Scalars['String']
-    uiScale?: Scalars['String']
+    uiScale: Scalars['String']
     openRecordIn: OpenRecordIn
     avatarUrl?: Scalars['String']
     locale?: Scalars['String']

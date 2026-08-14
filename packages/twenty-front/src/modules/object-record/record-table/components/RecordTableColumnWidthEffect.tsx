@@ -71,18 +71,18 @@ export const RecordTableColumnWidthEffect = () => {
 
     const dragColumnWidth = isRecordTableDragColumnHidden
       ? 0
-      : RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH;
+      : RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH * theme.scale;
 
     const checkboxColumnWidth = isRecordTableCheckboxColumnHidden
       ? 0
-      : RECORD_TABLE_COLUMN_CHECKBOX_WIDTH;
+      : RECORD_TABLE_COLUMN_CHECKBOX_WIDTH * theme.scale;
 
     const leftColumnsWidth = dragColumnWidth + checkboxColumnWidth;
 
     const totalTableBodyWidth =
       visibleRecordFieldsWidth +
       leftColumnsWidth +
-      RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH +
+      RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH * theme.scale +
       lastColumnWidth +
       visibleRecordFields.length;
 

@@ -62,7 +62,7 @@ const StyledIconContainer = styled.div`
   left: calc(${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px * var(--t-scale, 1));
 
   position: sticky;
-  width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
+  width: calc(${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px * var(--t-scale, 1));
 `;
 
 const StyledActionTextContainer = styled.div<{ width: number }>`
@@ -74,7 +74,11 @@ const StyledActionTextContainer = styled.div<{ width: number }>`
   height: calc(${RECORD_TABLE_ROW_HEIGHT}px * var(--t-scale, 1));
   justify-content: start;
 
-  left: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
+  left: calc(
+    ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH +
+      RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px *
+      var(--t-scale, 1)
+  );
   position: sticky;
   width: ${({ width }) => width}px;
 `;

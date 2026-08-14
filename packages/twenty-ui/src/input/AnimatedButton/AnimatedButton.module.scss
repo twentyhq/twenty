@@ -61,13 +61,13 @@
 
 // --abtn-square-size keeps the square width declaration flat on .square.
 .small {
-  --abtn-square-size: 24px;
+  --abtn-square-size: calc(24px * var(--t-scale, 1));
 
   height: calc(24px * var(--t-scale, 1));
 }
 
 .medium {
-  --abtn-square-size: 32px;
+  --abtn-square-size: calc(32px * var(--t-scale, 1));
 
   height: calc(32px * var(--t-scale, 1));
 }

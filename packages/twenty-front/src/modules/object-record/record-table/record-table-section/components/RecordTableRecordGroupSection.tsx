@@ -163,7 +163,8 @@ export const RecordTableRecordGroupSection = () => {
   );
 
   const sumOfWidthOfVisibleRecordFieldsAfterLabelIdentifierField =
-    visibleRecordFieldsWithoutLabelIdentifier.reduce(sumByProperty('size'), 0);
+    visibleRecordFieldsWithoutLabelIdentifier.reduce(sumByProperty('size'), 0) *
+    theme.scale;
 
   const sumOfBorderWidthForFields = visibleRecordFields.length;
 

@@ -4,6 +4,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { IconAlertTriangle, IconInfoCircle } from '@ui/icon';
 import { AppTooltip } from '@ui/surfaces';
+import { useTheme } from '@ui/theme-constants';
 
 import styles from './SidePanelInformationBanner.module.scss';
 
@@ -20,6 +21,7 @@ export const SidePanelInformationBanner = ({
   variant = 'default',
   tooltipMessage,
 }: SidePanelInformationBannerProps) => {
+  const theme = useTheme();
   const tooltipId = useId();
 
   return (
@@ -29,9 +31,9 @@ export const SidePanelInformationBanner = ({
     >
       <div className={styles.iconContainer}>
         {variant === 'default' ? (
-          <IconInfoCircle size={16} />
+          <IconInfoCircle size={theme.icon.size.md} />
         ) : (
-          <IconAlertTriangle size={16} />
+          <IconAlertTriangle size={theme.icon.size.md} />
         )}
       </div>
       <p className={styles.message}>{message}</p>

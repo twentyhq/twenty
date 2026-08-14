@@ -1060,6 +1060,7 @@
    queries cannot read from a custom property. */
 @media (max-width: 768px) {
   .light {
-    --t-scale-base: calc(14 / 13);
+    /* 14 / 13, precomputed because Safari does not support calc() division */
+    --t-scale-base: 1.0769230769230769;
   }
 }

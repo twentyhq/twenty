@@ -91,7 +91,7 @@ export const useLoadCurrentUser = () => {
       workspaceMember = {
         ...user.workspaceMember,
         colorScheme: user.workspaceMember?.colorScheme as ColorScheme,
-        uiScale: (user.workspaceMember?.uiScale ?? null) as UiScale | null,
+        uiScale: user.workspaceMember?.uiScale as UiScale,
         openRecordIn: toOpenRecordInPreference(
           user.workspaceMember?.openRecordIn,
         ),

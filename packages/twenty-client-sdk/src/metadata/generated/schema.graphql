@@ -358,7 +358,7 @@ type WorkspaceMember {
   name: FullName!
   userEmail: String!
   colorScheme: String!
-  uiScale: String
+  uiScale: String!
   openRecordIn: OpenRecordIn!
   avatarUrl: String
   locale: String

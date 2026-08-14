@@ -18,10 +18,7 @@ const StyledHeaderContainer = styled.div`
   box-shadow: 0 -1px 0 ${themeCssVariables.background.primary};
   display: flex;
   flex-direction: row;
-  height: calc(
-    calc(${RECORD_TABLE_ROW_HEIGHT}px * var(--t-scale, 1)) * var(--t-scale, 1) +
-      1px
-  );
+  height: calc(${RECORD_TABLE_ROW_HEIGHT}px * var(--t-scale, 1) + 1px);
   position: sticky;
   top: 0;
   z-index: ${TABLE_Z_INDEX.headerRow};

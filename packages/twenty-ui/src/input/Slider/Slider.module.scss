@@ -1,6 +1,7 @@
 .slider {
-  --slider-thumb-size: 12px;
-  --slider-track-size: 16px;
+  --slider-thumb-size: calc(12px * var(--t-scale, 1));
+  --slider-track-size: calc(16px * var(--t-scale, 1));
+  --slider-thumb-inset: calc(2px * var(--t-scale, 1));
 
   cursor: pointer;
   height: var(--slider-track-size);
@@ -45,8 +46,8 @@
     content: '';
     height: var(--slider-thumb-size);
     position: absolute;
-    right: 2px;
-    top: 2px;
+    right: var(--slider-thumb-inset);
+    top: var(--slider-thumb-inset);
     width: var(--slider-thumb-size);
   }
 }
@@ -75,7 +76,7 @@
     border-radius: var(--t-border-radius-rounded);
     corner-shape: round;
     height: var(--slider-thumb-size);
-    margin-top: 2px;
+    margin-top: var(--slider-thumb-inset);
     width: var(--slider-thumb-size);
   }
 

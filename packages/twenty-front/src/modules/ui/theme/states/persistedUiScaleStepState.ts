@@ -6,5 +6,5 @@ export const persistedUiScaleStepState = createAtomState<UiScale>({
   key: 'persistedUiScaleStepState',
   defaultValue: 'Default',
   useLocalStorage: true,
-  validateInitFn: (step) => step in UI_SCALE_MULTIPLIERS,
+  validateInitFn: (step) => Object.hasOwn(UI_SCALE_MULTIPLIERS, step),
 });

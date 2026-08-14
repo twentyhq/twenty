@@ -58,7 +58,7 @@ export const getRecordTableColumnWidthInlineStyles = ({
 
   style[RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR] = isCheckboxColumnHidden
     ? '0px'
-    : `${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`;
+    : `calc(${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px * var(--t-scale, 1))`;
 
   return style;
 };
