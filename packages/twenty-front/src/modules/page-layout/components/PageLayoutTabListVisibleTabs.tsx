@@ -1,8 +1,9 @@
 import { styled } from '@linaria/react';
+import { useRef } from 'react';
 import { TabButton } from 'twenty-ui/input';
 
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
-import { useScrollActiveTabIntoView } from '@/ui/layout/tab-list/hooks/useScrollActiveTabIntoView';
+import { ScrollActiveTabIntoViewEffect } from '@/ui/layout/tab-list/components/ScrollActiveTabIntoViewEffect';
 import { SCROLLABLE_TAB_ROW_CSS } from '@/ui/layout/tab-list/styles/ScrollableTabRowCSS';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 
@@ -24,10 +25,10 @@ type PageLayoutTabListVisibleTabsProps = {
   isScrollable: boolean;
 };
 
-const StyledTabContainer = styled.div<{ isScrollable: boolean }>`
+const StyledTabContainer = styled.div<{ $isScrollable: boolean }>`
   display: flex;
   max-width: 100%;
-  overflow-x: ${({ isScrollable }) => (isScrollable ? 'auto' : 'hidden')};
+  overflow-x: ${({ $isScrollable }) => ($isScrollable ? 'auto' : 'hidden')};
   position: relative;
   ${SCROLLABLE_TAB_ROW_CSS}
 
@@ -59,70 +60,81 @@ export const PageLayoutTabListVisibleTabs = ({
   firstHiddenTabId,
   isScrollable,
 }: PageLayoutTabListVisibleTabsProps) => {
-  const { tabRowRef } = useScrollActiveTabIntoView({
-    activeTabId,
-    isScrollable,
-  });
+  const tabRowRef = useRef<HTMLDivElement>(null);
 
   if (canReorder) {
     const shownTabs = visibleTabs.slice(0, visibleTabCount);
 
     return (
-      <StyledTabContainer ref={tabRowRef} isScrollable={isScrollable}>
-        {shownTabs.map((tab, index) => (
-          <StyledTabSlot key={tab.id}>
-            <StyledLeadingDropTarget>
-              <DragDropItemDropTarget
+      <>
+        <ScrollActiveTabIntoViewEffect
+          tabRowRef={tabRowRef}
+          activeTabId={activeTabId}
+          isScrollable={isScrollable}
+        />
+        <StyledTabContainer ref={tabRowRef} $isScrollable={isScrollable}>
+          {shownTabs.map((tab, index) => (
+            <StyledTabSlot key={tab.id}>
+              <StyledLeadingDropTarget>
+                <DragDropItemDropTarget
+                  index={index}
+                  droppableId={PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.VISIBLE_TABS}
+                  orientation="vertical"
+                  compact
+                />
+              </StyledLeadingDropTarget>
+              <PageLayoutTabListReorderableTab
+                tab={tab}
                 index={index}
-                droppableId={PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.VISIBLE_TABS}
-                orientation="vertical"
-                compact
+                group={PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.VISIBLE_TABS}
+                nextTabId={shownTabs[index + 1]?.id ?? firstHiddenTabId}
+                isActive={tab.id === activeTabId}
+                disabled={tab.disabled ?? loading}
+                isWidgetDropTarget={widgetDropTargetTabIds.has(tab.id)}
+                onSelect={() => onSelectTab(tab.id)}
               />
-            </StyledLeadingDropTarget>
-            <PageLayoutTabListReorderableTab
-              tab={tab}
-              index={index}
-              group={PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.VISIBLE_TABS}
-              nextTabId={shownTabs[index + 1]?.id ?? firstHiddenTabId}
-              isActive={tab.id === activeTabId}
-              disabled={tab.disabled ?? loading}
-              isWidgetDropTarget={widgetDropTargetTabIds.has(tab.id)}
-              onSelect={() => onSelectTab(tab.id)}
+            </StyledTabSlot>
+          ))}
+          <StyledLeadingDropTarget>
+            <DragDropItemDropTarget
+              index={visibleTabCount}
+              droppableId={PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.VISIBLE_TABS}
+              orientation="vertical"
+              compact
             />
-          </StyledTabSlot>
-        ))}
-        <StyledLeadingDropTarget>
-          <DragDropItemDropTarget
-            index={visibleTabCount}
-            droppableId={PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.VISIBLE_TABS}
-            orientation="vertical"
-            compact
-          />
-        </StyledLeadingDropTarget>
-      </StyledTabContainer>
+          </StyledLeadingDropTarget>
+        </StyledTabContainer>
+      </>
     );
   }
 
   return (
-    <StyledTabContainer ref={tabRowRef} isScrollable={isScrollable}>
-      {visibleTabs.slice(0, visibleTabCount).map((tab) => (
-        <TabButton
-          key={tab.id}
-          id={tab.id}
-          title={tab.title}
-          LeftIcon={tab.Icon}
-          logo={tab.logo}
-          active={tab.id === activeTabId}
-          disabled={tab.disabled ?? loading}
-          pill={tab.pill}
-          to={behaveAsLinks ? `#${tab.id}` : undefined}
-          onClick={
-            behaveAsLinks
-              ? () => onChangeTab?.(tab.id)
-              : () => onSelectTab(tab.id)
-          }
-        />
-      ))}
-    </StyledTabContainer>
+    <>
+      <ScrollActiveTabIntoViewEffect
+        tabRowRef={tabRowRef}
+        activeTabId={activeTabId}
+        isScrollable={isScrollable}
+      />
+      <StyledTabContainer ref={tabRowRef} $isScrollable={isScrollable}>
+        {visibleTabs.slice(0, visibleTabCount).map((tab) => (
+          <TabButton
+            key={tab.id}
+            id={tab.id}
+            title={tab.title}
+            LeftIcon={tab.Icon}
+            logo={tab.logo}
+            active={tab.id === activeTabId}
+            disabled={tab.disabled ?? loading}
+            pill={tab.pill}
+            to={behaveAsLinks ? `#${tab.id}` : undefined}
+            onClick={
+              behaveAsLinks
+                ? () => onChangeTab?.(tab.id)
+                : () => onSelectTab(tab.id)
+            }
+          />
+        ))}
+      </StyledTabContainer>
+    </>
   );
 };

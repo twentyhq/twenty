@@ -2,7 +2,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { TabListHiddenMeasurements } from '@/ui/layout/tab-list/components/TabListHiddenMeasurements';
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
 import { TAB_LIST_HEIGHT } from '@/ui/layout/tab-list/constants/TabListHeight';
-import { useScrollActiveTabIntoView } from '@/ui/layout/tab-list/hooks/useScrollActiveTabIntoView';
+import { ScrollActiveTabIntoViewEffect } from '@/ui/layout/tab-list/components/ScrollActiveTabIntoViewEffect';
 import { useTabListMeasurements } from '@/ui/layout/tab-list/hooks/useTabListMeasurements';
 import { SCROLLABLE_TAB_ROW_CSS } from '@/ui/layout/tab-list/styles/ScrollableTabRowCSS';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -12,7 +12,7 @@ import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimensio
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { styled } from '@linaria/react';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { TabButton } from 'twenty-ui/input';
@@ -52,11 +52,11 @@ const StyledDropdownContainer = styled.div`
   display: flex;
 `;
 
-const StyledTabContainer = styled.div<{ isScrollable: boolean }>`
+const StyledTabContainer = styled.div<{ $isScrollable: boolean }>`
   display: flex;
   gap: ${TAB_LIST_GAP}px;
   max-width: 100%;
-  overflow-x: ${({ isScrollable }) => (isScrollable ? 'auto' : 'hidden')};
+  overflow-x: ${({ $isScrollable }) => ($isScrollable ? 'auto' : 'hidden')};
   position: relative;
   ${SCROLLABLE_TAB_ROW_CSS}
 `;
@@ -115,10 +115,7 @@ export const TabList = ({
     : visibleTabs.slice(0, visibleTabCount);
   const shouldShowOverflowDropdown = hasHiddenTabs && !shouldScrollTabs;
 
-  const { tabRowRef } = useScrollActiveTabIntoView({
-    activeTabId,
-    isScrollable: shouldScrollTabs,
-  });
+  const tabRowRef = useRef<HTMLDivElement>(null);
 
   const dropdownId = `tab-overflow-${componentInstanceId}`;
   const { closeDropdown } = useCloseDropdown();
@@ -180,9 +177,14 @@ export const TabList = ({
         <StyledContainer className={className}>
           <StyledNodeDimension onDimensionChange={onContainerWidthChange}>
             <StyledInnerContainer $centerTabs={centerTabs && !shouldScrollTabs}>
+              <ScrollActiveTabIntoViewEffect
+                tabRowRef={tabRowRef}
+                activeTabId={activeTabId}
+                isScrollable={shouldScrollTabs}
+              />
               <StyledTabContainer
                 ref={tabRowRef}
-                isScrollable={shouldScrollTabs}
+                $isScrollable={shouldScrollTabs}
               >
                 {renderedTabs.map((tab) => (
                   <TabButton

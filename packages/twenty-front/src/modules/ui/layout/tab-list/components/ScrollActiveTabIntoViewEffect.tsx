@@ -1,6 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
-type UseScrollActiveTabIntoViewParams = {
+type ScrollActiveTabIntoViewEffectProps = {
+  tabRowRef: React.RefObject<HTMLDivElement | null>;
   activeTabId: string | null;
   isScrollable: boolean;
 };
@@ -8,12 +9,11 @@ type UseScrollActiveTabIntoViewParams = {
 // A tab selected from the URL or from initial state can sit outside the
 // scrolled region, and a rotation can push it back out, which would leave the
 // row looking like nothing is selected.
-export const useScrollActiveTabIntoView = ({
+export const ScrollActiveTabIntoViewEffect = ({
+  tabRowRef,
   activeTabId,
   isScrollable,
-}: UseScrollActiveTabIntoViewParams) => {
-  const tabRowRef = useRef<HTMLDivElement>(null);
-
+}: ScrollActiveTabIntoViewEffectProps) => {
   useEffect(() => {
     const tabRow = tabRowRef.current;
 
@@ -49,7 +49,7 @@ export const useScrollActiveTabIntoView = ({
     return () => {
       tabRowResizeObserver.disconnect();
     };
-  }, [activeTabId, isScrollable]);
+  }, [tabRowRef, activeTabId, isScrollable]);
 
-  return { tabRowRef };
+  return <></>;
 };
