@@ -11,6 +11,7 @@ import {
   IsOptional,
   IsString,
   IsUrl,
+  Max,
   ValidateIf,
   type ValidationError,
   validateSync,
@@ -1216,6 +1217,7 @@ export class ConfigVariables {
     isEnvOnly: true,
   })
   @CastToPositiveNumber()
+  @Max(1)
   @IsOptional()
   SENTRY_TRACES_SAMPLE_RATE = 0.1;
 
@@ -1227,6 +1229,7 @@ export class ConfigVariables {
     isEnvOnly: true,
   })
   @CastToPositiveNumber()
+  @Max(1)
   @IsOptional()
   SENTRY_AI_TRACES_SAMPLE_RATE = 1;
 
@@ -1237,6 +1240,7 @@ export class ConfigVariables {
     isEnvOnly: true,
   })
   @CastToPositiveNumber()
+  @Max(1)
   @IsOptional()
   SENTRY_PROFILES_SAMPLE_RATE = 0.01;
 
