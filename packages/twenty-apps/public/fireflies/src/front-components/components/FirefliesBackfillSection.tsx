@@ -3,6 +3,7 @@ import { isUndefined } from '@sniptt/guards';
 import { useState } from 'react';
 import { enqueueSnackbar } from 'twenty-sdk/front-component';
 import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 import { H2Title } from 'twenty-ui/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -12,11 +13,6 @@ import { useRequestFirefliesBackfill } from 'src/front-components/hooks/use-requ
 import { getFirefliesBackfillFeedback } from 'src/front-components/utils/get-fireflies-backfill-feedback.util';
 import { parseBackfillDays } from 'src/front-components/utils/parse-backfill-days.util';
 import { FIREFLIES_BACKFILL_MAX_WINDOW_DAYS } from 'src/logic-functions/constants/fireflies-backfill-max-window-days.constant';
-
-const StyledSection = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
 
 const StyledRow = styled.div`
   align-items: center;
@@ -35,7 +31,7 @@ const StyledDaysUnit = styled.span`
   font-size: ${() => themeCssVariables.font.size.sm};
 `;
 
-const StyledHint = styled.span`
+const StyledHint = styled.div`
   color: ${() => themeCssVariables.font.color.tertiary};
   font-family: ${() => themeCssVariables.font.family};
   font-size: ${() => themeCssVariables.font.size.xs};
@@ -73,7 +69,7 @@ export const FirefliesBackfillSection = ({
   };
 
   return (
-    <StyledSection>
+    <Section>
       <H2Title
         title="Import call history"
         description="Imports past Fireflies calls as call recordings. Already-imported calls are skipped."
@@ -106,6 +102,6 @@ export const FirefliesBackfillSection = ({
           {FIREFLIES_BACKFILL_MAX_WINDOW_DAYS}.
         </StyledHint>
       )}
-    </StyledSection>
+    </Section>
   );
 };

@@ -4,6 +4,7 @@ import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { useFrontComponentId } from 'twenty-sdk/front-component';
 
 import { type FirefliesApplicationVariable } from 'src/front-components/types/fireflies-application-variable.type';
+import { shouldDisplayApplicationVariable } from 'src/front-components/utils/should-display-application-variable.util';
 
 type FirefliesApplicationVariablesState = {
   applicationId: string | undefined;
@@ -67,6 +68,7 @@ export const useFirefliesApplicationVariables =
                 value: true,
                 description: true,
                 isSecret: true,
+                isDeprecated: true,
               },
             },
           });
@@ -78,7 +80,9 @@ export const useFirefliesApplicationVariables =
           const applicationVariables = [
             ...(applicationResult.findOneApplication?.applicationVariables ??
               []),
-          ].sort((left, right) => left.key.localeCompare(right.key));
+          ]
+            .filter(shouldDisplayApplicationVariable)
+            .sort((left, right) => left.key.localeCompare(right.key));
 
           setState({
             applicationId,

@@ -3,4 +3,5 @@ export type FirefliesApplicationVariable = {
   value: string;
   description: string;
   isSecret: boolean;
+  isDeprecated: boolean;
 };
