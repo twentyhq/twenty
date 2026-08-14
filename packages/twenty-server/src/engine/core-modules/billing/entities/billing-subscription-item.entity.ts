@@ -74,6 +74,9 @@ export class BillingSubscriptionItemEntity {
   @Column({ nullable: true, type: 'numeric' })
   quantity: number | null;
 
+  // No longer read or written: the GraphQL field of the same name is derived
+  // from the live credit balance in BillingSubscriptionItemResolver. Kept so a
+  // deploy rollback still runs; drop in a follow-up migration.
   @Column({ type: 'boolean', default: false })
   hasReachedCurrentPeriodCap: boolean;
 }
