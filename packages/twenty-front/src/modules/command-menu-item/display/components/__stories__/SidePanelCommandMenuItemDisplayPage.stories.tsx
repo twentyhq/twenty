@@ -96,6 +96,7 @@ const createDecorator =
       commandMenuPinnedInlineLayoutFamilyState.atomFamily('page-header'),
       {
         containerWidth: pinnedItemsContainerWidth,
+        leadingActionWidth: 0,
         commandMenuItemWidthsByKey: Object.fromEntries(
           PINNED_ITEMS.map((item) => [item.id, PINNED_ITEM_WIDTH]),
         ),
