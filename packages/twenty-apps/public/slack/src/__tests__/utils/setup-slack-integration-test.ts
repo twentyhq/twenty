@@ -22,7 +22,7 @@ type SlackIntegrationTestContext = {
   workspaceId: string;
 };
 
-const readWorkspaceIdFromToken = (token: string): string => {
+const readWorkspaceIdFromTokenOrThrow = (token: string): string => {
   const payload = ((): { workspaceId?: string } => {
     try {
       return JSON.parse(
@@ -67,7 +67,7 @@ export const buildSlackAppConnection = (
 export const setupSlackIntegrationTest = (): SlackIntegrationTestContext => {
   const apiUrl = process.env.TWENTY_API_URL ?? '';
   const apiKey = process.env.TWENTY_API_KEY ?? '';
-  const workspaceId = readWorkspaceIdFromToken(apiKey);
+  const workspaceId = readWorkspaceIdFromTokenOrThrow(apiKey);
 
   const slack = createSlackApiMock();
   const appRuntime = createAppRuntimeMock({

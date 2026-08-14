@@ -1,5 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 
+import { createSlackMessageTimestampSequence } from 'src/__tests__/utils/create-slack-message-timestamp-sequence';
+import { requireDefinedOrThrow } from 'src/__tests__/utils/require-defined-or-throw';
 import { setupSlackIntegrationTest } from 'src/__tests__/utils/setup-slack-integration-test';
 import { SLACK_ASSISTANT_FAILURE_TEXT } from 'src/logic-functions/constants/slack-assistant-failure-text';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
@@ -23,17 +25,6 @@ type SlackAssistantRequestRecordFields = {
   errorMessage?: string | null;
 };
 
-const requireRecord = <TRecord>(
-  record: TRecord | undefined,
-  what: string,
-): TRecord => {
-  if (record === undefined) {
-    throw new Error(`${what} was not returned by the Twenty API`);
-  }
-
-  return record;
-};
-
 type WorkerEvent = Parameters<typeof slackAssistantWorkerHandler>[0];
 
 describe('Slack assistant worker', () => {
@@ -41,15 +32,7 @@ describe('Slack assistant worker', () => {
     setupSlackIntegrationTest();
 
   const createdRequestIds: string[] = [];
-  let messageTimestampSequence = 0;
-
-  const nextMessageTimestamp = (): string => {
-    messageTimestampSequence += 1;
-
-    return `1700001${String(Date.now()).slice(-3)}.${String(
-      messageTimestampSequence,
-    ).padStart(6, '0')}`;
-  };
+  const nextMessageTimestamp = createSlackMessageTimestampSequence('1700001');
 
   // Records are stored as PROCESSING so that the deployed worker on the test
   // server leaves them alone; the handler under test gets its PENDING record
@@ -78,9 +61,9 @@ describe('Slack assistant worker', () => {
       },
     });
 
-    const createdRequest = requireRecord(
+    const createdRequest = requireDefinedOrThrow(
       mutationResult.createSlackAssistantRequest,
-      'The created Slack Assistant Request',
+      'The created Slack Assistant Request was not returned by the Twenty API',
     );
 
     createdRequestIds.push(createdRequest.id);
@@ -102,9 +85,9 @@ describe('Slack assistant worker', () => {
       },
     });
 
-    return requireRecord(
+    return requireDefinedOrThrow(
       queryResult.slackAssistantRequest,
-      'The Slack Assistant Request',
+      'The Slack Assistant Request was not returned by the Twenty API',
     );
   };
 

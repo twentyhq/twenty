@@ -120,13 +120,17 @@ const JSON_ENCODED_ARGUMENT_NAMES = new Set([
   'prompts',
 ]);
 
-const parseSlackArgumentValue = (name: string, value: string): unknown => {
-  if (value === 'true') {
-    return true;
-  }
+// The boolean flags the app sends; converting only these keeps a message
+// whose text happens to be "true" the verbatim string it was sent as.
+const BOOLEAN_ENCODED_ARGUMENT_NAMES = new Set([
+  'exclude_archived',
+  'unfurl_links',
+  'unfurl_media',
+]);
 
-  if (value === 'false') {
-    return false;
+const parseSlackArgumentValue = (name: string, value: string): unknown => {
+  if (BOOLEAN_ENCODED_ARGUMENT_NAMES.has(name)) {
+    return value === 'true';
   }
 
   if (!JSON_ENCODED_ARGUMENT_NAMES.has(name)) {

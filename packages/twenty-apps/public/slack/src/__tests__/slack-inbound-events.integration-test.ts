@@ -8,6 +8,7 @@ import {
   buildSlackMessageEventBody,
   buildSlackRoutePayload,
 } from 'src/__tests__/utils/build-slack-event-payloads';
+import { createSlackMessageTimestampSequence } from 'src/__tests__/utils/create-slack-message-timestamp-sequence';
 import { setupSlackIntegrationTest } from 'src/__tests__/utils/setup-slack-integration-test';
 import {
   SLACK_CHANNEL_WELCOME_UNIVERSAL_IDENTIFIER,
@@ -40,15 +41,7 @@ describe('Slack inbound events', () => {
   const { slack, appRuntime, coreClient, workspaceId } =
     setupSlackIntegrationTest();
 
-  let messageTimestampSequence = 0;
-
-  const nextMessageTimestamp = (): string => {
-    messageTimestampSequence += 1;
-
-    return `1700000${String(Date.now()).slice(-3)}.${String(
-      messageTimestampSequence,
-    ).padStart(6, '0')}`;
-  };
+  const nextMessageTimestamp = createSlackMessageTimestampSequence('1700000');
 
   const claimSlackTeamForThisWorkspace = (): void => {
     appRuntime.seedKeyValue(

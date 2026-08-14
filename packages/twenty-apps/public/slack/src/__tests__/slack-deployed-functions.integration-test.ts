@@ -6,6 +6,7 @@ import { functionExecute } from 'twenty-sdk/cli';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { buildSlackRoutePayload } from 'src/__tests__/utils/build-slack-event-payloads';
+import { requireDefinedOrThrow } from 'src/__tests__/utils/require-defined-or-throw';
 import { SLACK_TEST_WEBHOOK_SECRET } from 'src/__tests__/utils/setup-slack-integration-test';
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
@@ -13,17 +14,6 @@ import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identi
 // in the app runtime, with the app's own access token and server variables -
 // which nothing running in the test process can prove on its own.
 const APP_PATH = process.cwd();
-
-const requireDefined = <TValue>(
-  value: TValue | undefined,
-  what: string,
-): TValue => {
-  if (value === undefined) {
-    throw new Error(`${what} was not found on the test workspace`);
-  }
-
-  return value;
-};
 
 const executeDeployedFunction = async (
   functionName: string,
@@ -65,9 +55,9 @@ describe('Slack app deployed functions', () => {
       updateApplicationRegistrationVariable: {
         __args: {
           input: {
-            id: requireDefined(
+            id: requireDefinedOrThrow(
               webhookSecretVariableId,
-              'The SLACK_WEBHOOK_SECRET variable id',
+              'The SLACK_WEBHOOK_SECRET variable id was not found on the test workspace',
             ),
             update: { value },
           },
@@ -86,20 +76,20 @@ describe('Slack app deployed functions', () => {
       },
     });
 
-    const slackApplication = requireDefined(
+    const slackApplication = requireDefinedOrThrow(
       applicationsResult.findManyApplications.find(
         (application: { universalIdentifier: string }) =>
           application.universalIdentifier === APPLICATION_UNIVERSAL_IDENTIFIER,
       ),
-      'The Slack application',
+      'The Slack application was not found on the test workspace',
     );
 
     const variablesResult = await metadataClient.query({
       findApplicationRegistrationVariables: {
         __args: {
-          applicationRegistrationId: requireDefined(
+          applicationRegistrationId: requireDefinedOrThrow(
             slackApplication.applicationRegistrationId,
-            'The Slack application registration',
+            'The Slack application registration was not found on the test workspace',
           ),
         },
         id: true,
@@ -108,11 +98,11 @@ describe('Slack app deployed functions', () => {
       },
     });
 
-    const webhookSecretVariable = requireDefined(
+    const webhookSecretVariable = requireDefinedOrThrow(
       variablesResult.findApplicationRegistrationVariables.find(
         (variable: { key: string }) => variable.key === 'SLACK_WEBHOOK_SECRET',
       ),
-      'The SLACK_WEBHOOK_SECRET application variable',
+      'The SLACK_WEBHOOK_SECRET application variable was not found on the test workspace',
     );
 
     // The stored secret is write-only, so a real one could not be put back
