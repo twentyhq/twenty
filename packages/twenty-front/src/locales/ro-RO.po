@@ -1599,6 +1599,11 @@ msgstr "Adresă 2"
 msgid "Addresses your workspace uses to send and receive email from shared inboxes"
 msgstr "Adrese pe care spațiul dvs. de lucru le folosește pentru a trimite și a primi e-mailuri din inboxuri partajate"
 
+#. js-lingui-id: 11TrtH
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+msgid "Adjust the size of text and interface elements"
+msgstr ""
+
 #. js-lingui-id: U3pytU
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 msgid "Admin"
@@ -6023,6 +6028,7 @@ msgstr "implicit"
 #. js-lingui-id: ovBPCi
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
+#: src/modules/settings/experience/components/UiScalePicker.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
@@ -10377,6 +10383,11 @@ msgstr "Editor de instrucțiuni"
 msgid "Integrations - Settings"
 msgstr "Integrări - Setări"
 
+#. js-lingui-id: gVouHS
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+msgid "Interface scale"
+msgstr ""
+
 #. js-lingui-id: a+PGuG
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Internet accounts per user"
@@ -10870,9 +10881,19 @@ msgstr "Limbă"
 msgid "Languages"
 msgstr "Limbi"
 
+#. js-lingui-id: k7rCa/
+#: src/modules/settings/experience/components/UiScalePicker.tsx
+msgid "Large"
+msgstr ""
+
 #. js-lingui-id: 59o/ag
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Large section heading"
+msgstr ""
+
+#. js-lingui-id: ke14uo
+#: src/modules/settings/experience/components/UiScalePicker.tsx
+msgid "Larger"
 msgstr ""
 
 #. Short label (keep brief) indicating the most recently used login method
@@ -14220,6 +14241,7 @@ msgid "Organize"
 msgstr "Organizare"
 
 #. js-lingui-id: /IX/7x
+#: src/modules/ai/components/internal/AiChatQuestionOtherOption.tsx
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
@@ -17592,6 +17614,11 @@ msgstr "Cer"
 msgid "Small section heading"
 msgstr ""
 
+#. js-lingui-id: OueVS2
+#: src/modules/settings/experience/components/UiScalePicker.tsx
+msgid "Smaller"
+msgstr ""
+
 #. js-lingui-id: 5J8ZFl
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
@@ -19631,11 +19658,6 @@ msgstr "Tip"
 msgid "Type '/' for commands, '@' for mentions"
 msgstr "Tastați '/' pentru comenzi, '@' pentru mențiuni"
 
-#. js-lingui-id: vf2PjH
-#: src/modules/ai/components/AiChatQuestionCard.tsx
-msgid "Type anything to do differently."
-msgstr "Scrieți orice pentru a face altfel."
-
 #. js-lingui-id: qzD6hf
 #: src/modules/side-panel/components/SidePanelTopBar.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
@@ -19652,6 +19674,11 @@ msgstr "Tastează ceva sau apasă \"/\" pentru a vedea comenzile"
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemRecordSubPage.tsx
 msgid "Type to search records"
 msgstr "Tastați pentru a căuta înregistrări"
+
+#. js-lingui-id: SILT51
+#: src/modules/ai/components/internal/AiChatQuestionOtherOption.tsx
+msgid "Type your own answer here"
+msgstr ""
 
 #. js-lingui-id: D38O1A
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx

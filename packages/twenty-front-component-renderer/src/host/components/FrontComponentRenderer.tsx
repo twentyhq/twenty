@@ -5,8 +5,10 @@ import { FrontComponentConfirmationModalResultEffect } from '@/host/effect-compo
 import { FrontComponentErrorEffect } from '@/host/effect-components/FrontComponentErrorEffect';
 import { FrontComponentGeometryTrackerEffect } from '@/host/effect-components/FrontComponentGeometryTrackerEffect';
 import { FrontComponentInitializeHostCommunicationApiEffect } from '@/host/effect-components/FrontComponentInitializeHostCommunicationApiEffect';
+import { FrontComponentMediaSessionEffect } from '@/host/effect-components/FrontComponentMediaSessionEffect';
 import { FrontComponentUpdateContextEffect } from '@/host/effect-components/FrontComponentUpdateContextEffect';
 import { FrontComponentUpdateHostCommunicationApiEffect } from '@/host/effect-components/FrontComponentUpdateHostCommunicationApiEffect';
+import { type FrontComponentMediaSessionHost } from '@/host/media/types/FrontComponentMediaSessionHost';
 import { type FrontComponentHostCommunicationApi } from '@/types/FrontComponentHostCommunicationApi';
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
@@ -39,6 +41,7 @@ type FrontComponentRendererProps = {
   storageNamespace?: string;
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
+  mediaSessionHost?: FrontComponentMediaSessionHost;
   onError: (error?: Error) => void;
   colorScheme: 'light' | 'dark';
   loadingFallback?: ReactNode;
@@ -55,6 +58,7 @@ export const FrontComponentRenderer = ({
   storageNamespace,
   executionContext,
   frontComponentHostCommunicationApi,
+  mediaSessionHost,
   onError,
   colorScheme,
   loadingFallback,
@@ -81,6 +85,7 @@ export const FrontComponentRenderer = ({
           applicationVariables={applicationVariables}
           storageNamespace={storageNamespace}
           geometryTracker={geometryTracker}
+          mediaSessionHost={mediaSessionHost}
           setReceiver={setReceiver}
           setThread={setThread}
           setError={setError}
@@ -108,6 +113,12 @@ export const FrontComponentRenderer = ({
               thread={thread}
               geometryTracker={geometryTracker}
             />
+            {isDefined(mediaSessionHost) && (
+              <FrontComponentMediaSessionEffect
+                thread={thread}
+                mediaSessionHost={mediaSessionHost}
+              />
+            )}
             <FrontComponentUpdateContextEffect
               thread={thread}
               executionContext={executionContext}

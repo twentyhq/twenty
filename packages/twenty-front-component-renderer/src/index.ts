@@ -8,6 +8,22 @@ export { FrontComponentInitializeHostCommunicationApiEffect } from '@/host/effec
 export { FrontComponentUpdateContextEffect } from '@/host/effect-components/FrontComponentUpdateContextEffect';
 export { FrontComponentUpdateHostCommunicationApiEffect } from '@/host/effect-components/FrontComponentUpdateHostCommunicationApiEffect';
 export { FrontComponentWorkerEffect } from '@/host/effect-components/FrontComponentWorkerEffect';
+export { FrontComponentMediaSessionEffect } from '@/host/effect-components/FrontComponentMediaSessionEffect';
+export { createFrontComponentMediaSessionHost } from '@/host/media/utils/createFrontComponentMediaSessionHost';
+export type {
+  CreateFrontComponentMediaSessionHostInput,
+  FrontComponentActiveMediaSession,
+  FrontComponentMediaSessionHost,
+  MediaSessionEventTransport,
+  MediaSessionStartVeto,
+} from '@/host/media/types/FrontComponentMediaSessionHost';
+export type {
+  MediaRecorderCapabilities,
+  MediaSessionEvent,
+  MediaSessionEventBatch,
+  MediaSessionHostFunctions,
+  MediaSessionMediaType,
+} from '@/types/MediaSession';
 export {
   HtmlA,
   HtmlArticle,

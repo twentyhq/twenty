@@ -466,15 +466,16 @@ const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_AP
 
 프런트 컴포넌트는 `twenty-sdk`의 함수를 사용해 내비게이션, 모달, 알림을 트리거할 수 있습니다:
 
-| 함수                                              | 설명            |
-| ----------------------------------------------- | ------------- |
-| `navigate(to, params?, queryParams?, options?)` | 앱 내 페이지로 이동   |
-| `openSidePanelPage(params)`                     | 사이드 패널 열기     |
-| `closeSidePanel()`                              | 사이드 패널을 닫습니다  |
-| `openCommandConfirmationModal(params)`          | 확인 대화상자 표시    |
-| `enqueueSnackbar(params)`                       | 토스트 알림 표시     |
-| `unmountFrontComponent()`                       | 컴포넌트를 언마운트합니다 |
-| `updateProgress(progress)`                      | 진행률 표시기 업데이트  |
+| 함수                                                 | 설명                                                                                                                                                                                        |
+| -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `navigate(to, params?, queryParams?, options?)`    | 앱 내 페이지로 이동                                                                                                                                                                               |
+| `openSidePanelPage(params)`                        | 사이드 패널 열기                                                                                                                                                                                 |
+| `closeSidePanel()`                                 | 사이드 패널을 닫습니다                                                                                                                                                                              |
+| `openCommandConfirmationModal(params)`             | 확인 대화상자 표시                                                                                                                                                                                |
+| `enqueueSnackbar(params)`                          | 토스트 알림 표시                                                                                                                                                                                 |
+| `unmountFrontComponent()`                          | 컴포넌트를 언마운트합니다                                                                                                                                                                             |
+| `updateProgress(progress)`                         | 진행률 표시기 업데이트                                                                                                                                                                              |
+| `uploadFile(file, { fieldMetadataId, fileName? })` | `Blob`을 FILES 필드에 업로드합니다. 이 함수는 `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` 또는 `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }`로 resolve됩니다. |
 
 호스트 API를 사용하여 동작이 완료된 후 스낵바를 표시하고 사이드 패널을 닫는 예시는 다음과 같습니다:
 
@@ -773,24 +774,24 @@ const Card = () => {
 
 ## 현재 제한 사항
 
-Front 컴포넌트는 활발히 개발 중입니다. 렌더링, 스타일링 및 이벤트 처리는 잘 동작합니다. 렌더링을 *넘어서는* 작업(요소 측정, ref에 DOM 메서드 호출, 트리 바깥으로 포털링, 브라우저 스토리지 접근 등)은 현재 누락되었거나 불완전하며, 대부분 조용히 실패합니다. 예외도 발생하지 않고, 스캐폴드가 전체 브라우저 DOM을 기준으로 타입이 지정되어 있기 때문에 TypeScript 오류도 발생하지 않습니다.
+Front 컴포넌트는 활발히 개발 중입니다. 렌더링, 스타일링, 이벤트 처리, 요소 측정 및 브라우저 스토리지는 잘 동작합니다. 그 범위를 *넘어서는* 모든 작업(ref에 대해 DOM 메서드를 호출하거나, 요소 크기 변경을 관찰하거나, 트리 바깥으로 포털링하는 등)은 현재 누락되었거나 불완전하며, 대부분 조용히 실패합니다. 예외도 발생하지 않고, 스캐폴드가 전체 브라우저 DOM을 기준으로 타입이 지정되어 있기 때문에 TypeScript 오류도 발생하지 않습니다.
 
 이 중 하나가 개발을 가로막는다면, 우선순위를 높일 수 있도록 [issue를 열어](https://github.com/twentyhq/twenty/issues/new/choose) 주세요.
 
 ### 레이아웃과 측정
 
-아직 어떤 요소도 스스로를 측정할 수 없습니다.
+요소는 스스로를 측정할 수 있습니다. 호스트는 기하 정보를 샌드박스로 미러링하므로, 읽기는 로컬에서 처리되지만 최대 한 프레임까지 오래된 값일 수 있으며, 한 번도 측정되지 않은 요소를 처음 읽으면 0을 반환합니다. 값을 쓴 다음에는 `requestAnimationFrame` 콜백이나 effect에서 다시 읽으세요.
 
-| API                                                           | 무슨 일이 일어나는지                                                               |
-| ------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| `getBoundingClientRect()`, `getClientRects()`                 | 예외 발생                                                                     |
-| `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | 조용히 `undefined`가 되어, `width ?? 0`은 `0`을 반환하고, `width > 600`은 항상 false입니다. |
-| `ResizeObserver`, `IntersectionObserver`                      | `ReferenceError` 발생(단, `typeof` 가드는 동작함)                                  |
-| `window.matchMedia()`, `window.getComputedStyle()`            | 예외 발생                                                                     |
-| `window.innerWidth`, `innerHeight`, `devicePixelRatio`        | 조용히 `undefined`가 됨                                                        |
-| `new MutationObserver(fn)`                                    | 생성은 되지만 이후 `.observe()`에서 예외가 발생합니다.                                      |
+| API                                                                                      | 무슨 일이 일어나는지                                                                           |
+| ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | 미러에서 동작합니다. `scrollTop` / `scrollLeft`를 할당해도 아무 일도 일어나지 않습니다(no-op).                  |
+| `getClientRects()`, `window.matchMedia()`                                                | 예외 발생                                                                                 |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY`             | **브라우저 뷰포트**를 기준으로 동작합니다. 위젯 자체의 크기는 `document.body.clientWidth` / `clientHeight`입니다. |
+| `window.getComputedStyle()`                                                              | 요소의 인라인 스타일만 반환하며, 호스트에서 계산된 전체 스타일(cascade)은 반환하지 않습니다.                              |
+| `ResizeObserver`, `IntersectionObserver`                                                 | `ReferenceError` 발생(단, `typeof` 가드는 동작함)                                              |
+| `MutationObserver`                                                                       | `subtree`, `attributeFilter`, 이전 값(old values) 및 `takeRecords()`를 포함해 정상적으로 동작합니다.    |
 
-따라서 recharts의 `ResponsiveContainer`, Floating UI / Popper, 리스트 가상화, 드래그로 크기 조절 등은 아직 동작하지 않습니다. 대신 CSS에서 레이아웃을 구현하세요. 스타일시트는 실제 페이지에 도달하므로 flexbox, grid, `aspect-ratio`, `clamp()` 및 `@container`는 모두 정상적으로 동작합니다.
+`getBoundingClientRect`를 통한 포지셔닝은 이제 동작하지만, `ResizeObserver`를 통해 크기 변화를 감시하는(recharts의 `ResponsiveContainer`, Floating UI의 `autoUpdate` 등) 기능은 여전히 동작하지 않습니다. 레이아웃은 가능하면 CSS로 작성하는 편이 좋습니다. 스타일시트가 실제 페이지에 적용되므로 flexbox, grid, `aspect-ratio`, `clamp()` 및 `@container`는 지연 없이 정상적으로 동작합니다.
 
 <Note>
 `requestAnimationFrame`, `fetch`, `setTimeout` 및 `queueMicrotask`는 `window.` 접두사 없이 동작합니다. `window.requestAnimationFrame(...)` 등만 예외를 발생시킵니다.
@@ -800,14 +801,14 @@ Front 컴포넌트는 활발히 개발 중입니다. 렌더링, 스타일링 및
 
 `ref`는 `HTMLElement`가 아니라 샌드박스 요소를 반환합니다.
 
-| 작성한 코드                                                                                                      | 무슨 일이 일어나는지                               | 대신 사용할 것                                                            |
-| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------------- |
-| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | 예외 발생                                     | 제어 컴포넌트를 사용하고 값을 `event.target`에서 읽습니다                              |
-| `element.classList.add(...)`                                                                                | 예외 발생(`classList`는 `undefined`임)          | `className` 문자열을 직접 구성하세요.                                          |
-| `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | 예외 발생                                     | 정상 동작하는 `querySelector()` / `querySelectorAll()`을 사용                |
-| `document.activeElement`                                                                                    | 항상 `undefined`                            | `onFocus` / `onBlur`로 포커스를 추적하세요.                                   |
-| `canvas`                                                                                                    | 아무것도 렌더링되지 않으며, 오류도 없습니다.                 | SVG 또는 오프스크린에서 그린 뒤 결과를 `img` 요소에 표시                                |
-| `createPortal(node, document.body)`                                                                         | `isConnected`는 성공으로 보고하지만 아무것도 렌더링되지 않습니다 | `position: absolute`로 인라인 오버레이를 사용하거나 라이브러리에 직접 렌더링한 컨테이너 요소를 전달하세요 |
+| 작성한 코드                                                                                                      | 무슨 일이 일어나는지                               | 대신 사용할 것                                                                                                                                            |
+| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | 예외 발생                                     | 제어 컴포넌트를 사용하고 값을 `event.target`에서 읽습니다                                                                                                              |
+| `element.classList.add(...)`                                                                                | 예외 발생(`classList`는 `undefined`임)          | `className` 문자열을 직접 구성하세요.                                                                                                                          |
+| `document.createTreeWalker()`                                                                               | 예외 발생                                     | `querySelector()` / `querySelectorAll()` 및 `getElementById()`는 동작합니다. `getElementsByClassName()`도 동작하지만, live `HTMLCollection`이 아니라 정적인 컬렉션을 반환합니다. |
+| `document.activeElement`                                                                                    | 항상 `undefined`                            | `onFocus` / `onBlur`로 포커스를 추적하세요.                                                                                                                   |
+| `canvas`                                                                                                    | 아무것도 렌더링되지 않으며, 오류도 없습니다.                 | SVG 또는 오프스크린에서 그린 뒤 결과를 `img` 요소에 표시                                                                                                                |
+| `createPortal(node, document.body)`                                                                         | `isConnected`는 성공으로 보고하지만 아무것도 렌더링되지 않습니다 | `position: absolute`로 인라인 오버레이를 사용하거나 라이브러리에 직접 렌더링한 컨테이너 요소를 전달하세요                                                                                 |
 
 이 포털 간극 때문에 Radix, Headless UI, MUI, react-select의 팝오버는 기본적으로 아무것도 렌더링하지 않습니다. 대부분 컨테이너 prop을 받으므로, 직접 렌더링한 요소를 가리키도록 설정하세요.
 
@@ -833,9 +834,13 @@ Front 컴포넌트는 활발히 개발 중입니다. 렌더링, 스타일링 및
 * 다른 오리진으로 나가는 요청은 `Origin: null`을 가진 채 샌드박스를 벗어나므로, 서드파티 API는 `Access-Control-Allow-Origin: *`를 보내는 경우에만 응답합니다. 대신 logic function에서 호출하세요.
 * 샌드박스에는 상대 경로를 해석할 페이지 URL이 없으므로, `fetch('/rest/people')`은 Twenty API와 절대 매칭되지 않습니다.
 
+### 미디어 캡처
+
+`navigator.mediaDevices.getUserMedia()`와 `MediaRecorder`는 샌드박스 폴리필을 통해 front 컴포넌트 내부에서 동작하므로, 표준 녹화 코드는 변경 없이 실행되며 `MediaRecorder.isTypeSupported`는 일반적인 컨테이너/코덱 조합에 대해 응답합니다. 상세한 `getUserMedia` 제약 조건 객체는 허용되지만 전달되지는 않습니다. 호스트가 요청된 종류에 대해 기본값으로 캡처하며, 애플리케이션 전체에서 한 번에 하나의 캡처만 활성 상태일 수 있습니다. 기록된 `Blob`을 `uploadFile` 호스트 함수로 저장합니다.
+
 ### 기타 제약 사항
 
-* **파일 내용.** `file` 타입의 `input`은 핸들러에 바이트가 아닌 파일 메타데이터만 제공하므로, 현재는 `FileReader` 사용과 업로드가 불가능합니다.
+* **파일 내용.** `file` 타입의 `input`은 핸들러에 바이트가 아닌 파일 메타데이터만 제공하므로 `FileReader`는 사용할 수 없습니다. `MediaRecorder`가 생성한 것처럼 코드에서 이미 가지고 있는 `Blob`을 업로드하려면 `uploadFile` 호스트 함수를 사용하세요.
 * **드래그 앤 드롭 페이로드.** 드래그 이벤트는 발생하지만, `event.dataTransfer`는 `undefined`입니다.
 * **Node 내장 모듈.** `fs`, `path` 및 `node:crypto`는 빌드에 실패하므로, 해당 작업은 [logic function](/l/ko/developers/extend/apps/logic/logic-functions)으로 옮기세요. Web Crypto, `fetch`, `TextEncoder` 및 `URL`은 사용할 수 있습니다.
 * \*\*`iframe`\*\*은 항상 `allow-same-origin` 없이 다시 샌드박싱되므로, 자체 세션에 의존하는 임베드는 로그아웃된 상태로 렌더링됩니다. 또한 `onLoad`도 지원되지 않습니다.

@@ -36,7 +36,7 @@ const StyledContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   margin: 0 0 0 calc(-1 * ${themeCssVariables.spacing[5]});
-  max-height: min(60vh, 500px);
+  max-height: min(calc(60vh / var(--t-zoom, 1)), 500px);
   overflow: hidden;
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]}
     ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[12]};

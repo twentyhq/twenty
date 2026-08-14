@@ -61,7 +61,7 @@ jobs:
             core.setOutput('has_pr', 'true');
             core.info(`PR #${prNumber}, Run ID: ${runId}`);
 
-      - name: Mint ci-privileged dispatch token
+      - name: Mint twenty-factory dispatch token
         id: app-token
         if: steps.pr-info.outputs.has_pr == 'true'
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
@@ -69,10 +69,10 @@ jobs:
           client-id: ${{ vars.TWENTY_WORKFLOW_DISPATCHER_CLIENT_ID }}
           private-key: ${{ secrets.TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY }}
           owner: twentyhq
-          repositories: ci-privileged
+          repositories: twenty-factory
           permission-actions: write
 
-      - name: Dispatch to ci-privileged
+      - name: Dispatch to twenty-factory
         if: steps.pr-info.outputs.has_pr == 'true'
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
@@ -81,7 +81,7 @@ jobs:
           REPOSITORY: ${{ github.repository }}
           BRANCH_STATE: ${{ github.event.workflow_run.head_branch }}
         run: |
-          gh workflow run post-breaking-changes-comment.yaml --repo twentyhq/ci-privileged --ref main \
+          gh workflow run post-breaking-changes-comment.yaml --repo twentyhq/twenty-factory --ref main \
             -f pr_number="$PR_NUMBER" \
             -f run_id="$RUN_ID" \
             -f repo="$REPOSITORY" \
