@@ -76,6 +76,23 @@ const longQuestion: AgentChatPendingQuestion = {
   ],
 };
 
+const multiSelectQuestion: AgentChatPendingQuestion = {
+  messageId: 'assistant-1',
+  toolCallId: 'call-4',
+  questions: [
+    {
+      header: 'Channels',
+      question: 'Which channels should the outreach campaign use?',
+      allowMultiSelect: true,
+      options: [
+        { label: 'Email', isRecommended: true },
+        { label: 'LinkedIn' },
+        { label: 'Phone' },
+      ],
+    },
+  ],
+};
+
 const StoreSeeder = ({ children }: { children: ReactNode }) => {
   const store = useStore();
 
@@ -123,4 +140,8 @@ export const MultipleQuestions: Story = {
 
 export const LongQuestion: Story = {
   args: { pendingQuestion: longQuestion },
+};
+
+export const MultiSelectQuestion: Story = {
+  args: { pendingQuestion: multiSelectQuestion },
 };
