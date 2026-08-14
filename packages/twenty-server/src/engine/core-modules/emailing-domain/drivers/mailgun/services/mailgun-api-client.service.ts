@@ -26,7 +26,7 @@ export class MailgunApiClientService {
       `${this.getApiBaseUrl()}/v3/${domain}/messages`,
       {
         method: 'POST',
-        headers: { Authorization: this.getAuthorizationHeader() },
+        headers: { Authorization: this.getAuthorizationHeaderOrThrow() },
         body: form,
       },
     );
@@ -45,7 +45,7 @@ export class MailgunApiClientService {
 
     const response = await fetch(`${this.getApiBaseUrl()}/v4/domains`, {
       method: 'POST',
-      headers: { Authorization: this.getAuthorizationHeader() },
+      headers: { Authorization: this.getAuthorizationHeaderOrThrow() },
       body: form,
     });
 
@@ -60,7 +60,7 @@ export class MailgunApiClientService {
     const response = await fetch(
       `${this.getApiBaseUrl()}/v4/domains/${domainName}`,
       {
-        headers: { Authorization: this.getAuthorizationHeader() },
+        headers: { Authorization: this.getAuthorizationHeaderOrThrow() },
       },
     );
 
@@ -76,7 +76,7 @@ export class MailgunApiClientService {
       `${this.getApiBaseUrl()}/v4/domains/${domainName}/verify`,
       {
         method: 'PUT',
-        headers: { Authorization: this.getAuthorizationHeader() },
+        headers: { Authorization: this.getAuthorizationHeaderOrThrow() },
       },
     );
 
@@ -92,7 +92,7 @@ export class MailgunApiClientService {
       `${this.getApiBaseUrl()}/v3/domains/${domainName}`,
       {
         method: 'DELETE',
-        headers: { Authorization: this.getAuthorizationHeader() },
+        headers: { Authorization: this.getAuthorizationHeaderOrThrow() },
       },
     );
 
@@ -108,7 +108,7 @@ export class MailgunApiClientService {
 
     const response = await fetch(messageUrl, {
       headers: {
-        Authorization: this.getAuthorizationHeader(),
+        Authorization: this.getAuthorizationHeaderOrThrow(),
         Accept: 'message/rfc2822',
       },
     });
@@ -132,7 +132,7 @@ export class MailgunApiClientService {
 
     const response = await fetch(messageUrl, {
       method: 'DELETE',
-      headers: { Authorization: this.getAuthorizationHeader() },
+      headers: { Authorization: this.getAuthorizationHeaderOrThrow() },
     });
 
     if (response.ok || response.status === 404) {
@@ -172,12 +172,30 @@ export class MailgunApiClientService {
   }
 
   private getApiBaseUrl(): string {
-    return this.twentyConfigService
-      .get('MAILGUN_API_BASE_URL')
-      .replace(/\/$/, '');
+    const apiBaseUrl = this.twentyConfigService.get('MAILGUN_API_BASE_URL');
+
+    let parsedUrl: URL;
+
+    try {
+      parsedUrl = new URL(apiBaseUrl);
+    } catch {
+      throw new EmailingDomainDriverException(
+        `MAILGUN_API_BASE_URL is not a valid URL: ${apiBaseUrl}`,
+        EmailingDomainDriverExceptionCode.CONFIGURATION_ERROR,
+      );
+    }
+
+    if (parsedUrl.protocol !== 'https:') {
+      throw new EmailingDomainDriverException(
+        'MAILGUN_API_BASE_URL must be an https URL',
+        EmailingDomainDriverExceptionCode.CONFIGURATION_ERROR,
+      );
+    }
+
+    return apiBaseUrl.replace(/\/$/, '');
   }
 
-  private getAuthorizationHeader(): string {
+  private getAuthorizationHeaderOrThrow(): string {
     const apiKey = this.twentyConfigService.get('MAILGUN_API_KEY');
 
     if (!isNonEmptyString(apiKey)) {

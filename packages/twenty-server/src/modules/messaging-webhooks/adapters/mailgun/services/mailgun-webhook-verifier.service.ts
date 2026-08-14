@@ -54,7 +54,11 @@ export class MailgunWebhookVerifierService {
     const expectedSignature = createHmac('sha256', signingKey)
       .update(`${timestamp}${token}`)
       .digest();
-    const candidateSignature = Buffer.from(signature, 'hex');
+    // Buffer.from(..., 'hex') silently truncates at the first invalid
+    // character, so a strict shape check has to come first
+    const candidateSignature = /^[0-9a-f]{64}$/i.test(signature)
+      ? Buffer.from(signature, 'hex')
+      : Buffer.alloc(0);
 
     const isSigned =
       candidateSignature.length === expectedSignature.length &&

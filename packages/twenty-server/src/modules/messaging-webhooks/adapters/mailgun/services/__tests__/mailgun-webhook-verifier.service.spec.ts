@@ -34,6 +34,18 @@ describe('MailgunWebhookVerifierService', () => {
     ).not.toThrow();
   });
 
+  it('should reject signatures with trailing garbage after a valid digest', () => {
+    const timestamp = `${Math.floor(Date.now() / 1000)}`;
+
+    expect(() =>
+      verifier.assertSigned({
+        timestamp,
+        token: 'token-value',
+        signature: `${signFields(timestamp, 'token-value')}zz`,
+      }),
+    ).toThrow('Mailgun webhook signature invalid');
+  });
+
   it('should reject a tampered token', () => {
     const timestamp = `${Math.floor(Date.now() / 1000)}`;
 

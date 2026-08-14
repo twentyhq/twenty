@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import {
@@ -452,10 +452,14 @@ export class MessageChannelMetadataService {
         return isNonEmptyString(
           this.twentyConfigService.get('MAILGUN_API_KEY'),
         );
-      default:
+      case EmailingDomainDriver.LOG:
+        return true;
+      case EmailingDomainDriver.AWS_SES:
         return (
           this.twentyConfigService.get('STORAGE_TYPE') === StorageDriverType.S_3
         );
+      default:
+        return assertUnreachable(emailingDomainDriver);
     }
   }
 

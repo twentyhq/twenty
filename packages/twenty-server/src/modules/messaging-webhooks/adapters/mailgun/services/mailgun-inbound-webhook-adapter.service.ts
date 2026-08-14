@@ -29,12 +29,6 @@ export class MailgunInboundWebhookAdapterService {
       );
     }
 
-    this.mailgunWebhookVerifierService.assertSigned({
-      timestamp: fields.timestamp,
-      token: fields.token,
-      signature: fields.signature,
-    });
-
     if (
       !isNonEmptyString(fields.messageUrl) ||
       !isNonEmptyString(fields.recipient) ||
@@ -45,6 +39,12 @@ export class MailgunInboundWebhookAdapterService {
         MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_INVALID_PAYLOAD,
       );
     }
+
+    this.mailgunWebhookVerifierService.assertSigned({
+      timestamp: fields.timestamp,
+      token: fields.token,
+      signature: fields.signature,
+    });
 
     await this.inboundMailHandlerService.handle({
       recipients: fields.recipient

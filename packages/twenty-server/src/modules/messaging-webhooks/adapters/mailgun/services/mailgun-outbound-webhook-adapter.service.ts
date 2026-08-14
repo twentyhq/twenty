@@ -41,6 +41,14 @@ export class MailgunOutboundWebhookAdapterService {
     });
 
     const eventData = payload['event-data'];
+
+    if (!isDefined(eventData) || !isNonEmptyString(eventData.event)) {
+      throw new MessagingWebhookException(
+        'Mailgun webhook payload has no event data',
+        MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_INVALID_PAYLOAD,
+      );
+    }
+
     const suppressionReason = this.resolveSuppressionReason(eventData);
 
     if (!isDefined(suppressionReason)) {
