@@ -337,7 +337,6 @@ export const PageLayoutTabList = ({
 
   const canReorderTabs = isReorderEnabled;
 
-  // Reordering drags along the same axis as the scroll, so it keeps the dropdown.
   const shouldScrollTabs = isMobile && !canReorderTabs;
 
   const shouldRenderReorderableDropdown = hasHiddenTabs && canReorderTabs;
