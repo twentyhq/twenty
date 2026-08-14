@@ -51,6 +51,8 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
     } catch (error) {
       this.logger.error(error);
       this.logger.error(error.stack);
+
+      throw error;
     }
   }
 }

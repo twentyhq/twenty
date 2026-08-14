@@ -11,6 +11,7 @@ import { WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/co
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
 import { getFlatEntityMapsExceptionContext } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entity-maps-exception-context.util';
@@ -33,6 +34,15 @@ import {
   WorkspaceMigrationOrchestratorSuccessfulResult,
 } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
+
+// appliedAllFlatEntityMaps is the state the runner ended on, so a caller can read back the
+// entities it just committed without going through the eventually consistent workspace cache.
+// It is undefined when nothing ran: a dry run, or a migration that resolved to zero actions.
+type ValidateBuildAndRunSuccessfulResult =
+  WorkspaceMigrationOrchestratorSuccessfulResult & {
+    hasSchemaMetadataChanged: boolean;
+    appliedAllFlatEntityMaps: AllFlatEntityMaps | undefined;
+  };
 
 type ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs = {
   workspaceId: string;
@@ -91,9 +101,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     },
   ): Promise<
     | WorkspaceMigrationOrchestratorFailedResult
-    | (WorkspaceMigrationOrchestratorSuccessfulResult & {
-        hasSchemaMetadataChanged: boolean;
-      })
+    | ValidateBuildAndRunSuccessfulResult
   > {
     const { idByUniversalIdentifierByMetadataName, dryRun, ...buildArgs } =
       args;
@@ -158,6 +166,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
         status: 'success',
         workspaceMigration,
         hasSchemaMetadataChanged: false,
+        appliedAllFlatEntityMaps: undefined,
       };
     }
 
@@ -182,7 +191,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     });
 
     const runStart = performance.now();
-    const { hasSchemaMetadataChanged, metadataEvents } =
+    const { hasSchemaMetadataChanged, metadataEvents, allFlatEntityMaps } =
       await this.workspaceMigrationRunnerService.run({
         workspaceId: args.workspaceId,
         workspaceMigration,
@@ -203,6 +212,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       status: 'success',
       workspaceMigration,
       hasSchemaMetadataChanged,
+      appliedAllFlatEntityMaps: allFlatEntityMaps,
     };
   }
 
@@ -214,9 +224,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     dryRun,
   }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs): Promise<
     | WorkspaceMigrationOrchestratorFailedResult
-    | (WorkspaceMigrationOrchestratorSuccessfulResult & {
-        hasSchemaMetadataChanged: boolean;
-      })
+    | ValidateBuildAndRunSuccessfulResult
   > {
     return await this.validateBuildAndRunWorkspaceMigrationFromRecord({
       allFlatEntityOperationRecordByMetadataName:
@@ -234,9 +242,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     args: ValidateBuildAndRunWorkspaceMigrationFromRecordArgs,
   ): Promise<
     | WorkspaceMigrationOrchestratorFailedResult
-    | (WorkspaceMigrationOrchestratorSuccessfulResult & {
-        hasSchemaMetadataChanged: boolean;
-      })
+    | ValidateBuildAndRunSuccessfulResult
   > {
     return await this.validateBuildAndRunWorkspaceMigrationFromRecordInternal({
       ...args,
@@ -259,9 +265,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     dryRun,
   }: ValidateBuildAndRunWorkspaceMigrationFromMatriceArgs): Promise<
     | WorkspaceMigrationOrchestratorFailedResult
-    | (WorkspaceMigrationOrchestratorSuccessfulResult & {
-        hasSchemaMetadataChanged: boolean;
-      })
+    | ValidateBuildAndRunSuccessfulResult
   > {
     return await this.validateBuildAndRunWorkspaceMigrationFromRecordInternal({
       allFlatEntityOperationRecordByMetadataName:
@@ -285,9 +289,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     skipSideEffectExpandEngine,
   }: ValidateBuildAndRunWorkspaceMigrationFromRecordInternalArgs): Promise<
     | WorkspaceMigrationOrchestratorFailedResult
-    | (WorkspaceMigrationOrchestratorSuccessfulResult & {
-        hasSchemaMetadataChanged: boolean;
-      })
+    | ValidateBuildAndRunSuccessfulResult
   > {
     const callerMetadataNames = Object.keys(
       allFlatEntityOperationRecordByMetadataName,
@@ -350,9 +352,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     allMetadataNameCacheToCompute,
   }: ComputeAndRunWorkspaceMigrationFromResolvedOperationsArgs): Promise<
     | WorkspaceMigrationOrchestratorFailedResult
-    | (WorkspaceMigrationOrchestratorSuccessfulResult & {
-        hasSchemaMetadataChanged: boolean;
-      })
+    | ValidateBuildAndRunSuccessfulResult
   > {
     const {
       fromToAllFlatEntityMaps,
