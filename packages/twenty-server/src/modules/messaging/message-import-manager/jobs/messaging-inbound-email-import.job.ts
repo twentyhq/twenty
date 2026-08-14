@@ -4,11 +4,8 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { InboundEmailImportService } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/services/inbound-email-import.service';
-import {
-  INBOUND_EMAIL_MESSAGE_SOURCE,
-  type InboundEmailMessageReference,
-  type InboundEmailMessageSource,
-} from 'src/modules/messaging/message-import-manager/drivers/inbound-email/types/inbound-email-message-source.type';
+import { type InboundEmailMessageSource } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/types/inbound-email-message-source.type';
+import { resolveInboundEmailMessageReference } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/utils/resolve-inbound-email-message-reference.util';
 
 export type MessagingInboundEmailImportJobData = {
   envelopeRecipients: string[];
@@ -31,13 +28,7 @@ export class MessagingInboundEmailImportJob {
 
   @Process(MessagingInboundEmailImportJob.name)
   async handle(data: MessagingInboundEmailImportJobData): Promise<void> {
-    const messageReference: InboundEmailMessageReference =
-      's3Key' in data
-        ? {
-            source: INBOUND_EMAIL_MESSAGE_SOURCE.SES_S3,
-            reference: data.s3Key,
-          }
-        : { source: data.source, reference: data.reference };
+    const messageReference = resolveInboundEmailMessageReference(data);
 
     const outcome = await this.inboundEmailImportService.importInboundMessage({
       messageReference,
