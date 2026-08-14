@@ -16,6 +16,7 @@ import { CommandRunner } from '@/command-menu-item/engine-command/components/Com
 import { MainContextStoreProvider } from '@/context-store/components/MainContextStoreProvider';
 import { ErrorMessageEffect } from '@/error-handler/components/ErrorMessageEffect';
 import { PromiseRejectionEffect } from '@/error-handler/components/PromiseRejectionEffect';
+import { FrontComponentMediaRecordingIndicator } from '@/front-components/media-session/components/FrontComponentMediaRecordingIndicator';
 import { IsMinimalMetadataReadyEffect } from '@/metadata-store/effect-components/IsMinimalMetadataReadyEffect';
 import { MinimalMetadataLoadEffect } from '@/metadata-store/effect-components/MinimalMetadataLoadEffect';
 import { UserMetadataProviderInitialEffect } from '@/metadata-store/effect-components/UserMetadataProviderInitialEffect';
@@ -70,6 +71,7 @@ export const WorkspaceAppProviders = () => {
                             <Outlet />
                             <GlobalFilePreviewModal />
                             <CommandMenuConfirmationModalManager />
+                            <FrontComponentMediaRecordingIndicator />
                             <CommandRunner />
                           </StrictMode>
                         </DialogManager>

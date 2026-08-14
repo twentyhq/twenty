@@ -18,6 +18,17 @@ jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
   }),
 }));
 
+jest.mock('@/object-metadata/utils/getFieldMetadataItemById', () => ({
+  getFieldMetadataItemById: (parameters: { fieldMetadataId: string }) => ({
+    fieldMetadataItem:
+      parameters.fieldMetadataId === 'files-field-id'
+        ? { id: 'files-field-id', type: 'FILES' }
+        : parameters.fieldMetadataId === 'text-field-id'
+          ? { id: 'text-field-id', type: 'TEXT' }
+          : undefined,
+  }),
+}));
+
 const mockNavigateApp = jest.fn();
 const mockRequestAccessTokenRefresh = jest.fn();
 const mockOpenConfirmationModal = jest.fn();
@@ -36,6 +47,7 @@ const mockEnqueueWarningSnackBar = jest.fn();
 const mockCloseSidePanelMenu = jest.fn();
 const mockSetCommandMenuItemProgress = jest.fn();
 const mockCopyToClipboard = jest.fn();
+const mockDirectUploadFile = jest.fn();
 const mockSetRecordPageActiveTabId = jest.fn();
 const mockStorageSet = jest.fn();
 const mockStorageDelete = jest.fn();
@@ -140,6 +152,12 @@ jest.mock('@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState', () => ({
 jest.mock('~/hooks/useCopyToClipboard', () => ({
   useCopyToClipboard: () => ({
     copyToClipboard: mockCopyToClipboard,
+  }),
+}));
+
+jest.mock('@/file/hooks/useDirectFileUpload', () => ({
+  useDirectFileUpload: () => ({
+    uploadFile: mockDirectUploadFile,
   }),
 }));
 
@@ -806,6 +824,150 @@ describe('useFrontComponentExecutionContext', () => {
       });
 
       expect(mockSetCommandMenuItemProgress).toHaveBeenCalledWith(100);
+    });
+  });
+
+  describe('uploadFile', () => {
+    const buildRecordedBlob = () =>
+      new Blob(['recorded-bytes'], { type: 'audio/webm' });
+
+    it('should upload a blob into a FILES field and return the stored file', async () => {
+      mockDirectUploadFile.mockResolvedValue({
+        id: 'file-1',
+        path: 'files-field/file-1.webm',
+        url: 'https://example.com/files/file-1.webm',
+        size: 14,
+      });
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      const uploadResult =
+        await result.current.frontComponentHostCommunicationApi.uploadFile(
+          buildRecordedBlob(),
+          { fieldMetadataId: 'files-field-id', fileName: 'note.webm' },
+        );
+
+      expect(mockDirectUploadFile).toHaveBeenCalledWith(
+        expect.any(File),
+        expect.objectContaining({ fieldMetadataId: 'files-field-id' }),
+      );
+      expect(uploadResult).toEqual({
+        status: 'uploaded',
+        file: {
+          fileId: 'file-1',
+          path: 'files-field/file-1.webm',
+          url: 'https://example.com/files/file-1.webm',
+          size: 14,
+          mimeType: 'audio/webm',
+        },
+      });
+
+      const [uploadedFile] = mockDirectUploadFile.mock.calls[0];
+      expect(uploadedFile.name).toBe('note.webm');
+    });
+
+    it('should reject non-FILES fields without uploading', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      const uploadResult =
+        await result.current.frontComponentHostCommunicationApi.uploadFile(
+          buildRecordedBlob(),
+          { fieldMetadataId: 'text-field-id' },
+        );
+
+      expect(uploadResult).toEqual({
+        status: 'failed',
+        reason: 'invalid-params',
+      });
+      expect(mockDirectUploadFile).not.toHaveBeenCalled();
+    });
+
+    it('should reject malformed arguments without uploading', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      const emptyBlobResult =
+        await result.current.frontComponentHostCommunicationApi.uploadFile(
+          new Blob([], { type: 'audio/webm' }),
+          { fieldMetadataId: 'files-field-id' },
+        );
+      const missingFieldResult =
+        await result.current.frontComponentHostCommunicationApi.uploadFile(
+          buildRecordedBlob(),
+          { fieldMetadataId: '' },
+        );
+      const nonBlobResult =
+        await result.current.frontComponentHostCommunicationApi.uploadFile(
+          'not-a-blob' as unknown as Blob,
+          { fieldMetadataId: 'files-field-id' },
+        );
+
+      expect(emptyBlobResult).toEqual({
+        status: 'failed',
+        reason: 'invalid-params',
+      });
+      expect(missingFieldResult).toEqual({
+        status: 'failed',
+        reason: 'invalid-params',
+      });
+      expect(nonBlobResult).toEqual({
+        status: 'failed',
+        reason: 'invalid-params',
+      });
+      expect(mockDirectUploadFile).not.toHaveBeenCalled();
+    });
+
+    it('should strip path separators from the file name and fall back when empty', async () => {
+      mockDirectUploadFile.mockResolvedValue({
+        id: 'file-2',
+        path: 'files-field/file-2.webm',
+        url: 'https://example.com/files/file-2.webm',
+        size: 14,
+      });
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await result.current.frontComponentHostCommunicationApi.uploadFile(
+        buildRecordedBlob(),
+        { fieldMetadataId: 'files-field-id', fileName: '../../etc/passwd' },
+      );
+
+      const [traversalFile] = mockDirectUploadFile.mock.calls[0];
+      expect(traversalFile.name).toBe('....etcpasswd');
+
+      await result.current.frontComponentHostCommunicationApi.uploadFile(
+        buildRecordedBlob(),
+        { fieldMetadataId: 'files-field-id', fileName: '///' },
+      );
+
+      const [fallbackFile] = mockDirectUploadFile.mock.calls[1];
+      expect(fallbackFile.name).toMatch(/^upload-.*\.webm$/);
+    });
+
+    it('should report upload failures as upload-failed', async () => {
+      mockDirectUploadFile.mockRejectedValue(new Error('network down'));
+
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      const uploadResult =
+        await result.current.frontComponentHostCommunicationApi.uploadFile(
+          buildRecordedBlob(),
+          { fieldMetadataId: 'files-field-id' },
+        );
+
+      expect(uploadResult).toEqual({
+        status: 'failed',
+        reason: 'upload-failed',
+      });
     });
   });
 

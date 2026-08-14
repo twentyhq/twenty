@@ -2,6 +2,7 @@ import { FrontComponentApplicationTokenPairEffect } from '@/front-components/com
 import { FrontComponentLoadErrorSnackBarEffect } from '@/front-components/components/FrontComponentLoadErrorSnackBarEffect';
 import { FrontComponentRendererProvider } from '@/front-components/components/FrontComponentRendererProvider';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
+import { useFrontComponentMediaSession } from '@/front-components/media-session/hooks/useFrontComponentMediaSession';
 import { useOnApplicationSdkClientChecksumsUpdated } from '@/front-components/hooks/useOnApplicationSdkClientChecksumsUpdated';
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
 import { getFingerprintedRestUrl } from '@/front-components/utils/getFingerprintedRestUrl';
@@ -100,6 +101,10 @@ const FrontComponentRendererContent = ({
     colorScheme,
   });
 
+  const { mediaSessionHost } = useFrontComponentMediaSession({
+    applicationId,
+  });
+
   const handleError = useCallback(
     (error?: Error) => {
       if (!isDefined(error)) {
@@ -174,6 +179,7 @@ const FrontComponentRendererContent = ({
             frontComponentHostCommunicationApi={
               frontComponentHostCommunicationApi
             }
+            mediaSessionHost={mediaSessionHost}
             applicationVariables={applicationVariables}
             storageNamespace={storageNamespace}
             onError={handleError}
