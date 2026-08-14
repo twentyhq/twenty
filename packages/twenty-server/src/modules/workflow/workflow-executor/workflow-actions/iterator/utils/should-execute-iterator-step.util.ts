@@ -64,6 +64,7 @@ export const shouldExecuteIteratorStep = ({
 
   return shouldExecuteChildStep({
     parentSteps: stepsToCheck,
+    childStepId: step.id,
     stepInfos,
   });
 };

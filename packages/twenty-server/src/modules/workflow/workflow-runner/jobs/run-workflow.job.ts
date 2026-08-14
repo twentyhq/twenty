@@ -197,13 +197,10 @@ export class RunWorkflowJob {
     const lastExecutedStepOutput =
       workflowRun.state?.stepInfos[lastExecutedStepId];
 
-    const steps = workflowRun.state?.flow?.steps ?? [];
-
     const { nextStepIdsToExecute, nextStepIdsToSkip, nextStepIdsToFailSafely } =
       await this.workflowExecutorWorkspaceService.getNextStepIdsToExecute({
         executedStep: lastExecutedStep,
         executedStepOutput: lastExecutedStepOutput,
-        steps,
       });
 
     const hasStepsToSkipOrFailSafely =
@@ -221,6 +218,8 @@ export class RunWorkflowJob {
 
       return;
     }
+
+    const steps = workflowRun.state?.flow?.steps ?? [];
 
     if (hasStepsToSkipOrFailSafely) {
       await this.workflowExecutorWorkspaceService.skipAndFailSafelyStepsThenContinue(

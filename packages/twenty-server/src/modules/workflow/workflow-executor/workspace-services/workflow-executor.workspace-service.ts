@@ -216,7 +216,6 @@ export class WorkflowExecutorWorkspaceService {
       await this.getNextStepIdsToExecute({
         executedStep: stepToExecute,
         executedStepOutput: actionOutput,
-        steps,
       });
 
     if (isDefined(nextStepIdsToSkip) || isDefined(nextStepIdsToFailSafely)) {
@@ -244,11 +243,9 @@ export class WorkflowExecutorWorkspaceService {
   async getNextStepIdsToExecute({
     executedStep,
     executedStepOutput,
-    steps,
   }: {
     executedStep: WorkflowAction;
     executedStepOutput: WorkflowActionOutput;
-    steps: WorkflowAction[];
   }): Promise<{
     nextStepIdsToExecute?: string[];
     nextStepIdsToSkip?: string[];
@@ -269,7 +266,6 @@ export class WorkflowExecutorWorkspaceService {
       return getNextStepIdsForIfElse({
         executedStep,
         executedStepOutput,
-        steps,
       });
     }
 
@@ -544,7 +540,6 @@ export class WorkflowExecutorWorkspaceService {
       const result = await this.getNextStepIdsToExecute({
         executedStep: step,
         executedStepOutput: { shouldSkipStepExecution: true },
-        steps,
       });
 
       for (const id of result.nextStepIdsToExecute ?? []) {
@@ -566,7 +561,6 @@ export class WorkflowExecutorWorkspaceService {
       const result = await this.getNextStepIdsToExecute({
         executedStep: step,
         executedStepOutput: { shouldFailSafely: true },
-        steps,
       });
 
       for (const id of result.nextStepIdsToExecute ?? []) {

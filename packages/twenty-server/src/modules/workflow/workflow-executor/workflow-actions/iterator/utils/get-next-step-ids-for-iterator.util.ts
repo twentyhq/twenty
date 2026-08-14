@@ -25,12 +25,21 @@ export const getNextStepIdsForIterator = ({
     ? JSON.parse(executedStep.settings.input.initialLoopStepIds)
     : (executedStep.settings.input.initialLoopStepIds ?? []);
 
+  // A terminated iterator must also hand its after-loop children back for
+  // evaluation, otherwise a step that converges on them never gets a second
+  // look once its other parent finished first.
   if (executedStepOutput.shouldSkipStepExecution) {
-    return { nextStepIdsToSkip: initialLoopStepIds };
+    return {
+      nextStepIdsToSkip: initialLoopStepIds,
+      nextStepIdsToExecute: executedStep.nextStepIds,
+    };
   }
 
   if (executedStepOutput.shouldFailSafely) {
-    return { nextStepIdsToFailSafely: initialLoopStepIds };
+    return {
+      nextStepIdsToFailSafely: initialLoopStepIds,
+      nextStepIdsToExecute: executedStep.nextStepIds,
+    };
   }
 
   const iteratorStepResult = executedStepOutput.result as
