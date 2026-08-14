@@ -831,6 +831,12 @@ describe('useFrontComponentExecutionContext', () => {
     const buildRecordedBlob = () =>
       new Blob(['recorded-bytes'], { type: 'audio/webm' });
 
+    beforeEach(() => {
+      // clearAllMocks keeps implementations; drop resolved/rejected values
+      // so these tests stay order-independent.
+      mockDirectUploadFile.mockReset();
+    });
+
     it('should upload a blob into a FILES field and return the stored file', async () => {
       mockDirectUploadFile.mockResolvedValue({
         id: 'file-1',

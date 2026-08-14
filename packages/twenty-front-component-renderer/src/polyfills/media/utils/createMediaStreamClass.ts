@@ -15,6 +15,17 @@ export type WorkerMediaStreamInstance = EventTarget & {
 const generateLocalMediaStreamId = (): string =>
   `local-media-stream-${generateRandomId()}`;
 
+const createTrackEvent = (
+  eventType: string,
+  track: WorkerMediaStreamTrackInstance,
+): Event => {
+  const trackEvent = new Event(eventType);
+
+  Object.defineProperty(trackEvent, 'track', { value: track });
+
+  return trackEvent;
+};
+
 export const createMediaStreamClass = () => {
   const capturedStreamIds = new WeakMap<object, string>();
 
@@ -35,6 +46,14 @@ export const createMediaStreamClass = () => {
 
       if (streamOrTracks instanceof MediaStreamImplementation) {
         this.#tracks = [...streamOrTracks.getTracks()];
+
+        // A clone of a captured stream stays recordable, like the native
+        // constructor which keeps the same source tracks.
+        const sourceCapturedStreamId = capturedStreamIds.get(streamOrTracks);
+
+        if (sourceCapturedStreamId !== undefined) {
+          capturedStreamIds.set(this, sourceCapturedStreamId);
+        }
       } else if (Array.isArray(streamOrTracks)) {
         this.#tracks = [...streamOrTracks];
       }
@@ -68,12 +87,18 @@ export const createMediaStreamClass = () => {
       }
 
       this.#tracks.push(track);
+      this.dispatchEvent(createTrackEvent('addtrack', track));
     }
 
     removeTrack(track: WorkerMediaStreamTrackInstance): void {
+      if (!this.#tracks.includes(track)) {
+        return;
+      }
+
       this.#tracks = this.#tracks.filter(
         (existingTrack) => existingTrack !== track,
       );
+      this.dispatchEvent(createTrackEvent('removetrack', track));
     }
   }
 

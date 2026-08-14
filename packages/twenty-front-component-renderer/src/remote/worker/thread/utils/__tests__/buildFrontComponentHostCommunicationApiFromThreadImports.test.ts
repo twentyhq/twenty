@@ -58,6 +58,7 @@ describe('buildFrontComponentHostCommunicationApiFromThreadImports', () => {
     expect(hostCommunicationApi.unmountFrontComponent).toBe(
       hostThreadImports.unmountFrontComponent,
     );
+    expect(hostCommunicationApi.uploadFile).toBe(hostThreadImports.uploadFile);
     expect(hostCommunicationApi.enqueueSnackbar).toBe(
       hostThreadImports.enqueueSnackbar,
     );

@@ -3,7 +3,11 @@ import { createWorkerMediaBridge } from '../createWorkerMediaBridge';
 import { installMediaCapturePolyfills } from '../installMediaCapturePolyfills';
 
 type MediaGlobals = {
-  navigator: { mediaDevices: { getUserMedia: (constraints?: unknown) => Promise<MediaStreamLike> } };
+  navigator: {
+    mediaDevices: {
+      getUserMedia: (constraints?: unknown) => Promise<MediaStreamLike>;
+    };
+  };
   MediaStream: new (streamOrTracks?: unknown) => MediaStreamLike;
   MediaStreamTrack: new () => unknown;
   MediaRecorder: (new (
@@ -107,9 +111,9 @@ describe('installMediaCapturePolyfills', () => {
     const transport = createTransportStub();
     const { mediaGlobals } = installOnFreshScope(transport);
 
-    const mediaStream = await mediaGlobals.navigator.mediaDevices.getUserMedia(
-      { audio: true },
-    );
+    const mediaStream = await mediaGlobals.navigator.mediaDevices.getUserMedia({
+      audio: true,
+    });
 
     expect(mediaStream.active).toBe(true);
 
@@ -136,9 +140,9 @@ describe('installMediaCapturePolyfills', () => {
     const transport = createTransportStub();
     const { bridge, mediaGlobals } = installOnFreshScope(transport);
 
-    const mediaStream = await mediaGlobals.navigator.mediaDevices.getUserMedia(
-      { audio: true },
-    );
+    const mediaStream = await mediaGlobals.navigator.mediaDevices.getUserMedia({
+      audio: true,
+    });
     const [track] = mediaStream.getTracks();
 
     const endedHandler = jest.fn();
@@ -158,9 +162,9 @@ describe('installMediaCapturePolyfills', () => {
     const transport = createTransportStub();
     const { bridge, mediaGlobals } = installOnFreshScope(transport);
 
-    const mediaStream = await mediaGlobals.navigator.mediaDevices.getUserMedia(
-      { audio: true },
-    );
+    const mediaStream = await mediaGlobals.navigator.mediaDevices.getUserMedia({
+      audio: true,
+    });
 
     const mediaRecorder = new mediaGlobals.MediaRecorder(mediaStream);
 
@@ -208,19 +212,98 @@ describe('installMediaCapturePolyfills', () => {
     expect(stopHandler).toHaveBeenCalledTimes(1);
   });
 
+  it('should ignore stale host events after the recorder restarts', async () => {
+    const transport = createTransportStub();
+    let recorderCounter = 0;
+    transport.mediaStartRecorder = jest.fn(async () => ({
+      status: 'started' as const,
+      recorderId: `recorder-${recorderCounter++}`,
+      mimeType: 'audio/webm',
+    }));
+
+    const { bridge, mediaGlobals } = installOnFreshScope(transport);
+
+    const mediaStream = await mediaGlobals.navigator.mediaDevices.getUserMedia({
+      audio: true,
+    });
+
+    const mediaRecorder = new mediaGlobals.MediaRecorder(mediaStream);
+    const stopHandler = jest.fn();
+    mediaRecorder.onstop = stopHandler;
+
+    mediaRecorder.start();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    mediaRecorder.stop();
+    // Restart before the previous host stop event has arrived.
+    mediaRecorder.start();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(mediaRecorder.state).toBe('recording');
+
+    // The late stop event of the previous recording must not end the new
+    // one.
+    bridge.dispatchEvents({
+      events: [{ type: 'recorder-stop', recorderId: 'recorder-0' }],
+    });
+
+    expect(mediaRecorder.state).toBe('recording');
+
+    bridge.dispatchEvents({
+      events: [{ type: 'recorder-stop', recorderId: 'recorder-1' }],
+    });
+
+    expect(mediaRecorder.state).toBe('inactive');
+    expect(stopHandler).toHaveBeenCalledTimes(1);
+  });
+
+  it('should fire error and then stop when the host cannot start the recorder', async () => {
+    const transport = createTransportStub();
+    transport.mediaStartRecorder = jest.fn(async () => ({
+      status: 'failed' as const,
+      errorName: 'NotReadableError',
+      errorMessage: 'The recorder could not start',
+    }));
+
+    const { mediaGlobals } = installOnFreshScope(transport);
+
+    const mediaStream = await mediaGlobals.navigator.mediaDevices.getUserMedia({
+      audio: true,
+    });
+
+    const mediaRecorder = new mediaGlobals.MediaRecorder(mediaStream);
+
+    const errorHandler = jest.fn();
+    const stopHandler = jest.fn();
+
+    mediaRecorder.onerror = errorHandler;
+    mediaRecorder.onstop = stopHandler;
+
+    mediaRecorder.start();
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(errorHandler).toHaveBeenCalledTimes(1);
+    expect(errorHandler.mock.calls[0][0].error.name).toBe('NotReadableError');
+    // The stop event follows the error, like a native recorder, so callers
+    // waiting on it never hang.
+    expect(stopHandler).toHaveBeenCalledTimes(1);
+    expect(mediaRecorder.state).toBe('inactive');
+  });
+
   it('should throw for recorder construction on foreign values and unsupported types', async () => {
     const { mediaGlobals } = installOnFreshScope(createTransportStub());
 
     expect(
       () =>
-        new mediaGlobals.MediaRecorder(
-          { id: 'not-a-stream' } as unknown as MediaStreamLike,
-        ),
+        new mediaGlobals.MediaRecorder({
+          id: 'not-a-stream',
+        } as unknown as MediaStreamLike),
     ).toThrow(TypeError);
 
-    const mediaStream = await mediaGlobals.navigator.mediaDevices.getUserMedia(
-      { audio: true },
-    );
+    const mediaStream = await mediaGlobals.navigator.mediaDevices.getUserMedia({
+      audio: true,
+    });
 
     expect(
       () =>
@@ -233,9 +316,9 @@ describe('installMediaCapturePolyfills', () => {
   it('should refuse to start a recorder on an inactive stream', async () => {
     const { mediaGlobals } = installOnFreshScope(createTransportStub());
 
-    const mediaStream = await mediaGlobals.navigator.mediaDevices.getUserMedia(
-      { audio: true },
-    );
+    const mediaStream = await mediaGlobals.navigator.mediaDevices.getUserMedia({
+      audio: true,
+    });
 
     const mediaRecorder = new mediaGlobals.MediaRecorder(mediaStream);
 

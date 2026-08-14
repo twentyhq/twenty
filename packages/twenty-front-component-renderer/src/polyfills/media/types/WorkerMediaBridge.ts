@@ -2,7 +2,6 @@ import {
   type MediaRecorderCapabilities,
   type MediaSessionEventBatch,
   type MediaSessionHostFunctions,
-  type MediaSessionMediaType,
   type StartMediaRecorderResult,
   type StartMediaStreamResult,
 } from '@/types/MediaSession';
@@ -22,7 +21,8 @@ export type WorkerMediaBridge = {
   seedRecorderCapabilities: (capabilities: MediaRecorderCapabilities) => void;
   isRecorderMimeTypeSupported: (mimeType: string) => boolean;
   startStream: (params: {
-    mediaType: MediaSessionMediaType;
+    audio: boolean;
+    video: boolean;
   }) => Promise<StartMediaStreamResult>;
   registerTrackEventHandlers: (params: {
     streamId: string;

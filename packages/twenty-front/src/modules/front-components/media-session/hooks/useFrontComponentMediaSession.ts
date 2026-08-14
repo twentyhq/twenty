@@ -8,6 +8,11 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { frontComponentMediaSessionState } from '@/front-components/media-session/states/frontComponentMediaSessionState';
 
+// Reserves the host-wide capture slot synchronously, before any getUserMedia
+// round trip: without it two components starting at the same time would both
+// pass the atom check while neither session exists yet.
+let hasReservedCaptureSlot = false;
+
 // One capture session host per rendered front component. It owns the real
 // getUserMedia and MediaRecorder objects, while this hook contributes the
 // host-wide policy: a single live capture at a time, surfaced through the
@@ -27,7 +32,7 @@ export const useFrontComponentMediaSession = ({
       beforeStartStream: () => {
         const activeSession = store.get(frontComponentMediaSessionState.atom);
 
-        if (isDefined(activeSession)) {
+        if (hasReservedCaptureSlot || isDefined(activeSession)) {
           // Mirrors what a browser reports when the device is held by
           // someone else, so standard error handling code just works.
           return {
@@ -36,13 +41,20 @@ export const useFrontComponentMediaSession = ({
           };
         }
 
+        hasReservedCaptureSlot = true;
+
         return null;
+      },
+      onStartStreamFailed: () => {
+        hasReservedCaptureSlot = false;
       },
       onActiveSessionsChange: (activeSessions) => {
         const currentSession = store.get(frontComponentMediaSessionState.atom);
         const [firstSession] = activeSessions;
 
         if (isDefined(firstSession)) {
+          // The live session carries the slot from here on.
+          hasReservedCaptureSlot = false;
           ownedStreamIds.add(firstSession.streamId);
 
           if (

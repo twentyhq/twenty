@@ -12,7 +12,9 @@ export type WorkerMediaRecorderErrorEvent = Event & { error: Error };
 
 type CreateMediaRecorderClassInput = {
   bridge: WorkerMediaBridge;
-  isMediaStreamInstance: (stream: unknown) => stream is WorkerMediaStreamInstance;
+  isMediaStreamInstance: (
+    stream: unknown,
+  ) => stream is WorkerMediaStreamInstance;
   resolveCapturedStreamId: (stream: object) => string | null;
 };
 
@@ -49,10 +51,14 @@ export const createMediaRecorderClass = ({
     #state: WorkerMediaRecorderState = 'inactive';
     #mimeType: string;
     #recorderId: string | null = null;
-    // A stop or pause can land while the start round trip is still in
-    // flight; it is applied as soon as the host recorder id is known.
+    // Restarting before the previous host stop event arrives must not let
+    // stale acknowledgements or events touch the new recording.
+    #startGeneration = 0;
+    // A stop, pause, or data request can land while the start round trip is
+    // still in flight; they are applied once the host recorder id is known.
     #hasPendingStopRequest = false;
     #hasPendingPauseRequest = false;
+    #hasPendingDataRequest = false;
 
     #eventHandlers = new Map<string, EventListener>();
 
@@ -169,8 +175,14 @@ export const createMediaRecorderClass = ({
       }
 
       this.#state = 'recording';
+      this.#recorderId = null;
       this.#hasPendingStopRequest = false;
       this.#hasPendingPauseRequest = false;
+      this.#hasPendingDataRequest = false;
+
+      const startGeneration = ++this.#startGeneration;
+      const isCurrentGeneration = () =>
+        startGeneration === this.#startGeneration;
 
       bridge
         .startRecorder({
@@ -178,24 +190,48 @@ export const createMediaRecorderClass = ({
           mimeType: this.#mimeType === '' ? undefined : this.#mimeType,
           timesliceMs,
           handlers: {
-            onData: (data) => this.dispatchEvent(createRecorderDataEvent(data)),
-            onStop: () => this.#handleHostStop(),
-            onError: (errorMessage) =>
-              this.dispatchEvent(
-                createRecorderErrorEvent(
-                  createDomException(errorMessage, 'UnknownError'),
-                ),
-              ),
+            onData: (data) => {
+              if (isCurrentGeneration()) {
+                this.dispatchEvent(createRecorderDataEvent(data));
+              }
+            },
+            onStop: () => {
+              if (isCurrentGeneration()) {
+                this.#handleHostStop();
+              }
+            },
+            onError: (errorMessage) => {
+              if (isCurrentGeneration()) {
+                this.dispatchEvent(
+                  createRecorderErrorEvent(
+                    createDomException(errorMessage, 'UnknownError'),
+                  ),
+                );
+              }
+            },
           },
         })
         .then((result) => {
+          if (!isCurrentGeneration()) {
+            // A newer start owns this recorder object now; do not leak the
+            // host recorder this stale acknowledgement created.
+            if (result.status === 'started') {
+              bridge.stopRecorder(result.recorderId);
+            }
+            return;
+          }
+
           if (result.status === 'failed') {
+            // Native recorders that fail to start fire error and then stop,
+            // so waiting on the stop event never hangs.
             this.#state = 'inactive';
+            this.#hasPendingStopRequest = false;
             this.dispatchEvent(
               createRecorderErrorEvent(
                 createDomException(result.errorMessage, result.errorName),
               ),
             );
+            this.dispatchEvent(new Event('stop'));
             return;
           }
 
@@ -205,13 +241,22 @@ export const createMediaRecorderClass = ({
 
           if (this.#hasPendingStopRequest) {
             this.#hasPendingStopRequest = false;
+            this.#recorderId = null;
             bridge.stopRecorder(result.recorderId);
             return;
           }
 
           if (this.#hasPendingPauseRequest) {
             this.#hasPendingPauseRequest = false;
+            // The pause event was deferred so it follows the start event in
+            // native order.
+            this.dispatchEvent(new Event('pause'));
             bridge.pauseRecorder(result.recorderId);
+          }
+
+          if (this.#hasPendingDataRequest) {
+            this.#hasPendingDataRequest = false;
+            bridge.requestRecorderData(result.recorderId);
           }
         });
     }
@@ -228,6 +273,7 @@ export const createMediaRecorderClass = ({
 
       if (isDefined(this.#recorderId)) {
         bridge.stopRecorder(this.#recorderId);
+        this.#recorderId = null;
         return;
       }
 
@@ -247,13 +293,15 @@ export const createMediaRecorderClass = ({
       }
 
       this.#state = 'paused';
-      this.dispatchEvent(new Event('pause'));
 
       if (isDefined(this.#recorderId)) {
+        this.dispatchEvent(new Event('pause'));
         bridge.pauseRecorder(this.#recorderId);
         return;
       }
 
+      // Event deferred until the start acknowledgement so pause never fires
+      // before start.
       this.#hasPendingPauseRequest = true;
     }
 
@@ -288,7 +336,10 @@ export const createMediaRecorderClass = ({
 
       if (isDefined(this.#recorderId)) {
         bridge.requestRecorderData(this.#recorderId);
+        return;
       }
+
+      this.#hasPendingDataRequest = true;
     }
 
     #handleHostStop(): void {

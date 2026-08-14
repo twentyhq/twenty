@@ -38,12 +38,16 @@ const toFailure = (
 
 export const createFrontComponentMediaSessionHost = ({
   beforeStartStream,
+  onStartStreamFailed,
   onActiveSessionsChange,
 }: CreateFrontComponentMediaSessionHostInput = {}): FrontComponentMediaSessionHost => {
   const streamSessions = new Map<string, HostStreamSession>();
   const recorderSessions = new Map<string, HostRecorderSession>();
 
   let transport: MediaSessionEventTransport | null = null;
+  // Bumped by stopAllSessions so a getUserMedia still pending at teardown
+  // cannot register a stream nobody owns anymore.
+  let teardownGeneration = 0;
   // Recorder chunks must survive the window before the worker transport is
   // connected, so events buffer instead of dropping.
   let bufferedEvents: MediaSessionEvent[] = [];
@@ -113,10 +117,13 @@ export const createFrontComponentMediaSessionHost = ({
   };
 
   const mediaStartStream = async ({
-    mediaType,
+    audio,
+    video,
   }: {
-    mediaType: MediaSessionMediaType;
+    audio: boolean;
+    video: boolean;
   }): Promise<StartMediaStreamResult> => {
+    const mediaType: MediaSessionMediaType = video ? 'video' : 'audio';
     const veto = beforeStartStream?.(mediaType) ?? null;
 
     if (isDefined(veto)) {
@@ -124,6 +131,8 @@ export const createFrontComponentMediaSessionHost = ({
     }
 
     if (typeof navigator === 'undefined' || !navigator.mediaDevices) {
+      onStartStreamFailed?.();
+
       return {
         status: 'failed',
         errorName: 'NotSupportedError',
@@ -131,14 +140,33 @@ export const createFrontComponentMediaSessionHost = ({
       };
     }
 
+    const startGeneration = teardownGeneration;
+
     let mediaStream: MediaStream;
 
     try {
-      mediaStream = await navigator.mediaDevices.getUserMedia(
-        mediaType === 'video' ? { video: true, audio: true } : { audio: true },
-      );
+      mediaStream = await navigator.mediaDevices.getUserMedia({
+        audio,
+        video,
+      });
     } catch (error) {
+      onStartStreamFailed?.();
+
       return toFailure(error);
+    }
+
+    if (startGeneration !== teardownGeneration) {
+      for (const track of mediaStream.getTracks()) {
+        track.stop();
+      }
+
+      onStartStreamFailed?.();
+
+      return {
+        status: 'failed',
+        errorName: 'AbortError',
+        errorMessage: 'The capture was interrupted',
+      };
     }
 
     const streamId = generateRandomId();
@@ -334,6 +362,8 @@ export const createFrontComponentMediaSessionHost = ({
   };
 
   const stopAllSessions = (): void => {
+    teardownGeneration += 1;
+
     for (const recorderSession of recorderSessions.values()) {
       if (recorderSession.mediaRecorder.state !== 'inactive') {
         recorderSession.mediaRecorder.stop();

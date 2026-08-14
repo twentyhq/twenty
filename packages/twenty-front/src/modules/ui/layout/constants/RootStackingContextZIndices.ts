@@ -23,4 +23,7 @@ export enum RootStackingContextZIndices {
   WelcomeOverlay = 10000,
   SnackBar = 10002,
   NotFound = 10001,
+  // Above every other layer: while a device is live the indicator is the
+  // user's only guaranteed view of the capture and its stop control.
+  MediaRecordingIndicator = 10003,
 }

@@ -100,12 +100,8 @@ const getFileExtension = (mimeType: string): string =>
 // The recording engine is the standard web platform: getUserMedia and
 // MediaRecorder, polyfilled into the sandbox by the host. Errors surface as
 // DOMException names exactly like in a regular page.
-const mapMediaErrorToReason = (error: unknown): string => {
-  if (!(error instanceof Error)) {
-    return 'unknown';
-  }
-
-  switch (error.name) {
+const mapMediaErrorNameToReason = (errorName: string): string => {
+  switch (errorName) {
     case 'NotAllowedError':
     case 'SecurityError':
       return 'permission-denied';
@@ -120,6 +116,9 @@ const mapMediaErrorToReason = (error: unknown): string => {
       return 'unknown';
   }
 };
+
+const mapMediaErrorToReason = (error: unknown): string =>
+  error instanceof Error ? mapMediaErrorNameToReason(error.name) : 'unknown';
 
 type CapturedMediaFile = UploadedFrontComponentFile & {
   durationSeconds: number;
@@ -147,6 +146,8 @@ type ActiveRecording = {
 
 type RecordingSession = {
   wasCancelled: boolean;
+  isUserStopping: boolean;
+  errorName: string | null;
   collectRecordedBlob: Promise<Blob>;
 };
 
@@ -170,6 +171,9 @@ const MediaNotes = () => {
 
   const recordingSessionRef = useRef<RecordingSession | null>(null);
   const stopAndSaveRef = useRef<(() => void) | null>(null);
+  // Synchronous guard: a second click during the getUserMedia permission
+  // prompt would otherwise start a second capture.
+  const isStartingRef = useRef(false);
 
   useEffect(() => {
     fetchRecordingFieldMetadataId()
@@ -243,25 +247,33 @@ const MediaNotes = () => {
       recordingFieldMetadataId === null ||
       isAttaching ||
       isStopping ||
+      isStartingRef.current ||
       activeRecording !== null
     ) {
       return;
     }
 
+    isStartingRef.current = true;
     setCaptureResult(null);
     setSavedRecordId(null);
     setFailedAttach(null);
+
+    let acquiredMediaStream: MediaStream | null = null;
 
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia(
         mediaType === 'audio' ? { audio: true } : { video: true, audio: true },
       );
 
+      acquiredMediaStream = mediaStream;
+
       const mediaRecorder = new MediaRecorder(mediaStream);
 
       const recordedChunks: Blob[] = [];
       const recordingSession: RecordingSession = {
         wasCancelled: false,
+        isUserStopping: false,
+        errorName: null,
         collectRecordedBlob: new Promise<Blob>((resolve) => {
           mediaRecorder.onstop = () =>
             resolve(
@@ -282,6 +294,37 @@ const MediaNotes = () => {
         }
       };
 
+      mediaRecorder.onerror = (event) => {
+        const errorEvent = event as Event & { error?: Error };
+
+        recordingSession.errorName = errorEvent.error?.name ?? 'UnknownError';
+      };
+
+      // A stop the app did not ask for means the recorder failed to start on
+      // the host or died mid-recording (it fires error then stop, like the
+      // native API): release the devices and surface the failure.
+      mediaRecorder.addEventListener('stop', () => {
+        if (recordingSession.isUserStopping || recordingSession.wasCancelled) {
+          return;
+        }
+
+        recordingSession.wasCancelled = true;
+        recordingSessionRef.current = null;
+
+        for (const track of mediaStream.getTracks()) {
+          track.stop();
+        }
+
+        setActiveRecording(null);
+        setCaptureResult({
+          status: 'failed',
+          reason:
+            recordingSession.errorName === null
+              ? 'unknown'
+              : mapMediaErrorNameToReason(recordingSession.errorName),
+        });
+      });
+
       // The host indicator's stop button (or a revoked device) surfaces as
       // standard track ended events; the app reacts by discarding, without
       // any bespoke callback from the host.
@@ -293,6 +336,20 @@ const MediaNotes = () => {
 
           recordingSession.wasCancelled = true;
           recordingSessionRef.current = null;
+
+          // One dead track ends the whole take: stop the recorder and the
+          // remaining tracks so nothing keeps capturing behind the
+          // cancelled state.
+          if (mediaRecorder.state !== 'inactive') {
+            mediaRecorder.stop();
+          }
+
+          for (const remainingTrack of mediaStream.getTracks()) {
+            if (remainingTrack.readyState === 'live') {
+              remainingTrack.stop();
+            }
+          }
+
           setActiveRecording(null);
           setCaptureResult({ status: 'cancelled' });
         };
@@ -308,10 +365,20 @@ const MediaNotes = () => {
         mediaRecorder,
       });
     } catch (error) {
+      // The recorder can fail after the devices were granted; do not leave
+      // them capturing behind a failure message.
+      if (acquiredMediaStream !== null) {
+        for (const track of acquiredMediaStream.getTracks()) {
+          track.stop();
+        }
+      }
+
       setCaptureResult({
         status: 'failed',
         reason: mapMediaErrorToReason(error),
       });
+    } finally {
+      isStartingRef.current = false;
     }
   };
 
@@ -323,6 +390,10 @@ const MediaNotes = () => {
     const { mediaRecorder, mediaStream, mediaType, startedAt } =
       activeRecording;
     const recordingSession = recordingSessionRef.current;
+
+    if (recordingSession) {
+      recordingSession.isUserStopping = true;
+    }
 
     setActiveRecording(null);
     setIsStopping(true);
@@ -346,6 +417,20 @@ const MediaNotes = () => {
         recordingSession.wasCancelled
       ) {
         setCaptureResult({ status: 'cancelled' });
+
+        return;
+      }
+
+      // An errored recorder still resolves the stop, but with nothing worth
+      // uploading.
+      if (recordingSession.errorName !== null || recordedBlob.size === 0) {
+        setCaptureResult({
+          status: 'failed',
+          reason:
+            recordingSession.errorName === null
+              ? 'unknown'
+              : mapMediaErrorNameToReason(recordingSession.errorName),
+        });
 
         return;
       }

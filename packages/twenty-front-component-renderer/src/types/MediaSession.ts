@@ -38,8 +38,11 @@ export type MediaRecorderCapabilities = {
 // as dedicated thread functions owned by the renderer, not through the
 // application-facing host communication api.
 export type MediaSessionHostFunctions = {
+  // The requested kinds are forwarded as booleans so video-only capture
+  // does not silently open the microphone.
   mediaStartStream: (params: {
-    mediaType: MediaSessionMediaType;
+    audio: boolean;
+    video: boolean;
   }) => Promise<StartMediaStreamResult>;
   mediaStopStreamTrack: (params: {
     streamId: string;

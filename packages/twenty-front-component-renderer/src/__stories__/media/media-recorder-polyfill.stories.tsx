@@ -103,7 +103,7 @@ const baseStory = runFrontComponentStory({
     await waitFor(
       () => {
         expect(mockMediaSessionHost.mediaStartStream).toHaveBeenCalledWith(
-          expect.objectContaining({ mediaType: 'audio' }),
+          expect.objectContaining({ audio: true, video: false }),
         );
         expect(mockMediaSessionHost.mediaStartRecorder).toHaveBeenCalledWith(
           expect.objectContaining({ streamId: TEST_STREAM_ID }),

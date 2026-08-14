@@ -24,7 +24,10 @@ describe('createWorkerMediaBridge', () => {
   it('should fail stream and recorder starts when no transport is connected', async () => {
     const bridge = createWorkerMediaBridge();
 
-    const streamResult = await bridge.startStream({ mediaType: 'audio' });
+    const streamResult = await bridge.startStream({
+      audio: true,
+      video: false,
+    });
     const recorderResult = await bridge.startRecorder({
       streamId: 'stream-1',
       handlers: { onData: jest.fn(), onStop: jest.fn(), onError: jest.fn() },
@@ -40,10 +43,11 @@ describe('createWorkerMediaBridge', () => {
 
     bridge.connectTransport(transport);
 
-    const result = await bridge.startStream({ mediaType: 'video' });
+    const result = await bridge.startStream({ audio: true, video: true });
 
     expect(transport.mediaStartStream).toHaveBeenCalledWith({
-      mediaType: 'video',
+      audio: true,
+      video: true,
     });
     expect(result.status).toBe('started');
   });

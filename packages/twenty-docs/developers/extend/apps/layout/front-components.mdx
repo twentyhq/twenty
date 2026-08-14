@@ -505,6 +505,9 @@ A few environment specifics to be aware of:
   were held by another program.
 - **`MediaRecorder.isTypeSupported`** answers for common container/codec
   combinations; uncommon types report as unsupported.
+- **Track mute states are not forwarded.** `track.enabled` reaches the real
+  device, but the `muted` property and `mute`/`unmute` events are not
+  implemented.
 - **Live preview inside the component is not available.** `srcObject` does
   not cross the sandbox; the host indicator shows a self-view while a camera
   is live. Recorded files play back normally from their uploaded URL.

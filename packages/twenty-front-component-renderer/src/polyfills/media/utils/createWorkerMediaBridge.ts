@@ -45,9 +45,7 @@ export const createWorkerMediaBridge = (): WorkerMediaBridge => {
     console.warn(MEDIA_TRANSPORT_FAILURE_WARNING);
   };
 
-  const connectTransport = (
-    nextTransport: MediaSessionHostFunctions,
-  ): void => {
+  const connectTransport = (nextTransport: MediaSessionHostFunctions): void => {
     transport = nextTransport;
   };
 
@@ -70,13 +68,18 @@ export const createWorkerMediaBridge = (): WorkerMediaBridge => {
   };
 
   const startStream = async (params: {
-    mediaType: 'audio' | 'video';
+    audio: boolean;
+    video: boolean;
   }): Promise<StartMediaStreamResult> => {
     if (!isDefined(transport)) {
       return MEDIA_TRANSPORT_UNAVAILABLE_FAILURE;
     }
 
-    return await transport.mediaStartStream(params);
+    try {
+      return await transport.mediaStartStream(params);
+    } catch {
+      return MEDIA_TRANSPORT_UNAVAILABLE_FAILURE;
+    }
   };
 
   const registerTrackEventHandlers = ({
@@ -88,7 +91,10 @@ export const createWorkerMediaBridge = (): WorkerMediaBridge => {
     trackId: string;
     handlers: WorkerMediaTrackEventHandlers;
   }): void => {
-    trackEventHandlersByTrackKey.set(buildTrackKey(streamId, trackId), handlers);
+    trackEventHandlersByTrackKey.set(
+      buildTrackKey(streamId, trackId),
+      handlers,
+    );
   };
 
   const stopStreamTrack = ({
@@ -145,11 +151,17 @@ export const createWorkerMediaBridge = (): WorkerMediaBridge => {
       return MEDIA_TRANSPORT_UNAVAILABLE_FAILURE;
     }
 
-    const result = await transport.mediaStartRecorder({
-      streamId,
-      mimeType,
-      timesliceMs,
-    });
+    let result: StartMediaRecorderResult;
+
+    try {
+      result = await transport.mediaStartRecorder({
+        streamId,
+        mimeType,
+        timesliceMs,
+      });
+    } catch {
+      return MEDIA_TRANSPORT_UNAVAILABLE_FAILURE;
+    }
 
     // Events for this recorder can only arrive after this response: both
     // travel the same message port, so registering now cannot miss any.

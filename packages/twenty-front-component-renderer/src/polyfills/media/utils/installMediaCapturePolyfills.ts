@@ -9,7 +9,6 @@ import {
 } from '@/polyfills/media/utils/createMediaStreamClass';
 import { createMediaStreamTrackClass } from '@/polyfills/media/utils/createMediaStreamTrackClass';
 import { resolveGlobalScopeInstallTargets } from '@/polyfills/utils/resolveGlobalScopeInstallTargets';
-import { type MediaSessionMediaType } from '@/types/MediaSession';
 
 type InstallMediaCapturePolyfillsInput = {
   globalScope: Record<string, unknown>;
@@ -58,12 +57,12 @@ export const installMediaCapturePolyfills = ({
     }
 
     // Detailed constraint objects (deviceId, resolution, ...) are accepted
-    // but not forwarded: the host captures with its defaults.
-    const mediaType: MediaSessionMediaType = isVideoRequested
-      ? 'video'
-      : 'audio';
-
-    const startStreamResult = await bridge.startStream({ mediaType });
+    // but not forwarded: the host captures with its defaults for the
+    // requested kinds.
+    const startStreamResult = await bridge.startStream({
+      audio: isAudioRequested,
+      video: isVideoRequested,
+    });
 
     if (startStreamResult.status === 'failed') {
       throw createDomException(

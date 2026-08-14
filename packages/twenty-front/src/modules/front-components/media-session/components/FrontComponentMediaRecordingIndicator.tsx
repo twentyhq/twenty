@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { FrontComponentMediaSessionTimerEffect } from '@/front-components/media-session/components/FrontComponentMediaSessionTimerEffect';
+import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { frontComponentMediaSessionState } from '@/front-components/media-session/states/frontComponentMediaSessionState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { FindOneApplicationNameDocument } from '~/generated-metadata/graphql';
@@ -27,7 +28,7 @@ const StyledIndicatorContainer = styled.div`
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
   position: fixed;
   right: ${themeCssVariables.spacing[4]};
-  z-index: 1000;
+  z-index: ${RootStackingContextZIndices.MediaRecordingIndicator};
 `;
 
 const StyledRecordingDot = styled.div`
