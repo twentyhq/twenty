@@ -14,14 +14,10 @@ import {
 } from 'src/engine/core-modules/emailing-domain/drivers/interfaces/emailing-domain-driver.interface';
 import { type ResendDriverConfig } from 'src/engine/core-modules/emailing-domain/drivers/interfaces/driver-config.interface';
 import { type ResendApiClientService } from 'src/engine/core-modules/emailing-domain/drivers/resend/services/resend-api-client.service';
-import {
-  type ResendDomain,
-  type ResendSendEmailPayload,
-} from 'src/engine/core-modules/emailing-domain/drivers/resend/types/resend-api.type';
-import {
-  mapResendDomainRecords,
-  mapResendDomainStatus,
-} from 'src/engine/core-modules/emailing-domain/drivers/resend/utils/map-resend-domain-verification.util';
+import { type ResendDomain } from 'src/engine/core-modules/emailing-domain/drivers/resend/types/resend-domain.type';
+import { type ResendSendEmailPayload } from 'src/engine/core-modules/emailing-domain/drivers/resend/types/resend-send-email-payload.type';
+import { mapResendDomainRecords } from 'src/engine/core-modules/emailing-domain/drivers/resend/utils/map-resend-domain-records.util';
+import { mapResendDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/resend/utils/map-resend-domain-status.util';
 import { RESEND_WORKSPACE_TAG_NAME } from 'src/engine/core-modules/emailing-domain/drivers/resend/constants/resend-workspace-tag-name.constant';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { type EmailingDomainSendEmailRequest } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-input.type';

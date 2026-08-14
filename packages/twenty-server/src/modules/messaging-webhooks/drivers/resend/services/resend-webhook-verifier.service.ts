@@ -1,25 +1,15 @@
-import { createHmac, timingSafeEqual } from 'crypto';
-
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type ResendWebhookHeaders } from 'src/modules/messaging-webhooks/drivers/resend/types/resend-webhook-headers.type';
+import { verifySvixSignature } from 'src/modules/messaging-webhooks/drivers/resend/utils/verify-svix-signature.util';
 import { MessagingWebhookExceptionCode } from 'src/modules/messaging-webhooks/messaging-webhook-exception-code.enum';
 import { MessagingWebhookException } from 'src/modules/messaging-webhooks/messaging-webhook.exception';
 
-const SIGNING_SECRET_PREFIX = 'whsec_';
 const TIMESTAMP_TOLERANCE_SECONDS = 5 * 60;
 
-export type ResendWebhookHeaders = {
-  svixId: string | undefined;
-  svixTimestamp: string | undefined;
-  svixSignature: string | undefined;
-};
-
-// Resend signs webhooks with the Svix scheme: an HMAC-SHA256 over
-// `${id}.${timestamp}.${body}` keyed with the base64 secret after `whsec_`,
-// carried base64-encoded in the space-separated `v1,<sig>` signature header.
 @Injectable()
 export class ResendWebhookVerifierService {
   private readonly logger = new Logger(ResendWebhookVerifierService.name);
@@ -53,29 +43,13 @@ export class ResendWebhookVerifierService {
 
     this.assertTimestampWithinTolerance(svixTimestamp);
 
-    const secretKey = Buffer.from(
-      signingSecret.startsWith(SIGNING_SECRET_PREFIX)
-        ? signingSecret.slice(SIGNING_SECRET_PREFIX.length)
-        : signingSecret,
-      'base64',
-    );
-
-    const expectedSignature = createHmac('sha256', secretKey)
-      .update(`${svixId}.${svixTimestamp}.${rawBody.toString('utf8')}`)
-      .digest();
-
-    const isSigned = svixSignature
-      .split(' ')
-      .map((entry) => entry.split(',')[1])
-      .filter(isNonEmptyString)
-      .some((candidate) => {
-        const candidateSignature = Buffer.from(candidate, 'base64');
-
-        return (
-          candidateSignature.length === expectedSignature.length &&
-          timingSafeEqual(candidateSignature, expectedSignature)
-        );
-      });
+    const isSigned = verifySvixSignature({
+      signingSecret,
+      svixId,
+      svixTimestamp,
+      svixSignature,
+      rawBody,
+    });
 
     if (!isSigned) {
       this.logger.warn('Resend webhook signature verification failed');

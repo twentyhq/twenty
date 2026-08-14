@@ -7,12 +7,10 @@ import {
   EmailingDomainDriverException,
   EmailingDomainDriverExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception';
-import {
-  type ResendDomain,
-  type ResendErrorBody,
-  type ResendReceivedEmail,
-  type ResendSendEmailPayload,
-} from 'src/engine/core-modules/emailing-domain/drivers/resend/types/resend-api.type';
+import { type ResendDomain } from 'src/engine/core-modules/emailing-domain/drivers/resend/types/resend-domain.type';
+import { type ResendErrorBody } from 'src/engine/core-modules/emailing-domain/drivers/resend/types/resend-error-body.type';
+import { type ResendReceivedEmail } from 'src/engine/core-modules/emailing-domain/drivers/resend/types/resend-received-email.type';
+import { type ResendSendEmailPayload } from 'src/engine/core-modules/emailing-domain/drivers/resend/types/resend-send-email-payload.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 const RESEND_API_BASE_URL = 'https://api.resend.com';

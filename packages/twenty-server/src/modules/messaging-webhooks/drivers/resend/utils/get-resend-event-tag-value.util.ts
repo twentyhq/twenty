@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { type ResendWebhookEventTags } from 'src/modules/messaging-webhooks/adapters/resend/types/resend-webhook-event.type';
+import { type ResendWebhookEventTags } from 'src/modules/messaging-webhooks/drivers/resend/types/resend-webhook-event-tags.type';
 
 export const getResendEventTagValue = (
   tags: ResendWebhookEventTags | undefined,

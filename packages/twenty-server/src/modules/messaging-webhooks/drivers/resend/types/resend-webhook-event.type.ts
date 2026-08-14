@@ -1,8 +1,4 @@
-// tags are documented as an object map but have historically also appeared
-// as { name, value } entries, so both shapes are accepted
-export type ResendWebhookEventTags =
-  | Record<string, string>
-  | { name?: string; value?: string }[];
+import { type ResendWebhookEventTags } from 'src/modules/messaging-webhooks/drivers/resend/types/resend-webhook-event-tags.type';
 
 export type ResendWebhookEvent = {
   type: string;
