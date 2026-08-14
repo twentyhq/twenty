@@ -4,6 +4,10 @@ type RequestIdle = (callback: IdleRequestCallback) => number;
 type CancelIdle = (idleCallbackHandle: number) => void;
 
 describe('installIdleCallbackShim', () => {
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   it('should install the shim on both the global scope and a distinct window', () => {
     const polyfillWindow: Record<string, unknown> = {};
     const globalScope: Record<string, unknown> = { window: polyfillWindow };
@@ -40,8 +44,6 @@ describe('installIdleCallbackShim', () => {
     expect(idleDeadline.didTimeout).toBe(false);
     expect(idleDeadline.timeRemaining()).toBeGreaterThanOrEqual(0);
     expect(idleDeadline.timeRemaining()).toBeLessThanOrEqual(50);
-
-    jest.useRealTimers();
   });
 
   it('should cancel a scheduled idle callback through its handle', () => {
@@ -61,8 +63,6 @@ describe('installIdleCallbackShim', () => {
     jest.advanceTimersByTime(10);
 
     expect(canceledCallback).not.toHaveBeenCalled();
-
-    jest.useRealTimers();
   });
 
   it('should alias a native idle callback scheduler when present', () => {

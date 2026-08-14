@@ -23,14 +23,16 @@ export const installAnimationFrameWindowAliases = (
       : createSetTimeoutAnimationFrameScheduler();
 
   for (const installTarget of resolveGlobalScopeInstallTargets(globalScope)) {
-    if (!('requestAnimationFrame' in installTarget)) {
-      installTarget.requestAnimationFrame =
-        animationFrameScheduler.requestAnimationFrame;
+    if (
+      'requestAnimationFrame' in installTarget &&
+      'cancelAnimationFrame' in installTarget
+    ) {
+      continue;
     }
 
-    if (!('cancelAnimationFrame' in installTarget)) {
-      installTarget.cancelAnimationFrame =
-        animationFrameScheduler.cancelAnimationFrame;
-    }
+    installTarget.requestAnimationFrame =
+      animationFrameScheduler.requestAnimationFrame;
+    installTarget.cancelAnimationFrame =
+      animationFrameScheduler.cancelAnimationFrame;
   }
 };

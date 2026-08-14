@@ -6,7 +6,13 @@ export const installCssNamespacePolyfill = (
   globalScope: Record<string, unknown>,
 ): void => {
   const cssNamespace = {
-    escape: (value: unknown) => escapeCssIdentifier(value),
+    escape: (...escapeArguments: unknown[]) => {
+      if (escapeArguments.length === 0) {
+        throw new TypeError('CSS.escape requires an argument');
+      }
+
+      return escapeCssIdentifier(escapeArguments[0]);
+    },
     supports: (...supportsArguments: unknown[]) => {
       try {
         return evaluateCssSupportsQuery(supportsArguments);

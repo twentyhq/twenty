@@ -4,6 +4,10 @@ type RequestFrame = (callback: FrameRequestCallback) => number;
 type CancelFrame = (frameHandle: number) => void;
 
 describe('installAnimationFrameWindowAliases', () => {
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   it('should alias the native scheduler onto a distinct window when present', () => {
     const nativeRequestAnimationFrame = jest.fn().mockReturnValue(7);
     const nativeCancelAnimationFrame = jest.fn();
@@ -54,8 +58,6 @@ describe('installAnimationFrameWindowAliases', () => {
 
     expect(firedCallback).toHaveBeenCalledTimes(1);
     expect(firedCallback).toHaveBeenCalledWith(expect.any(Number));
-
-    jest.useRealTimers();
   });
 
   it('should keep fallback frame ids cancelable through the same cancel function', () => {
@@ -76,7 +78,37 @@ describe('installAnimationFrameWindowAliases', () => {
     jest.advanceTimersByTime(32);
 
     expect(canceledCallback).not.toHaveBeenCalled();
+  });
 
-    jest.useRealTimers();
+  it('should replace a partial native scheduler with a coherent fallback pair', () => {
+    jest.useFakeTimers();
+
+    const nativeRequestAnimationFrame = jest.fn();
+    const polyfillWindow: Record<string, unknown> = {};
+    const globalScope: Record<string, unknown> = {
+      window: polyfillWindow,
+      requestAnimationFrame: nativeRequestAnimationFrame,
+    };
+
+    installAnimationFrameWindowAliases(globalScope);
+
+    expect(globalScope.requestAnimationFrame).not.toBe(
+      nativeRequestAnimationFrame,
+    );
+    expect(globalScope.requestAnimationFrame).toBe(
+      polyfillWindow.requestAnimationFrame,
+    );
+
+    const canceledCallback = jest.fn();
+    const frameHandle = (globalScope.requestAnimationFrame as RequestFrame)(
+      canceledCallback,
+    );
+
+    (globalScope.cancelAnimationFrame as CancelFrame)(frameHandle);
+
+    jest.advanceTimersByTime(32);
+
+    expect(canceledCallback).not.toHaveBeenCalled();
+    expect(nativeRequestAnimationFrame).not.toHaveBeenCalled();
   });
 });

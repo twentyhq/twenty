@@ -1,7 +1,7 @@
 import { installCssNamespacePolyfill } from '../installCssNamespacePolyfill';
 
 type CssNamespace = {
-  escape: (value: unknown) => string;
+  escape: (...escapeArguments: unknown[]) => string;
   supports: (...supportsArguments: unknown[]) => boolean;
 };
 
@@ -21,6 +21,16 @@ describe('installCssNamespacePolyfill', () => {
     expect(cssNamespace.supports('display', 'flex')).toBe(true);
     expect(cssNamespace.supports('made-up-property', 'anything')).toBe(false);
     expect(cssNamespace.supports()).toBe(false);
+  });
+
+  it('should throw a TypeError when escape is called without an argument', () => {
+    const globalScope: Record<string, unknown> = { window: {} };
+
+    installCssNamespacePolyfill(globalScope);
+
+    const cssNamespace = globalScope.CSS as CssNamespace;
+
+    expect(() => cssNamespace.escape()).toThrow(TypeError);
   });
 
   it('should never throw on unstringifiable supports arguments', () => {
