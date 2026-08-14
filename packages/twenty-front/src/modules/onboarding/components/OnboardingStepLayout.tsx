@@ -1,5 +1,6 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
+import { HolostaffCopilotEffect } from '@/holostaff/components/HolostaffCopilotEffect';
 import { OnboardingLayout } from '@/onboarding/components/OnboardingLayout';
 import { OnboardingTransitionOutlet } from '@/onboarding/components/OnboardingTransitionOutlet';
 import { PrefetchBookCallStepEffect } from '@/onboarding/effect-components/PrefetchBookCallStepEffect';
@@ -36,6 +37,7 @@ export const OnboardingStepLayout = () => {
     >
       <PrefetchBookCallStepEffect />
       <PrefetchPlanRequiredStepEffect />
+      <HolostaffCopilotEffect />
       <OnboardingTransitionOutlet />
     </OnboardingLayout>
   );

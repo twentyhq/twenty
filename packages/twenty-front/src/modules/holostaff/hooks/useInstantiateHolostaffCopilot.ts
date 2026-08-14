@@ -7,14 +7,17 @@ import { scheduleIdleCallback } from '~/utils/scheduleIdleCallback';
 
 type BowtieStage = 'onboarding' | 'adoption' | 'expansion';
 
-// Journey stages, by the route the user is on. First match wins. Only
-// routes rendered under DefaultLayout are listed, since that is the only
-// place this hook mounts: the onboarding and invite steps live under
-// BlankLayout, so the copilot never sees them and they are not mapped
-// here. Everything else (stall detection, what to say, whether to say
-// anything at all) comes from the journey map, not from this file.
+// Journey stages, by the route the user is on. First match wins. Covers
+// the routes the copilot actually mounts on: the authenticated app shell
+// (DefaultLayout) and the signed-in onboarding steps (OnboardingStepLayout).
+// Everything else (stall detection, what to say, whether to say anything
+// at all) comes from the journey map, not from this file.
 const STAGE_ROUTES: [RegExp, BowtieStage][] = [
-  [/^\/settings\/(members|billing)/, 'expansion'],
+  [
+    /^\/(create\/profile|sync\/emails|install-apps|invite-team|book-call)/,
+    'onboarding',
+  ],
+  [/^\/(plan-required|settings\/(members|billing))/, 'expansion'],
   [/./, 'adoption'],
 ];
 
@@ -28,8 +31,10 @@ const STAGE_ROUTES: [RegExp, BowtieStage][] = [
  * idle callback, so with the ids empty no visitor ever downloads its
  * code, and with them set it never competes with app boot.
  *
- * Instantiated from DefaultLayout only, which no public route uses, so
- * it can never run on the auth, invite, or onboarding-activation pages.
+ * Instantiated from the authenticated app shell (DefaultLayout) and the
+ * signed-in onboarding steps (OnboardingStepLayout). Both are behind
+ * authentication, so the copilot never runs on the anonymous sign-in,
+ * invite-acceptance, email-verification, or OAuth-consent pages.
  */
 export const useInstantiateHolostaffCopilot = () => {
   const [holostaffConfig] = useAtomState(holostaffConfigState);
