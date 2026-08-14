@@ -26,20 +26,14 @@ export function addPersonEmailFiltersToQueryBuilder({
   const normalizedEmails = emails.map((email) => email.toLowerCase());
 
   queryBuilder = queryBuilder
-    .select([
-      'person.id',
-      'person.emailsPrimaryEmail',
-      'person.emailsAdditionalEmails',
-      'person.deletedAt',
-    ])
-    .where('LOWER(person.emailsPrimaryEmail) IN (:...emails)', {
+    .where('LOWER("person"."emailsPrimaryEmail") IN (:...emails)', {
       emails: normalizedEmails,
     })
     .withDeleted();
 
   if (excludePersonIds.length > 0) {
     queryBuilder = queryBuilder.andWhere(
-      'person.id NOT IN (:...excludePersonIds)',
+      '"person"."id" NOT IN (:...excludePersonIds)',
       {
         excludePersonIds,
       },
@@ -50,8 +44,8 @@ export function addPersonEmailFiltersToQueryBuilder({
     const emailParamName = `email${index}`;
     const orWhereIsInAdditionalEmail =
       excludePersonIds.length > 0
-        ? `person.id NOT IN (:...excludePersonIds) AND person.emailsAdditionalEmails @> :${emailParamName}::jsonb`
-        : `person.emailsAdditionalEmails @> :${emailParamName}::jsonb`;
+        ? `"person"."id" NOT IN (:...excludePersonIds) AND "person"."emailsAdditionalEmails" @> :${emailParamName}::jsonb`
+        : `"person"."emailsAdditionalEmails" @> :${emailParamName}::jsonb`;
 
     queryBuilder = queryBuilder.orWhere(orWhereIsInAdditionalEmail, {
       ...(excludePersonIds.length > 0 && { excludePersonIds }),

@@ -4,8 +4,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/global-workspace-datasource/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
@@ -48,7 +48,7 @@ export class MessagingMessageService {
   public async saveMessagesWithinTransaction(
     messages: MessageWithParticipants[],
     messageChannelId: string,
-    transactionManager: WorkspaceEntityManager,
+    transactionScope: WorkspaceTransactionScope,
     workspaceId: string,
   ): Promise<{
     createdMessages: Partial<MessageWorkspaceEntity>[];
@@ -64,20 +64,15 @@ export class MessagingMessageService {
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const messageChannelMessageAssociationRepository =
-          await this.globalWorkspaceOrmManager.getV1Repository<MessageChannelMessageAssociationWorkspaceEntity>(
-            workspaceId,
+          transactionScope.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
             'messageChannelMessageAssociation',
           );
 
         const messageRepository =
-          await this.globalWorkspaceOrmManager.getV1Repository<MessageWorkspaceEntity>(
-            workspaceId,
-            'message',
-          );
+          transactionScope.getRepository<MessageWorkspaceEntity>('message');
 
         const messageThreadRepository =
-          await this.globalWorkspaceOrmManager.getV1Repository<MessageThreadWorkspaceEntity>(
-            workspaceId,
+          transactionScope.getRepository<MessageThreadWorkspaceEntity>(
             'messageThread',
           );
 
@@ -92,18 +87,15 @@ export class MessagingMessageService {
         });
 
         const messageChannelMessageAssociationsReferencingMessageThread =
-          await messageChannelMessageAssociationRepository.find(
-            {
-              where: {
-                messageThreadExternalId: In(
-                  messages.map((message) => message.messageThreadExternalId),
-                ),
-                messageChannelId,
-              },
-              relations: ['message'],
+          await messageChannelMessageAssociationRepository.find({
+            where: {
+              messageThreadExternalId: In(
+                messages.map((message) => message.messageThreadExternalId),
+              ),
+              messageChannelId,
             },
-            transactionManager,
-          );
+            relations: { message: true },
+          });
 
         const existingMessageChannelMessageAssociations =
           await messageChannelMessageAssociationRepository.find({
@@ -252,10 +244,7 @@ export class MessagingMessageService {
         }
 
         if (messageThreadsToCreate.length > 0) {
-          await messageThreadRepository.insert(
-            messageThreadsToCreate,
-            transactionManager,
-          );
+          await messageThreadRepository.insert(messageThreadsToCreate);
         }
 
         if (threadSubjectUpdates.size > 0) {
@@ -264,7 +253,6 @@ export class MessagingMessageService {
               ([id, { subject }]) => ({ id, subject }),
             ),
             ['id'],
-            transactionManager,
           );
         }
 
@@ -272,7 +260,7 @@ export class MessagingMessageService {
           .map((accumulator) => accumulator.messageToCreate)
           .filter(isDefined);
 
-        await messageRepository.insert(messagesToCreate, transactionManager);
+        await messageRepository.insert(messagesToCreate);
 
         const messageChannelMessageAssociationsToCreate = Array.from(
           associationToCreateByMessageId.values(),
@@ -280,7 +268,6 @@ export class MessagingMessageService {
 
         await messageChannelMessageAssociationRepository.insert(
           messageChannelMessageAssociationsToCreate,
-          transactionManager,
         );
 
         const messageExternalIdsAndIdsMap = new Map<string, string>();

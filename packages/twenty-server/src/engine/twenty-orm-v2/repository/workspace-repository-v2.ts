@@ -159,6 +159,10 @@ export class WorkspaceRepositoryV2 {
     return this.options.internalContext;
   }
 
+  get internalContext(): WorkspaceInternalContext {
+    return this.options.internalContext;
+  }
+
   async find(options?: FindOptionsV2): Promise<ObjectRecord[]> {
     const records = await applyFindOptionsToQueryBuilder(
       this.createQueryBuilder(),
@@ -486,7 +490,9 @@ export class WorkspaceRepositoryV2 {
 
     const { identifiers, generatedMaps, raw } = await this.runInsert({
       records,
-      columnsToReturn: ['id'],
+      columnsToReturn: this.options.shouldBypassPermissionChecks
+        ? Object.keys(this.options.tableShape.columnShapeByColumnName)
+        : ['id'],
     });
 
     const insertResult = new InsertResult();
