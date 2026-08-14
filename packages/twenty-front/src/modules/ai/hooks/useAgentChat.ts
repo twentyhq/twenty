@@ -35,11 +35,18 @@ import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMess
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import {
+  markWorkspaceCreditsAvailable,
+  markWorkspaceCreditsExhausted,
+} from '@/workspace/utils/updateWorkspaceResourceCreditCap';
+import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 export const useAgentChat = (
   ensureThreadIdForSend: () => Promise<string | null>,
@@ -190,6 +197,19 @@ export const useAgentChat = (
         },
       });
 
+      // The stream this send started can exhaust the balance and publish
+      // credits-exhausted before this response resolves; that event marks the
+      // thread error, so its presence means the exhaustion is newer information
+      // than the gate pass this response proves.
+      if (
+        !isGraphqlErrorOfType(
+          store.get(errorAtom),
+          AiChatErrorCode.BILLING_CREDITS_EXHAUSTED,
+        )
+      ) {
+        store.set(currentWorkspaceState.atom, markWorkspaceCreditsAvailable);
+      }
+
       if (isBrowsingContextChanged) {
         store.set(lastSentBrowsingContextAtom, browsingContext);
       }
@@ -238,6 +258,12 @@ export const useAgentChat = (
           ? error
           : new Error('An unexpected error occurred'),
       );
+
+      if (
+        isGraphqlErrorOfType(error, AiChatErrorCode.BILLING_CREDITS_EXHAUSTED)
+      ) {
+        store.set(currentWorkspaceState.atom, markWorkspaceCreditsExhausted);
+      }
 
       dispatchBrowserEvent(AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
         content: serializedContentToSend,

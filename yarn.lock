@@ -49795,7 +49795,6 @@ __metadata:
     twenty-sdk: "workspace:*"
     twenty-shared: "workspace:*"
     twenty-ui: "workspace:*"
-    vite-plugin-dts: "npm:^4.5.4"
     zod: "npm:^4.1.11"
   languageName: unknown
   linkType: soft

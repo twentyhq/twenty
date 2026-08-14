@@ -1,5 +1,6 @@
 import { Injectable, type Type } from '@nestjs/common';
 
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { type ObjectLiteral } from 'typeorm';
 
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
@@ -10,10 +11,12 @@ import { GlobalWorkspaceDataSourceService } from 'src/engine/twenty-orm/global-w
 import { ExecuteInWorkspaceContextOptions } from 'src/engine/twenty-orm/global-workspace-datasource/types/execute-in-workspace-context-options.type';
 import type { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import {
+  getWorkspaceContext,
   type ORMWorkspaceContext,
   withWorkspaceContext,
 } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import type { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { WorkspaceDataSourceV2Service } from 'src/engine/twenty-orm-v2/datasource/workspace-data-source-v2.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/utils/convert-class-to-object-metadata-name.util';
 
@@ -22,6 +25,7 @@ export class GlobalWorkspaceOrmManager {
   constructor(
     private readonly globalWorkspaceDataSourceService: GlobalWorkspaceDataSourceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly workspaceDataSourceV2Service: WorkspaceDataSourceV2Service,
   ) {}
 
   async getRepository<T extends ObjectLiteral>(
@@ -41,14 +45,21 @@ export class GlobalWorkspaceOrmManager {
     workspaceEntityOrObjectMetadataName: Type<T> | string,
     permissionOptions?: RolePermissionConfig,
   ): Promise<WorkspaceRepository<T>> {
-    let objectMetadataName: string;
+    const objectMetadataName = this.resolveObjectMetadataName(
+      workspaceEntityOrObjectMetadataName,
+    );
 
-    if (typeof workspaceEntityOrObjectMetadataName === 'string') {
-      objectMetadataName = workspaceEntityOrObjectMetadataName;
-    } else {
-      objectMetadataName = convertClassNameToObjectMetadataName(
-        workspaceEntityOrObjectMetadataName.name,
-      );
+    if (
+      getWorkspaceContext().featureFlagsMap[
+        FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED
+      ]
+    ) {
+      return this.workspaceDataSourceV2Service
+        .getDataSource({ useReplica: false })
+        .getRepository(
+          objectMetadataName,
+          permissionOptions,
+        ) as unknown as WorkspaceRepository<T>;
     }
 
     const globalDataSource = await this.getGlobalWorkspaceDataSource();
@@ -65,6 +76,77 @@ export class GlobalWorkspaceOrmManager {
 
   async getGlobalWorkspaceDataSourceReplica(): Promise<GlobalWorkspaceDataSource> {
     return this.globalWorkspaceDataSourceService.getGlobalWorkspaceDataSourceReplica();
+  }
+
+  async ensureEntityMetadatasLoaded(): Promise<void> {
+    const context = getWorkspaceContext();
+
+    if (context.entityMetadatas.length > 0) {
+      return;
+    }
+
+    const { ORMEntityMetadatas } =
+      await this.workspaceCacheService.getOrRecompute(
+        context.authContext.workspace.id,
+        ['ORMEntityMetadatas'],
+      );
+
+    context.entityMetadatas.push(...ORMEntityMetadatas);
+  }
+
+  private resolveObjectMetadataName<T extends ObjectLiteral>(
+    workspaceEntityOrObjectMetadataName: Type<T> | string,
+  ): string {
+    if (typeof workspaceEntityOrObjectMetadataName === 'string') {
+      return workspaceEntityOrObjectMetadataName;
+    }
+
+    return convertClassNameToObjectMetadataName(
+      workspaceEntityOrObjectMetadataName.name,
+    );
+  }
+
+  async getV1Repository<T extends ObjectLiteral>(
+    workspaceId: string,
+    workspaceEntity: Type<T>,
+    permissionOptions?: RolePermissionConfig,
+  ): Promise<WorkspaceRepository<T>>;
+
+  async getV1Repository<T extends ObjectLiteral>(
+    workspaceId: string,
+    objectMetadataName: string,
+    permissionOptions?: RolePermissionConfig,
+  ): Promise<WorkspaceRepository<T>>;
+
+  async getV1Repository<T extends ObjectLiteral>(
+    _workspaceId: string,
+    workspaceEntityOrObjectMetadataName: Type<T> | string,
+    permissionOptions?: RolePermissionConfig,
+  ): Promise<WorkspaceRepository<T>> {
+    const objectMetadataName = this.resolveObjectMetadataName(
+      workspaceEntityOrObjectMetadataName,
+    );
+
+    await this.ensureEntityMetadatasLoaded();
+
+    const globalDataSource = await this.getGlobalWorkspaceDataSource();
+
+    return globalDataSource.getRepository<T>(
+      objectMetadataName,
+      permissionOptions,
+    );
+  }
+
+  async getGlobalWorkspaceDataSourceWithEntityMetadatas(): Promise<GlobalWorkspaceDataSource> {
+    await this.ensureEntityMetadatasLoaded();
+
+    return this.getGlobalWorkspaceDataSource();
+  }
+
+  async getGlobalWorkspaceDataSourceReplicaWithEntityMetadatas(): Promise<GlobalWorkspaceDataSource> {
+    await this.ensureEntityMetadatasLoaded();
+
+    return this.getGlobalWorkspaceDataSourceReplica();
   }
 
   async executeInWorkspaceContext<T>(
@@ -91,7 +173,6 @@ export class GlobalWorkspaceOrmManager {
       flatIndexMaps,
       featureFlagsMap,
       rolesPermissions: permissionsPerRoleId,
-      ORMEntityMetadatas: entityMetadatas,
       userWorkspaceRoleMap,
       apiKeyRoleMap,
       flatRowLevelPermissionPredicateMaps,
@@ -102,12 +183,21 @@ export class GlobalWorkspaceOrmManager {
       'flatIndexMaps',
       'featureFlagsMap',
       'rolesPermissions',
-      'ORMEntityMetadatas',
       'userWorkspaceRoleMap',
       'apiKeyRoleMap',
       'flatRowLevelPermissionPredicateMaps',
       'flatRowLevelPermissionPredicateGroupMaps',
     ]);
+
+    const entityMetadatas = featureFlagsMap[
+      FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED
+    ]
+      ? []
+      : (
+          await this.workspaceCacheService.getOrRecompute(workspaceId, [
+            'ORMEntityMetadatas',
+          ])
+        ).ORMEntityMetadatas;
 
     const { idByNameSingular: objectIdByNameSingular } =
       buildObjectIdByNameMaps(flatObjectMetadataMaps);

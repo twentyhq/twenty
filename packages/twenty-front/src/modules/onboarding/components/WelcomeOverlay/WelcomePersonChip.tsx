@@ -28,6 +28,10 @@ const StyledPersonName = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+
+  @media (max-width: 600px) {
+    max-width: min(70vw, 360px);
+  }
 `;
 
 type WelcomePersonChipProps = {

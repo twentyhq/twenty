@@ -411,12 +411,13 @@ export const generateRemoteElements = (
   });
 
   sourceFile.addImportDeclaration({
-    moduleSpecifier: '@/constants/applySerializedEventProperties',
+    moduleSpecifier: '@/remote/elements/utils/applySerializedEventProperties',
     namedImports: ['applySerializedEventProperties'],
   });
 
   sourceFile.addImportDeclaration({
-    moduleSpecifier: '@/constants/applySerializedEventTargetProperties',
+    moduleSpecifier:
+      '@/remote/elements/utils/applySerializedEventTargetProperties',
     namedImports: ['applySerializedEventTargetProperties'],
   });
 
