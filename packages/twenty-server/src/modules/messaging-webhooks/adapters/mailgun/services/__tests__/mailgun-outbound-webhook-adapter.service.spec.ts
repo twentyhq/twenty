@@ -118,4 +118,20 @@ describe('MailgunOutboundWebhookAdapterService', () => {
       'Invalid Mailgun webhook payload',
     );
   });
+
+  it('should reject signed payloads without event data', async () => {
+    await expect(
+      adapter.handle(
+        Buffer.from(
+          JSON.stringify({
+            signature: {
+              timestamp: '1700000000',
+              token: 'token-value',
+              signature: 'signature-value',
+            },
+          }),
+        ),
+      ),
+    ).rejects.toThrow('Mailgun webhook payload has no event data');
+  });
 });
