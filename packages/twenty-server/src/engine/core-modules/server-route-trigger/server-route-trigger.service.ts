@@ -173,8 +173,7 @@ export class ServerRouteTriggerService {
       { retryLimit: QUEUED_TARGET_RETRY_LIMIT },
     );
 
-    // Slack interactivity requires a plain 200 acknowledgment, and every
-    // other webhook sender accepts it, so the dispatch ack is 200 over 202.
+    // 200 over 202: Slack interactivity requires a plain 200 OK acknowledgment and every other webhook sender accepts it
     return { statusCode: 200, headers: {}, body: { queued: true } };
   }
 
