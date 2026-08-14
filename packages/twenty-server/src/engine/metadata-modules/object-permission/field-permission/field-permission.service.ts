@@ -37,6 +37,23 @@ type DesiredFieldPermission = {
 const keyFrom = (objectMetadataId: string, fieldMetadataId: string) =>
   `${objectMetadataId}:${fieldMetadataId}`;
 
+const toUniversalFlatFieldPermissionToDelete = (
+  fieldPermission: FlatFieldPermission,
+): UniversalFlatFieldPermission => ({
+  universalIdentifier: fieldPermission.universalIdentifier,
+  applicationUniversalIdentifier:
+    fieldPermission.applicationUniversalIdentifier,
+  roleUniversalIdentifier: fieldPermission.roleUniversalIdentifier,
+  objectMetadataUniversalIdentifier:
+    fieldPermission.objectMetadataUniversalIdentifier,
+  fieldMetadataUniversalIdentifier:
+    fieldPermission.fieldMetadataUniversalIdentifier,
+  canReadFieldValue: fieldPermission.canReadFieldValue ?? undefined,
+  canUpdateFieldValue: fieldPermission.canUpdateFieldValue ?? undefined,
+  createdAt: fieldPermission.createdAt,
+  updatedAt: fieldPermission.updatedAt,
+});
+
 @Injectable()
 export class FieldPermissionService {
   constructor(
@@ -202,20 +219,9 @@ export class FieldPermissionService {
         // Once both flags are cleared the row no longer restricts anything: delete it
         // instead of keeping an empty row (mirrored relation permissions land here on grant-back)
         if (!isDefined(effectiveCanRead) && !isDefined(effectiveCanUpdate)) {
-          flatEntityToDelete.push({
-            universalIdentifier: current.universalIdentifier,
-            applicationUniversalIdentifier:
-              current.applicationUniversalIdentifier,
-            roleUniversalIdentifier: current.roleUniversalIdentifier,
-            objectMetadataUniversalIdentifier:
-              current.objectMetadataUniversalIdentifier,
-            fieldMetadataUniversalIdentifier:
-              current.fieldMetadataUniversalIdentifier,
-            canReadFieldValue: current.canReadFieldValue ?? undefined,
-            canUpdateFieldValue: current.canUpdateFieldValue ?? undefined,
-            createdAt: current.createdAt,
-            updatedAt: current.updatedAt,
-          });
+          flatEntityToDelete.push(
+            toUniversalFlatFieldPermissionToDelete(current),
+          );
           continue;
         }
 
@@ -253,20 +259,9 @@ export class FieldPermissionService {
       const key = keyFrom(current.objectMetadataId, current.fieldMetadataId);
 
       if (inputFieldKeys.has(key) && !desiredMap.has(key)) {
-        flatEntityToDelete.push({
-          universalIdentifier: current.universalIdentifier,
-          applicationUniversalIdentifier:
-            current.applicationUniversalIdentifier,
-          roleUniversalIdentifier: current.roleUniversalIdentifier,
-          objectMetadataUniversalIdentifier:
-            current.objectMetadataUniversalIdentifier,
-          fieldMetadataUniversalIdentifier:
-            current.fieldMetadataUniversalIdentifier,
-          canReadFieldValue: current.canReadFieldValue ?? undefined,
-          canUpdateFieldValue: current.canUpdateFieldValue ?? undefined,
-          createdAt: current.createdAt,
-          updatedAt: current.updatedAt,
-        });
+        flatEntityToDelete.push(
+          toUniversalFlatFieldPermissionToDelete(current),
+        );
       }
     }
 
