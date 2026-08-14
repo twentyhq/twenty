@@ -31,8 +31,6 @@ export type JoinClause = {
   additionalOnConditions: string[];
 };
 
-// Which child row represents its parent in a deduped to-many join: the first one
-// under this ordering, mirroring the row TypeORM's flattened join would surface.
 export type ToManyDedupOrder = {
   columnName: string;
   direction: 'ASC' | 'DESC';
@@ -111,8 +109,6 @@ const quoteQualifiedAliasReferencesInSegment = (
     segment,
   );
 
-// Quotes TypeORM-style bare <alias>.<column> references, leaving string
-// literals and already-quoted identifiers untouched.
 export const quoteQualifiedAliasReferences = (
   expression: string,
   aliases: string[],
@@ -380,9 +376,6 @@ export const buildJoinClause = (state: SelectStatementState): string =>
 
       const onConditions = [condition, ...joinClause.additionalOnConditions];
 
-      // A to-one join filters soft-deleted rows in its ON clause. The deduped
-      // to-many join picks one representative row per parent, so its soft-delete
-      // filter runs inside the derived table before that pick.
       if (
         softDeletePredicateApplies &&
         !isDefined(toManyForeignKeyColumnName)
@@ -436,8 +429,6 @@ export const buildOrderByClause = (state: SelectStatementState): string => {
     .join(', ')}`;
 };
 
-// Inlining page size and offset would mint a new prepared statement shape per page, so
-// they bind as parameters under reserved names the shared parsers cannot produce.
 export const LIMIT_PARAMETER_NAME = 'ormV2Limit';
 export const OFFSET_PARAMETER_NAME = 'ormV2Offset';
 
@@ -509,10 +500,6 @@ type RelationColumnLeaf = {
   value: unknown;
 };
 
-// A LEFT JOIN with no matching row projects NULL for the joined id, which maps
-// the relation to null rather than a shell object of nulls. Partial selections
-// that do not project the id cannot tell a matched row apart from an unmatched
-// one, so they always hydrate an object.
 const buildRelationValue = (leaves: RelationColumnLeaf[]): unknown => {
   const idLeaf = leaves.find(
     (leaf) =>

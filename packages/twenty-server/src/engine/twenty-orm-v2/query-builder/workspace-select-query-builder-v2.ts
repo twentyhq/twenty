@@ -435,7 +435,6 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       ?.targetTableShape;
   }
 
-  // Resolved lazily so an addSelect('<alias>.<column>') may precede its join.
   private resolveColumnSelections(): ColumnSelection[] {
     return this.pendingColumnSelections.map((expression) => {
       const [alias, columnName] = expression.split('.');
@@ -642,10 +641,6 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     return true;
   }
 
-  // Mirrors the v1 enforcement surface: only selects and order bys written as
-  // qualified "alias"."column" references count towards permission checks, so
-  // system-context reads that join relations keep working with an empty
-  // permission map; row-level permissions still cover every joined alias.
   getReferencedColumnNamesByAlias(): Record<string, string[]> {
     const state = this.toSelectStatementState();
     const aliases = collectStatementAliases(state);
@@ -968,7 +963,6 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     return this;
   }
 
-  // An order by targeting an added-select alias must stay unqualified.
   private normaliseOrderByExpression(expression: string): string {
     const isBareIdentifier = /^\w+$/.test(expression);
 

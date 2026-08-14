@@ -16,8 +16,6 @@ export type FindOptionsRelationsV2 = {
 
 export type FindOptionsSelectV2 = FindOptionsSelectLike | string[];
 
-// An order entry keyed by a relation field carries the column orders of the
-// related records, as TypeORM's nested find order does.
 export type FindOptionsOrderV2 = {
   [key: string]: OrderByValueLike | OrderByConditionLike;
 };
@@ -32,8 +30,6 @@ export type FindOptionsV2 = {
   relations?: FindOptionsRelationsV2 | string[];
 };
 
-// TypeORM also accepts relations as an array of possibly dotted paths, e.g.
-// ['messages', 'messages.messageParticipants'].
 export const normalizeFindOptionsRelations = (
   relations: FindOptionsRelationsV2 | string[],
 ): FindOptionsRelationsV2 => {
@@ -106,8 +102,6 @@ const isRelationOrderEntry = (
   isDefined(tableShape.relationShapeByFieldName[key]) &&
   isRelationOrderValue(value);
 
-// An order entry keyed by a relation field orders parents through the relation
-// and sorts the loaded child records; every other entry is a plain column order.
 export const splitFindOptionsOrder = (
   tableShape: WorkspaceTableShape,
   order?: FindOptionsOrderV2,
