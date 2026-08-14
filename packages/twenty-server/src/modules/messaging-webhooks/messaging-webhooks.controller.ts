@@ -14,6 +14,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
+import { ResendWebhookAdapterService } from 'src/modules/messaging-webhooks/adapters/resend/services/resend-webhook-adapter.service';
 import { SesInboundWebhookDriverService } from 'src/modules/messaging-webhooks/drivers/aws-ses/services/ses-inbound-webhook-driver.service';
 import { SesOutboundWebhookDriverService } from 'src/modules/messaging-webhooks/drivers/aws-ses/services/ses-outbound-webhook-driver.service';
 import { MessagingWebhookApiExceptionFilter } from 'src/modules/messaging-webhooks/filters/messaging-webhook-api-exception.filter';
@@ -26,6 +27,7 @@ export class MessagingWebhooksController {
   constructor(
     private readonly sesInboundWebhookDriverService: SesInboundWebhookDriverService,
     private readonly sesOutboundWebhookDriverService: SesOutboundWebhookDriverService,
+    private readonly resendWebhookAdapterService: ResendWebhookAdapterService,
   ) {}
 
   @Post(`${ApiPath.Webhooks}/messaging/ses/inbound`)
@@ -58,5 +60,31 @@ export class MessagingWebhooksController {
     }
 
     await this.sesOutboundWebhookDriverService.handle(request.rawBody);
+  }
+
+  @Post(`${ApiPath.Webhooks}/messaging/resend`)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+  @HttpCode(200)
+  async handleResendWebhook(
+    @Req() request: RawBodyRequest<Request>,
+  ): Promise<void> {
+    if (!isDefined(request.rawBody)) {
+      throw new MessagingWebhookException(
+        'Missing Resend payload',
+        MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_MISSING_REQUEST_BODY,
+      );
+    }
+
+    await this.resendWebhookAdapterService.handle(request.rawBody, {
+      svixId: this.getHeader(request, 'svix-id'),
+      svixTimestamp: this.getHeader(request, 'svix-timestamp'),
+      svixSignature: this.getHeader(request, 'svix-signature'),
+    });
+  }
+
+  private getHeader(request: Request, name: string): string | undefined {
+    const value = request.headers[name];
+
+    return Array.isArray(value) ? value[0] : value;
   }
 }

@@ -2096,7 +2096,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.AWS_SES_SETTINGS,
     description:
-      'Driver used for the emailing domain feature — AWS_SES for production (requires AWS credentials), LOG fakes registration/verification/sends locally',
+      'Driver used for the emailing domain feature — AWS_SES (requires AWS credentials), RESEND (requires a Resend API key), LOG fakes registration/verification/sends locally',
     type: ConfigVariableType.ENUM,
     options: Object.values(EmailingDomainDriver),
   })
@@ -2183,6 +2183,34 @@ export class ConfigVariables {
   })
   @IsOptional()
   TATAMI_SNS_TOPIC_ARN: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RESEND_SETTINGS,
+    isSensitive: true,
+    description: 'Resend API key used when EMAILING_DOMAIN_DRIVER is RESEND',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  RESEND_API_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RESEND_SETTINGS,
+    isSensitive: true,
+    description:
+      'Signing secret of the Resend webhook endpoint that targets /webhooks/messaging/resend (whsec_...)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  RESEND_WEBHOOK_SIGNING_SECRET: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RESEND_SETTINGS,
+    description:
+      'Region Resend provisions new emailing domains in (us-east-1, eu-west-1, sa-east-1 or ap-northeast-1). Leave empty for the Resend default.',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  RESEND_DOMAIN_REGION: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
