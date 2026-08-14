@@ -1,7 +1,4 @@
-import {
-  MetadataWritability,
-  ObjectOpenRecordIn,
-} from 'twenty-shared/types';
+import { MetadataWritability, ObjectOpenRecordIn } from 'twenty-shared/types';
 import { faker } from '@faker-js/faker';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 

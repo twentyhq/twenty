@@ -425,6 +425,29 @@ export class WorkspaceUpdateQueryBuilder<
           criteria: this.manyInputs[index].criteria,
           partialEntity: updatedValue,
         }));
+
+        // nested relation processing adds join columns, so the written
+        // columns must be validated again on the final values
+        for (const input of this.manyInputs) {
+          const expressionMapWithFinalValues = Object.assign(
+            {},
+            this.expressionMap,
+            {
+              wheres: input.criteria,
+              valuesSet: input.partialEntity,
+            },
+          );
+
+          validateQueryIsPermittedOrThrow({
+            expressionMap: expressionMapWithFinalValues,
+            objectsPermissions: this.objectRecordsPermissions,
+            flatObjectMetadataMaps: this.internalContext.flatObjectMetadataMaps,
+            flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
+            objectIdByNameSingular: this.internalContext.objectIdByNameSingular,
+            shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+            authContext: this.authContext,
+          });
+        }
       }
 
       const beforeRecordById = new Map<string, T>();
