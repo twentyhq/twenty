@@ -6,6 +6,8 @@ import {
 } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
+
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { clampRecordBoardColumnWidth } from '@/object-record/record-board/utils/clampRecordBoardColumnWidth';
 import { setRecordBoardColumnWidthCssVariable } from '@/object-record/record-board/utils/setRecordBoardColumnWidthCssVariable';
@@ -32,6 +34,10 @@ export const useResizeBoardColumn = () => {
 
   const isResizing = isDefined(initialPointerPositionX);
 
+  // captured once per drag: reading computed style on every move would
+  // force a synchronous style recalc, and the zoom cannot change mid-drag
+  const [dragUiZoom, setDragUiZoom] = useState(1);
+
   const handleResizeStart = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
       if (event.pointerType !== 'mouse') {
@@ -39,6 +45,7 @@ export const useResizeBoardColumn = () => {
       }
 
       setDragSelectionStartEnabled(false);
+      setDragUiZoom(getUiZoom());
       setInitialPointerPositionX(event.clientX);
     },
     [setDragSelectionStartEnabled],
@@ -63,7 +70,8 @@ export const useResizeBoardColumn = () => {
       setRecordBoardColumnWidthCssVariable(
         recordBoardId,
         clampRecordBoardColumnWidth(
-          recordIndexKanbanColumnWidth + (x - initialPointerPositionX),
+          recordIndexKanbanColumnWidth +
+            (x - initialPointerPositionX) / dragUiZoom,
         ),
       );
     },
@@ -72,6 +80,7 @@ export const useResizeBoardColumn = () => {
       recordIndexKanbanColumnWidth,
       recordBoardId,
       setDragSelectionStartEnabled,
+      dragUiZoom,
     ],
   );
 
@@ -86,7 +95,8 @@ export const useResizeBoardColumn = () => {
 
       const nextWidth = Math.round(
         clampRecordBoardColumnWidth(
-          recordIndexKanbanColumnWidth + (x - initialPointerPositionX),
+          recordIndexKanbanColumnWidth +
+            (x - initialPointerPositionX) / dragUiZoom,
         ),
       );
 
@@ -101,6 +111,7 @@ export const useResizeBoardColumn = () => {
       setRecordIndexKanbanColumnWidth,
       updateViewKanbanColumnWidth,
       setDragSelectionStartEnabled,
+      dragUiZoom,
     ],
   );
 

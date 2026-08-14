@@ -61,7 +61,7 @@ const StyledFieldList = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  max-height: 50dvh;
+  max-height: calc(50dvh / var(--t-zoom, 1));
   overflow-y: auto;
   padding: ${themeCssVariables.spacing[3]};
 `;

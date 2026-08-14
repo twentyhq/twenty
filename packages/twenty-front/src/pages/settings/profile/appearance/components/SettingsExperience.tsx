@@ -1,5 +1,6 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { FormatPreferencesSettings } from '@/settings/experience/components/FormatPreferencesSettings';
+import { UiScalePicker } from '@/settings/experience/components/UiScalePicker';
 import { OpenRecordInPreferencePicker } from '@/settings/experience/components/OpenRecordInPreferencePicker';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
@@ -36,6 +37,14 @@ export const SettingsExperience = () => {
             darkLabel={t`Dark`}
             systemLabel={t`System settings`}
           />
+        </Section>
+
+        <Section>
+          <H2Title
+            title={t`Interface scale`}
+            description={t`Adjust the size of text and interface elements`}
+          />
+          <UiScalePicker />
         </Section>
 
         <Section>
