@@ -186,6 +186,17 @@ describe('Slack assistant worker', () => {
         ),
       },
     ]);
+    // A request record the app did not write earns no run-as, so the agent
+    // keeps its own role.
+    const agentMessages = appRuntime.lastAgentMessages;
+    const agentRuns = appRuntime.agentRuns;
+
+    expect(agentMessages[agentMessages.length - 1]?.content).toContain(
+      "You are answering with the app's own role",
+    );
+    expect(
+      agentRuns[agentRuns.length - 1]?.runAsWorkspaceMemberId,
+    ).toBeUndefined();
 
     expect(slack.assistantStatuses).toEqual([
       {

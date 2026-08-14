@@ -14,6 +14,7 @@ export type FakeSlackChannel = {
   isPrivate: boolean;
   isArchived: boolean;
   isMember: boolean;
+  isDirectMessage: boolean;
   numMembers: number;
   topic: string;
   purpose: string;
@@ -66,6 +67,13 @@ export type FakeSlackUser = {
   id: string;
   displayName?: string;
   realName?: string;
+  email?: string;
+  teamId?: string;
+  isBot?: boolean;
+  isDeleted?: boolean;
+  isRestricted?: boolean;
+  isUltraRestricted?: boolean;
+  isEmailConfirmed?: boolean;
 };
 
 export type SlackApiMockOptions = {
@@ -423,8 +431,34 @@ export const createSlackApiMock = ({
       ok: true,
       user: {
         id: user.id,
+        team_id: user.teamId ?? teamId,
         real_name: user.realName,
-        profile: { display_name: user.displayName },
+        is_bot: user.isBot ?? false,
+        deleted: user.isDeleted ?? false,
+        is_restricted: user.isRestricted ?? false,
+        is_ultra_restricted: user.isUltraRestricted ?? false,
+        is_email_confirmed: user.isEmailConfirmed ?? true,
+        profile: { display_name: user.displayName, email: user.email },
+      },
+    });
+  };
+
+  const getChannelInfo = (args: Record<string, unknown>) => {
+    const channel = findChannel(args.channel);
+
+    if (!isDefined(channel)) {
+      return slackError('channel_not_found');
+    }
+
+    return HttpResponse.json({
+      ok: true,
+      channel: {
+        id: channel.id,
+        name: channel.name,
+        is_im: channel.isDirectMessage,
+        is_private: channel.isPrivate,
+        is_archived: channel.isArchived,
+        is_member: channel.isMember,
       },
     });
   };
@@ -453,6 +487,8 @@ export const createSlackApiMock = ({
         return changeReaction('add', args);
       case 'reactions.remove':
         return changeReaction('remove', args);
+      case 'conversations.info':
+        return getChannelInfo(args);
       case 'conversations.list':
         return listChannels(args);
       case 'conversations.replies':
@@ -523,6 +559,9 @@ export const createSlackApiMock = ({
         isPrivate: false,
         isArchived: false,
         isMember: true,
+        // Slack direct message channel ids start with a D, and the app asks
+        // Slack rather than trusting the request record.
+        isDirectMessage: channel.id.startsWith('D'),
         numMembers: 3,
         topic: '',
         purpose: '',
