@@ -39,7 +39,9 @@ export const FilesCard = () => {
 
   const handleFileInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (isDefined(event.target.files)) {
-      onUploadFiles(Array.from(event.target.files));
+      const files = Array.from(event.target.files);
+      event.target.value = '';
+      onUploadFiles(files);
     }
   };
 
