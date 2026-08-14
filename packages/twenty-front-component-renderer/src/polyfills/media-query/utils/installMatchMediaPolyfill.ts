@@ -58,10 +58,10 @@ export const installMatchMediaPolyfill = ({
     return createWorkerMediaQueryList({
       media,
       evaluateMatches: () =>
-        evaluateParsedMediaQueryList(
+        evaluateParsedMediaQueryList({
           parsedMediaQueryList,
-          readMediaQueryEnvironment(),
-        ),
+          environment: readMediaQueryEnvironment(),
+        }),
       subscribeToEnvironmentUpdates,
     });
   };
