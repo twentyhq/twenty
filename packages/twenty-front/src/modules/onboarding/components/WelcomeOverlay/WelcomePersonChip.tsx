@@ -29,8 +29,6 @@ const StyledPersonName = styled.span`
   text-overflow: ellipsis;
   white-space: nowrap;
 
-  // The chip wraps onto its own line here, so it can use most of the width
-  // before the name has to be ellipsised.
   @media (max-width: 600px) {
     max-width: min(70vw, 360px);
   }
