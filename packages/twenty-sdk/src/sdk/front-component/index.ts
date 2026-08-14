@@ -9,6 +9,7 @@ export { openCommandConfirmationModal } from './functions/openCommandConfirmatio
 export { openSidePanelPage } from './functions/openSidePanelPage';
 export { unmountFrontComponent } from './functions/unmountFrontComponent';
 export { updateProgress } from './functions/updateProgress';
+export { uploadFile } from './functions/uploadFile';
 export { useColorScheme } from './hooks/useColorScheme';
 export { useFrontComponentExecutionContext } from './hooks/useFrontComponentExecutionContext';
 export { useFrontComponentId } from './hooks/useFrontComponentId';
@@ -44,6 +45,11 @@ export type {
   StorageSetFunction,
   UnmountFrontComponentFunction,
   UpdateProgressFunction,
+  UploadedFrontComponentFile,
+  UploadFileFailureReason,
+  UploadFileFunction,
+  UploadFileParams,
+  UploadFileResult,
 } from './globals/frontComponentHostCommunicationApi';
 
 export {

@@ -18,6 +18,8 @@ import { installMutationObserver } from '@/polyfills/dom/utils/installMutationOb
 import { workerGeometryStore } from '@/polyfills/geometry/states/workerGeometryStore';
 import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
 import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/installWindowGeometryPolyfill';
+import { workerMediaBridge } from '@/polyfills/media/states/workerMediaBridge';
+import { installMediaCapturePolyfills } from '@/polyfills/media/utils/installMediaCapturePolyfills';
 import { frontComponentStorageBridges } from '@/polyfills/storage/states/frontComponentStorageBridges';
 import { toGlobalScopeRecord } from '@/polyfills/utils/toGlobalScopeRecord';
 import { installStorageBridge } from '@/polyfills/storage/utils/installStorageBridge';
@@ -81,6 +83,11 @@ installClipboardPolyfill({
   },
 });
 
+installMediaCapturePolyfills({
+  globalScope: toGlobalScopeRecord(globalThis),
+  bridge: workerMediaBridge,
+});
+
 exposeGlobals({
   __HTML_TAG_TO_CUSTOM_ELEMENT_TAG__: HTML_TAG_TO_CUSTOM_ELEMENT_TAG,
 });
@@ -122,6 +129,9 @@ const workerExports: WorkerExports = {
   pushGeometryUpdates: async (batch) => {
     workerGeometryStore.applyGeometryBatch(batch);
   },
+  pushMediaSessionEvents: async (batch) => {
+    workerMediaBridge.dispatchEvents(batch);
+  },
 };
 
 self.addEventListener('message', (event) => {
@@ -141,6 +151,7 @@ self.addEventListener('message', (event) => {
   hostThread = nextHostThread;
 
   workerGeometryStore.connectTransport(nextHostThread.imports);
+  workerMediaBridge.connectTransport(nextHostThread.imports);
 
   transferredPort.start();
 });

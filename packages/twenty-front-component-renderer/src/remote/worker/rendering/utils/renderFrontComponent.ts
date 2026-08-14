@@ -2,6 +2,7 @@ import { type RemoteConnection } from '@remote-dom/core/elements';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
 import { workerGeometryStore } from '@/polyfills/geometry/states/workerGeometryStore';
+import { workerMediaBridge } from '@/polyfills/media/states/workerMediaBridge';
 import { frontComponentStorageBridges } from '@/polyfills/storage/states/frontComponentStorageBridges';
 import { attachRemoteRenderRootToWorkerDocument } from '@/remote/worker/rendering/utils/attachRemoteRenderRootToWorkerDocument';
 import { installHostFetchProxy } from '@/remote/worker/fetch-proxy/utils/installHostFetchProxy';
@@ -38,6 +39,12 @@ export const renderFrontComponent = async ({
     workerGeometryStore.applyGeometryBatch({
       viewport: renderContext.initialViewportGeometry,
     });
+  }
+
+  if (isDefined(renderContext.mediaRecorderCapabilities)) {
+    workerMediaBridge.seedRecorderCapabilities(
+      renderContext.mediaRecorderCapabilities,
+    );
   }
 
   const storageSnapshots = renderContext.storageSnapshots;
