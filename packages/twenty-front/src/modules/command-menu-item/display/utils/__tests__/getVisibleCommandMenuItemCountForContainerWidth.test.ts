@@ -36,4 +36,30 @@ describe('getVisibleCommandMenuItemCountForContainerWidth', () => {
 
     expect(visibleCommandMenuItemCount).toBe(2);
   });
+
+  it('should reserve the leading action width and its gap', () => {
+    const visibleCommandMenuItemCount =
+      getVisibleCommandMenuItemCountForContainerWidth({
+        commandMenuItemKeysInDisplayOrder: ['a', 'b', 'c'],
+        commandMenuItemWidthsByKey: { a: 40, b: 40, c: 40 },
+        commandMenuItemsContainerWidth: 148,
+        commandMenuItemsGapWidth: 8,
+        commandMenuItemsLeadingActionWidth: 24,
+      });
+
+    expect(visibleCommandMenuItemCount).toBe(2);
+  });
+
+  it('should overflow every item when the leading action fills the container', () => {
+    const visibleCommandMenuItemCount =
+      getVisibleCommandMenuItemCountForContainerWidth({
+        commandMenuItemKeysInDisplayOrder: ['a'],
+        commandMenuItemWidthsByKey: { a: 40 },
+        commandMenuItemsContainerWidth: 30,
+        commandMenuItemsGapWidth: 8,
+        commandMenuItemsLeadingActionWidth: 24,
+      });
+
+    expect(visibleCommandMenuItemCount).toBe(0);
+  });
 });

@@ -3,6 +3,7 @@ type GetVisibleCommandMenuItemCountForContainerWidthParams = {
   commandMenuItemWidthsByKey: Record<string, number>;
   commandMenuItemsContainerWidth: number;
   commandMenuItemsGapWidth: number;
+  commandMenuItemsLeadingActionWidth?: number;
 };
 
 export const getVisibleCommandMenuItemCountForContainerWidth = ({
@@ -10,10 +11,20 @@ export const getVisibleCommandMenuItemCountForContainerWidth = ({
   commandMenuItemWidthsByKey,
   commandMenuItemsContainerWidth,
   commandMenuItemsGapWidth,
+  commandMenuItemsLeadingActionWidth = 0,
 }: GetVisibleCommandMenuItemCountForContainerWidthParams): number => {
   if (commandMenuItemsContainerWidth <= 0) {
     return commandMenuItemKeysInDisplayOrder.length;
   }
+
+  // A leading action shares the container with the items and is separated from
+  // them by one gap, so its footprint is reserved before fitting the items.
+  const availableContainerWidth =
+    commandMenuItemsLeadingActionWidth > 0
+      ? commandMenuItemsContainerWidth -
+        commandMenuItemsLeadingActionWidth -
+        commandMenuItemsGapWidth
+      : commandMenuItemsContainerWidth;
 
   let usedWidth = 0;
   let visibleCommandMenuItemCount = 0;
@@ -30,7 +41,7 @@ export const getVisibleCommandMenuItemCountForContainerWidth = ({
         ? commandMenuItemWidth
         : usedWidth + commandMenuItemsGapWidth + commandMenuItemWidth;
 
-    if (nextWidth > commandMenuItemsContainerWidth) {
+    if (nextWidth > availableContainerWidth) {
       break;
     }
 

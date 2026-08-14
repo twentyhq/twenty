@@ -91,6 +91,7 @@ export const PinnedCommandMenuItemButtons = ({
     pinnedInlineCommandMenuItems,
     pinnedOverflowCommandMenuItems,
     onContainerDimensionChange,
+    onLeadingActionDimensionChange,
     onCommandMenuItemDimensionChange,
   } = usePinnedCommandMenuItemsInlineLayout({
     pinnedCommandMenuItems,
@@ -127,7 +128,11 @@ export const PinnedCommandMenuItemButtons = ({
       <StyledWrapper>
         <NodeDimension onDimensionChange={onContainerDimensionChange}>
           <StyledContainer>
-            {leadingAction}
+            {isDefined(leadingAction) && (
+              <NodeDimension onDimensionChange={onLeadingActionDimensionChange}>
+                {leadingAction}
+              </NodeDimension>
+            )}
             <StyledItemsContainer shouldReverse={!isSidePanelFooter}>
               {displayedInlineCommandMenuItems.map((item) => (
                 <StyledCommandMenuItemContainer

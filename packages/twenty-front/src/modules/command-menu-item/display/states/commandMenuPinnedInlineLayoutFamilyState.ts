@@ -12,6 +12,7 @@ export const commandMenuPinnedInlineLayoutFamilyState = createAtomFamilyState<
   key: 'commandMenuPinnedInlineLayoutFamilyState',
   defaultValue: {
     containerWidth: 0,
+    leadingActionWidth: 0,
     commandMenuItemWidthsByKey: {},
   },
 });

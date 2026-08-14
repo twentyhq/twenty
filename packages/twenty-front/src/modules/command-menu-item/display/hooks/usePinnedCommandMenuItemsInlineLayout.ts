@@ -53,6 +53,8 @@ export const usePinnedCommandMenuItemsInlineLayout = ({
             commandMenuItemsContainerWidth:
               commandMenuPinnedInlineLayout.containerWidth,
             commandMenuItemsGapWidth: PINNED_COMMAND_MENU_ITEMS_GAP,
+            commandMenuItemsLeadingActionWidth:
+              commandMenuPinnedInlineLayout.leadingActionWidth,
           })
         : 0,
     [
@@ -88,6 +90,22 @@ export const usePinnedCommandMenuItemsInlineLayout = ({
     [setCommandMenuPinnedInlineLayout],
   );
 
+  const onLeadingActionDimensionChange = useCallback(
+    (dimensions: ElementDimensions) => {
+      setCommandMenuPinnedInlineLayout(
+        (previousCommandMenuPinnedInlineLayout) =>
+          previousCommandMenuPinnedInlineLayout.leadingActionWidth !==
+          dimensions.width
+            ? {
+                ...previousCommandMenuPinnedInlineLayout,
+                leadingActionWidth: dimensions.width,
+              }
+            : previousCommandMenuPinnedInlineLayout,
+      );
+    },
+    [setCommandMenuPinnedInlineLayout],
+  );
+
   const onCommandMenuItemDimensionChange = useCallback(
     (commandMenuItemKey: string) => (dimensions: ElementDimensions) => {
       setCommandMenuPinnedInlineLayout(
@@ -112,6 +130,7 @@ export const usePinnedCommandMenuItemsInlineLayout = ({
     pinnedInlineCommandMenuItems,
     pinnedOverflowCommandMenuItems,
     onContainerDimensionChange,
+    onLeadingActionDimensionChange,
     onCommandMenuItemDimensionChange,
   };
 };
