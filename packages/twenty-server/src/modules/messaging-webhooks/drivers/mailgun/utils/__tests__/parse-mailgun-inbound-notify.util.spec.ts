@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { parseMailgunInboundNotify } from 'src/modules/messaging-webhooks/drivers/mailgun/utils/parse-mailgun-inbound-notify.util';
 
 describe('parseMailgunInboundNotify', () => {

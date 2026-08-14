@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { Injectable } from '@nestjs/common';
 
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces/file-storage.interface';

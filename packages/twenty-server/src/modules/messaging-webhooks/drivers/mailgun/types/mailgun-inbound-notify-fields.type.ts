@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 export type MailgunInboundNotifyFields = {
   timestamp: string | undefined;
   token: string | undefined;

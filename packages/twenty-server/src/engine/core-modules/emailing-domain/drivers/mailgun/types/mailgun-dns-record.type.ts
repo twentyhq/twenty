@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 export type MailgunDnsRecord = {
   record_type?: string;
   name?: string;

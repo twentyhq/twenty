@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { type MailgunDnsRecord } from 'src/engine/core-modules/emailing-domain/drivers/mailgun/types/mailgun-dns-record.type';
 
 export type MailgunDomainResponse = {

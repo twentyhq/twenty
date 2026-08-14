@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 export type AwsSesError = {
   name?: string;
   message?: string;

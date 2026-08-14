@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { Injectable, Logger } from '@nestjs/common';
 
 import { MessagingWebhookExceptionCode } from 'src/modules/messaging-webhooks/messaging-webhook-exception-code.enum';

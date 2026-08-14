@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { Injectable, Logger } from '@nestjs/common';
 
 import {

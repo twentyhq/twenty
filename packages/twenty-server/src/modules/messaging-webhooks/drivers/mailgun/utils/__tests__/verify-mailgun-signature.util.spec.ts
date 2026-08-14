@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { createHmac } from 'crypto';
 
 import { verifyMailgunSignature } from 'src/modules/messaging-webhooks/drivers/mailgun/utils/verify-mailgun-signature.util';

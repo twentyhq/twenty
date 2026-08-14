@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';

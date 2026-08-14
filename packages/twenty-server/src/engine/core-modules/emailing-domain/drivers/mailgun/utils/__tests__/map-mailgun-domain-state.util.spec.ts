@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { mapMailgunDomainState } from 'src/engine/core-modules/emailing-domain/drivers/mailgun/utils/map-mailgun-domain-state.util';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 

@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { type MailgunInboundNotifyFields } from 'src/modules/messaging-webhooks/drivers/mailgun/types/mailgun-inbound-notify-fields.type';

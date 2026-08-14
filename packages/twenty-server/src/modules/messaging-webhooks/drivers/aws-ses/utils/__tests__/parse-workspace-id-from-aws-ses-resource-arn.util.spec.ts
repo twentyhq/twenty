@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { parseWorkspaceIdFromAwsSesResourceArn } from 'src/modules/messaging-webhooks/drivers/aws-ses/utils/parse-workspace-id-from-aws-ses-resource-arn.util';
 
 describe('parseWorkspaceIdFromAwsSesResourceArn', () => {
