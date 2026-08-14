@@ -7,6 +7,8 @@ import {
 
 export type ColorScheme = 'Dark' | 'Light' | 'System';
 
+export type UiScale = 'Smaller' | 'Default' | 'Large' | 'Larger';
+
 export type WorkspaceMember = {
   __typename: 'WorkspaceMember';
   id: string;
@@ -18,6 +20,7 @@ export type WorkspaceMember = {
   avatarUrl?: string | null;
   locale: string | null;
   colorScheme: ColorScheme;
+  uiScale?: UiScale | null;
   openRecordIn?: OpenRecordIn;
   createdAt: string;
   updatedAt: string;

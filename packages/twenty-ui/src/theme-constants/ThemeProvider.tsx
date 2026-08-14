@@ -110,12 +110,14 @@ export const ThemeProvider = ({
   applyToRoot = true,
   overrides,
   className,
+  scale,
 }: {
   children: React.ReactNode;
   colorScheme: 'light' | 'dark';
   applyToRoot?: boolean;
   overrides?: ThemeOverrides;
   className?: string;
+  scale?: number;
 }) => {
   const isScoped = isDefined(overrides) || !applyToRoot;
 
@@ -145,6 +147,32 @@ export const ThemeProvider = ({
     );
     setScopeContainer(isScoped ? wrapperRef.current : null);
   }, [colorScheme, applyToRoot, isScoped, overridesKey]);
+
+  // The interface scale preference is consumed by the root zoom rule in the
+  // app stylesheet through --t-scale-user. Computed styles stay unzoomed, so
+  // no theme recompute is needed when the value changes. The provider owns
+  // the property on its target while mounted; the cleanup is only registered
+  // from the branch that set it, so a provider mounted without a scale can
+  // never clear a value another provider owns.
+  useLayoutEffect(() => {
+    if (typeof document === 'undefined') {
+      return;
+    }
+
+    const scaleTarget = isScoped
+      ? wrapperRef.current
+      : document.documentElement;
+
+    if (!isDefined(scaleTarget) || !isDefined(scale)) {
+      return;
+    }
+
+    scaleTarget.style.setProperty('--t-scale-user', String(scale));
+
+    return () => {
+      scaleTarget.style.removeProperty('--t-scale-user');
+    };
+  }, [scale, isScoped]);
 
   const contextValue = { theme, colorScheme };
 

@@ -6,6 +6,8 @@ import {
 } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
+
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { clampRecordBoardColumnWidth } from '@/object-record/record-board/utils/clampRecordBoardColumnWidth';
 import { setRecordBoardColumnWidthCssVariable } from '@/object-record/record-board/utils/setRecordBoardColumnWidthCssVariable';
@@ -63,7 +65,8 @@ export const useResizeBoardColumn = () => {
       setRecordBoardColumnWidthCssVariable(
         recordBoardId,
         clampRecordBoardColumnWidth(
-          recordIndexKanbanColumnWidth + (x - initialPointerPositionX),
+          recordIndexKanbanColumnWidth +
+            (x - initialPointerPositionX) / getUiZoom(),
         ),
       );
     },
@@ -86,7 +89,8 @@ export const useResizeBoardColumn = () => {
 
       const nextWidth = Math.round(
         clampRecordBoardColumnWidth(
-          recordIndexKanbanColumnWidth + (x - initialPointerPositionX),
+          recordIndexKanbanColumnWidth +
+            (x - initialPointerPositionX) / getUiZoom(),
         ),
       );
 

@@ -37,6 +37,11 @@ msgstr "A(z) \"{0}\" nem összetett mező — távolítsa el az almező kiválas
 msgid "\"{0}\" is not a valid sub-field of \"{1}\"."
 msgstr "A(z) \"{0}\" nem érvényes almezője a(z) \"{1}\" mezőnek."
 
+#. js-lingui-id: gKGO2f
+#: src/engine/core-modules/user/utils/assert-workspace-member-update-values-are-valid.util.ts
+msgid "\"{fieldName}\" received an invalid value."
+msgstr ""
+
 #. js-lingui-id: SsRDX3
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
 msgid "\"{payloadKey}\" is not a valid workspace member field."
@@ -3610,6 +3615,11 @@ msgstr "Nincs elegendő jogosultság a naptár eléréséhez."
 msgid "Insufficient permissions."
 msgstr "Elégtelen jogosultság."
 
+#. js-lingui-id: HTEaVD
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgid "Interface Scale"
+msgstr ""
+
 #. js-lingui-id: 4bX5tI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgid "Internal name of the campaign"
@@ -6373,6 +6383,11 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgid "Preferred color scheme"
 msgstr "Preferált színséma"
+
+#. js-lingui-id: QG76Gf
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgid "Preferred interface scale"
+msgstr ""
 
 #. js-lingui-id: 5v4qYi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts

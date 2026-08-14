@@ -15,6 +15,7 @@ import { shouldCompactRecordTableFirstColumnComponentState } from '@/object-reco
 import { computeLastRecordTableColumnWidth } from '@/object-record/record-table/utils/computeLastRecordTableColumnWidth';
 import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
 import { updateRecordTableCSSVariable } from '@/object-record/record-table/utils/updateRecordTableCSSVariable';
+import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { type PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
@@ -93,7 +94,7 @@ export const useResizeTableHeader = () => {
 
       throwIfNotDefined(recordField, 'recordField');
 
-      const newResizeOffset = x - initialPointerPositionX;
+      const newResizeOffset = (x - initialPointerPositionX) / getUiZoom();
 
       const newRecordFieldSizeWithOffset = recordField.size + newResizeOffset;
 
@@ -140,7 +141,7 @@ export const useResizeTableHeader = () => {
         `${newGroupSectionLastColumnWidth}px`,
       );
 
-      setResizeFieldOffset(x - initialPointerPositionX);
+      setResizeFieldOffset((x - initialPointerPositionX) / getUiZoom());
     },
     [
       initialPointerPositionX,

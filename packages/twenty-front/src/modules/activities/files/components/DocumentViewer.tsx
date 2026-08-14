@@ -30,7 +30,7 @@ const StyledDocumentViewerContainer = styled.div`
   background: ${themeCssVariables.background.secondary};
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 200px);
+  height: calc(calc(100vh / var(--t-zoom, 1)) - 200px);
   min-height: 500px;
   width: 100%;
 

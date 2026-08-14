@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 
+import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { type PointerEventListener } from '@/ui/utilities/pointer-event/types/PointerEventListener';
 
@@ -39,7 +40,7 @@ export const useResizablePanel = ({
     ({ x }) => {
       if (startX === null) return;
 
-      const deltaX = x - startX;
+      const deltaX = (x - startX) / getUiZoom();
 
       if (!hasDragged && Math.abs(deltaX) > RESIZE_DRAG_THRESHOLD_PX) {
         setHasDragged(true);
@@ -81,7 +82,7 @@ export const useResizablePanel = ({
         return;
       }
 
-      const deltaX = x - startX;
+      const deltaX = (x - startX) / getUiZoom();
 
       if (!hasDragged) {
         onCollapse();
