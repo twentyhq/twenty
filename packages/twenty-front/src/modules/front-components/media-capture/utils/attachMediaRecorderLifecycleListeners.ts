@@ -64,7 +64,11 @@ export const attachMediaRecorderLifecycleListeners = <
 
     releaseRecordingResources(recording);
 
-    if (isDisposed() || recording.wasCancelled || recording.hasRecorderErrored) {
+    if (
+      isDisposed() ||
+      recording.wasCancelled ||
+      recording.hasRecorderErrored
+    ) {
       // Dropping the chunks matters: they alone pin the discarded
       // recording's bytes (tens of MB for video).
       recording.recordedChunks = [];

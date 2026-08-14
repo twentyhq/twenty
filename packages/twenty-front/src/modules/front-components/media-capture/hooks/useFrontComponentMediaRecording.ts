@@ -253,8 +253,14 @@ export const useFrontComponentMediaRecording = ({
 
     // Await the stop event even when the recorder is already inactive: the
     // max-duration ceiling stops it asynchronously, and the blob only exists
-    // once the stop handler has run.
-    if (!isDefined(recordedBlob) && !activeRecording.hasStopHandlerRun) {
+    // once the stop handler has run. Not after a recorder error though — an
+    // inactive errored recorder fires no further stop event, so waiting for
+    // one would hang this call forever.
+    if (
+      !isDefined(recordedBlob) &&
+      !activeRecording.hasStopHandlerRun &&
+      !activeRecording.hasRecorderErrored
+    ) {
       recordedBlob = await new Promise<Blob | null>((resolve) => {
         activeRecording.pendingStopResolve = resolve;
 
