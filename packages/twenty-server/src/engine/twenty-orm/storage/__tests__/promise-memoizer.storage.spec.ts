@@ -8,19 +8,16 @@ describe('PromiseMemoizer', () => {
   const TTL_MS = 1000; // 1 second TTL for testing
 
   beforeAll(() => {
-    // Store the original Date.now function
     originalDateNow = Date.now;
   });
 
   afterAll(() => {
-    // Restore the original Date.now function
     global.Date.now = originalDateNow;
   });
 
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // Start with a fixed timestamp
     const currentTimestamp = 1000;
 
     global.Date.now = jest.fn(() => currentTimestamp);
@@ -46,7 +43,6 @@ describe('PromiseMemoizer', () => {
 
       await memoizer.memoizePromiseAndExecute('test-key-1', mockFactory);
 
-      // Move time forward but still within TTL
       const currentTime = Date.now();
 
       jest
@@ -67,7 +63,6 @@ describe('PromiseMemoizer', () => {
 
       await memoizer.memoizePromiseAndExecute('test-key-1', mockFactory);
 
-      // Move time beyond TTL
       const currentTime = Date.now();
 
       jest

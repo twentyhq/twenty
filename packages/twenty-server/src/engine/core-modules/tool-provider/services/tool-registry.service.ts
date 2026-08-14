@@ -101,7 +101,6 @@ export class ToolRegistryService {
     return schemas;
   }
 
-  // Hydrate ToolDescriptor[] into an AI SDK ToolSet with thin dispatch closures
   hydrateToolSet(
     descriptors: ToolDescriptor[],
     context: ToolProviderContext,

@@ -74,7 +74,6 @@ const companyPeopleField = getMockFieldMetadataItemOrThrow({
 const TEST_RECORD_ID = 'test-record-123';
 const TEST_PERSON_RECORD_ID = 'test-person-456';
 
-// Widget ID constants for stories
 const WIDGET_ID_NUMBER_CHART = 'widget-number-chart';
 const WIDGET_ID_BAR_CHART = 'widget-bar-chart';
 const WIDGET_ID_SMALL = 'widget-small';
@@ -1011,7 +1010,6 @@ export const WithManyToOneRelationFieldWidget: Story = {
       recordStoreFamilyState.atomFamily(TEST_RECORD_ID),
       mockCompanyRecord,
     );
-    // Set the related WorkspaceMember record for relation field display
     if (
       mockCompanyRecord.accountOwner !== null &&
       mockCompanyRecord.accountOwner !== undefined
@@ -1253,7 +1251,6 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
       recordStoreFamilyState.atomFamily(TEST_PERSON_RECORD_ID),
       mockPersonRecord,
     );
-    // Set hover state to make the "See all" button visible
     jotaiStore.set(
       widgetCardHoveredComponentFamilyState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -1303,13 +1300,10 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Find the "See all" link button by its test id
     const seeAllLink = await canvas.findByTestId('widget-see-all-link');
 
-    // Verify the button is visible
     expect(seeAllLink).toBeVisible();
 
-    // Verify it has a well-formed link (should contain the filter query params)
     expect(seeAllLink).toHaveAttribute('href');
     const href = seeAllLink.getAttribute('href');
     expect(href).toContain('/objects/people');
@@ -1661,7 +1655,6 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
       );
     }
 
-    // currentUserWorkspaceState is now a Jotai state, set it directly
     if (isRestricted === true) {
       jotaiStore.set(currentUserWorkspaceState.atom, {
         permissionFlags: [],

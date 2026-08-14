@@ -37,6 +37,7 @@ export default defineApplication({
 * 在构建清单时会自动检测安装前、安装后和卸载函数——无需在 `defineApplication()` 中引用它们。
 * 显式传递 `defaultRoleUniversalIdentifier` 仍然受支持以保持向后兼容性，但已弃用，推荐改用 `defineApplicationRole()`。
 * `serverVariables` 是实例级的配置和机密信息（例如 API 密钥）。 与 `applicationVariables` 不同，它们不会在 manifest 中声明具体值——工作区运维人员会在应用设置中填写这些值，并且它们只有在被设置后才会被注入到逻辑函数中。
+* 两种类型的变量都可以接受 `isDeprecated: true`。 使用它来停用变量而不是删除它：保留已声明的键可以保留存储的值（删除它会销毁操作员输入的值），并且变量仍然会被注入，所以你的代码仍然可以回退到它 — `process.env.NEW_API_KEY ?? process.env.API_KEY`。 一旦弃用变量没有任何值，它就会从应用的设置中消失，并且永远不会计入应用的配置检查中，因此 `isDeprecated` 的优先级高于 `isRequired`。
 * 要在应用的 **Settings** 选项卡中渲染自定义配置界面（替换默认的变量配置部分），请在其独立文件中使用 [`defineSettingsFrontComponent()`](/l/zh/developers/extend/apps/layout/front-components#custom-settings-component) 声明一个前端组件。 每个应用只允许有一个。 系统管理的部分（自动升级、App URL、连接）将始终保持可见。
 
 ## 变量类型

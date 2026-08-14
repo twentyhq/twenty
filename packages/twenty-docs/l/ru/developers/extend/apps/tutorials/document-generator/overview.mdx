@@ -1,0 +1,67 @@
+---
+title: "Учебник: Генератор документов"
+icon: wand-magic-sparkles
+description: Создайте реальное приложение Twenty, которое генерирует персонализированные документы из ваших данных CRM.
+---
+
+В этом учебнике вы создадите **Document Generator** — приложение, которое преобразует многоразовые шаблоны в персонализированные документы, используя данные, уже находящиеся в вашей CRM.
+
+Один раз напишите шаблон с `{{placeholders}}`, затем генерируйте заполненный документ для любого Контакта или Компании в один клик — из командного меню, от агента ИИ или из рабочего процесса.
+
+<Frame caption="Один шаблон, сгенерированный для конкретного человека, открыт как страница для печати.">
+  <img src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png" alt="Сгенерированное коммерческое предложение" />
+</Frame>
+
+## Чему вы научитесь
+
+Каждая глава добавляет одну возможность. К концу вы познакомитесь с большинством возможностей SDK.
+
+| Глава                                                                                               | Возможность                                                                                                                                            | Справочник                                                          |
+| --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
+| [1. Модель данных](/l/ru/developers/extend/apps/tutorials/document-generator/data-model)                 | Объекты, поля и связь                                                                                                                                  | [Данные](/l/ru/developers/extend/apps/data/overview)                     |
+| [2. Создание документов](/l/ru/developers/extend/apps/tutorials/document-generator/generating-documents) | Логическая функция (инструмент ИИ + действие рабочего процесса), которая заполняет шаблон Markdown и прикрепляет отточенный PDF                        | [Логические функции](/l/ru/developers/extend/apps/logic/logic-functions) |
+| [3. HTTP-маршруты](/l/ru/developers/extend/apps/tutorials/document-generator/http-routes)                | Выдача JSON и доступной по ссылке HTML-страницы из маршрутов                                                                                           | [Логические функции](/l/ru/developers/extend/apps/logic/logic-functions) |
+| [4. Создание интерфейса](/l/ru/developers/extend/apps/tutorials/document-generator/building-the-ui)      | Представления, навигация, командное меню и фронтенд-компоненты, которые показывают предварительный просмотр документа и позволяют редактировать шаблон | [Макет](/l/ru/developers/extend/apps/layout/overview)                    |
+| [5. Агент ИИ](/l/ru/developers/extend/apps/tutorials/document-generator/ai-agent)                        | Агент + навык                                                                                                                                          | [Навыки и агенты](/l/ru/developers/extend/apps/logic/skills-and-agents)  |
+| [6. Публикация](/l/ru/developers/extend/apps/tutorials/document-generator/publishing)                    | Выпустить в маркетплейс                                                                                                                                | [Публикация](/l/ru/developers/extend/apps/operations/publishing)         |
+
+## Требования
+
+К этому моменту вы уже должны были пройти [быстрый старт](/l/ru/developers/extend/apps/getting-started/quick-start):
+локальный сервер Twenty, запущенный на порту `2020`, и CLI, аутентифицированный в нем.
+
+Если нет, разверните и запустите его сейчас:
+
+```bash filename="Terminal"
+npx create-twenty-app@latest document-generator
+cd document-generator
+yarn twenty dev
+```
+
+<Note>
+Предпочитаете читать готовый код? Полное приложение находится в
+[`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
+Каждый фрагмент кода ниже скопирован из него.
+</Note>
+
+## Как устроено приложение
+
+<Frame>
+  <img src="/images/docs/developers/extends/apps/document-generator/how-it-fits.svg" alt="Шаблон с плейсхолдерами преобразуется в отточенный документ с PDF, запускаемый из командного меню, агентом ИИ, рабочим процессом или общей ссылкой" />
+</Frame>
+
+Вы один раз пишете **шаблон** в редакторе форматированного текста с `{{placeholders}}`. Выбор
+шаблона и записи CRM заполняет плейсхолдеры и сохраняет отточенный
+**документ** (с PDF-файлом). Все остальное — командное меню, агент ИИ,
+шаг рабочего процесса, общая ссылка — это всего лишь разные способы запустить
+один и тот же генератор.
+
+## Поддерживайте этот цикл
+
+Оставьте `yarn twenty dev` запущенной в терминале на протяжении всего учебника. Каждый раз, когда
+вы добавляете или изменяете файл в `src/`, он заново синхронизируется с вашим сервером в течение нескольких
+секунд, так что вы можете наблюдать, как каждая новая возможность появляется в интерфейсе по мере ее создания.
+
+<Card title="Начните разработку →" icon="database" href="/l/ru/developers/extend/apps/tutorials/document-generator/data-model">
+  Глава 1: моделируем документы и шаблоны.
+</Card>

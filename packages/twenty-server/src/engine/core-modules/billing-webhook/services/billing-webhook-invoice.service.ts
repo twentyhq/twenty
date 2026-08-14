@@ -15,7 +15,6 @@ import {
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
-import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
@@ -34,8 +33,6 @@ export class BillingWebhookInvoiceService {
   protected readonly logger = new Logger(BillingWebhookInvoiceService.name);
 
   constructor(
-    @InjectRepository(BillingSubscriptionItemEntity)
-    private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItemEntity>,
     // Stripe webhook: workspace discovered from BillingCustomer by stripeCustomerId.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingCustomerEntity)
@@ -87,11 +84,6 @@ export class BillingWebhookInvoiceService {
       return;
     }
 
-    await this.billingSubscriptionItemRepository.update(
-      { stripeSubscriptionId },
-      { hasReachedCurrentPeriodCap: false },
-    );
-
     if (!isDefined(stripeCustomerId) || !periodEnd || !periodStart) {
       return;
     }
@@ -134,6 +126,15 @@ export class BillingWebhookInvoiceService {
     invoicePeriodEnd: Date;
     isFirstPeriodAfterTrial: boolean;
   }): Promise<void> {
+    const workspaceExists = await this.workspaceRepository.exists({
+      where: { id: subscription.workspaceId },
+      withDeleted: true,
+    });
+
+    if (!workspaceExists) {
+      return;
+    }
+
     const params =
       await this.resourceCreditService.getResourceCreditRolloverParameters(
         subscription.workspaceId,

@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { buildColumnResultAlias } from 'src/engine/twenty-orm-v2/sql/utils/build-column-result-alias.util';
@@ -21,6 +21,7 @@ export type JoinClause = {
   targetTableShape: WorkspaceTableShape;
   relationType: RelationType;
   condition?: string;
+  toManyForeignKeyColumnName?: string;
   additionalOnConditions: string[];
 };
 
@@ -43,6 +44,7 @@ export type SelectStatementState = {
   extraSelectClauses: SelectClause[];
   joinClauses: JoinClause[];
   whereClauses: WhereClause[];
+  groupByExpressions: string[];
   orderByClauses: OrderByClause[];
   includeDeleted: boolean;
   limitValue?: number;
@@ -107,19 +109,24 @@ export const buildProjection = (
   return { expressions, mainAliasColumnNames };
 };
 
-export const buildWhereExpression = (
-  state: SelectStatementState,
-  {
-    includeSoftDeletePredicate = true,
-  }: { includeSoftDeletePredicate?: boolean } = {},
-): string => {
-  const userExpression = state.whereClauses
+export const renderUserWhereExpression = (
+  whereClauses: WhereClause[],
+): string =>
+  whereClauses
     .map((clause, index) =>
       index === 0
         ? clause.sql
         : `${clause.operator.toUpperCase()} ${clause.sql}`,
     )
     .join(' ');
+
+export const buildWhereExpression = (
+  state: SelectStatementState,
+  {
+    includeSoftDeletePredicate = true,
+  }: { includeSoftDeletePredicate?: boolean } = {},
+): string => {
+  const userExpression = renderUserWhereExpression(state.whereClauses);
 
   const shouldAddSoftDeletePredicate =
     includeSoftDeletePredicate &&
@@ -144,6 +151,23 @@ export const buildFromClause = (state: SelectStatementState): string =>
     state.tableShape.tableName,
   )} AS ${escapeIdentifier(state.alias)}`;
 
+const buildToManyDedupedJoinSource = ({
+  tableExpression,
+  foreignKeyColumnName,
+  includeSoftDeleteFilter,
+}: {
+  tableExpression: string;
+  foreignKeyColumnName: string;
+  includeSoftDeleteFilter: boolean;
+}): string => {
+  const foreignKey = escapeIdentifier(foreignKeyColumnName);
+  const whereClause = includeSoftDeleteFilter
+    ? ` WHERE ${escapeIdentifier('deletedAt')} IS NULL`
+    : '';
+
+  return `(SELECT DISTINCT ON (${foreignKey}) * FROM ${tableExpression}${whereClause} ORDER BY ${foreignKey}, ${escapeIdentifier('id')})`;
+};
+
 export const buildJoinClause = (state: SelectStatementState): string =>
   state.joinClauses
     .map((joinClause) => {
@@ -154,29 +178,56 @@ export const buildJoinClause = (state: SelectStatementState): string =>
         );
       }
 
+      const softDeletePredicateApplies =
+        !state.includeDeleted && joinClause.targetTableShape.hasDeletedAtColumn;
+
+      const toManyForeignKeyColumnName =
+        joinClause.relationType === RelationType.ONE_TO_MANY
+          ? joinClause.toManyForeignKeyColumnName
+          : undefined;
+
       const onConditions = [
         joinClause.condition,
         ...joinClause.additionalOnConditions,
       ];
 
+      // A to-one join filters soft-deleted rows in its ON clause. The deduped
+      // to-many join picks one representative row per parent, so its soft-delete
+      // filter runs inside the derived table before that pick.
       if (
-        !state.includeDeleted &&
-        joinClause.targetTableShape.hasDeletedAtColumn
+        softDeletePredicateApplies &&
+        !isDefined(toManyForeignKeyColumnName)
       ) {
         onConditions.push(
           `${quoteColumn(joinClause.alias, 'deletedAt')} IS NULL`,
         );
       }
 
-      return `LEFT JOIN ${escapeIdentifier(
+      const tableExpression = `${escapeIdentifier(
         joinClause.targetTableShape.schemaName,
-      )}.${escapeIdentifier(
-        joinClause.targetTableShape.tableName,
-      )} AS ${escapeIdentifier(joinClause.alias)} ON ${onConditions
-        .map((condition) => `(${condition})`)
-        .join(' AND ')}`;
+      )}.${escapeIdentifier(joinClause.targetTableShape.tableName)}`;
+
+      const joinSource = isDefined(toManyForeignKeyColumnName)
+        ? buildToManyDedupedJoinSource({
+            tableExpression,
+            foreignKeyColumnName: toManyForeignKeyColumnName,
+            includeSoftDeleteFilter: softDeletePredicateApplies,
+          })
+        : tableExpression;
+
+      return `LEFT JOIN ${joinSource} AS ${escapeIdentifier(
+        joinClause.alias,
+      )} ON ${onConditions.map((condition) => `(${condition})`).join(' AND ')}`;
     })
     .join(' ');
+
+export const buildGroupByClause = (state: SelectStatementState): string => {
+  if (state.groupByExpressions.length === 0) {
+    return '';
+  }
+
+  return `GROUP BY ${state.groupByExpressions.join(', ')}`;
+};
 
 export const buildOrderByClause = (state: SelectStatementState): string => {
   if (state.orderByClauses.length === 0) {
@@ -222,6 +273,7 @@ export const buildSelectStatement = (state: SelectStatementState): string => {
     buildFromClause(state),
     buildJoinClause(state),
     whereExpression.length > 0 ? `WHERE ${whereExpression}` : '',
+    buildGroupByClause(state),
     buildOrderByClause(state),
     isDefined(state.limitValue) ? `LIMIT :${LIMIT_PARAMETER_NAME}` : '',
     isDefined(state.offsetValue) ? `OFFSET :${OFFSET_PARAMETER_NAME}` : '',

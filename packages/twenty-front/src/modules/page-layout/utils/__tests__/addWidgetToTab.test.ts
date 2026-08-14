@@ -80,7 +80,6 @@ describe('addWidgetToTab', () => {
   it('should handle non-existent tab ID gracefully', () => {
     const result = addWidgetToTab(mockTabs, 'non-existent-tab', mockWidget);
 
-    // All tabs should remain unchanged
     expect(result[0].widgets).toHaveLength(0);
     expect(result[1].widgets).toHaveLength(0);
   });

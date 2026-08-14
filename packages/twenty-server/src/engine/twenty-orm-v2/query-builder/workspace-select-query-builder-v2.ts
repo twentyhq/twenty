@@ -1,5 +1,5 @@
 import { type ObjectsPermissions } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, pascalCase } from 'twenty-shared/utils';
 import { FindOperator } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -20,6 +20,8 @@ import {
   isObjectWhereLike,
   isWhereFactoryLike,
 } from 'src/engine/twenty-orm-v2/query-builder/types/query-builder-v2.type';
+import { WorkspaceMutationQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-mutation-query-builder-v2';
+import { type MutationKind } from 'src/engine/twenty-orm-v2/sql/utils/build-mutation-statement.util';
 import { buildOrderByClauses } from 'src/engine/twenty-orm-v2/sql/utils/build-order-by-clauses.util';
 import { collectReferencedColumnNames } from 'src/engine/twenty-orm-v2/sql/utils/collect-referenced-column-names.util';
 import { compileNamedParameters } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
@@ -65,6 +67,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
   private readonly joinClauses: JoinClause[] = [];
   private readonly extraSelectClauses: SelectClause[] = [];
   private orderByClauses: OrderByClause[] = [];
+  private groupByExpressions: string[] = [];
   private parameters: Record<string, unknown> = {};
   private findOptions: FindOptionsLike = {};
   private limitValue?: number;
@@ -105,6 +108,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     );
     cloned.extraSelectClauses.push(...this.extraSelectClauses);
     cloned.orderByClauses = [...this.orderByClauses];
+    cloned.groupByExpressions = [...this.groupByExpressions];
     cloned.parameters = { ...this.parameters };
     cloned.findOptions = { ...this.findOptions };
     cloned.limitValue = this.limitValue;
@@ -130,6 +134,13 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     this.aliasesWithRowLevelPermissionApplied.delete(this.alias);
 
     return this.appendWhere('and', condition, parameters);
+  }
+
+  copyWhereFrom(source: WorkspaceSelectQueryBuilderV2): this {
+    this.whereClauses.push(...source.whereClauses);
+    this.parameters = { ...this.parameters, ...source.parameters };
+
+    return this;
   }
 
   andWhere(
@@ -159,6 +170,10 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     this.parameters = { ...this.parameters, ...parameters };
 
     return this;
+  }
+
+  setParameter(key: string, value: unknown): this {
+    return this.setParameters({ [key]: value });
   }
 
   getParameters(): Record<string, unknown> {
@@ -223,7 +238,24 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     return this.appendOrderBy(orderByOrExpression, direction, nulls);
   }
 
-  leftJoin(relationPath: string, alias: string, condition?: string): this {
+  groupBy(expression: string): this {
+    this.groupByExpressions = [this.normaliseColumnExpression(expression)];
+
+    return this;
+  }
+
+  addGroupBy(expression: string): this {
+    this.groupByExpressions.push(this.normaliseColumnExpression(expression));
+
+    return this;
+  }
+
+  leftJoin(
+    relationPath: string,
+    alias: string,
+    condition?: string,
+    options?: { allowToManyJoin?: boolean },
+  ): this {
     const [parentAlias, relationFieldName] = relationPath.split('.');
 
     if (!isDefined(relationFieldName)) {
@@ -253,9 +285,21 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
 
     const joinColumnName = relationShape.joinColumnName;
 
-    // A to-many join has no renderable condition, but it is still recorded so the shared
-    // to-one guard rejects it with the same error the TypeORM path produces. Reaching SQL
-    // generation with one of these means the guard was bypassed, which throws there.
+    // A to-one relation carries its join column on the current table, so the condition
+    // is always renderable. A to-many relation carries the foreign key on the target
+    // table; it is only built when the caller opts in (group-by "with records" ordering)
+    // and renders as a DISTINCT ON derived table so it stays one row per parent.
+    // Otherwise the condition is left undefined and the shared to-one guard rejects it.
+    const toManyJoin =
+      options?.allowToManyJoin === true
+        ? this.buildToManyJoin({
+            parentAlias,
+            alias,
+            targetTableShape,
+            targetFieldMetadataId: relationShape.targetFieldMetadataId,
+          })
+        : undefined;
+
     this.joinClauses.push({
       alias,
       targetTableShape,
@@ -263,11 +307,46 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       condition: isDefined(joinColumnName)
         ? (condition ??
           `${this.quoteColumn(parentAlias, joinColumnName)} = ${this.quoteColumn(alias, 'id')}`)
-        : undefined,
+        : (condition ?? toManyJoin?.condition),
+      toManyForeignKeyColumnName: toManyJoin?.foreignKeyColumnName,
       additionalOnConditions: [],
     });
 
     return this;
+  }
+
+  private buildToManyJoin({
+    parentAlias,
+    alias,
+    targetTableShape,
+    targetFieldMetadataId,
+  }: {
+    parentAlias: string;
+    alias: string;
+    targetTableShape: WorkspaceTableShape;
+    targetFieldMetadataId: string | null;
+  }): { condition: string; foreignKeyColumnName: string } | undefined {
+    if (!isDefined(targetFieldMetadataId)) {
+      return undefined;
+    }
+
+    const inverseRelationShape = Object.values(
+      targetTableShape.relationShapeByFieldName,
+    ).find(
+      (relationShape) =>
+        relationShape.fieldMetadataId === targetFieldMetadataId,
+    );
+
+    const foreignKeyColumnName = inverseRelationShape?.joinColumnName;
+
+    if (!isDefined(foreignKeyColumnName)) {
+      return undefined;
+    }
+
+    return {
+      condition: `${this.quoteColumn(alias, foreignKeyColumnName)} = ${this.quoteColumn(parentAlias, 'id')}`,
+      foreignKeyColumnName,
+    };
   }
 
   withDeleted(): this {
@@ -368,6 +447,18 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     }
   }
 
+  async getRawMany<T extends Record<string, unknown>>(): Promise<T[]> {
+    const rows = await this.executeSelect();
+
+    return rows as T[];
+  }
+
+  applyRowLevelPermissions(): this {
+    this.context.onBeforeExecute(this);
+
+    return this;
+  }
+
   async getCount(): Promise<number> {
     this.context.onBeforeExecute(this);
 
@@ -416,6 +507,45 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
 
   getSelectedColumnNames(): string[] {
     return this.getReferencedColumnNamesByAlias()[this.alias] ?? [];
+  }
+
+  update(): WorkspaceMutationQueryBuilderV2 {
+    return this.toMutationQueryBuilder('update');
+  }
+
+  delete(): WorkspaceMutationQueryBuilderV2 {
+    return this.toMutationQueryBuilder('delete');
+  }
+
+  softDelete(): WorkspaceMutationQueryBuilderV2 {
+    return this.toMutationQueryBuilder('soft-delete');
+  }
+
+  restore(): WorkspaceMutationQueryBuilderV2 {
+    return this.toMutationQueryBuilder('restore');
+  }
+
+  private toMutationQueryBuilder(
+    kind: MutationKind,
+  ): WorkspaceMutationQueryBuilderV2 {
+    if (this.joinClauses.length > 0) {
+      throw new TwentyOrmV2Exception(
+        `A mutation cannot carry a relation join; rewrite the filter as an "id IN (subquery)" predicate first`,
+        TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
+      );
+    }
+
+    return new WorkspaceMutationQueryBuilderV2({
+      alias: this.alias,
+      kind,
+      context: {
+        tableShape: this.tableShape,
+        executor: this.context.executor,
+        formatResult: this.context.formatResult,
+      },
+      whereClauses: this.whereClauses,
+      parameters: this.parameters,
+    });
   }
 
   private appendWhere(
@@ -481,29 +611,168 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     const parameters: Record<string, unknown> = {};
 
     for (const [columnName, value] of Object.entries(where)) {
-      if (!isDefined(this.tableShape.columnShapeByColumnName[columnName])) {
-        throw new TwentyOrmV2Exception(
-          `Column "${columnName}" does not exist on "${this.tableShape.nameSingular}"`,
-          TwentyOrmV2ExceptionCode.UNKNOWN_COLUMN,
+      if (isDefined(this.tableShape.columnShapeByColumnName[columnName])) {
+        conditions.push(
+          this.buildValueCondition(
+            quoteColumn(this.alias, columnName),
+            columnName,
+            value,
+            parameters,
+          ),
         );
+
+        continue;
       }
 
-      if (!(value instanceof FindOperator) || value.type !== 'in') {
-        throw new TwentyOrmV2Exception(
-          `Object where only supports the "in" operator on "${columnName}"`,
-          TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
-        );
+      const hasCompositeChildColumns = Object.values(
+        this.tableShape.columnShapeByColumnName,
+      ).some((shape) => shape.compositeParentFieldName === columnName);
+
+      if (
+        hasCompositeChildColumns &&
+        isDefined(value) &&
+        typeof value === 'object' &&
+        !(value instanceof FindOperator) &&
+        !Array.isArray(value)
+      ) {
+        for (const [subFieldName, subValue] of Object.entries(
+          value as Record<string, unknown>,
+        )) {
+          const compositeColumnName = `${columnName}${pascalCase(subFieldName)}`;
+
+          if (
+            !isDefined(
+              this.tableShape.columnShapeByColumnName[compositeColumnName],
+            )
+          ) {
+            throw new TwentyOrmV2Exception(
+              `Column "${compositeColumnName}" does not exist on "${this.tableShape.nameSingular}"`,
+              TwentyOrmV2ExceptionCode.UNKNOWN_COLUMN,
+            );
+          }
+
+          conditions.push(
+            this.buildValueCondition(
+              quoteColumn(this.alias, compositeColumnName),
+              compositeColumnName,
+              subValue,
+              parameters,
+            ),
+          );
+        }
+
+        continue;
       }
 
-      const parameterName = `ormV2ObjectWhere_${objectWhereParameterSequence++}`;
-
-      conditions.push(
-        `${quoteColumn(this.alias, columnName)} IN (:...${parameterName})`,
+      throw new TwentyOrmV2Exception(
+        `Column "${columnName}" does not exist on "${this.tableShape.nameSingular}"`,
+        TwentyOrmV2ExceptionCode.UNKNOWN_COLUMN,
       );
-      parameters[parameterName] = value.value;
     }
 
     return { sql: conditions.join(' AND '), parameters };
+  }
+
+  private buildValueCondition(
+    quotedColumn: string,
+    columnName: string,
+    value: unknown,
+    parameters: Record<string, unknown>,
+  ): string {
+    if (value === null) {
+      return `${quotedColumn} IS NULL`;
+    }
+
+    const nextParameter = (parameterValue: unknown): string => {
+      const parameterName = `ormV2ObjectWhere_${objectWhereParameterSequence++}`;
+
+      parameters[parameterName] = parameterValue;
+
+      return parameterName;
+    };
+
+    if (value instanceof FindOperator) {
+      switch (value.type) {
+        case 'in':
+          return `${quotedColumn} IN (:...${nextParameter(value.value)})`;
+        case 'any':
+          return `${quotedColumn} = ANY(:${nextParameter(value.value)})`;
+        case 'equal':
+          return `${quotedColumn} = :${nextParameter(value.value)}`;
+        case 'lessThan':
+          return `${quotedColumn} < :${nextParameter(value.value)}`;
+        case 'lessThanOrEqual':
+          return `${quotedColumn} <= :${nextParameter(value.value)}`;
+        case 'moreThan':
+          return `${quotedColumn} > :${nextParameter(value.value)}`;
+        case 'moreThanOrEqual':
+          return `${quotedColumn} >= :${nextParameter(value.value)}`;
+        case 'like':
+          return `${quotedColumn} LIKE :${nextParameter(value.value)}`;
+        case 'ilike':
+          return `${quotedColumn} ILIKE :${nextParameter(value.value)}`;
+        case 'arrayContains':
+          return `${quotedColumn} @> :${nextParameter(value.value)}`;
+        case 'isNull':
+          return `${quotedColumn} IS NULL`;
+        case 'between': {
+          const [from, to] = value.value as [unknown, unknown];
+
+          return `${quotedColumn} BETWEEN :${nextParameter(
+            from,
+          )} AND :${nextParameter(to)}`;
+        }
+        case 'not':
+          return `NOT (${this.buildValueCondition(
+            quotedColumn,
+            columnName,
+            value.child ?? value.value,
+            parameters,
+          )})`;
+        case 'and':
+        case 'or': {
+          const childOperators = value.value as unknown[];
+          const separator = value.type === 'and' ? ' AND ' : ' OR ';
+
+          return `(${childOperators
+            .map((childOperator) =>
+              this.buildValueCondition(
+                quotedColumn,
+                columnName,
+                childOperator,
+                parameters,
+              ),
+            )
+            .join(separator)})`;
+        }
+        case 'raw': {
+          const rawValue = value.value as unknown;
+
+          let rawSql: string;
+
+          if (typeof rawValue === 'function') {
+            rawSql = (rawValue as (columnAlias: string) => string)(
+              quotedColumn,
+            );
+          } else if (typeof rawValue === 'string') {
+            rawSql = rawValue;
+          } else {
+            rawSql = value.getSql?.(quotedColumn) ?? '';
+          }
+
+          Object.assign(parameters, value.objectLiteralParameters ?? {});
+
+          return rawSql;
+        }
+        default:
+          throw new TwentyOrmV2Exception(
+            `Object where does not support the "${value.type}" operator on "${columnName}"`,
+            TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
+          );
+      }
+    }
+
+    return `${quotedColumn} = :${nextParameter(value)}`;
   }
 
   private appendOrderBy(
@@ -582,6 +851,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       extraSelectClauses: this.extraSelectClauses,
       joinClauses: this.joinClauses,
       whereClauses: this.whereClauses,
+      groupByExpressions: this.groupByExpressions,
       orderByClauses: this.orderByClauses,
       includeDeleted: this.includeDeleted,
       limitValue: this.limitValue,
