@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { parseJson } from 'twenty-shared/utils';
+import { isDefined, parseJson } from 'twenty-shared/utils';
 
 import {
   EmailingDomainDriverException,
@@ -22,34 +22,34 @@ export class ResendApiClientService {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
   async sendEmail(payload: ResendSendEmailPayload): Promise<{ id: string }> {
-    return this.request<{ id: string }>('POST', '/emails', payload);
+    return this.requestJson<{ id: string }>('POST', '/emails', payload);
   }
 
   async createDomain(payload: {
     name: string;
     region?: string;
   }): Promise<ResendDomain> {
-    return this.request<ResendDomain>('POST', '/domains', payload);
+    return this.requestJson<ResendDomain>('POST', '/domains', payload);
   }
 
   async getDomain(domainId: string): Promise<ResendDomain> {
-    return this.request<ResendDomain>('GET', `/domains/${domainId}`);
+    return this.requestJson<ResendDomain>('GET', `/domains/${domainId}`);
   }
 
   async listDomains(): Promise<{ data: ResendDomain[] }> {
-    return this.request<{ data: ResendDomain[] }>('GET', '/domains');
+    return this.requestJson<{ data: ResendDomain[] }>('GET', '/domains');
   }
 
   async verifyDomain(domainId: string): Promise<void> {
-    await this.request('POST', `/domains/${domainId}/verify`);
+    await this.performRequest('POST', `/domains/${domainId}/verify`);
   }
 
   async deleteDomain(domainId: string): Promise<void> {
-    await this.request('DELETE', `/domains/${domainId}`);
+    await this.performRequest('DELETE', `/domains/${domainId}`);
   }
 
   async getReceivedEmail(emailId: string): Promise<ResendReceivedEmail> {
-    return this.request<ResendReceivedEmail>(
+    return this.requestJson<ResendReceivedEmail>(
       'GET',
       `/emails/receiving/${emailId}`,
     );
@@ -82,11 +82,29 @@ export class ResendApiClientService {
     return apiKey;
   }
 
-  private async request<T>(
+  private async requestJson<T>(
     method: string,
     path: string,
     body?: object,
   ): Promise<T> {
+    const responseText = await this.performRequest(method, path, body);
+    const parsedResponse = parseJson<T>(responseText);
+
+    if (!isDefined(parsedResponse)) {
+      throw new EmailingDomainDriverException(
+        `Resend API ${method} ${path} returned an unparsable response`,
+        EmailingDomainDriverExceptionCode.UNKNOWN,
+      );
+    }
+
+    return parsedResponse;
+  }
+
+  private async performRequest(
+    method: string,
+    path: string,
+    body?: object,
+  ): Promise<string> {
     const response = await fetch(`${RESEND_API_BASE_URL}${path}`, {
       method,
       headers: {
@@ -102,9 +120,7 @@ export class ResendApiClientService {
       throw this.buildException(response.status, responseText, method, path);
     }
 
-    return (
-      responseText.length > 0 ? parseJson<T>(responseText) : undefined
-    ) as T;
+    return responseText;
   }
 
   private buildException(
