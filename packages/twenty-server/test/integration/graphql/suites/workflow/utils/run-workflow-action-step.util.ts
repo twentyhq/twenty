@@ -61,13 +61,13 @@ const findDraftWorkflowVersionId = async (
 ): Promise<string> => {
   const response = await makeGraphqlAPIRequest({
     query: gql`
-      query FindWorkflowVersions($workflowId: UUID!) {
-        workflow(filter: { id: { eq: $workflowId } }) {
-          versions {
-            edges {
-              node {
-                id
-              }
+      query FindDraftWorkflowVersion($workflowId: UUID!) {
+        workflowVersions(
+          filter: { workflowId: { eq: $workflowId }, status: { in: ["DRAFT"] } }
+        ) {
+          edges {
+            node {
+              id
             }
           }
         }
@@ -78,7 +78,7 @@ const findDraftWorkflowVersionId = async (
 
   expect(response.body.errors).toBeUndefined();
 
-  return response.body.data.workflow.versions.edges[0].node.id;
+  return response.body.data.workflowVersions.edges[0].node.id;
 };
 
 const createWorkflowVersionStep = async ({
