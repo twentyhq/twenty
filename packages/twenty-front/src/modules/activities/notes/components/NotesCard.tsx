@@ -5,12 +5,13 @@ import { NoteList } from '@/activities/notes/components/NoteList';
 import { useNotes } from '@/activities/notes/hooks/useNotes';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import { WidgetHeaderInfoEffect } from '@/page-layout/widgets/components/WidgetHeaderInfoEffect';
-import { type WidgetHeaderAction } from '@/page-layout/widgets/types/WidgetHeaderInfo';
+import { usePublishWidgetHeaderInfo } from '@/page-layout/widgets/hooks/usePublishWidgetHeaderInfo';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useMemo } from 'react';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import {
@@ -56,70 +57,64 @@ export const NotesCard = () => {
 
   const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
-  const handleNewNoteClick = () => {
-    openCreateActivity({ targetableObjects: [targetRecord] });
-  };
-
-  const newNoteAction: WidgetHeaderAction = {
-    actionType: 'button',
-    Icon: IconPlus,
-    label: t`New note`,
-    onClick: handleNewNoteClick,
-  };
-
-  const widgetHeaderInfoEffect = (
-    <WidgetHeaderInfoEffect
-      count={totalCountNotes}
-      actions={hasObjectUpdatePermissions ? [newNoteAction] : undefined}
-    />
+  const newNoteAction = useMemo(
+    () =>
+      hasObjectUpdatePermissions
+        ? {
+            id: 'new-note',
+            Icon: IconPlus,
+            label: t`New note`,
+            onClick: () =>
+              openCreateActivity({ targetableObjects: [targetRecord] }),
+          }
+        : undefined,
+    [hasObjectUpdatePermissions, openCreateActivity, targetRecord],
   );
 
+  usePublishWidgetHeaderInfo({
+    count: totalCountNotes,
+    actions: isDefined(newNoteAction) ? [newNoteAction] : undefined,
+  });
+
   if (loading && isNotesEmpty) {
-    return (
-      <>
-        {widgetHeaderInfoEffect}
-        <SkeletonLoader />
-      </>
-    );
+    return <SkeletonLoader />;
   }
 
   if (isNotesEmpty) {
     return (
-      <>
-        {widgetHeaderInfoEffect}
-        <AnimatedPlaceholderEmptyContainer>
-          <AnimatedPlaceholder type="noNote" />
-          <AnimatedPlaceholderEmptyTextContainer>
-            <AnimatedPlaceholderEmptyTitle>
-              {t`No notes`}
-            </AnimatedPlaceholderEmptyTitle>
-            <AnimatedPlaceholderEmptySubTitle>
-              {t`There are no associated notes with this record.`}
-            </AnimatedPlaceholderEmptySubTitle>
-          </AnimatedPlaceholderEmptyTextContainer>
-          {hasObjectUpdatePermissions && (
-            <Button
-              Icon={IconPlus}
-              title={t`New note`}
-              variant="secondary"
-              onClick={handleNewNoteClick}
-            />
-          )}
-        </AnimatedPlaceholderEmptyContainer>
-      </>
+      <AnimatedPlaceholderEmptyContainer>
+        <AnimatedPlaceholder type="noNote" />
+        <AnimatedPlaceholderEmptyTextContainer>
+          <AnimatedPlaceholderEmptyTitle>
+            {t`No notes`}
+          </AnimatedPlaceholderEmptyTitle>
+          <AnimatedPlaceholderEmptySubTitle>
+            {t`There are no associated notes with this record.`}
+          </AnimatedPlaceholderEmptySubTitle>
+        </AnimatedPlaceholderEmptyTextContainer>
+        {hasObjectUpdatePermissions && (
+          <Button
+            Icon={IconPlus}
+            title={t`New note`}
+            variant="secondary"
+            onClick={() =>
+              openCreateActivity({
+                targetableObjects: [targetRecord],
+              })
+            }
+          />
+        )}
+      </AnimatedPlaceholderEmptyContainer>
     );
   }
 
   return (
-    <>
-      {widgetHeaderInfoEffect}
-      <StyledNotesContainer>
-        <NoteList notes={notes} />
-        <CustomResolverFetchMoreLoader
-          loading={loading}
-          onLastRowVisible={handleLastRowVisible}
-        />
-      </StyledNotesContainer>
-    </>
+    <StyledNotesContainer>
+      <NoteList notes={notes} />
+      <CustomResolverFetchMoreLoader
+        loading={loading}
+        onLastRowVisible={handleLastRowVisible}
+      />
+    </StyledNotesContainer>
   );
 };

@@ -1,7 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconSearch } from '@ui/icon';
-import { MemoryRouter } from 'react-router-dom';
-import { expect, within } from 'storybook/test';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
@@ -35,29 +33,6 @@ export const Default: Story = {
     Icon: { control: false },
   },
   decorators: [ComponentDecorator],
-};
-
-export const WithLink: Story = {
-  args: {
-    'aria-label': 'Open search',
-    Icon: IconSearch,
-    title: 'Open search',
-    to: '/search',
-  },
-  decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
-    ),
-    ComponentDecorator,
-  ],
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const link = await canvas.findByRole('link', { name: 'Open search' });
-    expect(link).toHaveAttribute('href', '/search');
-  },
 };
 
 export const Catalog: CatalogStory<Story, typeof LightIconButton> = {

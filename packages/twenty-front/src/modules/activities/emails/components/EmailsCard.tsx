@@ -11,10 +11,10 @@ import { getTimelineThreadsFromObjectRecord } from '@/activities/emails/graphql/
 import { useComposeEmailForTargetRecord } from '@/activities/emails/hooks/useComposeEmailForTargetRecord';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
 import { useSubscribeTimelineToParticipantChanges } from '@/activities/hooks/useSubscribeTimelineToParticipantChanges';
-import { WidgetHeaderInfoEffect } from '@/page-layout/widgets/components/WidgetHeaderInfoEffect';
-import { type WidgetHeaderAction } from '@/page-layout/widgets/types/WidgetHeaderInfo';
+import { usePublishWidgetHeaderInfo } from '@/page-layout/widgets/hooks/usePublishWidgetHeaderInfo';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { t } from '@lingui/core/macro';
+import { useMemo } from 'react';
 import { IconPlus } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -58,20 +58,21 @@ export const EmailsCard = () => {
   const { totalNumberOfThreads, timelineThreads } =
     data?.getTimelineThreadsFromObjectRecord ?? {};
 
-  const composeAction: WidgetHeaderAction = {
-    actionType: 'button',
-    Icon: IconPlus,
-    label: t`Compose`,
-    onClick: openComposer,
-    disabled: composerLoading,
-  };
-
-  const widgetHeaderInfoEffect = (
-    <WidgetHeaderInfoEffect
-      count={totalNumberOfThreads}
-      actions={[composeAction]}
-    />
+  const composeAction = useMemo(
+    () => ({
+      id: 'compose',
+      Icon: IconPlus,
+      label: t`Compose`,
+      onClick: openComposer,
+      disabled: composerLoading,
+    }),
+    [openComposer, composerLoading],
   );
+
+  usePublishWidgetHeaderInfo({
+    count: totalNumberOfThreads,
+    actions: [composeAction],
+  });
 
   const hasMoreTimelineThreads =
     timelineThreads && totalNumberOfThreads
@@ -85,43 +86,32 @@ export const EmailsCard = () => {
   };
 
   if (firstQueryLoading) {
-    return (
-      <>
-        {widgetHeaderInfoEffect}
-        <SkeletonLoader />
-      </>
-    );
+    return <SkeletonLoader />;
   }
 
   if (!firstQueryLoading && !timelineThreads?.length) {
     return (
-      <>
-        {widgetHeaderInfoEffect}
-        <StyledContainer>
-          <EmptyInboxPlaceholder />
-        </StyledContainer>
-      </>
+      <StyledContainer>
+        <EmptyInboxPlaceholder />
+      </StyledContainer>
     );
   }
 
   return (
-    <>
-      {widgetHeaderInfoEffect}
-      <StyledContainer>
-        <Section>
-          {!firstQueryLoading && (
-            <ActivityList>
-              {timelineThreads?.map((thread: TimelineThread) => (
-                <EmailThreadPreview key={thread.id} thread={thread} />
-              ))}
-            </ActivityList>
-          )}
-          <CustomResolverFetchMoreLoader
-            loading={isFetchingMore || firstQueryLoading}
-            onLastRowVisible={handleLastRowVisible}
-          />
-        </Section>
-      </StyledContainer>
-    </>
+    <StyledContainer>
+      <Section>
+        {!firstQueryLoading && (
+          <ActivityList>
+            {timelineThreads?.map((thread: TimelineThread) => (
+              <EmailThreadPreview key={thread.id} thread={thread} />
+            ))}
+          </ActivityList>
+        )}
+        <CustomResolverFetchMoreLoader
+          loading={isFetchingMore || firstQueryLoading}
+          onLastRowVisible={handleLastRowVisible}
+        />
+      </Section>
+    </StyledContainer>
   );
 };

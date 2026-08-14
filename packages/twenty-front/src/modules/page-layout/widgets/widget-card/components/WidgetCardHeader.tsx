@@ -133,7 +133,7 @@ export const WidgetCardHeader = ({
           isNonEmptyArray(headerActions) &&
           headerActions.map((headerAction) => (
             <WidgetCardHeaderAction
-              key={headerAction.label}
+              key={headerAction.id}
               headerAction={headerAction}
             />
           ))}

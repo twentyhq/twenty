@@ -18,7 +18,7 @@ export const Catalog: CatalogStory<Story, typeof WidgetCardHeaderAction> = {
   decorators: [CatalogDecorator],
   args: {
     headerAction: {
-      actionType: 'button',
+      id: 'copy-transcript',
       Icon: IconCopy,
       label: 'Copy transcript',
       onClick: fn(),
@@ -34,13 +34,13 @@ export const Catalog: CatalogStory<Story, typeof WidgetCardHeaderAction> = {
             headerAction:
               actionType === 'Link'
                 ? {
-                    actionType: 'link',
+                    id: 'see-all',
                     Icon: IconArrowUpRight,
                     label: 'See all',
                     to: '/objects/callRecordings',
                   }
                 : {
-                    actionType: 'button',
+                    id: 'copy-transcript',
                     Icon: IconCopy,
                     label: 'Copy transcript',
                     onClick: fn(),
