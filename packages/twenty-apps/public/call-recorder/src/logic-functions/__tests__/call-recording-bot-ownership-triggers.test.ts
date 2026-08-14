@@ -8,6 +8,11 @@ import { scheduleRecallBotOnCallRecordingRestorationHandler } from 'src/logic-fu
 
 const removeRecallBotsForRemovedCallRecordingMock = vi.hoisted(() => vi.fn());
 const resumePendingCallRecordingMock = vi.hoisted(() => vi.fn());
+const coreApiClientMock = vi.hoisted(() => vi.fn());
+
+vi.mock('twenty-client-sdk/core', () => ({
+  CoreApiClient: coreApiClientMock,
+}));
 
 vi.mock(
   'src/logic-functions/flows/remove-recall-bots-for-removed-call-recording.util',

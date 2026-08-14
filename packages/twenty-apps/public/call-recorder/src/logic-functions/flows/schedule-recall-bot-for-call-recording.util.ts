@@ -115,6 +115,7 @@ export const scheduleRecallBotForCallRecording = async (
     client,
     callRecordingId: callRecording.id,
     externalBotId: scheduleResult.externalBotId,
+    botScheduleAttemptedAt,
     botScheduleIdempotencyKey,
   });
 };
@@ -154,11 +155,13 @@ const attachRecallBotOrRemoveAfterOwnershipLoss = async ({
   client,
   callRecordingId,
   externalBotId,
+  botScheduleAttemptedAt,
   botScheduleIdempotencyKey,
 }: {
   client: CoreApiClient;
   callRecordingId: string;
   externalBotId: string;
+  botScheduleAttemptedAt: string;
   botScheduleIdempotencyKey: string;
 }): Promise<boolean> => {
   let didAttachRecallBot = false;
@@ -167,6 +170,7 @@ const attachRecallBotOrRemoveAfterOwnershipLoss = async ({
     didAttachRecallBot = await attachRecallBotToCallRecording(client, {
       callRecordingId,
       externalBotId,
+      botScheduleAttemptedAt,
       botScheduleIdempotencyKey,
     });
   } catch (writeBackError) {

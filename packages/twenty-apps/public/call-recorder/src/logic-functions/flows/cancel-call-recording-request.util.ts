@@ -2,6 +2,7 @@ import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
+import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 import { cancelRecallBot } from 'src/logic-functions/recall-api/cancel-recall-bot.util';
 import { clearCallRecordingBotOwnership } from 'src/logic-functions/data/clear-call-recording-bot-ownership.util';
@@ -37,9 +38,18 @@ export const cancelCallRecordingRequest = async ({
     return;
   }
 
+  const currentCallRecording = (
+    await findCallRecordingsByIds(client, [callRecording.id])
+  )[0];
+
+  if (isUndefined(currentCallRecording)) {
+    return;
+  }
+
   await clearCallRecordingBotOwnership(client, {
     callRecordingId: callRecording.id,
     expectedExternalBotId: callRecording.externalBotId,
-    expectedBotScheduleIdempotencyKey: callRecording.botScheduleIdempotencyKey,
+    expectedBotScheduleIdempotencyKey:
+      currentCallRecording.botScheduleIdempotencyKey,
   });
 };

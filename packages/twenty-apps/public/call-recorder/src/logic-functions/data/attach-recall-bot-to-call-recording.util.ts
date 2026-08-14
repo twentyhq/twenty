@@ -1,38 +1,25 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
-import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { updateUnclaimedCallRecordingBotScheduleAttempt } from 'src/logic-functions/data/update-unclaimed-call-recording-bot-schedule-attempt.util';
 
 export const attachRecallBotToCallRecording = async (
   client: CoreApiClient,
   {
     callRecordingId,
     externalBotId,
+    botScheduleAttemptedAt,
     botScheduleIdempotencyKey,
   }: {
     callRecordingId: string;
     externalBotId: string;
+    botScheduleAttemptedAt: string;
     botScheduleIdempotencyKey: string;
   },
 ): Promise<boolean> => {
-  const result = await client.mutation({
-    updateCallRecordings: {
-      __args: {
-        filter: {
-          id: { eq: callRecordingId },
-          deletedAt: { is: 'NULL' },
-          recordingRequestStatus: {
-            eq: CallRecordingRequestStatus.REQUESTED,
-          },
-          status: { eq: CallRecordingStatus.SCHEDULED },
-          externalBotId: { is: 'NULL' },
-          botScheduleIdempotencyKey: { eq: botScheduleIdempotencyKey },
-        },
-        data: { externalBotId },
-      },
-      id: true,
-    },
+  return updateUnclaimedCallRecordingBotScheduleAttempt(client, {
+    callRecordingId,
+    expectedBotScheduleAttemptedAt: botScheduleAttemptedAt,
+    expectedBotScheduleIdempotencyKey: botScheduleIdempotencyKey,
+    data: { externalBotId },
   });
-
-  return (result.updateCallRecordings ?? []).length > 0;
 };

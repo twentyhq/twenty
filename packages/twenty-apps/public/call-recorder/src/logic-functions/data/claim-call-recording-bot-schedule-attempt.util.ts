@@ -1,8 +1,6 @@
-import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
-import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { updateUnclaimedCallRecordingBotScheduleAttempt } from 'src/logic-functions/data/update-unclaimed-call-recording-bot-schedule-attempt.util';
 
 export const claimCallRecordingBotScheduleAttempt = async (
   client: CoreApiClient,
@@ -20,34 +18,13 @@ export const claimCallRecordingBotScheduleAttempt = async (
     botScheduleIdempotencyKey: string;
   },
 ): Promise<boolean> => {
-  const result = await client.mutation({
-    updateCallRecordings: {
-      __args: {
-        filter: {
-          id: { eq: callRecordingId },
-          deletedAt: { is: 'NULL' },
-          recordingRequestStatus: {
-            eq: CallRecordingRequestStatus.REQUESTED,
-          },
-          status: { eq: CallRecordingStatus.SCHEDULED },
-          externalBotId: { is: 'NULL' },
-          botScheduleAttemptedAt: isUndefined(expectedBotScheduleAttemptedAt)
-            ? { is: 'NULL' }
-            : { eq: expectedBotScheduleAttemptedAt },
-          botScheduleIdempotencyKey: isUndefined(
-            expectedBotScheduleIdempotencyKey,
-          )
-            ? { is: 'NULL' }
-            : { eq: expectedBotScheduleIdempotencyKey },
-        },
-        data: {
-          botScheduleAttemptedAt,
-          botScheduleIdempotencyKey,
-        },
-      },
-      id: true,
+  return updateUnclaimedCallRecordingBotScheduleAttempt(client, {
+    callRecordingId,
+    expectedBotScheduleAttemptedAt,
+    expectedBotScheduleIdempotencyKey,
+    data: {
+      botScheduleAttemptedAt,
+      botScheduleIdempotencyKey,
     },
   });
-
-  return (result.updateCallRecordings ?? []).length > 0;
 };
