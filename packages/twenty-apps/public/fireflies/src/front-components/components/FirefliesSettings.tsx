@@ -51,13 +51,9 @@ export const FirefliesSettings = () => {
   const [draftValueByVariableKey, setDraftValueByVariableKey] = useState<
     Record<string, string>
   >({});
-  const [savedValueByVariableKey, setSavedValueByVariableKey] = useState<
-    Record<string, string>
-  >({});
 
   const isApiKeyConfigured = getIsApplicationVariableConfigured({
     draftValue: draftValueByVariableKey[FIREFLIES_API_KEY_VARIABLE_KEY],
-    savedValue: savedValueByVariableKey[FIREFLIES_API_KEY_VARIABLE_KEY],
     storedValue: applicationVariables.find(
       (variable) => variable.key === FIREFLIES_API_KEY_VARIABLE_KEY,
     )?.value,
@@ -96,12 +92,6 @@ export const FirefliesSettings = () => {
               onValueChange={({ variableKey, value }) =>
                 setDraftValueByVariableKey((previousDraftValues) => ({
                   ...previousDraftValues,
-                  [variableKey]: value,
-                }))
-              }
-              onValueSaved={({ variableKey, value }) =>
-                setSavedValueByVariableKey((previousSavedValues) => ({
-                  ...previousSavedValues,
                   [variableKey]: value,
                 }))
               }

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
 type UpdateApplicationVariableParams = {
@@ -10,23 +10,17 @@ type UpdateApplicationVariableState = {
   updateApplicationVariable: (
     params: UpdateApplicationVariableParams,
   ) => Promise<boolean>;
-  isUpdatingApplicationVariable: boolean;
 };
 
 export const useUpdateApplicationVariable = (
   applicationId: string,
 ): UpdateApplicationVariableState => {
-  const [isUpdatingApplicationVariable, setIsUpdatingApplicationVariable] =
-    useState(false);
-
   const pendingUpdateRef = useRef<Promise<boolean>>(Promise.resolve(true));
 
   const performUpdate = async ({
     variableKey,
     value,
   }: UpdateApplicationVariableParams): Promise<boolean> => {
-    setIsUpdatingApplicationVariable(true);
-
     try {
       const client = new MetadataApiClient();
 
@@ -39,8 +33,6 @@ export const useUpdateApplicationVariable = (
       return true;
     } catch {
       return false;
-    } finally {
-      setIsUpdatingApplicationVariable(false);
     }
   };
 
@@ -56,5 +48,5 @@ export const useUpdateApplicationVariable = (
     return queuedUpdate;
   };
 
-  return { updateApplicationVariable, isUpdatingApplicationVariable };
+  return { updateApplicationVariable };
 };
