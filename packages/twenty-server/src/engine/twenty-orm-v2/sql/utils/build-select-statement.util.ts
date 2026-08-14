@@ -23,8 +23,6 @@ export type JoinClause = {
   targetTableShape: WorkspaceTableShape;
   relationType: RelationType;
   joinType: 'INNER' | 'LEFT';
-  // A joinAndSelect projects every column of the joined table and hydrates them
-  // into the relation property of the parent entity.
   isSelected?: boolean;
   condition?: string;
   toManyForeignKeyColumnName?: string;
@@ -32,7 +30,6 @@ export type JoinClause = {
   additionalOnConditions: string[];
 };
 
-// A single joined column projected through addSelect('<alias>.<column>').
 export type ColumnSelection = {
   alias: string;
   columnName: string;
@@ -62,8 +59,6 @@ export type SelectStatementState = {
   orderByClauses: OrderByClause[];
   distinctOnExpressions: string[];
   includeDeleted: boolean;
-  // A raw or aggregation read tolerates row multiplication, so it may render a
-  // plain to-many join; an entity-hydrating read must stay one row per entity.
   allowPlainToManyJoins: boolean;
   limitValue?: number;
   offsetValue?: number;
@@ -89,24 +84,38 @@ export const normaliseColumnExpression = (
   return quoteColumn(defaultAlias, expression);
 };
 
-// TypeORM lets raw SQL fragments reference columns as <alias>.<column>; Postgres
-// would fold those bare identifiers to lowercase and miss the quoted aliases, so
-// they are quoted here against the aliases the statement knows about.
-export const quoteQualifiedAliasReferences = (
-  expression: string,
+const SQL_TEXT_SEGMENTS = /('(?:[^']|'')*'|"[^"]*")/;
+
+const quoteQualifiedAliasReferencesInSegment = (
+  segment: string,
   aliases: string[],
 ): string =>
   aliases.reduce(
-    (quotedExpression, alias) =>
-      quotedExpression.replace(
+    (quotedSegment, alias) =>
+      quotedSegment.replace(
         new RegExp(
           `(?<![\\w".:])${alias.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\.(\\w+)`,
           'g',
         ),
         (_, columnName) => quoteColumn(alias, columnName),
       ),
-    expression,
+    segment,
   );
+
+// Quotes TypeORM-style bare <alias>.<column> references, leaving string
+// literals and already-quoted identifiers untouched.
+export const quoteQualifiedAliasReferences = (
+  expression: string,
+  aliases: string[],
+): string =>
+  expression
+    .split(SQL_TEXT_SEGMENTS)
+    .map((segment, segmentIndex) =>
+      segmentIndex % 2 === 1
+        ? segment
+        : quoteQualifiedAliasReferencesInSegment(segment, aliases),
+    )
+    .join('');
 
 export const collectStatementAliases = (
   state: SelectStatementState,
@@ -115,9 +124,6 @@ export const collectStatementAliases = (
   ...state.joinClauses.map((joinClause) => joinClause.alias),
 ];
 
-// The dotted property chain a joined alias hydrates into, e.g. a join of
-// "company.owner" aliased "owner" under a join of "person.company" aliased
-// "company" resolves to "company.owner".
 const buildJoinPropertyPath = (
   state: SelectStatementState,
   joinAlias: string,
@@ -460,8 +466,6 @@ export const buildSelectStatement = (state: SelectStatementState): string => {
 export const buildCountStatement = (state: SelectStatementState): string => {
   const whereExpression = buildWhereExpression(state);
 
-  // A join can multiply rows, so counting mirrors TypeORM's getCount and counts
-  // distinct main-alias records instead of result rows.
   const countExpression =
     state.joinClauses.length > 0
       ? `COUNT(DISTINCT ${quoteColumn(state.alias, 'id')})`
@@ -482,10 +486,17 @@ type RelationColumnLeaf = {
   value: unknown;
 };
 
-// A LEFT JOIN with no matching row projects only NULLs for the joined alias;
-// TypeORM maps that relation to null rather than a shell object of nulls.
+// A LEFT JOIN with no matching row projects NULL for the joined id, which maps
+// the relation to null rather than a shell object of nulls. Partial selections
+// that do not project the id cannot tell a matched row apart from an unmatched
+// one, so they always hydrate an object.
 const buildRelationValue = (leaves: RelationColumnLeaf[]): unknown => {
-  if (leaves.every((leaf) => leaf.value === null)) {
+  const idLeaf = leaves.find(
+    (leaf) =>
+      leaf.propertySegments.length === 1 && leaf.propertySegments[0] === 'id',
+  );
+
+  if (isDefined(idLeaf) && idLeaf.value === null) {
     return null;
   }
 
@@ -516,9 +527,6 @@ const buildRelationValue = (leaves: RelationColumnLeaf[]): unknown => {
   return relationValue;
 };
 
-// Only projected columns become entity properties: a plain path maps onto the main
-// entity, a dotted path nests under the relation property chain it was joined
-// through, and anything else in the row is raw join output that gets dropped.
 export const mapRowToEntity = <T extends Record<string, unknown>>(
   row: Record<string, unknown>,
   columnNameByResultAlias: Record<string, string>,
@@ -568,9 +576,6 @@ export const buildColumnNameByResultAlias = (
     ]),
   );
 
-// Maps every projected result alias of a select back to the property path it
-// hydrates: a main column maps to its name, a joined column to the dotted
-// relation chain it was joined through.
 export const buildHydrationPathByResultAlias = (
   state: SelectStatementState,
 ): Record<string, string> => {

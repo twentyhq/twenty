@@ -215,9 +215,8 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       return this;
     }
 
-    // Selecting the main alias by name means "every column of the main entity".
     if (selection === this.alias && alias === undefined) {
-      this.explicitSelection = undefined;
+      this.explicitSelection = [...this.tableShape.columnNames];
 
       return this;
     }
@@ -238,9 +237,6 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       return this;
     }
 
-    // Without an output alias, an "<alias>.<column>" selection projects that
-    // column and hydrates it into the entity like TypeORM does; anything else
-    // is a raw expression selected under its own text.
     if (/^\w+\.\w+$/.test(expression)) {
       this.pendingColumnSelections.push(expression);
 
@@ -344,6 +340,13 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       );
     }
 
+    if (alias === this.alias) {
+      throw new TwentyOrmV2Exception(
+        `Join alias "${alias}" collides with the main query alias`,
+        TwentyOrmV2ExceptionCode.INVALID_PARAMETER,
+      );
+    }
+
     if (this.joinClauses.some((joinClause) => joinClause.alias === alias)) {
       return this;
     }
@@ -373,12 +376,6 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
 
     const joinColumnName = relationShape.joinColumnName;
 
-    // A to-one relation carries its join column on the current table, so the condition
-    // is always renderable. A to-many relation carries the foreign key on the target
-    // table; when the caller opts in (group-by "with records" ordering) it renders as
-    // a DISTINCT ON derived table so it stays one row per parent. Otherwise the
-    // condition is kept aside as a plain row-multiplying join that only raw and
-    // aggregation reads may render; entity-hydrating reads still reject it.
     const toManyJoin = isDefined(joinColumnName)
       ? undefined
       : this.buildToManyJoin({
@@ -401,12 +398,13 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       condition: isDefined(joinColumnName)
         ? (condition ??
           `${this.quoteColumn(parentAlias, joinColumnName)} = ${this.quoteColumn(alias, 'id')}`)
-        : (condition ??
-          (shouldJoinDedupedToMany ? toManyJoin?.condition : undefined)),
+        : shouldJoinDedupedToMany
+          ? (condition ?? toManyJoin?.condition)
+          : undefined,
       toManyForeignKeyColumnName: shouldJoinDedupedToMany
         ? toManyJoin?.foreignKeyColumnName
         : undefined,
-      toManyPlainCondition: toManyJoin?.condition,
+      toManyPlainCondition: condition ?? toManyJoin?.condition,
       additionalOnConditions: [],
     });
 
@@ -424,8 +422,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       ?.targetTableShape;
   }
 
-  // Resolved lazily so an addSelect('<alias>.<column>') may precede the join
-  // that introduces the alias, as it can with TypeORM.
+  // Resolved lazily so an addSelect('<alias>.<column>') may precede its join.
   private resolveColumnSelections(): ColumnSelection[] {
     return this.pendingColumnSelections.map((expression) => {
       const [alias, columnName] = expression.split('.');
@@ -637,8 +634,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     const aliases = collectStatementAliases(state);
 
     // Every joined alias is reported, even with no referenced column, so
-    // object-level select permission is validated for each joined object;
-    // projected joined columns then feed field-level checks.
+    // object-level select permission is validated for each joined object.
     const additionalColumnNamesByAlias: Record<string, string[]> =
       Object.fromEntries(
         this.joinClauses.map((joinClause) => [joinClause.alias, []]),
@@ -669,8 +665,6 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
           aliases,
         ),
       })),
-      // An order by that targets an added-select alias references an output
-      // column, and the columns feeding it are collected from the select itself.
       orderByClauses: this.orderByClauses
         .filter(
           (orderByClause) =>
@@ -979,8 +973,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     return this;
   }
 
-  // Ordering by the alias of an added select (e.g. MAX(...) AS "max_received_at")
-  // must reference the output column unqualified, not a main-alias column.
+  // An order by targeting an added-select alias must stay unqualified.
   private normaliseOrderByExpression(expression: string): string {
     const isBareIdentifier = /^\w+$/.test(expression);
 
