@@ -27,7 +27,16 @@ export type JoinClause = {
   condition?: string;
   toManyForeignKeyColumnName?: string;
   toManyPlainCondition?: string;
+  toManyDedupOrder?: ToManyDedupOrder[];
   additionalOnConditions: string[];
+};
+
+// Which child row represents its parent in a deduped to-many join: the first one
+// under this ordering, mirroring the row TypeORM's flattened join would surface.
+export type ToManyDedupOrder = {
+  columnName: string;
+  direction: 'ASC' | 'DESC';
+  nulls?: 'NULLS FIRST' | 'NULLS LAST';
 };
 
 export type ColumnSelection = {
@@ -319,17 +328,30 @@ const buildToManyDedupedJoinSource = ({
   tableExpression,
   foreignKeyColumnName,
   includeSoftDeleteFilter,
+  dedupOrder = [],
 }: {
   tableExpression: string;
   foreignKeyColumnName: string;
   includeSoftDeleteFilter: boolean;
+  dedupOrder?: ToManyDedupOrder[];
 }): string => {
   const foreignKey = escapeIdentifier(foreignKeyColumnName);
   const whereClause = includeSoftDeleteFilter
     ? ` WHERE ${escapeIdentifier('deletedAt')} IS NULL`
     : '';
 
-  return `(SELECT DISTINCT ON (${foreignKey}) * FROM ${tableExpression}${whereClause} ORDER BY ${foreignKey}, ${escapeIdentifier('id')})`;
+  const orderExpressions = [
+    foreignKey,
+    ...dedupOrder.map(
+      (order) =>
+        `${escapeIdentifier(order.columnName)} ${order.direction}${
+          isDefined(order.nulls) ? ` ${order.nulls}` : ''
+        }`,
+    ),
+    escapeIdentifier('id'),
+  ];
+
+  return `(SELECT DISTINCT ON (${foreignKey}) * FROM ${tableExpression}${whereClause} ORDER BY ${orderExpressions.join(', ')})`;
 };
 
 export const buildJoinClause = (state: SelectStatementState): string =>
@@ -379,6 +401,7 @@ export const buildJoinClause = (state: SelectStatementState): string =>
             tableExpression,
             foreignKeyColumnName: toManyForeignKeyColumnName,
             includeSoftDeleteFilter: softDeletePredicateApplies,
+            dedupOrder: joinClause.toManyDedupOrder,
           })
         : tableExpression;
 

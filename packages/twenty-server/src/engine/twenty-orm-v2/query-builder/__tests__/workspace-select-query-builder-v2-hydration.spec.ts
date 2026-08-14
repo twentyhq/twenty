@@ -133,17 +133,16 @@ describe('WorkspaceSelectQueryBuilderV2 joined hydration', () => {
     expect(() => queryBuilder.getQuery()).toThrow(TwentyOrmV2Exception);
   });
 
-  it('should report joined projections and every joined alias for permissions', () => {
+  it('should keep the v1 permission surface for joinAndSelect projections', () => {
     const { queryBuilder } = buildQueryBuilder();
 
     queryBuilder.setFindOptions({ select: { id: true } });
     queryBuilder.leftJoinAndSelect('person.company', 'company');
-    queryBuilder.leftJoin('person.people', 'people');
 
     const columnNamesByAlias = queryBuilder.getReferencedColumnNamesByAlias();
 
-    expect(columnNamesByAlias['company']).toEqual(['id', 'name', 'deletedAt']);
-    expect(columnNamesByAlias['people']).toEqual([]);
+    expect(columnNamesByAlias['person']).toEqual(['id']);
+    expect(columnNamesByAlias['company']).toBeUndefined();
   });
 
   it('should still reject a to-many joinAndSelect for an entity-hydrating read', async () => {

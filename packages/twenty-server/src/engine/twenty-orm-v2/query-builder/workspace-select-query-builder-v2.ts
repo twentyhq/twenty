@@ -33,13 +33,13 @@ import {
   buildProjection,
   buildSelectStatement,
   buildWhereExpression,
-  collectJoinedColumnProjections,
   collectStatementAliases,
   mapRowToEntity,
   normaliseColumnExpression,
   quoteColumn,
   quoteQualifiedAliasReferences,
   type ColumnSelection,
+  type ToManyDedupOrder,
   type JoinClause,
   type OrderByClause,
   type SelectClause,
@@ -290,7 +290,10 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     relationPath: string,
     alias: string,
     condition?: string,
-    options?: { allowToManyJoin?: boolean },
+    options?: {
+      allowToManyJoin?: boolean;
+      toManyDedupOrder?: ToManyDedupOrder[];
+    },
   ): this {
     return this.addJoin('LEFT', relationPath, alias, condition, options);
   }
@@ -299,7 +302,10 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     relationPath: string,
     alias: string,
     condition?: string,
-    options?: { allowToManyJoin?: boolean },
+    options?: {
+      allowToManyJoin?: boolean;
+      toManyDedupOrder?: ToManyDedupOrder[];
+    },
   ): this {
     return this.addJoin('INNER', relationPath, alias, condition, options);
   }
@@ -329,7 +335,11 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     relationPath: string,
     alias: string,
     condition?: string,
-    options?: { allowToManyJoin?: boolean; select?: boolean },
+    options?: {
+      allowToManyJoin?: boolean;
+      toManyDedupOrder?: ToManyDedupOrder[];
+      select?: boolean;
+    },
   ): this {
     const [parentAlias, relationFieldName] = relationPath.split('.');
 
@@ -405,6 +415,9 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
         ? toManyJoin?.foreignKeyColumnName
         : undefined,
       toManyPlainCondition: condition ?? toManyJoin?.condition,
+      toManyDedupOrder: shouldJoinDedupedToMany
+        ? options?.toManyDedupOrder
+        : undefined,
       additionalOnConditions: [],
     });
 
@@ -629,35 +642,17 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     return true;
   }
 
+  // Mirrors the v1 enforcement surface: only selects and order bys written as
+  // qualified "alias"."column" references count towards permission checks, so
+  // system-context reads that join relations keep working with an empty
+  // permission map; row-level permissions still cover every joined alias.
   getReferencedColumnNamesByAlias(): Record<string, string[]> {
     const state = this.toSelectStatementState();
     const aliases = collectStatementAliases(state);
 
-    // Every joined alias is reported, even with no referenced column, so
-    // object-level select permission is validated for each joined object.
-    const additionalColumnNamesByAlias: Record<string, string[]> =
-      Object.fromEntries(
-        this.joinClauses.map((joinClause) => [joinClause.alias, []]),
-      );
-
-    for (const joinedProjection of collectJoinedColumnProjections(state)) {
-      additionalColumnNamesByAlias[joinedProjection.joinAlias].push(
-        joinedProjection.columnName,
-      );
-    }
-
-    for (const columnSelection of state.columnSelections) {
-      if (columnSelection.alias === this.alias) {
-        (additionalColumnNamesByAlias[this.alias] ??= []).push(
-          columnSelection.columnName,
-        );
-      }
-    }
-
     return collectReferencedColumnNames({
       mainAlias: this.alias,
       mainAliasColumnNames: this.buildProjection().mainAliasColumnNames,
-      additionalColumnNamesByAlias,
       extraSelectClauses: this.extraSelectClauses.map((selectClause) => ({
         ...selectClause,
         expression: quoteQualifiedAliasReferences(
