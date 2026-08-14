@@ -773,24 +773,24 @@ const Card = () => {
 
 ## القيود الحالية
 
-مكوّنات Front قيد التطوير النشط. الترسيم والتنسيق والتعامل مع الأحداث تعمل بشكل جيد. أي شيء يتجاوز *مرحلة* الترسيم (قياس عنصر، استدعاء دالة DOM على ref، إنشاء portal خارج الشجرة الخاصة بك، أو لمس تخزين المتصفح) مفقود أو غير مكتمل حاليًا، ومعظم هذه الحالات تفشل بصمت: لا يتم رمي استثناء، ولا يظهر خطأ TypeScript أيضًا، لأن القالب مكتوب استنادًا إلى DOM الكامل للمتصفح.
+مكوّنات Front قيد التطوير النشط. الترسيم، والتنسيق، والتعامل مع الأحداث، وقياس العناصر، وتخزين المتصفح تعمل جميعها بشكل جيد. أي شيء يتجاوز *تلك* الحدود (استدعاء دالة DOM على ref، مراقبة تغيير أحجام العناصر، إنشاء portal خارج الشجرة الخاصة بك) مفقود أو غير مكتمل حاليًا، ومعظم هذه الحالات تفشل بصمت: لا يتم رمي استثناء، ولا يظهر خطأ TypeScript أيضًا، لأن القالب مكتوب استنادًا إلى DOM الكامل للمتصفح.
 
 إذا كان أحد هذه الأمور يعيقك، [افتح تذكرة](https://github.com/twentyhq/twenty/issues/new/choose) ليتم إعطاؤه أولوية.
 
 ### التخطيط والقياس
 
-لا يوجد أي شيء يمكنه قياس نفسه بعد.
+يمكن للعناصر قياس نفسها: المضيف يعكس الإحداثيات الهندسية داخل وضع الحماية، بحيث تتم الإجابة عن عمليات القراءة محليًا ولكن يمكن أن تتأخر حتى إطار واحد، وتعيد أول عملية قراءة لعنصر لم يُقَس من قبل قيمًا صفرية. بعد الكتابة، أعد القراءة داخل استدعاء `requestAnimationFrame` أو داخل تأثير.
 
-| واجهة برمجة التطبيقات                                         | ما الذي يحدث                                                                           |
-| ------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `getBoundingClientRect()`, `getClientRects()`                 | يرمي استثناء                                                                           |
-| `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | قيمة `undefined` بصمت، لذا فإن `width ?? 0` تعطي `0` و `width > 600` تكون دائمًا خاطئة |
-| `ResizeObserver`, `IntersectionObserver`                      | `ReferenceError` (`typeof` guards تعمل)                                                |
-| `window.matchMedia()`, `window.getComputedStyle()`            | يرمي استثناء                                                                           |
-| `window.innerWidth`, `innerHeight`, `devicePixelRatio`        | قيمة `undefined` بصمت                                                                  |
-| `new MutationObserver(fn)`                                    | يتم الإنشاء، ثم ترمي `.observe()` استثناء                                              |
+| واجهة برمجة التطبيقات                                                                    | ما الذي يحدث                                                                                          |
+| ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | يعمل، من المرآة؛ تعيين `scrollTop` / `scrollLeft` بلا تأثير                                           |
+| `getClientRects()`, `window.matchMedia()`                                                | يرمي استثناء                                                                                          |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY`             | يعمل، مع الإبلاغ عن منفذ عرض المتصفح؛ حجم أداتك نفسها هو `document.body.clientWidth` / `clientHeight` |
+| `window.getComputedStyle()`                                                              | يُرجع أنماط العنصر المضمّنة فقط، وليس سلسلة الأنماط المحسوبة من المضيف مطلقًا                         |
+| `ResizeObserver`, `IntersectionObserver`                                                 | `ReferenceError` (`typeof` guards تعمل)                                                               |
+| `MutationObserver`                                                                       | يعمل، بما في ذلك `subtree` و `attributeFilter` والقيم القديمة و `takeRecords()`                       |
 
-لذلك فإن recharts `ResponsiveContainer`، و Floating UI / Popper، وvirtualization للقوائم، والسحب لتغيير الحجم لا تعمل بعد. قم بتنفيذ التخطيط في CSS بدلًا من ذلك: ورقة الأنماط الخاصة بك تصل إلى الصفحة الحقيقية، لذا فإن flexbox و grid و `aspect-ratio` و `clamp()` و ‎`@container` كلها تتصرف بشكل طبيعي.
+أصبح التموضع باستخدام `getBoundingClientRect` يعمل الآن، ولكن أي شيء يراقب تغيّر الأحجام عبر `ResizeObserver` (مثل `ResponsiveContainer` في recharts و `autoUpdate` في Floating UI) ما زال لا يعمل. يفضَّل استخدام CSS للتخطيط على أي حال: ورقة الأنماط الخاصة بك تصل إلى الصفحة الحقيقية، لذا فإن flexbox و grid و `aspect-ratio` و `clamp()` و ‎`@container` تعمل بشكل طبيعي، بدون أي تأخير في الإطار.
 
 <Note>
 `requestAnimationFrame`, `fetch`, `setTimeout` و `queueMicrotask` تعمل بدون بادئة `window.`. فقط `window.requestAnimationFrame(...)` وما شابهها ترمي استثناء.
@@ -800,14 +800,14 @@ const Card = () => {
 
 يعطيك `ref` عنصرًا في sandbox، وليس `HTMLElement`.
 
-| ما الذي تكتبه                                                                                               | ما الذي يحدث                                          | استخدم بدلًا من ذلك                                                                                                    |
-| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | يرمي استثناء                                          | مكوّنات مضبوطة (Controlled components)؛ اقرأ القيم من `event.target`                                                   |
-| `element.classList.add(...)`                                                                                | يرمي استثناء (`classList` هو `undefined`)             | قم ببناء سلسلة `className` بنفسك                                                                                       |
-| `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | يرمي استثناء                                          | `querySelector()` / `querySelectorAll()`, والتي تعمل                                                                   |
-| `document.activeElement`                                                                                    | دائمًا `undefined`                                    | تتبّع التركيز باستخدام `onFocus` / `onBlur`                                                                            |
-| `canvas`                                                                                                    | لا يَرسُم أي شيء، بدون خطأ                            | SVG، أو الرسم خارج الشاشة وعرض النتيجة في عنصر `img`                                                                   |
-| `createPortal(node, document.body)`                                                                         | لا يَرسُم أي شيء، بينما `isConnected` يُبلغ عن النجاح | استخدم الطبقات العائمة (overlays) داخل التخطيط نفسه مع `position: absolute`، أو مرّر إلى المكتبة عنصر الحاوية الخاص بك |
+| ما الذي تكتبه                                                                                               | ما الذي يحدث                                          | استخدم بدلًا من ذلك                                                                                                                                                |
+| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | يرمي استثناء                                          | مكوّنات مضبوطة (Controlled components)؛ اقرأ القيم من `event.target`                                                                                               |
+| `element.classList.add(...)`                                                                                | يرمي استثناء (`classList` هو `undefined`)             | قم ببناء سلسلة `className` بنفسك                                                                                                                                   |
+| `document.createTreeWalker()`                                                                               | يرمي استثناء                                          | تعمل `querySelector()` / `querySelectorAll()` و `getElementById()`؛ تعمل `getElementsByClassName()` أيضًا، ولكنها تُرجِع مجموعة ثابتة، وليس `HTMLCollection` حيًّا |
+| `document.activeElement`                                                                                    | دائمًا `undefined`                                    | تتبّع التركيز باستخدام `onFocus` / `onBlur`                                                                                                                        |
+| `canvas`                                                                                                    | لا يَرسُم أي شيء، بدون خطأ                            | SVG، أو الرسم خارج الشاشة وعرض النتيجة في عنصر `img`                                                                                                               |
+| `createPortal(node, document.body)`                                                                         | لا يَرسُم أي شيء، بينما `isConnected` يُبلغ عن النجاح | استخدم الطبقات العائمة (overlays) داخل التخطيط نفسه مع `position: absolute`، أو مرّر إلى المكتبة عنصر الحاوية الخاص بك                                             |
 
 فجوة الـ portal هي السبب في أن عناصر popover في Radix و Headless UI و MUI و react-select لا ترسُم أي شيء بشكل افتراضي. معظمها يقبل خاصية container؛ وجّهها إلى عنصر قمت بترسيمه.
 

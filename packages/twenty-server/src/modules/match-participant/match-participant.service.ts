@@ -4,7 +4,6 @@ import chunk from 'lodash.chunk';
 import { isDefined } from 'twenty-shared/utils';
 import { Any, In } from 'typeorm';
 
-import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
@@ -47,7 +46,6 @@ type MatchParticipantsArgs<
 > = {
   participants: ParticipantWorkspaceEntity[];
   objectMetadataName: ObjectMetadataName;
-  transactionManager?: WorkspaceEntityManager;
   matchWith: 'workspaceMemberOnly' | 'personOnly' | 'workspaceMemberAndPerson';
   workspaceId: string;
 };
@@ -68,13 +66,13 @@ export class MatchParticipantService<
     objectMetadataName: 'messageParticipant' | 'calendarEventParticipant',
   ) {
     if (objectMetadataName === 'messageParticipant') {
-      return await this.globalWorkspaceOrmManager.getV1Repository<MessageParticipantWorkspaceEntity>(
+      return await this.globalWorkspaceOrmManager.getRepository<MessageParticipantWorkspaceEntity>(
         workspaceId,
         objectMetadataName,
       );
     }
 
-    return await this.globalWorkspaceOrmManager.getV1Repository<CalendarEventParticipantWorkspaceEntity>(
+    return await this.globalWorkspaceOrmManager.getRepository<CalendarEventParticipantWorkspaceEntity>(
       workspaceId,
       objectMetadataName,
     );
@@ -83,7 +81,6 @@ export class MatchParticipantService<
   public async matchParticipants({
     participants,
     objectMetadataName,
-    transactionManager,
     matchWith = 'workspaceMemberAndPerson',
     workspaceId,
   }: MatchParticipantsArgs<ParticipantWorkspaceEntity>) {
@@ -92,7 +89,7 @@ export class MatchParticipantService<
     }
 
     const personRepository =
-      await this.globalWorkspaceOrmManager.getV1Repository<PersonWorkspaceEntity>(
+      await this.globalWorkspaceOrmManager.getRepository<PersonWorkspaceEntity>(
         workspaceId,
         'person',
         { shouldBypassPermissionChecks: true },
@@ -104,7 +101,7 @@ export class MatchParticipantService<
     );
 
     const workspaceMemberRepository =
-      await this.globalWorkspaceOrmManager.getV1Repository<WorkspaceMemberWorkspaceEntity>(
+      await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
         workspaceId,
         'workspaceMember',
         { shouldBypassPermissionChecks: true },
@@ -127,14 +124,11 @@ export class MatchParticipantService<
         .orderBy('person.createdAt', 'ASC')
         .getMany();
 
-      const workspaceMembers = await workspaceMemberRepository.find(
-        {
-          where: {
-            userEmail: Any(uniqueParticipantsHandles),
-          },
+      const workspaceMembers = await workspaceMemberRepository.find({
+        where: {
+          userEmail: Any(uniqueParticipantsHandles),
         },
-        transactionManager,
-      );
+      });
 
       const partipantsToBeUpdated = participants
         .map((participant) => ({
