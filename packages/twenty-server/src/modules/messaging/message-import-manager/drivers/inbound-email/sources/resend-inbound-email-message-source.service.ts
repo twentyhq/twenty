@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import {
@@ -37,6 +38,9 @@ export class ResendInboundEmailMessageSourceService implements InboundEmailMessa
       throw new EmailingDomainDriverException(
         `Received email ${reference} has no raw content download URL`,
         EmailingDomainDriverExceptionCode.NOT_FOUND,
+        {
+          userFriendlyMessage: msg`The received email content is no longer available.`,
+        },
       );
     }
 
