@@ -52,7 +52,6 @@ export const slackInteractivityResolverHandler = async (
       (action) => action.action_id === SLACK_ASSISTANT_FEEDBACK_ACTION_ID,
     );
 
-  // Acknowledge interactions we do not handle so Slack does not retry them.
   if (!hasAssistantFeedbackAction) {
     return new Response({ ok: true });
   }

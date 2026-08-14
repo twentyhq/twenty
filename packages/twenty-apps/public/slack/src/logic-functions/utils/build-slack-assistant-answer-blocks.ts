@@ -25,7 +25,6 @@ export const buildSlackAssistantAnswerBlocks = ({
   },
   {
     type: 'context_actions',
-    // Carries the request record id so the feedback handler can find the record.
     block_id: requestId,
     elements: [
       {
