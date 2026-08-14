@@ -86,23 +86,18 @@ export const AiChatQuestionOtherOption = ({
   };
 
   return (
-    <StyledContainer
-      isHighlighted={isHighlighted}
-      role="button"
-      tabIndex={0}
-      onClick={selectAndFocus}
-      onKeyDown={(event) => {
-        if (event.target !== event.currentTarget) {
-          return;
-        }
-
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          selectAndFocus();
-        }
-      }}
-    >
-      <StyledLabelRow>
+    <StyledContainer isHighlighted={isHighlighted} onClick={selectAndFocus}>
+      <StyledLabelRow
+        role="button"
+        tabIndex={0}
+        aria-pressed={isHighlighted}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            selectAndFocus();
+          }
+        }}
+      >
         <NumberIcon
           size={theme.icon.size.sm}
           color={themeCssVariables.font.color.tertiary}
