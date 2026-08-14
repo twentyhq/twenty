@@ -5,6 +5,7 @@ import {
   MessageChannelVisibility,
   MessageParticipantRole,
 } from 'twenty-shared/types';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
 
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
@@ -14,8 +15,10 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
+import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
@@ -56,33 +59,62 @@ export class TimelineMessagingService {
             workspaceId,
             'messageThread',
           );
+        const messageParticipantRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageParticipantWorkspaceEntity>(
+            workspaceId,
+            'messageParticipant',
+          );
+        const messageRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageWorkspaceEntity>(
+            workspaceId,
+            'message',
+          );
 
-        const totalNumberOfThreads = await messageThreadRepository
-          .createQueryBuilder('messageThread')
-          .innerJoin('messageThread.messages', 'messages')
-          .innerJoin('messages.messageParticipants', 'messageParticipants')
-          .where('messageParticipants.personId IN(:...personIds)', {
-            personIds,
-          })
-          .groupBy('messageThread.id')
-          .getCount();
+        // ORM v2 does not join to-many relations, so the thread set is resolved
+        // with flat queries: participants of these people -> their messages ->
+        // threads, tracking the latest message date per thread for ordering.
+        const participants = await messageParticipantRepository.find({
+          where: { personId: In(personIds) },
+          select: { messageId: true },
+        });
 
-        const threadIdsQuery = await messageThreadRepository
-          .createQueryBuilder('messageThread')
-          .select('messageThread.id', 'id')
-          .addSelect('MAX(messages.receivedAt)', 'max_received_at')
-          .innerJoin('messageThread.messages', 'messages')
-          .innerJoin('messages.messageParticipants', 'messageParticipants')
-          .where('messageParticipants.personId IN (:...personIds)', {
-            personIds,
-          })
-          .groupBy('messageThread.id')
-          .orderBy('max_received_at', 'DESC')
-          .offset(offset)
-          .limit(pageSize)
-          .getRawMany();
+        const participantMessageIds = [
+          ...new Set(participants.map((participant) => participant.messageId)),
+        ];
 
-        const messageThreadIds = threadIdsQuery.map((thread) => thread.id);
+        const participantMessages = isNonEmptyArray(participantMessageIds)
+          ? await messageRepository.find({
+              where: { id: In(participantMessageIds) },
+              select: { messageThreadId: true, receivedAt: true },
+            })
+          : [];
+
+        const latestReceivedAtByThreadId = new Map<string, number>();
+
+        for (const message of participantMessages) {
+          if (!isDefined(message.messageThreadId)) {
+            continue;
+          }
+
+          const receivedAtTime = (message.receivedAt ?? new Date(0)).getTime();
+          const currentLatest = latestReceivedAtByThreadId.get(
+            message.messageThreadId,
+          );
+
+          if (!isDefined(currentLatest) || receivedAtTime > currentLatest) {
+            latestReceivedAtByThreadId.set(
+              message.messageThreadId,
+              receivedAtTime,
+            );
+          }
+        }
+
+        const totalNumberOfThreads = latestReceivedAtByThreadId.size;
+
+        const messageThreadIds = [...latestReceivedAtByThreadId.entries()]
+          .sort(([, aReceivedAt], [, bReceivedAt]) => bReceivedAt - aReceivedAt)
+          .slice(offset, offset + pageSize)
+          .map(([threadId]) => threadId);
 
         const messageThreads = await messageThreadRepository.find({
           where: {
@@ -133,27 +165,54 @@ export class TimelineMessagingService {
             workspaceId,
             'messageParticipant',
           );
+        const messageRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageWorkspaceEntity>(
+            workspaceId,
+            'message',
+          );
 
-        const threadParticipants = await messageParticipantRepository
-          .createQueryBuilder()
-          .select('messageParticipant')
-          .addSelect('message.messageThreadId')
-          .addSelect('message.receivedAt')
-          .leftJoinAndSelect('messageParticipant.person', 'person')
-          .leftJoinAndSelect(
-            'messageParticipant.workspaceMember',
-            'workspaceMember',
-          )
-          .leftJoin('messageParticipant.message', 'message')
-          .where('message.messageThreadId = ANY(:messageThreadIds)', {
-            messageThreadIds,
-          })
-          .andWhere('messageParticipant.role = :role', {
-            role: MessageParticipantRole.FROM,
-          })
-          .orderBy('message.messageThreadId')
-          .distinctOn(['message.messageThreadId', 'messageParticipant.handle'])
-          .getMany();
+        const threadMessages = await messageRepository.find({
+          where: { messageThreadId: In(messageThreadIds) },
+          select: { id: true, messageThreadId: true, receivedAt: true },
+        });
+
+        const messageById = new Map(
+          threadMessages.map((message) => [message.id, message]),
+        );
+
+        const threadMessageIds = threadMessages.map((message) => message.id);
+
+        const fromParticipants = isNonEmptyArray(threadMessageIds)
+          ? await messageParticipantRepository.find({
+              where: {
+                messageId: In(threadMessageIds),
+                role: MessageParticipantRole.FROM,
+              },
+              relations: ['person', 'workspaceMember'],
+            })
+          : [];
+
+        // ORM v2 has no DISTINCT ON, so keep one FROM participant per
+        // (thread, handle) in memory, attaching its message for downstream use.
+        const seenThreadHandleKeys = new Set<string>();
+        const threadParticipants: MessageParticipantWorkspaceEntity[] = [];
+
+        for (const participant of fromParticipants) {
+          const message = messageById.get(participant.messageId);
+
+          if (!isDefined(message) || !isDefined(message.messageThreadId)) {
+            continue;
+          }
+
+          const threadHandleKey = `${message.messageThreadId}:${participant.handle}`;
+
+          if (seenThreadHandleKeys.has(threadHandleKey)) {
+            continue;
+          }
+
+          seenThreadHandleKeys.add(threadHandleKey);
+          threadParticipants.push({ ...participant, message });
+        }
 
         const orderedThreadParticipants = threadParticipants.sort(
           (a, b) =>
@@ -271,28 +330,46 @@ export class TimelineMessagingService {
 
         const currentUserWorkspaceId = currentUserWorkspace.id;
 
-        const messageThreadRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageThreadWorkspaceEntity>(
+        const messageRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageWorkspaceEntity>(
             workspaceId,
-            'messageThread',
+            'message',
+          );
+        const messageChannelMessageAssociationRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+            workspaceId,
+            'messageChannelMessageAssociation',
           );
 
-        const threadChannelRows = await messageThreadRepository
-          .createQueryBuilder()
-          .select('messageThread.id', 'id')
-          .addSelect(
-            'messageChannelMessageAssociation.messageChannelId',
-            'messageChannelId',
-          )
-          .leftJoin('messageThread.messages', 'message')
-          .leftJoin(
-            'message.messageChannelMessageAssociations',
-            'messageChannelMessageAssociation',
-          )
-          .where('messageThread.id = ANY(:messageThreadIds)', {
-            messageThreadIds,
-          })
-          .getRawMany<{ id: string; messageChannelId: string | null }>();
+        // ORM v2 does not join to-many relations: resolve thread -> messages ->
+        // channel associations with flat queries and stitch them in memory.
+        const threadMessages = await messageRepository.find({
+          where: { messageThreadId: In(messageThreadIds) },
+          select: { id: true, messageThreadId: true },
+        });
+
+        const threadIdByMessageId = new Map(
+          threadMessages.map((message) => [message.id, message.messageThreadId]),
+        );
+
+        const threadMessageIds = threadMessages.map((message) => message.id);
+
+        const messageChannelAssociations = isNonEmptyArray(threadMessageIds)
+          ? await messageChannelMessageAssociationRepository.find({
+              where: { messageId: In(threadMessageIds) },
+              select: { messageId: true, messageChannelId: true },
+            })
+          : [];
+
+        const threadChannelRows = messageChannelAssociations
+          .map((association) => ({
+            id: threadIdByMessageId.get(association.messageId) ?? null,
+            messageChannelId: association.messageChannelId,
+          }))
+          .filter(
+            (row): row is { id: string; messageChannelId: string } =>
+              isDefined(row.id),
+          );
 
         const allMessageChannelIds = [
           ...new Set(
