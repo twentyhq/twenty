@@ -618,39 +618,111 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
         );
       }
 
-      const quotedColumn = quoteColumn(this.alias, columnName);
-
-      if (value === null) {
-        conditions.push(`${quotedColumn} IS NULL`);
-        continue;
-      }
-
-      const parameterName = `ormV2ObjectWhere_${objectWhereParameterSequence++}`;
-
-      if (value instanceof FindOperator) {
-        if (value.type === 'in') {
-          conditions.push(`${quotedColumn} IN (:...${parameterName})`);
-          parameters[parameterName] = value.value;
-          continue;
-        }
-
-        if (value.type === 'equal') {
-          conditions.push(`${quotedColumn} = :${parameterName}`);
-          parameters[parameterName] = value.value;
-          continue;
-        }
-
-        throw new TwentyOrmV2Exception(
-          `Object where supports only the "in" and "equal" operators on "${columnName}"`,
-          TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
-        );
-      }
-
-      conditions.push(`${quotedColumn} = :${parameterName}`);
-      parameters[parameterName] = value;
+      conditions.push(
+        this.buildValueCondition(
+          quoteColumn(this.alias, columnName),
+          columnName,
+          value,
+          parameters,
+        ),
+      );
     }
 
     return { sql: conditions.join(' AND '), parameters };
+  }
+
+  private buildValueCondition(
+    quotedColumn: string,
+    columnName: string,
+    value: unknown,
+    parameters: Record<string, unknown>,
+  ): string {
+    if (value === null) {
+      return `${quotedColumn} IS NULL`;
+    }
+
+    const nextParameter = (parameterValue: unknown): string => {
+      const parameterName = `ormV2ObjectWhere_${objectWhereParameterSequence++}`;
+
+      parameters[parameterName] = parameterValue;
+
+      return parameterName;
+    };
+
+    if (value instanceof FindOperator) {
+      switch (value.type) {
+        case 'in':
+          return `${quotedColumn} IN (:...${nextParameter(value.value)})`;
+        case 'any':
+          return `${quotedColumn} = ANY(:${nextParameter(value.value)})`;
+        case 'equal':
+          return `${quotedColumn} = :${nextParameter(value.value)}`;
+        case 'lessThan':
+          return `${quotedColumn} < :${nextParameter(value.value)}`;
+        case 'lessThanOrEqual':
+          return `${quotedColumn} <= :${nextParameter(value.value)}`;
+        case 'moreThan':
+          return `${quotedColumn} > :${nextParameter(value.value)}`;
+        case 'moreThanOrEqual':
+          return `${quotedColumn} >= :${nextParameter(value.value)}`;
+        case 'like':
+          return `${quotedColumn} LIKE :${nextParameter(value.value)}`;
+        case 'ilike':
+          return `${quotedColumn} ILIKE :${nextParameter(value.value)}`;
+        case 'arrayContains':
+          return `${quotedColumn} @> :${nextParameter(value.value)}`;
+        case 'isNull':
+          return `${quotedColumn} IS NULL`;
+        case 'between': {
+          const [from, to] = value.value as [unknown, unknown];
+
+          return `${quotedColumn} BETWEEN :${nextParameter(
+            from,
+          )} AND :${nextParameter(to)}`;
+        }
+        case 'not':
+          return `NOT (${this.buildValueCondition(
+            quotedColumn,
+            columnName,
+            value.child ?? value.value,
+            parameters,
+          )})`;
+        case 'and':
+        case 'or': {
+          const childOperators = value.value as unknown[];
+          const separator = value.type === 'and' ? ' AND ' : ' OR ';
+
+          return `(${childOperators
+            .map((childOperator) =>
+              this.buildValueCondition(
+                quotedColumn,
+                columnName,
+                childOperator,
+                parameters,
+              ),
+            )
+            .join(separator)})`;
+        }
+        case 'raw': {
+          const rawValue = value.value as
+            | string
+            | ((columnAlias: string) => string);
+          const rawSql =
+            typeof rawValue === 'function' ? rawValue(quotedColumn) : rawValue;
+
+          Object.assign(parameters, value.objectLiteralParameters ?? {});
+
+          return rawSql;
+        }
+        default:
+          throw new TwentyOrmV2Exception(
+            `Object where does not support the "${value.type}" operator on "${columnName}"`,
+            TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
+          );
+      }
+    }
+
+    return `${quotedColumn} = :${nextParameter(value)}`;
   }
 
   private appendOrderBy(

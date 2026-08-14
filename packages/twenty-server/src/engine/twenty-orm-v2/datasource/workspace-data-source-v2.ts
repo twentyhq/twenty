@@ -69,22 +69,28 @@ export class WorkspaceDataSourceV2 {
   async transaction<T>(
     work: (transactionScope: WorkspaceTransactionScopeV2) => Promise<T>,
   ): Promise<T> {
-    const client = await this.pool.connect();
-
-    try {
-      await client.query('BEGIN');
-
-      const executor = new ClientQueryExecutor({ client });
-      const transactionScope: WorkspaceTransactionScopeV2 = {
+    return this.runInClientTransaction((executor) =>
+      work({
         getRepository: (nameSingular, rolePermissionConfig) =>
           this.buildRepository({
             nameSingular,
             rolePermissionConfig,
             executor,
+            isTransactional: true,
           }),
-      };
+      }),
+    );
+  }
 
-      const result = await work(transactionScope);
+  private async runInClientTransaction<T>(
+    work: (executor: QueryExecutorV2) => Promise<T>,
+  ): Promise<T> {
+    const client = await this.pool.connect();
+
+    try {
+      await client.query('BEGIN');
+
+      const result = await work(new ClientQueryExecutor({ client }));
 
       await client.query('COMMIT');
 
@@ -102,10 +108,12 @@ export class WorkspaceDataSourceV2 {
     nameSingular,
     rolePermissionConfig,
     executor,
+    isTransactional = false,
   }: {
     nameSingular: string;
     rolePermissionConfig?: RolePermissionConfig;
     executor: QueryExecutorV2;
+    isTransactional?: boolean;
   }): WorkspaceRepositoryV2 {
     const objectMetadataId =
       this.internalContext.objectIdByNameSingular[nameSingular];
@@ -121,6 +129,7 @@ export class WorkspaceDataSourceV2 {
       objectMetadataId,
       rolePermissionConfig,
       executor,
+      isTransactional,
     });
   }
 
@@ -128,10 +137,12 @@ export class WorkspaceDataSourceV2 {
     objectMetadataId,
     rolePermissionConfig,
     executor,
+    isTransactional = false,
   }: {
     objectMetadataId: string;
     rolePermissionConfig?: RolePermissionConfig;
     executor: QueryExecutorV2;
+    isTransactional?: boolean;
   }): WorkspaceRepositoryV2 {
     const flatObjectMetadata =
       this.getFlatObjectMetadataOrThrow(objectMetadataId);
@@ -159,7 +170,20 @@ export class WorkspaceDataSourceV2 {
           objectMetadataId: targetObjectMetadataId,
           rolePermissionConfig,
           executor,
+          isTransactional,
         }),
+      isTransactional,
+      runInNewTransaction: (work) =>
+        this.runInClientTransaction((transactionExecutor) =>
+          work(
+            this.buildRepositoryForObjectMetadataId({
+              objectMetadataId,
+              rolePermissionConfig,
+              executor: transactionExecutor,
+              isTransactional: true,
+            }),
+          ),
+        ),
     });
   }
 
