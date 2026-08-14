@@ -11,6 +11,7 @@ import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/module
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
+import { resolveMessageExternalId } from 'src/modules/messaging/message-import-manager/utils/resolve-message-external-id.util';
 
 type MessageAccumulator = {
   existingMessageInDB?: MessageWorkspaceEntity;
@@ -187,7 +188,7 @@ export class MessagingMessageService {
               id: v4(),
               messageChannelId,
               messageId: newOrExistingMessageId,
-              messageExternalId: message.externalId,
+              messageExternalId: resolveMessageExternalId(message),
               messageThreadExternalId: message.messageThreadExternalId,
               direction: message.direction,
             };

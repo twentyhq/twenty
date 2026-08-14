@@ -40,10 +40,22 @@ export class MessagingMessageParticipantService {
             },
           });
 
+        // The same address is often repeated across the recipient headers of a
+        // single message, and every repetition would otherwise create another
+        // participant row and another contact creation job for that person.
+        const uniqueParticipants = participants.filter(
+          (participant, index) =>
+            participants.findIndex(
+              (candidate) =>
+                candidate.messageId === participant.messageId &&
+                candidate.handle === participant.handle,
+            ) === index,
+        );
+
         const participantsToCreate: Pick<
           MessageParticipantWorkspaceEntity,
           'messageId' | 'handle' | 'displayName' | 'role'
-        >[] = participants
+        >[] = uniqueParticipants
           .filter(
             (participant) =>
               !existingParticipantsBasedOnMessageIds.find(

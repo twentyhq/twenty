@@ -53,12 +53,15 @@ export class CalendarSaveEventsService {
 
         await workspaceDataSource.transaction(
           async (transactionManager: WorkspaceEntityManager) => {
+            // Providers rewrite the resource identifier when an event is moved
+            // or re-published, so reconciliation looks the event up by the
+            // iCal UID, which stays stable for the lifetime of the event.
             const existingAssociations =
               await calendarChannelEventAssociationRepository.find(
                 {
                   where: {
                     eventExternalId: Any(
-                      fetchedCalendarEvents.map((event) => event.id),
+                      fetchedCalendarEvents.map((event) => event.iCalUid),
                     ),
                     calendarChannelId: calendarChannel.id,
                   },
