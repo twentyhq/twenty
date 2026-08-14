@@ -6,7 +6,8 @@ type UseScrollActiveTabIntoViewParams = {
 };
 
 // A tab selected from the URL or from initial state can sit outside the
-// scrolled region, which would leave the row looking like nothing is selected.
+// scrolled region, and a rotation can push it back out, which would leave the
+// row looking like nothing is selected.
 export const useScrollActiveTabIntoView = ({
   activeTabId,
   isScrollable,
@@ -14,28 +15,40 @@ export const useScrollActiveTabIntoView = ({
   const tabRowRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!isScrollable) {
-      return;
-    }
-
     const tabRow = tabRowRef.current;
-    const activeTab = tabRow?.querySelector('[data-active]');
 
-    if (!tabRow || !(activeTab instanceof HTMLElement)) {
+    if (!isScrollable || !tabRow) {
       return;
     }
 
-    const activeTabLeft = activeTab.offsetLeft;
-    const activeTabRight = activeTabLeft + activeTab.offsetWidth;
+    const scrollActiveTabIntoView = () => {
+      const activeTab = tabRow.querySelector('[data-active]');
 
-    if (activeTabLeft < tabRow.scrollLeft) {
-      tabRow.scrollLeft = activeTabLeft;
-      return;
-    }
+      if (!(activeTab instanceof HTMLElement)) {
+        return;
+      }
 
-    if (activeTabRight > tabRow.scrollLeft + tabRow.clientWidth) {
-      tabRow.scrollLeft = activeTabRight - tabRow.clientWidth;
-    }
+      const activeTabLeft = activeTab.offsetLeft;
+      const activeTabRight = activeTabLeft + activeTab.offsetWidth;
+
+      if (activeTabLeft < tabRow.scrollLeft) {
+        tabRow.scrollLeft = activeTabLeft;
+        return;
+      }
+
+      if (activeTabRight > tabRow.scrollLeft + tabRow.clientWidth) {
+        tabRow.scrollLeft = activeTabRight - tabRow.clientWidth;
+      }
+    };
+
+    scrollActiveTabIntoView();
+
+    const tabRowResizeObserver = new ResizeObserver(scrollActiveTabIntoView);
+    tabRowResizeObserver.observe(tabRow);
+
+    return () => {
+      tabRowResizeObserver.disconnect();
+    };
   }, [activeTabId, isScrollable]);
 
   return { tabRowRef };
