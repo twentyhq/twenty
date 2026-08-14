@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { AWS_SES_RESOURCE_NAME_PREFIX } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/aws-ses-resource-name-prefix.constant';
 import { isDefined } from 'twenty-shared/utils';
 

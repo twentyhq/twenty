@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 export type MailgunOutboundWebhookPayload = {
   signature?: {
     timestamp?: string;

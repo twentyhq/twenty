@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { mapMailgunDnsRecords } from 'src/engine/core-modules/emailing-domain/drivers/mailgun/utils/map-mailgun-dns-records.util';
 
 describe('mapMailgunDnsRecords', () => {

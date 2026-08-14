@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { Injectable } from '@nestjs/common';
 
 import { type AwsSesError } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/types/aws-ses-error.type';

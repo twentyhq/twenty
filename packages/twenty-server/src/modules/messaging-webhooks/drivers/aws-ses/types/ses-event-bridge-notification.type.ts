@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 type SesEventBridgeDetailType =
   | 'Sending Status Enabled'
   | 'Sending Status Disabled'

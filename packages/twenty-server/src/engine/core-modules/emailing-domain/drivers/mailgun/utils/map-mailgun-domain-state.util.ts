@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 
 export const mapMailgunDomainState = (

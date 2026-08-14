@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { createHmac, timingSafeEqual } from 'crypto';
 
 // Mailgun signs webhooks with an HMAC-SHA256 hex digest over

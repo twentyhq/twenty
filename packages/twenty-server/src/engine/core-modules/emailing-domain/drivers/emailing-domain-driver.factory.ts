@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
+
 import { isNonEmptyString } from '@sniptt/guards';
 
 import {
@@ -19,7 +21,14 @@ import { MailgunDriver } from 'src/engine/core-modules/emailing-domain/drivers/m
 import { ResendApiClientService } from 'src/engine/core-modules/emailing-domain/drivers/resend/services/resend-api-client.service';
 import { ResendDriver } from 'src/engine/core-modules/emailing-domain/drivers/resend/services/resend-driver.service';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
+import {
+  EmailingDomainDriverException,
+  EmailingDomainDriverExceptionCode,
+} from 'src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception';
+import { isCommunityEmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/utils/is-community-emailing-domain-driver.util';
 import { UnsubscribeContentService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-content.service';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { DriverFactoryBase } from 'src/engine/core-modules/twenty-config/dynamic-factory.base';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
@@ -38,6 +47,8 @@ export class EmailingDomainDriverFactory extends DriverFactoryBase<EmailingDomai
     private readonly resendApiClientService: ResendApiClientService,
     private readonly mailgunApiClientService: MailgunApiClientService,
     private readonly unsubscribeContentService: UnsubscribeContentService,
+    private readonly billingService: BillingService,
+    private readonly enterprisePlanService: EnterprisePlanService,
   ) {
     super(twentyConfigService, configGroupHashService);
   }
@@ -139,5 +150,28 @@ export class EmailingDomainDriverFactory extends DriverFactoryBase<EmailingDomai
       default:
         throw new Error(`Invalid emailing domain driver: ${driver}`);
     }
+  }
+
+  // Checked on every access rather than only at construction so a cached
+  // enterprise driver stops working as soon as the plan expires. Cloud
+  // (billing enabled) meters emailing with credits at send time instead.
+  override getCurrentDriver(): EmailingDomainDriverInterface {
+    const driver = this.twentyConfigService.get('EMAILING_DOMAIN_DRIVER');
+
+    if (
+      !isCommunityEmailingDomainDriver(driver) &&
+      !this.billingService.isBillingEnabled() &&
+      !this.enterprisePlanService.isValid()
+    ) {
+      throw new EmailingDomainDriverException(
+        `The ${driver} emailing domain driver requires an Enterprise plan; use the RESEND driver on the community edition`,
+        EmailingDomainDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+        {
+          userFriendlyMessage: msg`This email provider requires an Enterprise plan.`,
+        },
+      );
+    }
+
+    return super.getCurrentDriver();
   }
 }
