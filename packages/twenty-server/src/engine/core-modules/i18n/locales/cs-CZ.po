@@ -37,11 +37,6 @@ msgstr "\"{0}\" není složené pole — odstraňte výběr podpole."
 msgid "\"{0}\" is not a valid sub-field of \"{1}\"."
 msgstr "\"{0}\" není platné podpole \"{1}\"."
 
-#. js-lingui-id: gKGO2f
-#: src/engine/core-modules/user/utils/assert-workspace-member-update-values-are-valid.util.ts
-msgid "\"{fieldName}\" received an invalid value."
-msgstr ""
-
 #. js-lingui-id: SsRDX3
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
 msgid "\"{payloadKey}\" is not a valid workspace member field."
@@ -3615,11 +3610,6 @@ msgstr "Nedostatečná oprávnění pro přístup ke kalendáři."
 msgid "Insufficient permissions."
 msgstr "Nedostatečná oprávnění."
 
-#. js-lingui-id: HTEaVD
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
-msgid "Interface Scale"
-msgstr ""
-
 #. js-lingui-id: 4bX5tI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgid "Internal name of the campaign"
@@ -6383,11 +6373,6 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgid "Preferred color scheme"
 msgstr "Preferované barevné schéma"
-
-#. js-lingui-id: QG76Gf
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
-msgid "Preferred interface scale"
-msgstr ""
 
 #. js-lingui-id: 5v4qYi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts

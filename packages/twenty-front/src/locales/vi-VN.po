@@ -1599,11 +1599,6 @@ msgstr "Địa chỉ 2"
 msgid "Addresses your workspace uses to send and receive email from shared inboxes"
 msgstr "Các địa chỉ mà không gian làm việc của bạn sử dụng để gửi và nhận email từ các hộp thư chung"
 
-#. js-lingui-id: 11TrtH
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Adjust the size of text and interface elements"
-msgstr ""
-
 #. js-lingui-id: U3pytU
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 msgid "Admin"
@@ -6028,7 +6023,6 @@ msgstr "mặc định"
 #. js-lingui-id: ovBPCi
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
-#: src/modules/settings/experience/components/UiScalePicker.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
@@ -10383,11 +10377,6 @@ msgstr "Trình chỉnh sửa hướng dẫn"
 msgid "Integrations - Settings"
 msgstr "Cài đặt - Tích hợp"
 
-#. js-lingui-id: gVouHS
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Interface scale"
-msgstr ""
-
 #. js-lingui-id: a+PGuG
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Internet accounts per user"
@@ -10881,19 +10870,9 @@ msgstr "Ngôn ngữ"
 msgid "Languages"
 msgstr "Ngôn ngữ"
 
-#. js-lingui-id: k7rCa/
-#: src/modules/settings/experience/components/UiScalePicker.tsx
-msgid "Large"
-msgstr ""
-
 #. js-lingui-id: 59o/ag
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Large section heading"
-msgstr ""
-
-#. js-lingui-id: ke14uo
-#: src/modules/settings/experience/components/UiScalePicker.tsx
-msgid "Larger"
 msgstr ""
 
 #. Short label (keep brief) indicating the most recently used login method
@@ -17611,11 +17590,6 @@ msgstr "Xanh trời"
 #. js-lingui-id: Ik7fz5
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Small section heading"
-msgstr ""
-
-#. js-lingui-id: OueVS2
-#: src/modules/settings/experience/components/UiScalePicker.tsx
-msgid "Smaller"
 msgstr ""
 
 #. js-lingui-id: 5J8ZFl
