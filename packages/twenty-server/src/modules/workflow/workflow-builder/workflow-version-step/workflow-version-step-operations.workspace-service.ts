@@ -973,13 +973,10 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
         await this.workflowVersionCoreSyncService.writeWorkflowVersionAndMirror(
           workspaceId,
-          async (scopedRepository, entityManager) => {
-            await scopedRepository.update(
-              workflowVersion.id,
-              { steps: [...existingSteps, emptyNodeStep] },
-              undefined,
-              entityManager,
-            );
+          async (scopedRepository) => {
+            await scopedRepository.update(workflowVersion.id, {
+              steps: [...existingSteps, emptyNodeStep],
+            });
 
             return workflowVersion.id;
           },
@@ -1065,13 +1062,10 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
         await this.workflowVersionCoreSyncService.writeWorkflowVersionAndMirror(
           workspaceId,
-          async (scopedRepository, entityManager) => {
-            await scopedRepository.update(
-              workflowVersion.id,
-              { steps: [...existingSteps, ifEmptyNode, elseEmptyNode] },
-              undefined,
-              entityManager,
-            );
+          async (scopedRepository) => {
+            await scopedRepository.update(workflowVersion.id, {
+              steps: [...existingSteps, ifEmptyNode, elseEmptyNode],
+            });
 
             return workflowVersion.id;
           },

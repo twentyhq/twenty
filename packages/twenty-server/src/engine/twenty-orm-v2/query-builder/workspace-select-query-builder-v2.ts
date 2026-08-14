@@ -1,5 +1,5 @@
 import { type ObjectsPermissions } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, pascalCase } from 'twenty-shared/utils';
 import { FindOperator } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -611,20 +611,62 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     const parameters: Record<string, unknown> = {};
 
     for (const [columnName, value] of Object.entries(where)) {
-      if (!isDefined(this.tableShape.columnShapeByColumnName[columnName])) {
-        throw new TwentyOrmV2Exception(
-          `Column "${columnName}" does not exist on "${this.tableShape.nameSingular}"`,
-          TwentyOrmV2ExceptionCode.UNKNOWN_COLUMN,
+      if (isDefined(this.tableShape.columnShapeByColumnName[columnName])) {
+        conditions.push(
+          this.buildValueCondition(
+            quoteColumn(this.alias, columnName),
+            columnName,
+            value,
+            parameters,
+          ),
         );
+
+        continue;
       }
 
-      conditions.push(
-        this.buildValueCondition(
-          quoteColumn(this.alias, columnName),
-          columnName,
-          value,
-          parameters,
-        ),
+      const hasCompositeChildColumns = Object.values(
+        this.tableShape.columnShapeByColumnName,
+      ).some((shape) => shape.compositeParentFieldName === columnName);
+
+      if (
+        hasCompositeChildColumns &&
+        isDefined(value) &&
+        typeof value === 'object' &&
+        !(value instanceof FindOperator) &&
+        !Array.isArray(value)
+      ) {
+        for (const [subFieldName, subValue] of Object.entries(
+          value as Record<string, unknown>,
+        )) {
+          const compositeColumnName = `${columnName}${pascalCase(subFieldName)}`;
+
+          if (
+            !isDefined(
+              this.tableShape.columnShapeByColumnName[compositeColumnName],
+            )
+          ) {
+            throw new TwentyOrmV2Exception(
+              `Column "${compositeColumnName}" does not exist on "${this.tableShape.nameSingular}"`,
+              TwentyOrmV2ExceptionCode.UNKNOWN_COLUMN,
+            );
+          }
+
+          conditions.push(
+            this.buildValueCondition(
+              quoteColumn(this.alias, compositeColumnName),
+              compositeColumnName,
+              subValue,
+              parameters,
+            ),
+          );
+        }
+
+        continue;
+      }
+
+      throw new TwentyOrmV2Exception(
+        `Column "${columnName}" does not exist on "${this.tableShape.nameSingular}"`,
+        TwentyOrmV2ExceptionCode.UNKNOWN_COLUMN,
       );
     }
 
@@ -704,11 +746,19 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
             .join(separator)})`;
         }
         case 'raw': {
-          const rawValue = value.value as
-            | string
-            | ((columnAlias: string) => string);
-          const rawSql =
-            typeof rawValue === 'function' ? rawValue(quotedColumn) : rawValue;
+          const rawValue = value.value as unknown;
+
+          let rawSql: string;
+
+          if (typeof rawValue === 'function') {
+            rawSql = (rawValue as (columnAlias: string) => string)(
+              quotedColumn,
+            );
+          } else if (typeof rawValue === 'string') {
+            rawSql = rawValue;
+          } else {
+            rawSql = value.getSql?.(quotedColumn) ?? '';
+          }
 
           Object.assign(parameters, value.objectLiteralParameters ?? {});
 
