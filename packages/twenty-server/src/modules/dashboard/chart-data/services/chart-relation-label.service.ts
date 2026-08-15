@@ -236,7 +236,7 @@ export class ChartRelationLabelService {
                 }
 
                 return queryBuilder
-                  .where(`${alias}.id IN (:...recordIdChunk)`, {
+                  .where(`"${alias}".id IN (:...recordIdChunk)`, {
                     recordIdChunk,
                   })
                   .getRawMany();
