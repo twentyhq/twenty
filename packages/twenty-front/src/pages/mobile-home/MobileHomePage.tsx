@@ -27,8 +27,6 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-// The tabs that used to sit here moved into the bottom bar, leaving the
-// workspace switcher, which anchors a dropdown and so cannot be a bar item.
 const StyledTopRow = styled.div`
   align-items: center;
   display: flex;
