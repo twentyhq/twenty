@@ -45,17 +45,18 @@ export const RecordDetailMorphRelationSectionDropdown = ({
 
   const isDeleted = useIsRecordDeleted({ recordId });
 
-  const isRecordReadOnlyFromRelatedRecordPerspective =
-    relatedObjectMetadataItems.some((relatedObjectMetadataItem) => {
-      return isRecordReadOnly({
-        objectPermissions: {
-          canUpdateObjectRecords: true,
-          objectMetadataId: relatedObjectMetadataItem.id,
-        },
-        isRecordDeleted: isDeleted,
-        objectMetadataItem: relatedObjectMetadataItem,
+  const isRecordReadOnlyFromRelatedRecordPerspective = isToOneObject
+    ? false
+    : relatedObjectMetadataItems.some((relatedObjectMetadataItem) => {
+        return isRecordReadOnly({
+          objectPermissions: {
+            canUpdateObjectRecords: true,
+            objectMetadataId: relatedObjectMetadataItem.id,
+          },
+          isRecordDeleted: isDeleted,
+          objectMetadataItem: relatedObjectMetadataItem,
+        });
       });
-    });
 
   if (
     loading ||

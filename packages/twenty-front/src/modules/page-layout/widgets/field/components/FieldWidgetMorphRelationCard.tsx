@@ -7,6 +7,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsRecordFieldReadOnly';
+import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { isRecordReadOnly } from '@/object-record/read-only/utils/isRecordReadOnly';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { RecordDetailRecordsListContainer } from '@/object-record/record-field-list/record-detail-section/components/RecordDetailRecordsListContainer';
@@ -37,6 +38,7 @@ import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelCont
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { RelationType } from '~/generated-metadata/graphql';
 
 const StyledShowMoreButtonContainer = styled.div`
   padding-top: ${themeCssVariables.spacing[2]};
@@ -116,6 +118,14 @@ export const FieldWidgetMorphRelationCard = ({
     objectMetadataId: objectMetadataItem.id,
   });
 
+  const isToOneObject =
+    fieldMetadata.relationType === RelationType.MANY_TO_ONE;
+
+  const isRecordReadOnlyFromSourcePerspective = useIsRecordReadOnly({
+    recordId: targetRecord.id,
+    objectMetadataId: objectMetadataItem.id,
+  });
+
   const relatedObjectMetadataItems = fieldMetadata.morphRelations
     .map((morphRelation) => morphRelation.targetObjectMetadata.id)
     .map((objectMetadataId) =>
@@ -128,7 +138,7 @@ export const FieldWidgetMorphRelationCard = ({
 
   const isDeleted = useIsRecordDeleted({ recordId: targetRecord.id });
 
-  const isRecordReadOnlyFromRelatedRecordPerspective =
+  const isRecordReadOnlyFromTargetPerspective =
     relatedObjectMetadataItems.some((relatedObjectMetadataItem) => {
       const objectPermissions = getObjectPermissionsFromMapByObjectMetadataId({
         objectPermissionsByObjectMetadataId,
@@ -141,6 +151,10 @@ export const FieldWidgetMorphRelationCard = ({
         objectMetadataItem: relatedObjectMetadataItem,
       });
     });
+
+  const isRecordReadOnlyFromRelatedRecordPerspective = isToOneObject
+    ? isRecordReadOnlyFromSourcePerspective
+    : isRecordReadOnlyFromTargetPerspective;
 
   const isReadOnly =
     isRecordFieldReadOnly || isRecordReadOnlyFromRelatedRecordPerspective;
