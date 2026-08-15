@@ -3,18 +3,22 @@ import { useLingui } from '@lingui/react/macro';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { MobileNavigationBarScrollEffect } from '@/navigation/components/MobileNavigationBarScrollEffect';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
+import { isMobileNavigationBarVisibleState } from '@/navigation/states/isMobileNavigationBarVisibleState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { styled } from '@linaria/react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import {
@@ -24,9 +28,36 @@ import {
   IconSearch,
 } from 'twenty-ui/icon';
 import { NavigationBar } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 type NavigationBarItemName = 'home' | 'search' | 'newAiChat';
+
+// The bar floats over the page, so the container has to let taps through to
+// whatever is scrolling underneath it. flex-start rather than left so the bar
+// follows the writing direction in RTL locales.
+const StyledFloatingContainer = styled.div`
+  bottom: 0;
+  display: flex;
+  justify-content: flex-start;
+  left: 0;
+  padding: ${themeCssVariables.spacing[3]};
+  padding-bottom: calc(
+    ${themeCssVariables.spacing[3]} + env(safe-area-inset-bottom, 0px)
+  );
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  z-index: ${RootStackingContextZIndices.MobileNavigationBar};
+
+  > * {
+    pointer-events: auto;
+  }
+
+  @media print {
+    display: none;
+  }
+`;
 
 export const MobileNavigationBar = () => {
   const { t } = useLingui();
@@ -41,6 +72,9 @@ export const MobileNavigationBar = () => {
   const { alphaSortedActiveNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
+  const isMobileNavigationBarVisible = useAtomStateValue(
+    isMobileNavigationBarVisibleState,
+  );
 
   const setContextStoreCurrentObjectMetadataItemId = useSetAtomComponentState(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -68,11 +102,13 @@ export const MobileNavigationBar = () => {
 
   const isHomePage = pathname === AppPath.Home;
 
-  const activeItemName: NavigationBarItemName | undefined = isSidePanelOpened
-    ? 'search'
-    : isHomePage
-      ? 'home'
-      : undefined;
+  // The side panel is full screen on mobile, so the bar would be floating over
+  // a view it does not navigate. It comes back when the panel closes.
+  const isHidden = isSidePanelOpened || !isMobileNavigationBarVisible;
+
+  const activeItemName: NavigationBarItemName | undefined = isHomePage
+    ? 'home'
+    : undefined;
 
   const items: {
     name: NavigationBarItemName;
@@ -127,5 +163,16 @@ export const MobileNavigationBar = () => {
       : []),
   ];
 
-  return <NavigationBar activeItemName={activeItemName ?? ''} items={items} />;
+  return (
+    <>
+      <MobileNavigationBarScrollEffect />
+      <StyledFloatingContainer>
+        <NavigationBar
+          activeItemName={activeItemName ?? ''}
+          isHidden={isHidden}
+          items={items}
+        />
+      </StyledFloatingContainer>
+    </>
+  );
 };
