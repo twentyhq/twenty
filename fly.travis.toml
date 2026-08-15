@@ -1,0 +1,58 @@
+app = "travis-twenty"
+primary_region = "iad"
+
+# Source-build config for the Travis fork. GitHub Actions is the intended
+# publisher (see .github/workflows/fork-image.yml); this file is the Fly
+# remote-builder fallback when GHCR is unavailable.
+[build]
+  dockerfile = "packages/twenty-docker/twenty/Dockerfile"
+  build-target = "twenty"
+
+  [build.args]
+    APP_VERSION = "v2.31.1-travis"
+
+[processes]
+  app = "node dist/main"
+  worker = "yarn worker:prod"
+
+[env]
+  NODE_PORT = "3000"
+  DISABLE_DB_MIGRATIONS = "true"
+  DISABLE_CRON_JOBS_REGISTRATION = "true"
+
+[deploy]
+  release_command = "sh -c 'DISABLE_DB_MIGRATIONS=false DISABLE_CRON_JOBS_REGISTRATION=false /app/entrypoint.sh true'"
+  release_command_timeout = "15m"
+  release_command_vm.size = "shared-cpu-1x"
+  release_command_vm.memory = "2gb"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]
+
+  [http_service.http_options]
+    [http_service.http_options.response]
+      pristine = true
+
+[[http_service.checks]]
+  grace_period = "300s"
+  interval = "15s"
+  timeout = "10s"
+  method = "GET"
+  path = "/healthz"
+
+[[vm]]
+  memory = "2gb"
+  cpu_kind = "shared"
+  cpus = 1
+  processes = ["app"]
+
+[[vm]]
+  memory = "2gb"
+  cpu_kind = "shared"
+  cpus = 1
+  processes = ["worker"]

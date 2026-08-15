@@ -38,4 +38,10 @@ Files: `.github/workflows/fork-image.yml`
 Type: new-file
 Why: Build `packages/twenty-docker/twenty/Dockerfile` on GitHub Actions and publish `ghcr.io/travis-gilbert/twenty` tagged with the upstream version and the fork SHA, so Fly deploys do not wait on a remote builder.
 Could this be a new file instead: yes
-Upstream equivalent: none (upstream CD lives in `twentyhq/twenty-infra`)
+## P004. Fly source-build fallback config
+
+Files: `fly.travis.toml`
+Type: new-file
+Why: GitHub Actions is the intended image publisher; this config is the Fly remote-builder fallback when GHCR is unavailable, with dockerfile paths resolved from the repository root.
+Could this be a new file instead: yes
+Upstream equivalent: none
