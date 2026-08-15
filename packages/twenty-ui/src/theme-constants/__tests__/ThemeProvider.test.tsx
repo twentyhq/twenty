@@ -1,6 +1,8 @@
 import { render } from '@testing-library/react';
 
-import { ThemeProvider } from '../ThemeProvider';
+import { ThemeProvider, type ThemeType } from '../ThemeProvider';
+import { themeCssVariables } from '../themeCssVariables';
+import { useTheme } from '../useTheme';
 
 const readInlineScale = () =>
   document.documentElement.style.getPropertyValue('--t-scale-user');
@@ -77,5 +79,55 @@ describe('ThemeProvider scale', () => {
     unmount();
 
     expect(readInlineScale()).toBe('1.25');
+  });
+});
+
+describe('ThemeProvider token resolution', () => {
+  let latestTheme: ThemeType | undefined;
+
+  const ThemeSpy = () => {
+    latestTheme = useTheme();
+    return null;
+  };
+
+  beforeEach(() => {
+    latestTheme = undefined;
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  // jsdom never applies theme-light.css / theme-dark.css (CSS imports are
+  // mocked out in Jest), so getComputedStyle().getPropertyValue('--t-...')
+  // returns '' for every design token here, the same failure mode as the
+  // front-component sandbox described in issue #24052.
+  it('falls back to the original CSS variable reference when a token cannot be resolved', () => {
+    render(
+      <ThemeProvider colorScheme="light">
+        <ThemeSpy />
+      </ThemeProvider>,
+    );
+
+    expect(latestTheme?.icon.size.md).toBe(themeCssVariables.icon.size.md);
+    expect(latestTheme?.font.color.primary).toBe(
+      themeCssVariables.font.color.primary,
+    );
+  });
+
+  it('still resolves numeric CSS variables that are readable, alongside unresolved ones', () => {
+    jest.spyOn(window, 'getComputedStyle').mockReturnValue({
+      getPropertyValue: (property: string) =>
+        property === '--t-icon-size-md' ? '16' : '',
+    } as CSSStyleDeclaration);
+
+    render(
+      <ThemeProvider colorScheme="light">
+        <ThemeSpy />
+      </ThemeProvider>,
+    );
+
+    expect(latestTheme?.icon.size.md).toBe(16);
+    expect(latestTheme?.icon.size.sm).toBe(themeCssVariables.icon.size.sm);
   });
 });

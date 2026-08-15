@@ -74,8 +74,16 @@ const computeThemeFromCss = (sourceElement?: HTMLElement): ThemeType => {
       if (typeof value === 'string' && value.startsWith('var(')) {
         const varName = value.slice(4, -1);
         const raw = computedStyle.getPropertyValue(varName).trim();
-        const num = Number(raw);
-        result[key] = raw !== '' && !isNaN(num) ? num : raw;
+
+        if (raw === '') {
+          // Some sandboxed environments (e.g. the front-component renderer)
+          // expose getComputedStyle but never resolve CSS custom properties,
+          // so keep the original var() reference instead of zeroing the token.
+          result[key] = value;
+        } else {
+          const num = Number(raw);
+          result[key] = !isNaN(num) ? num : raw;
+        }
       } else if (typeof value === 'object' && value !== null) {
         result[key] = resolve(value as Record<string, unknown>);
       } else {
