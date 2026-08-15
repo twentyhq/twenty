@@ -10,8 +10,8 @@ const StyledContainer = styled.div`
   background: ${themeCssVariables.background.primary};
   box-sizing: border-box;
   display: flex;
-  height: 100dvh;
-  width: 100vw;
+  height: calc(100dvh / var(--t-zoom, 1));
+  width: calc(100vw / var(--t-zoom, 1));
 `;
 
 export const AppFullScreenErrorFallback = ({

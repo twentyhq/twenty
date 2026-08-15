@@ -3,59 +3,112 @@ import { useLingui } from '@lingui/react/macro';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
+import { MobileNavigationBarScrollEffect } from '@/navigation/components/MobileNavigationBarScrollEffect';
+import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
-import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
+import { isMobileNavigationBarVisibleState } from '@/navigation/states/isMobileNavigationBarVisibleState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
+import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useNavigate } from 'react-router-dom';
+import { styled } from '@linaria/react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { AppPath } from 'twenty-shared/types';
 import {
   type IconComponent,
-  IconList,
+  IconHome,
   IconMessageCirclePlus,
   IconSearch,
 } from 'twenty-ui/icon';
 import { NavigationBar } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
-type NavigationBarItemName = 'main' | 'search' | 'newAiChat';
+type NavigationBarItemName = 'home' | 'search' | 'newAiChat';
+
+// The bar floats over the page, so the container has to let taps through to
+// whatever is scrolling underneath it. flex-start rather than left so the bar
+// follows the writing direction in RTL locales.
+const StyledFloatingContainer = styled.div`
+  bottom: 0;
+  display: flex;
+  justify-content: flex-start;
+  left: 0;
+  padding: ${themeCssVariables.spacing[3]};
+  padding-bottom: calc(
+    ${themeCssVariables.spacing[3]} + env(safe-area-inset-bottom, 0px)
+  );
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  z-index: ${RootStackingContextZIndices.MobileNavigationBar};
+
+  > * {
+    pointer-events: auto;
+  }
+
+  @media print {
+    display: none;
+  }
+`;
 
 export const MobileNavigationBar = () => {
   const { t } = useLingui();
   const navigate = useNavigate();
-  const { defaultHomePagePath } = useDefaultHomePagePath();
+  const { pathname } = useLocation();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
-  const navigationMemorizedUrl = useAtomStateValue(navigationMemorizedUrlState);
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
   const isSettingsPage = useIsSettingsPage();
-  const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
-    useAtomState(isNavigationDrawerExpandedState);
-  const [currentMobileNavigationDrawer, setCurrentMobileNavigationDrawer] =
-    useAtomState(currentMobileNavigationDrawerState);
+  const isSettingsDrawer = useIsSettingsDrawer();
   const { switchToNewChat } = useSwitchToNewAiChat();
   const { alphaSortedActiveNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
+  const isMobileNavigationBarVisible = useAtomStateValue(
+    isMobileNavigationBarVisibleState,
+  );
 
   const setContextStoreCurrentObjectMetadataItemId = useSetAtomComponentState(
     contextStoreCurrentObjectMetadataItemIdComponentState,
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
+  const setCurrentMobileNavigationDrawer = useSetAtomState(
+    currentMobileNavigationDrawerState,
+  );
+  const setIsNavigationDrawerExpanded = useSetAtomState(
+    isNavigationDrawerExpandedState,
+  );
 
-  const activeItemName = isNavigationDrawerExpanded
-    ? currentMobileNavigationDrawer
-    : isSidePanelOpened
-      ? 'search'
-      : 'main';
+  // Settings is the one drawer left on mobile, and it stays open across
+  // navigation, so it would cover whatever the bottom bar goes to. Guarded so a
+  // tap outside settings leaves the persisted expansion alone: it is shared with
+  // the desktop drawer, which every tap would otherwise collapse.
+  const closeSettingsDrawer = () => {
+    if (!isSettingsDrawer) {
+      return;
+    }
+
+    setCurrentMobileNavigationDrawer('main');
+    setIsNavigationDrawerExpanded(false);
+  };
+
+  const isHomePage = pathname === AppPath.Home;
+
+  // The side panel is full screen on mobile, so the bar would be floating over
+  // a view it does not navigate. It comes back when the panel closes.
+  const isHidden = isSidePanelOpened || !isMobileNavigationBarVisible;
+
+  const activeItemName: NavigationBarItemName | undefined = isHomePage
+    ? 'home'
+    : undefined;
 
   const items: {
     name: NavigationBarItemName;
@@ -64,23 +117,13 @@ export const MobileNavigationBar = () => {
     onClick: () => void;
   }[] = [
     {
-      name: 'main',
-      label: t`Main navigation`,
-      Icon: IconList,
+      name: 'home',
+      label: t`Home`,
+      Icon: IconHome,
       onClick: () => {
         closeSidePanelMenu();
-        setIsNavigationDrawerExpanded(
-          (previousIsOpen) => activeItemName !== 'main' || !previousIsOpen,
-        );
-        setCurrentMobileNavigationDrawer('main');
-
-        if (isSettingsPage) {
-          navigate(
-            navigationMemorizedUrl !== '/'
-              ? navigationMemorizedUrl
-              : defaultHomePagePath,
-          );
-        }
+        closeSettingsDrawer();
+        navigate(AppPath.Home);
       },
     },
     {
@@ -88,8 +131,8 @@ export const MobileNavigationBar = () => {
       label: t`Search`,
       Icon: IconSearch,
       onClick: () => {
-        setIsNavigationDrawerExpanded(false);
         closeSidePanelMenu();
+        closeSettingsDrawer();
 
         if (isSettingsPage) {
           const firstObjectMetadataItem =
@@ -111,8 +154,8 @@ export const MobileNavigationBar = () => {
             label: t`New AI chat`,
             Icon: IconMessageCirclePlus,
             onClick: () => {
-              setIsNavigationDrawerExpanded(false);
               closeSidePanelMenu();
+              closeSettingsDrawer();
               switchToNewChat();
             },
           },
@@ -120,5 +163,16 @@ export const MobileNavigationBar = () => {
       : []),
   ];
 
-  return <NavigationBar activeItemName={activeItemName} items={items} />;
+  return (
+    <>
+      <MobileNavigationBarScrollEffect />
+      <StyledFloatingContainer>
+        <NavigationBar
+          activeItemName={activeItemName ?? ''}
+          isHidden={isHidden}
+          items={items}
+        />
+      </StyledFloatingContainer>
+    </>
+  );
 };

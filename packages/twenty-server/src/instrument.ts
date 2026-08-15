@@ -83,10 +83,13 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
       nodeProfilingIntegration(),
     ],
     tracesSampleRate,
+    tracesSampler: ({ name, inheritOrSampleWith }) =>
+      name.startsWith('ai.') ? 1 : inheritOrSampleWith(tracesSampleRate),
     profilesSampleRate: parseSampleRate({
       value: process.env.SENTRY_PROFILES_SAMPLE_RATE,
       fallback: 0.01,
     }),
+    maxValueLength: 8192,
     sendDefaultPii: true,
     debug: process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT,
     beforeSendSpan: (span) => {
@@ -114,8 +117,6 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
     },
   });
 }
-
-// Meter setup
 
 const prometheusExporter = meterDrivers.includes(MeterDriver.Prometheus)
   ? new PrometheusExporter({ port: 9464 })

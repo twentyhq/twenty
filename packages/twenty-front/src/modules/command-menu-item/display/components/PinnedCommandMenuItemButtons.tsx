@@ -1,3 +1,4 @@
+import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { PinnedCommandMenuItemsInlineMeasurements } from '@/command-menu-item/display/components/PinnedCommandMenuItemsInlineMeasurements';
@@ -10,6 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { motion } from 'framer-motion';
 import { useContext, useMemo } from 'react';
 import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useIsMobile } from 'twenty-ui/utilities';
 import {
   type CommandMenuItemFieldsFragment,
   EngineComponentKey,
@@ -40,29 +42,49 @@ const StyledItemsContainer = styled.div<{ shouldReverse: boolean }>`
     shouldReverse ? 'row-reverse' : 'row'};
   gap: ${PINNED_COMMAND_MENU_ITEMS_GAP}px;
   max-width: 100%;
+  min-width: 0;
   overflow: hidden;
 `;
 
-export const PinnedCommandMenuItemButtons = () => {
+export const PinnedCommandMenuItemButtons = ({
+  containerWidth,
+}: {
+  // Provided when an ancestor already knows the width available to the
+  // buttons; the row then shrinks to fit instead of stretching over the free
+  // space to measure it, so sibling actions stay adjacent to the buttons.
+  containerWidth?: number;
+}) => {
   const { theme } = useContext(ThemeContext);
   const { commandMenuItems, containerType } = useContext(CommandMenuContext);
+  const isMobile = useIsMobile();
 
-  // The footer is far narrower than a page header, so it labels a single action
-  // and keeps that label rightmost. Headers label every action and reverse the
-  // row so their labels sit left of the icons.
-  const isSidePanelFooter = containerType === 'side-panel-footer';
+  // The footer keeps its label rightmost. Headers reverse the row so labels sit
+  // left of the icons.
+  const isSidePanelFooter =
+    containerType === CommandMenuItemContainerType.SidePanelFooter;
+
+  // A record header keeps its breadcrumb on mobile, so its actions stay icons
+  // and leave the record name room. Index and standalone headers drop their
+  // title there, which frees the width for one label.
+  const isRecordPageHeader =
+    containerType === CommandMenuItemContainerType.ShowPageHeader;
+
+  const shouldLabelSingleCommandMenuItem =
+    isSidePanelFooter || (isMobile && !isRecordPageHeader);
 
   const pinnedCommandMenuItems = useMemo(
     () => commandMenuItems.filter((item) => item.isPinned === true),
     [commandMenuItems],
   );
 
-  const labelledCommandMenuItemId = isSidePanelFooter
+  const labelledCommandMenuItemId = shouldLabelSingleCommandMenuItem
     ? getLabelledPinnedCommandMenuItemId(pinnedCommandMenuItems)
     : null;
 
   const shouldHideCommandMenuItemLabel = (commandMenuItemId: string) =>
-    isSidePanelFooter && commandMenuItemId !== labelledCommandMenuItemId;
+    (isMobile && isRecordPageHeader) ||
+    (shouldLabelSingleCommandMenuItem &&
+      commandMenuItemId !== labelledCommandMenuItemId);
 
   const {
     pinnedInlineCommandMenuItems,
@@ -72,6 +94,7 @@ export const PinnedCommandMenuItemButtons = () => {
   } = usePinnedCommandMenuItemsInlineLayout({
     pinnedCommandMenuItems,
     layoutKey: isSidePanelFooter ? 'side-panel-footer' : 'page-header',
+    containerWidth,
   });
 
   const isCommandMenuItemLabelled = (
@@ -89,6 +112,35 @@ export const PinnedCommandMenuItemButtons = () => {
     ...pinnedInlineCommandMenuItems.filter(isCommandMenuItemLabelled),
   ];
 
+  const inlineItemsRow = (
+    <StyledItemsContainer shouldReverse={!isSidePanelFooter}>
+      {displayedInlineCommandMenuItems.map((item) => (
+        <StyledCommandMenuItemContainer
+          key={item.id}
+          initial={{ width: 0, opacity: 0 }}
+          animate={{ width: 'unset', opacity: 1 }}
+          exit={{ width: 0, opacity: 0 }}
+          transition={{
+            duration: theme.animation.duration.instant,
+            ease: 'easeInOut',
+          }}
+        >
+          <CommandMenuItemRenderer
+            item={item}
+            shouldHideLabel={shouldHideCommandMenuItemLabel(item.id)}
+            isPrimaryAction={
+              item.engineComponentKey ===
+                EngineComponentKey.CREATE_NEW_RECORD ||
+              item.engineComponentKey === EngineComponentKey.COMPOSE_CAMPAIGN ||
+              item.engineComponentKey ===
+                EngineComponentKey.SEND_MESSAGE_CAMPAIGN
+            }
+          />
+        </StyledCommandMenuItemContainer>
+      ))}
+    </StyledItemsContainer>
+  );
+
   return (
     <>
       <PinnedCommandMenuItemsInlineMeasurements
@@ -101,39 +153,15 @@ export const PinnedCommandMenuItemButtons = () => {
           onCommandMenuItemDimensionChange
         }
       />
-      <StyledWrapper>
-        <NodeDimension onDimensionChange={onContainerDimensionChange}>
-          <StyledContainer>
-            <StyledItemsContainer shouldReverse={!isSidePanelFooter}>
-              {displayedInlineCommandMenuItems.map((item) => (
-                <StyledCommandMenuItemContainer
-                  key={item.id}
-                  initial={{ width: 0, opacity: 0 }}
-                  animate={{ width: 'unset', opacity: 1 }}
-                  exit={{ width: 0, opacity: 0 }}
-                  transition={{
-                    duration: theme.animation.duration.instant,
-                    ease: 'easeInOut',
-                  }}
-                >
-                  <CommandMenuItemRenderer
-                    item={item}
-                    shouldHideLabel={shouldHideCommandMenuItemLabel(item.id)}
-                    isPrimaryAction={
-                      item.engineComponentKey ===
-                        EngineComponentKey.CREATE_NEW_RECORD ||
-                      item.engineComponentKey ===
-                        EngineComponentKey.COMPOSE_CAMPAIGN ||
-                      item.engineComponentKey ===
-                        EngineComponentKey.SEND_MESSAGE_CAMPAIGN
-                    }
-                  />
-                </StyledCommandMenuItemContainer>
-              ))}
-            </StyledItemsContainer>
-          </StyledContainer>
-        </NodeDimension>
-      </StyledWrapper>
+      {isDefined(containerWidth) ? (
+        inlineItemsRow
+      ) : (
+        <StyledWrapper>
+          <NodeDimension onDimensionChange={onContainerDimensionChange}>
+            <StyledContainer>{inlineItemsRow}</StyledContainer>
+          </NodeDimension>
+        </StyledWrapper>
+      )}
     </>
   );
 };

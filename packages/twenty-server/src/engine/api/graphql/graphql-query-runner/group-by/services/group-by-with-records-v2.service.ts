@@ -15,8 +15,8 @@ import { CommonResultGettersService } from 'src/engine/api/common/common-result-
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import { type CommonGroupByOutputItem } from 'src/engine/api/common/types/common-group-by-output-item.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import { type NestedRelationsReadPathOptions } from 'src/engine/api/common/types/nested-relations-read-path-options.type';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
-import { addRelationJoinAliasToQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/add-relation-join-alias.util';
 import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util';
 import {
   RECORDS_PER_GROUP_LIMIT,
@@ -60,10 +60,7 @@ export class GroupByWithRecordsV2Service {
     orderByForRecords: ObjectRecordOrderBy;
     groupLimit?: number;
     offsetForRecords?: number;
-    nestedRelationsReadPathOptions: {
-      isOrmV2ReadPathEnabled: boolean;
-      useReplica: boolean;
-    };
+    nestedRelationsReadPathOptions: NestedRelationsReadPathOptions;
   }): Promise<CommonGroupByOutputItem[]> {
     const effectiveGroupLimit = getGroupLimit(groupLimit);
 
@@ -280,11 +277,12 @@ export class GroupByWithRecordsV2Service {
     }
 
     for (const joinInfo of relationJoins) {
-      addRelationJoinAliasToQueryBuilder({
-        queryBuilder: subQueryBuilder,
-        parentAlias: flatObjectMetadata.nameSingular,
-        relationName: joinInfo.joinAlias,
-      });
+      subQueryBuilder.leftJoin(
+        `${flatObjectMetadata.nameSingular}.${joinInfo.joinAlias}`,
+        joinInfo.joinAlias,
+        undefined,
+        { allowToManyJoin: true },
+      );
     }
 
     return `ROW_NUMBER() OVER (PARTITION BY ${partitionBy} ${orderByRawSQL})`;

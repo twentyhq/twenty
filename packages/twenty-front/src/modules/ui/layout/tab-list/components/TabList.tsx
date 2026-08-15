@@ -2,11 +2,14 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { TabListHiddenMeasurements } from '@/ui/layout/tab-list/components/TabListHiddenMeasurements';
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
 import { TAB_LIST_HEIGHT } from '@/ui/layout/tab-list/constants/TabListHeight';
+import { useScrollActiveTabIntoView } from '@/ui/layout/tab-list/hooks/useScrollActiveTabIntoView';
 import { useTabListMeasurements } from '@/ui/layout/tab-list/hooks/useTabListMeasurements';
+import { SCROLLABLE_TAB_ROW_CSS } from '@/ui/layout/tab-list/styles/ScrollableTabRowCSS';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { styled } from '@linaria/react';
 import { useCallback, useEffect, useMemo } from 'react';
@@ -49,12 +52,13 @@ const StyledDropdownContainer = styled.div`
   display: flex;
 `;
 
-const StyledTabContainer = styled.div`
+const StyledTabContainer = styled.div<{ isScrollable: boolean }>`
   display: flex;
   gap: ${TAB_LIST_GAP}px;
   max-width: 100%;
-  overflow: hidden;
+  overflow-x: ${({ isScrollable }) => (isScrollable ? 'auto' : 'hidden')};
   position: relative;
+  ${SCROLLABLE_TAB_ROW_CSS}
 `;
 
 const StyledNodeDimension = styled(NodeDimension)`
@@ -82,6 +86,7 @@ export const TabList = ({
 }: TabListProps) => {
   const visibleTabs = tabs.filter((tab) => !tab.hide);
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const [activeTabId, setActiveTabId] = useAtomComponentState(
     activeTabIdComponentState,
@@ -102,6 +107,17 @@ export const TabList = ({
   } = useTabListMeasurements({
     visibleTabs,
     hasAddButton: false,
+  });
+
+  const shouldScrollTabs = isMobile;
+  const renderedTabs = shouldScrollTabs
+    ? visibleTabs
+    : visibleTabs.slice(0, visibleTabCount);
+  const shouldShowOverflowDropdown = hasHiddenTabs && !shouldScrollTabs;
+
+  const { tabRowRef } = useScrollActiveTabIntoView({
+    activeTabId,
+    isScrollable: shouldScrollTabs,
   });
 
   const dropdownId = `tab-overflow-${componentInstanceId}`;
@@ -151,7 +167,7 @@ export const TabList = ({
           tabListIds={tabs.map((tab) => tab.id)}
         />
 
-        {visibleTabs.length > 1 && (
+        {visibleTabs.length > 1 && !shouldScrollTabs && (
           <TabListHiddenMeasurements
             visibleTabs={visibleTabs}
             activeTabId={activeTabId}
@@ -163,9 +179,12 @@ export const TabList = ({
 
         <StyledContainer className={className}>
           <StyledNodeDimension onDimensionChange={onContainerWidthChange}>
-            <StyledInnerContainer $centerTabs={centerTabs}>
-              <StyledTabContainer>
-                {visibleTabs.slice(0, visibleTabCount).map((tab) => (
+            <StyledInnerContainer $centerTabs={centerTabs && !shouldScrollTabs}>
+              <StyledTabContainer
+                ref={tabRowRef}
+                isScrollable={shouldScrollTabs}
+              >
+                {renderedTabs.map((tab) => (
                   <TabButton
                     key={tab.id}
                     id={tab.id}
@@ -186,7 +205,7 @@ export const TabList = ({
                 ))}
               </StyledTabContainer>
 
-              {hasHiddenTabs && (
+              {shouldShowOverflowDropdown && (
                 <StyledDropdownContainer>
                   <TabListDropdown
                     dropdownId={dropdownId}

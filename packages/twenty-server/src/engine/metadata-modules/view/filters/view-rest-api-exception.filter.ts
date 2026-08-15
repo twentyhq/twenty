@@ -75,7 +75,6 @@ export class ViewRestApiExceptionFilter implements ExceptionFilter {
       }
     }
 
-    // Fallback for any other exception type
     const unknownException = new UnknownException(
       'Internal server error',
       'INTERNAL_ERROR',

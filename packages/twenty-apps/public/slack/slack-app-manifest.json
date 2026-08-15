@@ -31,6 +31,7 @@
         "channels:history",
         "groups:history",
         "im:history",
+        "im:read",
         "users:read",
         "users:read.email",
         "assistant:write",
@@ -45,11 +46,13 @@
       "bot_events": [
         "app_home_opened",
         "app_mention",
+        "app_uninstalled",
         "link_shared",
         "member_joined_channel",
         "message.channels",
         "message.groups",
-        "message.im"
+        "message.im",
+        "tokens_revoked"
       ]
     },
     "org_deploy_enabled": false,

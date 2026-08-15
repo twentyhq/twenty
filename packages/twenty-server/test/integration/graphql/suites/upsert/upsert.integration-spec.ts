@@ -118,7 +118,6 @@ describe('upsert (createMany with upsert:true)', () => {
   });
 
   it('should update many records', async () => {
-    // Create 2 records
     await makeGraphqlAPIRequest({
       query: createRecordsQuery,
       variables: {
@@ -138,7 +137,6 @@ describe('upsert (createMany with upsert:true)', () => {
       },
     });
 
-    // Update 2 records using upsert
     const updatedRecordsResponse = await makeGraphqlAPIRequest({
       query: createRecordsQuery,
       variables: {

@@ -45,7 +45,6 @@ const config: StorybookConfig = {
     '@storybook/addon-links',
     '@storybook/addon-coverage',
     'storybook-addon-pseudo-states',
-    // 'storybook-dark-mode',
     'storybook-addon-mock-date',
     '@storybook/addon-vitest',
   ],

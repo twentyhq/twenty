@@ -8,7 +8,6 @@ type FieldMetadataDateProperties =
 
 // oxlint-disable-next-line unused-imports/no-unused-vars
 type Assertions = [
-  // FieldMetadataEntity has createdAt and updatedAt Date properties
   Expect<
     Equal<
       FieldMetadataDateProperties,

@@ -47,7 +47,6 @@ const getSchemaComponentsExample = (
   flatFieldMetadatas: FlatFieldMetadata[],
 ): OpenApiExample => {
   return flatFieldMetadatas.reduce((node, field) => {
-    // If field is required
     if (!field.isNullable && field.defaultValue === null) {
       return {
         ...node,
@@ -202,7 +201,6 @@ const computeSchemaComponent = ({
 
   const withRequiredFields = !forResponse && !forUpdate;
 
-  // Create a temporary object that looks like ObjectMetadataEntity for the converter
   const tempItem = {
     ...item,
     fields: flatFieldMetadatas,

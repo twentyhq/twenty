@@ -50,7 +50,6 @@ export class UploadProfilePicturePermissionGuard implements CanActivate {
       return true;
     }
 
-    // Check if user has WORKSPACE_MEMBERS permission (can edit any profile picture)
     const hasWorkspaceMembersPermission =
       await this.permissionsService.userHasWorkspaceSettingPermission({
         userWorkspaceId,
@@ -63,7 +62,6 @@ export class UploadProfilePicturePermissionGuard implements CanActivate {
       return true;
     }
 
-    // Check if user has PROFILE_INFORMATION permission (can edit their own profile picture)
     const hasProfileInformationPermission =
       await this.permissionsService.userHasWorkspaceSettingPermission({
         userWorkspaceId,

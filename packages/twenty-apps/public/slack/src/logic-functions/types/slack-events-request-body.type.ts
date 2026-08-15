@@ -8,6 +8,11 @@ type SlackSharedLink = {
   domain?: string;
 };
 
+type SlackRevokedTokens = {
+  oauth?: string[];
+  bot?: string[];
+};
+
 type SlackInboundEvent = {
   type?: string;
   subtype?: string;
@@ -23,6 +28,7 @@ type SlackInboundEvent = {
   message_ts?: string;
   source?: string;
   unfurl_id?: string;
+  tokens?: SlackRevokedTokens;
 };
 
 export type SlackEventsRequestBody = {

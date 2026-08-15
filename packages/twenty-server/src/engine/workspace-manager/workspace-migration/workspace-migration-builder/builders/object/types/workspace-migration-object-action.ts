@@ -8,14 +8,12 @@ import { type BaseUniversalCreateWorkspaceMigrationAction } from 'src/engine/wor
 import { type BaseUniversalDeleteWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-universal-delete-workspace-migration-action.type';
 import { type BaseUniversalUpdateWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/base-universal-update-workspace-migration-action.type';
 
-// Universal action types (always use universal identifiers)
 export type UniversalCreateObjectAction =
   BaseUniversalCreateWorkspaceMigrationAction<'objectMetadata'> & {
     universalFlatFieldMetadatas: Omit<
       UniversalFlatFieldMetadata,
       ExtractUniversalForeignKeyAggregatorForMetadataName<'fieldMetadata'>
     >[];
-    // Optional map to provide specific IDs for field creation (for API metadata).
     fieldIdByUniversalIdentifier?: Record<string, string>;
   };
 
@@ -25,7 +23,6 @@ export type UniversalUpdateObjectAction =
 export type UniversalDeleteObjectAction =
   BaseUniversalDeleteWorkspaceMigrationAction<'objectMetadata'>;
 
-// Flat action types (always use entity IDs)
 export type FlatCreateObjectAction =
   BaseFlatCreateWorkspaceMigrationAction<'objectMetadata'> & {
     flatFieldMetadatas: FlatFieldMetadata[];
