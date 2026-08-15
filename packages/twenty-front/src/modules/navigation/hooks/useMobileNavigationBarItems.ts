@@ -4,13 +4,17 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
+import { getMobileHomeActiveTab } from '@/navigation/utils/getMobileHomeActiveTab';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
-import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
+import {
+  type NavigationDrawerActiveTab,
+  NAVIGATION_DRAWER_TABS,
+} from '@/ui/navigation/states/navigationDrawerTabs';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -28,8 +32,6 @@ import {
 } from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
-// The tab names double as item names so the active tab maps straight onto the
-// bar without a lookup.
 type MobileNavigationBarItemName =
   | 'home'
   | 'search'
@@ -44,9 +46,6 @@ type MobileNavigationBarItem = {
   onClick: () => void;
 };
 
-// The bar is the primary switcher for wherever it is. Off the home page it
-// switches places, on the home page it switches the sections of that page,
-// which is why the tabs row it replaces there no longer exists.
 export const useMobileNavigationBarItems = (): {
   items: MobileNavigationBarItem[];
   activeItemName: MobileNavigationBarItemName | undefined;
@@ -95,6 +94,11 @@ export const useMobileNavigationBarItems = (): {
     setIsNavigationDrawerExpanded(false);
   };
 
+  const selectHomeTab = (tab: NavigationDrawerActiveTab) => () => {
+    closeSettingsDrawer();
+    setNavigationDrawerActiveTab(tab);
+  };
+
   const searchItem: MobileNavigationBarItem = {
     name: 'search',
     label: t`Search`,
@@ -107,7 +111,9 @@ export const useMobileNavigationBarItems = (): {
         const firstObjectMetadataItem =
           alphaSortedActiveNonSystemObjectMetadataItems[0];
         if (isDefined(firstObjectMetadataItem)) {
-          setContextStoreCurrentObjectMetadataItemId(firstObjectMetadataItem.id);
+          setContextStoreCurrentObjectMetadataItemId(
+            firstObjectMetadataItem.id,
+          );
         }
       }
 
@@ -117,14 +123,16 @@ export const useMobileNavigationBarItems = (): {
 
   if (isHomePage) {
     return {
-      activeItemName: navigationDrawerActiveTab,
+      activeItemName: getMobileHomeActiveTab({
+        navigationDrawerActiveTab,
+        hasAiPermission,
+      }),
       items: [
         {
           name: 'home',
           label: t`Home`,
           Icon: IconHome,
-          onClick: () =>
-            setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU),
+          onClick: selectHomeTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU),
         },
         searchItem,
         ...(hasAiPermission
@@ -133,10 +141,7 @@ export const useMobileNavigationBarItems = (): {
                 name: 'chat' as const,
                 label: t`Chat`,
                 Icon: IconComment,
-                onClick: () =>
-                  setNavigationDrawerActiveTab(
-                    NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
-                  ),
+                onClick: selectHomeTab(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY),
               },
             ]
           : []),
@@ -144,8 +149,7 @@ export const useMobileNavigationBarItems = (): {
           name: 'settings',
           label: t`Settings`,
           Icon: IconSettings,
-          onClick: () =>
-            setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.SETTINGS),
+          onClick: selectHomeTab(NAVIGATION_DRAWER_TABS.SETTINGS),
         },
       ],
     };

@@ -1,6 +1,7 @@
 import { MainNavigationDrawerNavigationContent } from '@/navigation/components/MainNavigationDrawerNavigationContent';
 import { NavigationDrawerTabbedContent } from '@/navigation/components/NavigationDrawerTabbedContent';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
+import { getMobileHomeActiveTab } from '@/navigation/utils/getMobileHomeActiveTab';
 import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { MultiWorkspaceDropdownButton } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
@@ -49,12 +50,15 @@ export const MobileHomePage = () => {
     return <Navigate to={defaultHomePagePath} replace />;
   }
 
-  const showAiChatContent =
-    hasAiPermission &&
-    navigationDrawerActiveTab === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY;
+  const activeTab = getMobileHomeActiveTab({
+    navigationDrawerActiveTab,
+    hasAiPermission,
+  });
 
-  const showSettingsContent =
-    navigationDrawerActiveTab === NAVIGATION_DRAWER_TABS.SETTINGS;
+  const showAiChatContent =
+    activeTab === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY;
+
+  const showSettingsContent = activeTab === NAVIGATION_DRAWER_TABS.SETTINGS;
 
   return (
     <StyledContainer>
