@@ -55,7 +55,7 @@ export default defineApplication({
       universalIdentifier:
         CALL_RECORDER_RECORD_BY_DEFAULT_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
       description:
-        'Default for the recording bot across the workspace. On: the bot records every eligible meeting unless its Recording Bot field is set to Off. Off (the default): the bot only records meetings whose Recording Bot field is set to On. Make sure participants are given the notice required by the consent laws that apply to your calls before turning this on.',
+        'Default for the recording bot across the workspace. On (the default): the bot records every eligible meeting unless its Recording Bot field is set to Off. Off: the bot only records meetings whose Recording Bot field is set to On, making recording opt-in per meeting. Make sure participants are given the notice required by the consent laws that apply to your calls.',
       isSecret: false,
       type: FieldType.BOOLEAN,
       value: DEFAULT_CALL_RECORDER_RECORD_BY_DEFAULT,

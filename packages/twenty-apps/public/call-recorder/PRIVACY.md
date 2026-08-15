@@ -6,23 +6,25 @@ not legal advice. The recordings, transcripts, and summaries the app produces
 belong to your workspace, and your organization is responsible for using them
 lawfully.
 
-## Recording is opt-in by default
+## Recording defaults and controls
 
-Out of the box the bot joins **nothing**. The workspace-level
-`CALL_RECORDER_RECORD_BY_DEFAULT` app setting is the default for all
-meetings, and it ships **off**. Each calendar event carries a
-**Recording Bot** field that overrides the default for that meeting:
+The workspace-level `CALL_RECORDER_RECORD_BY_DEFAULT` app setting is the
+default for all meetings. It ships **on**, so after installing the app the
+bot records every eligible meeting (upcoming, synced from a connected
+calendar, with a supported video-conference link). A workspace admin can turn
+it **off** to make recording opt-in per meeting.
+
+Each calendar event carries a **Recording Bot** field that overrides the
+workspace default for that meeting:
 
 | Recording Bot field | Behavior |
 |---|---|
-| *(empty, the default)* | Follows the workspace `CALL_RECORDER_RECORD_BY_DEFAULT` app setting, which is **off** by default. |
+| *(empty, the default)* | Follows the workspace `CALL_RECORDER_RECORD_BY_DEFAULT` app setting. |
 | **On** | The bot records this meeting, regardless of the workspace setting. |
 | **Off** | The bot never records this meeting, regardless of the workspace setting. |
 
-A workspace admin can turn `CALL_RECORDER_RECORD_BY_DEFAULT` on to record
-every eligible meeting (upcoming, synced from a connected calendar, with a
-supported video-conference link). Setting a meeting to **Off** — or turning
-the workspace setting off — cancels any bot already scheduled for it.
+Setting a meeting to **Off** — or turning the workspace setting off — cancels
+any bot already scheduled for it.
 
 ## The bot is visible on the call
 
@@ -75,8 +77,8 @@ require that some or all participants consent to being recorded. You are
 responsible for giving participants whatever notice applies to your calls.
 Practical steps:
 
-- Keep `CALL_RECORDER_RECORD_BY_DEFAULT` **off** and turn individual meetings
-  **On**, so a person decides per meeting.
+- Turn `CALL_RECORDER_RECORD_BY_DEFAULT` **off** and set individual meetings
+  to **On**, so a person decides per meeting.
 - Announce the recording at the start of the call, or mention it in the
   calendar invite.
 - Give the bot an unmistakable display name (for example
@@ -89,7 +91,7 @@ Practical steps:
 | Control | Where | Default |
 |---|---|---|
 | Record this meeting | **Recording Bot** field on the calendar event | Empty (follows the workspace default) |
-| Record all eligible meetings | `CALL_RECORDER_RECORD_BY_DEFAULT` app setting | Off |
+| Record all eligible meetings | `CALL_RECORDER_RECORD_BY_DEFAULT` app setting | On |
 | AI summaries | `CALL_RECORDER_SUMMARY_ENABLED` app setting | On |
 | Bot display name | `CALL_RECORDER_NAME` app setting | `Twenty.com` |
 | Processing region | `RECALL_REGION` server variable | `eu-central-1` |

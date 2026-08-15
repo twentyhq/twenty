@@ -1,29 +1,29 @@
 # Call Recorder
 
-**Record, transcribe, and save your meetings — right inside your CRM.**
+**Record, transcribe, and save every meeting — right inside your CRM.**
 
 ## ✨ What you get
 
-- **Recordings on the meetings you choose**
+- **Recordings on every meeting**
 - **A Call Recording tab**
 - **A per-meeting on/off switch**
 - **AI meeting summaries**
 - **Built for AI & automation**
 
-## 🔒 Private by default
+## 🔒 Privacy controls
 
-The bot doesn't record anything until you ask it to:
+Recording is **on by default**, and every layer of it can be turned off:
 
-- Recording is governed by the `CALL_RECORDER_RECORD_BY_DEFAULT` app setting,
-  which ships **off** — out of the box, the bot only joins meetings whose
-  **Recording Bot** field you set to **On**.
-- Workspace admins who want every eligible meeting captured can turn
-  `CALL_RECORDER_RECORD_BY_DEFAULT` on; individual meetings still override it
-  in both directions — **Off** is never recorded, and a meeting with no value
-  simply follows the workspace setting.
+- Each meeting has a **Recording Bot** field. Set it to **Off** and the bot
+  stays out of that call (a bot already scheduled is canceled). Set it to
+  **On** to record the meeting regardless of the workspace default. Left
+  empty, the meeting follows the workspace default.
+- Workspace admins can flip the `CALL_RECORDER_RECORD_BY_DEFAULT` app setting
+  to **off** to make recording opt-in per meeting across the whole workspace —
+  the bot then only joins meetings explicitly set to **On**.
 - The bot joins visibly, as a named participant everyone can see.
 - Recording laws vary by place — make sure participants get the notice your
-  jurisdiction requires before turning recording on.
+  jurisdiction requires.
 
 What is captured, who processes it, and how long it is retained are documented
 in [PRIVACY.md](./PRIVACY.md).

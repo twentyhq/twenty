@@ -330,8 +330,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     ]);
   });
 
-  it('creates a scheduled call recording for an unset preference when record-by-default is enabled', async () => {
-    vi.stubEnv('CALL_RECORDER_RECORD_BY_DEFAULT', 'true');
+  it('creates a scheduled call recording for an unset preference (record-by-default ships on)', async () => {
     const client = buildFakeCoreApiClient({
       calendarEvents: [buildCalendarEvent({ callRecorderPreference: null })],
     });
@@ -351,7 +350,8 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     expect(recallBotCreateCalls()).toHaveLength(1);
   });
 
-  it('does not create a call recording for an unset preference when record-by-default is off (the default)', async () => {
+  it('does not create a call recording for an unset preference when the workspace turns record-by-default off', async () => {
+    vi.stubEnv('CALL_RECORDER_RECORD_BY_DEFAULT', 'false');
     const client = buildFakeCoreApiClient({
       calendarEvents: [buildCalendarEvent({ callRecorderPreference: null })],
     });
@@ -373,6 +373,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
   });
 
   it('cancels a scheduled recording when record-by-default turns off for an unset preference', async () => {
+    vi.stubEnv('CALL_RECORDER_RECORD_BY_DEFAULT', 'false');
     const client = buildFakeCoreApiClient({
       calendarEvents: [buildCalendarEvent({ callRecorderPreference: null })],
       callRecordings: [
@@ -403,7 +404,6 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
   });
 
   it('creates a recording for an in-progress meeting that has not ended', async () => {
-    vi.stubEnv('CALL_RECORDER_RECORD_BY_DEFAULT', 'true');
     const client = buildFakeCoreApiClient({
       calendarEvents: [
         buildCalendarEvent({
@@ -432,7 +432,6 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
   });
 
   it('updates an existing in-progress recording', async () => {
-    vi.stubEnv('CALL_RECORDER_RECORD_BY_DEFAULT', 'true');
     const client = buildFakeCoreApiClient({
       calendarEvents: [
         buildCalendarEvent({

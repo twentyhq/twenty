@@ -12,8 +12,8 @@ describe('isCallRecorderRecordByDefaultEnabled', () => {
     delete process.env[CALL_RECORDER_RECORD_BY_DEFAULT_ENV_VAR_NAME];
   });
 
-  it('defaults to disabled when unset', () => {
-    expect(isCallRecorderRecordByDefaultEnabled()).toBe(false);
+  it('defaults to enabled when unset', () => {
+    expect(isCallRecorderRecordByDefaultEnabled()).toBe(true);
   });
 
   it.each(['true', '1', 'yes', 'on', '  True  '])(
@@ -34,6 +34,6 @@ describe('isCallRecorderRecordByDefaultEnabled', () => {
   it('falls back to the default for unrecognized values', () => {
     process.env[CALL_RECORDER_RECORD_BY_DEFAULT_ENV_VAR_NAME] = 'maybe';
 
-    expect(isCallRecorderRecordByDefaultEnabled()).toBe(false);
+    expect(isCallRecorderRecordByDefaultEnabled()).toBe(true);
   });
 });

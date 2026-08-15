@@ -18,7 +18,7 @@ export default defineField({
   name: 'callRecorderPreference',
   label: 'Recording Bot',
   description:
-    'Turns the recording bot on or off for this meeting. When empty, the meeting follows the workspace default (the CALL_RECORDER_RECORD_BY_DEFAULT app setting, off unless enabled).',
+    'Turns the recording bot on or off for this meeting. When empty, the meeting follows the workspace default (the CALL_RECORDER_RECORD_BY_DEFAULT app setting, on by default).',
   icon: 'IconRobot',
   isNullable: true,
   options: [

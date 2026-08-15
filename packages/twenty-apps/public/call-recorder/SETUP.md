@@ -36,9 +36,9 @@ Set these on the application registration after installing
 | `RECALL_WEBHOOK_SECRET` | Yes | Svix signing secret (`whsec_…`) used to verify incoming Recall webhooks. |
 
 > **Recording policy and bot behavior settings** — the workspace recording
-> default (`CALL_RECORDER_RECORD_BY_DEFAULT`, off by default so only meetings
-> explicitly set to **On** are recorded), display name, join timing, lobby and
-> leave timeouts, the transcription provider
+> default (`CALL_RECORDER_RECORD_BY_DEFAULT`, on by default; turn it off to
+> record only meetings explicitly set to **On**), display name, join timing,
+> lobby and leave timeouts, the transcription provider
 > (`CALL_RECORDER_TRANSCRIPT_PROVIDER`) and the summary settings
 > (`CALL_RECORDER_SUMMARY_ENABLED`, `CALL_RECORDER_ADDITIONAL_SUMMARY_PROMPT`)
 > are **application variables** that a workspace admin tunes inside the app —
@@ -97,12 +97,12 @@ webhook update is missed.
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
-| No bot joined a meeting | The event's **Recording Bot** field wasn't set to On while `CALL_RECORDER_RECORD_BY_DEFAULT` is off (the default), or it was Off, the event had no conference link, it wasn't synced from a connected calendar, or `RECALL_API_KEY` isn't set | Set the event's **Recording Bot** field to On (or turn on `CALL_RECORDER_RECORD_BY_DEFAULT`); confirm the event is upcoming, has a video link, and came from a synced calendar; confirm `RECALL_API_KEY` is set |
+| No bot joined a meeting | The event's **Recording Bot** field was Off, the workspace turned `CALL_RECORDER_RECORD_BY_DEFAULT` off without setting the field to On, the event had no conference link, it wasn't synced from a connected calendar, or `RECALL_API_KEY` isn't set | Confirm the event is upcoming, has a video link, and came from a synced calendar; set the **Recording Bot** field to On (or leave the workspace default on); confirm `RECALL_API_KEY` is set |
 | Recording never reaches `COMPLETED` | A Recall webhook was missed, or only one of audio/video was produced | The reconciliation job pulls the latest status from Recall within a few minutes; if it is marked `FAILED`, inspect the bot in the Recall dashboard |
 | Transcript empty, or marked pending/failed | Recall hasn't finished async transcription yet, or transcription failed for that call | Wait for the reconciliation job to ingest the transcript; a persistent failure leaves a marker in the transcript |
 | Webhook rejected with `500` (`Invalid webhook signature`, Recall keeps retrying) | `RECALL_WEBHOOK_SECRET` doesn't match the Recall endpoint's signing secret | Re-copy the `whsec_…` secret from the Recall webhook endpoint into the `RECALL_WEBHOOK_SECRET` server variable |
 | Webhook rejected with `500` (`RECALL_WEBHOOK_SECRET … not set`) | `RECALL_WEBHOOK_SECRET` is not set | Set it on the application registration |
 | Bot left almost immediately | No one was admitted before the lobby / empty-meeting timeout, or everyone left | Adjust the lobby / empty-meeting timeouts in the app settings (see **Customize the bot** in the README) if they're too aggressive |
-| Bot joined a meeting you didn't want recorded | The event was set to On, or the workspace default (`CALL_RECORDER_RECORD_BY_DEFAULT`) is on | Set the event's **Recording Bot** field to Off (the scheduled bot is canceled); turn off `CALL_RECORDER_RECORD_BY_DEFAULT` to stop recording meetings without an explicit On |
+| Bot joined a meeting you didn't want recorded | Recording is on by default (`CALL_RECORDER_RECORD_BY_DEFAULT`) | Set the event's **Recording Bot** field to Off (the scheduled bot is canceled); turn off `CALL_RECORDER_RECORD_BY_DEFAULT` to make recording opt-in per meeting workspace-wide |
 | Summary stays empty after the transcript arrives | Summaries are disabled, or the summarizer run failed (for example, out of AI credits) | Confirm `CALL_RECORDER_SUMMARY_ENABLED` isn't `false` and the workspace has AI credits |
 | Summary shows "No summary available." | The transcript was empty or unintelligible | No action needed; this is the expected outcome for low-quality transcripts |

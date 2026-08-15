@@ -184,8 +184,6 @@ describe('reconcileUpcomingCalendarEventBatches', () => {
     vi.stubGlobal('fetch', fetchMock);
     vi.stubEnv('TWENTY_FUNCTIONS_URL', 'https://acme.functions.example.com');
     vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', 'app-access-token');
-    // These tests cover batching mechanics; record every event like the old default.
-    vi.stubEnv('CALL_RECORDER_RECORD_BY_DEFAULT', 'true');
     fetchMock.mockResolvedValue(new Response('{}', { status: 200 }));
     seedClientQueries();
     seedClientMutations();
