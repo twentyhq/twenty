@@ -27,15 +27,19 @@ import { collectReferencedColumnNames } from 'src/engine/twenty-orm-v2/sql/utils
 import { compileNamedParameters } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
 import {
   RESERVED_PARAMETER_NAMES,
-  buildColumnNameByResultAlias,
   buildCountStatement,
+  buildHydrationPathByResultAlias,
   buildPaginationParameters,
   buildProjection,
   buildSelectStatement,
   buildWhereExpression,
+  collectStatementAliases,
   mapRowToEntity,
   normaliseColumnExpression,
   quoteColumn,
+  quoteQualifiedAliasReferences,
+  type ColumnSelection,
+  type ToManyDedupOrder,
   type JoinClause,
   type OrderByClause,
   type SelectClause,
@@ -43,6 +47,7 @@ import {
   type WhereClause,
 } from 'src/engine/twenty-orm-v2/sql/utils/build-select-statement.util';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm-v2/table-shape/types/workspace-table-shape.type';
+import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 let objectWhereParameterSequence = 0;
 
@@ -66,8 +71,10 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
   private readonly whereClauses: WhereClause[] = [];
   private readonly joinClauses: JoinClause[] = [];
   private readonly extraSelectClauses: SelectClause[] = [];
+  private readonly pendingColumnSelections: string[] = [];
   private orderByClauses: OrderByClause[] = [];
   private groupByExpressions: string[] = [];
+  private distinctOnExpressions: string[] = [];
   private parameters: Record<string, unknown> = {};
   private findOptions: FindOptionsLike = {};
   private limitValue?: number;
@@ -107,8 +114,10 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       })),
     );
     cloned.extraSelectClauses.push(...this.extraSelectClauses);
+    cloned.pendingColumnSelections.push(...this.pendingColumnSelections);
     cloned.orderByClauses = [...this.orderByClauses];
     cloned.groupByExpressions = [...this.groupByExpressions];
+    cloned.distinctOnExpressions = [...this.distinctOnExpressions];
     cloned.parameters = { ...this.parameters };
     cloned.findOptions = { ...this.findOptions };
     cloned.limitValue = this.limitValue;
@@ -192,6 +201,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
 
   select(selection?: string | string[], alias?: string): this {
     this.extraSelectClauses.length = 0;
+    this.pendingColumnSelections.length = 0;
 
     if (selection === undefined) {
       this.explicitSelection = undefined;
@@ -205,6 +215,12 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       return this;
     }
 
+    if (selection === this.alias && alias === undefined) {
+      this.explicitSelection = [...this.tableShape.columnNames];
+
+      return this;
+    }
+
     this.explicitSelection = [];
     this.extraSelectClauses.push({
       expression: this.normaliseColumnExpression(selection),
@@ -214,8 +230,20 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     return this;
   }
 
-  addSelect(expression: string, alias: string): this {
-    this.extraSelectClauses.push({ expression, alias });
+  addSelect(expression: string, alias?: string): this {
+    if (isDefined(alias)) {
+      this.extraSelectClauses.push({ expression, alias });
+
+      return this;
+    }
+
+    if (/^\w+\.\w+$/.test(expression)) {
+      this.pendingColumnSelections.push(expression);
+
+      return this;
+    }
+
+    this.extraSelectClauses.push({ expression, alias: expression });
 
     return this;
   }
@@ -238,6 +266,14 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     return this.appendOrderBy(orderByOrExpression, direction, nulls);
   }
 
+  distinctOn(columns: string[]): this {
+    this.distinctOnExpressions = columns.map((column) =>
+      this.normaliseColumnExpression(column),
+    );
+
+    return this;
+  }
+
   groupBy(expression: string): this {
     this.groupByExpressions = [this.normaliseColumnExpression(expression)];
 
@@ -254,7 +290,56 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     relationPath: string,
     alias: string,
     condition?: string,
-    options?: { allowToManyJoin?: boolean },
+    options?: {
+      allowToManyJoin?: boolean;
+      toManyDedupOrder?: ToManyDedupOrder[];
+    },
+  ): this {
+    return this.addJoin('LEFT', relationPath, alias, condition, options);
+  }
+
+  innerJoin(
+    relationPath: string,
+    alias: string,
+    condition?: string,
+    options?: {
+      allowToManyJoin?: boolean;
+      toManyDedupOrder?: ToManyDedupOrder[];
+    },
+  ): this {
+    return this.addJoin('INNER', relationPath, alias, condition, options);
+  }
+
+  leftJoinAndSelect(
+    relationPath: string,
+    alias: string,
+    condition?: string,
+  ): this {
+    return this.addJoin('LEFT', relationPath, alias, condition, {
+      select: true,
+    });
+  }
+
+  innerJoinAndSelect(
+    relationPath: string,
+    alias: string,
+    condition?: string,
+  ): this {
+    return this.addJoin('INNER', relationPath, alias, condition, {
+      select: true,
+    });
+  }
+
+  private addJoin(
+    joinType: 'INNER' | 'LEFT',
+    relationPath: string,
+    alias: string,
+    condition?: string,
+    options?: {
+      allowToManyJoin?: boolean;
+      toManyDedupOrder?: ToManyDedupOrder[];
+      select?: boolean;
+    },
   ): this {
     const [parentAlias, relationFieldName] = relationPath.split('.');
 
@@ -265,16 +350,32 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       );
     }
 
+    if (alias === this.alias) {
+      throw new TwentyOrmV2Exception(
+        `Join alias "${alias}" collides with the main query alias`,
+        TwentyOrmV2ExceptionCode.INVALID_PARAMETER,
+      );
+    }
+
     if (this.joinClauses.some((joinClause) => joinClause.alias === alias)) {
       return this;
     }
 
+    const parentTableShape = this.getTableShapeForAlias(parentAlias);
+
+    if (!isDefined(parentTableShape)) {
+      throw new TwentyOrmV2Exception(
+        `Join path "${relationPath}" references "${parentAlias}", which is neither the main alias nor a joined alias`,
+        TwentyOrmV2ExceptionCode.UNKNOWN_RELATION,
+      );
+    }
+
     const relationShape =
-      this.tableShape.relationShapeByFieldName[relationFieldName];
+      parentTableShape.relationShapeByFieldName[relationFieldName];
 
     if (!isDefined(relationShape)) {
       throw new TwentyOrmV2Exception(
-        `Relation "${relationFieldName}" does not exist on "${this.tableShape.nameSingular}"`,
+        `Relation "${relationFieldName}" does not exist on "${parentTableShape.nameSingular}"`,
         TwentyOrmV2ExceptionCode.UNKNOWN_RELATION,
       );
     }
@@ -285,34 +386,76 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
 
     const joinColumnName = relationShape.joinColumnName;
 
-    // A to-one relation carries its join column on the current table, so the condition
-    // is always renderable. A to-many relation carries the foreign key on the target
-    // table; it is only built when the caller opts in (group-by "with records" ordering)
-    // and renders as a DISTINCT ON derived table so it stays one row per parent.
-    // Otherwise the condition is left undefined and the shared to-one guard rejects it.
-    const toManyJoin =
-      options?.allowToManyJoin === true
-        ? this.buildToManyJoin({
-            parentAlias,
-            alias,
-            targetTableShape,
-            targetFieldMetadataId: relationShape.targetFieldMetadataId,
-          })
-        : undefined;
+    const toManyJoin = isDefined(joinColumnName)
+      ? undefined
+      : this.buildToManyJoin({
+          parentAlias,
+          alias,
+          targetTableShape,
+          targetFieldMetadataId: relationShape.targetFieldMetadataId,
+        });
+
+    const shouldJoinDedupedToMany = options?.allowToManyJoin === true;
 
     this.joinClauses.push({
       alias,
+      parentAlias,
+      relationFieldName,
       targetTableShape,
       relationType: relationShape.relationType,
+      joinType,
+      isSelected: options?.select === true,
       condition: isDefined(joinColumnName)
         ? (condition ??
           `${this.quoteColumn(parentAlias, joinColumnName)} = ${this.quoteColumn(alias, 'id')}`)
-        : (condition ?? toManyJoin?.condition),
-      toManyForeignKeyColumnName: toManyJoin?.foreignKeyColumnName,
+        : shouldJoinDedupedToMany
+          ? (condition ?? toManyJoin?.condition)
+          : undefined,
+      toManyForeignKeyColumnName: shouldJoinDedupedToMany
+        ? toManyJoin?.foreignKeyColumnName
+        : undefined,
+      toManyPlainCondition: condition ?? toManyJoin?.condition,
+      toManyDedupOrder: shouldJoinDedupedToMany
+        ? options?.toManyDedupOrder
+        : undefined,
       additionalOnConditions: [],
     });
 
     return this;
+  }
+
+  private getTableShapeForAlias(
+    alias: string,
+  ): WorkspaceTableShape | undefined {
+    if (alias === this.alias) {
+      return this.tableShape;
+    }
+
+    return this.joinClauses.find((joinClause) => joinClause.alias === alias)
+      ?.targetTableShape;
+  }
+
+  private resolveColumnSelections(): ColumnSelection[] {
+    return this.pendingColumnSelections.map((expression) => {
+      const [alias, columnName] = expression.split('.');
+      const tableShape = this.getTableShapeForAlias(alias);
+
+      if (!isDefined(tableShape)) {
+        throw new TwentyOrmV2Exception(
+          `Selection "${expression}" references "${alias}", which is neither the main alias nor a joined alias`,
+          TwentyOrmV2ExceptionCode.UNKNOWN_RELATION,
+        );
+      }
+
+      if (!isDefined(tableShape.columnShapeByColumnName[columnName])) {
+        throw new TwentyOrmV2Exception(
+          `Column "${columnName}" does not exist on "${tableShape.nameSingular}"`,
+          TwentyOrmV2ExceptionCode.UNKNOWN_COLUMN,
+        );
+      }
+
+      return { alias, columnName };
+    });
   }
 
   private buildToManyJoin({
@@ -439,7 +582,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     this.limitValue = this.limitValue ?? 1;
 
     try {
-      const rows = await this.executeSelect();
+      const rows = await this.executeSelect({ allowPlainToManyJoins: true });
 
       return rows[0] as T | undefined;
     } finally {
@@ -448,7 +591,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
   }
 
   async getRawMany<T extends Record<string, unknown>>(): Promise<T[]> {
-    const rows = await this.executeSelect();
+    const rows = await this.executeSelect({ allowPlainToManyJoins: true });
 
     return rows as T[];
   }
@@ -462,7 +605,9 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
   async getCount(): Promise<number> {
     this.context.onBeforeExecute(this);
 
-    const sql = buildCountStatement(this.toSelectStatementState());
+    const sql = buildCountStatement(
+      this.toSelectStatementState({ allowPlainToManyJoins: true }),
+    );
     const compiled = compileNamedParameters(sql, this.parameters);
     const rows = await this.context.executor.execute(compiled);
 
@@ -497,11 +642,36 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
   }
 
   getReferencedColumnNamesByAlias(): Record<string, string[]> {
+    const state = this.toSelectStatementState();
+    const aliases = collectStatementAliases(state);
+
     return collectReferencedColumnNames({
       mainAlias: this.alias,
       mainAliasColumnNames: this.buildProjection().mainAliasColumnNames,
-      extraSelectClauses: this.extraSelectClauses,
-      orderByClauses: this.orderByClauses,
+      extraSelectClauses: this.extraSelectClauses.map((selectClause) => ({
+        ...selectClause,
+        expression: quoteQualifiedAliasReferences(
+          selectClause.expression,
+          aliases,
+        ),
+      })),
+      orderByClauses: this.orderByClauses
+        .filter(
+          (orderByClause) =>
+            !this.extraSelectClauses.some(
+              (selectClause) =>
+                escapeIdentifier(selectClause.alias) ===
+                orderByClause.expression,
+            ),
+        )
+        .map((orderByClause) => ({
+          ...orderByClause,
+          expression: quoteQualifiedAliasReferences(
+            orderByClause.expression,
+            aliases,
+          ),
+        })),
+      distinctOnExpressions: this.distinctOnExpressions,
     });
   }
 
@@ -786,27 +956,44 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
         direction,
         nulls,
         normaliseColumnExpression: (expression) =>
-          this.normaliseColumnExpression(expression),
+          this.normaliseOrderByExpression(expression),
       }),
     );
 
     return this;
   }
 
-  private async executeSelect(): Promise<Record<string, unknown>[]> {
+  private normaliseOrderByExpression(expression: string): string {
+    const isBareIdentifier = /^\w+$/.test(expression);
+
+    if (
+      isBareIdentifier &&
+      this.extraSelectClauses.some(
+        (selectClause) => selectClause.alias === expression,
+      )
+    ) {
+      return escapeIdentifier(expression);
+    }
+
+    return this.normaliseColumnExpression(expression);
+  }
+
+  private async executeSelect(options?: {
+    allowPlainToManyJoins?: boolean;
+  }): Promise<Record<string, unknown>[]> {
     this.context.onBeforeExecute(this);
 
-    const { sql, parameters } = this.buildSelectStatement();
+    const { sql, parameters } = this.buildSelectStatement(options);
     const compiled = compileNamedParameters(sql, parameters);
 
     return this.context.executor.execute(compiled);
   }
 
-  private buildSelectStatement(): {
+  private buildSelectStatement(options?: { allowPlainToManyJoins?: boolean }): {
     sql: string;
     parameters: Record<string, unknown>;
   } {
-    const state = this.toSelectStatementState();
+    const state = this.toSelectStatementState(options);
 
     return {
       sql: buildSelectStatement(state),
@@ -822,10 +1009,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
   }
 
   private buildColumnNameByResultAlias(): Record<string, string> {
-    return buildColumnNameByResultAlias(
-      this.alias,
-      this.buildProjection().mainAliasColumnNames,
-    );
+    return buildHydrationPathByResultAlias(this.toSelectStatementState());
   }
 
   private buildWhereExpression(options?: {
@@ -842,18 +1026,23 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     return quoteColumn(alias, columnName);
   }
 
-  private toSelectStatementState(): SelectStatementState {
+  private toSelectStatementState(options?: {
+    allowPlainToManyJoins?: boolean;
+  }): SelectStatementState {
     return {
       alias: this.alias,
       tableShape: this.tableShape,
       findOptions: this.findOptions,
       explicitSelection: this.explicitSelection,
       extraSelectClauses: this.extraSelectClauses,
+      columnSelections: this.resolveColumnSelections(),
       joinClauses: this.joinClauses,
       whereClauses: this.whereClauses,
       groupByExpressions: this.groupByExpressions,
       orderByClauses: this.orderByClauses,
+      distinctOnExpressions: this.distinctOnExpressions,
       includeDeleted: this.includeDeleted,
+      allowPlainToManyJoins: options?.allowPlainToManyJoins ?? false,
       limitValue: this.limitValue,
       offsetValue: this.offsetValue,
     };
