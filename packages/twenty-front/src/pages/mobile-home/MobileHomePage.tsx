@@ -1,5 +1,4 @@
 import { MainNavigationDrawerNavigationContent } from '@/navigation/components/MainNavigationDrawerNavigationContent';
-import { MobileHomeTabsRow } from '@/navigation/components/MobileHomeTabsRow';
 import { NavigationDrawerTabbedContent } from '@/navigation/components/NavigationDrawerTabbedContent';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
@@ -27,11 +26,13 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
+// The tabs that used to sit here moved into the bottom bar, leaving the
+// workspace switcher, which anchors a dropdown and so cannot be a bar item.
 const StyledTopRow = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-  justify-content: space-between;
+  justify-content: flex-end;
   width: 100%;
 `;
 
@@ -59,7 +60,6 @@ export const MobileHomePage = () => {
     <StyledContainer>
       <NavigationDrawerFixedContent>
         <StyledTopRow>
-          <MobileHomeTabsRow />
           <MultiWorkspaceDropdownButton shouldHideLabel />
         </StyledTopRow>
       </NavigationDrawerFixedContent>
