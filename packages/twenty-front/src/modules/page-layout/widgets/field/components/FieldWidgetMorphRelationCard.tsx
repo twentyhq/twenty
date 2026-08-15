@@ -171,7 +171,7 @@ export const FieldWidgetMorphRelationCard = ({
   const { openDropdown } = useOpenDropdown();
 
   const handleOpenDropdown = useCallback(() => {
-    openDropdown(dropdownId);
+    openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
   }, [openDropdown, dropdownId]);
 
   usePublishWidgetHeaderInfo({

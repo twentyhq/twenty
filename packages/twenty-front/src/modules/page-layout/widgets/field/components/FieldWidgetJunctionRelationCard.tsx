@@ -177,7 +177,7 @@ export const FieldWidgetJunctionRelationCard = ({
   const { openDropdown } = useOpenDropdown();
 
   const handleOpenDropdown = useCallback(() => {
-    openDropdown(dropdownId);
+    openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
   }, [openDropdown, dropdownId]);
 
   const targetField = junctionConfig?.targetFields[0];
