@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { useHideMobileNavigationBarOnScrollDown } from '@/navigation/hooks/useHideMobileNavigationBarOnScrollDown';
+import { MobileNavigationBarScrollEffect } from '@/navigation/components/MobileNavigationBarScrollEffect';
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { isMobileNavigationBarVisibleState } from '@/navigation/states/isMobileNavigationBarVisibleState';
@@ -12,6 +12,7 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -47,7 +48,7 @@ const StyledFloatingContainer = styled.div`
   pointer-events: none;
   position: absolute;
   right: 0;
-  z-index: 1001;
+  z-index: ${RootStackingContextZIndices.MobileNavigationBar};
 
   > * {
     pointer-events: auto;
@@ -74,8 +75,6 @@ export const MobileNavigationBar = () => {
   const isMobileNavigationBarVisible = useAtomStateValue(
     isMobileNavigationBarVisibleState,
   );
-
-  useHideMobileNavigationBarOnScrollDown();
 
   const setContextStoreCurrentObjectMetadataItemId = useSetAtomComponentState(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -165,12 +164,15 @@ export const MobileNavigationBar = () => {
   ];
 
   return (
-    <StyledFloatingContainer>
-      <NavigationBar
-        activeItemName={activeItemName ?? ''}
-        isHidden={isHidden}
-        items={items}
-      />
-    </StyledFloatingContainer>
+    <>
+      <MobileNavigationBarScrollEffect />
+      <StyledFloatingContainer>
+        <NavigationBar
+          activeItemName={activeItemName ?? ''}
+          isHidden={isHidden}
+          items={items}
+        />
+      </StyledFloatingContainer>
+    </>
   );
 };
