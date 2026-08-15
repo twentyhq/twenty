@@ -3,24 +3,20 @@ import { useLingui } from '@lingui/react/macro';
 import { Fragment, useCallback, useState } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsRecordFieldReadOnly';
-import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
-import { isRecordReadOnly } from '@/object-record/read-only/utils/isRecordReadOnly';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { RecordDetailRecordsListContainer } from '@/object-record/record-field-list/record-detail-section/components/RecordDetailRecordsListContainer';
 import { RecordDetailMorphRelationSectionDropdown } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailMorphRelationSectionDropdown';
 import { RecordDetailRelationRecordsListItem } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem';
 import { RecordDetailRelationRecordsListItemEffect } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItemEffect';
 import { useGetMorphRelationRelatedRecordsWithObjectNameSingular } from '@/object-record/record-field-list/record-detail-section/relation/components/hooks/useGetMorphRelationRelatedRecordsWithObjectNameSingular';
+import { useIsMorphRelationReadOnlyFromRelatedRecordPerspective } from '@/object-record/record-field-list/record-detail-section/relation/components/hooks/useIsMorphRelationReadOnlyFromRelatedRecordPerspective';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import {
   FieldInputEventContext,
   type FieldInputEvent,
 } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
-import { useIsRecordDeleted } from '@/object-record/record-field/ui/hooks/useIsRecordDeleted';
 import { usePersistField } from '@/object-record/record-field/ui/hooks/usePersistField';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMorphRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -31,14 +27,12 @@ import { FIELD_WIDGET_RELATION_CARD_LOAD_MORE_INCREMENT } from '@/page-layout/wi
 import { generateFieldWidgetInstanceId } from '@/page-layout/widgets/field/utils/generateFieldWidgetInstanceId';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { usePublishWidgetHeaderInfo } from '@/page-layout/widgets/hooks/usePublishWidgetHeaderInfo';
-import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { RelationType } from '~/generated-metadata/graphql';
 
 const StyledShowMoreButtonContainer = styled.div`
   padding-top: ${themeCssVariables.spacing[2]};
@@ -86,9 +80,6 @@ export const FieldWidgetMorphRelationCard = ({
     objectNameSingular: targetRecord.targetObjectNameSingular,
   });
 
-  const { objectMetadataItems } = useObjectMetadataItems();
-  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-
   const { updateOneRecord } = useUpdateOneRecord();
 
   const useUpdateOneObjectRecordMutation = () => {
@@ -118,43 +109,12 @@ export const FieldWidgetMorphRelationCard = ({
     objectMetadataId: objectMetadataItem.id,
   });
 
-  const isToOneObject =
-    fieldMetadata.relationType === RelationType.MANY_TO_ONE;
-
-  const isRecordReadOnlyFromSourcePerspective = useIsRecordReadOnly({
-    recordId: targetRecord.id,
-    objectMetadataId: objectMetadataItem.id,
-  });
-
-  const relatedObjectMetadataItems = fieldMetadata.morphRelations
-    .map((morphRelation) => morphRelation.targetObjectMetadata.id)
-    .map((objectMetadataId) =>
-      objectMetadataItems.find(
-        (objectMetadataItemToFind) =>
-          objectMetadataItemToFind.id === objectMetadataId,
-      ),
-    )
-    .filter(isDefined);
-
-  const isDeleted = useIsRecordDeleted({ recordId: targetRecord.id });
-
-  const isRecordReadOnlyFromTargetPerspective =
-    relatedObjectMetadataItems.some((relatedObjectMetadataItem) => {
-      const objectPermissions = getObjectPermissionsFromMapByObjectMetadataId({
-        objectPermissionsByObjectMetadataId,
-        objectMetadataId: relatedObjectMetadataItem.id,
-      });
-
-      return isRecordReadOnly({
-        objectPermissions,
-        isRecordDeleted: isDeleted,
-        objectMetadataItem: relatedObjectMetadataItem,
-      });
+  const isRecordReadOnlyFromRelatedRecordPerspective =
+    useIsMorphRelationReadOnlyFromRelatedRecordPerspective({
+      recordId: targetRecord.id,
+      sourceObjectMetadataId: objectMetadataItem.id,
+      fieldMetadata,
     });
-
-  const isRecordReadOnlyFromRelatedRecordPerspective = isToOneObject
-    ? isRecordReadOnlyFromSourcePerspective
-    : isRecordReadOnlyFromTargetPerspective;
 
   const isReadOnly =
     isRecordFieldReadOnly || isRecordReadOnlyFromRelatedRecordPerspective;
