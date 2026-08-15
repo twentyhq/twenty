@@ -41,6 +41,12 @@ const otherApplicationContext = {
   application: { id: 'app-2' },
 } as WorkspaceAuthContext;
 
+const apiKeyContext = {
+  type: 'apiKey',
+  workspace: { id: 'workspace-1' },
+  apiKey: { id: 'api-key-1' },
+} as WorkspaceAuthContext;
+
 const userContextCarryingApplication = {
   type: 'user',
   workspace: { id: 'workspace-1' },
@@ -115,6 +121,15 @@ describe('validateWritabilityOrThrow', () => {
     ).toThrow(/not writable/);
   });
 
+  it('should refuse an api key context on an APPLICATION object', () => {
+    expect(() =>
+      validate({
+        objectWritability: MetadataWritability.APPLICATION,
+        authContext: apiKeyContext,
+      }),
+    ).toThrow(/not writable/);
+  });
+
   it('should refuse a missing context on an APPLICATION object', () => {
     expect(() =>
       validate({
@@ -149,6 +164,15 @@ describe('validateWritabilityOrThrow', () => {
         authContext: applicationContext,
       }),
     ).not.toThrow();
+  });
+
+  it('should refuse every caller on a SYSTEM field', () => {
+    expect(() =>
+      validate({
+        fieldWritability: MetadataWritability.SYSTEM,
+        authContext: applicationContext,
+      }),
+    ).toThrow(/field "status".*not writable/);
   });
 
   it('should ignore field writability for columns that are not written', () => {
