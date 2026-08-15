@@ -5,6 +5,7 @@ import { Fragment, useCallback, useState } from 'react';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsRecordFieldReadOnly';
+import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { RecordDetailRecordsListContainer } from '@/object-record/record-field-list/record-detail-section/components/RecordDetailRecordsListContainer';
 import { RecordDetailMorphRelationSectionDropdown } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailMorphRelationSectionDropdown';
@@ -108,6 +109,14 @@ export const FieldWidgetMorphRelationCard = ({
     objectMetadataId: objectMetadataItem.id,
   });
 
+  const isRecordReadOnlyFromRelatedRecordPerspective = useIsRecordReadOnly({
+    recordId: targetRecord.id,
+    objectMetadataId: objectMetadataItem.id,
+  });
+
+  const isReadOnly =
+    isRecordFieldReadOnly || isRecordReadOnlyFromRelatedRecordPerspective;
+
   const persistField = usePersistField({
     objectMetadataItemId: objectMetadataItem.id,
   });
@@ -144,11 +153,13 @@ export const FieldWidgetMorphRelationCard = ({
 
   usePublishWidgetHeaderInfo({
     count: validRecords.length,
-    primaryAction: {
-      Icon: IconPlus,
-      label: t`Add ${fieldDefinition.label}`,
-      onClick: handleOpenDropdown,
-    },
+    primaryAction: isReadOnly
+      ? undefined
+      : {
+          Icon: IconPlus,
+          label: t`Add ${fieldDefinition.label}`,
+          onClick: handleOpenDropdown,
+        },
   });
 
   const visibleRecords = validRecords.slice(0, visibleItemsCount);

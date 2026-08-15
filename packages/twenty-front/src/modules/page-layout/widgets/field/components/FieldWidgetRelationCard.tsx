@@ -5,6 +5,7 @@ import { Fragment, useCallback, useState } from 'react';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsRecordFieldReadOnly';
+import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { RecordDetailRecordsListContainer } from '@/object-record/record-field-list/record-detail-section/components/RecordDetailRecordsListContainer';
 import { RecordDetailRelationRecordsListItem } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem';
@@ -31,6 +32,7 @@ import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelCont
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { RelationType } from '~/generated-metadata/graphql';
 
 const StyledShowMoreButtonContainer = styled.div`
   padding-top: ${themeCssVariables.spacing[2]};
@@ -115,6 +117,19 @@ export const FieldWidgetRelationCard = ({
     objectMetadataId: objectMetadataItem.id,
   });
 
+  const isToOneObject =
+    fieldMetadata.relationType === RelationType.MANY_TO_ONE;
+
+  const isRecordReadOnlyFromRelatedRecordPerspective = useIsRecordReadOnly({
+    recordId: targetRecord.id,
+    objectMetadataId: isToOneObject
+      ? objectMetadataItem.id
+      : relationObjectMetadataItem.id,
+  });
+
+  const isReadOnly =
+    isRecordFieldReadOnly || isRecordReadOnlyFromRelatedRecordPerspective;
+
   const persistField = usePersistField({
     objectMetadataItemId: objectMetadataItem.id,
   });
@@ -147,11 +162,13 @@ export const FieldWidgetRelationCard = ({
 
   usePublishWidgetHeaderInfo({
     count: records.length,
-    primaryAction: {
-      Icon: IconPlus,
-      label: t`Add ${relationObjectMetadataItem.labelSingular}`,
-      onClick: handleOpenDropdown,
-    },
+    primaryAction: isReadOnly
+      ? undefined
+      : {
+          Icon: IconPlus,
+          label: t`Add ${relationObjectMetadataItem.labelSingular}`,
+          onClick: handleOpenDropdown,
+        },
   });
 
   const visibleRecords = records.slice(0, visibleItemsCount);

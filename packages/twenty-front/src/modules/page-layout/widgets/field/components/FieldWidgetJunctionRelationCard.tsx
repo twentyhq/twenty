@@ -5,6 +5,8 @@ import { Fragment, useCallback, useState } from 'react';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsRecordFieldReadOnly';
+import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { RecordDetailRecordsListContainer } from '@/object-record/record-field-list/record-detail-section/components/RecordDetailRecordsListContainer';
 import { RecordDetailRelationRecordsListItem } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem';
@@ -84,14 +86,6 @@ export const FieldWidgetJunctionRelationCard = ({
     objectNameSingular: targetRecord.targetObjectNameSingular,
   });
 
-  const relationObjectNameSingular =
-    fieldMetadata.relationObjectMetadataNameSingular;
-
-  const { objectMetadataItem: relationObjectMetadataItem } =
-    useObjectMetadataItem({
-      objectNameSingular: relationObjectNameSingular,
-    });
-
   const { updateOneRecord } = useUpdateOneRecord();
 
   const useUpdateOneObjectRecordMutation = () => {
@@ -114,6 +108,20 @@ export const FieldWidgetJunctionRelationCard = ({
       { loading: boolean },
     ];
   };
+
+  const isRecordFieldReadOnly = useIsRecordFieldReadOnly({
+    recordId: targetRecord.id,
+    fieldMetadataId: fieldDefinition.fieldMetadataId,
+    objectMetadataId: objectMetadataItem.id,
+  });
+
+  const isRecordReadOnlyFromRelatedRecordPerspective = useIsRecordReadOnly({
+    recordId: targetRecord.id,
+    objectMetadataId: objectMetadataItem.id,
+  });
+
+  const isReadOnly =
+    isRecordFieldReadOnly || isRecordReadOnlyFromRelatedRecordPerspective;
 
   const persistField = usePersistField({
     objectMetadataItemId: objectMetadataItem.id,
@@ -172,13 +180,20 @@ export const FieldWidgetJunctionRelationCard = ({
     openDropdown(dropdownId);
   }, [openDropdown, dropdownId]);
 
+  const targetField = junctionConfig?.targetFields[0];
+  const targetObjectLabelSingular =
+    targetField?.relation?.targetObjectMetadata?.labelSingular ??
+    fieldDefinition.label;
+
   usePublishWidgetHeaderInfo({
     count: targetRecordsWithMetadata.length,
-    primaryAction: {
-      Icon: IconPlus,
-      label: t`Add ${relationObjectMetadataItem.labelSingular}`,
-      onClick: handleOpenDropdown,
-    },
+    primaryAction: isReadOnly
+      ? undefined
+      : {
+          Icon: IconPlus,
+          label: t`Add ${targetObjectLabelSingular}`,
+          onClick: handleOpenDropdown,
+        },
   });
 
   if (!isDefined(junctionConfig)) {
@@ -198,38 +213,48 @@ export const FieldWidgetJunctionRelationCard = ({
             isLabelIdentifier: false,
             fieldDefinition,
             useUpdateRecord: useUpdateOneObjectRecordMutation,
-            // Junction card detach/delete logic in RecordDetailRelationRecordsListItem
-            // assumes direct relations. Force read-only to prevent data corruption.
-            isRecordFieldReadOnly: true,
+            isRecordFieldReadOnly,
           }}
         >
           <FieldInputEventContext.Provider value={{ onSubmit: handleSubmit }}>
             {targetRecordsWithMetadata.length > 0 && (
-              <RecordDetailRecordsListContainer>
-                {visibleRecords.map((item) => (
-                  <Fragment key={item.record.id}>
-                    <RecordDetailRelationRecordsListItemEffect
-                      relationRecordId={item.record.id}
-                      relationObjectMetadataNameSingular={item.objectNameSingular}
-                    />
-                    <RecordDetailRelationRecordsListItem
-                      isExpanded={expandedItem === item.record.id}
-                      onClick={handleItemClick}
-                      relationRecord={item.record}
-                      relationObjectMetadataNameSingular={item.objectNameSingular}
-                      relationFieldMetadataId=""
-                    />
-                  </Fragment>
-                ))}
-                {hasMoreRecords && (
-                  <StyledShowMoreButtonContainer>
-                    <FieldWidgetShowMoreButton
-                      remainingCount={remainingCount}
-                      onClick={handleShowMore}
-                    />
-                  </StyledShowMoreButtonContainer>
-                )}
-              </RecordDetailRecordsListContainer>
+              <FieldContext.Provider
+                value={{
+                  recordId: targetRecord.id,
+                  isLabelIdentifier: false,
+                  fieldDefinition,
+                  useUpdateRecord: useUpdateOneObjectRecordMutation,
+                  // Junction card detach/delete logic in RecordDetailRelationRecordsListItem
+                  // assumes direct relations. Force read-only for items to prevent data corruption.
+                  isRecordFieldReadOnly: true,
+                }}
+              >
+                <RecordDetailRecordsListContainer>
+                  {visibleRecords.map((item) => (
+                    <Fragment key={item.record.id}>
+                      <RecordDetailRelationRecordsListItemEffect
+                        relationRecordId={item.record.id}
+                        relationObjectMetadataNameSingular={item.objectNameSingular}
+                      />
+                      <RecordDetailRelationRecordsListItem
+                        isExpanded={expandedItem === item.record.id}
+                        onClick={handleItemClick}
+                        relationRecord={item.record}
+                        relationObjectMetadataNameSingular={item.objectNameSingular}
+                        relationFieldMetadataId=""
+                      />
+                    </Fragment>
+                  ))}
+                  {hasMoreRecords && (
+                    <StyledShowMoreButtonContainer>
+                      <FieldWidgetShowMoreButton
+                        remainingCount={remainingCount}
+                        onClick={handleShowMore}
+                      />
+                    </StyledShowMoreButtonContainer>
+                  )}
+                </RecordDetailRecordsListContainer>
+              </FieldContext.Provider>
             )}
             <RecordDetailRelationSectionDropdown loading={false} />
           </FieldInputEventContext.Provider>
