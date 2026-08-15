@@ -1599,11 +1599,6 @@ msgstr "Dirección 2"
 msgid "Addresses your workspace uses to send and receive email from shared inboxes"
 msgstr "Direcciones que tu espacio de trabajo usa para enviar y recibir correo electrónico desde bandejas de entrada compartidas"
 
-#. js-lingui-id: 11TrtH
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Adjust the size of text and interface elements"
-msgstr ""
-
 #. js-lingui-id: U3pytU
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 msgid "Admin"
@@ -10383,9 +10378,9 @@ msgstr "Editor de instrucciones"
 msgid "Integrations - Settings"
 msgstr "Integraciones - Ajustes"
 
-#. js-lingui-id: gVouHS
+#. js-lingui-id: GfnKOF
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Interface scale"
+msgid "Interface"
 msgstr ""
 
 #. js-lingui-id: a+PGuG
@@ -10872,7 +10867,7 @@ msgid "Label must contain at least one alphanumeric character"
 msgstr "La etiqueta debe contener al menos un carácter alfanumérico"
 
 #. js-lingui-id: vXIe7J
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Language"
 msgstr "Idioma"
 
@@ -16307,6 +16302,11 @@ msgstr "Guardar como nueva vista"
 msgid "Save or cancel dashboard changes before editing the layout."
 msgstr "Guarda o cancela los cambios del panel antes de editar el diseño."
 
+#. js-lingui-id: bifv6N
+#: src/modules/settings/experience/components/UiScalePicker.tsx
+msgid "Scale"
+msgstr ""
+
 #. js-lingui-id: gmB6oO
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
 msgid "Schedule"
@@ -17059,10 +17059,10 @@ msgstr "Seleccionar un valor"
 msgid "Select which models appear as recommended in the workspace model picker"
 msgstr "Selecciona qué modelos aparecen como recomendados en el selector de modelos del espacio de trabajo"
 
-#. js-lingui-id: AXTJAW
+#. js-lingui-id: 7c7atJ
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Select your preferred language"
-msgstr "Selecciona tu idioma preferido"
+msgid "Select your language and adjust the size of the interface"
+msgstr ""
 
 #. js-lingui-id: JlFcis
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
