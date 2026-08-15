@@ -1599,11 +1599,6 @@ msgstr "Διεύθυνση 2"
 msgid "Addresses your workspace uses to send and receive email from shared inboxes"
 msgstr "Διευθύνσεις που χρησιμοποιεί ο χώρος εργασίας σας για την αποστολή και λήψη email από κοινόχρηστα εισερχόμενα"
 
-#. js-lingui-id: 11TrtH
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Adjust the size of text and interface elements"
-msgstr ""
-
 #. js-lingui-id: U3pytU
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 msgid "Admin"
@@ -10383,9 +10378,9 @@ msgstr "Επεξεργαστής οδηγιών"
 msgid "Integrations - Settings"
 msgstr "Ενσωματώσεις - Ρυθμίσεις"
 
-#. js-lingui-id: gVouHS
+#. js-lingui-id: GfnKOF
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Interface scale"
+msgid "Interface"
 msgstr ""
 
 #. js-lingui-id: a+PGuG
@@ -10872,7 +10867,7 @@ msgid "Label must contain at least one alphanumeric character"
 msgstr "Η ετικέτα πρέπει να περιέχει τουλάχιστον έναν αλφαριθμητικό χαρακτήρα"
 
 #. js-lingui-id: vXIe7J
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Language"
 msgstr "Γλώσσα"
 
@@ -16307,6 +16302,11 @@ msgstr "Αποθήκευση ως νέα προβολή"
 msgid "Save or cancel dashboard changes before editing the layout."
 msgstr "Αποθηκεύστε ή ακυρώστε τις αλλαγές του πίνακα ελέγχου πριν επεξεργαστείτε τη διάταξη."
 
+#. js-lingui-id: bifv6N
+#: src/modules/settings/experience/components/UiScalePicker.tsx
+msgid "Scale"
+msgstr ""
+
 #. js-lingui-id: gmB6oO
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
 msgid "Schedule"
@@ -17059,10 +17059,10 @@ msgstr "Επιλογή τιμής"
 msgid "Select which models appear as recommended in the workspace model picker"
 msgstr "Επιλέξτε ποια μοντέλα θα εμφανίζονται ως συνιστώμενα στον επιλογέα μοντέλων του χώρου εργασίας"
 
-#. js-lingui-id: AXTJAW
+#. js-lingui-id: 7c7atJ
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Select your preferred language"
-msgstr "Επιλέξτε την προτιμώμενη γλώσσα σας"
+msgid "Select your language and adjust the size of the interface"
+msgstr ""
 
 #. js-lingui-id: JlFcis
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx

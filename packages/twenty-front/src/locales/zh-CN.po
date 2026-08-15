@@ -1599,11 +1599,6 @@ msgstr "地址 2"
 msgid "Addresses your workspace uses to send and receive email from shared inboxes"
 msgstr "工作区用于从共享收件箱发送和接收电子邮件的地址"
 
-#. js-lingui-id: 11TrtH
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Adjust the size of text and interface elements"
-msgstr ""
-
 #. js-lingui-id: U3pytU
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 msgid "Admin"
@@ -10360,9 +10355,9 @@ msgstr "指令编辑器"
 msgid "Integrations - Settings"
 msgstr "集成 - 设置"
 
-#. js-lingui-id: gVouHS
+#. js-lingui-id: GfnKOF
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Interface scale"
+msgid "Interface"
 msgstr ""
 
 #. js-lingui-id: a+PGuG
@@ -10849,7 +10844,7 @@ msgid "Label must contain at least one alphanumeric character"
 msgstr "标签必须至少包含一个字母或数字字符"
 
 #. js-lingui-id: vXIe7J
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Language"
 msgstr "语言"
 
@@ -16284,6 +16279,11 @@ msgstr "另存为新视图"
 msgid "Save or cancel dashboard changes before editing the layout."
 msgstr "在编辑布局之前，请先保存或取消仪表板的更改。"
 
+#. js-lingui-id: bifv6N
+#: src/modules/settings/experience/components/UiScalePicker.tsx
+msgid "Scale"
+msgstr ""
+
 #. js-lingui-id: gmB6oO
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
 msgid "Schedule"
@@ -17036,10 +17036,10 @@ msgstr "选择值"
 msgid "Select which models appear as recommended in the workspace model picker"
 msgstr "选择哪些模型在工作区模型选择器中显示为推荐"
 
-#. js-lingui-id: AXTJAW
+#. js-lingui-id: 7c7atJ
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Select your preferred language"
-msgstr "选择您偏好的语言"
+msgid "Select your language and adjust the size of the interface"
+msgstr ""
 
 #. js-lingui-id: JlFcis
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx

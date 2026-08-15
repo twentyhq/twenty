@@ -1599,11 +1599,6 @@ msgstr "주소 2"
 msgid "Addresses your workspace uses to send and receive email from shared inboxes"
 msgstr "워크스페이스에서 공유 받은편지함을 통해 이메일을 보내고 받을 때 사용하는 주소입니다."
 
-#. js-lingui-id: 11TrtH
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Adjust the size of text and interface elements"
-msgstr ""
-
 #. js-lingui-id: U3pytU
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 msgid "Admin"
@@ -10383,9 +10378,9 @@ msgstr "지침 편집기"
 msgid "Integrations - Settings"
 msgstr "통합 - 설정"
 
-#. js-lingui-id: gVouHS
+#. js-lingui-id: GfnKOF
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Interface scale"
+msgid "Interface"
 msgstr ""
 
 #. js-lingui-id: a+PGuG
@@ -10872,7 +10867,7 @@ msgid "Label must contain at least one alphanumeric character"
 msgstr "레이블에는 최소 하나의 영숫자 문자가 포함되어야 합니다"
 
 #. js-lingui-id: vXIe7J
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Language"
 msgstr "언어"
 
@@ -16307,6 +16302,11 @@ msgstr "새 보기로 저장"
 msgid "Save or cancel dashboard changes before editing the layout."
 msgstr "레이아웃을 편집하기 전에 대시보드 변경 사항을 저장하거나 취소하세요."
 
+#. js-lingui-id: bifv6N
+#: src/modules/settings/experience/components/UiScalePicker.tsx
+msgid "Scale"
+msgstr ""
+
 #. js-lingui-id: gmB6oO
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
 msgid "Schedule"
@@ -17059,10 +17059,10 @@ msgstr "값 선택"
 msgid "Select which models appear as recommended in the workspace model picker"
 msgstr "워크스페이스 모델 선택기에서 권장으로 표시할 모델을 선택하세요"
 
-#. js-lingui-id: AXTJAW
+#. js-lingui-id: 7c7atJ
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Select your preferred language"
-msgstr "선호하는 언어 선택"
+msgid "Select your language and adjust the size of the interface"
+msgstr ""
 
 #. js-lingui-id: JlFcis
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
