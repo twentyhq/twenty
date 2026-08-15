@@ -1,4 +1,3 @@
-import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
 import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
@@ -22,11 +21,7 @@ export const MobileHomeAiChatSection = () => {
   const { handleThreadClick } = useAiChatThreadClick({
     resetNavigationStack: true,
   });
-  const { threads, hasNextPage, loading, fetchMoreRef } = useChatThreads();
-
-  if (loading && threads.length === 0) {
-    return <AiChatSkeletonLoader />;
-  }
+  const { threads, hasNextPage, fetchMoreRef } = useChatThreads();
 
   if (threads.length === 0) {
     return null;
