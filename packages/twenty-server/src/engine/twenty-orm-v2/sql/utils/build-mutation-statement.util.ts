@@ -5,8 +5,10 @@ import {
 } from 'src/engine/twenty-orm-v2/exceptions/twenty-orm-v2.exception';
 import { buildColumnResultAlias } from 'src/engine/twenty-orm-v2/sql/utils/build-column-result-alias.util';
 import {
+  type ExistsFilterClause,
   quoteColumn,
   renderUserWhereExpression,
+  substituteExistsFilterTokens,
   type WhereClause,
 } from 'src/engine/twenty-orm-v2/sql/utils/build-select-statement.util';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm-v2/table-shape/types/workspace-table-shape.type';
@@ -24,7 +26,9 @@ export type MutationStatementState = {
   kind: MutationKind;
   setClauses: SetClause[];
   whereClauses: WhereClause[];
+  existsFilterClauses: ExistsFilterClause[];
   returningColumns: string[];
+  includeDeleted: boolean;
 };
 
 const buildReturningClause = (state: MutationStatementState): string => {
@@ -58,7 +62,11 @@ const buildSetClause = (state: MutationStatementState): string =>
 export const buildMutationStatement = (
   state: MutationStatementState,
 ): string => {
-  const whereExpression = renderUserWhereExpression(state.whereClauses);
+  const whereExpression = substituteExistsFilterTokens({
+    expression: renderUserWhereExpression(state.whereClauses),
+    existsFilterClauses: state.existsFilterClauses,
+    includeDeleted: state.includeDeleted,
+  });
   const returningClause = buildReturningClause(state);
 
   if (state.kind === 'delete') {
