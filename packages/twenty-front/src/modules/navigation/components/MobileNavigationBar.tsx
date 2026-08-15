@@ -8,21 +8,19 @@ import { styled } from '@linaria/react';
 import { NavigationBar } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-// The bar floats over the page, so the container has to let taps through to
-// whatever is scrolling underneath it. flex-start rather than left so the bar
-// follows the writing direction in RTL locales.
-const StyledFloatingContainer = styled.div`
-  bottom: 0;
+// In the layout flow rather than over it, so the band the bar occupies is
+// exactly its own size and no page has to reserve room for it. flex-start
+// rather than left so the bar follows the writing direction in RTL locales.
+const StyledBarContainer = styled.div`
   display: flex;
+  flex-shrink: 0;
   justify-content: flex-start;
-  left: 0;
   padding: ${themeCssVariables.spacing[3]};
   padding-bottom: calc(
     ${themeCssVariables.spacing[3]} + env(safe-area-inset-bottom, 0px)
   );
   pointer-events: none;
-  position: absolute;
-  right: 0;
+  position: relative;
   z-index: ${RootStackingContextZIndices.MobileNavigationBar};
 
   > * {
@@ -48,13 +46,13 @@ export const MobileNavigationBar = () => {
   return (
     <>
       <MobileNavigationBarScrollEffect />
-      <StyledFloatingContainer>
+      <StyledBarContainer>
         <NavigationBar
           activeItemName={activeItemName ?? ''}
           isHidden={isHidden}
           items={items}
         />
-      </StyledFloatingContainer>
+      </StyledBarContainer>
     </>
   );
 };
