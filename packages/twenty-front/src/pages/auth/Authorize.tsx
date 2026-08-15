@@ -1,129 +1,89 @@
-import { styled } from '@linaria/react';
+import styled from '@emotion/styled';
+import { useMutation, useQuery } from '@apollo/client';
 import { useContext, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Key } from 'ts-key-enum';
-import { AppPath } from 'twenty-shared/types';
-
-import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
-import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
-import { useRedirect } from '@/domain-manager/hooks/useRedirect';
-import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
-import { Trans, useLingui } from '@lingui/react/macro';
-import { useMutation, useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  type IconComponent,
+  H1TitleFontColor,
+  IconComponent,
   IconDatabase,
   IconUserCircle,
-} from 'twenty-ui/icon';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/typography';
-import { ModalContent } from 'twenty-ui/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+  ModalContent,
+  useGlobalHotkeys,
+  useRedirect,
+} from 'twenty-ui';
+import { Key } from 'ts-key-enum';
+import { t, Trans } from '@lingui/macro';
+import { useLingui } from '@lingui/react/macro';
+
+import { AppConnectionHeader } from '@/auth/components/AppConnectionHeader';
+import { AuthorizeActionButtons } from '@/auth/components/AuthorizeActionButtons';
+import { StyledOAuthTitle } from '@/auth/components/StyledOAuthTitle';
 import {
   AuthorizeAppDocument,
   FindApplicationRegistrationByClientIdDocument,
-} from '~/generated-metadata/graphql';
+} from '~/generated/graphql';
+import { ThemeContext } from '@/ui/theme/contexts/ThemeContext';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { AppPath } from '~/types/AppPath';
 
 const StyledCardWrapper = styled.div`
-  --oauth-modal-content-max-width: calc(
-    ${themeCssVariables.modal.size.md.width} + ${themeCssVariables.spacing[32]}
-  );
-
-  background-color: ${themeCssVariables.background.primary};
-  border-radius: ${themeCssVariables.border.radius.md};
-  box-shadow: ${themeCssVariables.boxShadow.strong};
+  background: ${({ theme }) => theme.background.primary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  box-shadow: ${({ theme }) => theme.boxShadow.strong};
   display: flex;
   flex-direction: column;
-  max-width: min(
-    100%,
-    calc(
-      var(--oauth-modal-content-max-width) + ${themeCssVariables.spacing[20]}
-    )
-  );
+  max-width: 400px;
   overflow: hidden;
-  width: fit-content;
+  width: 100%;
 `;
 
 const StyledHeader = styled.div`
   align-items: center;
-  background-image: url('/images/integrations/oauth-modal-header.png');
-  background-position: center;
-  background-size: cover;
+  background: ${({ theme }) => theme.background.secondary};
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  height: ${themeCssVariables.spacing[30]};
   justify-content: center;
-  width: 100%;
-`;
-
-const StyledOAuthTitle = styled(H1Title)`
-  margin: 0;
-  max-width: min(100%, var(--oauth-modal-content-max-width));
-  padding-bottom: ${themeCssVariables.spacing[1]};
-  text-wrap: balance;
-  width: max-content;
+  padding: ${({ theme }) => theme.spacing(6)};
 `;
 
 const StyledPermissionSection = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: ${themeCssVariables.spacing[6]};
-  width: 100%;
+  gap: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${({ theme }) => theme.spacing(4)};
 `;
 
-const StyledPermissionIntro = styled.p`
-  color: ${themeCssVariables.font.color.primary};
-  font-family: ${themeCssVariables.font.family};
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  line-height: ${themeCssVariables.text.lineHeight.lg};
-  margin: 0;
-  padding: 0 0 ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[1]};
+const StyledPermissionIntro = styled.span`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.sm};
 `;
 
-const StyledScopeList = styled.ul`
+const StyledScopeList = styled.div`
   display: flex;
   flex-direction: column;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  width: 100%;
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledScopeItem = styled.li`
+const StyledScopeItem = styled.div`
   align-items: center;
-  color: ${themeCssVariables.font.color.secondary};
+  color: ${({ theme }) => theme.font.color.secondary};
   display: flex;
-  font-family: ${themeCssVariables.font.family};
-  font-size: ${themeCssVariables.font.size.md};
-  gap: ${themeCssVariables.spacing[2]};
-  line-height: ${themeCssVariables.text.lineHeight.lg};
-  padding-left: ${themeCssVariables.spacing[2]};
-
-  & + & {
-    border-top: 1px solid ${themeCssVariables.border.color.light};
-    margin-top: ${themeCssVariables.spacing[3]};
-    padding-top: ${themeCssVariables.spacing[3]};
-  }
-
-  span {
-    min-width: 0;
-  }
+  font-size: ${({ theme }) => theme.font.size.sm};
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledScopeIcon = styled.div`
   align-items: center;
-  color: ${themeCssVariables.color.blue};
+  color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
-  flex-shrink: 0;
-  justify-content: center;
 `;
 
-const StyledErrorText = styled.div`
-  color: ${themeCssVariables.color.red};
-  font-size: ${themeCssVariables.font.size.sm};
-  margin-top: ${themeCssVariables.spacing[4]};
+const StyledErrorText = styled.span`
+  color: ${({ theme }) => theme.color.red};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  margin-top: ${({ theme }) => theme.spacing(2)};
   text-align: center;
   width: 100%;
 `;
@@ -181,6 +141,9 @@ export const Authorize = () => {
       const url = new URL(urlString);
 
       url.searchParams.set('theme', colorScheme);
+      if (!url.searchParams.has('iss')) {
+        url.searchParams.set('iss', window.location.origin);
+      }
 
       return url.toString();
     } catch {
