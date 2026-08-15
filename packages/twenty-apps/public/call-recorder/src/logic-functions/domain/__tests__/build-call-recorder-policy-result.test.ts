@@ -19,12 +19,12 @@ const buildCalendarEventInput = (
 });
 
 describe('buildCallRecorderPolicyResult', () => {
-  it('requests a bot for the ON wire value even when auto-record is disabled', () => {
+  it('requests a bot for the ON wire value even when record-by-default is disabled', () => {
     const policyResult = buildCallRecorderPolicyResult(
       buildCalendarEventInput({
         callRecorderPreference: 'ON',
       }),
-      { now: NOW, isAutoRecordEnabled: false },
+      { now: NOW, isRecordByDefaultEnabled: false },
     );
 
     expect(policyResult.callRecorderPreference).toBe('ON');
@@ -37,7 +37,7 @@ describe('buildCallRecorderPolicyResult', () => {
       buildCalendarEventInput({
         callRecorderPreference: 'OFF',
       }),
-      { now: NOW, isAutoRecordEnabled: true },
+      { now: NOW, isRecordByDefaultEnabled: true },
     );
 
     expect(policyResult.callRecorderPreference).toBe('OFF');
@@ -45,29 +45,29 @@ describe('buildCallRecorderPolicyResult', () => {
     expect(policyResult.reason).toBe('PREFERENCE_OFF');
   });
 
-  it('requests a bot for the AUTO wire value when auto-record is enabled', () => {
+  it('treats an unknown wire value as unset and follows an enabled default', () => {
     const policyResult = buildCallRecorderPolicyResult(
       buildCalendarEventInput({
-        callRecorderPreference: 'AUTO',
+        callRecorderPreference: 'UNKNOWN_VALUE',
       }),
-      { now: NOW, isAutoRecordEnabled: true },
+      { now: NOW, isRecordByDefaultEnabled: true },
     );
 
-    expect(policyResult.callRecorderPreference).toBe('AUTO');
+    expect(policyResult.callRecorderPreference).toBeUndefined();
     expect(policyResult.shouldRequestBot).toBe(true);
     expect(policyResult.reason).toBe('RECORDING_ENABLED');
   });
 
-  it('does not request a bot for the AUTO wire value when auto-record is disabled', () => {
+  it('treats an unset preference as following a disabled default', () => {
     const policyResult = buildCallRecorderPolicyResult(
       buildCalendarEventInput({
-        callRecorderPreference: 'AUTO',
+        callRecorderPreference: undefined,
       }),
-      { now: NOW, isAutoRecordEnabled: false },
+      { now: NOW, isRecordByDefaultEnabled: false },
     );
 
-    expect(policyResult.callRecorderPreference).toBe('AUTO');
+    expect(policyResult.callRecorderPreference).toBeUndefined();
     expect(policyResult.shouldRequestBot).toBe(false);
-    expect(policyResult.reason).toBe('AUTO_RECORD_DISABLED');
+    expect(policyResult.reason).toBe('RECORD_BY_DEFAULT_DISABLED');
   });
 });

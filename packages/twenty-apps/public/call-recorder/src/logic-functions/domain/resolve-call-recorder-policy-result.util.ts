@@ -26,12 +26,12 @@ export const resolveCallRecorderPolicyResult = ({
     return botNotRequired('PREFERENCE_OFF');
   }
 
-  // AUTO (and any unknown value) only records when the workspace opted in.
+  // An event without an explicit preference follows the workspace default.
   if (
     input.callRecorderPreference !== CallRecorderPreference.ON &&
-    !input.isAutoRecordEnabled
+    !input.isRecordByDefaultEnabled
   ) {
-    return botNotRequired('AUTO_RECORD_DISABLED');
+    return botNotRequired('RECORD_BY_DEFAULT_DISABLED');
   }
 
   if (!isNonEmptyString(input.conferenceLinkUrl)) {

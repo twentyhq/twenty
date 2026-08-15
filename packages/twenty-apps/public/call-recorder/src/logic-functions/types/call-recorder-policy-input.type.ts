@@ -2,7 +2,7 @@ import { type CallRecorderPreference } from 'src/constants/call-recorder-prefere
 
 export type CallRecorderPolicyInput = {
   callRecorderPreference: CallRecorderPreference | undefined;
-  isAutoRecordEnabled: boolean;
+  isRecordByDefaultEnabled: boolean;
   isCanceled: boolean;
   startsAt: string | undefined;
   endsAt: string | undefined;

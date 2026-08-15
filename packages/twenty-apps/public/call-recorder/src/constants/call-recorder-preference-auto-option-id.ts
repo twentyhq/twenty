@@ -1,2 +1,0 @@
-export const CALL_RECORDER_PREFERENCE_AUTO_OPTION_ID =
-  '59c1fcdc-e668-4bba-99d7-2434c6a5ac53';

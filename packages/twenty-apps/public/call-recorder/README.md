@@ -14,13 +14,13 @@
 
 The bot doesn't record anything until you ask it to:
 
-- Each calendar event has a **Recording Bot** field: **On**, **Off**, or
-  **Auto** (the default). Auto follows the workspace-level
-  `CALL_RECORDER_AUTO_RECORD_ENABLED` app setting, which ships **off** — so
-  out of the box, only meetings you explicitly set to **On** are recorded.
-- Workspace admins who want every eligible meeting captured can enable
-  `CALL_RECORDER_AUTO_RECORD_ENABLED`; individual meetings set to **Off** are
-  still never recorded.
+- Recording is governed by the `CALL_RECORDER_RECORD_BY_DEFAULT` app setting,
+  which ships **off** — out of the box, the bot only joins meetings whose
+  **Recording Bot** field you set to **On**.
+- Workspace admins who want every eligible meeting captured can turn
+  `CALL_RECORDER_RECORD_BY_DEFAULT` on; individual meetings still override it
+  in both directions — **Off** is never recorded, and a meeting with no value
+  simply follows the workspace setting.
 - The bot joins visibly, as a named participant everyone can see.
 - Recording laws vary by place — make sure participants get the notice your
   jurisdiction requires before turning recording on.

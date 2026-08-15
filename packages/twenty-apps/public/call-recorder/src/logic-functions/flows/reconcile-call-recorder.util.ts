@@ -21,7 +21,7 @@ import { scheduleRecallBotForCallRecording } from 'src/logic-functions/flows/sch
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { fetchCalendarEventsByStartsAtValues } from 'src/logic-functions/data/fetch-calendar-events-by-starts-at-values.util';
 import { findCallRecordingsByCalendarEventIds } from 'src/logic-functions/data/find-call-recordings-by-calendar-event-ids.util';
-import { isCallRecorderAutoRecordEnabled } from 'src/logic-functions/utils/is-call-recorder-auto-record-enabled.util';
+import { isCallRecorderRecordByDefaultEnabled } from 'src/logic-functions/utils/is-call-recorder-record-by-default-enabled.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { rescheduleCallRecordingBot } from 'src/logic-functions/flows/reschedule-call-recording-bot.util';
@@ -70,12 +70,15 @@ const resolveCallRecorderPolicyResultsForMeetings = async ({
     client,
     getUniqueSortedIds(calendarEventIds),
   );
-  const isAutoRecordEnabled = isCallRecorderAutoRecordEnabled();
+  const isRecordByDefaultEnabled = isCallRecorderRecordByDefaultEnabled();
   const affectedMeetingKeys = new Set<string>();
   const occurrenceStartsAtAnchors = new Set<string>();
   const changedCalendarEventPolicyResults = changedCalendarEvents.map(
     (calendarEvent) =>
-      buildCallRecorderPolicyResult(calendarEvent, { now, isAutoRecordEnabled }),
+      buildCallRecorderPolicyResult(calendarEvent, {
+        now,
+        isRecordByDefaultEnabled,
+      }),
   );
 
   for (const policyResult of changedCalendarEventPolicyResults) {
@@ -118,7 +121,10 @@ const resolveCallRecorderPolicyResultsForMeetings = async ({
 
     policyResultsByCalendarEventId.set(
       calendarEvent.id,
-      buildCallRecorderPolicyResult(calendarEvent, { now, isAutoRecordEnabled }),
+      buildCallRecorderPolicyResult(calendarEvent, {
+        now,
+        isRecordByDefaultEnabled,
+      }),
     );
   }
 
