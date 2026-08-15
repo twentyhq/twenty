@@ -24,7 +24,6 @@ import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type IconComponent,
-  IconComment,
   IconHome,
   IconMessageCirclePlus,
   IconSearch,
@@ -32,12 +31,7 @@ import {
 } from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
-type MobileNavigationBarItemName =
-  | 'home'
-  | 'search'
-  | 'newAiChat'
-  | 'chat'
-  | 'settings';
+type MobileNavigationBarItemName = 'home' | 'search' | 'newAiChat' | 'settings';
 
 type MobileNavigationBarItem = {
   name: MobileNavigationBarItemName;
@@ -121,12 +115,20 @@ export const useMobileNavigationBarItems = (): {
     },
   };
 
+  const newAiChatItem: MobileNavigationBarItem = {
+    name: 'newAiChat',
+    label: t`New AI chat`,
+    Icon: IconMessageCirclePlus,
+    onClick: () => {
+      closeSidePanelMenu();
+      closeSettingsDrawer();
+      switchToNewChat();
+    },
+  };
+
   if (isHomePage) {
     return {
-      activeItemName: getMobileHomeActiveTab({
-        navigationDrawerActiveTab,
-        hasAiPermission,
-      }),
+      activeItemName: getMobileHomeActiveTab(navigationDrawerActiveTab),
       items: [
         {
           name: 'home',
@@ -135,16 +137,7 @@ export const useMobileNavigationBarItems = (): {
           onClick: selectHomeTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU),
         },
         searchItem,
-        ...(hasAiPermission
-          ? [
-              {
-                name: 'chat' as const,
-                label: t`Chat`,
-                Icon: IconComment,
-                onClick: selectHomeTab(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY),
-              },
-            ]
-          : []),
+        ...(hasAiPermission ? [newAiChatItem] : []),
         {
           name: 'settings',
           label: t`Settings`,
@@ -169,20 +162,7 @@ export const useMobileNavigationBarItems = (): {
         },
       },
       searchItem,
-      ...(hasAiPermission
-        ? [
-            {
-              name: 'newAiChat' as const,
-              label: t`New AI chat`,
-              Icon: IconMessageCirclePlus,
-              onClick: () => {
-                closeSidePanelMenu();
-                closeSettingsDrawer();
-                switchToNewChat();
-              },
-            },
-          ]
-        : []),
+      ...(hasAiPermission ? [newAiChatItem] : []),
     ],
   };
 };

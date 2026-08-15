@@ -1,5 +1,5 @@
+import { MobileHomeAiChatSection } from '@/ai/components/MobileHomeAiChatSection';
 import { MainNavigationDrawerNavigationContent } from '@/navigation/components/MainNavigationDrawerNavigationContent';
-import { NavigationDrawerTabbedContent } from '@/navigation/components/NavigationDrawerTabbedContent';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { getMobileHomeActiveTab } from '@/navigation/utils/getMobileHomeActiveTab';
 import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
@@ -27,12 +27,22 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-const StyledTopRow = styled.div`
-  align-items: center;
+const StyledSections = styled.div`
   display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  justify-content: flex-end;
-  width: 100%;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[3]};
+`;
+
+// The navigation content stretches to fill the drawer it was built for, which
+// would push everything after it past the fold here.
+const StyledNavigationSection = styled.div`
+  flex: 0 0 auto;
+
+  // :first-child only to outrank the single class selector it overrides, which
+  // would otherwise be decided by stylesheet order.
+  > *:first-child {
+    height: auto;
+  }
 `;
 
 export const MobileHomePage = () => {
@@ -48,36 +58,27 @@ export const MobileHomePage = () => {
     return <Navigate to={defaultHomePagePath} replace />;
   }
 
-  const activeTab = getMobileHomeActiveTab({
-    navigationDrawerActiveTab,
-    hasAiPermission,
-  });
-
-  const showAiChatContent =
-    activeTab === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY;
-
-  const showSettingsContent = activeTab === NAVIGATION_DRAWER_TABS.SETTINGS;
+  const showSettingsContent =
+    getMobileHomeActiveTab(navigationDrawerActiveTab) ===
+    NAVIGATION_DRAWER_TABS.SETTINGS;
 
   return (
     <StyledContainer>
       <NavigationDrawerFixedContent>
-        <StyledTopRow>
-          <MultiWorkspaceDropdownButton shouldHideLabel />
-        </StyledTopRow>
+        <MultiWorkspaceDropdownButton />
       </NavigationDrawerFixedContent>
 
       <NavigationDrawerScrollableContent>
-        <NavigationDrawerTabbedContent
-          showAiChatContent={showAiChatContent}
-          shouldMountAiChatContent={hasAiPermission}
-          navigationContent={
-            showSettingsContent ? (
-              <SettingsNavigationDrawerItems />
-            ) : (
+        {showSettingsContent ? (
+          <SettingsNavigationDrawerItems />
+        ) : (
+          <StyledSections>
+            <StyledNavigationSection>
               <MainNavigationDrawerNavigationContent />
-            )
-          }
-        />
+            </StyledNavigationSection>
+            {hasAiPermission && <MobileHomeAiChatSection />}
+          </StyledSections>
+        )}
       </NavigationDrawerScrollableContent>
     </StyledContainer>
   );
