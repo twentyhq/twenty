@@ -8,7 +8,12 @@ import { createOneField } from "src/logic-functions/data/targetWorkspace/create-
 import { updateOneField } from "src/logic-functions/data/targetWorkspace/update-one-field.util";
 import { findManyRecords } from "src/logic-functions/data/targetWorkspace/find-many-records.util";
 import { createManyRecords } from "src/logic-functions/data/targetWorkspace/create-many-records.util";
-import { FieldsListType, ObjectType, RelationType } from "src/logic-functions/types/find-objects-fields.type";
+import {
+  FieldRelationInfo,
+  FieldsListType,
+  ObjectType,
+  RelationType
+} from "src/logic-functions/types/find-objects-fields.type";
 import { UpdateOneObjectType } from "src/logic-functions/types/update-one-object.type";
 import { CreateOneFieldType, RelationCreationPayload } from "src/logic-functions/types/create-one-field.type";
 import { UpdateOneFieldType } from "src/logic-functions/types/update-one-field.type";
@@ -37,7 +42,7 @@ import { FindWorkspaceMembers } from "src/logic-functions/data/targetWorkspace/f
 // errors instead of pacing every request with a fixed delay.
 
 const fieldsToOmit = ['id', 'createdBy', 'updatedBy', 'createdAt', 'updatedAt', 'deletedAt', 'position', 'searchVector', 'timelineActivities', 'attachments', 'noteTargets', 'taskTargets'];
-const objectsToOmit = ['dashboard', 'workflow', 'workflowRun', 'workflowVersion', 'workflowAutomatedTrigger', 'workspaceMember', 'timelineActivity'];
+const objectsToOmit = ['dashboard', 'workflow', 'workflowRun', 'workflowVersion', 'workflowAutomatedTrigger', 'timelineActivity'];
 const sourceAppsToOmit = ['OAUTH_ONLY', 'LOCAL'];
 
 function mapEntities<T extends { universalIdentifier: string }>(a: T[]) {
@@ -59,9 +64,58 @@ const areObjectsIdentical = (a: ObjectType, b: ObjectType) => {
     a.icon === b.icon;
 }
 
-// TODO: check how to compare options and settings (especially for relations)
+const areRelationsIdentical = (a: FieldRelationInfo, b: FieldRelationInfo) => {
+  return a.targetObjectMetadata.nameSingular === b.targetObjectMetadata.nameSingular &&
+    a.targetFieldMetadata.icon === b.targetFieldMetadata.icon &&
+    a.targetFieldMetadata.label === b.targetFieldMetadata.label;
+}
+
+// Order-independent: each morph target is matched to its counterpart by object name,
+// since the same set of targets can legitimately come back in a different array order.
+const areMorphRelationsIdentical = (a: FieldRelationInfo[], b: FieldRelationInfo[]) => {
+  if (a.length !== b.length) {
+    return false;
+  }
+  return a.every((relationA) => {
+    const relationB = b.find(
+      (candidate) => candidate.targetObjectMetadata.nameSingular === relationA.targetObjectMetadata.nameSingular,
+    );
+    return relationB !== undefined && areRelationsIdentical(relationA, relationB);
+  });
+}
+
 const areFieldsListsIdentical = (a: FieldsListType, b: FieldsListType) => {
-  return a.defaultValue === b.defaultValue &&
+  if (a.type === 'RELATION' && b.type === 'RELATION') {
+    return a.description === b.description &&
+      a.icon === b.icon &&
+      a.isActive === b.isActive &&
+      a.isLabelSyncedWithName === b.isLabelSyncedWithName &&
+      a.isNullable === b.isNullable &&
+      a.isUIEditable === b.isUIEditable &&
+      a.isUIReadOnly === b.isUIReadOnly &&
+      a.isUnique === b.isUnique &&
+      a.label === b.label &&
+      a.name === b.name &&
+      JSON.stringify(a.settings) === JSON.stringify(b.settings) &&
+      areRelationsIdentical(a.relation, b.relation);
+  }
+
+  if (a.type === 'MORPH_RELATION' && b.type === 'MORPH_RELATION') {
+    return a.description === b.description &&
+      a.icon === b.icon &&
+      a.isActive === b.isActive &&
+      a.isLabelSyncedWithName === b.isLabelSyncedWithName &&
+      a.isNullable === b.isNullable &&
+      a.isUIEditable === b.isUIEditable &&
+      a.isUIReadOnly === b.isUIReadOnly &&
+      a.isUnique === b.isUnique &&
+      a.label === b.label &&
+      a.name === b.name &&
+      JSON.stringify(a.settings) === JSON.stringify(b.settings) &&
+      areMorphRelationsIdentical(a.morphRelations, b.morphRelations);
+  }
+
+  return JSON.stringify(a.defaultValue) === JSON.stringify(b.defaultValue) &&
     a.description === b.description &&
     a.icon === b.icon &&
     a.isActive === b.isActive &&
@@ -72,8 +126,8 @@ const areFieldsListsIdentical = (a: FieldsListType, b: FieldsListType) => {
     a.isUnique === b.isUnique &&
     a.label === b.label &&
     a.name === b.name &&
-    a.options === b.options &&
-    a.settings === b.settings;
+    JSON.stringify(a.options) === JSON.stringify(b.options) &&
+    JSON.stringify(a.settings) === JSON.stringify(b.settings);
 }
 
 const buildFieldToCreate = (
@@ -327,10 +381,10 @@ const handler = async () => {
   const { data: targetWorkspaceObjectsFields } = await FindAllObjectsAndFields(targetWorkspace);
   const extractedSourceWorkspaceObjects = extractNodes(sourceWorkspaceObjectsFields.objects).filter(n => objectsToOmit.includes(n.nameSingular) === false);
   const extractedTargetWorkspaceObjects = extractNodes(targetWorkspaceObjectsFields.objects).filter(n => objectsToOmit.includes(n.nameSingular) === false);
-  const systemSourceObjects = mapEntities(extractedSourceWorkspaceObjects.filter(n => !n.isSystem && n.applicationId === sourceStandardAppUUID));
-  const systemTargetObjects = mapEntities(extractedTargetWorkspaceObjects.filter(n => n.applicationId === sourceCustomAppUUID));
+  const systemSourceObjects = mapEntities(extractedSourceWorkspaceObjects.filter(n => n.applicationId === sourceStandardAppUUID));
+  const systemTargetObjects = mapEntities(extractedTargetWorkspaceObjects.filter(n => n.applicationId === targetStandardAppUUID));
   // we don't want app-based objects or fields
-  const customSourceObjects = mapEntities(extractedSourceWorkspaceObjects.filter(n => !n.isSystem && n.applicationId === targetStandardAppUUID));
+  const customSourceObjects = mapEntities(extractedSourceWorkspaceObjects.filter(n => n.applicationId === sourceCustomAppUUID));
   // when workspace is created, there are no custom objects hence no customTargetObjects variable
   const objectsToUpdate: Map<string, UpdateOneObjectType> = new Map(); // standard, keyed by target object id
   const fieldsToCreate: CreateOneFieldType[] = [];

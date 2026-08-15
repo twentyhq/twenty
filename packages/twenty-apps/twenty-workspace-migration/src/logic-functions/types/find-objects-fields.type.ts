@@ -253,7 +253,7 @@ export type DefaultValueForFieldMetadataType<T extends FieldMetadataType> =
     ? FieldMetadataDefaultValueMapping[T]
     : null;
 
-type FieldRelationInfo = {
+export type FieldRelationInfo = {
   type: RelationType;
   targetObjectMetadata: { nameSingular: string };
   targetFieldMetadata: { icon: string, label: string };
