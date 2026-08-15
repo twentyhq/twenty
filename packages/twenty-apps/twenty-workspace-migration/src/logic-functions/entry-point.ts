@@ -494,6 +494,7 @@ const handler = async () => {
     await migrateRecordsForObject(sourceWorkspace, targetWorkspace, sourceObject, recordIdMap);
   }
 
+  // TODO: implement migrating view and all view related objects, roles, navigation menu items, webhooks, skills
   return;
 };
 
