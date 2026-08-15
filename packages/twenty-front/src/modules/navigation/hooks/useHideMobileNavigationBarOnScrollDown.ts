@@ -1,4 +1,6 @@
 import { isMobileNavigationBarVisibleState } from '@/navigation/states/isMobileNavigationBarVisibleState';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -11,13 +13,16 @@ const SCROLL_TOP_ALWAYS_VISIBLE_IN_PX = 8;
 // through the document on its way down.
 export const useHideMobileNavigationBarOnScrollDown = () => {
   const { pathname } = useLocation();
+  const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
   const setIsMobileNavigationBarVisible = useSetAtomState(
     isMobileNavigationBarVisibleState,
   );
 
+  // Scrolling inside the side panel drives the same state, so without this the
+  // bar would come back hidden once the panel closes.
   useEffect(() => {
     setIsMobileNavigationBarVisible(true);
-  }, [pathname, setIsMobileNavigationBarVisible]);
+  }, [pathname, isSidePanelOpened, setIsMobileNavigationBarVisible]);
 
   useEffect(() => {
     const lastScrollTopByElement = new WeakMap<Element, number>();

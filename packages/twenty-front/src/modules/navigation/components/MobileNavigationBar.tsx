@@ -102,11 +102,13 @@ export const MobileNavigationBar = () => {
 
   const isHomePage = pathname === AppPath.Home;
 
-  const activeItemName: NavigationBarItemName | undefined = isSidePanelOpened
-    ? 'search'
-    : isHomePage
-      ? 'home'
-      : undefined;
+  // The side panel is full screen on mobile, so the bar would be floating over
+  // a view it does not navigate. It comes back when the panel closes.
+  const isHidden = isSidePanelOpened || !isMobileNavigationBarVisible;
+
+  const activeItemName: NavigationBarItemName | undefined = isHomePage
+    ? 'home'
+    : undefined;
 
   const items: {
     name: NavigationBarItemName;
@@ -165,7 +167,7 @@ export const MobileNavigationBar = () => {
     <StyledFloatingContainer>
       <NavigationBar
         activeItemName={activeItemName ?? ''}
-        isHidden={!isMobileNavigationBarVisible}
+        isHidden={isHidden}
         items={items}
       />
     </StyledFloatingContainer>
