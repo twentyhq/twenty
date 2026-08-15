@@ -141,9 +141,7 @@ export const Authorize = () => {
       const url = new URL(urlString);
 
       url.searchParams.set('theme', colorScheme);
-      if (!url.searchParams.has('iss')) {
-        url.searchParams.set('iss', window.location.origin);
-      }
+      url.searchParams.set('iss', window.location.origin);
 
       return url.toString();
     } catch {
