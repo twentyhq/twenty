@@ -1,3 +1,4 @@
+import { SIDE_PANEL_FOOTER_OPTIONS_RESERVED_WIDTH } from '@/command-menu-item/constants/SidePanelFooterOptionsReservedWidth';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
 import { usePinnedCommandMenuItemsInlineLayout } from '@/command-menu-item/display/hooks/usePinnedCommandMenuItemsInlineLayout';
@@ -5,6 +6,7 @@ import { getSidePanelCommandMenuDropdownIdFromCommandMenuId } from '@/command-me
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { OptionsDropdownMenu } from '@/ui/layout/dropdown/components/OptionsDropdownMenu';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { SidePanelFooterWidthContext } from '@/ui/layout/side-panel/contexts/SidePanelFooterWidthContext';
 import { sidePanelWidgetFooterCommandMenuItemsState } from '@/ui/layout/side-panel/states/sidePanelWidgetFooterCommandMenuItemsState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -49,12 +51,18 @@ export const RecordPageSidePanelCommandMenuDropdown = () => {
     [commandMenuItems],
   );
 
+  const sidePanelFooterWidth = useContext(SidePanelFooterWidthContext);
+
   // Pinned items are buttons in the footer, so the dropdown only repeats the
-  // ones the footer could not fit.
+  // ones the footer could not fit next to this dropdown's own footprint.
   const { pinnedOverflowCommandMenuItems } =
     usePinnedCommandMenuItemsInlineLayout({
       pinnedCommandMenuItems,
       layoutKey: 'side-panel-footer',
+      containerWidth: Math.max(
+        sidePanelFooterWidth - SIDE_PANEL_FOOTER_OPTIONS_RESERVED_WIDTH,
+        0,
+      ),
     });
 
   // A widget owning the footer suppresses those buttons entirely, and leaves

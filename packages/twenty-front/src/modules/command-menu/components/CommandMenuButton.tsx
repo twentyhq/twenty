@@ -65,7 +65,7 @@ export const CommandMenuButton = ({
           <IconButton
             Icon={command.Icon}
             size="small"
-            variant={buttonAccent === 'blue' ? 'primary' : 'tertiary'}
+            variant="primary"
             accent={buttonAccent}
             to={to}
             onClick={onClick}
