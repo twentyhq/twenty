@@ -1,0 +1,19 @@
+{
+  "identifier": "default",
+  "description": "Exact-origin capability for the Travis Twenty Fly deployment",
+  "windows": ["main"],
+  "remote": {
+    "urls": ["https://travis-twenty.fly.dev/*"]
+  },
+  "permissions": [
+    "core:default",
+    "core:window:allow-show",
+    "core:window:allow-set-focus",
+    "core:window:allow-unminimize",
+    "opener:default",
+    "notification:default",
+    "deep-link:default",
+    "global-shortcut:allow-register",
+    "global-shortcut:allow-unregister"
+  ]
+}

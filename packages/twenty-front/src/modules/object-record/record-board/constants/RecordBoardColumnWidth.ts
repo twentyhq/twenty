@@ -1,1 +1,1 @@
-export const RECORD_BOARD_COLUMN_WIDTH = 200;
+export const RECORD_BOARD_COLUMN_WIDTH = 380;

@@ -1,0 +1,16 @@
+{
+  "name": "twenty-desktop",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Tauri shell for the Travis Twenty Fly deployment. Does not bundle the frontend.",
+  "type": "module",
+  "scripts": {
+    "dev": "tauri dev",
+    "build": "tauri build",
+    "tauri": "tauri",
+    "icon": "tauri icon src-tauri/icons/icon.png"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2"
+  }
+}

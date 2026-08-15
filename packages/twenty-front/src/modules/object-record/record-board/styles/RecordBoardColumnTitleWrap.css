@@ -1,0 +1,19 @@
+/* P001: board-only title wrap. Scoped to the column so chips on record
+   detail pages and in the command menu stay single-line ellipsis. */
+[data-record-board-column-id] [data-testid='chip'] {
+  height: auto;
+  min-height: var(--t-spacing-3);
+  align-items: flex-start;
+  overflow: visible;
+}
+
+[data-record-board-column-id] [data-testid='tooltip'] {
+  height: auto;
+  white-space: normal;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
+}

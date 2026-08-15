@@ -1,0 +1,27 @@
+[package]
+name = "twenty-desktop"
+version = "0.1.0"
+description = "Tauri shell for the Travis Twenty Fly deployment"
+authors = ["Travis Gilbert"]
+edition = "2021"
+
+[workspace]
+
+[lib]
+name = "twenty_desktop_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+serde_json = "1"
+tauri = { version = "2", features = [] }
+tauri-plugin-deep-link = "2"
+tauri-plugin-notification = "2"
+tauri-plugin-opener = "2"
+url = "2"
+
+[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
+tauri-plugin-global-shortcut = "2"
+tauri-plugin-single-instance = "2"
