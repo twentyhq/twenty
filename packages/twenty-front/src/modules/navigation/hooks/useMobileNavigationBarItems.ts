@@ -34,7 +34,7 @@ type MobileNavigationBarItem = {
 
 export const useMobileNavigationBarItems = (): {
   items: MobileNavigationBarItem[];
-  activeItemName: MobileNavigationBarItemName | undefined;
+  activeItemName: MobileNavigationBarItemName | '';
 } => {
   const { t } = useLingui();
   const navigate = useNavigate();
@@ -59,10 +59,8 @@ export const useMobileNavigationBarItems = (): {
     isNavigationDrawerExpandedState,
   );
 
-  // Settings is the one drawer left on mobile, and it stays open across
-  // navigation, so it would cover whatever the bottom bar goes to. Guarded so a
-  // tap outside settings leaves the persisted expansion alone: it is shared with
-  // the desktop drawer, which every tap would otherwise collapse.
+  // The expansion state is shared with the desktop drawer, so the guard keeps a
+  // tap outside settings from collapsing it there.
   const closeSettingsDrawer = () => {
     if (!isSettingsDrawer) {
       return;
@@ -73,7 +71,7 @@ export const useMobileNavigationBarItems = (): {
   };
 
   return {
-    activeItemName: pathname === AppPath.Home ? 'home' : undefined,
+    activeItemName: pathname === AppPath.Home ? 'home' : '',
     items: [
       {
         name: 'home',

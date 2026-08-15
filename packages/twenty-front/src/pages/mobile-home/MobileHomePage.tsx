@@ -28,18 +28,6 @@ const StyledSections = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
-// The navigation content stretches to fill the drawer it was built for, which
-// would push everything after it past the fold here. :first-child only to
-// outrank the single class selector it overrides, which would otherwise be
-// decided by stylesheet order.
-const StyledNavigationSection = styled.div`
-  flex: 0 0 auto;
-
-  > *:first-child {
-    height: auto;
-  }
-`;
-
 export const MobileHomePage = () => {
   const isMobile = useIsMobile();
   const { defaultHomePagePath } = useDefaultHomePagePath();
@@ -58,9 +46,7 @@ export const MobileHomePage = () => {
 
       <NavigationDrawerScrollableContent>
         <StyledSections>
-          <StyledNavigationSection>
-            <MainNavigationDrawerNavigationContent />
-          </StyledNavigationSection>
+          <MainNavigationDrawerNavigationContent />
           {hasAiPermission && <MobileHomeAiChatSection />}
         </StyledSections>
       </NavigationDrawerScrollableContent>

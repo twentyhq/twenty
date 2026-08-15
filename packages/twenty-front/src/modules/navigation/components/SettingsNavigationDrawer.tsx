@@ -48,9 +48,8 @@ export const SettingsNavigationDrawer = ({
   );
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
 
-  // Mobile reaches chat from the bottom bar instead, and the tab is shared with
-  // the desktop drawer, so without this a tab set there would strand this drawer
-  // on chat content with no row left to switch back.
+  // The tab is shared with the desktop drawer, so gating the content on the row
+  // too stops a tab set there stranding this drawer with no way back.
   const showTabsRow = hasAiPermission && !isMobile;
 
   const showAiChatContent =
@@ -71,7 +70,7 @@ export const SettingsNavigationDrawer = ({
       <NavigationDrawerScrollableContent>
         <NavigationDrawerTabbedContent
           showAiChatContent={showAiChatContent}
-          shouldMountAiChatContent={hasAiPermission}
+          shouldMountAiChatContent={showTabsRow}
           navigationContent={<SettingsNavigationDrawerItems />}
         />
       </NavigationDrawerScrollableContent>
