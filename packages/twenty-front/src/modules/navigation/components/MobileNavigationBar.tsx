@@ -33,11 +33,12 @@ import { PermissionFlagType } from '~/generated-metadata/graphql';
 type NavigationBarItemName = 'home' | 'search' | 'newAiChat';
 
 // The bar floats over the page, so the container has to let taps through to
-// whatever is scrolling underneath it.
+// whatever is scrolling underneath it. flex-start rather than left so the bar
+// follows the writing direction in RTL locales.
 const StyledFloatingContainer = styled.div`
   bottom: 0;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   left: 0;
   padding: ${themeCssVariables.spacing[3]};
   padding-bottom: calc(
