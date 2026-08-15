@@ -1,7 +1,13 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { In } from 'typeorm';
 
-import { applyFindOptionsToQueryBuilder } from 'src/engine/twenty-orm-v2/query-builder/utils/apply-find-options.util';
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+
+import {
+  applyFindOptionsToQueryBuilder,
+  normalizeFindOptionsRelations,
+  splitFindOptionsOrder,
+} from 'src/engine/twenty-orm-v2/query-builder/utils/apply-find-options.util';
 import { WorkspaceSelectQueryBuilderV2 } from 'src/engine/twenty-orm-v2/query-builder/workspace-select-query-builder-v2';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm-v2/table-shape/types/workspace-table-shape.type';
 
@@ -140,5 +146,130 @@ describe('applyFindOptionsToQueryBuilder', () => {
 
     expect(queryBuilder.getQuery()).not.toContain('JOIN');
     expect(queryBuilder.getQuery()).toContain('"person"."id" =');
+  });
+});
+
+const messageShape: WorkspaceTableShape = {
+  objectMetadataId: 'message-object-id',
+  nameSingular: 'message',
+  schemaName: SCHEMA_NAME,
+  tableName: 'message',
+  columnShapeByColumnName: {
+    id: buildColumn('id'),
+    threadId: buildColumn('threadId'),
+    receivedAt: buildColumn('receivedAt'),
+    deletedAt: buildColumn('deletedAt'),
+  },
+  columnNames: ['id', 'threadId', 'receivedAt', 'deletedAt'],
+  relationShapeByFieldName: {
+    thread: {
+      fieldName: 'thread',
+      fieldMetadataId: 'field-message-thread',
+      relationType: RelationType.MANY_TO_ONE,
+      targetObjectMetadataId: 'thread-object-id',
+      targetFieldMetadataId: 'field-thread-messages',
+      joinColumnName: 'threadId',
+    },
+  },
+  hasDeletedAtColumn: true,
+};
+
+const threadShape: WorkspaceTableShape = {
+  objectMetadataId: 'thread-object-id',
+  nameSingular: 'thread',
+  schemaName: SCHEMA_NAME,
+  tableName: 'thread',
+  columnShapeByColumnName: {
+    id: buildColumn('id'),
+    subject: buildColumn('subject'),
+    deletedAt: buildColumn('deletedAt'),
+  },
+  columnNames: ['id', 'subject', 'deletedAt'],
+  relationShapeByFieldName: {
+    messages: {
+      fieldName: 'messages',
+      fieldMetadataId: 'field-thread-messages',
+      relationType: RelationType.ONE_TO_MANY,
+      targetObjectMetadataId: 'message-object-id',
+      targetFieldMetadataId: 'field-message-thread',
+    },
+  },
+  hasDeletedAtColumn: true,
+};
+
+const buildThreadQueryBuilder = () =>
+  new WorkspaceSelectQueryBuilderV2('thread', {
+    tableShape: threadShape,
+    executor: { execute: async () => [] },
+    objectRecordsPermissions: {},
+    tableShapeByObjectMetadataId: () => messageShape,
+    onBeforeExecute: () => undefined,
+    formatResult: (records) => records as never,
+  });
+
+describe('applyFindOptionsToQueryBuilder relation order', () => {
+  it('orders parents through a deduped to-many join whose representative follows the order', () => {
+    const queryBuilder = applyFindOptionsToQueryBuilder(
+      buildThreadQueryBuilder(),
+      { order: { messages: { receivedAt: 'DESC' } } },
+    );
+
+    const sql = queryBuilder.getQuery();
+
+    expect(sql).toContain(
+      `LEFT JOIN (SELECT DISTINCT ON ("threadId") * ` +
+        `FROM "${SCHEMA_NAME}"."message" ` +
+        `WHERE "deletedAt" IS NULL ` +
+        `ORDER BY "threadId", "receivedAt" DESC, "id") AS "messages" ` +
+        'ON ("messages"."threadId" = "thread"."id")',
+    );
+    expect(sql).toContain('ORDER BY "messages"."receivedAt" DESC');
+  });
+
+  it('keeps mixed column and relation order entries in their original sequence', () => {
+    const queryBuilder = applyFindOptionsToQueryBuilder(
+      buildThreadQueryBuilder(),
+      {
+        order: {
+          messages: { receivedAt: { order: 'DESC', nulls: 'NULLS LAST' } },
+          subject: 'ASC',
+        },
+      },
+    );
+
+    expect(queryBuilder.getQuery()).toContain(
+      'ORDER BY "messages"."receivedAt" DESC NULLS LAST, "thread"."subject" ASC',
+    );
+  });
+});
+
+describe('splitFindOptionsOrder', () => {
+  it('splits relation order entries from column order entries', () => {
+    const { columnOrder, orderByRelationFieldName } = splitFindOptionsOrder(
+      threadShape,
+      { subject: 'ASC', messages: { receivedAt: 'DESC' } },
+    );
+
+    expect(columnOrder).toEqual({ subject: 'ASC' });
+    expect(orderByRelationFieldName).toEqual({
+      messages: { receivedAt: 'DESC' },
+    });
+  });
+});
+
+describe('normalizeFindOptionsRelations', () => {
+  it('keeps an object form untouched', () => {
+    expect(normalizeFindOptionsRelations({ messages: true })).toEqual({
+      messages: true,
+    });
+  });
+
+  it('normalises an array of dotted relation paths into nested objects', () => {
+    expect(
+      normalizeFindOptionsRelations([
+        'messages',
+        'messages.messageParticipants',
+      ]),
+    ).toEqual({ messages: { messageParticipants: {} } });
   });
 });
