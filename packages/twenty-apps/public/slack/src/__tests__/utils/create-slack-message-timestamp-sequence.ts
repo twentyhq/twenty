@@ -1,22 +1,20 @@
 // Slack message timestamps double as record lookup keys on the live test
-// server. The per-suite prefix keeps suites apart, and the run's start time -
-// its second in the leading half, its millisecond in the trailing one - keeps
-// runs apart, so a rerun against a database that still holds an earlier run's
-// records cannot match them.
+// server. The whole part is the run's start second, shifted by a per-suite
+// offset so two suites in one run cannot meet, and the fraction carries the
+// millisecond and the message counter. Epoch seconds never wrap, so no rerun
+// can reproduce an earlier run's keys.
 export const createSlackMessageTimestampSequence = (
-  suitePrefix: string,
+  suiteOffsetSeconds: number,
 ): (() => string) => {
-  const startedAt = String(Date.now());
-  const runSecond = startedAt.slice(-6, -3);
-  const runMillisecond = startedAt.slice(-3);
+  const startedAt = Date.now();
+  const runSecond = Math.floor(startedAt / 1000) + suiteOffsetSeconds;
+  const runMillisecond = String(startedAt % 1000).padStart(3, '0');
 
   let sequence = 0;
 
   return () => {
     sequence += 1;
 
-    return `${suitePrefix}${runSecond}.${runMillisecond}${String(
-      sequence,
-    ).padStart(3, '0')}`;
+    return `${runSecond}.${runMillisecond}${String(sequence).padStart(3, '0')}`;
   };
 };

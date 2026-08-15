@@ -32,7 +32,7 @@ describe('Slack assistant worker', () => {
     setupSlackIntegrationTest();
 
   const createdRequestIds: string[] = [];
-  const nextMessageTimestamp = createSlackMessageTimestampSequence('1700001');
+  const nextMessageTimestamp = createSlackMessageTimestampSequence(1);
 
   // Records are stored as PROCESSING so that the deployed worker on the test
   // server leaves them alone; the handler under test gets its PENDING record

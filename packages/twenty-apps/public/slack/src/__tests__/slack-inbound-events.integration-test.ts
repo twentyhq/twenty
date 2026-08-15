@@ -41,7 +41,7 @@ describe('Slack inbound events', () => {
   const { slack, appRuntime, coreClient, workspaceId } =
     setupSlackIntegrationTest();
 
-  const nextMessageTimestamp = createSlackMessageTimestampSequence('1700000');
+  const nextMessageTimestamp = createSlackMessageTimestampSequence(0);
 
   const claimSlackTeamForThisWorkspace = (): void => {
     appRuntime.seedKeyValue(
