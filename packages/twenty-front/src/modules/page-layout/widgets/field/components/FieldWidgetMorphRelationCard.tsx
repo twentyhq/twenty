@@ -217,7 +217,7 @@ export const FieldWidgetMorphRelationCard = ({
             isLabelIdentifier: false,
             fieldDefinition,
             useUpdateRecord: useUpdateOneObjectRecordMutation,
-            isRecordFieldReadOnly,
+            isRecordFieldReadOnly: isReadOnly,
           }}
         >
           <FieldInputEventContext.Provider value={{ onSubmit: handleSubmit }}>
