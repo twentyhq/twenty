@@ -13,18 +13,28 @@ const meta: Meta<typeof NavigationBar> = {
 export default meta;
 type Story = StoryObj<typeof NavigationBar>;
 
+const items = [
+  { name: 'Home', label: 'Home', Icon: IconHome, onClick: () => {} },
+  { name: 'Search', label: 'Search', Icon: IconSearch, onClick: () => {} },
+  {
+    name: 'Settings',
+    label: 'Settings',
+    Icon: IconSettings,
+    onClick: () => {},
+  },
+];
+
 export const Default: Story = {
   args: {
     activeItemName: 'Home',
-    items: [
-      { name: 'Home', label: 'Home', Icon: IconHome, onClick: () => {} },
-      { name: 'Search', label: 'Search', Icon: IconSearch, onClick: () => {} },
-      {
-        name: 'Settings',
-        label: 'Settings',
-        Icon: IconSettings,
-        onClick: () => {},
-      },
-    ],
+    items,
+  },
+};
+
+export const Hidden: Story = {
+  args: {
+    activeItemName: 'Home',
+    isHidden: true,
+    items,
   },
 };
