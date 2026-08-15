@@ -4,6 +4,7 @@ import { Fragment, useCallback, useState } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsRecordFieldReadOnly';
 import { isRecordReadOnly } from '@/object-record/read-only/utils/isRecordReadOnly';
@@ -29,6 +30,7 @@ import { FIELD_WIDGET_RELATION_CARD_LOAD_MORE_INCREMENT } from '@/page-layout/wi
 import { generateFieldWidgetInstanceId } from '@/page-layout/widgets/field/utils/generateFieldWidgetInstanceId';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { usePublishWidgetHeaderInfo } from '@/page-layout/widgets/hooks/usePublishWidgetHeaderInfo';
+import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
@@ -83,6 +85,7 @@ export const FieldWidgetMorphRelationCard = ({
   });
 
   const { objectMetadataItems } = useObjectMetadataItems();
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const { updateOneRecord } = useUpdateOneRecord();
 
@@ -127,11 +130,13 @@ export const FieldWidgetMorphRelationCard = ({
 
   const isRecordReadOnlyFromRelatedRecordPerspective =
     relatedObjectMetadataItems.some((relatedObjectMetadataItem) => {
+      const objectPermissions = getObjectPermissionsFromMapByObjectMetadataId({
+        objectPermissionsByObjectMetadataId,
+        objectMetadataId: relatedObjectMetadataItem.id,
+      });
+
       return isRecordReadOnly({
-        objectPermissions: {
-          canUpdateObjectRecords: true,
-          objectMetadataId: relatedObjectMetadataItem.id,
-        },
+        objectPermissions,
         isRecordDeleted: isDeleted,
         objectMetadataItem: relatedObjectMetadataItem,
       });
