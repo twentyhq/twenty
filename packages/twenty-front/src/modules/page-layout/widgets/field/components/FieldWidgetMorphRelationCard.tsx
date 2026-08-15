@@ -3,9 +3,10 @@ import { useLingui } from '@lingui/react/macro';
 import { Fragment, useCallback, useState } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsRecordFieldReadOnly';
-import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
+import { isRecordReadOnly } from '@/object-record/read-only/utils/isRecordReadOnly';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { RecordDetailRecordsListContainer } from '@/object-record/record-field-list/record-detail-section/components/RecordDetailRecordsListContainer';
 import { RecordDetailMorphRelationSectionDropdown } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailMorphRelationSectionDropdown';
@@ -17,6 +18,7 @@ import {
   FieldInputEventContext,
   type FieldInputEvent,
 } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
+import { useIsRecordDeleted } from '@/object-record/record-field/ui/hooks/useIsRecordDeleted';
 import { usePersistField } from '@/object-record/record-field/ui/hooks/usePersistField';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMorphRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -80,6 +82,8 @@ export const FieldWidgetMorphRelationCard = ({
     objectNameSingular: targetRecord.targetObjectNameSingular,
   });
 
+  const { objectMetadataItems } = useObjectMetadataItems();
+
   const { updateOneRecord } = useUpdateOneRecord();
 
   const useUpdateOneObjectRecordMutation = () => {
@@ -109,10 +113,29 @@ export const FieldWidgetMorphRelationCard = ({
     objectMetadataId: objectMetadataItem.id,
   });
 
-  const isRecordReadOnlyFromRelatedRecordPerspective = useIsRecordReadOnly({
-    recordId: targetRecord.id,
-    objectMetadataId: objectMetadataItem.id,
-  });
+  const relatedObjectMetadataItems = fieldMetadata.morphRelations
+    .map((morphRelation) => morphRelation.targetObjectMetadata.id)
+    .map((objectMetadataId) =>
+      objectMetadataItems.find(
+        (objectMetadataItemToFind) =>
+          objectMetadataItemToFind.id === objectMetadataId,
+      ),
+    )
+    .filter(isDefined);
+
+  const isDeleted = useIsRecordDeleted({ recordId: targetRecord.id });
+
+  const isRecordReadOnlyFromRelatedRecordPerspective =
+    relatedObjectMetadataItems.some((relatedObjectMetadataItem) => {
+      return isRecordReadOnly({
+        objectPermissions: {
+          canUpdateObjectRecords: true,
+          objectMetadataId: relatedObjectMetadataItem.id,
+        },
+        isRecordDeleted: isDeleted,
+        objectMetadataItem: relatedObjectMetadataItem,
+      });
+    });
 
   const isReadOnly =
     isRecordFieldReadOnly || isRecordReadOnlyFromRelatedRecordPerspective;
