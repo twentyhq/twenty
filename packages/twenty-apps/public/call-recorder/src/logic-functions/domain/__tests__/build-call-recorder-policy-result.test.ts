@@ -19,12 +19,12 @@ const buildCalendarEventInput = (
 });
 
 describe('buildCallRecorderPolicyResult', () => {
-  it('requests a bot for the ON wire value', () => {
+  it('requests a bot for the ON wire value even when auto-record is disabled', () => {
     const policyResult = buildCallRecorderPolicyResult(
       buildCalendarEventInput({
         callRecorderPreference: 'ON',
       }),
-      NOW,
+      { now: NOW, isAutoRecordEnabled: false },
     );
 
     expect(policyResult.callRecorderPreference).toBe('ON');
@@ -37,11 +37,37 @@ describe('buildCallRecorderPolicyResult', () => {
       buildCalendarEventInput({
         callRecorderPreference: 'OFF',
       }),
-      NOW,
+      { now: NOW, isAutoRecordEnabled: true },
     );
 
     expect(policyResult.callRecorderPreference).toBe('OFF');
     expect(policyResult.shouldRequestBot).toBe(false);
     expect(policyResult.reason).toBe('PREFERENCE_OFF');
+  });
+
+  it('requests a bot for the AUTO wire value when auto-record is enabled', () => {
+    const policyResult = buildCallRecorderPolicyResult(
+      buildCalendarEventInput({
+        callRecorderPreference: 'AUTO',
+      }),
+      { now: NOW, isAutoRecordEnabled: true },
+    );
+
+    expect(policyResult.callRecorderPreference).toBe('AUTO');
+    expect(policyResult.shouldRequestBot).toBe(true);
+    expect(policyResult.reason).toBe('RECORDING_ENABLED');
+  });
+
+  it('does not request a bot for the AUTO wire value when auto-record is disabled', () => {
+    const policyResult = buildCallRecorderPolicyResult(
+      buildCalendarEventInput({
+        callRecorderPreference: 'AUTO',
+      }),
+      { now: NOW, isAutoRecordEnabled: false },
+    );
+
+    expect(policyResult.callRecorderPreference).toBe('AUTO');
+    expect(policyResult.shouldRequestBot).toBe(false);
+    expect(policyResult.reason).toBe('AUTO_RECORD_DISABLED');
   });
 });

@@ -6,7 +6,7 @@ import { resolveCallRecorderPolicyResult } from 'src/logic-functions/domain/reso
 
 export const buildCallRecorderPolicyResult = (
   calendarEvent: CallRecorderPolicyCalendarEventInput,
-  now: Date,
+  context: { now: Date; isAutoRecordEnabled: boolean },
 ): CallRecorderPolicyResultForCalendarEvent => {
   const realMeetingKey = computeRealMeetingKey({
     calendarEventId: calendarEvent.id,
@@ -22,12 +22,13 @@ export const buildCallRecorderPolicyResult = (
   const policyResult = resolveCallRecorderPolicyResult({
     input: {
       callRecorderPreference,
+      isAutoRecordEnabled: context.isAutoRecordEnabled,
       isCanceled: calendarEvent.isCanceled,
       startsAt: calendarEvent.startsAt,
       endsAt: calendarEvent.endsAt,
       conferenceLinkUrl: calendarEvent.conferenceLinkUrl,
     },
-    now,
+    now: context.now,
   });
 
   return {

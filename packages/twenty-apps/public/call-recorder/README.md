@@ -1,14 +1,32 @@
 # Call Recorder
 
-**Record, transcribe, and save every meeting — right inside your CRM.**
+**Record, transcribe, and save your meetings — right inside your CRM.**
 
 ## ✨ What you get
 
-- **Recordings on every meeting**
+- **Recordings on the meetings you choose**
 - **A Call Recording tab**
 - **A per-meeting on/off switch**
 - **AI meeting summaries**
 - **Built for AI & automation**
+
+## 🔒 Private by default
+
+The bot doesn't record anything until you ask it to:
+
+- Each calendar event has a **Recording Bot** field: **On**, **Off**, or
+  **Auto** (the default). Auto follows the workspace-level
+  `CALL_RECORDER_AUTO_RECORD_ENABLED` app setting, which ships **off** — so
+  out of the box, only meetings you explicitly set to **On** are recorded.
+- Workspace admins who want every eligible meeting captured can enable
+  `CALL_RECORDER_AUTO_RECORD_ENABLED`; individual meetings set to **Off** are
+  still never recorded.
+- The bot joins visibly, as a named participant everyone can see.
+- Recording laws vary by place — make sure participants get the notice your
+  jurisdiction requires before turning recording on.
+
+What is captured, who processes it, and how long it is retained are documented
+in [PRIVACY.md](./PRIVACY.md).
 
 ## 💳 Billing
 

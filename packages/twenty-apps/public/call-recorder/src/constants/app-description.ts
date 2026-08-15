@@ -1,2 +1,2 @@
 export const APP_DESCRIPTION =
-  'Capture every customer conversation automatically. A call recorder joins eligible meetings and records calls for you.';
+  'A call recorder joins the meetings you choose and records calls for you. Opt in per meeting, or enable auto-record to capture every eligible meeting.';

@@ -330,7 +330,8 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     ]);
   });
 
-  it('creates a scheduled call recording for the default ON preference', async () => {
+  it('creates a scheduled call recording for an unset preference when auto-record is enabled', async () => {
+    vi.stubEnv('CALL_RECORDER_AUTO_RECORD_ENABLED', 'true');
     const client = buildFakeCoreApiClient({
       calendarEvents: [buildCalendarEvent({ callRecorderPreference: null })],
     });
@@ -350,7 +351,80 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     expect(recallBotCreateCalls()).toHaveLength(1);
   });
 
+  it('does not create a call recording for an unset preference when auto-record is off (the default)', async () => {
+    const client = buildFakeCoreApiClient({
+      calendarEvents: [buildCalendarEvent({ callRecorderPreference: null })],
+    });
+
+    const result = await reconcileCallRecorderForCalendarEventIds({
+      client: client as unknown as CoreApiClient,
+      calendarEventIds: ['calendar-event-1'],
+      now: NOW,
+    });
+
+    expect(result).toEqual([
+      expect.objectContaining({
+        action: 'SKIPPED',
+        callRecordingId: null,
+      }),
+    ]);
+    expect(client.callRecordings).toEqual([]);
+    expect(recallBotCreateCalls()).toHaveLength(0);
+  });
+
+  it('does not create a call recording for the AUTO preference when auto-record is off (the default)', async () => {
+    const client = buildFakeCoreApiClient({
+      calendarEvents: [buildCalendarEvent({ callRecorderPreference: 'AUTO' })],
+    });
+
+    const result = await reconcileCallRecorderForCalendarEventIds({
+      client: client as unknown as CoreApiClient,
+      calendarEventIds: ['calendar-event-1'],
+      now: NOW,
+    });
+
+    expect(result).toEqual([
+      expect.objectContaining({
+        action: 'SKIPPED',
+        callRecordingId: null,
+      }),
+    ]);
+    expect(client.callRecordings).toEqual([]);
+    expect(recallBotCreateCalls()).toHaveLength(0);
+  });
+
+  it('cancels a scheduled recording when auto-record turns off for an AUTO preference', async () => {
+    const client = buildFakeCoreApiClient({
+      calendarEvents: [buildCalendarEvent({ callRecorderPreference: 'AUTO' })],
+      callRecordings: [
+        {
+          id: buildCustomerSyncCallRecordingId(),
+          title: 'Customer Sync',
+          status: 'SCHEDULED',
+          recordingRequestStatus: 'REQUESTED',
+          calendarEventId: 'calendar-event-1',
+          externalBotId: 'recall-bot-1',
+        },
+      ],
+    });
+
+    const result = await reconcileCallRecorderForCalendarEventIds({
+      client: client as unknown as CoreApiClient,
+      calendarEventIds: ['calendar-event-1'],
+      now: NOW,
+    });
+
+    expect(result).toEqual([
+      expect.objectContaining({
+        action: 'CANCELED',
+        callRecordingId: buildCustomerSyncCallRecordingId(),
+      }),
+    ]);
+    expect(recallBotCreateCalls()).toHaveLength(0);
+  });
+
   it('creates a recording for an in-progress meeting that has not ended', async () => {
+    vi.stubEnv('CALL_RECORDER_AUTO_RECORD_ENABLED', 'true');
     const client = buildFakeCoreApiClient({
       calendarEvents: [
         buildCalendarEvent({
@@ -379,6 +453,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
   });
 
   it('updates an existing in-progress recording', async () => {
+    vi.stubEnv('CALL_RECORDER_AUTO_RECORD_ENABLED', 'true');
     const client = buildFakeCoreApiClient({
       calendarEvents: [
         buildCalendarEvent({

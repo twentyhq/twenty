@@ -18,6 +18,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           callRecorderPreference: CallRecorderPreference.ON,
+          isAutoRecordEnabled: false,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
           endsAt: FUTURE_ENDS_AT,
@@ -36,6 +37,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           callRecorderPreference: CallRecorderPreference.ON,
+          isAutoRecordEnabled: false,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
           endsAt: FUTURE_ENDS_AT,
@@ -54,6 +56,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           callRecorderPreference: CallRecorderPreference.ON,
+          isAutoRecordEnabled: false,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
           endsAt: FUTURE_ENDS_AT,
@@ -67,11 +70,12 @@ describe('resolveCallRecorderPolicyResult', () => {
     });
   });
 
-  it('requires a bot without an event preference override', () => {
+  it('requires a bot for the AUTO preference when auto-record is enabled', () => {
     expect(
       resolveCallRecorderPolicyResult({
         input: {
-          callRecorderPreference: undefined,
+          callRecorderPreference: CallRecorderPreference.AUTO,
+          isAutoRecordEnabled: true,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
           endsAt: FUTURE_ENDS_AT,
@@ -85,11 +89,69 @@ describe('resolveCallRecorderPolicyResult', () => {
     });
   });
 
+  it('does not request a bot for the AUTO preference when auto-record is disabled', () => {
+    expect(
+      resolveCallRecorderPolicyResult({
+        input: {
+          callRecorderPreference: CallRecorderPreference.AUTO,
+          isAutoRecordEnabled: false,
+          isCanceled: false,
+          startsAt: FUTURE_STARTS_AT,
+          endsAt: FUTURE_ENDS_AT,
+          conferenceLinkUrl: 'https://meet.google.com/abc-defg-hij',
+        },
+        now: NOW,
+      }),
+    ).toEqual({
+      shouldRequestBot: false,
+      reason: 'AUTO_RECORD_DISABLED',
+    });
+  });
+
+  it('requires a bot without an event preference override when auto-record is enabled', () => {
+    expect(
+      resolveCallRecorderPolicyResult({
+        input: {
+          callRecorderPreference: undefined,
+          isAutoRecordEnabled: true,
+          isCanceled: false,
+          startsAt: FUTURE_STARTS_AT,
+          endsAt: FUTURE_ENDS_AT,
+          conferenceLinkUrl: 'https://meet.google.com/abc-defg-hij',
+        },
+        now: NOW,
+      }),
+    ).toEqual({
+      shouldRequestBot: true,
+      reason: 'RECORDING_ENABLED',
+    });
+  });
+
+  it('does not request a bot without an event preference override when auto-record is disabled', () => {
+    expect(
+      resolveCallRecorderPolicyResult({
+        input: {
+          callRecorderPreference: undefined,
+          isAutoRecordEnabled: false,
+          isCanceled: false,
+          startsAt: FUTURE_STARTS_AT,
+          endsAt: FUTURE_ENDS_AT,
+          conferenceLinkUrl: 'https://meet.google.com/abc-defg-hij',
+        },
+        now: NOW,
+      }),
+    ).toEqual({
+      shouldRequestBot: false,
+      reason: 'AUTO_RECORD_DISABLED',
+    });
+  });
+
   it('lets an OFF event preference opt out of workspace auto-recording', () => {
     expect(
       resolveCallRecorderPolicyResult({
         input: {
           callRecorderPreference: CallRecorderPreference.OFF,
+          isAutoRecordEnabled: true,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
           endsAt: FUTURE_ENDS_AT,
@@ -108,6 +170,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           callRecorderPreference: undefined,
+          isAutoRecordEnabled: true,
           isCanceled: false,
           startsAt: PAST_STARTS_AT,
           endsAt: PAST_ENDS_AT,
@@ -126,6 +189,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           callRecorderPreference: undefined,
+          isAutoRecordEnabled: true,
           isCanceled: true,
           startsAt: FUTURE_STARTS_AT,
           endsAt: FUTURE_ENDS_AT,
@@ -144,6 +208,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           callRecorderPreference: CallRecorderPreference.ON,
+          isAutoRecordEnabled: false,
           isCanceled: false,
           startsAt: BEYOND_HORIZON_STARTS_AT,
           endsAt: BEYOND_HORIZON_ENDS_AT,
@@ -162,6 +227,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           callRecorderPreference: CallRecorderPreference.ON,
+          isAutoRecordEnabled: false,
           isCanceled: false,
           startsAt: FUTURE_STARTS_AT,
           endsAt: BEYOND_HORIZON_ENDS_AT,
@@ -180,6 +246,7 @@ describe('resolveCallRecorderPolicyResult', () => {
       resolveCallRecorderPolicyResult({
         input: {
           callRecorderPreference: CallRecorderPreference.ON,
+          isAutoRecordEnabled: false,
           isCanceled: false,
           startsAt: '',
           endsAt: FUTURE_ENDS_AT,

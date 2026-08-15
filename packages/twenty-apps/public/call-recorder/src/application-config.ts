@@ -3,6 +3,7 @@ import { defineApplication, FieldType } from 'twenty-sdk/define';
 import { APP_DESCRIPTION } from 'src/constants/app-description';
 import { APP_DISPLAY_NAME } from 'src/constants/app-display-name';
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/application-universal-identifier';
+import { CALL_RECORDER_AUTO_RECORD_ENABLED_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-auto-record-enabled-app-variable-universal-identifier';
 import { CALL_RECORDER_BOT_IMAGE_BACKGROUND_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-bot-image-background-app-variable-universal-identifier';
 import { CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-everyone-left-timeout-seconds-app-variable-universal-identifier';
 import { CALL_RECORDER_JOIN_EARLY_MINUTES_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-join-early-minutes-app-variable-universal-identifier';
@@ -13,6 +14,7 @@ import { CALL_RECORDER_SUMMARY_ENABLED_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 
 import { CALL_RECORDER_TRANSCRIPT_PROVIDER_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-transcript-provider-app-variable-universal-identifier';
 import { CALL_RECORDER_USE_WORKSPACE_LOGO_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-use-workspace-logo-app-variable-universal-identifier';
 import { CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER } from 'src/constants/call-recorder-waiting-room-timeout-seconds-app-variable-universal-identifier';
+import { CALL_RECORDER_AUTO_RECORD_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-auto-record-enabled-env-var-name';
 import { CALL_RECORDER_BOT_IMAGE_BACKGROUND_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-bot-image-background-env-var-name';
 import { CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS } from 'src/logic-functions/constants/call-recorder-everyone-left-timeout-seconds';
 import { CALL_RECORDER_EVERYONE_LEFT_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-everyone-left-timeout-seconds-env-var-name';
@@ -27,6 +29,7 @@ import { CALL_RECORDER_TRANSCRIPT_PROVIDER_ENV_VAR_NAME } from 'src/logic-functi
 import { CALL_RECORDER_USE_WORKSPACE_LOGO_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-use-workspace-logo-env-var-name';
 import { CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS } from 'src/logic-functions/constants/call-recorder-waiting-room-timeout-seconds';
 import { CALL_RECORDER_WAITING_ROOM_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-waiting-room-timeout-seconds-env-var-name';
+import { DEFAULT_CALL_RECORDER_AUTO_RECORD_ENABLED } from 'src/logic-functions/constants/default-call-recorder-auto-record-enabled';
 import { DEFAULT_CALL_RECORDER_BOT_IMAGE_BACKGROUND } from 'src/logic-functions/constants/default-call-recorder-bot-image-background';
 import { DEFAULT_CALL_RECORDER_JOIN_EARLY_MINUTES } from 'src/logic-functions/constants/default-call-recorder-join-early-minutes';
 import { DEFAULT_CALL_RECORDER_NAME } from 'src/logic-functions/constants/default-call-recorder-name';
@@ -48,6 +51,15 @@ export default defineApplication({
   author: 'Twenty',
   galleryImages: ['public/gallery/call-recorder-cover.png'],
   applicationVariables: {
+    [CALL_RECORDER_AUTO_RECORD_ENABLED_ENV_VAR_NAME]: {
+      universalIdentifier:
+        CALL_RECORDER_AUTO_RECORD_ENABLED_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      description:
+        'Whether the recorder automatically joins every eligible meeting whose Recording Bot field is set to Auto. Off by default, so only meetings explicitly set to On are recorded. Meetings set to Off are never recorded. Make sure participants are given the notice required by the consent laws that apply to your calls before enabling.',
+      isSecret: false,
+      type: FieldType.BOOLEAN,
+      value: DEFAULT_CALL_RECORDER_AUTO_RECORD_ENABLED,
+    },
     [CALL_RECORDER_NAME_ENV_VAR_NAME]: {
       universalIdentifier: CALL_RECORDER_NAME_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
       description: 'Display name the call recorder uses when it joins a call.',
