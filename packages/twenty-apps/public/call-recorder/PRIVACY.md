@@ -50,8 +50,9 @@ it leaves the call.
 ## Who processes the data
 
 - **[Recall.ai](https://recall.ai)** operates the meeting bot and processes
-  the media, in the region configured by your server admin (`RECALL_REGION`,
-  Frankfurt `eu-central-1` by default on self-hosted setups).
+  the media. The processing region is configured at the deployment level (by
+  Twenty on Twenty Cloud, by your server admin if self-hosted); it defaults
+  to Frankfurt, Germany.
 - **Transcription** runs on Recall.ai's transcription provider by default, or
   on **Gladia** if the workspace selects it via
   `CALL_RECORDER_TRANSCRIPT_PROVIDER`.
@@ -62,8 +63,8 @@ it leaves the call.
 ## How long data is kept
 
 - **Recall.ai keeps a temporary copy** of the media while processing it,
-  deleted after `CALL_RECORDER_RECORDING_RETENTION_HOURS` (default 166 hours,
-  just under 7 days).
+  deleted automatically after a deployment-configured window (just under
+  7 days by default).
 - **Your workspace keeps the durable copy**: the video, audio, transcript,
   and summary are imported into a CallRecording record stored in your
   Twenty workspace's own storage, alongside the rest of your CRM data and
@@ -94,6 +95,9 @@ Practical steps:
 | Record all eligible meetings | `CALL_RECORDER_RECORD_BY_DEFAULT` app setting | On |
 | AI summaries | `CALL_RECORDER_SUMMARY_ENABLED` app setting | On |
 | Bot display name | `CALL_RECORDER_NAME` app setting | `Twenty.com` |
-| Processing region | `RECALL_REGION` server variable | `eu-central-1` |
-| Recall.ai media retention | `CALL_RECORDER_RECORDING_RETENTION_HOURS` server variable | 166 hours |
 | Delete a recording | Delete the CallRecording record in your workspace | Kept until deleted |
+
+The Recall.ai processing region and its temporary retention window are
+deployment-level configuration, managed by whoever operates the Twenty server
+(Twenty on Twenty Cloud, your server admin if self-hosted, see
+[SETUP.md](./SETUP.md)). Workspace users don't see or change those.
