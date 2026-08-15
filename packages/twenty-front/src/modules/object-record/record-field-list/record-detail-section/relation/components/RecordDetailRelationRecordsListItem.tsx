@@ -226,6 +226,10 @@ export const RecordDetailRelationRecordsListItem = ({
             className="displayOnHover"
             Icon={AnimatedIconChevronDown}
             accent="tertiary"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleClick();
+            }}
           />
         </StyledClickableZone>
         {!parentIsRecordFieldReadOnly && (

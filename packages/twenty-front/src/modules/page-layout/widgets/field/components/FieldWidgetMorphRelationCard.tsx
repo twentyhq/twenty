@@ -1,11 +1,13 @@
 import { styled } from '@linaria/react';
-import { Fragment, useState } from 'react';
+import { useLingui } from '@lingui/react/macro';
+import { Fragment, useCallback, useState } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsRecordFieldReadOnly';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { RecordDetailRecordsListContainer } from '@/object-record/record-field-list/record-detail-section/components/RecordDetailRecordsListContainer';
+import { RecordDetailMorphRelationSectionDropdown } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailMorphRelationSectionDropdown';
 import { RecordDetailRelationRecordsListItem } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem';
 import { RecordDetailRelationRecordsListItemEffect } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItemEffect';
 import { useGetMorphRelationRelatedRecordsWithObjectNameSingular } from '@/object-record/record-field-list/record-detail-section/relation/components/hooks/useGetMorphRelationRelatedRecordsWithObjectNameSingular';
@@ -17,14 +19,18 @@ import {
 import { usePersistField } from '@/object-record/record-field/ui/hooks/usePersistField';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMorphRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
 import { FieldWidgetShowMoreButton } from '@/page-layout/widgets/field/components/FieldWidgetShowMoreButton';
 import { FIELD_WIDGET_RELATION_CARD_INITIAL_VISIBLE_ITEMS } from '@/page-layout/widgets/field/constants/FieldWidgetRelationCardInitialVisibleItems';
 import { FIELD_WIDGET_RELATION_CARD_LOAD_MORE_INCREMENT } from '@/page-layout/widgets/field/constants/FieldWidgetRelationCardLoadMoreIncrement';
 import { generateFieldWidgetInstanceId } from '@/page-layout/widgets/field/utils/generateFieldWidgetInstanceId';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
+import { usePublishWidgetHeaderInfo } from '@/page-layout/widgets/hooks/usePublishWidgetHeaderInfo';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { isDefined } from 'twenty-shared/utils';
+import { IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledShowMoreButtonContainer = styled.div`
@@ -42,6 +48,7 @@ export const FieldWidgetMorphRelationCard = ({
   recordId,
   isInSidePanel,
 }: FieldWidgetMorphRelationCardProps) => {
+  const { t } = useLingui();
   const widget = useCurrentWidget();
 
   const [expandedItem, setExpandedItem] = useState('');
@@ -123,9 +130,26 @@ export const FieldWidgetMorphRelationCard = ({
     isDefined(item.value),
   );
 
-  if (validRecords.length === 0) {
-    return null;
-  }
+  const dropdownId = getRecordFieldCardRelationPickerDropdownId({
+    fieldDefinition,
+    recordId: targetRecord.id,
+    instanceId,
+  });
+
+  const { openDropdown } = useOpenDropdown();
+
+  const handleOpenDropdown = useCallback(() => {
+    openDropdown(dropdownId);
+  }, [openDropdown, dropdownId]);
+
+  usePublishWidgetHeaderInfo({
+    count: validRecords.length,
+    primaryAction: {
+      Icon: IconPlus,
+      label: t`Add ${fieldDefinition.label}`,
+      onClick: handleOpenDropdown,
+    },
+  });
 
   const visibleRecords = validRecords.slice(0, visibleItemsCount);
   const remainingCount = validRecords.length - visibleItemsCount;
@@ -144,31 +168,34 @@ export const FieldWidgetMorphRelationCard = ({
           }}
         >
           <FieldInputEventContext.Provider value={{ onSubmit: handleSubmit }}>
-            <RecordDetailRecordsListContainer>
-              {visibleRecords.map((item) => (
-                <Fragment key={`${item.value.id}-${item.fieldMetadataId}`}>
-                  <RecordDetailRelationRecordsListItemEffect
-                    relationRecordId={item.value.id}
-                    relationObjectMetadataNameSingular={item.objectNameSingular}
-                  />
-                  <RecordDetailRelationRecordsListItem
-                    isExpanded={expandedItem === item.value.id}
-                    onClick={handleItemClick}
-                    relationRecord={item.value}
-                    relationObjectMetadataNameSingular={item.objectNameSingular}
-                    relationFieldMetadataId={item.fieldMetadataId}
-                  />
-                </Fragment>
-              ))}
-              {hasMoreRecords && (
-                <StyledShowMoreButtonContainer>
-                  <FieldWidgetShowMoreButton
-                    remainingCount={remainingCount}
-                    onClick={handleShowMore}
-                  />
-                </StyledShowMoreButtonContainer>
-              )}
-            </RecordDetailRecordsListContainer>
+            {validRecords.length > 0 && (
+              <RecordDetailRecordsListContainer>
+                {visibleRecords.map((item) => (
+                  <Fragment key={`${item.value.id}-${item.fieldMetadataId}`}>
+                    <RecordDetailRelationRecordsListItemEffect
+                      relationRecordId={item.value.id}
+                      relationObjectMetadataNameSingular={item.objectNameSingular}
+                    />
+                    <RecordDetailRelationRecordsListItem
+                      isExpanded={expandedItem === item.value.id}
+                      onClick={handleItemClick}
+                      relationRecord={item.value}
+                      relationObjectMetadataNameSingular={item.objectNameSingular}
+                      relationFieldMetadataId={item.fieldMetadataId}
+                    />
+                  </Fragment>
+                ))}
+                {hasMoreRecords && (
+                  <StyledShowMoreButtonContainer>
+                    <FieldWidgetShowMoreButton
+                      remainingCount={remainingCount}
+                      onClick={handleShowMore}
+                    />
+                  </StyledShowMoreButtonContainer>
+                )}
+              </RecordDetailRecordsListContainer>
+            )}
+            <RecordDetailMorphRelationSectionDropdown loading={false} />
           </FieldInputEventContext.Provider>
         </FieldContext.Provider>
       </RecordFieldsScopeContextProvider>

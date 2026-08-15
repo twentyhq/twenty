@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
-import { Fragment, useState } from 'react';
+import { useLingui } from '@lingui/react/macro';
+import { Fragment, useCallback, useState } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -8,6 +9,7 @@ import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-l
 import { RecordDetailRecordsListContainer } from '@/object-record/record-field-list/record-detail-section/components/RecordDetailRecordsListContainer';
 import { RecordDetailRelationRecordsListItem } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem';
 import { RecordDetailRelationRecordsListItemEffect } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItemEffect';
+import { RecordDetailRelationSectionDropdown } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationSectionDropdown';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import {
   FieldInputEventContext,
@@ -18,14 +20,18 @@ import { type FieldDefinition } from '@/object-record/record-field/ui/types/Fiel
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/junction/extractTargetRecordsFromJunction';
 import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
 import { FieldWidgetShowMoreButton } from '@/page-layout/widgets/field/components/FieldWidgetShowMoreButton';
 import { FIELD_WIDGET_RELATION_CARD_INITIAL_VISIBLE_ITEMS } from '@/page-layout/widgets/field/constants/FieldWidgetRelationCardInitialVisibleItems';
 import { FIELD_WIDGET_RELATION_CARD_LOAD_MORE_INCREMENT } from '@/page-layout/widgets/field/constants/FieldWidgetRelationCardLoadMoreIncrement';
 import { generateFieldWidgetInstanceId } from '@/page-layout/widgets/field/utils/generateFieldWidgetInstanceId';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
+import { usePublishWidgetHeaderInfo } from '@/page-layout/widgets/hooks/usePublishWidgetHeaderInfo';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { isDefined } from 'twenty-shared/utils';
+import { IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledShowMoreButtonContainer = styled.div`
@@ -45,6 +51,7 @@ export const FieldWidgetJunctionRelationCard = ({
   isInSidePanel,
   sourceObjectMetadataId,
 }: FieldWidgetJunctionRelationCardProps) => {
+  const { t } = useLingui();
   const widget = useCurrentWidget();
 
   const [expandedItem, setExpandedItem] = useState('');
@@ -76,6 +83,14 @@ export const FieldWidgetJunctionRelationCard = ({
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetRecord.targetObjectNameSingular,
   });
+
+  const relationObjectNameSingular =
+    fieldMetadata.relationObjectMetadataNameSingular;
+
+  const { objectMetadataItem: relationObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: relationObjectNameSingular,
+    });
 
   const { updateOneRecord } = useUpdateOneRecord();
 
@@ -119,18 +134,16 @@ export const FieldWidgetJunctionRelationCard = ({
     objectMetadataItems,
   });
 
-  if (!isDefined(junctionConfig)) {
-    return null;
-  }
-
   const junctionRecords = Array.isArray(relationValue) ? relationValue : [];
 
-  const extractedRecords = extractTargetRecordsFromJunction({
-    junctionRecords,
-    targetFields: junctionConfig.targetFields,
-    objectMetadataItems,
-    includeRecord: true,
-  });
+  const extractedRecords = isDefined(junctionConfig)
+    ? extractTargetRecordsFromJunction({
+        junctionRecords,
+        targetFields: junctionConfig.targetFields,
+        objectMetadataItems,
+        includeRecord: true,
+      })
+    : [];
 
   const targetRecordsWithMetadata = extractedRecords
     .map((extracted) => {
@@ -147,7 +160,28 @@ export const FieldWidgetJunctionRelationCard = ({
     })
     .filter(isDefined);
 
-  if (targetRecordsWithMetadata.length === 0) {
+  const dropdownId = getRecordFieldCardRelationPickerDropdownId({
+    fieldDefinition,
+    recordId: targetRecord.id,
+    instanceId,
+  });
+
+  const { openDropdown } = useOpenDropdown();
+
+  const handleOpenDropdown = useCallback(() => {
+    openDropdown(dropdownId);
+  }, [openDropdown, dropdownId]);
+
+  usePublishWidgetHeaderInfo({
+    count: targetRecordsWithMetadata.length,
+    primaryAction: {
+      Icon: IconPlus,
+      label: t`Add ${relationObjectMetadataItem.labelSingular}`,
+      onClick: handleOpenDropdown,
+    },
+  });
+
+  if (!isDefined(junctionConfig)) {
     return null;
   }
 
@@ -170,31 +204,34 @@ export const FieldWidgetJunctionRelationCard = ({
           }}
         >
           <FieldInputEventContext.Provider value={{ onSubmit: handleSubmit }}>
-            <RecordDetailRecordsListContainer>
-              {visibleRecords.map((item) => (
-                <Fragment key={item.record.id}>
-                  <RecordDetailRelationRecordsListItemEffect
-                    relationRecordId={item.record.id}
-                    relationObjectMetadataNameSingular={item.objectNameSingular}
-                  />
-                  <RecordDetailRelationRecordsListItem
-                    isExpanded={expandedItem === item.record.id}
-                    onClick={handleItemClick}
-                    relationRecord={item.record}
-                    relationObjectMetadataNameSingular={item.objectNameSingular}
-                    relationFieldMetadataId=""
-                  />
-                </Fragment>
-              ))}
-              {hasMoreRecords && (
-                <StyledShowMoreButtonContainer>
-                  <FieldWidgetShowMoreButton
-                    remainingCount={remainingCount}
-                    onClick={handleShowMore}
-                  />
-                </StyledShowMoreButtonContainer>
-              )}
-            </RecordDetailRecordsListContainer>
+            {targetRecordsWithMetadata.length > 0 && (
+              <RecordDetailRecordsListContainer>
+                {visibleRecords.map((item) => (
+                  <Fragment key={item.record.id}>
+                    <RecordDetailRelationRecordsListItemEffect
+                      relationRecordId={item.record.id}
+                      relationObjectMetadataNameSingular={item.objectNameSingular}
+                    />
+                    <RecordDetailRelationRecordsListItem
+                      isExpanded={expandedItem === item.record.id}
+                      onClick={handleItemClick}
+                      relationRecord={item.record}
+                      relationObjectMetadataNameSingular={item.objectNameSingular}
+                      relationFieldMetadataId=""
+                    />
+                  </Fragment>
+                ))}
+                {hasMoreRecords && (
+                  <StyledShowMoreButtonContainer>
+                    <FieldWidgetShowMoreButton
+                      remainingCount={remainingCount}
+                      onClick={handleShowMore}
+                    />
+                  </StyledShowMoreButtonContainer>
+                )}
+              </RecordDetailRecordsListContainer>
+            )}
+            <RecordDetailRelationSectionDropdown loading={false} />
           </FieldInputEventContext.Provider>
         </FieldContext.Provider>
       </RecordFieldsScopeContextProvider>
