@@ -32,18 +32,12 @@ import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 type NavigationBarItemName = 'home' | 'search' | 'newAiChat';
 
-type NavigationBarItemDefinition = {
-  name: NavigationBarItemName;
-  label: string;
-  Icon: IconComponent;
-  onClick: () => void;
-};
-
 // The bar floats over the page, so the container has to let taps through to
 // whatever is scrolling underneath it.
 const StyledFloatingContainer = styled.div`
   bottom: 0;
   display: flex;
+  justify-content: center;
   left: 0;
   padding: ${themeCssVariables.spacing[3]};
   padding-bottom: calc(
@@ -53,6 +47,10 @@ const StyledFloatingContainer = styled.div`
   position: absolute;
   right: 0;
   z-index: 1001;
+
+  > * {
+    pointer-events: auto;
+  }
 
   @media print {
     display: none;
@@ -112,7 +110,12 @@ export const MobileNavigationBar = () => {
     ? 'home'
     : undefined;
 
-  const items: NavigationBarItemDefinition[] = [
+  const items: {
+    name: NavigationBarItemName;
+    label: string;
+    Icon: IconComponent;
+    onClick: () => void;
+  }[] = [
     {
       name: 'home',
       label: t`Home`,
@@ -144,23 +147,21 @@ export const MobileNavigationBar = () => {
         openRecordsSearchPage();
       },
     },
+    ...(hasAiPermission
+      ? [
+          {
+            name: 'newAiChat' as const,
+            label: t`New AI chat`,
+            Icon: IconMessageCirclePlus,
+            onClick: () => {
+              closeSidePanelMenu();
+              closeSettingsDrawer();
+              switchToNewChat();
+            },
+          },
+        ]
+      : []),
   ];
-
-  // Starting a chat is an action rather than a destination, so it sits apart
-  // from the tabs. Without it there is nothing to balance the pill against, and
-  // the bar falls back to a single centered group.
-  const detachedItem: NavigationBarItemDefinition | undefined = hasAiPermission
-    ? {
-        name: 'newAiChat',
-        label: t`New AI chat`,
-        Icon: IconMessageCirclePlus,
-        onClick: () => {
-          closeSidePanelMenu();
-          closeSettingsDrawer();
-          switchToNewChat();
-        },
-      }
-    : undefined;
 
   return (
     <StyledFloatingContainer>
@@ -168,7 +169,6 @@ export const MobileNavigationBar = () => {
         activeItemName={activeItemName ?? ''}
         isHidden={isHidden}
         items={items}
-        detachedItem={detachedItem}
       />
     </StyledFloatingContainer>
   );

@@ -1,4 +1,5 @@
-@mixin glass-surface {
+.container {
+  align-items: center;
   backdrop-filter: var(--t-blur-strong);
   background: var(--t-background-transparent-primary);
   border: 1px solid var(--t-border-color-transparent-strong);
@@ -6,26 +7,15 @@
   box-shadow: var(--t-box-shadow-strong);
   box-sizing: border-box;
   corner-shape: round;
-  padding: var(--t-spacing-1);
-  pointer-events: auto;
-}
-
-.container {
-  align-items: center;
   display: flex;
+  gap: var(--t-spacing-1);
   justify-content: center;
-  pointer-events: none;
+  padding: var(--t-spacing-1);
   transition:
     opacity duration(normal) ease,
     transform duration(normal) ease,
     visibility duration(normal);
-  width: 100%;
-
-  // The detached item balances the pill against the opposite edge, so the two
-  // are pushed apart instead of reading as one off-center group.
-  &[data-split] {
-    justify-content: space-between;
-  }
+  width: max-content;
 
   &[data-hidden] {
     opacity: 0;
@@ -37,18 +27,4 @@
   @media (prefers-reduced-motion: reduce) {
     transition: none;
   }
-}
-
-.pill {
-  align-items: center;
-  display: flex;
-  gap: var(--t-spacing-1);
-
-  @include glass-surface;
-}
-
-.detachedItem {
-  display: flex;
-
-  @include glass-surface;
 }

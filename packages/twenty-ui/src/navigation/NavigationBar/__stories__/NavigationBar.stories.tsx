@@ -16,14 +16,13 @@ type Story = StoryObj<typeof NavigationBar>;
 const items = [
   { name: 'Home', label: 'Home', Icon: IconHome, onClick: () => {} },
   { name: 'Search', label: 'Search', Icon: IconSearch, onClick: () => {} },
+  {
+    name: 'Settings',
+    label: 'Settings',
+    Icon: IconSettings,
+    onClick: () => {},
+  },
 ];
-
-const detachedItem = {
-  name: 'Settings',
-  label: 'Settings',
-  Icon: IconSettings,
-  onClick: () => {},
-};
 
 export const Default: Story = {
   args: {
@@ -32,19 +31,10 @@ export const Default: Story = {
   },
 };
 
-export const WithDetachedItem: Story = {
-  args: {
-    activeItemName: 'Home',
-    items,
-    detachedItem,
-  },
-};
-
 export const Hidden: Story = {
   args: {
     activeItemName: 'Home',
     isHidden: true,
     items,
-    detachedItem,
   },
 };
