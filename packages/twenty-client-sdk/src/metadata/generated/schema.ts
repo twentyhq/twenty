@@ -528,7 +528,7 @@ export interface View {
     __typename: 'View'
 }
 
-export type ViewType = 'TABLE' | 'KANBAN' | 'CALENDAR' | 'LIST' | 'FIELDS_WIDGET' | 'TABLE_WIDGET' | 'KANBAN_WIDGET' | 'LIST_WIDGET' | 'CALENDAR_WIDGET'
+export type ViewType = 'TABLE' | 'KANBAN' | 'CALENDAR' | 'LIST' | 'RELATIONS' | 'FIELDS_WIDGET' | 'TABLE_WIDGET' | 'KANBAN_WIDGET' | 'LIST_WIDGET' | 'CALENDAR_WIDGET'
 
 export type ViewKey = 'INDEX'
 
@@ -9399,6 +9399,7 @@ export const enumViewType = {
    KANBAN: 'KANBAN' as const,
    CALENDAR: 'CALENDAR' as const,
    LIST: 'LIST' as const,
+   RELATIONS: 'RELATIONS' as const,
    FIELDS_WIDGET: 'FIELDS_WIDGET' as const,
    TABLE_WIDGET: 'TABLE_WIDGET' as const,
    KANBAN_WIDGET: 'KANBAN_WIDGET' as const,

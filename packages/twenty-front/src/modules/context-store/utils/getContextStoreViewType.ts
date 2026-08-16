@@ -10,6 +10,7 @@ const VIEW_TYPE_TO_CONTEXT_STORE_VIEW_TYPE: Record<
   [ViewType.TABLE]: ContextStoreViewType.Table,
   [ViewType.TABLE_WIDGET]: ContextStoreViewType.Table,
   [ViewType.LIST]: ContextStoreViewType.Table,
+  [ViewType.RELATIONS]: ContextStoreViewType.Table,
   [ViewType.FIELDS_WIDGET]: ContextStoreViewType.Table,
   [ViewType.KANBAN]: ContextStoreViewType.Kanban,
   [ViewType.KANBAN_WIDGET]: ContextStoreViewType.Kanban,

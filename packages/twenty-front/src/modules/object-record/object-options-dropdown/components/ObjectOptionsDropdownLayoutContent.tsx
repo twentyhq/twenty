@@ -128,6 +128,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
   const selectableItemIdArray = [
     ViewType.TABLE,
     ...(isListViewEnabled ? [ViewType.LIST] : []),
+    ViewType.RELATIONS,
     ...(!isDefaultView ? [ViewType.CALENDAR] : []),
     ...(isDefaultView ? [] : [ViewType.KANBAN]),
     ...(currentView?.type === ViewType.KANBAN ? ['Group'] : []),
@@ -140,7 +141,8 @@ export const ObjectOptionsDropdownLayoutContent = () => {
         ]
       : []),
     ...(currentView?.type !== ViewType.TABLE &&
-    currentView?.type !== ViewType.LIST
+    currentView?.type !== ViewType.LIST &&
+    currentView?.type !== ViewType.RELATIONS
       ? ['Compact view']
       : []),
   ];
@@ -208,6 +210,24 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                 />
               </SelectableListItem>
             )}
+            <SelectableListItem
+              itemId={ViewType.RELATIONS}
+              onEnter={() => {
+                setAndPersistViewType(ViewType.RELATIONS);
+              }}
+            >
+              <MenuItemSelect
+                LeftIcon={viewTypeIconMapping(ViewType.RELATIONS)}
+                text={t(getViewTypeLabel(ViewType.RELATIONS))}
+                selected={currentView?.type === ViewType.RELATIONS}
+                focused={selectedItemId === ViewType.RELATIONS}
+                onClick={async () => {
+                  if (currentView?.type !== ViewType.RELATIONS) {
+                    await setAndPersistViewType(ViewType.RELATIONS);
+                  }
+                }}
+              />
+            </SelectableListItem>
             <SelectableListItem
               itemId={ViewType.CALENDAR}
               onEnter={() => {
@@ -333,7 +353,8 @@ export const ObjectOptionsDropdownLayoutContent = () => {
               </SelectableListItem>
             )}
             {currentView?.type !== ViewType.TABLE &&
-              currentView?.type !== ViewType.LIST && (
+              currentView?.type !== ViewType.LIST &&
+              currentView?.type !== ViewType.RELATIONS && (
                 <SelectableListItem
                   itemId="Compact view"
                   onEnter={() => {

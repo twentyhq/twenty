@@ -7,6 +7,7 @@ const VIEW_TYPE_TO_LAYOUT_MAPPING: Record<ViewTypeValue, ViewTypeValue> = {
   [ViewType.KANBAN]: ViewType.KANBAN,
   [ViewType.CALENDAR]: ViewType.CALENDAR,
   [ViewType.LIST]: ViewType.LIST,
+  [ViewType.RELATIONS]: ViewType.RELATIONS,
   [ViewType.FIELDS_WIDGET]: ViewType.FIELDS_WIDGET,
   [ViewType.TABLE_WIDGET]: ViewType.TABLE,
   [ViewType.KANBAN_WIDGET]: ViewType.KANBAN,

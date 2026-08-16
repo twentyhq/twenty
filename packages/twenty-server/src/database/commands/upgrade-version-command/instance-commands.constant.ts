@@ -144,6 +144,7 @@ import { CreateBillingCreditGrantTableFastInstanceCommand } from 'src/database/c
 import { BackfillCreditBalanceIntoGrantsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-slow-1786532184001-backfill-credit-balance-into-grants';
 import { AddPreviousPeriodStartToBillingSubscriptionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-fast-1786532184002-add-previous-period-start-to-billing-subscription';
 import { AddIsDeprecatedToApplicationVariablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-fast-1786533439000-add-is-deprecated-to-application-variables';
+import { AddRelationsViewTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/fork-travis/fork-instance-command-fast-1786904400000-add-relations-view-type';
 import { EncryptEmptyApplicationVariablesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-slow-1786533438000-encrypt-empty-application-variables';
 
 export const INSTANCE_COMMANDS = [
@@ -292,4 +293,5 @@ export const INSTANCE_COMMANDS = [
   AddPreviousPeriodStartToBillingSubscriptionFastInstanceCommand,
   AddIsDeprecatedToApplicationVariablesFastInstanceCommand,
   EncryptEmptyApplicationVariablesSlowInstanceCommand,
+  AddRelationsViewTypeFastInstanceCommand,
 ];

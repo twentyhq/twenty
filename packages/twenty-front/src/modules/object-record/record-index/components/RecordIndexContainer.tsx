@@ -9,6 +9,7 @@ import { useRecordIndexContextOrThrow } from '@/object-record/record-index/conte
 
 import { RecordIndexCalendarContainer } from '@/object-record/record-index/components/RecordIndexCalendarContainer';
 import { RecordIndexListContainer } from '@/object-record/record-index/components/RecordIndexListContainer';
+import { RecordIndexRelationsContainer } from '@/object-record/record-index/components/RecordIndexRelationsContainer';
 import { RecordIndexEmptyStateNotShared } from '@/object-record/record-index/components/RecordIndexEmptyStateNotShared';
 import { RecordIndexFiltersToContextStoreEffect } from '@/object-record/record-index/components/RecordIndexFiltersToContextStoreEffect';
 import { useHasCurrentViewNonReadableFields } from '@/object-record/record-index/hooks/useHasCurrentViewNonReadableFields';
@@ -72,6 +73,14 @@ export const RecordIndexContainer = () => {
             <StyledContainerWithPadding>
               <RecordIndexListContainer
                 recordListInstanceId={recordIndexId}
+                viewBarInstanceId={recordIndexId}
+              />
+            </StyledContainerWithPadding>
+          )}
+          {recordIndexViewType === ViewType.RELATIONS && (
+            <StyledContainerWithPadding>
+              <RecordIndexRelationsContainer
+                recordRelationsInstanceId={recordIndexId}
                 viewBarInstanceId={recordIndexId}
               />
             </StyledContainerWithPadding>

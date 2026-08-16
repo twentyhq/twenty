@@ -74,7 +74,8 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
           return;
         }
         case ViewType.TABLE:
-        case ViewType.LIST: {
+        case ViewType.LIST:
+        case ViewType.RELATIONS: {
           if (shouldChangeIcon(currentView.icon, currentView.type)) {
             updateCurrentViewParams.icon =
               viewTypeIconMapping(viewType).displayName;
@@ -163,6 +164,12 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
     if (
       oldViewType === ViewType.LIST &&
       oldIcon === viewTypeIconMapping(ViewType.LIST).displayName
+    ) {
+      return true;
+    }
+    if (
+      oldViewType === ViewType.RELATIONS &&
+      oldIcon === viewTypeIconMapping(ViewType.RELATIONS).displayName
     ) {
       return true;
     }

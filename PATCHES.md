@@ -38,6 +38,8 @@ Files: `.github/workflows/fork-image.yml`
 Type: new-file
 Why: Build `packages/twenty-docker/twenty/Dockerfile` on GitHub Actions and publish `ghcr.io/travis-gilbert/twenty` tagged with the upstream version and the fork SHA, so Fly deploys do not wait on a remote builder.
 Could this be a new file instead: yes
+Upstream equivalent: none (upstream CD lives in `twentyhq/twenty-infra`)
+
 ## P004. Fly source-build fallback config
 
 Files: `fly.travis.toml`
@@ -45,3 +47,39 @@ Type: new-file
 Why: GitHub Actions is the intended image publisher; this config is the Fly remote-builder fallback when GHCR is unavailable, with dockerfile paths resolved from the repository root.
 Could this be a new file instead: yes
 Upstream equivalent: none
+
+## P005. Published-image overlay for Fly
+
+Files: `packages/twenty-docker/overlay/**`
+Type: new-file
+Why: GitHub Actions is billing-locked and a from-source Fly build OOMs. Overlay `twentycrm/twenty:v2.31.1` with a rebuilt frontend and twenty-shared dist (`ViewType.RELATIONS`) plus an idempotent `view_type_enum` ALTER. Deploy from the repo root with `packages/twenty-docker/overlay/fly.toml` after pushing the image; flyctl's classic builder talks Docker :2375 while this org's builder is BuildKit :1234.
+Could this be a new file instead: yes
+Upstream equivalent: none. Retire this overlay once `ghcr.io/travis-gilbert/twenty` publishes from the full Dockerfile.
+
+## P006. Relations view type
+
+Files:
+- `packages/twenty-shared/src/types/ViewType.ts` (upstream-edit)
+- `packages/twenty-shared/src/utils/views/getViewLayoutFromViewType.ts` (upstream-edit)
+- `packages/twenty-front/src/modules/views/types/ViewType.ts` (upstream-edit)
+- `packages/twenty-front/src/generated-metadata/graphql.ts` (upstream-edit)
+- `packages/twenty-front/src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts` (upstream-edit)
+- `packages/twenty-front/src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx` (upstream-edit)
+- `packages/twenty-front/src/modules/object-record/object-options-dropdown/hooks/useSetViewTypeFromLayoutOptionsMenu.ts` (upstream-edit)
+- `packages/twenty-front/src/modules/object-record/record-index/components/RecordIndexContainer.tsx` (upstream-edit)
+- `packages/twenty-front/src/modules/object-record/record-index/hooks/useRecordIndexTableQuery.ts` (upstream-edit)
+- `packages/twenty-front/src/modules/object-record/components/RecordComponentInstanceContextsWrapper.tsx` (upstream-edit)
+- `packages/twenty-front/src/modules/context-store/utils/getContextStoreViewType.ts` (upstream-edit)
+- `packages/twenty-server/src/engine/metadata-modules/view/tools/view-tools.factory.ts` (upstream-edit)
+- `packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts` (upstream-edit)
+- `packages/twenty-client-sdk/src/metadata/generated/schema.ts` (upstream-edit)
+- `packages/twenty-client-sdk/src/metadata/generated/schema.graphql` (upstream-edit)
+- `packages/twenty-server/src/database/commands/upgrade-version-command/fork-travis/fork-instance-command-fast-1786904400000-add-relations-view-type.ts` (new-file)
+- `packages/twenty-front/src/modules/object-record/record-index/components/RecordIndexRelationsContainer.tsx` (new-file)
+- `packages/twenty-front/src/modules/object-record/record-relations/**` (new-file)
+
+Type: upstream-edit for single-source enum/picker/query/wiring files; new-file for the fork migration and the relations module.
+Why: Fifth view type `RELATIONS` (SPEC-TWENTY-RELATIONS-VIEW-1.0). Modelled on upstream LIST (PR #23829). No feature flag.
+Could this be a new file instead: no for the enum/layout/picker/query/wiring files, because each is a single source of truth; yes for `record-relations/` and the fork-local migration, and those are new files.
+Upstream equivalent: none
+

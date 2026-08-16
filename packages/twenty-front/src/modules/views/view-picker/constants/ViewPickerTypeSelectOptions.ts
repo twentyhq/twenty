@@ -25,4 +25,9 @@ export const VIEW_PICKER_TYPE_SELECT_OPTIONS = [
     label: VIEW_TYPE_LABELS[ViewType.LIST],
     Icon: viewTypeIconMapping(ViewType.LIST),
   },
+  {
+    value: ViewType.RELATIONS,
+    label: VIEW_TYPE_LABELS[ViewType.RELATIONS],
+    Icon: viewTypeIconMapping(ViewType.RELATIONS),
+  },
 ];
