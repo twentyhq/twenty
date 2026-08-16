@@ -22,6 +22,13 @@ import { buildRecordFieldPlan } from "src/logic-functions/utils/build-record-fie
 import { sortObjectsByDependency } from "src/logic-functions/utils/sort-objects-by-dependency.util";
 import { executeWithRetry } from "src/logic-functions/utils/execute-with-retry.util";
 import { FindWorkspaceMembers } from "src/logic-functions/data/targetWorkspace/find-workspace-members.util";
+import { findViews } from "src/logic-functions/data/targetWorkspace/find-views.util";
+import { findNavigationMenuItems } from "src/logic-functions/data/targetWorkspace/find-navigation-menu-items.util";
+import { findSkills } from "src/logic-functions/data/targetWorkspace/find-skills.util";
+import { findWebhooks } from "src/logic-functions/data/targetWorkspace/find-webhooks.util";
+import { createMetadataEntity } from "src/logic-functions/data/targetWorkspace/create-metadata-entity.util";
+import { findRoles } from "src/logic-functions/data/targetWorkspace/find-roles.util";
+import { upsertPermissionFlags, upsertObjectPermissions, upsertFieldPermissions } from "src/logic-functions/data/targetWorkspace/upsert-role-permissions.util";
 
 // Logic:
 // Read all apps
@@ -134,7 +141,7 @@ const buildFieldToCreate = (
   field: FieldsListType,
   targetObjectId: string,
   targetObjects: { nameSingular: string, id: string, universalIdentifier: string }[],
-): CreateOneFieldType => {
+): CreateOneFieldType | undefined => {
   if (field.type === FieldMetadataType.RELATION) {
     const targetRelationObjectId = targetObjects.find(
       obj => obj.nameSingular === field.relation?.targetObjectMetadata.nameSingular,
@@ -142,8 +149,7 @@ const buildFieldToCreate = (
 
     if (targetRelationObjectId === undefined) {
       console.warn(`Skipping relation field "${field.name}": relation target object not found in target workspace yet (possible dependency cycle)`);
-      // @ts-ignore
-      return;
+      return undefined;
     }
 
     const relationCreationPayload = {
@@ -181,8 +187,7 @@ const buildFieldToCreate = (
 
       if (targetRelationObjectId === undefined) {
         console.warn(`Skipping relation field "${field.name}": relation target object not found in target workspace yet (possible dependency cycle)`);
-        // @ts-ignore
-        return;
+        return undefined;
       }
 
       morphRelationPayload.push({
@@ -305,6 +310,391 @@ const migrateRecordsForObject = async (
   console.log(`Migrated ${migratedCount} record(s) for ${sourceObject.nameSingular}`);
 };
 
+const migrateViews = async (
+  targetWorkspace: AxiosInstance,
+  sourceViews: Awaited<ReturnType<typeof findViews>>,
+  targetViews: Awaited<ReturnType<typeof findViews>>,
+  targetObjectIdBySourceObjectId: Map<string, string>,
+  targetFieldIdBySourceFieldId: Map<string, string>,
+) => {
+  const existingTargetViewIds = new Set(targetViews.map((view) => view.id));
+  const existingTargetViewFieldIds = new Set(targetViews.flatMap((view) => view.viewFields.map((f) => f.id)));
+  const existingTargetViewFilterIds = new Set(targetViews.flatMap((view) => view.viewFilters.map((f) => f.id)));
+  const existingTargetViewSortIds = new Set(targetViews.flatMap((view) => view.viewSorts.map((f) => f.id)));
+  const existingTargetViewGroupIds = new Set(targetViews.flatMap((view) => view.viewGroups.map((f) => f.id)));
+  const existingTargetViewFilterGroupIds = new Set(targetViews.flatMap((view) => view.viewFilterGroups.map((f) => f.id)));
+  const existingTargetViewFieldGroupIds = new Set(targetViews.flatMap((view) => view.viewFieldGroups.map((f) => f.id)));
+
+  const resolveFieldId = (sourceFieldId: string | null): string | null =>
+    sourceFieldId === null ? null : targetFieldIdBySourceFieldId.get(sourceFieldId) ?? null;
+
+  let createdViews = 0;
+  let createdSubEntities = 0;
+
+  for (const view of sourceViews) {
+    const targetObjectMetadataId = targetObjectIdBySourceObjectId.get(view.objectMetadataId);
+    if (targetObjectMetadataId === undefined) {
+      console.warn(`Skipping view "${view.name}": target object not found for object ${view.objectMetadataId}`);
+      continue;
+    }
+
+    if (!existingTargetViewIds.has(view.id)) {
+      await executeWithRetry(() => createMetadataEntity(targetWorkspace, 'createView', 'input', 'CreateViewInput', {
+        id: view.id,
+        name: view.name,
+        objectMetadataId: targetObjectMetadataId,
+        type: view.type,
+        key: view.key,
+        icon: view.icon,
+        position: view.position,
+        isCompact: view.isCompact,
+        shouldHideEmptyGroups: view.shouldHideEmptyGroups,
+        kanbanColumnWidth: view.kanbanColumnWidth,
+        kanbanAggregateOperation: view.kanbanAggregateOperation,
+        kanbanAggregateOperationFieldMetadataId: resolveFieldId(view.kanbanAggregateOperationFieldMetadataId),
+        anyFieldFilterValue: view.anyFieldFilterValue,
+        calendarLayout: view.calendarLayout,
+        calendarFieldMetadataId: resolveFieldId(view.calendarFieldMetadataId),
+        calendarEndFieldMetadataId: resolveFieldId(view.calendarEndFieldMetadataId),
+        mainGroupByFieldMetadataId: resolveFieldId(view.mainGroupByFieldMetadataId),
+      }));
+      createdViews += 1;
+    }
+
+    for (const viewFieldGroup of view.viewFieldGroups) {
+      if (existingTargetViewFieldGroupIds.has(viewFieldGroup.id)) {
+        continue;
+      }
+      await executeWithRetry(() => createMetadataEntity(targetWorkspace, 'createViewFieldGroup', 'input', 'CreateViewFieldGroupInput', {
+        id: viewFieldGroup.id,
+        name: viewFieldGroup.name,
+        viewId: viewFieldGroup.viewId,
+        position: viewFieldGroup.position,
+        isVisible: viewFieldGroup.isVisible,
+      }));
+      createdSubEntities += 1;
+    }
+
+    for (const viewField of view.viewFields) {
+      if (existingTargetViewFieldIds.has(viewField.id)) {
+        continue;
+      }
+      const targetFieldMetadataId = resolveFieldId(viewField.fieldMetadataId);
+      if (targetFieldMetadataId === null) {
+        console.warn(`Skipping view field "${viewField.id}" on view "${view.name}": target field not found for field ${viewField.fieldMetadataId}`);
+        continue;
+      }
+      await executeWithRetry(() => createMetadataEntity(targetWorkspace, 'createViewField', 'input', 'CreateViewFieldInput', {
+        id: viewField.id,
+        fieldMetadataId: targetFieldMetadataId,
+        viewId: viewField.viewId,
+        isVisible: viewField.isVisible,
+        size: viewField.size,
+        position: viewField.position,
+        aggregateOperation: viewField.aggregateOperation,
+        viewFieldGroupId: viewField.viewFieldGroupId,
+      }));
+      createdSubEntities += 1;
+    }
+
+    // ViewFilterGroups can nest under a parent, so a group is only created once its parent
+    // (if any) is already resolved - same dependency ordering NavigationMenuItem folders need.
+    const remainingFilterGroups = [...view.viewFilterGroups];
+    const resolvedFilterGroupIds = new Set(existingTargetViewFilterGroupIds);
+    while (remainingFilterGroups.length > 0) {
+      const creatableNow = remainingFilterGroups.filter(
+        (group) => group.parentViewFilterGroupId === null || resolvedFilterGroupIds.has(group.parentViewFilterGroupId),
+      );
+      if (creatableNow.length === 0) {
+        console.warn(`Skipping ${remainingFilterGroups.length} view filter group(s) on view "${view.name}": unresolved parent chain`);
+        break;
+      }
+      for (const group of creatableNow) {
+        remainingFilterGroups.splice(remainingFilterGroups.indexOf(group), 1);
+        if (!resolvedFilterGroupIds.has(group.id)) {
+          await executeWithRetry(() => createMetadataEntity(targetWorkspace, 'createViewFilterGroup', 'input', 'CreateViewFilterGroupInput', {
+            id: group.id,
+            parentViewFilterGroupId: group.parentViewFilterGroupId,
+            logicalOperator: group.logicalOperator,
+            positionInViewFilterGroup: group.positionInViewFilterGroup,
+            viewId: group.viewId,
+          }));
+          createdSubEntities += 1;
+        }
+        resolvedFilterGroupIds.add(group.id);
+      }
+    }
+
+    for (const viewFilter of view.viewFilters) {
+      if (existingTargetViewFilterIds.has(viewFilter.id)) {
+        continue;
+      }
+      const targetFieldMetadataId = resolveFieldId(viewFilter.fieldMetadataId);
+      if (targetFieldMetadataId === null) {
+        console.warn(`Skipping view filter "${viewFilter.id}" on view "${view.name}": target field not found for field ${viewFilter.fieldMetadataId}`);
+        continue;
+      }
+      await executeWithRetry(() => createMetadataEntity(targetWorkspace, 'createViewFilter', 'input', 'CreateViewFilterInput', {
+        id: viewFilter.id,
+        fieldMetadataId: targetFieldMetadataId,
+        operand: viewFilter.operand,
+        value: viewFilter.value,
+        viewFilterGroupId: viewFilter.viewFilterGroupId,
+        positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
+        subFieldName: viewFilter.subFieldName,
+        relationTargetFieldMetadataId: resolveFieldId(viewFilter.relationTargetFieldMetadataId),
+        viewId: viewFilter.viewId,
+      }));
+      createdSubEntities += 1;
+    }
+
+    for (const viewSort of view.viewSorts) {
+      if (existingTargetViewSortIds.has(viewSort.id)) {
+        continue;
+      }
+      const targetFieldMetadataId = resolveFieldId(viewSort.fieldMetadataId);
+      if (targetFieldMetadataId === null) {
+        console.warn(`Skipping view sort "${viewSort.id}" on view "${view.name}": target field not found for field ${viewSort.fieldMetadataId}`);
+        continue;
+      }
+      await executeWithRetry(() => createMetadataEntity(targetWorkspace, 'createViewSort', 'input', 'CreateViewSortInput', {
+        id: viewSort.id,
+        fieldMetadataId: targetFieldMetadataId,
+        direction: viewSort.direction,
+        subFieldName: viewSort.subFieldName,
+        viewId: viewSort.viewId,
+      }));
+      createdSubEntities += 1;
+    }
+
+    for (const viewGroup of view.viewGroups) {
+      if (existingTargetViewGroupIds.has(viewGroup.id)) {
+        continue;
+      }
+      await executeWithRetry(() => createMetadataEntity(targetWorkspace, 'createViewGroup', 'input', 'CreateViewGroupInput', {
+        id: viewGroup.id,
+        isVisible: viewGroup.isVisible,
+        fieldValue: viewGroup.fieldValue,
+        position: viewGroup.position,
+        viewId: viewGroup.viewId,
+      }));
+      createdSubEntities += 1;
+    }
+  }
+
+  console.log(`Views: created ${createdViews} view(s) and ${createdSubEntities} related entitie(s)`);
+};
+
+const migrateNavigationMenuItems = async (
+  targetWorkspace: AxiosInstance,
+  sourceItems: Awaited<ReturnType<typeof findNavigationMenuItems>>,
+  targetItems: Awaited<ReturnType<typeof findNavigationMenuItems>>,
+  targetObjectIdBySourceObjectId: Map<string, string>,
+  recordIdMap: Map<string, string>,
+) => {
+  // Folders can be parents of other items, so an item is only attempted once its folder (if
+  // any) is already resolved in the target. Items skipped for any reason (personal, page
+  // layout, unresolved target) are never marked resolved, so anything nested under them is
+  // correctly left unresolved too, rather than pointing at a folder that was never created.
+  const resolvedItemIds = new Set(targetItems.map((item) => item.id));
+  const remainingItems = [...sourceItems];
+  let createdCount = 0;
+
+  while (remainingItems.length > 0) {
+    const creatableNow = remainingItems.filter(
+      (item) => item.folderId === null || resolvedItemIds.has(item.folderId),
+    );
+    if (creatableNow.length === 0) {
+      console.warn(`Skipping ${remainingItems.length} navigation menu item(s): unresolved folder chain`);
+      break;
+    }
+
+    for (const item of creatableNow) {
+      remainingItems.splice(remainingItems.indexOf(item), 1);
+
+      if (resolvedItemIds.has(item.id)) {
+        continue;
+      }
+      if (item.userWorkspaceId !== null) {
+        console.warn(`Skipping personal navigation menu item "${item.name ?? item.id}": personal items aren't portable across workspaces via API key`);
+        continue;
+      }
+      if (item.pageLayoutId !== null) {
+        console.warn(`Skipping navigation menu item "${item.name ?? item.id}": page layouts aren't migrated by this tool`);
+        continue;
+      }
+
+      const targetObjectMetadataId = item.targetObjectMetadataId !== null
+        ? targetObjectIdBySourceObjectId.get(item.targetObjectMetadataId)
+        : undefined;
+      if (item.targetObjectMetadataId !== null && targetObjectMetadataId === undefined) {
+        console.warn(`Skipping navigation menu item "${item.name ?? item.id}": target object not found for object ${item.targetObjectMetadataId}`);
+        continue;
+      }
+
+      const targetRecordId = item.targetRecordId !== null
+        ? recordIdMap.get(item.targetRecordId)
+        : undefined;
+      if (item.targetRecordId !== null && targetRecordId === undefined) {
+        console.warn(`Skipping navigation menu item "${item.name ?? item.id}": target record not found for record ${item.targetRecordId}`);
+        continue;
+      }
+
+      await executeWithRetry(() => createMetadataEntity(targetWorkspace, 'createNavigationMenuItem', 'input', 'CreateNavigationMenuItemInput', {
+        id: item.id,
+        targetRecordId: targetRecordId ?? null,
+        targetObjectMetadataId: targetObjectMetadataId ?? null,
+        viewId: item.viewId,
+        type: item.type,
+        name: item.name,
+        link: item.link,
+        icon: item.icon,
+        color: item.color,
+        folderId: item.folderId,
+        position: item.position,
+      }));
+      resolvedItemIds.add(item.id);
+      createdCount += 1;
+    }
+  }
+
+  console.log(`Navigation menu items: created ${createdCount}`);
+};
+
+const migrateSkills = async (targetWorkspace: AxiosInstance, sourceSkills: Awaited<ReturnType<typeof findSkills>>, targetSkills: Awaited<ReturnType<typeof findSkills>>) => {
+  const existingTargetSkillIds = new Set(targetSkills.map((skill) => skill.id));
+
+  let createdCount = 0;
+  for (const skill of sourceSkills) {
+    // Standard skills already exist in every workspace by construction (and the server
+    // blocks non-standard-app callers from modifying them) - only custom ones need migrating.
+    if (!skill.isCustom || existingTargetSkillIds.has(skill.id)) {
+      continue;
+    }
+    await executeWithRetry(() => createMetadataEntity(targetWorkspace, 'createSkill', 'input', 'CreateSkillInput', {
+      id: skill.id,
+      name: skill.name,
+      label: skill.label,
+      icon: skill.icon,
+      description: skill.description,
+      content: skill.content,
+    }));
+    createdCount += 1;
+  }
+
+  console.log(`Skills: created ${createdCount}`);
+};
+
+const migrateWebhooks = async (targetWorkspace: AxiosInstance, sourceWebhooks: Awaited<ReturnType<typeof findWebhooks>>, targetWebhooks: Awaited<ReturnType<typeof findWebhooks>>) => {
+  const existingTargetWebhookIds = new Set(targetWebhooks.map((webhook) => webhook.id));
+
+  let createdCount = 0;
+  for (const webhook of sourceWebhooks) {
+    if (existingTargetWebhookIds.has(webhook.id)) {
+      continue;
+    }
+    // `secret` is deliberately not copied - omitting it makes the server generate a fresh
+    // one, so the two workspaces don't end up sharing the same HMAC signing key.
+    await executeWithRetry(() => createMetadataEntity(targetWorkspace, 'createWebhook', 'input', 'CreateWebhookInput', {
+      id: webhook.id,
+      targetUrl: webhook.targetUrl,
+      operations: webhook.operations,
+      description: webhook.description,
+    }));
+    createdCount += 1;
+  }
+
+  console.log(`Webhooks: created ${createdCount}. Review each targetUrl - the receiving endpoint may not expect events from this new workspace.`);
+};
+
+const migrateRoles = async (
+  targetWorkspace: AxiosInstance,
+  sourceRoles: Awaited<ReturnType<typeof findRoles>>,
+  targetRoles: Awaited<ReturnType<typeof findRoles>>,
+  targetObjectIdBySourceObjectId: Map<string, string>,
+  targetFieldIdBySourceFieldId: Map<string, string>,
+) => {
+  // Unlike view/nav-item/skill/webhook create inputs, CreateRoleInput has no client-settable
+  // `id` - the row id (and universalIdentifier) are always server-generated. `label` is the
+  // real dedup key instead: it's workspace-uniquely enforced with a clean
+  // ROLE_LABEL_ALREADY_EXISTS error. A role's permissions are therefore only ever set once,
+  // at creation time - re-running this migration never touches an already-migrated role.
+  const targetRoleIdByLabel = new Map(targetRoles.map((role) => [role.label, role.id]));
+
+  let createdCount = 0;
+
+  for (const role of sourceRoles) {
+    if (targetRoleIdByLabel.has(role.label)) {
+      continue;
+    }
+
+    if (role.rowLevelPermissionPredicates.length > 0 || role.rowLevelPermissionPredicateGroups.length > 0) {
+      console.warn(`Role "${role.label}": has row-level permission predicates, which this tool doesn't migrate - review manually`);
+    }
+
+    const created = await executeWithRetry(() => createMetadataEntity(targetWorkspace, 'createOneRole', 'createRoleInput', 'CreateRoleInput', {
+      label: role.label,
+      description: role.description,
+      icon: role.icon,
+      canUpdateAllSettings: role.canUpdateAllSettings,
+      canAccessAllTools: role.canAccessAllTools,
+      canReadAllObjectRecords: role.canReadAllObjectRecords,
+      canUpdateAllObjectRecords: role.canUpdateAllObjectRecords,
+      canSoftDeleteAllObjectRecords: role.canSoftDeleteAllObjectRecords,
+      canDestroyAllObjectRecords: role.canDestroyAllObjectRecords,
+      canBeAssignedToUsers: role.canBeAssignedToUsers,
+      canBeAssignedToAgents: role.canBeAssignedToAgents,
+      canBeAssignedToApiKeys: role.canBeAssignedToApiKeys,
+    }));
+    const targetRoleId = created.id;
+    createdCount += 1;
+
+    if (role.permissionFlags.length > 0) {
+      await executeWithRetry(() =>
+        upsertPermissionFlags(targetWorkspace, targetRoleId, role.permissionFlags.map((flag) => flag.flag)),
+      );
+    }
+
+    const objectPermissions = role.objectPermissions.flatMap((permission) => {
+      const targetObjectMetadataId = targetObjectIdBySourceObjectId.get(permission.objectMetadataId);
+      if (targetObjectMetadataId === undefined) {
+        console.warn(`Role "${role.label}": skipping object permission - target object not found for object ${permission.objectMetadataId}`);
+        return [];
+      }
+      return [{
+        objectMetadataId: targetObjectMetadataId,
+        canReadObjectRecords: permission.canReadObjectRecords,
+        canUpdateObjectRecords: permission.canUpdateObjectRecords,
+        canSoftDeleteObjectRecords: permission.canSoftDeleteObjectRecords,
+        canDestroyObjectRecords: permission.canDestroyObjectRecords,
+      }];
+    });
+    if (objectPermissions.length > 0) {
+      await executeWithRetry(() => upsertObjectPermissions(targetWorkspace, targetRoleId, objectPermissions));
+    }
+
+    const fieldPermissions = role.fieldPermissions.flatMap((permission) => {
+      const targetObjectMetadataId = targetObjectIdBySourceObjectId.get(permission.objectMetadataId);
+      const targetFieldMetadataId = targetFieldIdBySourceFieldId.get(permission.fieldMetadataId);
+      if (targetObjectMetadataId === undefined || targetFieldMetadataId === undefined) {
+        console.warn(`Role "${role.label}": skipping field permission - target field not found for field ${permission.fieldMetadataId}`);
+        return [];
+      }
+      return [{
+        objectMetadataId: targetObjectMetadataId,
+        fieldMetadataId: targetFieldMetadataId,
+        canReadFieldValue: permission.canReadFieldValue,
+        canUpdateFieldValue: permission.canUpdateFieldValue,
+      }];
+    });
+    if (fieldPermissions.length > 0) {
+      await executeWithRetry(() => upsertFieldPermissions(targetWorkspace, targetRoleId, fieldPermissions));
+    }
+  }
+
+  console.log(`Roles: created ${createdCount}`);
+};
+
 const handler = async () => {
   // Stage 1: read all apps
 
@@ -336,8 +726,8 @@ const handler = async () => {
   const { universalIdentifier: targetStandardAppUUID } = targetWorkspaceInstalledApps.findManyApplications.filter(app => !app.canBeUninstalled && app.applicationRegistration === null)[0];
   const { universalIdentifier: targetCustomAppUUID } = targetWorkspaceInstalledApps.findManyApplications.filter(app => !app.canBeUninstalled && app.applicationRegistration?.sourceType === 'LOCAL')[0];
   targetWorkspaceInstalledApps.findManyApplications.filter((app) => app.applicationRegistration !== null && sourceAppsToOmit.indexOf(app.applicationRegistration.sourceType) === -1).map((app) => targetApps[app.universalIdentifier] = app.version);
-  const targetAppsIds = Object.keys(targetApps);
-  const missingAppsIds = targetAppsIds.filter((app) => Object.keys(sourceApps).indexOf(app) < 0);
+  const sourceAppsIds = Object.keys(sourceApps);
+  const missingAppsIds = sourceAppsIds.filter((app) => Object.keys(targetApps).indexOf(app) < 0);
   if (missingAppsIds.length > 0) {
     console.error('Install missing apps: '.concat(...missingAppsIds.map(id => sourceApps[id].name)));
     return;
@@ -437,7 +827,10 @@ const handler = async () => {
       }
       const targetObjectField = targetObjectFields.get(key);
       if (targetObjectField === undefined) {
-        fieldsToCreate.push(buildFieldToCreate(sourceObjectField, targetObject.id, targetWorkspaceObjects));
+        const fieldToCreate = buildFieldToCreate(sourceObjectField, targetObject.id, targetWorkspaceObjects);
+        if (fieldToCreate !== undefined) {
+          fieldsToCreate.push(fieldToCreate);
+        }
       } else if (!areFieldsListsIdentical(sourceObjectField, targetObjectField)) {
         // TODO: check if separate function is needed to build a proper field given the relations
         fieldsToUpdate.set(targetObjectField.id, sourceObjectField);
@@ -455,7 +848,10 @@ const handler = async () => {
       continue;
     }
     for (const field of filterFields(object.fieldsList)) {
-      fieldsToCreate.push(buildFieldToCreate(field, targetObjectId, targetWorkspaceObjects))
+      const fieldToCreate = buildFieldToCreate(field, targetObjectId, targetWorkspaceObjects);
+      if (fieldToCreate !== undefined) {
+        fieldsToCreate.push(fieldToCreate);
+      }
     }
   }
 
@@ -494,7 +890,55 @@ const handler = async () => {
     await migrateRecordsForObject(sourceWorkspace, targetWorkspace, sourceObject, recordIdMap);
   }
 
-  // TODO: implement migrating view and all view related objects, roles, navigation menu items, webhooks, skills
+  // Stage 6: migrate views (and all view-related sub-entities), navigation menu items,
+  // skills, webhooks, and roles (including their object/field permissions).
+  //
+  // objectMetadataId/fieldMetadataId references need remapping against the target workspace's
+  // own metadata ids (which are freshly server-generated, unlike the ids reused above) - the
+  // maps used for schema creation are now stale after Stage 3&4 created new fields, so this
+  // re-fetches the target's current objects/fields and rebuilds them by (object, field) name.
+  const { data: refetchedTargetWorkspaceObjectsFields } = await FindAllObjectsAndFields(targetWorkspace);
+  const refetchedTargetObjectsByNameSingular = new Map(
+    extractNodes(refetchedTargetWorkspaceObjectsFields.objects).map((object) => [object.nameSingular, object]),
+  );
+  const targetObjectIdBySourceObjectId = new Map<string, string>();
+  const targetFieldIdBySourceFieldId = new Map<string, string>();
+  for (const sourceObject of extractedSourceWorkspaceObjects) {
+    const targetObject = refetchedTargetObjectsByNameSingular.get(sourceObject.nameSingular);
+    if (targetObject === undefined) {
+      continue;
+    }
+    targetObjectIdBySourceObjectId.set(sourceObject.id, targetObject.id);
+
+    const targetFieldIdByName = new Map(targetObject.fieldsList.map((field) => [field.name, field.id]));
+    for (const sourceField of sourceObject.fieldsList) {
+      const targetFieldId = targetFieldIdByName.get(sourceField.name);
+      if (targetFieldId !== undefined) {
+        targetFieldIdBySourceFieldId.set(sourceField.id, targetFieldId);
+      }
+    }
+  }
+
+  const sourceViews = await findViews(sourceWorkspace);
+  const targetViews = await findViews(targetWorkspace);
+  await migrateViews(targetWorkspace, sourceViews, targetViews, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId);
+
+  const sourceNavigationMenuItems = await findNavigationMenuItems(sourceWorkspace);
+  const targetNavigationMenuItems = await findNavigationMenuItems(targetWorkspace);
+  await migrateNavigationMenuItems(targetWorkspace, sourceNavigationMenuItems, targetNavigationMenuItems, targetObjectIdBySourceObjectId, recordIdMap);
+
+  const sourceSkills = await findSkills(sourceWorkspace);
+  const targetSkills = await findSkills(targetWorkspace);
+  await migrateSkills(targetWorkspace, sourceSkills, targetSkills);
+
+  const sourceWebhooks = await findWebhooks(sourceWorkspace);
+  const targetWebhooks = await findWebhooks(targetWorkspace);
+  await migrateWebhooks(targetWorkspace, sourceWebhooks, targetWebhooks);
+
+  const sourceRoles = await findRoles(sourceWorkspace);
+  const targetRoles = await findRoles(targetWorkspace);
+  await migrateRoles(targetWorkspace, sourceRoles, targetRoles, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId);
+
   return;
 };
 
