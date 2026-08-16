@@ -111,8 +111,6 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
             isManyToMany: false,
           },
         })),
-        // Exists filters are surfaced as join attributes so that row-level permission
-        // predicates reach the filtered relation, exactly as they do for a v1 join.
         ...this.existsFilterClauses.map((existsFilterClause) => ({
           alias: { name: existsFilterClause.alias },
           relation: { isOneToMany: false, isManyToMany: false },

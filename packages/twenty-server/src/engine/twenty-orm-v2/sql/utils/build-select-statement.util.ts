@@ -37,10 +37,6 @@ export type ToManyDedupOrder = {
   nulls?: 'NULLS FIRST' | 'NULLS LAST';
 };
 
-// A relation-keyed where entry renders as a correlated EXISTS instead of a join, so
-// that filtering on a to-many relation never multiplies or drops parent rows. The SQL
-// is rendered from a placeholder token at statement time because row-level permission
-// predicates are injected per alias after the where clause has already been built.
 export type ExistsFilterClause = {
   token: string;
   alias: string;
@@ -344,10 +340,9 @@ export const substituteExistsFilterTokens = ({
 }): string =>
   existsFilterClauses.reduce(
     (substituted, existsFilterClause) =>
-      substituted.replaceAll(
-        existsFilterClause.token,
-        renderExistsFilter(existsFilterClause, includeDeleted),
-      ),
+      substituted
+        .split(existsFilterClause.token)
+        .join(renderExistsFilter(existsFilterClause, includeDeleted)),
     expression,
   );
 
@@ -366,8 +361,6 @@ export const buildWhereExpression = (
     collectStatementAliases(state),
   );
 
-  // Nested fragments keep their placeholder tokens so that the outermost render, which
-  // happens after row-level permission predicates have been injected, emits them once.
   const userExpression = substituteExistsFilters
     ? substituteExistsFilterTokens({
         expression: renderedWhereClauses,
