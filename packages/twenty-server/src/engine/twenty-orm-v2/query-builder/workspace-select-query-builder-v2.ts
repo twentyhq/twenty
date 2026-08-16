@@ -53,7 +53,7 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 let objectWhereParameterSequence = 0;
 let existsFilterSequence = 0;
 
-const isNestedWhereObject = (value: unknown): boolean =>
+const isNestedWhereObject = (value: unknown): value is ObjectWhereLike =>
   isDefined(value) &&
   typeof value === 'object' &&
   !Array.isArray(value) &&
@@ -169,6 +169,12 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
 
   copyWhereFrom(source: WorkspaceSelectQueryBuilderV2): this {
     this.whereClauses.push(...source.whereClauses);
+    this.existsFilterClauses.push(
+      ...source.existsFilterClauses.map((existsFilterClause) => ({
+        ...existsFilterClause,
+        additionalOnConditions: [...existsFilterClause.additionalOnConditions],
+      })),
+    );
     this.parameters = { ...this.parameters, ...source.parameters };
 
     return this;
@@ -738,6 +744,15 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       );
     }
 
+    // Row-level permission predicates are injected on the select path only, so an
+    // EXISTS rendered here would filter the related table with no predicate at all.
+    if (this.existsFilterClauses.length > 0) {
+      throw new TwentyOrmV2Exception(
+        `A mutation cannot carry a relation filter; rewrite the filter as an "id IN (subquery)" predicate first`,
+        TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION,
+      );
+    }
+
     return new WorkspaceMutationQueryBuilderV2({
       alias: this.alias,
       kind,
@@ -747,8 +762,6 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
         formatResult: this.context.formatResult,
       },
       whereClauses: this.whereClauses,
-      existsFilterClauses: this.existsFilterClauses,
-      includeDeleted: this.includeDeleted,
       parameters: this.parameters,
     });
   }
@@ -839,7 +852,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
           this.buildRelationExistsCondition({
             relationFieldName: columnName,
             relationShape,
-            where: value as ObjectWhereLike,
+            where: value,
             parameters,
           }),
         );

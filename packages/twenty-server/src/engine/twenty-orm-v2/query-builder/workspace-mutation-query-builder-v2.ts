@@ -8,7 +8,6 @@ import { type QueryExecutorV2 } from 'src/engine/twenty-orm-v2/executor/types/qu
 import {
   buildColumnNameByResultAlias,
   mapRowToEntity,
-  type ExistsFilterClause,
   type WhereClause,
 } from 'src/engine/twenty-orm-v2/sql/utils/build-select-statement.util';
 import { compileNamedParameters } from 'src/engine/twenty-orm-v2/sql/utils/compile-named-parameters.util';
@@ -43,8 +42,6 @@ export class WorkspaceMutationQueryBuilderV2 {
   private readonly context: MutationQueryBuilderV2Context;
   private readonly kind: MutationKind;
   private readonly whereClauses: WhereClause[];
-  private readonly existsFilterClauses: ExistsFilterClause[];
-  private readonly includeDeleted: boolean;
   private parameters: Record<string, unknown>;
   private setRecord: Record<string, unknown> = {};
   private returningColumns: string[] = [];
@@ -54,16 +51,12 @@ export class WorkspaceMutationQueryBuilderV2 {
     kind,
     context,
     whereClauses,
-    existsFilterClauses,
-    includeDeleted,
     parameters,
   }: {
     alias: string;
     kind: MutationKind;
     context: MutationQueryBuilderV2Context;
     whereClauses: WhereClause[];
-    existsFilterClauses: ExistsFilterClause[];
-    includeDeleted: boolean;
     parameters: Record<string, unknown>;
   }) {
     this.alias = alias;
@@ -71,8 +64,6 @@ export class WorkspaceMutationQueryBuilderV2 {
     this.context = context;
     this.tableShape = context.tableShape;
     this.whereClauses = [...whereClauses];
-    this.existsFilterClauses = existsFilterClauses;
-    this.includeDeleted = includeDeleted;
     this.parameters = { ...parameters };
   }
 
@@ -130,8 +121,6 @@ export class WorkspaceMutationQueryBuilderV2 {
       kind: this.kind,
       setClauses,
       whereClauses: this.whereClauses,
-      existsFilterClauses: this.existsFilterClauses,
-      includeDeleted: this.includeDeleted,
       returningColumns: this.returningColumns,
     });
 

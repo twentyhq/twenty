@@ -1,5 +1,7 @@
 import { Any, Equal } from 'typeorm';
 
+import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+
 import { TwentyOrmV2Exception } from 'src/engine/twenty-orm-v2/exceptions/twenty-orm-v2.exception';
 import { applyFindOptionsToQueryBuilder } from 'src/engine/twenty-orm-v2/query-builder/utils/apply-find-options.util';
 import { buildQueryBuilder } from 'src/engine/twenty-orm-v2/query-builder/__tests__/workspace-select-query-builder-v2-test-shapes.util';
@@ -168,7 +170,7 @@ describe('WorkspaceSelectQueryBuilderV2 relation-keyed where', () => {
           orphans: {
             fieldName: 'orphans',
             fieldMetadataId: 'field-orphans',
-            relationType: 'ONE_TO_MANY' as never,
+            relationType: RelationType.ONE_TO_MANY,
             targetObjectMetadataId: 'company-object-id',
             targetFieldMetadataId: null,
           },
@@ -180,5 +182,31 @@ describe('WorkspaceSelectQueryBuilderV2 relation-keyed where', () => {
     expect(() =>
       queryBuilder.where({ orphans: { name: Equal('Twenty') } }),
     ).toThrow(TwentyOrmV2Exception);
+  });
+
+  it('should carry relation filters into a builder that copies the where clauses', () => {
+    const { queryBuilder } = buildQueryBuilder();
+    const { queryBuilder: snapshotQueryBuilder } = buildQueryBuilder();
+
+    queryBuilder
+      .setFindOptions({ select: { id: true } })
+      .where({ people: { name: Equal('Twenty') } });
+
+    snapshotQueryBuilder
+      .setFindOptions({ select: { id: true } })
+      .copyWhereFrom(queryBuilder);
+
+    const text = snapshotQueryBuilder.getQuery();
+
+    expect(text).toContain('EXISTS (');
+    expect(text).not.toContain('__ormV2ExistsFilter');
+  });
+
+  it('should reject a relation filter on a mutation', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.where({ people: { name: Equal('Twenty') } });
+
+    expect(() => queryBuilder.delete()).toThrow(TwentyOrmV2Exception);
   });
 });
