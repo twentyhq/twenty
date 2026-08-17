@@ -4,11 +4,40 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { afterAll, afterEach, beforeAll, beforeEach, vi } from 'vitest';
 
 import { SLACK_TEST_WEBHOOK_SECRET } from 'src/__tests__/constants/slack-test-webhook-secret.constant';
-import { type SlackIntegrationTestContext } from 'src/__tests__/types/slack-integration-test-context.type';
+import { type AppRuntimeMock } from 'src/__tests__/types/app-runtime-mock.type';
+import { type SlackApiMock } from 'src/__tests__/types/slack-api-mock.type';
 import { buildSlackAppConnection } from 'src/__tests__/utils/build-slack-app-connection.util';
 import { createAppRuntimeMock } from 'src/__tests__/utils/create-app-runtime-mock.util';
 import { createSlackApiMock } from 'src/__tests__/utils/create-slack-api-mock.util';
-import { readWorkspaceIdFromTokenOrThrow } from 'src/__tests__/utils/read-workspace-id-from-token-or-throw.util';
+
+type SlackIntegrationTestContext = {
+  slack: SlackApiMock;
+  appRuntime: AppRuntimeMock;
+  coreClient: CoreApiClient;
+  workspaceId: string;
+};
+
+const readWorkspaceIdFromTokenOrThrow = (token: string): string => {
+  const payload = ((): { workspaceId?: string } => {
+    try {
+      return JSON.parse(
+        Buffer.from(token.split('.')[1] ?? '', 'base64url').toString('utf8'),
+      );
+    } catch (error) {
+      throw new Error(
+        `TWENTY_API_KEY is not a readable JWT: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+    }
+  })();
+
+  if (payload.workspaceId === undefined) {
+    throw new Error('TWENTY_API_KEY carries no workspaceId claim');
+  }
+
+  return payload.workspaceId;
+};
 
 const localhostPassthroughHandlers = [
   http.all('http://127.0.0.1*', () => passthrough()),

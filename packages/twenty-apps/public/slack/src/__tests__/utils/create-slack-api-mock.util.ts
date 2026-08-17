@@ -11,7 +11,6 @@ import { type FakeSlackSuggestedPrompts } from 'src/__tests__/types/fake-slack-s
 import { type FakeSlackUser } from 'src/__tests__/types/fake-slack-user.type';
 import { type SlackApiCall } from 'src/__tests__/types/slack-api-call.type';
 import { type SlackApiMock } from 'src/__tests__/types/slack-api-mock.type';
-import { type SlackApiMockOptions } from 'src/__tests__/types/slack-api-mock-options.type';
 
 const SLACK_API_BASE_URL = 'https://slack.com/api';
 
@@ -72,6 +71,12 @@ const parseSlackRequestArgs = async (
 
 const asString = (value: unknown): string | undefined =>
   typeof value === 'string' ? value : undefined;
+
+type SlackApiMockOptions = {
+  botToken?: string;
+  botUserId?: string;
+  teamId?: string;
+};
 
 export const createSlackApiMock = ({
   botToken = DEFAULT_SLACK_BOT_TOKEN,

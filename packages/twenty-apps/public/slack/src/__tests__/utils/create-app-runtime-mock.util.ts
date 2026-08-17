@@ -8,8 +8,6 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { type AppKeyValueScope } from 'src/__tests__/types/app-key-value-scope.type';
 import { type AppRuntimeMock } from 'src/__tests__/types/app-runtime-mock.type';
-import { type AppRuntimeMockOptions } from 'src/__tests__/types/app-runtime-mock-options.type';
-import { type StoredKeyValueEntry } from 'src/__tests__/types/stored-key-value-entry.type';
 
 // The app runtime services (`kv`, `listConnections`, `getConnection`,
 // `runAgent`) are GraphQL calls the server only answers for an
@@ -24,6 +22,17 @@ const readOperationName = (query: string): string | undefined =>
 
 const graphqlError = (message: string) =>
   HttpResponse.json({ errors: [{ message }] });
+
+type AppRuntimeMockOptions = {
+  apiUrl: string;
+  workspaceId: string;
+  connections?: AppConnection[];
+};
+
+type StoredKeyValueEntry = {
+  value: unknown;
+  workspaceId: string | null;
+};
 
 export const createAppRuntimeMock = ({
   apiUrl,
