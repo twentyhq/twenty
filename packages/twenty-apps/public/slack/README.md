@@ -39,9 +39,9 @@ Pick a **workspace shared** or **just for me** Slack connection; steps run with 
 
 ## 💳 Billing
 
-**Free** — the app itself costs no credits and is not metered.
+**Free** — the app charges nothing of its own on top of what it uses.
 
-The assistant still runs on your workspace AI credits, billed on the model's token usage, so every mention or DM answered has an indirect cost. The workflow steps only call Slack and consume nothing.
+The assistant runs on your workspace AI credits, billed on the model's token usage, so every mention or DM answered has a real cost. On top of that, each logic function invocation is metered like any other app's, at a flat rate per run: answering one mention takes a handful of them, which is negligible next to the model tokens. The workflow steps only call Slack, so they cost their invocation and nothing else.
 
 ## 📌 Heads up
 

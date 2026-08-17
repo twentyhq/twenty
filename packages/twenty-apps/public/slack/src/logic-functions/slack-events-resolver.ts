@@ -13,6 +13,7 @@ import {
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 import { findClaimedWorkspaceId } from 'src/logic-functions/utils/find-claimed-workspace-id';
 import { getSlackWebhookSecret } from 'src/logic-functions/utils/get-slack-webhook-secret';
+import { parseSlackAssistantRequest } from 'src/logic-functions/utils/parse-slack-assistant-request';
 import { resolveTargetWorkspaceId } from 'src/logic-functions/utils/resolve-target-workspace-id';
 import { verifySlackRequestSignature } from 'src/logic-functions/utils/verify-slack-request-signature';
 
@@ -87,6 +88,20 @@ export const slackEventsResolverHandler = async (
       targetLogicFunctionUniversalIdentifier,
       payload: body,
     };
+  }
+
+  if (
+    targetLogicFunctionUniversalIdentifier ===
+    SLACK_EVENTS_ENQUEUE_UNIVERSAL_IDENTIFIER
+  ) {
+    const parsed = parseSlackAssistantRequest(body);
+
+    // Slack delivers every message posted in every channel the bot sits in, and
+    // the assistant only acts on a fraction of them. Dropping the rest here
+    // saves a second logic function invocation per unrelated message.
+    if (parsed.request === null && !isDefined(parsed.emptyRequest)) {
+      return new Response({ ok: true, skipped: parsed.skipReason });
+    }
   }
 
   return {

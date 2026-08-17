@@ -36,6 +36,20 @@ vi.mock('src/logic-functions/utils/find-claimed-workspace-id', () => ({
   findClaimedWorkspaceId: findClaimedWorkspaceMock,
 }));
 
+const buildDirectMessageBody = (): SlackEventsRequestBody => ({
+  type: 'event_callback',
+  team_id: 'T123',
+  event_id: 'Ev123',
+  event: {
+    type: 'message',
+    channel_type: 'im',
+    channel: 'D123',
+    ts: '1700000000.000100',
+    user: 'U123',
+    text: 'how many open opportunities do we have?',
+  },
+});
+
 const buildRoutePayload = (body: SlackEventsRequestBody) => ({
   body,
   rawBody: JSON.stringify(body),
@@ -146,13 +160,7 @@ describe('slackEventsResolverHandler', () => {
     );
 
     await expect(
-      slackEventsResolverHandler(
-        buildRoutePayload({
-          type: 'event_callback',
-          team_id: 'T123',
-          event: { type: 'message', channel_type: 'im' },
-        }),
-      ),
+      slackEventsResolverHandler(buildRoutePayload(buildDirectMessageBody())),
     ).rejects.toThrow('No workspace has claimed Slack team T123');
   });
 
@@ -160,11 +168,7 @@ describe('slackEventsResolverHandler', () => {
     resolveWorkspaceMock.mockResolvedValue('workspace-1');
 
     const result = await slackEventsResolverHandler(
-      buildRoutePayload({
-        type: 'event_callback',
-        team_id: 'T123',
-        event: { type: 'message', channel_type: 'im' },
-      }),
+      buildRoutePayload(buildDirectMessageBody()),
     );
 
     expect(result).toMatchObject({
@@ -172,5 +176,52 @@ describe('slackEventsResolverHandler', () => {
         SLACK_EVENTS_ENQUEUE_UNIVERSAL_IDENTIFIER,
     });
     expect(findClaimedWorkspaceMock).not.toHaveBeenCalled();
+  });
+
+  it('should ack a channel message the assistant would discard without resolving a workspace', async () => {
+    const result = await slackEventsResolverHandler(
+      buildRoutePayload({
+        type: 'event_callback',
+        team_id: 'T123',
+        event_id: 'Ev123',
+        event: {
+          type: 'message',
+          channel_type: 'channel',
+          channel: 'C123',
+          ts: '1700000000.000100',
+          user: 'U123',
+          text: 'unrelated channel chatter',
+        },
+      }),
+    );
+
+    expect(result).toBeInstanceOf(Response);
+    expect((result as Response).body).toMatchObject({ ok: true });
+    expect(resolveWorkspaceMock).not.toHaveBeenCalled();
+  });
+
+  it('should still route a mention with no request text so it gets a hint reply', async () => {
+    resolveWorkspaceMock.mockResolvedValue('workspace-1');
+
+    const result = await slackEventsResolverHandler(
+      buildRoutePayload({
+        type: 'event_callback',
+        team_id: 'T123',
+        event_id: 'Ev123',
+        event: {
+          type: 'app_mention',
+          channel_type: 'channel',
+          channel: 'C123',
+          ts: '1700000000.000100',
+          user: 'U123',
+          text: '<@B123>',
+        },
+      }),
+    );
+
+    expect(result).toMatchObject({
+      targetLogicFunctionUniversalIdentifier:
+        SLACK_EVENTS_ENQUEUE_UNIVERSAL_IDENTIFIER,
+    });
   });
 });

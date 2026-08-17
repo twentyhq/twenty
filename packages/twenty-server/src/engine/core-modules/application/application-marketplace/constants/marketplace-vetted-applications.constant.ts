@@ -14,4 +14,8 @@ export const MARKETPLACE_VETTED_APPLICATIONS: {
     universalIdentifier: '66a504cc-0a75-410e-a43f-cdeae1db1522',
     position: 3,
   },
+  {
+    universalIdentifier: 'a8c47f21-3b9e-4d2a-8f61-9c0e7d4a2b51',
+    position: 4,
+  },
 ];
