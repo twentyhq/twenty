@@ -376,6 +376,24 @@ LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 When using `LOGIC_FUNCTION_TYPE=DISABLED` or `CODE_INTERPRETER_TYPE=DISABLED`, any attempt to execute will return an error. This is useful if you want to run Twenty without these capabilities.
 </Note>
 
+## Web sessions
+
+The web app authenticates with an httpOnly session cookie. Existing clients
+migrate to it on their next page load, and API keys and the REST/GraphQL APIs
+are unaffected.
+
+```bash
+AUTH_COOKIE_SESSIONS_ENABLED=false  # opt back out, defaults to true
+```
+
+Session lifetimes are configurable with `SESSION_ABSOLUTE_LIFETIME` (default
+`180d`, never extended) and `SESSION_IDLE_TIMEOUT` (default `30d`).
+
+<Note>
+Serving Twenty over HTTPS is recommended: the session cookie is only sent with
+the `Secure` attribute when `SERVER_URL` uses `https`.
+</Note>
+
 ## API and front-end on separate hosts
 
 Only relevant if you do not let the back-end serve the front-end. Same-origin
