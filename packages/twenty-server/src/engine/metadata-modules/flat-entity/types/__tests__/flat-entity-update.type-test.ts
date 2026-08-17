@@ -57,8 +57,8 @@ type Assertions = [
       | 'imageIdentifierFieldMetadataUniversalIdentifier'
       | 'isSearchable'
       | 'isUIEditable'
-      | 'writability'
       | 'isUICreatable'
+      | 'writability'
     >
   >,
 
