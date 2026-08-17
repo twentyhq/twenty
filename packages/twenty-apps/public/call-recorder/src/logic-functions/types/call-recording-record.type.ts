@@ -1,4 +1,5 @@
 import { type CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
+import { type CallRecordingBotScheduleAttempt } from 'src/logic-functions/domain/call-recording-bot-schedule-attempt';
 
 // Domain read shape: absence is always undefined; null lives only on wire types.
 export type CallRecordingRecord = {
@@ -12,9 +13,7 @@ export type CallRecordingRecord = {
   endedAt?: string;
   calendarEventId?: string;
   externalBotId?: string;
-  botScheduleAttemptId?: string;
-  botScheduleAttemptedAt?: string;
-  botScheduleIdempotencyKey?: string;
+  botScheduleAttempt?: CallRecordingBotScheduleAttempt;
   externalRecordingId?: string;
   callRecorderFailureReason?: string;
 };

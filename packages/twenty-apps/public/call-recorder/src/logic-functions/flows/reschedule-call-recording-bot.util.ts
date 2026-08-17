@@ -47,7 +47,7 @@ export const rescheduleCallRecordingBot = async (
     metadata: buildRecallRoutingMetadata({
       callRecordingId: callRecording.id,
       workspaceId,
-      botScheduleAttemptId: callRecording.botScheduleAttemptId,
+      botScheduleAttemptId: callRecording.botScheduleAttempt?.id,
     }),
   });
 

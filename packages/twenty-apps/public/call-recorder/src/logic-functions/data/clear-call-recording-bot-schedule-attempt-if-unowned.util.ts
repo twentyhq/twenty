@@ -1,23 +1,25 @@
-import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { getCallRecordingBotScheduleAttemptMutationFields } from 'src/logic-functions/data/get-call-recording-bot-schedule-attempt-mutation-fields.util';
+import { type CallRecordingBotScheduleAttempt } from 'src/logic-functions/domain/call-recording-bot-schedule-attempt';
 
 export const clearCallRecordingBotScheduleAttemptIfUnowned = async (
   coreApiClient: CoreApiClient,
   {
     callRecordingId,
-    expectedBotScheduleAttemptId,
-    expectedBotScheduleAttemptedAt,
-    expectedBotScheduleIdempotencyKey,
+    expectedAttempt,
   }: {
     callRecordingId: string;
-    expectedBotScheduleAttemptId: string | undefined;
-    expectedBotScheduleAttemptedAt: string | undefined;
-    expectedBotScheduleIdempotencyKey: string | undefined;
+    expectedAttempt: CallRecordingBotScheduleAttempt | undefined;
   },
 ): Promise<boolean> => {
+  const expectedAttemptFields =
+    getCallRecordingBotScheduleAttemptMutationFields(expectedAttempt);
+  const emptyAttemptFields =
+    getCallRecordingBotScheduleAttemptMutationFields(undefined);
+
   const clearAttemptMutationResult = await coreApiClient.mutation({
     updateCallRecordings: {
       __args: {
@@ -29,23 +31,9 @@ export const clearCallRecordingBotScheduleAttemptIfUnowned = async (
           },
           status: { eq: CallRecordingStatus.SCHEDULED },
           externalBotId: { is: 'NULL' },
-          botScheduleAttemptId: isUndefined(expectedBotScheduleAttemptId)
-            ? { is: 'NULL' }
-            : { eq: expectedBotScheduleAttemptId },
-          botScheduleAttemptedAt: isUndefined(expectedBotScheduleAttemptedAt)
-            ? { is: 'NULL' }
-            : { eq: expectedBotScheduleAttemptedAt },
-          botScheduleIdempotencyKey: isUndefined(
-            expectedBotScheduleIdempotencyKey,
-          )
-            ? { is: 'NULL' }
-            : { eq: expectedBotScheduleIdempotencyKey },
+          ...expectedAttemptFields.filter,
         },
-        data: {
-          botScheduleAttemptId: null,
-          botScheduleAttemptedAt: null,
-          botScheduleIdempotencyKey: null,
-        },
+        data: emptyAttemptFields.data,
       },
       id: true,
     },

@@ -19,8 +19,8 @@ export const hasUnchangedBotScheduleIdempotencyKey = ({
   calendarEvent: CalendarEventRecord;
   workspaceId: string;
 }): boolean => {
-  const storedIdempotencyKey = callRecording.botScheduleIdempotencyKey;
-  const botScheduleAttemptId = callRecording.botScheduleAttemptId;
+  const storedIdempotencyKey = callRecording.botScheduleAttempt?.idempotencyKey;
+  const botScheduleAttemptId = callRecording.botScheduleAttempt?.id;
   const meetingUrl = calendarEvent.conferenceLinkUrl;
   const meetingStartsAt = calendarEvent.startsAt;
 

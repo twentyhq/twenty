@@ -8,6 +8,7 @@ import { CallRecordingStatus } from 'src/logic-functions/constants/call-recordin
 import { type MeetingRecording } from 'src/logic-functions/types/meeting-recording.type';
 import { buildRecallBotAutomaticVideoOutput } from 'src/logic-functions/domain/build-recall-bot-automatic-video-output.util';
 import { buildRecallRoutingMetadata } from 'src/logic-functions/domain/build-recall-routing-metadata.util';
+import { isCompleteCallRecordingBotScheduleAttempt } from 'src/logic-functions/domain/call-recording-bot-schedule-attempt';
 import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
@@ -59,21 +60,16 @@ export const scheduleRecallBotForCallRecording = async (
   }
 
   const automaticVideoOutput = await buildRecallBotAutomaticVideoOutput();
-  const existingBotScheduleAttemptId =
-    freshCallRecording.botScheduleAttemptId;
-  const hasIncompleteBotScheduleAttemptState = isUndefined(
-    existingBotScheduleAttemptId,
-  )
-    ? !isUndefined(freshCallRecording.botScheduleAttemptedAt) ||
-      !isUndefined(freshCallRecording.botScheduleIdempotencyKey)
-    : isUndefined(freshCallRecording.botScheduleAttemptedAt) ||
-      isUndefined(freshCallRecording.botScheduleIdempotencyKey);
+  const existingAttempt = freshCallRecording.botScheduleAttempt;
 
-  if (hasIncompleteBotScheduleAttemptState) {
+  if (
+    !isUndefined(existingAttempt) &&
+    !isCompleteCallRecordingBotScheduleAttempt(existingAttempt)
+  ) {
     return false;
   }
 
-  const botScheduleAttemptId = existingBotScheduleAttemptId ?? randomUUID();
+  const botScheduleAttemptId = existingAttempt?.id ?? randomUUID();
   const metadata = buildRecallRoutingMetadata({
     callRecordingId: callRecording.id,
     workspaceId,
@@ -86,28 +82,25 @@ export const scheduleRecallBotForCallRecording = async (
   });
 
   if (
-    !isUndefined(existingBotScheduleAttemptId) &&
-    freshCallRecording.botScheduleIdempotencyKey !== idempotencyKey
+    !isUndefined(existingAttempt) &&
+    existingAttempt.idempotencyKey !== idempotencyKey
   ) {
     return false;
   }
 
   // Persist the attempt identity before the POST. Re-sends preserve the first
   // timestamp, while a replacement lifecycle claims a new UUID.
-  const botScheduleAttemptedAt =
-    freshCallRecording.botScheduleAttemptedAt ?? new Date().toISOString();
+  const nextAttempt = {
+    id: botScheduleAttemptId,
+    attemptedAt: existingAttempt?.attemptedAt ?? new Date().toISOString(),
+    idempotencyKey,
+  };
 
   const didRecordScheduleAttempt =
     await recordCallRecordingBotScheduleAttemptIfActive(coreApiClient, {
       callRecordingId: callRecording.id,
-      expectedBotScheduleAttemptId: existingBotScheduleAttemptId,
-      expectedBotScheduleAttemptedAt:
-        freshCallRecording.botScheduleAttemptedAt,
-      expectedBotScheduleIdempotencyKey:
-        freshCallRecording.botScheduleIdempotencyKey,
-      botScheduleAttemptId,
-      botScheduleAttemptedAt,
-      botScheduleIdempotencyKey: idempotencyKey,
+      expectedAttempt: existingAttempt,
+      nextAttempt,
     });
 
   if (!didRecordScheduleAttempt) {
@@ -144,7 +137,7 @@ export const scheduleRecallBotForCallRecording = async (
     )[0];
 
     if (
-      callRecordingAfterWritebackConflict?.botScheduleAttemptId ===
+      callRecordingAfterWritebackConflict?.botScheduleAttempt?.id ===
         botScheduleAttemptId &&
       callRecordingAfterWritebackConflict.externalBotId ===
         scheduleResult.externalBotId

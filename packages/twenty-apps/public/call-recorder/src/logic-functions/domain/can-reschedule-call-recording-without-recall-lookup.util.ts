@@ -2,6 +2,7 @@ import { isUndefined } from '@sniptt/guards';
 
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
+import { isCompleteCallRecordingBotScheduleAttempt } from 'src/logic-functions/domain/call-recording-bot-schedule-attempt';
 import { hasUnchangedBotScheduleIdempotencyKey } from 'src/logic-functions/domain/has-unchanged-bot-schedule-idempotency-key.util';
 
 // Recall retains idempotency keys for one hour. Keep a small safety margin so
@@ -22,20 +23,16 @@ export const canRescheduleCallRecordingWithoutRecallLookup = ({
   workspaceId: string | undefined;
   now: Date;
 }): boolean => {
-  const hasNoBotScheduleAttemptState =
-    isUndefined(callRecording.botScheduleAttemptId) &&
-    isUndefined(callRecording.botScheduleAttemptedAt) &&
-    isUndefined(callRecording.botScheduleIdempotencyKey);
+  const botScheduleAttempt = callRecording.botScheduleAttempt;
 
-  if (hasNoBotScheduleAttemptState) {
+  if (isUndefined(botScheduleAttempt)) {
     return true;
   }
 
   return (
-    !isUndefined(callRecording.botScheduleAttemptId) &&
-    !isUndefined(callRecording.botScheduleAttemptedAt) &&
+    isCompleteCallRecordingBotScheduleAttempt(botScheduleAttempt) &&
     isWithinIdempotentResendWindow(
-      callRecording.botScheduleAttemptedAt,
+      botScheduleAttempt.attemptedAt,
       now,
     ) &&
     !isUndefined(workspaceId) &&

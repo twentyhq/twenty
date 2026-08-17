@@ -157,13 +157,13 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
     const existingExternalBotId =
       lookupResult.externalBotIdsByCallRecordingId
         .get(callRecording.id)
-        ?.get(callRecording.botScheduleAttemptId);
+        ?.get(callRecording.botScheduleAttempt?.id);
 
     if (!isUndefined(existingExternalBotId)) {
       const didAttachExistingBot =
         await recordCallRecordingExternalBotIdForScheduleAttempt(client, {
           callRecordingId: callRecording.id,
-          botScheduleAttemptId: callRecording.botScheduleAttemptId,
+          botScheduleAttemptId: callRecording.botScheduleAttempt?.id,
           externalBotId: existingExternalBotId,
         });
 
@@ -176,11 +176,7 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
     const didClearResolvedAttempt =
       await clearCallRecordingBotScheduleAttemptIfUnowned(client, {
         callRecordingId: callRecording.id,
-        expectedBotScheduleAttemptId: callRecording.botScheduleAttemptId,
-        expectedBotScheduleAttemptedAt:
-          callRecording.botScheduleAttemptedAt,
-        expectedBotScheduleIdempotencyKey:
-          callRecording.botScheduleIdempotencyKey,
+        expectedAttempt: callRecording.botScheduleAttempt,
       });
 
     if (!didClearResolvedAttempt) {
@@ -238,7 +234,7 @@ const resolveEndedPendingCallRecording = async ({
   now: Date;
   result: ScheduleRecallBotsForPendingCallRecordingsResult;
 }): Promise<void> => {
-  if (isUndefined(callRecording.botScheduleAttemptedAt)) {
+  if (isUndefined(callRecording.botScheduleAttempt?.attemptedAt)) {
     await markCallRecordingFailed({
       client,
       callRecording,

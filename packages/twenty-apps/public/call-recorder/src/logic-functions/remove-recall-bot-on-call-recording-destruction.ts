@@ -5,6 +5,7 @@ import {
 } from 'twenty-sdk/define';
 
 import { REMOVE_RECALL_BOT_ON_CALL_RECORDING_DESTRUCTION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/remove-recall-bot-on-call-recording-destruction-logic-function-universal-identifier';
+import { getCallRecordingBotScheduleAttempt } from 'src/logic-functions/domain/call-recording-bot-schedule-attempt';
 import { isRecallBotRemovalCallRecordingStatus } from 'src/logic-functions/domain/is-recall-bot-removal-call-recording-status.util';
 import { removeRecallBotsForCallRecording } from 'src/logic-functions/flows/remove-recall-bots-for-call-recording.util';
 
@@ -26,19 +27,13 @@ export const removeRecallBotOnCallRecordingDestructionHandler = async (
 ): Promise<{ removedExternalBotIds: string[] }> => {
   const callRecording = event.properties.before;
   const externalBotId = callRecording.externalBotId ?? undefined;
-  const botScheduleAttemptId =
-    callRecording.botScheduleAttemptId ?? undefined;
-  const botScheduleAttemptedAt =
-    callRecording.botScheduleAttemptedAt ?? undefined;
-  const botScheduleIdempotencyKey =
-    callRecording.botScheduleIdempotencyKey ?? undefined;
+  const botScheduleAttempt =
+    getCallRecordingBotScheduleAttempt(callRecording);
   const removedExternalBotIds = await removeRecallBotsForCallRecording({
     callRecordingId: event.recordId,
     status: callRecording.status ?? undefined,
     externalBotId,
-    botScheduleAttemptId,
-    botScheduleAttemptedAt,
-    botScheduleIdempotencyKey,
+    botScheduleAttempt,
   });
 
   if (
@@ -46,9 +41,7 @@ export const removeRecallBotOnCallRecordingDestructionHandler = async (
       callRecording.status ?? undefined,
     ) &&
     externalBotId === undefined &&
-    (botScheduleAttemptId !== undefined ||
-      botScheduleAttemptedAt !== undefined ||
-      botScheduleIdempotencyKey !== undefined) &&
+    botScheduleAttempt !== undefined &&
     removedExternalBotIds.length === 0
   ) {
     throw new Error('Attempted Recall bot is not visible yet');

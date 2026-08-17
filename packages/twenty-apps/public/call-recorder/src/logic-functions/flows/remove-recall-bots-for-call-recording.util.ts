@@ -2,6 +2,7 @@ import { isUndefined } from '@sniptt/guards';
 
 import { ACTIVE_RECALL_BOT_STATUSES } from 'src/logic-functions/constants/active-recall-bot-statuses';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
+import { type CallRecordingBotScheduleAttempt } from 'src/logic-functions/domain/call-recording-bot-schedule-attempt';
 import { isRecallBotRemovalCallRecordingStatus } from 'src/logic-functions/domain/is-recall-bot-removal-call-recording-status.util';
 import { cancelOrEjectRecallBot } from 'src/logic-functions/recall-api/cancel-or-eject-recall-bot.util';
 import { listScheduledRecallBots } from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
@@ -10,16 +11,12 @@ export const removeRecallBotsForCallRecording = async ({
   callRecordingId,
   status,
   externalBotId,
-  botScheduleAttemptId,
-  botScheduleAttemptedAt,
-  botScheduleIdempotencyKey,
+  botScheduleAttempt,
 }: {
   callRecordingId: string;
   status: string | undefined;
   externalBotId: string | undefined;
-  botScheduleAttemptId: string | undefined;
-  botScheduleAttemptedAt: string | undefined;
-  botScheduleIdempotencyKey: string | undefined;
+  botScheduleAttempt: CallRecordingBotScheduleAttempt | undefined;
 }): Promise<string[]> => {
   if (!isRecallBotRemovalCallRecordingStatus(status)) {
     return [];
@@ -29,11 +26,8 @@ export const removeRecallBotsForCallRecording = async ({
     ? { externalBotIds: [externalBotId], wasTruncated: false }
     : await findExternalBotIdsForAmbiguousAttempt({
         callRecordingId,
-        botScheduleAttemptId,
-        hasAttemptMarker:
-          !isUndefined(botScheduleAttemptId) ||
-          !isUndefined(botScheduleAttemptedAt) ||
-          !isUndefined(botScheduleIdempotencyKey),
+        botScheduleAttemptId: botScheduleAttempt?.id,
+        hasAttemptMarker: !isUndefined(botScheduleAttempt),
       });
 
   for (const externalBotIdToRemove of botLookupResult.externalBotIds) {

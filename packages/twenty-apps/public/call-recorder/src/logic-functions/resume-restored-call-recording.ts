@@ -10,6 +10,7 @@ import { RESUME_RESTORED_CALL_RECORDING_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } fr
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { resetRestoredCallRecordingBotState } from 'src/logic-functions/data/reset-restored-call-recording-bot-state.util';
+import { getCallRecordingBotScheduleAttempt } from 'src/logic-functions/domain/call-recording-bot-schedule-attempt';
 import { isRecallBotRemovalCallRecordingStatus } from 'src/logic-functions/domain/is-recall-bot-removal-call-recording-status.util';
 import { removeRecallBotsForCallRecording } from 'src/logic-functions/flows/remove-recall-bots-for-call-recording.util';
 import {
@@ -51,25 +52,16 @@ export const resumeRestoredCallRecordingHandler = async (
   }
 
   const externalBotId = callRecording.externalBotId ?? undefined;
-  const botScheduleAttemptId =
-    callRecording.botScheduleAttemptId ?? undefined;
-  const botScheduleAttemptedAt =
-    callRecording.botScheduleAttemptedAt ?? undefined;
-  const botScheduleIdempotencyKey =
-    callRecording.botScheduleIdempotencyKey ?? undefined;
+  const botScheduleAttempt =
+    getCallRecordingBotScheduleAttempt(callRecording);
   const hasBotSchedulingState =
-    !isUndefined(externalBotId) ||
-    !isUndefined(botScheduleAttemptId) ||
-    !isUndefined(botScheduleAttemptedAt) ||
-    !isUndefined(botScheduleIdempotencyKey);
+    !isUndefined(externalBotId) || !isUndefined(botScheduleAttempt);
   const client = new CoreApiClient();
   const removedExternalBotIds = await removeRecallBotsForCallRecording({
     callRecordingId: event.recordId,
     status,
     externalBotId,
-    botScheduleAttemptId,
-    botScheduleAttemptedAt,
-    botScheduleIdempotencyKey,
+    botScheduleAttempt,
   });
 
   if (
@@ -83,14 +75,12 @@ export const resumeRestoredCallRecordingHandler = async (
   if (
     hasBotSchedulingState &&
     !(await resetRestoredCallRecordingBotState(client, {
-      id: event.recordId,
+      callRecordingId: event.recordId,
       status,
       recordingRequestStatus:
         callRecording.recordingRequestStatus ?? undefined,
       externalBotId,
-      botScheduleAttemptId,
-      botScheduleAttemptedAt,
-      botScheduleIdempotencyKey,
+      botScheduleAttempt,
     }))
   ) {
     return {

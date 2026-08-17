@@ -74,7 +74,7 @@ export const retryFailedRecallCancellations = async ({
       listedExternalBotId: recoverableCallRecordingIds.has(callRecording.id)
         ? externalBotIdsByCallRecordingId
             ?.get(callRecording.id)
-            ?.get(callRecording.botScheduleAttemptId)
+            ?.get(callRecording.botScheduleAttempt?.id)
         : undefined,
     });
 
@@ -104,7 +104,7 @@ export const retryFailedRecallCancellations = async ({
       await replaceCanceledCallRecordingExternalBotId(client, {
         id: callRecording.id,
         expectedBotScheduleAttemptId:
-          latestCallRecording.botScheduleAttemptId,
+          latestCallRecording.botScheduleAttempt?.id,
         expectedExternalBotId: externalBotId,
         nextExternalBotId: null,
       });
@@ -207,7 +207,7 @@ const recoverRecallBotIdForCanceledCallRecording = async ({
     client,
     {
       id: callRecording.id,
-      expectedBotScheduleAttemptId: callRecording.botScheduleAttemptId,
+      expectedBotScheduleAttemptId: callRecording.botScheduleAttempt?.id,
       expectedExternalBotId: null,
       nextExternalBotId: listedExternalBotId,
     },

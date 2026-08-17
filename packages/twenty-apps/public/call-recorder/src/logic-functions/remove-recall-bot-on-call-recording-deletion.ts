@@ -7,6 +7,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { REMOVE_RECALL_BOT_ON_CALL_RECORDING_DELETION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/remove-recall-bot-on-call-recording-deletion-logic-function-universal-identifier';
 import { findCallRecordingsByFilter } from 'src/logic-functions/data/find-call-recordings-by-filter.util';
+import { getCallRecordingBotScheduleAttempt } from 'src/logic-functions/domain/call-recording-bot-schedule-attempt';
 import { isRecallBotRemovalCallRecordingStatus } from 'src/logic-functions/domain/is-recall-bot-removal-call-recording-status.util';
 import { removeRecallBotsForCallRecording } from 'src/logic-functions/flows/remove-recall-bots-for-call-recording.util';
 
@@ -42,19 +43,13 @@ export const removeRecallBotOnCallRecordingDeletionHandler = async (
 
   const callRecording = event.properties.before;
   const externalBotId = callRecording.externalBotId ?? undefined;
-  const botScheduleAttemptId =
-    callRecording.botScheduleAttemptId ?? undefined;
-  const botScheduleAttemptedAt =
-    callRecording.botScheduleAttemptedAt ?? undefined;
-  const botScheduleIdempotencyKey =
-    callRecording.botScheduleIdempotencyKey ?? undefined;
+  const botScheduleAttempt =
+    getCallRecordingBotScheduleAttempt(callRecording);
   const removedExternalBotIds = await removeRecallBotsForCallRecording({
     callRecordingId: event.recordId,
     status: callRecording.status ?? undefined,
     externalBotId,
-    botScheduleAttemptId,
-    botScheduleAttemptedAt,
-    botScheduleIdempotencyKey,
+    botScheduleAttempt,
   });
 
   if (
@@ -62,9 +57,7 @@ export const removeRecallBotOnCallRecordingDeletionHandler = async (
       callRecording.status ?? undefined,
     ) &&
     externalBotId === undefined &&
-    (botScheduleAttemptId !== undefined ||
-      botScheduleAttemptedAt !== undefined ||
-      botScheduleIdempotencyKey !== undefined) &&
+    botScheduleAttempt !== undefined &&
     removedExternalBotIds.length === 0
   ) {
     throw new Error('Attempted Recall bot is not visible yet');

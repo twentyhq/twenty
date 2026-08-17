@@ -3,32 +3,35 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { getCallRecordingBotScheduleAttemptMutationFields } from 'src/logic-functions/data/get-call-recording-bot-schedule-attempt-mutation-fields.util';
+import { type CallRecordingBotScheduleAttempt } from 'src/logic-functions/domain/call-recording-bot-schedule-attempt';
 
 export const resetRestoredCallRecordingBotState = async (
-  client: CoreApiClient,
+  coreApiClient: CoreApiClient,
   {
-    id,
+    callRecordingId,
     status,
     recordingRequestStatus,
     externalBotId,
-    botScheduleAttemptId,
-    botScheduleAttemptedAt,
-    botScheduleIdempotencyKey,
+    botScheduleAttempt,
   }: {
-    id: string;
+    callRecordingId: string;
     status: string;
     recordingRequestStatus: string | undefined;
     externalBotId: string | undefined;
-    botScheduleAttemptId: string | undefined;
-    botScheduleAttemptedAt: string | undefined;
-    botScheduleIdempotencyKey: string | undefined;
+    botScheduleAttempt: CallRecordingBotScheduleAttempt | undefined;
   },
 ): Promise<boolean> => {
-  const result = await client.mutation({
+  const attemptFields =
+    getCallRecordingBotScheduleAttemptMutationFields(botScheduleAttempt);
+  const emptyAttemptFields =
+    getCallRecordingBotScheduleAttemptMutationFields(undefined);
+
+  const resetBotStateMutationResult = await coreApiClient.mutation({
     updateCallRecordings: {
       __args: {
         filter: {
-          id: { eq: id },
+          id: { eq: callRecordingId },
           deletedAt: { is: 'NULL' },
           recordingRequestStatus: isUndefined(recordingRequestStatus)
             ? { is: 'NULL' }
@@ -36,21 +39,11 @@ export const resetRestoredCallRecordingBotState = async (
           externalBotId: isUndefined(externalBotId)
             ? { is: 'NULL' }
             : { eq: externalBotId },
-          botScheduleAttemptId: isUndefined(botScheduleAttemptId)
-            ? { is: 'NULL' }
-            : { eq: botScheduleAttemptId },
-          botScheduleAttemptedAt: isUndefined(botScheduleAttemptedAt)
-            ? { is: 'NULL' }
-            : { eq: botScheduleAttemptedAt },
-          botScheduleIdempotencyKey: isUndefined(botScheduleIdempotencyKey)
-            ? { is: 'NULL' }
-            : { eq: botScheduleIdempotencyKey },
+          ...attemptFields.filter,
         },
         data: {
           externalBotId: null,
-          botScheduleAttemptId: null,
-          botScheduleAttemptedAt: null,
-          botScheduleIdempotencyKey: null,
+          ...emptyAttemptFields.data,
           ...(recordingRequestStatus ===
             CallRecordingRequestStatus.REQUESTED &&
           status !== CallRecordingStatus.FAILED
@@ -62,5 +55,5 @@ export const resetRestoredCallRecordingBotState = async (
     },
   });
 
-  return (result.updateCallRecordings ?? []).length > 0;
+  return (resetBotStateMutationResult.updateCallRecordings ?? []).length > 0;
 };

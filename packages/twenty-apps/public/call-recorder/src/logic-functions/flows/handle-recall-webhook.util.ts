@@ -132,7 +132,7 @@ const handleRecallStatusEvent = async ({
       callRecordingId: callRecording.id,
       expectedStatus: callRecording.status,
       expectedExternalBotId: callRecording.externalBotId,
-      expectedBotScheduleAttemptId: callRecording.botScheduleAttemptId,
+      expectedBotScheduleAttemptId: callRecording.botScheduleAttempt?.id,
       data: updateData,
     });
 
@@ -234,9 +234,9 @@ const findMatchingCallRecording = async ({
     // row owns a different attempt.
     if (
       !isUndefined(callRecording) &&
-      callRecording.botScheduleAttemptId !==
+      callRecording.botScheduleAttempt?.id !==
         webhookEvent.botScheduleAttemptIdFromMetadata &&
-      (!isUndefined(callRecording.botScheduleAttemptId) ||
+      (!isUndefined(callRecording.botScheduleAttempt?.id) ||
         !isUndefined(webhookEvent.botScheduleAttemptIdFromMetadata))
     ) {
       return undefined;
@@ -266,7 +266,7 @@ const findMatchingCallRecording = async ({
   if (
     !isUndefined(callRecording) &&
     !isUndefined(webhookEvent.botScheduleAttemptIdFromMetadata) &&
-    callRecording.botScheduleAttemptId !==
+    callRecording.botScheduleAttempt?.id !==
       webhookEvent.botScheduleAttemptIdFromMetadata
   ) {
     return undefined;
