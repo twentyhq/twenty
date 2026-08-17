@@ -1942,6 +1942,7 @@ type ClientConfig {
   api: ApiConfig!
   canManageFeatureFlags: Boolean!
   publicFeatureFlags: [PublicFeatureFlag!]!
+  isCookieSessionEnabled: Boolean!
   isMicrosoftMessagingEnabled: Boolean!
   isMicrosoftCalendarEnabled: Boolean!
   isGoogleMessagingEnabled: Boolean!

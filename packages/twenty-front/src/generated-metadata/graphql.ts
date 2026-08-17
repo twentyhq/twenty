@@ -965,6 +965,7 @@ export type ClientConfig = {
   isCloudflareIntegrationEnabled: Scalars['Boolean']['output'];
   isCompanyEnrichmentEnabled: Scalars['Boolean']['output'];
   isConfigVariablesInDbEnabled: Scalars['Boolean']['output'];
+  isCookieSessionEnabled: Scalars['Boolean']['output'];
   isEmailVerificationRequired: Scalars['Boolean']['output'];
   isEmailingDomainInDemoMode: Scalars['Boolean']['output'];
   isGoogleCalendarEnabled: Scalars['Boolean']['output'];

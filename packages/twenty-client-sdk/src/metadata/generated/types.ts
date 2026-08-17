@@ -3772,6 +3772,9 @@ export default {
             "publicFeatureFlags": [
                 196
             ],
+            "isCookieSessionEnabled": [
+                8
+            ],
             "isMicrosoftMessagingEnabled": [
                 8
             ],

@@ -96,6 +96,7 @@ describe('ClientConfigController', () => {
         analyticsEnabled: false,
         canManageFeatureFlags: true,
         publicFeatureFlags: [],
+        isCookieSessionEnabled: true,
         isMicrosoftMessagingEnabled: false,
         isMicrosoftCalendarEnabled: false,
         isGoogleMessagingEnabled: false,
