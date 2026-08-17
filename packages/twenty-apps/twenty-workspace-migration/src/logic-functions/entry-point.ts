@@ -75,7 +75,7 @@ function extractNodes<T>(connection: { edges: { node: T }[] }): T[] {
   return connection.edges.map(edge => edge.node);
 }
 
-const areObjectsIdentical = (a: ObjectType, b: ObjectType) => {
+export const areObjectsIdentical = (a: ObjectType, b: ObjectType) => {
   return a.color === b.color &&
     a.description === b.description &&
     a.isLabelSyncedWithName === b.isLabelSyncedWithName &&
@@ -86,13 +86,13 @@ const areObjectsIdentical = (a: ObjectType, b: ObjectType) => {
     a.icon === b.icon;
 }
 
-const areRelationsIdentical = (a: FieldRelationInfo, b: FieldRelationInfo) => {
+export const areRelationsIdentical = (a: FieldRelationInfo, b: FieldRelationInfo) => {
   return a.targetObjectMetadata.nameSingular === b.targetObjectMetadata.nameSingular &&
     a.targetFieldMetadata.icon === b.targetFieldMetadata.icon &&
     a.targetFieldMetadata.label === b.targetFieldMetadata.label;
 }
 
-const areMorphRelationsIdentical = (a: FieldRelationInfo[], b: FieldRelationInfo[]) => {
+export const areMorphRelationsIdentical = (a: FieldRelationInfo[], b: FieldRelationInfo[]) => {
   if (a.length !== b.length) {
     return false;
   }
@@ -104,7 +104,7 @@ const areMorphRelationsIdentical = (a: FieldRelationInfo[], b: FieldRelationInfo
   });
 }
 
-const areFieldsListsIdentical = (a: FieldsListType, b: FieldsListType) => {
+export const areFieldsListsIdentical = (a: FieldsListType, b: FieldsListType) => {
   if (a.type === 'RELATION' && b.type === 'RELATION') {
     return a.description === b.description &&
       a.icon === b.icon &&
@@ -150,7 +150,7 @@ const areFieldsListsIdentical = (a: FieldsListType, b: FieldsListType) => {
     JSON.stringify(a.settings) === JSON.stringify(b.settings);
 }
 
-const buildFieldToCreate = (
+export const buildFieldToCreate = (
   field: FieldsListType,
   targetObjectId: string,
   targetObjects: { nameSingular: string, id: string, universalIdentifier: string }[],
@@ -253,7 +253,7 @@ const buildFieldToCreate = (
 // target-workspace record ids. Unresolvable references (target record not migrated,
 // e.g. out of scope, or a forward reference to a not-yet-migrated record of the same
 // object) are dropped with a warning rather than failing the record.
-const buildRecordDataToCreate = (
+export const buildRecordDataToCreate = (
   node: Record<string, unknown>,
   dataKeys: string[],
   relationForeignKeyNames: string[],
@@ -282,7 +282,7 @@ const buildRecordDataToCreate = (
   return data;
 };
 
-const migrateRecordsForObject = async (
+export const migrateRecordsForObject = async (
   sourceWorkspace: AxiosInstance,
   targetWorkspace: AxiosInstance,
   sourceObject: ObjectType,
@@ -323,7 +323,7 @@ const migrateRecordsForObject = async (
   console.log(`Migrated ${migratedCount} record(s) for ${sourceObject.nameSingular}`);
 };
 
-const migrateViews = async (
+export const migrateViews = async (
   targetWorkspace: AxiosInstance,
   sourceViews: Awaited<ReturnType<typeof findViews>>,
   targetViews: Awaited<ReturnType<typeof findViews>>,
@@ -574,7 +574,7 @@ const migrateNavigationMenuItems = async (
   console.log(`Navigation menu items: created ${createdCount}`);
 };
 
-const migrateSkills = async (targetWorkspace: AxiosInstance, sourceSkills: Awaited<ReturnType<typeof findSkills>>, targetSkills: Awaited<ReturnType<typeof findSkills>>) => {
+export const migrateSkills = async (targetWorkspace: AxiosInstance, sourceSkills: Awaited<ReturnType<typeof findSkills>>, targetSkills: Awaited<ReturnType<typeof findSkills>>) => {
   const existingTargetSkillIds = new Set(targetSkills.map((skill) => skill.id));
 
   let createdCount = 0;
@@ -598,7 +598,7 @@ const migrateSkills = async (targetWorkspace: AxiosInstance, sourceSkills: Await
   console.log(`Skills: created ${createdCount}`);
 };
 
-const migrateWebhooks = async (targetWorkspace: AxiosInstance, sourceWebhooks: Awaited<ReturnType<typeof findWebhooks>>, targetWebhooks: Awaited<ReturnType<typeof findWebhooks>>) => {
+export const migrateWebhooks = async (targetWorkspace: AxiosInstance, sourceWebhooks: Awaited<ReturnType<typeof findWebhooks>>, targetWebhooks: Awaited<ReturnType<typeof findWebhooks>>) => {
   const existingTargetWebhookIds = new Set(targetWebhooks.map((webhook) => webhook.id));
 
   let createdCount = 0;
@@ -724,7 +724,7 @@ const WIDGET_CONFIGURATION_FIELD_METADATA_ID_KEYS = [
   'nestedRelationFieldMetadataId',
 ];
 
-const remapWidgetConfiguration = (
+export const remapWidgetConfiguration = (
   configuration: Record<string, unknown>,
   targetFieldIdBySourceFieldId: Map<string, string>,
 ): Record<string, unknown> => {
@@ -743,7 +743,7 @@ const remapWidgetConfiguration = (
 // layout, so populating a brand-new empty layout works the same as updating an existing one),
 // widget objectMetadataId/configuration remapped against the target workspace, and VIEW-type
 // widgets skipped - the one widget type still rejected even through this bulk mutation.
-const buildPageLayoutTabsInput = (
+export const buildPageLayoutTabsInput = (
   sourceTabs: PageLayoutTab[],
   targetObjectIdBySourceObjectId: Map<string, string>,
   targetFieldIdBySourceFieldId: Map<string, string>,
