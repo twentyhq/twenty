@@ -1,5 +1,6 @@
 import { AttachmentFileInput } from '@/activities/files/components/AttachmentFileInput';
 import { useCanUploadAttachmentFiles } from '@/activities/files/hooks/useCanUploadAttachmentFiles';
+import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { WidgetCardHeaderActionButton } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionButton';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { t } from '@lingui/core/macro';
@@ -8,10 +9,11 @@ import { IconPlus } from 'twenty-ui/icon';
 
 export const WidgetActionFileAttach = () => {
   const targetRecord = useTargetRecord();
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
   const inputFileRef = useRef<HTMLInputElement>(null);
   const { canUploadFiles } = useCanUploadAttachmentFiles(targetRecord);
 
-  if (!canUploadFiles) {
+  if (isPageLayoutInEditMode || !canUploadFiles) {
     return null;
   }
 

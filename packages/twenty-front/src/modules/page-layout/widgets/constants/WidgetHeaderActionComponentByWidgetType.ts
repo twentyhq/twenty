@@ -1,3 +1,4 @@
+import { WidgetFieldActions } from '@/page-layout/widgets/components/WidgetFieldActions';
 import { WidgetActionEmailCompose } from '@/page-layout/widgets/emails/components/WidgetActionEmailCompose';
 import { WidgetActionFileAttach } from '@/page-layout/widgets/files/components/WidgetActionFileAttach';
 import { WidgetActionNoteCreate } from '@/page-layout/widgets/notes/components/WidgetActionNoteCreate';
@@ -8,6 +9,7 @@ import { WidgetType } from '~/generated-metadata/graphql';
 export const WIDGET_HEADER_ACTION_COMPONENT_BY_WIDGET_TYPE: Partial<
   Record<WidgetType, ComponentType>
 > = {
+  [WidgetType.FIELD]: WidgetFieldActions,
   [WidgetType.EMAILS]: WidgetActionEmailCompose,
   [WidgetType.TASKS]: WidgetActionTaskCreate,
   [WidgetType.NOTES]: WidgetActionNoteCreate,

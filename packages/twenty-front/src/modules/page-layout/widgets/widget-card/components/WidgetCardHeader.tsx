@@ -120,9 +120,7 @@ export const WidgetCardHeader = ({
         )}
       </StyledTitleContainer>
       <StyledRightContainer>
-        {hasAccess && (
-          <WidgetCardHeaderActionsRenderer isInEditMode={isInEditMode} />
-        )}
+        {hasAccess && <WidgetCardHeaderActionsRenderer />}
         {isDefined(forbiddenDisplay) && forbiddenDisplay}
         <AnimatePresence initial={false}>
           {!isResizing &&
