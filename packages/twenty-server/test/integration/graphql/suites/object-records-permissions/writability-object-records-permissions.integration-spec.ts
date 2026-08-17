@@ -37,13 +37,15 @@ const setObjectWritability = async (
     { writability },
   );
 
-  await updateOneObjectMetadata({
+  const { errors } = await updateOneObjectMetadata({
     expectToFail: false,
     input: {
       idToUpdate: objectMetadataId,
       updatePayload: { description: `writability set to ${writability}` },
     },
   });
+
+  expect(errors).toBeUndefined();
 };
 
 const setFieldWritability = async (
@@ -55,13 +57,15 @@ const setFieldWritability = async (
     { writability },
   );
 
-  await updateOneFieldMetadata({
+  const { errors } = await updateOneFieldMetadata({
     expectToFail: false,
     input: {
       idToUpdate: fieldMetadataId,
       updatePayload: { description: `writability set to ${writability}` },
     },
   });
+
+  expect(errors).toBeUndefined();
 };
 
 describe('writabilityObjectRecordsPermissions', () => {
