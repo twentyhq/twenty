@@ -4,8 +4,11 @@ import { MATCHING_MEDIA_TYPES } from '@/polyfills/media-query/constants/Matching
 import { NON_MATCHING_MEDIA_TYPES } from '@/polyfills/media-query/constants/NonMatchingMediaTypes';
 import { type ParsedMediaQuery } from '@/polyfills/media-query/types/ParsedMediaQuery';
 import { type ParsedMediaQueryCondition } from '@/polyfills/media-query/types/ParsedMediaQueryCondition';
+import { isMediaQueryConditionPart } from '@/polyfills/media-query/utils/isMediaQueryConditionPart';
 import { parseMediaQueryCondition } from '@/polyfills/media-query/utils/parseMediaQueryCondition';
 import { parseMediaQueryModifier } from '@/polyfills/media-query/utils/parseMediaQueryModifier';
+
+const MEDIA_QUERY_PART_SEPARATOR_PATTERN = /\s+and\s+/;
 
 export const parseMediaQuery = (
   mediaQueryString: string,
@@ -16,13 +19,14 @@ export const parseMediaQuery = (
     return { isNegated: false, matchesMediaType: true, conditions: [] };
   }
 
-  const [firstQueryPart, ...followingQueryParts] =
-    normalizedQuery.split(/\s+and\s+/);
+  const [firstQueryPart, ...followingQueryParts] = normalizedQuery.split(
+    MEDIA_QUERY_PART_SEPARATOR_PATTERN,
+  );
 
   const { isNegated, requiresMediaType, remainingFirstPart } =
     parseMediaQueryModifier(firstQueryPart.trim());
 
-  if (requiresMediaType && remainingFirstPart.startsWith('(')) {
+  if (requiresMediaType && isMediaQueryConditionPart(remainingFirstPart)) {
     return null;
   }
 
@@ -33,8 +37,9 @@ export const parseMediaQuery = (
 
   for (const [partIndex, queryPart] of queryParts.entries()) {
     const currentPart = queryPart.trim();
+    const isFirstQueryPart = partIndex === 0;
 
-    if (currentPart.startsWith('(')) {
+    if (isMediaQueryConditionPart(currentPart)) {
       const parsedCondition = parseMediaQueryCondition(currentPart);
 
       if (!isDefined(parsedCondition)) {
@@ -45,7 +50,7 @@ export const parseMediaQuery = (
       continue;
     }
 
-    if (partIndex > 0) {
+    if (!isFirstQueryPart) {
       return null;
     }
 
