@@ -9,7 +9,6 @@ import { isPendingServerSignOutState } from '@/auth/states/isPendingServerSignOu
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { ensureTokenRenewed } from '@/auth/utils/ensureTokenRenewed';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
-import { isCookieSessionEnabledState } from '@/client-config/states/isCookieSessionEnabledState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
@@ -43,7 +42,6 @@ export const CookieSessionBootEffect = () => {
   const apolloClient = useApolloClient();
   const store = useStore();
   const { isLoadedOnce } = useAtomStateValue(clientConfigApiStatusState);
-  const isCookieSessionEnabled = useAtomStateValue(isCookieSessionEnabledState);
   const [isCookieAuthActive, setIsCookieAuthActive] = useAtomState(
     isCookieAuthActiveState,
   );
@@ -69,7 +67,7 @@ export const CookieSessionBootEffect = () => {
     };
 
     // The token pair is deliberately retained rather than cleared. A server
-    // that still has cookie sessions disabled ignores the session cookie, so a
+    // that predates cookie sessions ignores the session cookie, so a
     // cookie-only client is unauthenticated against it — which is every request
     // routed to a not-yet-rolled pod during a deploy, and every request after a
     // rollback. Keeping the pair lets those fall back instead of signing the
@@ -125,14 +123,6 @@ export const CookieSessionBootEffect = () => {
         return;
       }
 
-      if (!isCookieSessionEnabled) {
-        if (isCookieAuthActive) {
-          setIsCookieAuthActive(false);
-        }
-
-        return;
-      }
-
       if (isCookieAuthActive || hasProbeRunRef.current) {
         return;
       }
@@ -148,7 +138,6 @@ export const CookieSessionBootEffect = () => {
   }, [
     apolloClient,
     isCookieAuthActive,
-    isCookieSessionEnabled,
     isLoadedOnce,
     setIsCookieAuthActive,
     store,

@@ -193,6 +193,21 @@ export class WorkspaceRepositoryV2 {
     return this.find({ where });
   }
 
+  async findAndCount(
+    options?: FindOptionsV2,
+  ): Promise<[ObjectRecord[], number]> {
+    const records = await this.find(options);
+    const totalCount = await this.count(options);
+
+    return [records, totalCount];
+  }
+
+  async findAndCountBy(
+    where: ObjectWhereLike | ObjectWhereLike[],
+  ): Promise<[ObjectRecord[], number]> {
+    return this.findAndCount({ where });
+  }
+
   async findOne(options?: FindOptionsV2): Promise<ObjectRecord | null> {
     if (!isDefined(options?.where)) {
       throw new TwentyOrmV2Exception(
@@ -1310,6 +1325,7 @@ export class WorkspaceRepositoryV2 {
       selectedColumns: columnsToReturn,
       allFieldsSelected: false,
       updatedColumns,
+      authContext: this.options.authContext,
     });
   }
 
