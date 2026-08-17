@@ -4553,6 +4553,7 @@ export type Query = {
   agentTurns: Array<AgentTurn>;
   apiKey?: Maybe<ApiKey>;
   apiKeys: Array<ApiKey>;
+  appCallerHasPermissionFlag: Scalars['Boolean']['output'];
   appConnection: AppConnection;
   appConnections: Array<AppConnection>;
   appKeyValue?: Maybe<AppKeyValue>;
@@ -4676,6 +4677,13 @@ export type QueryAgentTurnsArgs = {
 
 export type QueryApiKeyArgs = {
   input: GetApiKeyInput;
+};
+
+
+export type QueryAppCallerHasPermissionFlagArgs = {
+  apiKeyId?: InputMaybe<Scalars['String']['input']>;
+  permissionFlag: PermissionFlagType;
+  userWorkspaceId?: InputMaybe<Scalars['String']['input']>;
 };
 
 

@@ -7003,6 +7003,21 @@ export default {
                     ]
                 }
             ],
+            "appCallerHasPermissionFlag": [
+                8,
+                {
+                    "permissionFlag": [
+                        50,
+                        "PermissionFlagType!"
+                    ],
+                    "userWorkspaceId": [
+                        1
+                    ],
+                    "apiKeyId": [
+                        1
+                    ]
+                }
+            ],
             "appConnections": [
                 204,
                 {
