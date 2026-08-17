@@ -17,6 +17,7 @@ import { LogEmailingDomainDriver } from 'src/engine/core-modules/emailing-domain
 import { ResendApiClientService } from 'src/engine/core-modules/emailing-domain/drivers/resend/services/resend-api-client.service';
 import { ResendDriver } from 'src/engine/core-modules/emailing-domain/drivers/resend/services/resend-driver.service';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
+import { EmailGroupAccessService } from 'src/engine/core-modules/emailing-domain/services/email-group-access.service';
 import { UnsubscribeContentService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-content.service';
 import { DriverFactoryBase } from 'src/engine/core-modules/twenty-config/dynamic-factory.base';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
@@ -35,8 +36,15 @@ export class EmailingDomainDriverFactory extends DriverFactoryBase<EmailingDomai
     private readonly logEmailingDomainDriver: LogEmailingDomainDriver,
     private readonly resendApiClientService: ResendApiClientService,
     private readonly unsubscribeContentService: UnsubscribeContentService,
+    private readonly emailGroupAccessService: EmailGroupAccessService,
   ) {
     super(twentyConfigService, configGroupHashService);
+  }
+
+  override getCurrentDriver(): EmailingDomainDriverInterface {
+    this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
+
+    return super.getCurrentDriver();
   }
 
   protected buildConfigKey(): string {

@@ -57,6 +57,16 @@ export class ResendDriver implements EmailingDomainDriverInterface {
   ): Promise<EmailingDomainVerificationResult> {
     const domain = await this.findOrCreateDomain(input.domain);
 
+    const currentDomain = await this.resendApiClientService.getDomain(
+      domain.id,
+    );
+
+    if (
+      mapResendSendingStatus(currentDomain) === EmailingDomainStatus.VERIFIED
+    ) {
+      return this.toVerificationResult(currentDomain);
+    }
+
     await this.resendApiClientService.verifyDomain(domain.id);
 
     const refreshedDomain = await this.resendApiClientService.getDomain(
