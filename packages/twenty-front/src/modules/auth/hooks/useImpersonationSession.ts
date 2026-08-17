@@ -1,6 +1,7 @@
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
@@ -73,12 +74,15 @@ export const useImpersonationSession = () => {
 
     if (isCookieAuthActive) {
       let returnPath = window.location.pathname;
+      let parkedTokenPair: AuthTokenPair | undefined;
 
       if (raw !== null) {
         sessionStorage.removeItem(IMPERSONATION_SESSION_KEY);
         try {
-          returnPath = (JSON.parse(raw) as StoredImpersonationSession)
-            .returnPath;
+          const session = JSON.parse(raw) as StoredImpersonationSession;
+
+          returnPath = session.returnPath;
+          parkedTokenPair = session.tokenPair;
         } catch {}
       }
 
@@ -94,7 +98,24 @@ export const useImpersonationSession = () => {
         }
       } catch {}
 
-      // Cross-workspace: the admin session on its own origin was never replaced.
+      // The server had no impersonator session to hand back, and it cleared the
+      // session cookie on its way out. startImpersonating parked the token pair
+      // it dropped, so hand that back: it is the same credential the admin held
+      // before impersonating, and signing them out of it instead would end a
+      // session that is still valid. Cookie auth goes off with it, otherwise the
+      // auth link keeps suppressing the Bearer and the tab is left holding no
+      // credential at all.
+      if (isDefined(parkedTokenPair)) {
+        store.set(isCookieAuthActiveState.atom, false);
+        store.set(tokenPairState.atom, parkedTokenPair);
+        clearSessionLocalStorageKeys();
+        reloadWithSession(returnPath);
+
+        return;
+      }
+
+      // Cross-workspace: the admin session on its own origin was never replaced,
+      // and this origin never held one to park.
       window.close();
       await signOut();
 
