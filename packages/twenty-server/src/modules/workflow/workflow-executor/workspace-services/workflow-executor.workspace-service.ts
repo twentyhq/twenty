@@ -263,10 +263,7 @@ export class WorkflowExecutorWorkspaceService {
     }
 
     if (isWorkflowIfElseAction(executedStep)) {
-      return getNextStepIdsForIfElse({
-        executedStep,
-        executedStepOutput,
-      });
+      return getNextStepIdsForIfElse({ executedStep });
     }
 
     return { nextStepIdsToExecute: executedStep.nextStepIds };
