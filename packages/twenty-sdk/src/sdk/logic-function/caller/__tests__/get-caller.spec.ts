@@ -41,4 +41,19 @@ describe('getCaller', () => {
 
     expect(getCaller()).toBeNull();
   });
+
+  it('should return null for valid JSON of the wrong shape', () => {
+    process.env[DEFAULT_CALLER_NAME] = JSON.stringify({ foo: 'bar' });
+
+    expect(getCaller()).toBeNull();
+  });
+
+  it('should return null for a user caller missing required fields', () => {
+    process.env[DEFAULT_CALLER_NAME] = JSON.stringify({
+      kind: 'user',
+      userId: 'user-1',
+    });
+
+    expect(getCaller()).toBeNull();
+  });
 });

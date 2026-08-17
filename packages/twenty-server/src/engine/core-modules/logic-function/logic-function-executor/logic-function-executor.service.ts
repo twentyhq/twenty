@@ -362,18 +362,23 @@ export class LogicFunctionExecutorService {
         applicationVariableMaps,
       });
 
-    return {
+    const envVariables: Record<string, string> = {
       [DEFAULT_API_URL_NAME]: baseUrl ?? '',
       [DEFAULT_APP_ACCESS_TOKEN_NAME]: applicationAccessToken.token,
       [DEFAULT_API_KEY_NAME]: applicationAccessToken.token,
       [DEFAULT_FUNCTIONS_URL_NAME]: functionsBaseUrl ?? '',
       APPLICATION_ID: flatApplication.id,
-      ...(isDefined(caller)
-        ? { [DEFAULT_CALLER_NAME]: JSON.stringify(caller) }
-        : {}),
       ...serverVariables,
       ...workspaceVariables,
     };
+
+    delete envVariables[DEFAULT_CALLER_NAME];
+
+    if (isDefined(caller)) {
+      envVariables[DEFAULT_CALLER_NAME] = JSON.stringify(caller);
+    }
+
+    return envVariables;
   }
 
   private async buildFunctionsBaseUrl({
