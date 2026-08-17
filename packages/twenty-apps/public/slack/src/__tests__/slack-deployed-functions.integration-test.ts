@@ -3,7 +3,7 @@ import * as path from 'path';
 
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { functionExecute } from 'twenty-sdk/cli';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 import { buildSlackRoutePayload } from 'src/__tests__/utils/build-slack-event-payloads';
 import { requireDefinedOrThrow } from 'src/__tests__/utils/require-defined-or-throw';
@@ -67,6 +67,31 @@ describe('Slack app deployed functions', () => {
     });
   };
 
+  // Narrows the window in which the instance verifies Slack signatures against
+  // a value published in this repository to the block that needs it.
+  const withTestWebhookSecret = async (
+    run: () => Promise<void>,
+  ): Promise<void> => {
+    await writeWebhookSecret(SLACK_TEST_WEBHOOK_SECRET);
+
+    try {
+      await run();
+    } finally {
+      await writeWebhookSecret('');
+    }
+  };
+
+  const verifiesTestWebhookSecret = async (): Promise<boolean> => {
+    const execution = await executeDeployedFunction('slack-events-resolver', {
+      ...buildSlackRoutePayload({
+        type: 'url_verification',
+        challenge: 'leftover-secret-probe',
+      }),
+    });
+
+    return execution.status === 'SUCCESS';
+  };
+
   beforeAll(async () => {
     const applicationsResult = await metadataClient.query({
       findManyApplications: {
@@ -105,22 +130,20 @@ describe('Slack app deployed functions', () => {
       'The SLACK_WEBHOOK_SECRET application variable was not found on the test workspace',
     );
 
-    // The stored secret is write-only, so a real one could not be put back
-    // afterwards: refuse to overwrite it rather than leaving the instance
-    // verifying Slack signatures against a public test value.
-    if (webhookSecretVariable.isFilled) {
-      throw new Error(
-        'SLACK_WEBHOOK_SECRET is already set on this instance. Run the integration suite against a disposable Twenty instance.',
-      );
-    }
-
     webhookSecretVariableId = webhookSecretVariable.id;
 
-    await writeWebhookSecret(SLACK_TEST_WEBHOOK_SECRET);
-  });
+    // The stored secret is write-only, so a real one could not be put back
+    // afterwards: refuse to overwrite it rather than leaving the instance
+    // verifying Slack signatures against a public test value. A secret this
+    // suite left behind when it was interrupted is the one exception, and it
+    // is recognisable because it verifies the public test signature.
+    if (webhookSecretVariable.isFilled) {
+      if (!(await verifiesTestWebhookSecret())) {
+        throw new Error(
+          'SLACK_WEBHOOK_SECRET is already set on this instance. Run the integration suite against a disposable Twenty instance.',
+        );
+      }
 
-  afterAll(async () => {
-    if (webhookSecretVariableId !== undefined) {
       await writeWebhookSecret('');
     }
   });
@@ -141,31 +164,37 @@ describe('Slack app deployed functions', () => {
   });
 
   it('should answer the Slack url_verification handshake from the deployed events route', async () => {
-    const execution = await executeDeployedFunction('slack-events-resolver', {
-      ...buildSlackRoutePayload({
-        type: 'url_verification',
-        challenge: 'deployed-challenge-token',
-      }),
-    });
+    await withTestWebhookSecret(async () => {
+      const execution = await executeDeployedFunction('slack-events-resolver', {
+        ...buildSlackRoutePayload({
+          type: 'url_verification',
+          challenge: 'deployed-challenge-token',
+        }),
+      });
 
-    expect(execution.status).toBe('SUCCESS');
-    expect(execution.data).toEqual(
-      expect.objectContaining({
-        body: { challenge: 'deployed-challenge-token' },
-      }),
-    );
+      expect(execution.status).toBe('SUCCESS');
+      expect(execution.data).toEqual(
+        expect.objectContaining({
+          body: { challenge: 'deployed-challenge-token' },
+        }),
+      );
+    });
   });
 
   it('should reject an unsigned Slack request from the deployed events route', async () => {
-    const execution = await executeDeployedFunction('slack-events-resolver', {
-      ...buildSlackRoutePayload(
-        { type: 'url_verification', challenge: 'deployed-challenge-token' },
-        { secret: 'not-the-signing-secret' },
-      ),
-    });
+    await withTestWebhookSecret(async () => {
+      const execution = await executeDeployedFunction('slack-events-resolver', {
+        ...buildSlackRoutePayload(
+          { type: 'url_verification', challenge: 'deployed-challenge-token' },
+          { secret: 'not-the-signing-secret' },
+        ),
+      });
 
-    expect(execution.status).toBe('ERROR');
-    expect(execution.error?.errorMessage).toContain('Invalid Slack signature');
+      expect(execution.status).toBe('ERROR');
+      expect(execution.error?.errorMessage).toContain(
+        'Invalid Slack signature',
+      );
+    });
   });
 
   it('should report the missing Slack connection from the deployed channel list tool', async () => {
