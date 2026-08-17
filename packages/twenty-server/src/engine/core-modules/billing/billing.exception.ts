@@ -40,6 +40,8 @@ export enum BillingExceptionCode {
   BILLING_CREDIT_GRANT_VALIDITY_INVALID = 'BILLING_CREDIT_GRANT_VALIDITY_INVALID',
   BILLING_USAGE_UNAVAILABLE = 'BILLING_USAGE_UNAVAILABLE',
   BILLING_CREDIT_GRANT_TYPE_NOT_GRANTABLE = 'BILLING_CREDIT_GRANT_TYPE_NOT_GRANTABLE',
+  BILLING_UPGRADE_INVOICE_PAYMENT_FAILED = 'BILLING_UPGRADE_INVOICE_PAYMENT_FAILED',
+  BILLING_UPGRADE_INVOICE_VOID_FAILED = 'BILLING_UPGRADE_INVOICE_VOID_FAILED',
 }
 
 const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
@@ -108,6 +110,10 @@ const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
       return msg`Usage could not be read. Please try again later.`;
     case BillingExceptionCode.BILLING_CREDIT_GRANT_TYPE_NOT_GRANTABLE:
       return msg`This kind of credit grant cannot be created by hand.`;
+    case BillingExceptionCode.BILLING_UPGRADE_INVOICE_PAYMENT_FAILED:
+      return msg`Your payment method was declined. Please update it and try again.`;
+    case BillingExceptionCode.BILLING_UPGRADE_INVOICE_VOID_FAILED:
+      return msg`An unexpected billing error occurred. Please contact support.`;
     default:
       assertUnreachable(code);
   }
