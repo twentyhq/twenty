@@ -68,5 +68,14 @@ export type {
 export { kv } from '@/sdk/logic-function/key-value/kv';
 export type { AppKeyValue, AppKeyValueScope } from 'twenty-shared/application';
 
+export { getCaller } from '@/sdk/logic-function/caller/get-caller';
+export { callerHasPermissionFlag } from '@/sdk/logic-function/caller/caller-has-permission-flag';
+export type {
+  LogicFunctionApiKeyCaller,
+  LogicFunctionCaller,
+  LogicFunctionUserCaller,
+} from 'twenty-shared/application';
+export { PermissionFlagType } from 'twenty-shared/constants';
+
 export { Response } from '@/sdk/logic-function/response';
 export type { ResponseInit } from '@/sdk/logic-function/response';

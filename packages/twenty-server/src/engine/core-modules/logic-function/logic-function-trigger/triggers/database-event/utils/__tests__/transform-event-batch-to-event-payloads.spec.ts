@@ -450,4 +450,43 @@ describe('transformEventBatchToEventPayloads', () => {
       expect(result).toHaveLength(0);
     });
   });
+
+  describe('caller identity', () => {
+    it('should build the caller from the identity of the event mutator', () => {
+      const workspaceEventBatch = createMockWorkspaceEventBatch({
+        events: [
+          createMockEvent({
+            userId: 'user-1',
+            userWorkspaceId: 'user-workspace-1',
+            workspaceMemberId: 'workspace-member-1',
+          }),
+        ],
+      });
+      const logicFunctions = [createMockLogicFunction()];
+
+      const result = transformEventBatchToEventPayloads({
+        workspaceEventBatch,
+        logicFunctions,
+      });
+
+      expect(result[0].caller).toEqual({
+        kind: 'user',
+        userId: 'user-1',
+        userWorkspaceId: 'user-workspace-1',
+        workspaceMemberId: 'workspace-member-1',
+      });
+    });
+
+    it('should leave the caller unset for events without a mutator identity', () => {
+      const workspaceEventBatch = createMockWorkspaceEventBatch();
+      const logicFunctions = [createMockLogicFunction()];
+
+      const result = transformEventBatchToEventPayloads({
+        workspaceEventBatch,
+        logicFunctions,
+      });
+
+      expect(result[0].caller).toBeUndefined();
+    });
+  });
 });

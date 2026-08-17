@@ -619,6 +619,28 @@ const handler = async (params: { parentMessageId?: string }) => {
 **Install hooks** — pre-install, post-install, and uninstall handlers — share this runtime but are declared with their own define functions and don't take trigger settings. See [Install Hooks](/developers/extend/apps/config/install-hooks) for `definePreInstallLogicFunction`, `definePostInstallLogicFunction`, and `defineUninstallLogicFunction`.
 </Note>
 
+## Caller identity and permission checks
+
+When a logic function is invoked by someone — a workspace member executing it from the UI, an authenticated HTTP route call, a record mutation firing a database event trigger, or an AI agent acting for a user — the runtime exposes who that caller is. Cron triggers and unauthenticated webhooks have no caller.
+
+```ts
+import { getCaller, callerHasPermissionFlag, PermissionFlagType } from 'twenty-sdk/logic-function';
+
+const handler = async () => {
+  const caller = getCaller();
+  // caller is null, or:
+  // { kind: 'user', userId, userWorkspaceId, workspaceMemberId? }
+  // { kind: 'apiKey', apiKeyId }
+
+  if (!(await callerHasPermissionFlag(PermissionFlagType.WORKSPACE_MEMBERS))) {
+    throw new Error('Only admins can approve links');
+  }
+  // proceed with the privileged operation
+};
+```
+
+`callerHasPermissionFlag` checks the caller's role server-side and returns `false` when there is no caller. Use it to gate privileged operations inside your own logic: your function's data operations always run with the app's own access, so this is how you decide whether the person who triggered the function is allowed to make the function act.
+
 ## Typed API clients (twenty-client-sdk)
 
 The `twenty-client-sdk` package provides two typed GraphQL clients for interacting with the Twenty API from your logic functions and front components.

@@ -8,8 +8,15 @@ import { isDefined } from 'twenty-shared/utils';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
+import { type FlatAuthContextUser } from 'src/engine/core-modules/auth/types/flat-auth-context-user.type';
+import { buildLogicFunctionCaller } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-caller.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
+import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -174,12 +181,23 @@ export class LogicFunctionResolver {
   async executeOneLogicFunction(
     @Args('input') { id, payload }: ExecuteOneLogicFunctionInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUser({ allowUndefined: true }) user: FlatAuthContextUser | undefined,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
+    @AuthWorkspaceMemberId() workspaceMemberId: string | undefined,
+    @AuthApiKey() apiKey: FlatApiKey | undefined,
   ): Promise<LogicFunctionExecutionResultDTO> {
     try {
       return await this.logicFunctionFromSourceService.executeOneFromSource({
         id,
         payload,
         workspaceId,
+        caller: buildLogicFunctionCaller({
+          userId: user?.id,
+          userWorkspaceId,
+          workspaceMemberId,
+          apiKeyId: apiKey?.id,
+        }),
       });
     } catch (error) {
       return logicFunctionGraphQLApiExceptionHandler(error);

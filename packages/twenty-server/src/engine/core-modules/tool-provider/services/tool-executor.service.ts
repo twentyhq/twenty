@@ -10,6 +10,7 @@ import { type ObjectRecordGroupBy } from 'src/engine/api/graphql/workspace-query
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { buildLogicFunctionCaller } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-caller.util';
 import { CreateManyRecordsService } from 'src/engine/core-modules/record-crud/services/create-many-records.service';
 import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
 import { DeleteManyRecordsService } from 'src/engine/core-modules/record-crud/services/delete-many-records.service';
@@ -289,6 +290,18 @@ export class ToolExecutorService {
       logicFunctionId: ref.logicFunctionId,
       workspaceId: context.workspaceId,
       payload: args,
+      caller: buildLogicFunctionCaller({
+        userId: context.userId,
+        userWorkspaceId: context.userWorkspaceId,
+        workspaceMemberId:
+          context.authContext?.type === 'user'
+            ? context.authContext.workspaceMemberId
+            : undefined,
+        apiKeyId:
+          context.authContext?.type === 'apiKey'
+            ? context.authContext.apiKey.id
+            : undefined,
+      }),
     });
 
     if (result.error) {

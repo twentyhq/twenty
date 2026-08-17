@@ -8,6 +8,7 @@ import { AiGenerateTextModule } from 'src/engine/metadata-modules/ai/ai-generate
 import { AiWorkspaceStatsModule } from 'src/engine/metadata-modules/ai/ai-workspace-stats/ai-workspace-stats.module';
 import { ApplicationConnectionsModule } from 'src/engine/core-modules/application/connection-provider/connections/application-connections.module';
 import { ApplicationJobModule } from 'src/engine/core-modules/application/application-job/application-job.module';
+import { ApplicationCallerPermissionModule } from 'src/engine/core-modules/application/application-caller-permission/application-caller-permission.module';
 import { ApplicationKeyValueModule } from 'src/engine/core-modules/application/application-key-value/application-key-value.module';
 import { CalendarChannelMetadataModule } from 'src/engine/metadata-modules/calendar-channel/calendar-channel-metadata.module';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
@@ -52,6 +53,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     AiWorkspaceStatsModule,
     ApplicationConnectionsModule,
     ApplicationJobModule,
+    ApplicationCallerPermissionModule,
     ApplicationKeyValueModule,
     MinimalMetadataModule,
     ViewModule,
