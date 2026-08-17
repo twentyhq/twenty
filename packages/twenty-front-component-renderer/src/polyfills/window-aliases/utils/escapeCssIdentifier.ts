@@ -1,47 +1,66 @@
+// Backs the sandbox CSS.escape: https://drafts.csswg.org/cssom/#serialize-an-identifier
+
+const NULL_CODE_UNIT = 0x0000;
+const NULL_REPLACEMENT_CHARACTER = '�';
+
+const isControlCodeUnit = (codeUnit: number): boolean =>
+  (codeUnit >= 0x0001 && codeUnit <= 0x001f) || codeUnit === 0x007f;
+
+const isNonAsciiCodeUnit = (codeUnit: number): boolean => codeUnit >= 0x0080;
+
+const isAsciiDigit = (character: string): boolean =>
+  character >= '0' && character <= '9';
+
+const isAsciiLetter = (character: string): boolean =>
+  (character >= 'A' && character <= 'Z') ||
+  (character >= 'a' && character <= 'z');
+
+const isSafeIdentifierCharacter = (character: string): boolean =>
+  isNonAsciiCodeUnit(character.charCodeAt(0)) ||
+  character === '-' ||
+  character === '_' ||
+  isAsciiDigit(character) ||
+  isAsciiLetter(character);
+
+const escapeAsHexCodePoint = (character: string): string =>
+  `\\${character.charCodeAt(0).toString(16)} `;
+
+const escapeWithBackslash = (character: string): string => `\\${character}`;
+
 export const escapeCssIdentifier = (value: unknown): string => {
-  const stringValue = String(value);
-  const firstCodeUnit = stringValue.charCodeAt(0);
+  const identifier = String(value);
+  const isLoneHyphen = identifier === '-';
+  const startsWithHyphen = identifier.startsWith('-');
   let escapedIdentifier = '';
 
-  for (let index = 0; index < stringValue.length; index++) {
-    const codeUnit = stringValue.charCodeAt(index);
+  for (let index = 0; index < identifier.length; index++) {
+    const character = identifier.charAt(index);
+    const codeUnit = identifier.charCodeAt(index);
 
-    if (codeUnit === 0x0000) {
-      escapedIdentifier += '�';
+    if (codeUnit === NULL_CODE_UNIT) {
+      escapedIdentifier += NULL_REPLACEMENT_CHARACTER;
       continue;
     }
+
+    const isLeadingDigit = index === 0 && isAsciiDigit(character);
+    const isDigitAfterLeadingHyphen =
+      index === 1 && startsWithHyphen && isAsciiDigit(character);
 
     if (
-      (codeUnit >= 0x0001 && codeUnit <= 0x001f) ||
-      codeUnit === 0x007f ||
-      (index === 0 && codeUnit >= 0x0030 && codeUnit <= 0x0039) ||
-      (index === 1 &&
-        codeUnit >= 0x0030 &&
-        codeUnit <= 0x0039 &&
-        firstCodeUnit === 0x002d)
+      isControlCodeUnit(codeUnit) ||
+      isLeadingDigit ||
+      isDigitAfterLeadingHyphen
     ) {
-      escapedIdentifier += `\\${codeUnit.toString(16)} `;
+      escapedIdentifier += escapeAsHexCodePoint(character);
       continue;
     }
 
-    if (index === 0 && stringValue.length === 1 && codeUnit === 0x002d) {
-      escapedIdentifier += `\\${stringValue.charAt(index)}`;
+    if (isLoneHyphen || !isSafeIdentifierCharacter(character)) {
+      escapedIdentifier += escapeWithBackslash(character);
       continue;
     }
 
-    if (
-      codeUnit >= 0x0080 ||
-      codeUnit === 0x002d ||
-      codeUnit === 0x005f ||
-      (codeUnit >= 0x0030 && codeUnit <= 0x0039) ||
-      (codeUnit >= 0x0041 && codeUnit <= 0x005a) ||
-      (codeUnit >= 0x0061 && codeUnit <= 0x007a)
-    ) {
-      escapedIdentifier += stringValue.charAt(index);
-      continue;
-    }
-
-    escapedIdentifier += `\\${stringValue.charAt(index)}`;
+    escapedIdentifier += character;
   }
 
   return escapedIdentifier;
