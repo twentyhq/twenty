@@ -1,6 +1,7 @@
 import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
 import { findParentSteps } from 'src/modules/workflow/workflow-executor/utils/find-parent-steps.util';
+import { getEffectiveParentStatus } from 'src/modules/workflow/workflow-executor/utils/get-effective-parent-status.util';
 import { isWorkflowIteratorAction } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/guards/is-workflow-iterator-action.guard';
 import { shouldSkipIteratorStepExecution } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/should-skip-iterator-step-execution.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -28,10 +29,17 @@ export const shouldSkipStepExecution = ({
     return false;
   }
 
-  return parentSteps.every(
-    (parentStep) =>
-      stepInfos[parentStep.id]?.status === StepStatus.SKIPPED ||
-      stepInfos[parentStep.id]?.status === StepStatus.STOPPED ||
-      stepInfos[parentStep.id]?.status === StepStatus.FAILED_SAFELY,
-  );
+  return parentSteps.every((parentStep) => {
+    const status = getEffectiveParentStatus({
+      parentStep,
+      childStepId: step.id,
+      stepInfos,
+    });
+
+    return (
+      status === StepStatus.SKIPPED ||
+      status === StepStatus.STOPPED ||
+      status === StepStatus.FAILED_SAFELY
+    );
+  });
 };
