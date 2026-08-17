@@ -4,27 +4,21 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 
-export const recordCallRecordingBotScheduleAttemptIfActive = async (
+export const clearCallRecordingBotScheduleAttemptIfUnowned = async (
   coreApiClient: CoreApiClient,
   {
     callRecordingId,
     expectedBotScheduleAttemptId,
     expectedBotScheduleAttemptedAt,
     expectedBotScheduleIdempotencyKey,
-    botScheduleAttemptId,
-    botScheduleAttemptedAt,
-    botScheduleIdempotencyKey,
   }: {
     callRecordingId: string;
     expectedBotScheduleAttemptId: string | undefined;
     expectedBotScheduleAttemptedAt: string | undefined;
     expectedBotScheduleIdempotencyKey: string | undefined;
-    botScheduleAttemptId: string;
-    botScheduleAttemptedAt: string;
-    botScheduleIdempotencyKey: string;
   },
 ): Promise<boolean> => {
-  const scheduleAttemptMutationResult = await coreApiClient.mutation({
+  const clearAttemptMutationResult = await coreApiClient.mutation({
     updateCallRecordings: {
       __args: {
         filter: {
@@ -48,14 +42,14 @@ export const recordCallRecordingBotScheduleAttemptIfActive = async (
             : { eq: expectedBotScheduleIdempotencyKey },
         },
         data: {
-          botScheduleAttemptId,
-          botScheduleAttemptedAt,
-          botScheduleIdempotencyKey,
+          botScheduleAttemptId: null,
+          botScheduleAttemptedAt: null,
+          botScheduleIdempotencyKey: null,
         },
       },
       id: true,
     },
   });
 
-  return (scheduleAttemptMutationResult.updateCallRecordings ?? []).length > 0;
+  return (clearAttemptMutationResult.updateCallRecordings ?? []).length > 0;
 };

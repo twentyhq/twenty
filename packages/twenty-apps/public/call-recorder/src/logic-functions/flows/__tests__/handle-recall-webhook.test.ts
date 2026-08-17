@@ -73,6 +73,7 @@ type CallRecordingNode = {
   id: string;
   status?: string | null;
   externalBotId?: string | null;
+  botScheduleAttemptId?: string | null;
   externalRecordingId?: string | null;
   startedAt?: string | null;
   endedAt?: string | null;
@@ -498,6 +499,80 @@ describe('handleRecallWebhook', () => {
         },
       },
     ]);
+  });
+
+  it('matches an id-less recording only when the webhook carries its schedule attempt id', async () => {
+    const botScheduleAttemptId = 'd7f4b7df-e2b1-4c0f-b63b-a5fd16cf94cb';
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'SCHEDULED',
+        externalBotId: null,
+        botScheduleAttemptId,
+      },
+    ]);
+
+    const result = await handleRecallWebhook({
+      client: client as unknown as CoreApiClient,
+      body: {
+        event: 'bot.status_change',
+        data: {
+          bot: {
+            id: 'recall-bot-1',
+            metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
+              twentyCallRecordingId: 'call-recording-1',
+              twentyBotScheduleAttemptId: botScheduleAttemptId,
+            },
+          },
+          status: { code: 'in_call_recording' },
+        },
+      },
+    });
+
+    expect(result).toEqual({
+      status: 'updated',
+      event: 'bot.status_change',
+      callRecordingId: 'call-recording-1',
+      callRecordingStatus: 'RECORDING',
+    });
+  });
+
+  it('skips a delayed webhook from an earlier schedule attempt before bot id write-back', async () => {
+    const client = new FakeCoreApiClient([
+      {
+        id: 'call-recording-1',
+        status: 'SCHEDULED',
+        externalBotId: null,
+        botScheduleAttemptId: '3aa72e8d-d52f-4605-bc86-a2514049219b',
+      },
+    ]);
+
+    const result = await handleRecallWebhook({
+      client: client as unknown as CoreApiClient,
+      body: {
+        event: 'bot.status_change',
+        data: {
+          bot: {
+            id: 'recall-bot-old',
+            metadata: {
+              twentyWorkspaceId: WORKSPACE_ID,
+              twentyCallRecordingId: 'call-recording-1',
+              twentyBotScheduleAttemptId:
+                '50d11579-d884-4f94-b905-b5b22c025d6f',
+            },
+          },
+          status: { code: 'call_ended' },
+        },
+      },
+    });
+
+    expect(result).toEqual({
+      status: 'skipped',
+      event: 'bot.status_change',
+      reason: 'no matching call recording',
+    });
+    expect(client.mutations).toEqual([]);
   });
 
   it('prefers the metadata id over a different recording carrying the bot id', async () => {

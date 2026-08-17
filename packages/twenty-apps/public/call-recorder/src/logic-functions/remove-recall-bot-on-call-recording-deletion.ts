@@ -14,6 +14,7 @@ type CallRecordingForRemovalEvent = {
   id: string;
   status?: string | null;
   externalBotId?: string | null;
+  botScheduleAttemptId?: string | null;
   botScheduleAttemptedAt?: string | null;
   botScheduleIdempotencyKey?: string | null;
 };
@@ -41,6 +42,8 @@ export const removeRecallBotOnCallRecordingDeletionHandler = async (
 
   const callRecording = event.properties.before;
   const externalBotId = callRecording.externalBotId ?? undefined;
+  const botScheduleAttemptId =
+    callRecording.botScheduleAttemptId ?? undefined;
   const botScheduleAttemptedAt =
     callRecording.botScheduleAttemptedAt ?? undefined;
   const botScheduleIdempotencyKey =
@@ -49,6 +52,7 @@ export const removeRecallBotOnCallRecordingDeletionHandler = async (
     callRecordingId: event.recordId,
     status: callRecording.status ?? undefined,
     externalBotId,
+    botScheduleAttemptId,
     botScheduleAttemptedAt,
     botScheduleIdempotencyKey,
   });
@@ -58,7 +62,8 @@ export const removeRecallBotOnCallRecordingDeletionHandler = async (
       callRecording.status ?? undefined,
     ) &&
     externalBotId === undefined &&
-    (botScheduleAttemptedAt !== undefined ||
+    (botScheduleAttemptId !== undefined ||
+      botScheduleAttemptedAt !== undefined ||
       botScheduleIdempotencyKey !== undefined) &&
     removedExternalBotIds.length === 0
   ) {

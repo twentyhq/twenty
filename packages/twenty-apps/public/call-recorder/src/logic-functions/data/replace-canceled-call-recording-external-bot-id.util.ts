@@ -1,3 +1,4 @@
+import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
@@ -7,10 +8,12 @@ export const replaceCanceledCallRecordingExternalBotId = async (
   client: CoreApiClient,
   {
     id,
+    expectedBotScheduleAttemptId,
     expectedExternalBotId,
     nextExternalBotId,
   }: {
     id: string;
+    expectedBotScheduleAttemptId: string | undefined;
     expectedExternalBotId: string | null;
     nextExternalBotId: string | null;
   },
@@ -24,6 +27,9 @@ export const replaceCanceledCallRecordingExternalBotId = async (
             eq: CallRecordingRequestStatus.CANCELED,
           },
           status: { in: NON_TERMINAL_CALL_RECORDING_STATUSES },
+          botScheduleAttemptId: isUndefined(expectedBotScheduleAttemptId)
+            ? { is: 'NULL' }
+            : { eq: expectedBotScheduleAttemptId },
           externalBotId:
             expectedExternalBotId === null
               ? { is: 'NULL' }

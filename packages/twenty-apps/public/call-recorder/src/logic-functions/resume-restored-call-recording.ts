@@ -22,6 +22,7 @@ type CallRecordingForRestorationEvent = {
   status?: string | null;
   recordingRequestStatus?: string | null;
   externalBotId?: string | null;
+  botScheduleAttemptId?: string | null;
   botScheduleAttemptedAt?: string | null;
   botScheduleIdempotencyKey?: string | null;
 };
@@ -50,12 +51,15 @@ export const resumeRestoredCallRecordingHandler = async (
   }
 
   const externalBotId = callRecording.externalBotId ?? undefined;
+  const botScheduleAttemptId =
+    callRecording.botScheduleAttemptId ?? undefined;
   const botScheduleAttemptedAt =
     callRecording.botScheduleAttemptedAt ?? undefined;
   const botScheduleIdempotencyKey =
     callRecording.botScheduleIdempotencyKey ?? undefined;
   const hasBotSchedulingState =
     !isUndefined(externalBotId) ||
+    !isUndefined(botScheduleAttemptId) ||
     !isUndefined(botScheduleAttemptedAt) ||
     !isUndefined(botScheduleIdempotencyKey);
   const client = new CoreApiClient();
@@ -63,9 +67,18 @@ export const resumeRestoredCallRecordingHandler = async (
     callRecordingId: event.recordId,
     status,
     externalBotId,
+    botScheduleAttemptId,
     botScheduleAttemptedAt,
     botScheduleIdempotencyKey,
   });
+
+  if (
+    hasBotSchedulingState &&
+    isUndefined(externalBotId) &&
+    removedExternalBotIds.length === 0
+  ) {
+    throw new Error('Attempted Recall bot is not visible yet');
+  }
 
   if (
     hasBotSchedulingState &&
@@ -75,6 +88,7 @@ export const resumeRestoredCallRecordingHandler = async (
       recordingRequestStatus:
         callRecording.recordingRequestStatus ?? undefined,
       externalBotId,
+      botScheduleAttemptId,
       botScheduleAttemptedAt,
       botScheduleIdempotencyKey,
     }))

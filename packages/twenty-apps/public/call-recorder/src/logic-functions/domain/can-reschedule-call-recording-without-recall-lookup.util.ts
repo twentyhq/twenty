@@ -8,9 +8,9 @@ import { hasUnchangedBotScheduleIdempotencyKey } from 'src/logic-functions/domai
 // queue and clock skew cannot turn a recovery resend into a twin bot.
 const IDEMPOTENT_RESEND_WINDOW_MINUTES = 55;
 
-// Rows without a schedule-attempt marker never reached Recall, so no bot can
-// exist for them. Rows whose stored idempotency key still matches the current
-// scheduling inputs can re-send the creation and let Recall dedupe it.
+// A row with no attempt state never reached Recall. A complete, recent attempt
+// can safely re-send the same creation. Partial state is legacy or corrupt and
+// must be reconciled through Recall before another attempt can be claimed.
 export const canRescheduleCallRecordingWithoutRecallLookup = ({
   callRecording,
   calendarEvent,
@@ -21,15 +21,31 @@ export const canRescheduleCallRecordingWithoutRecallLookup = ({
   calendarEvent: CalendarEventRecord;
   workspaceId: string | undefined;
   now: Date;
-}): boolean =>
-  isUndefined(callRecording.botScheduleAttemptedAt) ||
-  (isWithinIdempotentResendWindow(callRecording.botScheduleAttemptedAt, now) &&
+}): boolean => {
+  const hasNoBotScheduleAttemptState =
+    isUndefined(callRecording.botScheduleAttemptId) &&
+    isUndefined(callRecording.botScheduleAttemptedAt) &&
+    isUndefined(callRecording.botScheduleIdempotencyKey);
+
+  if (hasNoBotScheduleAttemptState) {
+    return true;
+  }
+
+  return (
+    !isUndefined(callRecording.botScheduleAttemptId) &&
+    !isUndefined(callRecording.botScheduleAttemptedAt) &&
+    isWithinIdempotentResendWindow(
+      callRecording.botScheduleAttemptedAt,
+      now,
+    ) &&
     !isUndefined(workspaceId) &&
     hasUnchangedBotScheduleIdempotencyKey({
       callRecording,
       calendarEvent,
       workspaceId,
-    }));
+    })
+  );
+};
 
 const isWithinIdempotentResendWindow = (
   botScheduleAttemptedAt: string,

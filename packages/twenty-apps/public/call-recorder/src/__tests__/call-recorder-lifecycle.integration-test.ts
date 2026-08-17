@@ -221,9 +221,16 @@ const jsonResponse = (status: number, body: object): Response =>
 // Recall webhook payloads, mirroring the shapes Recall actually delivers.
 // ---------------------------------------------------------------------------
 
-const buildBotMetadata = (callRecordingId: string, workspaceId: string) => ({
+const buildBotMetadata = (
+  callRecordingId: string,
+  workspaceId: string,
+  botScheduleAttemptId?: string,
+) => ({
   twentyWorkspaceId: workspaceId,
   twentyCallRecordingId: callRecordingId,
+  ...(botScheduleAttemptId === undefined
+    ? {}
+    : { twentyBotScheduleAttemptId: botScheduleAttemptId }),
 });
 
 const buildBotStatusChangeWebhook = ({
@@ -487,6 +494,7 @@ describe('call recorder app lifecycle (integration)', () => {
             calendarEventId: true,
             externalBotId: true,
             externalRecordingId: true,
+            botScheduleAttemptId: true,
             botScheduleAttemptedAt: true,
             botScheduleIdempotencyKey: true,
             callRecorderFailureReason: true,
@@ -565,10 +573,15 @@ describe('call recorder app lifecycle (integration)', () => {
 
       expect(callRecording.status).toBe('SCHEDULED');
       expect(callRecording.recordingRequestStatus).toBe('REQUESTED');
+      expect(callRecording.botScheduleAttemptId).toBeTruthy();
       expect(callRecording.botScheduleAttemptedAt).toBeTruthy();
       expect(callRecording.botScheduleIdempotencyKey).toBeTruthy();
       expect(recall.bots.get(botId)?.metadata).toEqual(
-        buildBotMetadata(callRecordingId, workspaceId),
+        buildBotMetadata(
+          callRecordingId,
+          workspaceId,
+          callRecording.botScheduleAttemptId,
+        ),
       );
     });
 

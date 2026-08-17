@@ -59,6 +59,7 @@ type CalendarEventNode = {
 
 type CallRecordingNode = {
   id: string;
+  deletedAt?: string | null;
   title?: string | null;
   status?: string | null;
   recordingRequestStatus?: string | null;
@@ -66,6 +67,9 @@ type CallRecordingNode = {
   endedAt?: string | null;
   calendarEventId?: string | null;
   externalBotId?: string | null;
+  botScheduleAttemptId?: string | null;
+  botScheduleAttemptedAt?: string | null;
+  botScheduleIdempotencyKey?: string | null;
   externalRecordingId?: string | null;
   callRecorderFailureReason?: string | null;
 };
@@ -73,19 +77,24 @@ type CallRecordingNode = {
 type FakeCoreApiClientFixture = {
   calendarEvents: CalendarEventNode[];
   callRecordings?: CallRecordingNode[];
+  softDeleteCallRecordingAfterNextIdLookup?: boolean;
 };
 
 class FakeCoreApiClient {
   calendarEvents: CalendarEventNode[];
   callRecordings: CallRecordingNode[];
+  softDeleteCallRecordingAfterNextIdLookup: boolean;
   mutations: Array<{ name: string; args: unknown }> = [];
 
   constructor({
     calendarEvents,
     callRecordings = [],
+    softDeleteCallRecordingAfterNextIdLookup = false,
   }: FakeCoreApiClientFixture) {
     this.calendarEvents = calendarEvents;
     this.callRecordings = callRecordings;
+    this.softDeleteCallRecordingAfterNextIdLookup =
+      softDeleteCallRecordingAfterNextIdLookup;
   }
 
   async query(query: any): Promise<any> {
@@ -101,12 +110,27 @@ class FakeCoreApiClient {
       const filter = query.callRecordings.__args.filter;
 
       if (filter.id?.in !== undefined) {
+        const matchingCallRecordings = this.callRecordings.filter(
+          (callRecording) => filter.id.in.includes(callRecording.id),
+        );
+        const callRecordingsConnection = buildConnection(
+          matchingCallRecordings.map((callRecording) => ({
+            ...callRecording,
+          })),
+        );
+
+        if (
+          this.softDeleteCallRecordingAfterNextIdLookup &&
+          matchingCallRecordings.length > 0
+        ) {
+          this.softDeleteCallRecordingAfterNextIdLookup = false;
+          matchingCallRecordings.forEach((callRecording) => {
+            callRecording.deletedAt = NOW.toISOString();
+          });
+        }
+
         return {
-          callRecordings: buildConnection(
-            this.callRecordings.filter((callRecording) =>
-              filter.id.in.includes(callRecording.id),
-            ),
-          ),
+          callRecordings: callRecordingsConnection,
         };
       }
 
@@ -149,11 +173,7 @@ class FakeCoreApiClient {
       const { filter, data } = mutation.updateCallRecordings.__args;
       const matchingCallRecordings = this.callRecordings.filter(
         (callRecording) =>
-          callRecording.id === filter.id.eq &&
-          callRecording.recordingRequestStatus ===
-            filter.recordingRequestStatus.eq &&
-          callRecording.status === filter.status.eq &&
-          callRecording.externalBotId == null,
+          matchesCallRecordingMutationFilter(callRecording, filter),
       );
 
       matchingCallRecordings.forEach((callRecording) => {
@@ -213,6 +233,45 @@ class FakeCoreApiClient {
     );
   }
 }
+
+const matchesCallRecordingMutationFilter = (
+  callRecording: CallRecordingNode,
+  callRecordingMutationFilter: Record<
+    string,
+    { eq?: unknown; in?: unknown[]; is?: 'NULL' | 'NOT_NULL' }
+  >,
+): boolean =>
+  Object.entries(callRecordingMutationFilter).every(
+    ([fieldName, fieldFilter]) => {
+      const callRecordingFieldValue = (
+        callRecording as Record<string, unknown>
+      )[fieldName];
+
+      if (
+        fieldFilter.eq !== undefined &&
+        callRecordingFieldValue !== fieldFilter.eq
+      ) {
+        return false;
+      }
+
+      if (
+        fieldFilter.in !== undefined &&
+        !fieldFilter.in.includes(callRecordingFieldValue)
+      ) {
+        return false;
+      }
+
+      if (fieldFilter.is === 'NULL' && callRecordingFieldValue != null) {
+        return false;
+      }
+
+      if (fieldFilter.is === 'NOT_NULL' && callRecordingFieldValue == null) {
+        return false;
+      }
+
+      return true;
+    },
+  );
 
 const buildConnection = <Node>(nodes: Node[]) => ({
   pageInfo: {
@@ -306,6 +365,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         recordingRequestStatus: 'REQUESTED',
         calendarEventId: 'calendar-event-1',
         externalBotId: 'recall-bot-1',
+        botScheduleAttemptId: expect.any(String),
         botScheduleAttemptedAt: NOW.toISOString(),
         botScheduleIdempotencyKey: expect.any(String),
       },
@@ -323,9 +383,37 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         metadata: {
           twentyWorkspaceId: WORKSPACE_ID,
           twentyCallRecordingId: buildCustomerSyncCallRecordingId(),
+          twentyBotScheduleAttemptId: expect.any(String),
         },
       }),
     );
+  });
+
+  it('does not claim a bot attempt after the created recording is deleted', async () => {
+    const client = buildFakeCoreApiClient({
+      calendarEvents: [buildCalendarEvent()],
+      softDeleteCallRecordingAfterNextIdLookup: true,
+    });
+
+    const result = await reconcileCallRecorderForCalendarEventIds({
+      client: client as unknown as CoreApiClient,
+      calendarEventIds: ['calendar-event-1'],
+      now: NOW,
+    });
+
+    expect(result).toEqual([
+      expect.objectContaining({
+        action: 'CREATED',
+        callRecordingId: buildCustomerSyncCallRecordingId(),
+      }),
+    ]);
+    expect(client.callRecordings[0]).toEqual(
+      expect.objectContaining({
+        deletedAt: NOW.toISOString(),
+      }),
+    );
+    expect(client.callRecordings[0].externalBotId).toBeUndefined();
+    expect(recallBotCreateCalls()).toHaveLength(0);
   });
 
   it('creates a scheduled call recording with a fallback title when the calendar title is unavailable', async () => {

@@ -5,19 +5,25 @@ import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-work
 import { listScheduledRecallBots } from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
-export type FindScheduledRecallBotIdsByCallRecordingIdResult =
-  | { ok: true; externalBotIdByCallRecordingId: Map<string, string> }
+export type FindScheduledRecallBotIdsByCallRecordingOwnershipResult =
+  | {
+      ok: true;
+      externalBotIdsByCallRecordingId: Map<
+        string,
+        Map<string | undefined, string>
+      >;
+    }
   | { ok: false };
 
 // One workspace-wide list request covers every pending recording; Recall's
 // list endpoint has the tightest rate budget, so per-recording lookups must
 // not fan out.
-export const findScheduledRecallBotIdsByCallRecordingId =
-  async (): Promise<FindScheduledRecallBotIdsByCallRecordingIdResult> => {
+export const findScheduledRecallBotIdsByCallRecordingOwnership =
+  async (): Promise<FindScheduledRecallBotIdsByCallRecordingOwnershipResult> => {
     const workspaceId = getCurrentWorkspaceId();
 
     if (isUndefined(workspaceId)) {
-      return { ok: true, externalBotIdByCallRecordingId: new Map() };
+      return { ok: true, externalBotIdsByCallRecordingId: new Map() };
     }
 
     const listResult = await listScheduledRecallBots({
@@ -43,20 +49,36 @@ export const findScheduledRecallBotIdsByCallRecordingId =
       return { ok: false };
     }
 
-    const externalBotIdByCallRecordingId = new Map<string, string>();
+    const externalBotIdsByCallRecordingId = new Map<
+      string,
+      Map<string | undefined, string>
+    >();
 
     for (const bot of listResult.bots) {
       const callRecordingId = bot.metadata.twentyCallRecordingId;
+      const botScheduleAttemptId = isNonEmptyString(
+        bot.metadata.twentyBotScheduleAttemptId,
+      )
+        ? bot.metadata.twentyBotScheduleAttemptId
+        : undefined;
 
-      if (
-        !isNonEmptyString(callRecordingId) ||
-        externalBotIdByCallRecordingId.has(callRecordingId)
-      ) {
+      if (!isNonEmptyString(callRecordingId)) {
         continue;
       }
 
-      externalBotIdByCallRecordingId.set(callRecordingId, bot.id);
+      const externalBotIdsByAttemptId =
+        externalBotIdsByCallRecordingId.get(callRecordingId) ?? new Map();
+
+      if (externalBotIdsByAttemptId.has(botScheduleAttemptId)) {
+        continue;
+      }
+
+      externalBotIdsByAttemptId.set(botScheduleAttemptId, bot.id);
+      externalBotIdsByCallRecordingId.set(
+        callRecordingId,
+        externalBotIdsByAttemptId,
+      );
     }
 
-    return { ok: true, externalBotIdByCallRecordingId };
+    return { ok: true, externalBotIdsByCallRecordingId };
   };

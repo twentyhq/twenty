@@ -4,6 +4,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { findCallRecordingsByFilter } from 'src/logic-functions/data/find-call-recordings-by-filter.util';
 import { requestCallRecordingArtifactsImport } from 'src/logic-functions/data/request-call-recording-artifacts-import.util';
+import { updateCallRecordingForRecallWebhookIfOwned } from 'src/logic-functions/data/update-call-recording-for-recall-webhook-if-owned.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { isRecallRecordingDoneSignal } from 'src/logic-functions/domain/is-recall-recording-done-signal.util';
 import { mapRecallStatusCodeToCallRecordingStatus } from 'src/logic-functions/domain/map-recall-status-code-to-call-recording-status.util';
@@ -14,7 +15,6 @@ import {
 } from 'src/logic-functions/recall-api/parse-recall-webhook-event.util';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
-import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 
 type RecallWebhookHandlerResult =
   | {
@@ -127,10 +127,22 @@ const handleRecallStatusEvent = async ({
     ...buildRecordingTimestampsUpdate({ webhookEvent, callRecording }),
   };
 
-  await updateCallRecording(client, {
-    id: callRecording.id,
-    data: updateData,
-  });
+  const didUpdateOwnedCallRecording =
+    await updateCallRecordingForRecallWebhookIfOwned(client, {
+      callRecordingId: callRecording.id,
+      expectedStatus: callRecording.status,
+      expectedExternalBotId: callRecording.externalBotId,
+      expectedBotScheduleAttemptId: callRecording.botScheduleAttemptId,
+      data: updateData,
+    });
+
+  if (!didUpdateOwnedCallRecording) {
+    return {
+      status: 'skipped',
+      event,
+      reason: 'call recording ownership changed',
+    };
+  }
 
   if (
     isRecallRecordingDoneSignal({
@@ -217,10 +229,19 @@ const findMatchingCallRecording = async ({
       })
     )[0];
 
-    // Metadata survives bot replacement. Once a recording owns a newer bot,
-    // ignore delayed events from the old bot instead of moving ownership and
-    // status backwards. An id-less row remains intentionally best effort so
-    // webhooks can still close the normal create/write-back crash window.
+    // The attempt id is durable across the create/write-back crash window but
+    // changes for a replacement bot. Reject legacy or stale metadata once the
+    // row owns a different attempt.
+    if (
+      !isUndefined(callRecording) &&
+      callRecording.botScheduleAttemptId !==
+        webhookEvent.botScheduleAttemptIdFromMetadata &&
+      (!isUndefined(callRecording.botScheduleAttemptId) ||
+        !isUndefined(webhookEvent.botScheduleAttemptIdFromMetadata))
+    ) {
+      return undefined;
+    }
+
     if (
       !isUndefined(callRecording?.externalBotId) &&
       !isUndefined(webhookEvent.externalBotId) &&
@@ -236,11 +257,22 @@ const findMatchingCallRecording = async ({
     return undefined;
   }
 
-  return (
+  const callRecording = (
     await findCallRecordingsByFilter(client, {
       externalBotId: { eq: webhookEvent.externalBotId },
     })
   )[0];
+
+  if (
+    !isUndefined(callRecording) &&
+    !isUndefined(webhookEvent.botScheduleAttemptIdFromMetadata) &&
+    callRecording.botScheduleAttemptId !==
+      webhookEvent.botScheduleAttemptIdFromMetadata
+  ) {
+    return undefined;
+  }
+
+  return callRecording;
 };
 
 // Mirrors the snapshot extractor: a known recording artifact rules out NOT_RECORDED.

@@ -21,6 +21,7 @@ export type RecallWebhookEvent = {
   externalBotId: string | undefined;
   externalRecordingId: string | undefined;
   callRecordingIdFromMetadata: string | undefined;
+  botScheduleAttemptIdFromMetadata: string | undefined;
   recordingStartedAt: string | undefined;
   recordingEndedAt: string | undefined;
   transcriptId: string | undefined;
@@ -67,6 +68,9 @@ export const parseRecallWebhookEvent = (
       getString(data?.recording_id),
     callRecordingIdFromMetadata: getString(
       getRecallWebhookBotMetadata(body)?.twentyCallRecordingId,
+    ),
+    botScheduleAttemptIdFromMetadata: getString(
+      getRecallWebhookBotMetadata(body)?.twentyBotScheduleAttemptId,
     ),
     recordingStartedAt: normalizeRecallTimestamp(
       getString(getRecordAtPath(data, ['recording', 'started_at'])),

@@ -10,9 +10,11 @@ import { hasMeetingEnded } from 'src/logic-functions/domain/has-meeting-ended.ut
 import { scheduleRecallBotForCallRecording } from 'src/logic-functions/flows/schedule-recall-bot-for-call-recording.util';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { findOpenScheduledCallRecordings } from 'src/logic-functions/data/find-open-scheduled-call-recordings.util';
-import { findScheduledRecallBotIdsByCallRecordingId } from 'src/logic-functions/recall-api/find-scheduled-recall-bot-ids-by-call-recording-id.util';
+import { findScheduledRecallBotIdsByCallRecordingOwnership } from 'src/logic-functions/recall-api/find-scheduled-recall-bot-ids-by-call-recording-ownership.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
+import { recordCallRecordingExternalBotIdForScheduleAttempt } from 'src/logic-functions/data/record-call-recording-external-bot-id-for-schedule-attempt.util';
+import { clearCallRecordingBotScheduleAttemptIfUnowned } from 'src/logic-functions/data/clear-call-recording-bot-schedule-attempt-if-unowned.util';
 
 export const BOT_NEVER_SCHEDULED_FAILURE_REASON = 'bot_never_scheduled';
 export const BOT_SCHEDULE_OUTCOME_UNKNOWN_FAILURE_REASON =
@@ -142,7 +144,8 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
   // A run that POSTed a bot but died before the id write-back leaves the bot
   // claimable by metadata; one workspace-wide lookup finds them all without a
   // per-recording list call.
-  const lookupResult = await findScheduledRecallBotIdsByCallRecordingId();
+  const lookupResult =
+    await findScheduledRecallBotIdsByCallRecordingOwnership();
 
   // A failed lookup can hide existing bots; creating one now could duplicate
   // them, so defer to the next run.
@@ -152,14 +155,35 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
 
   for (const { callRecording, calendarEvent } of ambiguousCallRecordings) {
     const existingExternalBotId =
-      lookupResult.externalBotIdByCallRecordingId.get(callRecording.id);
+      lookupResult.externalBotIdsByCallRecordingId
+        .get(callRecording.id)
+        ?.get(callRecording.botScheduleAttemptId);
 
     if (!isUndefined(existingExternalBotId)) {
-      await updateCallRecording(client, {
-        id: callRecording.id,
-        data: { externalBotId: existingExternalBotId },
+      const didAttachExistingBot =
+        await recordCallRecordingExternalBotIdForScheduleAttempt(client, {
+          callRecordingId: callRecording.id,
+          botScheduleAttemptId: callRecording.botScheduleAttemptId,
+          externalBotId: existingExternalBotId,
+        });
+
+      if (didAttachExistingBot) {
+        result.attachedCallRecordingIds.push(callRecording.id);
+      }
+      continue;
+    }
+
+    const didClearResolvedAttempt =
+      await clearCallRecordingBotScheduleAttemptIfUnowned(client, {
+        callRecordingId: callRecording.id,
+        expectedBotScheduleAttemptId: callRecording.botScheduleAttemptId,
+        expectedBotScheduleAttemptedAt:
+          callRecording.botScheduleAttemptedAt,
+        expectedBotScheduleIdempotencyKey:
+          callRecording.botScheduleIdempotencyKey,
       });
-      result.attachedCallRecordingIds.push(callRecording.id);
+
+    if (!didClearResolvedAttempt) {
       continue;
     }
 

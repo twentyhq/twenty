@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
 import { scheduleRecallBotsForPendingCallRecordings } from 'src/logic-functions/flows/schedule-recall-bots-for-pending-call-recordings.util';
+import { scheduleRecallBotForCallRecording } from 'src/logic-functions/flows/schedule-recall-bot-for-call-recording.util';
 import { computeRecallBotCreationIdempotencyKey } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
 
 const NOW = new Date('2026-01-01T12:00:00.000Z');
@@ -31,6 +32,7 @@ type CallRecordingNode = {
   recordingRequestStatus?: string | null;
   calendarEventId?: string | null;
   externalBotId?: string | null;
+  botScheduleAttemptId?: string | null;
   botScheduleAttemptedAt?: string | null;
   botScheduleIdempotencyKey?: string | null;
   callRecorderFailureReason?: string | null;
@@ -48,20 +50,30 @@ class FakeCoreApiClient {
   callRecordings: CallRecordingNode[];
   calendarEvents: CalendarEventNode[];
   softDeleteCallRecordingAfterNextIdLookup: boolean;
+  softDeleteCallRecordingAfterNextAttemptClaim: boolean;
+  attachExternalBotAfterNextAttemptClaim: boolean;
 
   constructor({
     callRecordings = [],
     calendarEvents = [],
     softDeleteCallRecordingAfterNextIdLookup = false,
+    softDeleteCallRecordingAfterNextAttemptClaim = false,
+    attachExternalBotAfterNextAttemptClaim = false,
   }: {
     callRecordings?: CallRecordingNode[];
     calendarEvents?: CalendarEventNode[];
     softDeleteCallRecordingAfterNextIdLookup?: boolean;
+    softDeleteCallRecordingAfterNextAttemptClaim?: boolean;
+    attachExternalBotAfterNextAttemptClaim?: boolean;
   }) {
     this.callRecordings = callRecordings;
     this.calendarEvents = calendarEvents;
     this.softDeleteCallRecordingAfterNextIdLookup =
       softDeleteCallRecordingAfterNextIdLookup;
+    this.softDeleteCallRecordingAfterNextAttemptClaim =
+      softDeleteCallRecordingAfterNextAttemptClaim;
+    this.attachExternalBotAfterNextAttemptClaim =
+      attachExternalBotAfterNextAttemptClaim;
   }
 
   async query(query: any): Promise<any> {
@@ -118,18 +130,33 @@ class FakeCoreApiClient {
       const { filter, data } = mutation.updateCallRecordings.__args;
       const matchingCallRecordings = this.callRecordings.filter(
         (callRecording) =>
-          callRecording.id === filter.id.eq &&
-          (filter.deletedAt?.is !== 'NULL' ||
-            callRecording.deletedAt == null) &&
-          callRecording.recordingRequestStatus ===
-            filter.recordingRequestStatus.eq &&
-          callRecording.status === filter.status.eq &&
-          callRecording.externalBotId == null,
+          matchesCallRecordingMutationFilter(callRecording, filter),
       );
 
       matchingCallRecordings.forEach((callRecording) => {
         Object.assign(callRecording, data);
       });
+
+      if (
+        this.softDeleteCallRecordingAfterNextAttemptClaim &&
+        typeof data.botScheduleAttemptId === 'string'
+      ) {
+        this.softDeleteCallRecordingAfterNextAttemptClaim = false;
+        matchingCallRecordings.forEach((callRecording) => {
+          callRecording.deletedAt = NOW.toISOString();
+        });
+      }
+
+      if (
+        this.attachExternalBotAfterNextAttemptClaim &&
+        typeof data.botScheduleAttemptId === 'string'
+      ) {
+        this.attachExternalBotAfterNextAttemptClaim = false;
+        matchingCallRecordings.forEach((callRecording) => {
+          callRecording.status = 'JOINING';
+          callRecording.externalBotId = 'recall-bot-1';
+        });
+      }
 
       return {
         updateCallRecordings: matchingCallRecordings.map(({ id }) => ({ id })),
@@ -152,6 +179,45 @@ class FakeCoreApiClient {
     throw new Error(`Unhandled mutation: ${JSON.stringify(mutation)}`);
   }
 }
+
+const matchesCallRecordingMutationFilter = (
+  callRecording: CallRecordingNode,
+  callRecordingMutationFilter: Record<
+    string,
+    { eq?: unknown; in?: unknown[]; is?: 'NULL' | 'NOT_NULL' }
+  >,
+): boolean =>
+  Object.entries(callRecordingMutationFilter).every(
+    ([fieldName, fieldFilter]) => {
+      const callRecordingFieldValue = (
+        callRecording as Record<string, unknown>
+      )[fieldName];
+
+      if (
+        fieldFilter.eq !== undefined &&
+        callRecordingFieldValue !== fieldFilter.eq
+      ) {
+        return false;
+      }
+
+      if (
+        fieldFilter.in !== undefined &&
+        !fieldFilter.in.includes(callRecordingFieldValue)
+      ) {
+        return false;
+      }
+
+      if (fieldFilter.is === 'NULL' && callRecordingFieldValue != null) {
+        return false;
+      }
+
+      if (fieldFilter.is === 'NOT_NULL' && callRecordingFieldValue == null) {
+        return false;
+      }
+
+      return true;
+    },
+  );
 
 const buildConnection = <Node>(nodes: Node[]) => ({
   pageInfo: { hasNextPage: false, endCursor: undefined },
@@ -209,6 +275,10 @@ const stubRecallApi = ({
         });
       }
 
+      if (method === 'DELETE' && requestUrl.includes('/bot/')) {
+        return new Response(undefined, { status: 204 });
+      }
+
       throw new Error(`Unhandled fetch in test: ${method} ${requestUrl}`);
     },
   );
@@ -226,6 +296,11 @@ const listBotRequestUrls = (): string[] =>
 const createBotCalls = () =>
   fetchMock.mock.calls.filter(
     ([, requestInit]) => requestInit?.method === 'POST',
+  );
+
+const deleteBotCalls = () =>
+  fetchMock.mock.calls.filter(
+    ([, requestInit]) => requestInit?.method === 'DELETE',
   );
 
 describe('scheduleRecallBotsForPendingCallRecordings', () => {
@@ -282,6 +357,9 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
       metadata: {
         twentyWorkspaceId: WORKSPACE_ID,
         twentyCallRecordingId: 'call-recording-1',
+        twentyBotScheduleAttemptId: expect.stringMatching(
+          /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
+        ),
       },
     });
     expect(client.callRecordings[0].externalBotId).toBe('recall-bot-1');
@@ -302,6 +380,87 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     expect(schedulingResult.scheduledCallRecordingIds).toEqual([]);
     expect(createBotCalls()).toHaveLength(0);
     expect(client.callRecordings[0].deletedAt).toBe(NOW.toISOString());
+  });
+
+  it('removes a bot whose recording was deleted after the attempt claim', async () => {
+    const client = new FakeCoreApiClient({
+      callRecordings: [buildPendingCallRecording()],
+      calendarEvents: [buildCalendarEvent()],
+      softDeleteCallRecordingAfterNextAttemptClaim: true,
+    });
+
+    const schedulingResult = await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(schedulingResult.scheduledCallRecordingIds).toEqual([]);
+    expect(createBotCalls()).toHaveLength(1);
+    expect(deleteBotCalls()).toHaveLength(1);
+    expect(client.callRecordings[0].externalBotId).toBeNull();
+    expect(client.callRecordings[0].deletedAt).toBe(NOW.toISOString());
+  });
+
+  it('allows only one concurrent scheduler to claim a new attempt', async () => {
+    const callRecording = buildPendingCallRecording();
+    const client = new FakeCoreApiClient({
+      callRecordings: [callRecording],
+      calendarEvents: [buildCalendarEvent()],
+    });
+    const meetingRecording = {
+      callRecording: {
+        id: callRecording.id,
+      },
+      calendarEvent: {
+        id: 'calendar-event-1',
+        title: 'Customer Sync',
+        isCanceled: false,
+        startsAt: UPCOMING_STARTS_AT,
+        endsAt: UPCOMING_ENDS_AT,
+        iCalUid: 'calendar-event-uid',
+        conferenceLinkUrl: 'https://meet.example.com/customer-sync',
+        callRecorderPreference: 'ON',
+      },
+    };
+
+    const schedulingResults = await Promise.all([
+      scheduleRecallBotForCallRecording(
+        client as unknown as CoreApiClient,
+        meetingRecording,
+      ),
+      scheduleRecallBotForCallRecording(
+        client as unknown as CoreApiClient,
+        meetingRecording,
+      ),
+    ]);
+
+    expect(schedulingResults.filter(Boolean)).toHaveLength(1);
+    expect(createBotCalls()).toHaveLength(1);
+  });
+
+  it('accepts the same bot when its webhook wins the id write-back race', async () => {
+    const client = new FakeCoreApiClient({
+      callRecordings: [buildPendingCallRecording()],
+      calendarEvents: [buildCalendarEvent()],
+      attachExternalBotAfterNextAttemptClaim: true,
+    });
+
+    const schedulingResult = await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(schedulingResult.scheduledCallRecordingIds).toEqual([
+      'call-recording-1',
+    ]);
+    expect(createBotCalls()).toHaveLength(1);
+    expect(deleteBotCalls()).toHaveLength(0);
+    expect(client.callRecordings[0]).toEqual(
+      expect.objectContaining({
+        status: 'JOINING',
+        externalBotId: 'recall-bot-1',
+      }),
+    );
   });
 
   it('attaches an existing bot claiming the recording instead of scheduling a duplicate', async () => {
@@ -417,17 +576,20 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
   });
 
   it('re-sends the creation without any Recall lookup when the stored idempotency key still matches', async () => {
+    const botScheduleAttemptId = '9d1a3e8d-d1de-4c89-9831-67d3219f3270';
     const unchangedIdempotencyKey = computeRecallBotCreationIdempotencyKey({
       meetingUrl: 'https://meet.example.com/customer-sync',
       joinAt: computeRecallBotJoinAt(UPCOMING_STARTS_AT),
       metadata: {
         twentyWorkspaceId: WORKSPACE_ID,
         twentyCallRecordingId: 'call-recording-1',
+        twentyBotScheduleAttemptId: botScheduleAttemptId,
       },
     });
     const client = new FakeCoreApiClient({
       callRecordings: [
         buildPendingCallRecording({
+          botScheduleAttemptId,
           botScheduleAttemptedAt: '2026-01-01T11:55:00.000Z',
           botScheduleIdempotencyKey: unchangedIdempotencyKey,
         }),
@@ -455,17 +617,20 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
   });
 
   it('falls back to the Recall lookup outside the safe one-hour idempotency window', async () => {
+    const botScheduleAttemptId = 'db57a092-c84a-4cd7-8447-8854e7992bff';
     const unchangedIdempotencyKey = computeRecallBotCreationIdempotencyKey({
       meetingUrl: 'https://meet.example.com/customer-sync',
       joinAt: computeRecallBotJoinAt(UPCOMING_STARTS_AT),
       metadata: {
         twentyWorkspaceId: WORKSPACE_ID,
         twentyCallRecordingId: 'call-recording-1',
+        twentyBotScheduleAttemptId: botScheduleAttemptId,
       },
     });
     const client = new FakeCoreApiClient({
       callRecordings: [
         buildPendingCallRecording({
+          botScheduleAttemptId,
           botScheduleAttemptedAt: '2026-01-01T11:04:00.000Z',
           botScheduleIdempotencyKey: unchangedIdempotencyKey,
         }),
@@ -483,17 +648,20 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
   });
 
   it('falls back to the Recall lookup when the meeting moved since the recorded attempt', async () => {
+    const botScheduleAttemptId = '023fdaea-d57a-48bd-907c-78d00eb06e40';
     const staleIdempotencyKey = computeRecallBotCreationIdempotencyKey({
       meetingUrl: 'https://meet.example.com/customer-sync',
       joinAt: computeRecallBotJoinAt('2026-01-01T09:00:00.000Z'),
       metadata: {
         twentyWorkspaceId: WORKSPACE_ID,
         twentyCallRecordingId: 'call-recording-1',
+        twentyBotScheduleAttemptId: botScheduleAttemptId,
       },
     });
     const client = new FakeCoreApiClient({
       callRecordings: [
         buildPendingCallRecording({
+          botScheduleAttemptId,
           botScheduleAttemptedAt: '2026-01-01T11:55:00.000Z',
           botScheduleIdempotencyKey: staleIdempotencyKey,
         }),

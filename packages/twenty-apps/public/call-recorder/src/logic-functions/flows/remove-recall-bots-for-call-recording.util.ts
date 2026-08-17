@@ -10,12 +10,14 @@ export const removeRecallBotsForCallRecording = async ({
   callRecordingId,
   status,
   externalBotId,
+  botScheduleAttemptId,
   botScheduleAttemptedAt,
   botScheduleIdempotencyKey,
 }: {
   callRecordingId: string;
   status: string | undefined;
   externalBotId: string | undefined;
+  botScheduleAttemptId: string | undefined;
   botScheduleAttemptedAt: string | undefined;
   botScheduleIdempotencyKey: string | undefined;
 }): Promise<string[]> => {
@@ -23,33 +25,41 @@ export const removeRecallBotsForCallRecording = async ({
     return [];
   }
 
-  const externalBotIds = !isUndefined(externalBotId)
-    ? [externalBotId]
+  const botLookupResult = !isUndefined(externalBotId)
+    ? { externalBotIds: [externalBotId], wasTruncated: false }
     : await findExternalBotIdsForAmbiguousAttempt({
         callRecordingId,
+        botScheduleAttemptId,
         hasAttemptMarker:
+          !isUndefined(botScheduleAttemptId) ||
           !isUndefined(botScheduleAttemptedAt) ||
           !isUndefined(botScheduleIdempotencyKey),
       });
 
-  for (const id of externalBotIds) {
-    if (!(await cancelOrEjectRecallBot(id))) {
-      throw new Error(`Failed to remove Recall bot ${id}`);
+  for (const externalBotIdToRemove of botLookupResult.externalBotIds) {
+    if (!(await cancelOrEjectRecallBot(externalBotIdToRemove))) {
+      throw new Error(`Failed to remove Recall bot ${externalBotIdToRemove}`);
     }
   }
 
-  return externalBotIds;
+  if (botLookupResult.wasTruncated) {
+    throw new Error('Recall bot lookup was truncated');
+  }
+
+  return botLookupResult.externalBotIds;
 };
 
 const findExternalBotIdsForAmbiguousAttempt = async ({
   callRecordingId,
+  botScheduleAttemptId,
   hasAttemptMarker,
 }: {
   callRecordingId: string;
+  botScheduleAttemptId: string | undefined;
   hasAttemptMarker: boolean;
-}): Promise<string[]> => {
+}): Promise<{ externalBotIds: string[]; wasTruncated: boolean }> => {
   if (!hasAttemptMarker) {
-    return [];
+    return { externalBotIds: [], wasTruncated: false };
   }
 
   const workspaceId = getCurrentWorkspaceId();
@@ -62,6 +72,9 @@ const findExternalBotIdsForAmbiguousAttempt = async ({
     metadata: {
       twentyWorkspaceId: workspaceId,
       twentyCallRecordingId: callRecordingId,
+      ...(isUndefined(botScheduleAttemptId)
+        ? {}
+        : { twentyBotScheduleAttemptId: botScheduleAttemptId }),
     },
     statuses: ACTIVE_RECALL_BOT_STATUSES,
   });
@@ -70,19 +83,22 @@ const findExternalBotIdsForAmbiguousAttempt = async ({
     throw new Error(`Failed to look up Recall bots: ${listResult.errorMessage}`);
   }
 
-  if (listResult.truncated) {
-    throw new Error('Recall bot lookup was truncated');
-  }
-
-  return [
-    ...new Set(
-      listResult.bots
-        .filter(
-          (bot) =>
-            bot.metadata.twentyWorkspaceId === workspaceId &&
-            bot.metadata.twentyCallRecordingId === callRecordingId,
-        )
-        .map((bot) => bot.id),
-    ),
-  ];
+  return {
+    externalBotIds: [
+      ...new Set(
+        listResult.bots
+          .filter(
+            (bot) =>
+              bot.metadata.twentyWorkspaceId === workspaceId &&
+              bot.metadata.twentyCallRecordingId === callRecordingId &&
+              (isUndefined(botScheduleAttemptId)
+                ? isUndefined(bot.metadata.twentyBotScheduleAttemptId)
+                : bot.metadata.twentyBotScheduleAttemptId ===
+                  botScheduleAttemptId),
+          )
+          .map((bot) => bot.id),
+      ),
+    ],
+    wasTruncated: listResult.truncated,
+  };
 };

@@ -11,6 +11,7 @@ export const resetRestoredCallRecordingBotState = async (
     status,
     recordingRequestStatus,
     externalBotId,
+    botScheduleAttemptId,
     botScheduleAttemptedAt,
     botScheduleIdempotencyKey,
   }: {
@@ -18,6 +19,7 @@ export const resetRestoredCallRecordingBotState = async (
     status: string;
     recordingRequestStatus: string | undefined;
     externalBotId: string | undefined;
+    botScheduleAttemptId: string | undefined;
     botScheduleAttemptedAt: string | undefined;
     botScheduleIdempotencyKey: string | undefined;
   },
@@ -28,13 +30,15 @@ export const resetRestoredCallRecordingBotState = async (
         filter: {
           id: { eq: id },
           deletedAt: { is: 'NULL' },
-          status: { eq: status },
           recordingRequestStatus: isUndefined(recordingRequestStatus)
             ? { is: 'NULL' }
             : { eq: recordingRequestStatus },
           externalBotId: isUndefined(externalBotId)
             ? { is: 'NULL' }
             : { eq: externalBotId },
+          botScheduleAttemptId: isUndefined(botScheduleAttemptId)
+            ? { is: 'NULL' }
+            : { eq: botScheduleAttemptId },
           botScheduleAttemptedAt: isUndefined(botScheduleAttemptedAt)
             ? { is: 'NULL' }
             : { eq: botScheduleAttemptedAt },
@@ -44,6 +48,7 @@ export const resetRestoredCallRecordingBotState = async (
         },
         data: {
           externalBotId: null,
+          botScheduleAttemptId: null,
           botScheduleAttemptedAt: null,
           botScheduleIdempotencyKey: null,
           ...(recordingRequestStatus ===

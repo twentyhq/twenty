@@ -9,7 +9,7 @@ import { findCallRecordingsByFilter } from 'src/logic-functions/data/find-call-r
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { replaceCanceledCallRecordingExternalBotId } from 'src/logic-functions/data/replace-canceled-call-recording-external-bot-id.util';
 import { cancelOrEjectRecallBot } from 'src/logic-functions/recall-api/cancel-or-eject-recall-bot.util';
-import { findScheduledRecallBotIdsByCallRecordingId } from 'src/logic-functions/recall-api/find-scheduled-recall-bot-ids-by-call-recording-id.util';
+import { findScheduledRecallBotIdsByCallRecordingOwnership } from 'src/logic-functions/recall-api/find-scheduled-recall-bot-ids-by-call-recording-ownership.util';
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
@@ -63,7 +63,7 @@ export const retryFailedRecallCancellations = async ({
       )
       .map((callRecording) => callRecording.id),
   );
-  const externalBotIdByCallRecordingId =
+  const externalBotIdsByCallRecordingId =
     await lookupRecoverableExternalBotIds(recoverableCallRecordingIds);
   const canceledExternalBotCallRecordingIds: string[] = [];
 
@@ -72,7 +72,9 @@ export const retryFailedRecallCancellations = async ({
       client,
       callRecording,
       listedExternalBotId: recoverableCallRecordingIds.has(callRecording.id)
-        ? externalBotIdByCallRecordingId?.get(callRecording.id)
+        ? externalBotIdsByCallRecordingId
+            ?.get(callRecording.id)
+            ?.get(callRecording.botScheduleAttemptId)
         : undefined,
     });
 
@@ -101,6 +103,8 @@ export const retryFailedRecallCancellations = async ({
     if (latestCallRecording.externalBotId === externalBotId) {
       await replaceCanceledCallRecordingExternalBotId(client, {
         id: callRecording.id,
+        expectedBotScheduleAttemptId:
+          latestCallRecording.botScheduleAttemptId,
         expectedExternalBotId: externalBotId,
         nextExternalBotId: null,
       });
@@ -116,15 +120,18 @@ export const retryFailedRecallCancellations = async ({
 // means the lookup failed and recovery must wait for the next run.
 const lookupRecoverableExternalBotIds = async (
   recoverableCallRecordingIds: Set<string>,
-): Promise<Map<string, string> | undefined> => {
+): Promise<
+  Map<string, Map<string | undefined, string>> | undefined
+> => {
   if (recoverableCallRecordingIds.size === 0) {
     return new Map();
   }
 
-  const lookupResult = await findScheduledRecallBotIdsByCallRecordingId();
+  const lookupResult =
+    await findScheduledRecallBotIdsByCallRecordingOwnership();
 
   return lookupResult.ok
-    ? lookupResult.externalBotIdByCallRecordingId
+    ? lookupResult.externalBotIdsByCallRecordingId
     : undefined;
 };
 
@@ -200,6 +207,7 @@ const recoverRecallBotIdForCanceledCallRecording = async ({
     client,
     {
       id: callRecording.id,
+      expectedBotScheduleAttemptId: callRecording.botScheduleAttemptId,
       expectedExternalBotId: null,
       nextExternalBotId: listedExternalBotId,
     },

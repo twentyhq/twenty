@@ -21,6 +21,15 @@ vi.mock(
 );
 
 const fetchMock = vi.fn();
+const BOT_SCHEDULE_ATTEMPT_ID = 'e98e8dcc-5db1-485c-a68f-86cbd3a59faf';
+const WORKSPACE_ID = '123e4567-e89b-42d3-a456-426614174000';
+
+const buildAccessToken = (payload: Record<string, unknown>): string =>
+  [
+    Buffer.from(JSON.stringify({ alg: 'none' })).toString('base64url'),
+    Buffer.from(JSON.stringify(payload)).toString('base64url'),
+    'signature',
+  ].join('.');
 
 describe('resumeRestoredCallRecordingHandler', () => {
   beforeEach(() => {
@@ -53,6 +62,7 @@ describe('resumeRestoredCallRecordingHandler', () => {
           status: 'JOINING',
           recordingRequestStatus: 'REQUESTED',
           externalBotId: 'recall-bot-1',
+          botScheduleAttemptId: BOT_SCHEDULE_ATTEMPT_ID,
           botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
           botScheduleIdempotencyKey: 'schedule-attempt-1',
         },
@@ -72,9 +82,9 @@ describe('resumeRestoredCallRecordingHandler', () => {
           filter: {
             id: { eq: 'call-recording-1' },
             deletedAt: { is: 'NULL' },
-            status: { eq: 'JOINING' },
             recordingRequestStatus: { eq: 'REQUESTED' },
             externalBotId: { eq: 'recall-bot-1' },
+            botScheduleAttemptId: { eq: BOT_SCHEDULE_ATTEMPT_ID },
             botScheduleAttemptedAt: {
               eq: '2026-01-01T10:00:00.000Z',
             },
@@ -83,6 +93,7 @@ describe('resumeRestoredCallRecordingHandler', () => {
           data: {
             status: 'SCHEDULED',
             externalBotId: null,
+            botScheduleAttemptId: null,
             botScheduleAttemptedAt: null,
             botScheduleIdempotencyKey: null,
           },
@@ -127,6 +138,7 @@ describe('resumeRestoredCallRecordingHandler', () => {
           status: 'FAILED',
           recordingRequestStatus: 'REQUESTED',
           externalBotId: 'recall-bot-1',
+          botScheduleAttemptId: BOT_SCHEDULE_ATTEMPT_ID,
           botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
           botScheduleIdempotencyKey: 'schedule-attempt-1',
         },
@@ -146,6 +158,7 @@ describe('resumeRestoredCallRecordingHandler', () => {
           __args: expect.objectContaining({
             data: {
               externalBotId: null,
+              botScheduleAttemptId: null,
               botScheduleAttemptedAt: null,
               botScheduleIdempotencyKey: null,
             },
@@ -178,6 +191,38 @@ describe('resumeRestoredCallRecordingHandler', () => {
         reason: 'call recording changed while its old bot was removed',
       },
     });
+    expect(resumePendingCallRecordingMock).not.toHaveBeenCalled();
+  });
+
+  it('defers restoration while its claimed bot may still be in flight', async () => {
+    vi.stubEnv(
+      'TWENTY_APP_ACCESS_TOKEN',
+      buildAccessToken({ workspaceId: WORKSPACE_ID }),
+    );
+    fetchMock.mockResolvedValue(
+      new Response(JSON.stringify({ next: null, results: [] }), {
+        status: 200,
+      }),
+    );
+
+    await expect(
+      resumeRestoredCallRecordingHandler({
+        name: 'callRecording.restored',
+        recordId: 'call-recording-1',
+        properties: {
+          after: {
+            status: 'SCHEDULED',
+            recordingRequestStatus: 'REQUESTED',
+            externalBotId: null,
+            botScheduleAttemptId: BOT_SCHEDULE_ATTEMPT_ID,
+            botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
+            botScheduleIdempotencyKey: 'schedule-attempt-1',
+          },
+        },
+      } as never),
+    ).rejects.toThrow('Attempted Recall bot is not visible yet');
+
+    expect(mutationMock).not.toHaveBeenCalled();
     expect(resumePendingCallRecordingMock).not.toHaveBeenCalled();
   });
 

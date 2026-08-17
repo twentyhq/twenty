@@ -157,6 +157,69 @@ describe('removeRecallBotOnCallRecordingDeletionHandler', () => {
     );
   });
 
+  it('removes only the bot from the deleted recording schedule attempt', async () => {
+    const botScheduleAttemptId = '6e850751-df99-4c8b-b56f-2ec44bcbbcac';
+
+    vi.stubEnv(
+      'TWENTY_APP_ACCESS_TOKEN',
+      buildAccessToken({ workspaceId: WORKSPACE_ID }),
+    );
+    fetchMock
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            next: null,
+            results: [
+              {
+                id: 'recall-bot-1',
+                metadata: {
+                  twentyWorkspaceId: WORKSPACE_ID,
+                  twentyCallRecordingId: 'call-recording-1',
+                  twentyBotScheduleAttemptId: botScheduleAttemptId,
+                },
+              },
+              {
+                id: 'recall-bot-replacement',
+                metadata: {
+                  twentyWorkspaceId: WORKSPACE_ID,
+                  twentyCallRecordingId: 'call-recording-1',
+                  twentyBotScheduleAttemptId:
+                    '0d5c00a9-3bb3-4f20-b74f-b67262916e7f',
+                },
+              },
+            ],
+          }),
+          { status: 200 },
+        ),
+      )
+      .mockResolvedValueOnce(new Response(undefined, { status: 204 }));
+
+    const result = await removeRecallBotOnCallRecordingDeletionHandler({
+      name: 'callRecording.deleted',
+      recordId: 'call-recording-1',
+      properties: {
+        before: {
+          status: 'SCHEDULED',
+          externalBotId: null,
+          botScheduleAttemptId,
+          botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
+          botScheduleIdempotencyKey: 'schedule-attempt-1',
+        },
+      },
+    } as never);
+
+    expect(result).toEqual({ removedExternalBotIds: ['recall-bot-1'] });
+    const listUrl = new URL(fetchMock.mock.calls[0][0] as string);
+
+    expect(
+      listUrl.searchParams.get('metadata__twentyBotScheduleAttemptId'),
+    ).toBe(botScheduleAttemptId);
+    expect(fetchMock).not.toHaveBeenCalledWith(
+      expect.stringContaining('recall-bot-replacement'),
+      expect.anything(),
+    );
+  });
+
   it('does not call Recall when scheduling was never attempted', async () => {
     const result = await removeRecallBotOnCallRecordingDeletionHandler({
       name: 'callRecording.deleted',

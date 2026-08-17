@@ -66,7 +66,7 @@ describe('process-recall-webhook', () => {
     });
     mutationMock.mockReset();
     mutationMock.mockResolvedValue({
-      updateCallRecording: { id: 'call-recording-1' },
+      updateCallRecordings: [{ id: 'call-recording-1' }],
     });
     requestArtifactImportMock.mockReset();
     requestArtifactImportMock.mockResolvedValue(true);
@@ -103,9 +103,15 @@ describe('process-recall-webhook', () => {
     );
     expect(mutationMock).toHaveBeenCalledTimes(1);
     expect(mutationMock).toHaveBeenCalledWith({
-      updateCallRecording: {
+      updateCallRecordings: {
         __args: {
-          id: 'call-recording-1',
+          filter: {
+            id: { eq: 'call-recording-1' },
+            deletedAt: { is: 'NULL' },
+            status: { eq: 'PROCESSING' },
+            externalBotId: { is: 'NULL' },
+            botScheduleAttemptId: { is: 'NULL' },
+          },
           data: {
             externalBotId: 'recall-bot-1',
             externalRecordingId: 'recall-recording-1',
