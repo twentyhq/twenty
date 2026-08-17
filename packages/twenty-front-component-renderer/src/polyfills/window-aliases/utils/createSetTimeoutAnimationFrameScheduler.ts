@@ -7,7 +7,7 @@ export const createSetTimeoutAnimationFrameScheduler =
       setTimeout(
         () => callback(performance.now()),
         ANIMATION_FRAME_FALLBACK_INTERVAL_MS,
-      ) as unknown as number,
+      ),
     cancelAnimationFrame: (frameHandle) => {
       clearTimeout(frameHandle);
     },

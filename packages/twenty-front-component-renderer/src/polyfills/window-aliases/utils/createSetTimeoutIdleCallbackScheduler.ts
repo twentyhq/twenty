@@ -17,7 +17,7 @@ export const createSetTimeoutIdleCallbackScheduler =
                 (performance.now() - idleStartTimestamp),
             ),
         });
-      }, IDLE_CALLBACK_SCHEDULE_DELAY_MS) as unknown as number,
+      }, IDLE_CALLBACK_SCHEDULE_DELAY_MS),
     cancelIdleCallback: (idleCallbackHandle) => {
       clearTimeout(idleCallbackHandle);
     },

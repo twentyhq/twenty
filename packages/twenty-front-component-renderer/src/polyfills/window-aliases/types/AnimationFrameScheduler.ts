@@ -1,4 +1,6 @@
+import { type TimerHandle } from '@/polyfills/window-aliases/types/TimerHandle';
+
 export type AnimationFrameScheduler = {
-  requestAnimationFrame: (callback: FrameRequestCallback) => number;
-  cancelAnimationFrame: (frameHandle: number) => void;
+  requestAnimationFrame: (callback: FrameRequestCallback) => TimerHandle;
+  cancelAnimationFrame: (frameHandle: TimerHandle) => void;
 };

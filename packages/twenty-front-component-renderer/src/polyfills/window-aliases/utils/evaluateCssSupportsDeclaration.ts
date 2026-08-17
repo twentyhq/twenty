@@ -4,10 +4,15 @@ import { isDefined } from 'twenty-shared/utils';
 import { CSS_WIDE_KEYWORDS } from '@/polyfills/window-aliases/constants/CssWideKeywords';
 import { SUPPORTED_CSS_PROPERTY_KEYWORDS } from '@/polyfills/window-aliases/constants/SupportedCssPropertyKeywords';
 
-export const evaluateCssSupportsDeclaration = (
-  property: string,
-  value: string,
-): boolean => {
+type EvaluateCssSupportsDeclarationInput = {
+  property: string;
+  value: string;
+};
+
+export const evaluateCssSupportsDeclaration = ({
+  property,
+  value,
+}: EvaluateCssSupportsDeclarationInput): boolean => {
   const normalizedProperty = property.trim().toLowerCase();
   const normalizedValue = value.trim().toLowerCase();
 

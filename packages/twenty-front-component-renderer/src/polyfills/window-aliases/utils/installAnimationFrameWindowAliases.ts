@@ -15,7 +15,7 @@ export const installAnimationFrameWindowAliases = (
     isFunction(nativeCancelAnimationFrame)
       ? {
           requestAnimationFrame: (callback) =>
-            nativeRequestAnimationFrame.call(globalScope, callback) as number,
+            nativeRequestAnimationFrame.call(globalScope, callback),
           cancelAnimationFrame: (frameHandle) => {
             nativeCancelAnimationFrame.call(globalScope, frameHandle);
           },

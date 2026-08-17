@@ -15,11 +15,7 @@ export const installFetchWindowAlias = (
       throw new TypeError('fetch is not available in this environment');
     }
 
-    return currentGlobalFetch.call(
-      globalScope,
-      input,
-      init,
-    ) as Promise<Response>;
+    return currentGlobalFetch.call(globalScope, input, init);
   };
 
   for (const installTarget of resolveGlobalScopeInstallTargets(globalScope)) {

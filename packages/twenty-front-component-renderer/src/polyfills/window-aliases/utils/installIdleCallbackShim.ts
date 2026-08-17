@@ -15,11 +15,7 @@ export const installIdleCallbackShim = (
     isFunction(nativeCancelIdleCallback)
       ? {
           requestIdleCallback: (callback, options) =>
-            nativeRequestIdleCallback.call(
-              globalScope,
-              callback,
-              options,
-            ) as number,
+            nativeRequestIdleCallback.call(globalScope, callback, options),
           cancelIdleCallback: (idleCallbackHandle) => {
             nativeCancelIdleCallback.call(globalScope, idleCallbackHandle);
           },

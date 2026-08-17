@@ -7,10 +7,10 @@ export const evaluateCssSupportsQuery = (
   const [firstArgument, secondArgument] = supportsArguments;
 
   if (supportsArguments.length >= 2) {
-    return evaluateCssSupportsDeclaration(
-      String(firstArgument),
-      String(secondArgument),
-    );
+    return evaluateCssSupportsDeclaration({
+      property: String(firstArgument),
+      value: String(secondArgument),
+    });
   }
 
   if (supportsArguments.length === 1) {

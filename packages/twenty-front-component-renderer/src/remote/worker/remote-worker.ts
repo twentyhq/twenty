@@ -64,7 +64,7 @@ installWindowGeometryPolyfill({
 });
 
 installWindowAliasesPolyfill({
-  globalScope: globalThis as unknown as Record<string, unknown>,
+  globalScope: toGlobalScopeRecord(globalThis),
 });
 
 installStorageBridge({

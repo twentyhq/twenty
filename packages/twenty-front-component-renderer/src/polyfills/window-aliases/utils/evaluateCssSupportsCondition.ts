@@ -24,8 +24,8 @@ export const evaluateCssSupportsCondition = (condition: string): boolean => {
     return false;
   }
 
-  return evaluateCssSupportsDeclaration(
-    unwrappedCondition.slice(0, declarationSeparatorIndex),
-    unwrappedCondition.slice(declarationSeparatorIndex + 1),
-  );
+  return evaluateCssSupportsDeclaration({
+    property: unwrappedCondition.slice(0, declarationSeparatorIndex),
+    value: unwrappedCondition.slice(declarationSeparatorIndex + 1),
+  });
 };
