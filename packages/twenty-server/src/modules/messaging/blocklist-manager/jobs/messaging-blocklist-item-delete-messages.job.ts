@@ -17,6 +17,7 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { type BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
+import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -93,6 +94,13 @@ export class BlocklistItemDeleteMessagesJob {
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
             workspaceId,
             'workspaceMember',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        const messageParticipantRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageParticipantWorkspaceEntity>(
+            workspaceId,
+            'messageParticipant',
             { shouldBypassPermissionChecks: true },
           );
 
@@ -178,13 +186,29 @@ export class BlocklistItemDeleteMessagesJob {
                 : { handle, role: In(rolesToDelete) };
             });
 
+            const matchingParticipants =
+              await messageParticipantRepository.find({
+                where: handleConditions,
+                select: { messageId: true },
+              });
+
+            const messageIds = [
+              ...new Set(
+                matchingParticipants.map(
+                  (participant) => participant.messageId,
+                ),
+              ),
+            ];
+
+            if (messageIds.length === 0) {
+              continue;
+            }
+
             const messageChannelMessageAssociationsToDelete =
               await messageChannelMessageAssociationRepository.find({
                 where: {
                   messageChannelId: messageChannel.id,
-                  message: {
-                    messageParticipants: handleConditions,
-                  },
+                  messageId: In(messageIds),
                 },
               });
 

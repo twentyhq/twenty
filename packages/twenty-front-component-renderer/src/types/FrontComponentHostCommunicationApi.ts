@@ -11,6 +11,7 @@ import {
   type StorageSetFunction,
   type UnmountFrontComponentFunction,
   type UpdateProgressFunction,
+  type UploadFileFunction,
 } from 'twenty-sdk/front-component';
 
 export type FrontComponentHostCommunicationApi = {
@@ -23,6 +24,7 @@ export type FrontComponentHostCommunicationApi = {
   closeSidePanel: CloseSidePanelFunction;
   updateProgress: UpdateProgressFunction;
   copyToClipboard: CopyToClipboardFunction;
+  uploadFile: UploadFileFunction;
   storageSet: StorageSetFunction;
   storageDelete: StorageDeleteFunction;
   storageClear: StorageClearFunction;

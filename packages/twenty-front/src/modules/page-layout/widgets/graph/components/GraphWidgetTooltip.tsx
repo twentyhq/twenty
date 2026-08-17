@@ -18,7 +18,10 @@ const StyledTooltip = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2px;
-  max-width: min(${GRAPH_TOOLTIP_MAX_WIDTH_PX}px, calc(100vw - 40px));
+  max-width: min(
+    ${GRAPH_TOOLTIP_MAX_WIDTH_PX}px,
+    calc(100vw / var(--t-zoom, 1) - 40px)
+  );
   min-width: ${GRAPH_TOOLTIP_MIN_WIDTH_PX}px;
   pointer-events: auto;
 `;

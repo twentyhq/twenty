@@ -6,11 +6,7 @@ import { filterFieldsForRecordTableViewCreation } from '@/page-layout/widgets/re
 import { normalizeRecordTableWidgetViewFields } from '@/page-layout/widgets/record-table/utils/normalizeRecordTableWidgetViewFields';
 import { sortFieldsByRelevanceForRecordTableWidget } from '@/page-layout/widgets/record-table/utils/sortFieldsByRelevanceForRecordTableWidget';
 import { v4 } from 'uuid';
-import {
-  ViewOpenRecordIn,
-  ViewType,
-  ViewVisibility,
-} from '~/generated-metadata/graphql';
+import { ViewType, ViewVisibility } from '~/generated-metadata/graphql';
 
 const DEFAULT_VIEW_FIELD_SIZE = 180;
 const INITIAL_VISIBLE_FIELDS_COUNT_IN_WIDGET = 6;
@@ -28,7 +24,6 @@ export const buildRecordTableWidgetViewSnapshot = (
     type: ViewType.TABLE_WIDGET,
     isCompact: false,
     position: 0,
-    openRecordIn: ViewOpenRecordIn.RECORD_PAGE,
     visibility: ViewVisibility.WORKSPACE,
     shouldHideEmptyGroups: false,
     isActive: true,

@@ -8,7 +8,6 @@ import {
 import { currentUserWorkspaceContextQueryFactory } from 'test/integration/graphql/suites/auth/user-sessions/utils/user-session-operations.util';
 
 import { ALLOWED_ORIGIN } from 'test/integration/graphql/suites/auth/user-sessions/constants/session-origins.constants';
-import { setupDatabaseConfigOverrideForSuite } from 'test/integration/graphql/suites/auth/user-sessions/utils/setup-database-config-override.util';
 
 import {
   SEED_APPLE_WORKSPACE_ID,
@@ -24,8 +23,6 @@ import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils
 // (header, variable, origin) lets a session pivot to another workspace; the
 // context is rebuilt from the session row alone.
 describe('successful session workspace binding (integration)', () => {
-  setupDatabaseConfigOverrideForSuite('AUTH_COOKIE_SESSIONS_ENABLED', true);
-
   let appleSessionToken: string;
   let ycSessionToken: string;
   let appleSessionCookieHeader: string;

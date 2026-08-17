@@ -475,6 +475,7 @@ Front components can trigger navigation, modals, and notifications using functio
 | `enqueueSnackbar(params)` | Show a toast notification |
 | `unmountFrontComponent()` | Unmount the component |
 | `updateProgress(progress)` | Update a progress indicator |
+| `uploadFile(file, { fieldMetadataId, fileName? })` | Upload a `Blob` into a FILES field; resolves to `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` or `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` |
 
 Here is an example that uses the host API to show a snackbar and close the side panel after an action completes:
 
@@ -773,24 +774,24 @@ To branch on the active scheme explicitly, read it with `useColorScheme()` from 
 
 ## Current limitations
 
-Front components are under active development. Rendering, styling and handling events works well. Anything that reaches *past* rendering (measuring an element, calling a DOM method on a ref, portaling outside your tree, touching browser storage) is missing or incomplete today, and most of it fails silently: no exception, and no TypeScript error either, since the scaffold is typed against the full browser DOM.
+Front components are under active development. Rendering, styling, handling events, measuring elements and browser storage work well. Anything that reaches *past* those (calling a DOM method on a ref, observing element resizes, portaling outside your tree) is missing or incomplete today, and most of it fails silently: no exception, and no TypeScript error either, since the scaffold is typed against the full browser DOM.
 
 If one of these blocks you, [open an issue](https://github.com/twentyhq/twenty/issues/new/choose) so it gets prioritized.
 
 ### Layout and measurement
 
-Nothing can measure itself yet.
+Elements can measure themselves: the host mirrors geometry into the sandbox, so reads are answered locally but can be up to one frame stale, and the first read of a never-measured element returns zeros. After writing, re-read in a `requestAnimationFrame` callback or an effect.
 
 | API | What happens |
 |-----|--------------|
-| `getBoundingClientRect()`, `getClientRects()` | Throws |
-| `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Silently `undefined`, so `width ?? 0` yields `0` and `width > 600` is always false |
+| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Work, from the mirror; assigning `scrollTop` / `scrollLeft` is a no-op |
+| `getClientRects()`, `window.matchMedia()` | Throws |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY` | Work, reporting the **browser viewport**; your widget's own size is `document.body.clientWidth` / `clientHeight` |
+| `window.getComputedStyle()` | Returns the element's inline styles only, never the host-computed cascade |
 | `ResizeObserver`, `IntersectionObserver` | `ReferenceError` (`typeof` guards do work) |
-| `window.matchMedia()`, `window.getComputedStyle()` | Throws |
-| `window.innerWidth`, `innerHeight`, `devicePixelRatio` | Silently `undefined` |
-| `new MutationObserver(fn)` | Constructs, then `.observe()` throws |
+| `MutationObserver` | Works, including `subtree`, `attributeFilter`, old values and `takeRecords()` |
 
-So recharts `ResponsiveContainer`, Floating UI / Popper, list virtualization and drag-to-resize do not work yet. Do layout in CSS instead: your stylesheet reaches the real page, so flexbox, grid, `aspect-ratio`, `clamp()` and `@container` all behave normally.
+Positioning from `getBoundingClientRect` now works, but anything watching size changes through `ResizeObserver` (recharts `ResponsiveContainer`, Floating UI's `autoUpdate`) still does not. Prefer CSS for layout anyway: your stylesheet reaches the real page, so flexbox, grid, `aspect-ratio`, `clamp()` and `@container` behave normally, with no frame lag.
 
 <Note>
 `requestAnimationFrame`, `fetch`, `setTimeout` and `queueMicrotask` work without the `window.` prefix. Only `window.requestAnimationFrame(...)` and friends throw.
@@ -804,7 +805,7 @@ A `ref` gives you a sandbox element, not an `HTMLElement`.
 |----------------|--------------|-------------|
 | `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Throws | Controlled components; read values from `event.target` |
 | `element.classList.add(...)` | Throws (`classList` is `undefined`) | Build the `className` string yourself |
-| `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()` | Throws | `querySelector()` / `querySelectorAll()`, which work |
+| `document.createTreeWalker()` | Throws | `querySelector()` / `querySelectorAll()` and `getElementById()` work; `getElementsByClassName()` works too, but returns a static collection, not a live `HTMLCollection` |
 | `document.activeElement` | Always `undefined` | Track focus with `onFocus` / `onBlur` |
 | `canvas` | Renders nothing, no error | SVG, or draw offscreen and show the result in an `img` element |
 | `createPortal(node, document.body)` | Renders nothing, while `isConnected` reports success | Overlays inline with `position: absolute`, or pass the library your own container element |
@@ -833,9 +834,13 @@ Component CSS, whether from `import './styles.css'`, CSS-in-JS or a `style` elem
 - Other origins leave the sandbox with `Origin: null`, so a third-party API answers only if it sends `Access-Control-Allow-Origin: *`. Call it from a logic function instead.
 - `fetch('/rest/people')` is never matched to the Twenty API, because the sandbox has no page URL to resolve a relative path against.
 
+### Media capture
+
+`navigator.mediaDevices.getUserMedia()` and `MediaRecorder` work inside front components through sandbox polyfills, so standard recording code runs unchanged and `MediaRecorder.isTypeSupported` answers for common container/codec combinations. Detailed `getUserMedia` constraint objects are accepted but not forwarded — the host captures with its defaults for the requested kinds — and only one capture can be live at a time across applications. Store a recorded `Blob` with the `uploadFile` host function.
+
 ### Other gaps
 
-- **File contents.** An `input` of type `file` gives your handler file metadata only, not the bytes, so `FileReader` and uploads are not possible yet.
+- **File contents.** An `input` of type `file` gives your handler file metadata only, not the bytes, so `FileReader` is not available. To upload a `Blob` your code already holds — e.g. one produced by `MediaRecorder` — use the `uploadFile` host function.
 - **Drag-and-drop payloads.** Drag events fire, but `event.dataTransfer` is `undefined`.
 - **Node built-ins.** `fs`, `path` and `node:crypto` fail the build, so move that work into a [logic function](/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` and `URL` are available.
 - **`iframe`** is always re-sandboxed without `allow-same-origin`, so an embed relying on its own session renders logged out. It has no `onLoad` either.

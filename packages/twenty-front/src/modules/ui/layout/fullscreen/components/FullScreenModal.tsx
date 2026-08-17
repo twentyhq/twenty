@@ -13,7 +13,7 @@ const StyledFullScreenOverlay = styled.div`
   bottom: 0;
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: calc(100vh / var(--t-zoom, 1));
   left: 0;
   position: fixed;
   right: 0;

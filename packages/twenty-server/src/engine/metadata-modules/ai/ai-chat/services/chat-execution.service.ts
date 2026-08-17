@@ -77,7 +77,7 @@ import {
   injectCacheBreakpoint,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
 import { replaceUnsupportedFileParts } from 'src/engine/metadata-modules/ai/ai-chat/utils/replace-unsupported-file-parts.util';
-import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
+import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { NativeToolBinderService } from 'src/engine/metadata-modules/ai/ai-models/services/native-tool-binder.service';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
@@ -470,16 +470,14 @@ export class ChatExecutionService {
         hasToolCall(ASK_QUESTIONS_TOOL_NAME)(step) ||
         hasToolCall(COMPLETE_WORKSPACE_SETUP_TOOL_NAME)(step) ||
         hasNoMoreAvailableCredits,
-      experimental_telemetry: {
-        ...AI_TELEMETRY_CONFIG,
+      experimental_telemetry: buildAiTelemetry({
         functionId: 'ai-chat-stream',
-        metadata: {
-          streamId: streamId ?? '',
-          turnId: turnId ?? '',
-          threadId: threadId ?? '',
-          workspaceId: workspace.id,
-        },
-      },
+        workspaceId: workspace.id,
+        userWorkspaceId,
+        threadId,
+        turnId,
+        streamId,
+      }),
       providerOptions: getCallLevelProviderOptions({
         sdkPackage: registeredModel.sdkPackage,
         providerOptions: undefined,
