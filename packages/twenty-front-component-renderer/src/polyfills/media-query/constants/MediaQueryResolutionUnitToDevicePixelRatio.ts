@@ -1,6 +1,6 @@
 export const MEDIA_QUERY_RESOLUTION_UNIT_TO_DEVICE_PIXEL_RATIO: Record<
   string,
-  number
+  number | undefined
 > = {
   dppx: 1,
   x: 1,

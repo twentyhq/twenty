@@ -95,11 +95,13 @@ const matchMediaTest: Story['play'] = async ({ canvasElement }) => {
   expect(errorHandler).not.toHaveBeenCalled();
 };
 
-const createStory = (
-  name: string,
-  play: Story['play'],
-  runtime?: 'preact',
-): Story => ({
+type CreateStoryInput = {
+  name: string;
+  play: Story['play'];
+  runtime?: 'preact';
+};
+
+const createStory = ({ name, play, runtime }: CreateStoryInput): Story => ({
   args: {
     componentUrl: getBuiltStoryComponentPathForRender(
       `${name}.front-component`,
@@ -109,21 +111,21 @@ const createStory = (
   play,
 });
 
-export const MutationObserverReact: Story = createStory(
-  'mutation-observer-example',
-  mutationObserverTest,
-);
-export const MutationObserverPreact: Story = createStory(
-  'mutation-observer-example',
-  mutationObserverTest,
-  'preact',
-);
-export const MatchMediaReact: Story = createStory(
-  'match-media',
-  matchMediaTest,
-);
-export const MatchMediaPreact: Story = createStory(
-  'match-media',
-  matchMediaTest,
-  'preact',
-);
+export const MutationObserverReact: Story = createStory({
+  name: 'mutation-observer-example',
+  play: mutationObserverTest,
+});
+export const MutationObserverPreact: Story = createStory({
+  name: 'mutation-observer-example',
+  play: mutationObserverTest,
+  runtime: 'preact',
+});
+export const MatchMediaReact: Story = createStory({
+  name: 'match-media',
+  play: matchMediaTest,
+});
+export const MatchMediaPreact: Story = createStory({
+  name: 'match-media',
+  play: matchMediaTest,
+  runtime: 'preact',
+});
