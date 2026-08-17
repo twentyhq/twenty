@@ -119,7 +119,7 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true, type: 'uuid' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.32.0_AddUninstallLogicFunctionIdToApplicationFastInstanceCommand_1786623564993',
+      '2.32.0_AddUninstallLogicFunctionIdToApplicationFastInstanceCommand_1786959731000',
   })
   uninstallLogicFunctionId: string | null;
 

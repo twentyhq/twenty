@@ -7,7 +7,7 @@ import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 
 // The CASE guard keeps a malformed manifest identifier from aborting the
 // upgrade; unresolvable declarations stay NULL and self-heal on next sync.
-@RegisteredInstanceCommand('2.32.0', 1786623564994, { type: 'slow' })
+@RegisteredInstanceCommand('2.32.0', 1786959731001, { type: 'slow' })
 export class BackfillUninstallLogicFunctionIdOnApplicationSlowInstanceCommand
   implements SlowInstanceCommand
 {
