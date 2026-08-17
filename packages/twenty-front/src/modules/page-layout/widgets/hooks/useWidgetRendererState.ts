@@ -9,8 +9,9 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { useIsCurrentWidgetLastOfTab } from '@/page-layout/widgets/hooks/useIsCurrentWidgetLastOfTab';
 import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
 import { useWidgetPermissions } from '@/page-layout/widgets/hooks/useWidgetPermissions';
+import { WIDGET_TYPES_WITH_HEADER_ACTIONS } from '@/page-layout/widgets/constants/WidgetTypesWithHeaderActions';
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
-import { widgetHasHeaderInfoComponentFamilySelector } from '@/page-layout/widgets/states/selectors/widgetHasHeaderInfoComponentFamilySelector';
+import { widgetHasHeaderCountComponentFamilySelector } from '@/page-layout/widgets/states/selectors/widgetHasHeaderCountComponentFamilySelector';
 import { getWidgetCardVariant } from '@/page-layout/widgets/utils/getWidgetCardVariant';
 import { useOpenWidgetSettingsInSidePanel } from '@/side-panel/hooks/useOpenWidgetSettingsInSidePanel';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
@@ -57,10 +58,14 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
 
   const isLastWidget = useIsCurrentWidgetLastOfTab(widget.id);
 
-  const hasWidgetHeaderInfo = useAtomComponentFamilySelectorValue(
-    widgetHasHeaderInfoComponentFamilySelector,
+  const hasWidgetHeaderCount = useAtomComponentFamilySelectorValue(
+    widgetHasHeaderCountComponentFamilySelector,
     widget.id,
   );
+
+  const hasWidgetHeaderInfo =
+    hasWidgetHeaderCount ||
+    WIDGET_TYPES_WITH_HEADER_ACTIONS.includes(widget.type);
 
   const isHeaderHiddenInViewMode =
     widget.type === WidgetType.STANDALONE_RICH_TEXT ||

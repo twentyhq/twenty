@@ -6,7 +6,6 @@ import { type ActivityTargetableObject } from '@/activities/types/ActivityTarget
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -31,14 +30,16 @@ const StyledDropZoneContainer = styled.div`
 
 type FilesCardContentProps = {
   attachments: Attachment[];
+  canUploadFiles: boolean;
   loading: boolean;
-  onAddFile: (() => void) | undefined;
+  onAddFile: () => void;
   onUploadFiles: (files: File[]) => Promise<void>;
   targetRecord: ActivityTargetableObject;
 };
 
 export const FilesCardContent = ({
   attachments,
+  canUploadFiles,
   loading,
   onAddFile,
   onUploadFiles,
@@ -46,8 +47,6 @@ export const FilesCardContent = ({
 }: FilesCardContentProps) => {
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const { t } = useLingui();
-
-  const canUploadFiles = isDefined(onAddFile);
 
   const isAttachmentsEmpty = attachments.length === 0;
 

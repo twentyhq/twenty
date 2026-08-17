@@ -4,11 +4,8 @@ import { useNotes } from '@/activities/notes/hooks/useNotes';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import { WidgetHeaderInfoEffect } from '@/page-layout/widgets/components/WidgetHeaderInfoEffect';
+import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import { t } from '@lingui/core/macro';
-import { useCallback, useMemo } from 'react';
-import { IconPlus } from 'twenty-ui/icon';
 
 export const NotesCard = () => {
   const targetRecord = useTargetRecord();
@@ -35,29 +32,12 @@ export const NotesCard = () => {
 
   const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
-  const handleCreateNote = useCallback(
-    () => openCreateActivity({ targetableObjects: [targetRecord] }),
-    [openCreateActivity, targetRecord],
-  );
-
-  const headerActions = useMemo(
-    () =>
-      hasObjectUpdatePermissions
-        ? [
-            {
-              id: 'new-note',
-              Icon: IconPlus,
-              label: t`New note`,
-              onClick: handleCreateNote,
-            },
-          ]
-        : undefined,
-    [hasObjectUpdatePermissions, handleCreateNote],
-  );
+  const handleCreateNote = () =>
+    openCreateActivity({ targetableObjects: [targetRecord] });
 
   return (
     <>
-      <WidgetHeaderInfoEffect count={totalCountNotes} actions={headerActions} />
+      <WidgetHeaderCountEffect count={totalCountNotes} />
       <NotesCardContent
         loading={loading}
         notes={notes}

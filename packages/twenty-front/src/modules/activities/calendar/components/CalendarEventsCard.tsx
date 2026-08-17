@@ -3,7 +3,7 @@ import { TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE } from '@/activities/calenda
 import { getTimelineCalendarEventsFromObjectRecord } from '@/activities/calendar/graphql/queries/getTimelineCalendarEventsFromObjectRecord';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
 import { useSubscribeTimelineToParticipantChanges } from '@/activities/hooks/useSubscribeTimelineToParticipantChanges';
-import { WidgetHeaderInfoEffect } from '@/page-layout/widgets/components/WidgetHeaderInfoEffect';
+import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { type TimelineCalendarEventsWithTotal } from '~/generated/graphql';
 
@@ -43,7 +43,7 @@ export const CalendarEventsCard = () => {
 
   return (
     <>
-      <WidgetHeaderInfoEffect count={totalNumberOfCalendarEvents} />
+      <WidgetHeaderCountEffect count={totalNumberOfCalendarEvents} />
       <CalendarEventsCardContent
         firstQueryLoading={firstQueryLoading}
         isFetchingMore={isFetchingMore}

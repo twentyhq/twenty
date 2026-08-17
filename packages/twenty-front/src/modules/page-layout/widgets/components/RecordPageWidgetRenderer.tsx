@@ -1,6 +1,5 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { WidgetCardShell } from '@/page-layout/widgets/components/WidgetCardShell';
-import { useWidgetActions } from '@/page-layout/widgets/hooks/useWidgetActions';
 import { useWidgetRendererState } from '@/page-layout/widgets/hooks/useWidgetRendererState';
 
 type RecordPageWidgetRendererProps = {
@@ -13,8 +12,6 @@ export const RecordPageWidgetRenderer = ({
   const state = useWidgetRendererState(widget);
 
   const isWidgetEditable = state.isPageLayoutInEditMode;
-
-  const actions = useWidgetActions({ widget });
 
   const isSoloVariant = state.variant === 'solo';
 
@@ -30,7 +27,6 @@ export const RecordPageWidgetRenderer = ({
       showHeader={state.showHeader}
       hasAccess={state.hasAccess}
       restriction={state.restriction}
-      actions={actions}
       isInVerticalListTab={state.isInVerticalListTab}
       isMobile={state.isMobile}
       isReorderEnabled={true}

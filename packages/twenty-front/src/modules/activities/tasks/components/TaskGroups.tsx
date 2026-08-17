@@ -4,13 +4,8 @@ import { useTasks } from '@/activities/tasks/hooks/useTasks';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import { WidgetHeaderInfoEffect } from '@/page-layout/widgets/components/WidgetHeaderInfoEffect';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { t } from '@lingui/core/macro';
-import { useCallback, useMemo } from 'react';
+import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { IconPlus } from 'twenty-ui/icon';
 
 type TaskGroupsProps = {
   filterDropdownId?: string;
@@ -36,37 +31,14 @@ export const TaskGroups = ({ targetableObject }: TaskGroupsProps) => {
     activityObjectNameSingular: CoreObjectNameSingular.Task,
   });
 
-  const handleCreateTask = useCallback(
-    () => openCreateActivity({ targetableObjects: [targetableObject] }),
-    [openCreateActivity, targetableObject],
-  );
-
-  const headerActions = useMemo(
-    () =>
-      hasObjectUpdatePermissions
-        ? [
-            {
-              id: 'new-task',
-              Icon: IconPlus,
-              label: t`New task`,
-              onClick: handleCreateTask,
-            },
-          ]
-        : undefined,
-    [hasObjectUpdatePermissions, handleCreateTask],
-  );
-
-  const activeTabId = useAtomComponentStateValue(activeTabIdComponentState);
-
-  const isLoading =
-    (activeTabId !== 'done' && tasksLoading) ||
-    (activeTabId === 'done' && tasksLoading);
+  const handleCreateTask = () =>
+    openCreateActivity({ targetableObjects: [targetableObject] });
 
   return (
     <>
-      <WidgetHeaderInfoEffect count={totalCountTasks} actions={headerActions} />
+      <WidgetHeaderCountEffect count={totalCountTasks} />
       <TaskGroupsContent
-        isLoading={isLoading}
+        isLoading={tasksLoading}
         onCreateTask={hasObjectUpdatePermissions ? handleCreateTask : undefined}
         tasks={tasks}
       />
