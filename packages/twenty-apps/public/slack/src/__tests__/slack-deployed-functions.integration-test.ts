@@ -5,7 +5,10 @@ import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { functionExecute } from 'twenty-sdk/cli';
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import { buildSlackRoutePayload } from 'src/__tests__/utils/build-slack-event-payloads';
+import {
+  buildSlackAppMentionEventBody,
+  buildSlackRoutePayload,
+} from 'src/__tests__/utils/build-slack-event-payloads';
 import { requireDefinedOrThrow } from 'src/__tests__/utils/require-defined-or-throw';
 import { SLACK_TEST_WEBHOOK_SECRET } from 'src/__tests__/utils/setup-slack-integration-test';
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
@@ -193,6 +196,28 @@ describe('Slack app deployed functions', () => {
       expect(execution.status).toBe('ERROR');
       expect(execution.error?.errorMessage).toContain(
         'Invalid Slack signature',
+      );
+    });
+  });
+
+  // The team claim lives in a SERVER scoped key value entry, which only the app
+  // access token can read. Reaching the refusal proves the real runtime answers
+  // the scoped read the way the in-process app runtime fake pretends it does.
+  it('should refuse an event from an unclaimed Slack team through the real key value store', async () => {
+    await withTestWebhookSecret(async () => {
+      const execution = await executeDeployedFunction('slack-events-resolver', {
+        ...buildSlackRoutePayload(
+          buildSlackAppMentionEventBody({
+            channelId: 'C0DEPLOYED',
+            text: 'hello',
+            teamId: 'T0UNCLAIMED',
+          }),
+        ),
+      });
+
+      expect(execution.status).toBe('ERROR');
+      expect(execution.error?.errorMessage).toContain(
+        'No workspace has claimed Slack team T0UNCLAIMED',
       );
     });
   });
