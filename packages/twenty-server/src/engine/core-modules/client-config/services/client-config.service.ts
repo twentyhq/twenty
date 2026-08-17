@@ -264,9 +264,6 @@ export class ClientConfigService {
         isBillingEnabled ||
         this.twentyConfigService.get('IS_FEATURE_FLAG_MANAGEMENT_ENABLED'),
       publicFeatureFlags: PUBLIC_FEATURE_FLAGS,
-      isCookieSessionEnabled: this.twentyConfigService.get(
-        'AUTH_COOKIE_SESSIONS_ENABLED',
-      ),
       isMicrosoftMessagingEnabled: this.twentyConfigService.get(
         'MESSAGING_PROVIDER_MICROSOFT_ENABLED',
       ),

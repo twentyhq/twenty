@@ -1597,7 +1597,6 @@ export interface ClientConfig {
     api: ApiConfig
     canManageFeatureFlags: Scalars['Boolean']
     publicFeatureFlags: PublicFeatureFlag[]
-    isCookieSessionEnabled: Scalars['Boolean']
     isMicrosoftMessagingEnabled: Scalars['Boolean']
     isMicrosoftCalendarEnabled: Scalars['Boolean']
     isGoogleMessagingEnabled: Scalars['Boolean']
@@ -4884,7 +4883,6 @@ export interface ClientConfigGenqlSelection{
     api?: ApiConfigGenqlSelection
     canManageFeatureFlags?: boolean | number
     publicFeatureFlags?: PublicFeatureFlagGenqlSelection
-    isCookieSessionEnabled?: boolean | number
     isMicrosoftMessagingEnabled?: boolean | number
     isMicrosoftCalendarEnabled?: boolean | number
     isGoogleMessagingEnabled?: boolean | number

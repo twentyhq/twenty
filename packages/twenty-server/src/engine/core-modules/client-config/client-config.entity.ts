@@ -313,9 +313,6 @@ export class ClientConfig {
   publicFeatureFlags: PublicFeatureFlag[];
 
   @Field(() => Boolean)
-  isCookieSessionEnabled: boolean;
-
-  @Field(() => Boolean)
   isMicrosoftMessagingEnabled: boolean;
 
   @Field(() => Boolean)
