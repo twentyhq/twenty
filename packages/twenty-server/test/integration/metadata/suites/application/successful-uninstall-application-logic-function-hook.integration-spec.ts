@@ -215,6 +215,28 @@ describe('Uninstall application logic function hook', () => {
     expect(executeSpy).not.toHaveBeenCalled();
   }, 60000);
 
+  it('does not execute any hook when an upgrade removes the uninstall logic function from the manifest', async () => {
+    await syncTestApplication({ withUninstallHook: true });
+    await syncTestApplication({ withUninstallHook: false });
+
+    const [application] = await globalThis.testDataSource.query(
+      `SELECT "uninstallLogicFunctionId" FROM core."application"
+       WHERE "universalIdentifier" = $1 AND "deletedAt" IS NULL`,
+      [appId],
+    );
+
+    expect(application.uninstallLogicFunctionId).toBeNull();
+
+    const { data, errors } = await uninstallApplication({
+      universalIdentifier: appId,
+      expectToFail: false,
+    });
+
+    expect(errors).toBeUndefined();
+    expect(data?.uninstallApplication).toBe(true);
+    expect(executeSpy).not.toHaveBeenCalled();
+  }, 60000);
+
   it('uninstalls the application even when the uninstall hook returns an error (best-effort)', async () => {
     executeSpy.mockResolvedValue({
       data: null,

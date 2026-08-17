@@ -262,8 +262,6 @@ export class ApplicationManifestMigrationService {
     };
   }
 
-  // The manifest is not persisted per workspace, so these ids are resolved
-  // and stored at sync time.
   private async syncApplicationReferencesFromManifest({
     manifest,
     workspaceId,
