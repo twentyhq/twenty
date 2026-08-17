@@ -5,6 +5,8 @@ import { type WorkerMediaQueryList } from '@/polyfills/media-query/types/WorkerM
 import { type WorkerMediaQueryListEvent } from '@/polyfills/media-query/types/WorkerMediaQueryListEvent';
 import { type WorkerMediaQueryListener } from '@/polyfills/media-query/types/WorkerMediaQueryListener';
 
+const CHANGE_EVENT_TYPE = 'change';
+
 type CreateWorkerMediaQueryListInput = {
   media: string;
   evaluateMatches: () => boolean;
@@ -32,7 +34,7 @@ export const createWorkerMediaQueryList = ({
     lastNotifiedMatches = nextMatches;
 
     const changeEvent: WorkerMediaQueryListEvent = {
-      type: 'change',
+      type: CHANGE_EVENT_TYPE,
       media,
       matches: nextMatches,
     };
@@ -117,14 +119,14 @@ export const createWorkerMediaQueryList = ({
       releaseEnvironmentSubscriptionIfUnused();
     },
     addEventListener: (type: string, listener: WorkerMediaQueryListener) => {
-      if (type !== 'change') {
+      if (type !== CHANGE_EVENT_TYPE) {
         return;
       }
 
       addChangeListener(listener);
     },
     removeEventListener: (type: string, listener: WorkerMediaQueryListener) => {
-      if (type !== 'change') {
+      if (type !== CHANGE_EVENT_TYPE) {
         return;
       }
 

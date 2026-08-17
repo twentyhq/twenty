@@ -7,6 +7,8 @@ import { parseMediaQueryDevicePixelRatioCondition } from '@/polyfills/media-quer
 import { parseMediaQueryDimensionCondition } from '@/polyfills/media-query/utils/parseMediaQueryDimensionCondition';
 import { parseMediaQueryResolutionCondition } from '@/polyfills/media-query/utils/parseMediaQueryResolutionCondition';
 
+const CONDITION_WRAPPING_PARENTHESES_PATTERN = /^\((.*)\)$/;
+
 const WEBKIT_FEATURE_PREFIX = '-webkit-';
 
 const WEBKIT_DEVICE_PIXEL_RATIO_FEATURES = new Set([
@@ -18,16 +20,19 @@ const WEBKIT_DEVICE_PIXEL_RATIO_FEATURES = new Set([
 export const parseMediaQueryCondition = (
   conditionString: string,
 ): ParsedMediaQueryCondition | null => {
-  const conditionMatch = conditionString.match(/^\((.*)\)$/);
+  const conditionMatch = conditionString.match(
+    CONDITION_WRAPPING_PARENTHESES_PATTERN,
+  );
 
   if (!isDefined(conditionMatch)) {
     return null;
   }
 
-  const conditionContent = conditionMatch[1];
+  const [, conditionContent] = conditionMatch;
   const colonIndex = conditionContent.indexOf(':');
+  const hasFeatureNameValueSeparator = colonIndex !== -1;
 
-  if (colonIndex === -1) {
+  if (!hasFeatureNameValueSeparator) {
     return null;
   }
 

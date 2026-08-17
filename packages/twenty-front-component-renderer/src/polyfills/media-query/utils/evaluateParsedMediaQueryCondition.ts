@@ -14,15 +14,15 @@ export const evaluateParsedMediaQueryCondition = ({
     return condition.value === environment.colorScheme;
   }
 
-  const currentValue = environment[condition.source];
+  const environmentValue = environment[condition.source];
 
   if (condition.comparison === 'min') {
-    return currentValue >= condition.value;
+    return environmentValue >= condition.value;
   }
 
   if (condition.comparison === 'max') {
-    return currentValue <= condition.value;
+    return environmentValue <= condition.value;
   }
 
-  return currentValue === condition.value;
+  return environmentValue === condition.value;
 };
