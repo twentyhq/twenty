@@ -131,14 +131,24 @@ export const CountClearsWhenContentUnmounts: Story = {
 
 export const CountEffectNoOpsOutsideWidget: Story = {
   render: () => (
-    <>
+    <PageLayoutTestWrapper instanceId={PAGE_LAYOUT_TEST_INSTANCE_ID}>
       <WidgetHeaderCountEffect count={7} />
-      <div>Rendered without a widget</div>
-    </>
+      <WidgetComponentInstanceContext.Provider
+        value={{ instanceId: `${WIDGET_ID}-outside` }}
+      >
+        <WidgetCardHeader
+          widgetId={`${WIDGET_ID}-outside`}
+          variant="dashboard"
+          isInEditMode={false}
+          title="Call recordings"
+        />
+      </WidgetComponentInstanceContext.Provider>
+    </PageLayoutTestWrapper>
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('Rendered without a widget')).toBeVisible();
+    expect(await canvas.findByText('Call recordings')).toBeVisible();
+    expect(canvas.queryByText('7')).toBeNull();
   },
 };
