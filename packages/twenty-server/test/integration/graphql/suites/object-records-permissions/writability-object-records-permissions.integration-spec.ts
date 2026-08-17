@@ -24,7 +24,7 @@ const setObjectWritability = async (
   await objectMetadataRepository.update(objectMetadataId, { writability });
 
   await global.app
-    .get(WorkspaceCacheService)
+    .get(WorkspaceCacheService, { strict: false })
     .invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
       'flatObjectMetadataMaps',
     ]);
@@ -40,7 +40,7 @@ const setFieldWritability = async (
   await fieldMetadataRepository.update(fieldMetadataId, { writability });
 
   await global.app
-    .get(WorkspaceCacheService)
+    .get(WorkspaceCacheService, { strict: false })
     .invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['flatFieldMetadataMaps']);
 };
 
