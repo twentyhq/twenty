@@ -644,6 +644,11 @@ msgstr "An opportunity"
 msgid "An unexpected billing error occurred."
 msgstr "An unexpected billing error occurred."
 
+#. js-lingui-id: U8C7oj
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "An unexpected billing error occurred. Please contact support."
+msgstr "An unexpected billing error occurred. Please contact support."
+
 #. js-lingui-id: acTNEg
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "An unexpected configuration error occurred."
@@ -10181,6 +10186,11 @@ msgstr "Your GitHub account does not own the organization that publishes this pa
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Your Password Has Been Successfully Changed"
 msgstr "Your Password Has Been Successfully Changed"
+
+#. js-lingui-id: AKLZnk
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Your payment method was declined. Please update it and try again."
+msgstr "Your payment method was declined. Please update it and try again."
 
 #. js-lingui-id: XxkUFT
 #: src/engine/metadata-modules/permissions/permissions.service.ts

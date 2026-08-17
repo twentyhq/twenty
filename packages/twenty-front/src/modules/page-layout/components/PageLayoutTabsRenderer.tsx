@@ -18,6 +18,7 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div<{ hasPinnedTab: boolean }>`
   display: grid;
@@ -52,6 +53,15 @@ const StyledTabsAndDashboardContainer = styled.div`
 const StyledScrollWrapperContainer = styled.div`
   flex: 1;
   min-height: 0;
+
+  // The mobile navigation bar floats over the page, so the content reserves its
+  // footprint to stay readable once scrolled to the end.
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    .page-layout-scroll-wrapper {
+      box-sizing: border-box;
+      padding-bottom: ${themeCssVariables.spacing[20]};
+    }
+  }
 
   @media print {
     min-height: auto;
