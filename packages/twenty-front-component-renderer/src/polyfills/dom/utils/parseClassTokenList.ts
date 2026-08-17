@@ -6,7 +6,9 @@ export const parseClassTokenList = (classAttributeValue: string): string[] => {
   const orderedUniqueTokens: string[] = [];
 
   for (const token of classAttributeValue.split(ASCII_WHITESPACE_SEPARATOR)) {
-    if (isNonEmptyString(token) && !orderedUniqueTokens.includes(token)) {
+    const isDuplicateToken = orderedUniqueTokens.includes(token);
+
+    if (isNonEmptyString(token) && !isDuplicateToken) {
       orderedUniqueTokens.push(token);
     }
   }

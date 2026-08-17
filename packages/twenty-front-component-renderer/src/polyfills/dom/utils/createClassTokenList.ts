@@ -3,9 +3,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type ElementWithClassAttribute } from '@/polyfills/dom/types/ElementWithClassAttribute';
 import { type WorkerClassTokenList } from '@/polyfills/dom/types/WorkerClassTokenList';
-import { assertValidClassTokens } from '@/polyfills/dom/utils/assertValidClassTokens';
 import { parseClassTokenList } from '@/polyfills/dom/utils/parseClassTokenList';
+import { replaceClassToken } from '@/polyfills/dom/utils/replaceClassToken';
 import { resolveClassAttributeValue } from '@/polyfills/dom/utils/resolveClassAttributeValue';
+import { toValidClassTokenOrThrow } from '@/polyfills/dom/utils/toValidClassTokenOrThrow';
 
 export const createClassTokenList = (
   element: ElementWithClassAttribute,
@@ -13,7 +14,7 @@ export const createClassTokenList = (
   const readClassAttributeValue = (): string | null =>
     resolveClassAttributeValue(element);
 
-  const readTokens = (): string[] =>
+  const readCurrentTokens = (): string[] =>
     parseClassTokenList(readClassAttributeValue() ?? '');
 
   const writeClassAttributeValue = (classAttributeValue: string): void => {
@@ -23,7 +24,10 @@ export const createClassTokenList = (
   };
 
   const writeTokens = (tokens: string[]): void => {
-    if (!isDefined(readClassAttributeValue()) && tokens.length === 0) {
+    const shouldSkipCreatingEmptyClassAttribute =
+      !isDefined(readClassAttributeValue()) && tokens.length === 0;
+
+    if (shouldSkipCreatingEmptyClassAttribute) {
       return;
     }
 
@@ -32,7 +36,7 @@ export const createClassTokenList = (
 
   const classTokenList: WorkerClassTokenList = {
     get length() {
-      return readTokens().length;
+      return readCurrentTokens().length;
     },
     get value() {
       return readClassAttributeValue() ?? '';
@@ -41,76 +45,81 @@ export const createClassTokenList = (
       writeClassAttributeValue(String(newValue));
     },
     add: (...tokens) => {
-      const stringTokens = tokens.map(String);
-      assertValidClassTokens(stringTokens);
+      const tokensToAdd = tokens.map((token) =>
+        toValidClassTokenOrThrow(token),
+      );
 
-      const currentTokens = readTokens();
+      const updatedTokens = [...readCurrentTokens()];
 
-      for (const token of stringTokens) {
-        if (!currentTokens.includes(token)) {
-          currentTokens.push(token);
+      for (const tokenToAdd of tokensToAdd) {
+        if (!updatedTokens.includes(tokenToAdd)) {
+          updatedTokens.push(tokenToAdd);
         }
       }
 
-      writeTokens(currentTokens);
+      writeTokens(updatedTokens);
     },
     remove: (...tokens) => {
-      const stringTokens = tokens.map(String);
-      assertValidClassTokens(stringTokens);
-
-      writeTokens(
-        readTokens().filter((token) => !stringTokens.includes(token)),
+      const tokensToRemove = tokens.map((token) =>
+        toValidClassTokenOrThrow(token),
       );
+
+      const remainingTokens = readCurrentTokens().filter(
+        (currentToken) => !tokensToRemove.includes(currentToken),
+      );
+
+      writeTokens(remainingTokens);
     },
     toggle: (token, force) => {
-      const stringToken = String(token);
-      assertValidClassTokens([stringToken]);
+      const tokenToToggle = toValidClassTokenOrThrow(token);
 
-      const currentTokens = readTokens();
+      const currentTokens = readCurrentTokens();
+      const isTokenPresent = currentTokens.includes(tokenToToggle);
 
-      if (currentTokens.includes(stringToken)) {
-        if (force === true) {
-          return true;
-        }
+      if (isTokenPresent && force === true) {
+        return true;
+      }
 
-        writeTokens(currentTokens.filter((value) => value !== stringToken));
+      if (!isTokenPresent && force === false) {
+        return false;
+      }
+
+      if (isTokenPresent) {
+        writeTokens(
+          currentTokens.filter(
+            (currentToken) => currentToken !== tokenToToggle,
+          ),
+        );
 
         return false;
       }
 
-      if (force === false) {
-        return false;
-      }
-
-      writeTokens([...currentTokens, stringToken]);
+      writeTokens([...currentTokens, tokenToToggle]);
 
       return true;
     },
     replace: (oldToken, newToken) => {
-      const stringOldToken = String(oldToken);
-      const stringNewToken = String(newToken);
-      assertValidClassTokens([stringOldToken, stringNewToken]);
+      const oldTokenToReplace = toValidClassTokenOrThrow(oldToken);
+      const newTokenToInsert = toValidClassTokenOrThrow(newToken);
 
-      const currentTokens = readTokens();
+      const currentTokens = readCurrentTokens();
 
-      if (!currentTokens.includes(stringOldToken)) {
+      if (!currentTokens.includes(oldTokenToReplace)) {
         return false;
       }
 
-      const replacementIndex = currentTokens.findIndex(
-        (value) => value === stringOldToken || value === stringNewToken,
+      writeTokens(
+        replaceClassToken({
+          currentTokens,
+          oldToken: oldTokenToReplace,
+          newToken: newTokenToInsert,
+        }),
       );
-      const remainingTokens = currentTokens.filter(
-        (value) => value !== stringOldToken && value !== stringNewToken,
-      );
-      remainingTokens.splice(replacementIndex, 0, stringNewToken);
-
-      writeTokens(remainingTokens);
 
       return true;
     },
-    contains: (token) => readTokens().includes(String(token)),
-    item: (index) => readTokens()[index] ?? null,
+    contains: (token) => readCurrentTokens().includes(String(token)),
+    item: (index) => readCurrentTokens()[index] ?? null,
     supports: () => {
       throw new TypeError(
         "Failed to execute 'supports': the class attribute has no supported tokens.",
@@ -119,23 +128,23 @@ export const createClassTokenList = (
     forEach: (callback, thisArg) => {
       let tokenIndex = 0;
 
-      for (const token of readTokens()) {
+      for (const token of readCurrentTokens()) {
         callback.call(thisArg, token, tokenIndex, classTokenList);
         tokenIndex += 1;
       }
     },
     *entries() {
-      yield* readTokens().entries();
+      yield* readCurrentTokens().entries();
     },
     *keys() {
-      yield* readTokens().keys();
+      yield* readCurrentTokens().keys();
     },
     *values() {
-      yield* readTokens().values();
+      yield* readCurrentTokens().values();
     },
     toString: () => readClassAttributeValue() ?? '',
     *[Symbol.iterator]() {
-      yield* readTokens().values();
+      yield* readCurrentTokens().values();
     },
   };
 
