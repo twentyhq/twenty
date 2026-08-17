@@ -12,15 +12,24 @@ export const getDomainNamesFromCompany = (
     return [];
   }
 
-  const domainNames = isNonEmptyString(domainName.primaryLinkUrl)
-    ? [extractDomainFromLink(domainName.primaryLinkUrl).toLowerCase()]
-    : [];
+  const linkUrls = [
+    domainName.primaryLinkUrl,
+    ...parseArrayOrJsonStringToArray<LinkMetadata>(
+      domainName.secondaryLinks,
+    ).map((link) => link.url),
+  ];
 
-  for (const link of parseArrayOrJsonStringToArray<LinkMetadata>(
-    domainName.secondaryLinks,
-  )) {
-    if (isNonEmptyString(link.url)) {
-      domainNames.push(extractDomainFromLink(link.url).toLowerCase());
+  const domainNames = [];
+
+  for (const linkUrl of linkUrls) {
+    if (!isNonEmptyString(linkUrl)) {
+      continue;
+    }
+
+    const extractedDomainName = extractDomainFromLink(linkUrl).toLowerCase();
+
+    if (isNonEmptyString(extractedDomainName)) {
+      domainNames.push(extractedDomainName);
     }
   }
 
