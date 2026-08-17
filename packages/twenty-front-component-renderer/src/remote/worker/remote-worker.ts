@@ -38,7 +38,7 @@ import { installErrorEventBridge } from '@/remote/worker/thread/utils/installErr
 import { renderFrontComponent } from '@/remote/worker/rendering/utils/renderFrontComponent';
 import { getFrontComponentColorScheme } from '@/remote/worker/environment/utils/getFrontComponentColorScheme';
 import { setFrontComponentExecutionContext } from '@/remote/worker/environment/utils/setFrontComponentExecutionContext';
-import { subscribeToFrontComponentExecutionContextUpdates } from '@/remote/worker/environment/utils/subscribeToFrontComponentExecutionContextUpdates';
+import { subscribeToFrontComponentColorSchemeUpdates } from '@/remote/worker/environment/utils/subscribeToFrontComponentColorSchemeUpdates';
 import { type FrontComponentHostThread } from '@/types/FrontComponentHostThread';
 import { type FrontComponentHostThreadExports } from '@/types/FrontComponentHostThreadExports';
 import { type WorkerExports } from '@/types/WorkerExports';
@@ -93,8 +93,7 @@ installMatchMediaPolyfill({
   globalScope: globalThis as unknown as Record<string, unknown>,
   geometryStore: workerGeometryStore,
   getColorScheme: getFrontComponentColorScheme,
-  subscribeToColorSchemeUpdates:
-    subscribeToFrontComponentExecutionContextUpdates,
+  subscribeToColorSchemeUpdates: subscribeToFrontComponentColorSchemeUpdates,
 });
 
 installStorageBridge({
