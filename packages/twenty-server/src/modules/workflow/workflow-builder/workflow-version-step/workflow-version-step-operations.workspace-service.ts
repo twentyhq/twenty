@@ -215,6 +215,12 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           );
         }
 
+        const defaultLogicFunctionInput = (
+          defaultSettings?.input as
+            | { logicFunctionInput?: Record<string, unknown> }
+            | undefined
+        )?.logicFunctionInput;
+
         return {
           builtStep: {
             ...baseStep,
@@ -234,23 +240,29 @@ export class WorkflowVersionStepOperationsWorkspaceService {
               expectedOutputSchema: {},
               input: {
                 logicFunctionId: newLogicFunction.id,
-                logicFunctionInput: isDefined(
-                  newLogicFunction.workflowActionTriggerSettings?.inputSchema,
-                )
-                  ? (getFunctionInputFromInputSchema(
-                      newLogicFunction.workflowActionTriggerSettings
-                        .inputSchema,
-                    )[0] ?? {})
-                  : {},
+                logicFunctionInput:
+                  defaultLogicFunctionInput ??
+                  (isDefined(
+                    newLogicFunction.workflowActionTriggerSettings?.inputSchema,
+                  )
+                    ? (getFunctionInputFromInputSchema(
+                        newLogicFunction.workflowActionTriggerSettings
+                          .inputSchema,
+                      )[0] ?? {})
+                    : {}),
               },
             },
           },
         };
       }
       case WorkflowActionType.LOGIC_FUNCTION: {
-        const logicFunctionId = (
-          defaultSettings?.input as { logicFunctionId: string } | undefined
-        )?.logicFunctionId;
+        const defaultInput = defaultSettings?.input as
+          | {
+              logicFunctionId?: string;
+              logicFunctionInput?: Record<string, unknown>;
+            }
+          | undefined;
+        const logicFunctionId = defaultInput?.logicFunctionId;
 
         if (!isDefined(logicFunctionId)) {
           throw new WorkflowVersionStepException(
@@ -302,14 +314,17 @@ export class WorkflowVersionStepOperationsWorkspaceService {
               expectedOutputSchema: {},
               input: {
                 logicFunctionId,
-                logicFunctionInput: isDefined(
-                  flatLogicFunction.workflowActionTriggerSettings?.inputSchema,
-                )
-                  ? (getFunctionInputFromInputSchema(
-                      flatLogicFunction.workflowActionTriggerSettings
-                        .inputSchema,
-                    )[0] ?? {})
-                  : {},
+                logicFunctionInput:
+                  defaultInput?.logicFunctionInput ??
+                  (isDefined(
+                    flatLogicFunction.workflowActionTriggerSettings
+                      ?.inputSchema,
+                  )
+                    ? (getFunctionInputFromInputSchema(
+                        flatLogicFunction.workflowActionTriggerSettings
+                          .inputSchema,
+                      )[0] ?? {})
+                    : {}),
               },
             },
           },
@@ -958,13 +973,10 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
         await this.workflowVersionCoreSyncService.writeWorkflowVersionAndMirror(
           workspaceId,
-          async (scopedRepository, entityManager) => {
-            await scopedRepository.update(
-              workflowVersion.id,
-              { steps: [...existingSteps, emptyNodeStep] },
-              undefined,
-              entityManager,
-            );
+          async (scopedRepository) => {
+            await scopedRepository.update(workflowVersion.id, {
+              steps: [...existingSteps, emptyNodeStep],
+            });
 
             return workflowVersion.id;
           },
@@ -1050,13 +1062,10 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
         await this.workflowVersionCoreSyncService.writeWorkflowVersionAndMirror(
           workspaceId,
-          async (scopedRepository, entityManager) => {
-            await scopedRepository.update(
-              workflowVersion.id,
-              { steps: [...existingSteps, ifEmptyNode, elseEmptyNode] },
-              undefined,
-              entityManager,
-            );
+          async (scopedRepository) => {
+            await scopedRepository.update(workflowVersion.id, {
+              steps: [...existingSteps, ifEmptyNode, elseEmptyNode],
+            });
 
             return workflowVersion.id;
           },

@@ -3,14 +3,11 @@ import { convertBulkTextToOptions } from '@/settings/data-model/fields/forms/sel
 
 describe('convertBulkTextToOptions', () => {
   it('converts newline-separated text to options', () => {
-    // Given
     const text = 'Option 1\nOption 2\nOption 3';
     const currentOptions: FieldMetadataItemOption[] = [];
 
-    // When
     const result = convertBulkTextToOptions(text, currentOptions);
 
-    // Then
     expect(result).toHaveLength(3);
     expect(result[0].label).toBe('Option 1');
     expect(result[0].position).toBe(0);
@@ -21,52 +18,40 @@ describe('convertBulkTextToOptions', () => {
   });
 
   it('returns empty array for empty text', () => {
-    // Given
     const text = '';
     const currentOptions: FieldMetadataItemOption[] = [];
 
-    // When
     const result = convertBulkTextToOptions(text, currentOptions);
 
-    // Then
     expect(result).toHaveLength(0);
   });
 
   it('returns empty array for whitespace-only text', () => {
-    // Given
     const text = '   \n   \n   ';
     const currentOptions: FieldMetadataItemOption[] = [];
 
-    // When
     const result = convertBulkTextToOptions(text, currentOptions);
 
-    // Then
     expect(result).toHaveLength(0);
   });
 
   it('trims whitespace from lines', () => {
-    // Given
     const text = '  Option 1  \n  Option 2  ';
     const currentOptions: FieldMetadataItemOption[] = [];
 
-    // When
     const result = convertBulkTextToOptions(text, currentOptions);
 
-    // Then
     expect(result).toHaveLength(2);
     expect(result[0].label).toBe('Option 1');
     expect(result[1].label).toBe('Option 2');
   });
 
   it('filters out empty lines', () => {
-    // Given
     const text = 'Option 1\n\n\nOption 2\n\nOption 3';
     const currentOptions: FieldMetadataItemOption[] = [];
 
-    // When
     const result = convertBulkTextToOptions(text, currentOptions);
 
-    // Then
     expect(result).toHaveLength(3);
     expect(result[0].label).toBe('Option 1');
     expect(result[1].label).toBe('Option 2');
@@ -74,7 +59,6 @@ describe('convertBulkTextToOptions', () => {
   });
 
   it('preserves existing option metadata when label matches (case-insensitive)', () => {
-    // Given
     const text = 'option 1\nOption 2';
     const currentOptions: FieldMetadataItemOption[] = [
       {
@@ -93,10 +77,8 @@ describe('convertBulkTextToOptions', () => {
       },
     ];
 
-    // When
     const result = convertBulkTextToOptions(text, currentOptions);
 
-    // Then
     expect(result).toHaveLength(2);
     expect(result[0].id).toBe('existing-id-1');
     expect(result[0].color).toBe('blue');
@@ -109,7 +91,6 @@ describe('convertBulkTextToOptions', () => {
   });
 
   it('creates new options for labels that do not exist', () => {
-    // Given
     const text = 'Existing Option\nNew Option';
     const currentOptions: FieldMetadataItemOption[] = [
       {
@@ -121,10 +102,8 @@ describe('convertBulkTextToOptions', () => {
       },
     ];
 
-    // When
     const result = convertBulkTextToOptions(text, currentOptions);
 
-    // Then
     expect(result).toHaveLength(2);
     expect(result[0].id).toBe('existing-id');
     expect(result[1].label).toBe('New Option');
@@ -133,7 +112,6 @@ describe('convertBulkTextToOptions', () => {
   });
 
   it('updates positions correctly when reordering', () => {
-    // Given
     const text = 'Option 2\nOption 1';
     const currentOptions: FieldMetadataItemOption[] = [
       {
@@ -152,10 +130,8 @@ describe('convertBulkTextToOptions', () => {
       },
     ];
 
-    // When
     const result = convertBulkTextToOptions(text, currentOptions);
 
-    // Then
     expect(result).toHaveLength(2);
     expect(result[0].id).toBe('id-2');
     expect(result[0].position).toBe(0);
@@ -164,7 +140,6 @@ describe('convertBulkTextToOptions', () => {
   });
 
   it('handles mixed existing and new options', () => {
-    // Given
     const text = 'Existing\nNew 1\nAnother Existing\nNew 2';
     const currentOptions: FieldMetadataItemOption[] = [
       {
@@ -183,10 +158,8 @@ describe('convertBulkTextToOptions', () => {
       },
     ];
 
-    // When
     const result = convertBulkTextToOptions(text, currentOptions);
 
-    // Then
     expect(result).toHaveLength(4);
     expect(result[0].id).toBe('existing-1');
     expect(result[0].position).toBe(0);

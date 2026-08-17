@@ -10,9 +10,9 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type EncodedFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/types/encoded-flat-field-metadata-maps.type';
-import { decodeFlatFieldMetadataMapsFromCache } from 'src/engine/metadata-modules/flat-field-metadata/utils/decode-flat-field-metadata-maps-from-cache.util';
-import { encodeFlatFieldMetadataMapsForCache } from 'src/engine/metadata-modules/flat-field-metadata/utils/encode-flat-field-metadata-maps-for-cache.util';
+import { type CompactFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/types/compact-flat-field-metadata-maps.type';
+import { compactFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/utils/compact-flat-field-metadata-maps.util';
+import { expandFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/utils/expand-flat-field-metadata-maps.util';
 import { fromFieldMetadataEntityToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-field-metadata-entity-to-flat-field-metadata.util';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { computeUniqueFieldMetadataIdsFromIndexEntities } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-field-metadata-ids-from-index-entities.util';
@@ -34,7 +34,7 @@ import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/v
 @WorkspaceCache('flatFieldMetadataMaps', { packingPonderation: 64 })
 export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCacheProvider<
   FlatEntityMaps<FlatFieldMetadata>,
-  EncodedFlatFieldMetadataMaps
+  CompactFlatFieldMetadataMaps
 > {
   constructor(
     @InjectRepository(FieldMetadataEntity)
@@ -61,16 +61,16 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
     super();
   }
 
-  override encodeForCacheStorage(
+  override compactForStorage(
     data: FlatEntityMaps<FlatFieldMetadata>,
-  ): EncodedFlatFieldMetadataMaps {
-    return encodeFlatFieldMetadataMapsForCache(data);
+  ): CompactFlatFieldMetadataMaps {
+    return compactFlatFieldMetadataMaps(data);
   }
 
-  override decodeFromCacheStorage(
-    rawData: EncodedFlatFieldMetadataMaps,
+  override expandFromStorage(
+    compactData: CompactFlatFieldMetadataMaps,
   ): FlatEntityMaps<FlatFieldMetadata> {
-    return decodeFlatFieldMetadataMapsFromCache(rawData);
+    return expandFlatFieldMetadataMaps(compactData);
   }
 
   async computeForCache(

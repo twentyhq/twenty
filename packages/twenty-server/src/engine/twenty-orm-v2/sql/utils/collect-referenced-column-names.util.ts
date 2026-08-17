@@ -11,11 +11,13 @@ export const collectReferencedColumnNames = ({
   mainAliasColumnNames,
   extraSelectClauses,
   orderByClauses,
+  distinctOnExpressions = [],
 }: {
   mainAlias: string;
   mainAliasColumnNames: string[];
   extraSelectClauses: SelectClause[];
   orderByClauses: OrderByClause[];
+  distinctOnExpressions?: string[];
 }): Record<string, string[]> => {
   const columnNamesByAlias: Record<string, Set<string>> = {
     [mainAlias]: new Set(mainAliasColumnNames),
@@ -30,6 +32,7 @@ export const collectReferencedColumnNames = ({
   const expressions = [
     ...extraSelectClauses.map((extraSelect) => extraSelect.expression),
     ...orderByClauses.map((orderByClause) => orderByClause.expression),
+    ...distinctOnExpressions,
   ];
 
   for (const expression of expressions) {

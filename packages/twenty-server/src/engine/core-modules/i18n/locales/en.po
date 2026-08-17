@@ -32,6 +32,11 @@ msgstr "\"{0}\" is not a composite field — remove the sub-field selection."
 msgid "\"{0}\" is not a valid sub-field of \"{1}\"."
 msgstr "\"{0}\" is not a valid sub-field of \"{1}\"."
 
+#. js-lingui-id: gKGO2f
+#: src/engine/core-modules/user/utils/assert-workspace-member-update-values-are-valid.util.ts
+msgid "\"{fieldName}\" received an invalid value."
+msgstr "\"{fieldName}\" received an invalid value."
+
 #. js-lingui-id: SsRDX3
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
 msgid "\"{payloadKey}\" is not a valid workspace member field."
@@ -3605,6 +3610,11 @@ msgstr "Insufficient permissions to access calendar."
 msgid "Insufficient permissions."
 msgstr "Insufficient permissions."
 
+#. js-lingui-id: HTEaVD
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgid "Interface Scale"
+msgstr "Interface Scale"
+
 #. js-lingui-id: 4bX5tI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgid "Internal name of the campaign"
@@ -5738,6 +5748,11 @@ msgstr "Open Records In"
 msgid "Operand \"{operand}\" is not supported on field type \"{filterType}\". Supported operands: {0}."
 msgstr "Operand \"{operand}\" is not supported on field type \"{filterType}\". Supported operands: {0}."
 
+#. js-lingui-id: iD+jGc
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Operand \"{operand}\" requires a value, an empty predicate would remove the row restriction entirely"
+msgstr "Operand \"{operand}\" requires a value, an empty predicate would remove the row restriction entirely"
+
 #. js-lingui-id: Rh2dh5
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
 msgid "Operand \"{rawOperand}\" of a chart filter of widget \"{widgetTitle}\" is not supported on field type \"{effectiveFieldType}\". Supported operands: {allowedOperandsText}."
@@ -6348,10 +6363,26 @@ msgstr "Position must be a finite number"
 msgid "Prebuilt bundle is not installed on the function. Rebuild and try again."
 msgstr "Prebuilt bundle is not installed on the function. Rebuild and try again."
 
+#. js-lingui-id: OAanPr
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Predicate is missing a value"
+msgstr "Predicate is missing a value"
+
+#. js-lingui-id: a/WH2z
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Predicate value is not valid for this operand"
+msgstr "Predicate value is not valid for this operand"
+
 #. js-lingui-id: TTHIbk
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgid "Preferred color scheme"
 msgstr "Preferred color scheme"
+
+#. js-lingui-id: QG76Gf
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgid "Preferred interface scale"
+msgstr "Preferred interface scale"
 
 #. js-lingui-id: 5v4qYi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -8470,6 +8501,11 @@ msgstr "This version is not higher than the currently deployed version. Please b
 msgid "This version of the application is already installed in this workspace."
 msgstr "This version of the application is already installed in this workspace."
 
+#. js-lingui-id: o/Kt/Y
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This workspace already has a subscription."
+msgstr "This workspace already has a subscription."
+
 #. js-lingui-id: IdEnkZ
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This workspace's upgrade state could not be determined. Please try again once the workspace has finished upgrading."
@@ -8924,11 +8960,13 @@ msgid "User workspace role configuration not found."
 msgstr "User workspace role configuration not found."
 
 #. js-lingui-id: sFN4Dx
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-value-error.util.ts
 msgid "Value \"{stringifiedValue}\" is not valid for operand \"{operand}\" on field type \"{filterType}\"."
 msgstr "Value \"{stringifiedValue}\" is not valid for operand \"{operand}\" on field type \"{filterType}\"."
 
 #. js-lingui-id: ccqQWi
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-value-error.util.ts
 msgid "Value \"{stringifiedValue}\" is not valid for operand \"{operand}\" on field type \"{filterType}\". {hint}"
 msgstr "Value \"{stringifiedValue}\" is not valid for operand \"{operand}\" on field type \"{filterType}\". {hint}"
@@ -8942,6 +8980,11 @@ msgstr "Value \"{stringifiedValue}\" of a chart filter of widget \"{widgetTitle}
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
 msgid "Value \"{stringifiedValue}\" of a chart filter of widget \"{widgetTitle}\" is not valid for operand \"{operand}\" on field type \"{filterType}\". {hint}"
 msgstr "Value \"{stringifiedValue}\" of a chart filter of widget \"{widgetTitle}\" is not valid for operand \"{operand}\" on field type \"{filterType}\". {hint}"
+
+#. js-lingui-id: l+Dvh5
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Value \"{stringifiedValue}\" resolves to no record for operand \"{operand}\", the current record is not available to a row level permission predicate"
+msgstr "Value \"{stringifiedValue}\" resolves to no record for operand \"{operand}\", the current record is not available to a row level permission predicate"
 
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -9933,6 +9976,8 @@ msgid "You can only update one record with files field at once."
 msgstr "You can only update one record with files field at once."
 
 #. js-lingui-id: 4ysDL0
+#: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
+#: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
 #: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr "You can only update up to {QUERY_MAX_RECORDS} records at once."

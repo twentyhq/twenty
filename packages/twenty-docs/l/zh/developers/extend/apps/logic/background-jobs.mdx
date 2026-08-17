@@ -1,0 +1,165 @@
+---
+title: 后台作业
+description: 通过将另一次逻辑函数运行入队，而不是在当前执行中完成所有工作，把耗时较长或受速率限制的工作交给 Twenty 工作进程处理。
+icon: layer-group
+---
+
+一次逻辑函数运行会受到其 `timeoutSeconds`（最大 900 秒）的限制。 任何无法在该时间窗口内完成的工作——例如完整的重新同步、逐记录的扇出、对你进行速率限制的第三方 API——都必须拆分为更小的运行。
+
+`enqueueJob` 正是用于此：它会请求 Twenty 工作进程稍后在其自己的进程中运行你应用中的某个逻辑函数，并使用其独立的超时预算。 调用方会立即返回。
+
+```text
+  ┌─────────────────┐  enqueueJob(...)   ┌──────────────┐   ┌────────────────────┐
+  │ Logic function  │ ─────────────────▶ │ Job queue    │──▶│ Logic function     │
+  │ (returns now)   │                    │ (workers)    │   │ (fresh run/timeout)│
+  └─────────────────┘                    └──────────────┘   └────────────────────┘
+```
+
+## 将一次运行加入队列
+
+从 `twenty-sdk/logic-function` 导入 `enqueueJob`，并将其指向你想要运行的逻辑函数的 `universalIdentifier`。
+
+```ts src/logic-functions/sync-all-contacts.ts
+import { enqueueJob } from 'twenty-sdk/logic-function';
+
+await enqueueJob({
+  logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  payload: { page: 1 },
+});
+```
+
+目标函数会像其他任何触发器一样，将 `payload` 作为其处理程序参数接收。 它必须属于与调用方**相同的应用程序**——将其他应用的函数入队会被拒绝，并返回 `Logic function not found`。
+
+<Note>
+`enqueueJob` 在作业被接受后立即返回，而不是在它运行完成后返回。 它不会返回目标的结果——如果你需要再次读取结果，让目标将其输出写入[key-value store](/l/zh/developers/extend/apps/logic/key-value-store)或工作区记录。
+</Note>
+
+## 作业选项
+
+| 选项           | 默认  | 范围                   | 作用                                    |
+| ------------ | --- | -------------------- | ------------------------------------- |
+| `retryLimit` | `0` | `0`–`10`             | 如果运行抛出异常，进行额外重试。 仅对可以安全运行两次的处理程序提高该值。 |
+| `delayMs`    | `0` | `0`–`604800000`（7 天） | 在运行符合条件之前等待这么长时间。                     |
+
+```ts
+await enqueueJob({
+  logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
+  payload: { page: 1 },
+  retryLimit: 3,
+  delayMs: 60_000,
+});
+```
+
+<Note>
+**优先级尚不可配置。** 入队的作业始终以最低优先级运行，因此平台工作永远不会被应用程序作业延迟。 对优先级的控制即将推出。
+</Note>
+
+排队的运行会继承将其入队的函数的当前用户，因此会以相同的权限执行。
+
+## 用法：分页处理一次长时间同步
+
+典型模式是函数使用下一个游标将*自身*入队。 每次运行都在自己的超时时间内完成一页工作，当没有剩余内容时链条就会停止。
+
+```ts src/logic-functions/sync-contacts-page.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJob } from 'twenty-sdk/logic-function';
+
+const SYNC_CONTACTS_PAGE = '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33';
+
+const handler = async (params: { cursor?: string }) => {
+  const { contacts, nextCursor } = await fetchContactsPage(params.cursor);
+
+  await importContacts(contacts);
+
+  if (nextCursor) {
+    await enqueueJob({
+      logicFunctionUniversalIdentifier: SYNC_CONTACTS_PAGE,
+      payload: { cursor: nextCursor },
+      delayMs: 2_000,
+    });
+  }
+
+  return { imported: contacts.length, done: !nextCursor };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: SYNC_CONTACTS_PAGE,
+  name: 'sync-contacts-page',
+  timeoutSeconds: 120,
+  handler,
+});
+```
+
+## 按记录扇出（fan-out）
+
+当工作天然按条目划分时，为每个条目入队一个作业，并让工作进程并行处理它们，而不是在内联循环中处理。
+
+```ts
+const companies = await listCompaniesToEnrich();
+
+await Promise.all(
+  companies.map((company) =>
+    enqueueJob({
+      logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+      payload: { companyId: company.id },
+      retryLimit: 2,
+    }),
+  ),
+);
+```
+
+## 长时间运行工作的最佳实践
+
+两条规则涵盖几乎所有长作业：**用递归代替循环**，以及**每次运行处理一块有界的数据块（chunk）**。
+
+试图一次完成所有事情的运行就是失败模式——它会触发超时，并在重试时从头开始重新执行整个过程。 相反，应调整单个数据块的大小，使其能够从容地在 `timeoutSeconds` 内完成，持久化当前位置，然后入队下一次运行。
+
+```ts src/logic-functions/enrich-companies-batch.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { enqueueJob, kv } from 'twenty-sdk/logic-function';
+
+const ENRICH_COMPANIES_BATCH = '3f9d1c02-8a44-4f0e-b1d7-9c2e5a7b4f10';
+const CHUNK_SIZE = 50;
+
+const handler = async (params: { offset?: number }) => {
+  const offset = params.offset ?? 0;
+  const companies = await listCompaniesToEnrich({
+    offset,
+    limit: CHUNK_SIZE,
+  });
+
+  for (const company of companies) {
+    await enrichCompany(company);
+  }
+
+  await kv.set('enrich:progress', { offset: offset + companies.length });
+
+  if (companies.length === CHUNK_SIZE) {
+    await enqueueJob({
+      logicFunctionUniversalIdentifier: ENRICH_COMPANIES_BATCH,
+      payload: { offset: offset + CHUNK_SIZE },
+    });
+  }
+
+  return { processed: companies.length, done: companies.length < CHUNK_SIZE };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: ENRICH_COMPANIES_BATCH,
+  name: 'enrich-companies-batch',
+  timeoutSeconds: 300,
+  handler,
+});
+```
+
+支撑这一模式的要点：
+
+* **以最慢的条目而不是平均值来确定块大小。** `CHUNK_SIZE × worst-case item time` 必须在留有余量的情况下适配到 `timeoutSeconds` 中，否则在运行被切断时，一个数据块的尾部会丢失。
+* **让终止条件显式化。** 仅在返回的是完整数据块时继续递归。 仅在“无结果”时停止的链，如果源在中途返回一个较短的分页，将会永远继续下去。
+* **在入队下一次运行之前持久化进度，** 这样失败的链路会从上一个完成的数据块而不是从头开始重新启动。
+* **保持每个数据块幂等。** 在重试后重新处理一个数据块时，不能产生重复写入——应基于你处理的记录或外部 id 进行关键写入。
+* **在工作会访问受限频率的第三方服务时，优先使用分块链而不是一次巨大的 fan-out。** 使用 `delayMs` 的链会自我节奏控制，而一次性入队的数千个作业会立即全部变为可运行状态。
+
+<Warning>
+重试会重新运行整个处理程序。 在将 `retryLimit` 设为大于 `0` 之前，保持入队的处理程序幂等。
+</Warning>

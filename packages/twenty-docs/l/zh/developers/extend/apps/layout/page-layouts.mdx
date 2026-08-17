@@ -53,9 +53,32 @@ export default definePageLayout({
 
 * `type` 为 `'RECORD_INDEX'`、`'RECORD_PAGE'`、`'DASHBOARD'` 或 `'STANDALONE_PAGE'` 之一。 使用 `'RECORD_PAGE'` 来自定义特定对象的详情视图。
 * `objectUniversalIdentifier` 指定此布局适用于哪个对象。
-* 每个 `tab` 使用 `title`、`position` 和 `layoutMode` 定义页面的一个部分（记录页面使用 `VERTICAL_LIST`，仪表板使用 `GRID`）。 包含单个小部件的选项卡会自动将其渲染为全宽显示；包含多个小部件时，它们会堆叠为卡片。
+* 每个 `tab` 使用 `title`、`position` 和 `layoutMode` 定义页面的一个部分：记录页面和独立页面使用 `VERTICAL_LIST`，仪表板使用 `GRID`。 在 `VERTICAL_LIST` 选项卡中，单个小部件会以全宽方式渲染并占据整个选项卡；如果有多个小部件，它们会堆叠显示为卡片。 `GRID` 选项卡始终在 12 列网格上将其小部件布局为卡片，无论小部件数量多少都是如此，因此当你希望单个小部件填满页面时，请选择 `VERTICAL_LIST`。
+* 请显式设置 `layoutMode`。 如果省略它，在 `STANDALONE_PAGE` 上会得到 `VERTICAL_LIST`，在其他地方会得到 `GRID`，而这在记录页面上通常不是你想要的效果。
 * 选项卡内的每个 `widget` 可以渲染一个[前端组件](/l/zh/developers/extend/apps/layout/front-components)、关系列表或其他内置小部件类型。
 * 选项卡上的 `position` 控制其顺序。 使用更高的值（例如 50）可将自定义选项卡放在内置选项卡之后。
+
+### 字段小部件
+
+`FIELD` 小部件会渲染记录中的一个字段。 对于关系字段，它还可以嵌入相关记录的列表：
+
+```ts
+{
+  universalIdentifier: 'c1c2c3c4-c5c6-4000-8000-000000000003',
+  title: 'People → Opportunities',
+  type: 'FIELD',
+  configuration: {
+    configurationType: 'FIELD',
+    fieldMetadataId: PEOPLE_FIELD_UNIVERSAL_IDENTIFIER,
+    fieldDisplayMode: 'TABLE',
+    nestedRelationFieldMetadataId: OPPORTUNITIES_FIELD_UNIVERSAL_IDENTIFIER,
+  },
+}
+```
+
+* `fieldMetadataId` 接收布局对象上某个字段的全局标识符。
+* `fieldDisplayMode` 的取值之一为 `'FIELD'`、`'CARD'`、`'EDITOR'`、`'VIEW'` 或 `'TABLE'`。 `TABLE` 会嵌入一个视图，用于列出一对多关系字段中的记录。
+* `nestedRelationFieldMetadataId` 是可选的，并接收关系目标对象上一个一对多关系字段的通用标识符，用于列出跨两个关系跳数的记录（例如，在 Company 页面中列出该公司人员的机会，或在 Person 页面中列出该人员所在公司的机会）。 第一跳可以是一对多或多对一的关系字段，第二跳必须是一对多（不支持连接关系），并且需要 `fieldDisplayMode: 'TABLE'` — 将其与任何其他显示模式组合都会导致验证错误，因为嵌套小部件始终呈现为嵌入视图。
 
 ## definePageLayoutTab
 

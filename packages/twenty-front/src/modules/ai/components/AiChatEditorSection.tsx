@@ -19,15 +19,14 @@ import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useAiChatEditor } from '@/ai/hooks/useAiChatEditor';
 import { useAiModelOptions } from '@/ai/hooks/useAiModelOptions';
+import { useHasReachedAiChatCreditsCap } from '@/ai/hooks/useHasReachedAiChatCreditsCap';
 import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
 import { agentChatUserSelectedModelState } from '@/ai/states/agentChatUserSelectedModelState';
 import { agentChatPendingQuestionComponentSelector } from '@/ai/states/selectors/agentChatPendingQuestionComponentSelector';
 import { Select } from '@/ui/input/components/Select';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { hasReachedCurrentBillingPeriodCapSelector } from '@/workspace/states/hasReachedCurrentBillingPeriodCapSelector';
 import { type SelectOption } from 'twenty-ui/input';
 
 const StyledInputArea = styled.div<{ isMobile: boolean }>`
@@ -51,7 +50,7 @@ const StyledInputBox = styled.div<{ isMobile: boolean }>`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  min-height: ${({ isMobile }) => (isMobile ? '88px' : '140px')};
+  min-height: ${({ isMobile }) => (isMobile ? 'auto' : '140px')};
   padding: ${themeCssVariables.spacing[2]};
   width: 100%;
 
@@ -77,7 +76,7 @@ const StyledEditorWrapper = styled.div<{ isMobile: boolean }>`
     font-weight: ${themeCssVariables.font.weight.regular};
     line-height: 16px;
     max-height: ${({ isMobile }) => (isMobile ? '160px' : '320px')};
-    min-height: ${({ isMobile }) => (isMobile ? '36px' : '48px')};
+    min-height: ${({ isMobile }) => (isMobile ? 'auto' : '48px')};
     outline: none;
     overflow-y: auto;
     padding: 0;
@@ -119,9 +118,7 @@ const StyledRightButtonsContainer = styled.div`
 export const AiChatEditorSection = () => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
-  const hasReachedCurrentBillingPeriodCap = useAtomStateValue(
-    hasReachedCurrentBillingPeriodCapSelector,
-  );
+  const hasReachedAiChatCreditsCap = useHasReachedAiChatCreditsCap();
   const { enabledModels } = useWorkspaceAiModelAvailability();
   const hasNoEnabledModels = enabledModels.length === 0;
   const { options, pinnedOption } = useAiModelOptions({
@@ -162,9 +159,7 @@ export const AiChatEditorSection = () => {
             variant="warning"
           />
         )}
-        {hasReachedCurrentBillingPeriodCap && (
-          <AIChatNoMoreBillingCreditsBanner />
-        )}
+        {hasReachedAiChatCreditsCap && <AIChatNoMoreBillingCreditsBanner />}
         {isDefined(pendingQuestion) ? (
           <AiChatQuestionCard pendingQuestion={pendingQuestion} />
         ) : (

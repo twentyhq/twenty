@@ -443,7 +443,6 @@ export const SettingsDataModelFieldSelectForm = ({
                               key={option.id}
                               draggableId={option.id}
                               index={index}
-                              isDragDisabled={options.length === 1}
                               itemComponent={
                                 <SettingsDataModelFieldSelectFormOptionRow
                                   key={option.id}
@@ -461,7 +460,6 @@ export const SettingsDataModelFieldSelectForm = ({
                                     );
                                     onChange(nextOptions);
 
-                                    // Update option value in defaultValue if value has changed
                                     if (
                                       nextOption.value !== option.value &&
                                       isOptionDefaultValue(option.value)

@@ -3,6 +3,7 @@ import {
   FieldMetadataOptions,
   FieldMetadataSettings,
   FieldMetadataType,
+  MetadataWritability,
 } from 'twenty-shared/types';
 import {
   Check,
@@ -22,6 +23,7 @@ import {
 
 import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/is-system-side-effect-upgrade-command-name.constant';
 import { ADD_METADATA_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-metadata-overrides-column-upgrade-command-name.constant';
+import { ADD_METADATA_WRITABILITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-32/add-metadata-writability-upgrade-command-name.constant';
 import { DROP_METADATA_STANDARD_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-20/drop-metadata-standard-overrides-column-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
@@ -151,6 +153,16 @@ export class FieldMetadataEntity<
   })
   @Column({ default: true })
   isUIEditable: boolean;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_METADATA_WRITABILITY_UPGRADE_COMMAND_NAME,
+  })
+  @Column({
+    type: 'enum',
+    enum: Object.values(MetadataWritability),
+    default: MetadataWritability.OPEN,
+  })
+  writability: MetadataWritability;
 
   // Superseded by isUIEditable. Intentionally NOT @WasRemovedInUpgrade: dropping
   // it in 2.13 would break the previous release's pods mid rolling-deploy, since

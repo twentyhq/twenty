@@ -30,7 +30,6 @@ export const computeSystemViewFieldsToCreate = ({
           flatFieldMetadata: field,
           labelIdentifierFieldMetadataUniversalIdentifier,
         }) &&
-        // Exclude label identifier field when requested (e.g., for FIELDS_WIDGET views)
         (!excludeLabelIdentifier ||
           field.universalIdentifier !==
             labelIdentifierFieldMetadataUniversalIdentifier),

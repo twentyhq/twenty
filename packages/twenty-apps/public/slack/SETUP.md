@@ -23,8 +23,9 @@ Two parts: a **Slack app** you create, and the **Twenty side** where you paste i
    | `channels:history` | assistant: thread follow-ups in public channels |
    | `groups:history` | assistant: thread follow-ups in private channels |
    | `im:history` | assistant: direct messages |
+   | `im:read` | assistant: confirm with Slack that a conversation really is a direct message |
    | `users:read` | assistant: look up the requester's display name |
-   | `users:read.email` | assistant: match Slack users to Twenty workspace members (requested up front, not used yet) |
+   | `users:read.email` | assistant: match a Slack account to a workspace member |
    | `assistant:write` | agent surface: `assistant.threads.*` (statuses, titles, suggested prompts) |
 
    Adding or removing scopes later means existing installs must re-authorize: disconnect and **Add connection** again.
@@ -67,8 +68,11 @@ The assistant reuses the same Slack connection — no second bot identity.
    - `message.channels` — replies in public-channel threads, for un-mentioned follow-ups
    - `message.groups` — same, for private channels the bot is in
    - `member_joined_channel` — optional; lets the bot introduce itself when it is added to a channel
+   - `app_uninstalled` and `tokens_revoked` — the app was removed from the Slack workspace or its bot token was revoked; releases the Slack team claim so the team can be connected again
 
    Invite the bot to any channel where it should follow threads. Slack may ask you to reinstall after changing subscriptions.
+
+   Event subscriptions added in app upgrades must be added here by hand on existing installs — the Slack app only reads the manifest at creation. Upgrading from any version before 0.4.1 adds `app_uninstalled` and `tokens_revoked`; without them the team claim of a Slack-side removal is never released. No new scopes are involved, so the connection itself needs no re-authorization.
 
 3. **Interactivity.** On the Slack app, enable **Interactivity & Shortcuts** and set the Request URL to:
 
@@ -80,7 +84,9 @@ The assistant reuses the same Slack connection — no second bot identity.
 
 4. **Reconnect** so the token picks up the assistant scopes.
 
-5. **Role.** The `slack-assistant` agent binds to the app's **Slack Assistant** role automatically on install and upgrade. Anyone who can message the bot acts with that role — Slack users are not mapped to individual Twenty members yet, so keep the role scoped to what you're comfortable exposing.
+5. **Role.** The `slack-assistant` agent binds to the app's **Slack Assistant** role automatically on install and upgrade. That role is the ceiling for everything the bot can do.
+
+   Where a Slack account is linked to a workspace member, the bot also runs with that member's own permissions, so it can never do more than the person asking. Accounts with no link act with the Slack Assistant role alone, so keep it scoped to what you're comfortable exposing to anyone who can message the bot.
 
 ## Behaviour notes
 
@@ -90,8 +96,8 @@ The assistant reuses the same Slack connection — no second bot identity.
 - **Answer feedback.** Short answers end with Slack's native thumbs up / thumbs down feedback buttons. A click stores a Positive or Negative rating on the matching Slack Assistant Request record (last click wins). Very long answers fall back to a plain markdown message without buttons.
 - **Thread memory.** After a successful reply the bot stays active in that thread, so follow-ups need no mention. Channel threads stay active for 24 hours after the last reply (each reply renews it); DM threads never expire.
 - **No silent dead-ends.** A mention or DM with no request text gets a short hint reply. The first follow-up in a thread whose 24-hour window has lapsed gets an ephemeral nudge (only that member sees it) to mention the bot again.
-- **Channel welcome.** With `member_joined_channel` subscribed, the bot posts a short introduction the first time it is added to a channel, with the details (what to ask it, what it reads, and the shared-role caveat from step 5 above) in a thread reply so the channel itself stays quiet. It fires once per channel for 30 days, and only for the bot's own join — humans joining afterwards trigger nothing. Skip the subscription if you would rather it arrived silently.
-- **One Slack workspace per Twenty workspace.** Connecting Slack claims that Slack team for the connecting Twenty workspace. On the same server, a second Twenty workspace connecting the same Slack team is rejected. Removing the connection releases the claim, so another Twenty workspace can then connect that Slack team. Uninstalling the app releases it too.
+- **Channel welcome.** With `member_joined_channel` subscribed, the bot posts a short introduction the first time it is added to a channel, with the details (what to ask it, what it reads, and how permissions work per step 5 above) in a thread reply so the channel itself stays quiet. It fires once per channel for 30 days, and only for the bot's own join — humans joining afterwards trigger nothing. Skip the subscription if you would rather it arrived silently.
+- **One Slack workspace per Twenty workspace.** Connecting Slack claims that Slack team for the connecting Twenty workspace. On the same server, a second Twenty workspace connecting the same Slack team is rejected. Removing the connection releases the claim, so another Twenty workspace can then connect that Slack team. Uninstalling the app releases it too, and so does removing the app on the Slack side (uninstalling it from the Slack workspace or revoking its bot token) — with `app_uninstalled` and `tokens_revoked` subscribed, Slack reports the removal and the claim is released. The dead connection still shows under **Connections** until you remove it; reconnecting means removing it and adding a new connection.
 
 ## Workflow field names (for step authors)
 

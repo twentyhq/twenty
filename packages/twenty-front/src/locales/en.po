@@ -3462,9 +3462,14 @@ msgid "Call recorder"
 msgstr "Call recorder"
 
 #. js-lingui-id: ahn0Ti
-#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
+#: src/modules/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetUnavailableDisplay.tsx
 msgid "Call recording is not available in this workspace."
 msgstr "Call recording is not available in this workspace."
+
+#. js-lingui-id: z9jSP/
+#: src/modules/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetUnavailableDisplay.tsx
+msgid "Call Recording Unavailable"
+msgstr "Call Recording Unavailable"
 
 #. js-lingui-id: +Kx1Id
 #: src/modules/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog.ts
@@ -4783,6 +4788,7 @@ msgid "Conversation"
 msgstr "Conversation"
 
 #. js-lingui-id: EnJuK0
+#: src/modules/ai/components/MobileHomeAiChatSection.tsx
 #: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
 msgid "Conversations"
 msgstr "Conversations"
@@ -5380,10 +5386,10 @@ msgstr "Credits are added on top of the plan allowance and expire at the end of 
 msgid "Credits are used by workflows, AI chats, agents, and approved apps"
 msgstr "Credits are used by workflows, AI chats, agents, and approved apps"
 
-#. js-lingui-id: tx/xSF
+#. js-lingui-id: Ydxr+g
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
-msgid "credits available (Including {rolloverCreditsDisplay} from rollover)"
-msgstr "credits available (Including {rolloverCreditsDisplay} from rollover)"
+msgid "credits available (including {extraCreditsDisplay} on top of your plan)"
+msgstr "credits available (including {extraCreditsDisplay} on top of your plan)"
 
 #. js-lingui-id: zaaZ8V
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -6012,8 +6018,8 @@ msgstr "default"
 #. js-lingui-id: ovBPCi
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
+#: src/modules/settings/experience/components/UiScalePicker.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
-#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Default"
 msgstr "Default"
@@ -6968,6 +6974,7 @@ msgstr "eddy@gmail.com, @apple.com"
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
+#: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
@@ -8398,6 +8405,7 @@ msgid "Failed to merge records. Please try again."
 msgstr "Failed to merge records. Please try again."
 
 #. js-lingui-id: DvNGzq
+#: src/modules/object-record/record-calendar/month/hooks/useRecordCalendarMonthDndKit.ts
 #: src/modules/object-record/record-calendar/week/components/RecordCalendarWeekDragDropContext.tsx
 msgid "Failed to move record"
 msgstr "Failed to move record"
@@ -9382,6 +9390,7 @@ msgid "Granted {parsedAmount} credits to this workspace."
 msgstr "Granted {parsedAmount} credits to this workspace."
 
 #. js-lingui-id: fqtGOd
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 msgid "Granted credits"
 msgstr "Granted credits"
@@ -9671,6 +9680,7 @@ msgstr "Hire a partner to help you implement and customize Twenty."
 
 #. js-lingui-id: i0qMbr
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
+#: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 msgid "Home"
 msgstr "Home"
 
@@ -10362,6 +10372,11 @@ msgstr "Instructions Editor"
 msgid "Integrations - Settings"
 msgstr "Integrations - Settings"
 
+#. js-lingui-id: GfnKOF
+#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+msgid "Interface"
+msgstr "Interface"
+
 #. js-lingui-id: a+PGuG
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Internet accounts per user"
@@ -10846,7 +10861,7 @@ msgid "Label must contain at least one alphanumeric character"
 msgstr "Label must contain at least one alphanumeric character"
 
 #. js-lingui-id: vXIe7J
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Language"
 msgstr "Language"
 
@@ -10855,10 +10870,20 @@ msgstr "Language"
 msgid "Languages"
 msgstr "Languages"
 
+#. js-lingui-id: k7rCa/
+#: src/modules/settings/experience/components/UiScalePicker.tsx
+msgid "Large"
+msgstr "Large"
+
 #. js-lingui-id: 59o/ag
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Large section heading"
 msgstr "Large section heading"
+
+#. js-lingui-id: ke14uo
+#: src/modules/settings/experience/components/UiScalePicker.tsx
+msgid "Larger"
+msgstr "Larger"
 
 #. Short label (keep brief) indicating the most recently used login method
 #. js-lingui-id: RtKKbA
@@ -11589,11 +11614,6 @@ msgstr "loop"
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Mail Account"
 msgstr "Mail Account"
-
-#. js-lingui-id: HRha/x
-#: src/modules/navigation/components/MobileNavigationBar.tsx
-msgid "Main navigation"
-msgstr "Main navigation"
 
 #. js-lingui-id: 6Dd2PM
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
@@ -12479,7 +12499,7 @@ msgid "New Agent"
 msgstr "New Agent"
 
 #. js-lingui-id: JLx7YM
-#: src/modules/navigation/components/MobileNavigationBar.tsx
+#: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 msgid "New AI chat"
 msgstr "New AI chat"
 
@@ -12848,8 +12868,15 @@ msgstr "No billing data is available for this workspace."
 msgid "No body"
 msgstr "No body"
 
+#. js-lingui-id: O7I76L
+#: src/modules/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody.tsx
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
+msgid "No Call Recording"
+msgstr "No Call Recording"
+
 #. js-lingui-id: 8Qo8A6
-#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
+#: src/modules/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody.tsx
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
 msgid "No call recording exists for this calendar event yet."
 msgstr "No call recording exists for this calendar event yet."
 
@@ -13346,6 +13373,16 @@ msgstr "No server administrators found."
 msgid "No subject"
 msgstr "No subject"
 
+#. js-lingui-id: Y8HpZa
+#: src/modules/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody.tsx
+msgid "No Summary"
+msgstr "No Summary"
+
+#. js-lingui-id: cU6bd5
+#: src/modules/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody.tsx
+msgid "No summary has been generated for this call recording yet."
+msgstr "No summary has been generated for this call recording yet."
+
 #. js-lingui-id: RQ6tfU
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelSystemObjectPickerSubView.tsx
 msgid "No system objects available"
@@ -13371,8 +13408,13 @@ msgstr "No tools were called"
 msgid "No topic"
 msgstr "No topic"
 
+#. js-lingui-id: 3Y/oDZ
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
+msgid "No Transcript"
+msgstr "No Transcript"
+
 #. js-lingui-id: du4Icj
-#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
 msgid "No transcript is available for this recording."
 msgstr "No transcript is available for this recording."
 
@@ -14009,11 +14051,6 @@ msgstr "Only you will be able to see your emails and events"
 msgid "Open"
 msgstr "Open"
 
-#. js-lingui-id: Z5AQOT
-#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
-msgid "Open a calendar event to view its transcript."
-msgstr "Open a calendar event to view its transcript."
-
 #. js-lingui-id: Kkq3xr
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Open a maintained integration or prefill clients that accept MCP install links."
@@ -14069,11 +14106,6 @@ msgstr "Open record"
 #: src/modules/settings/experience/components/OpenRecordInPreferencePicker.tsx
 msgid "Open records alongside the current page"
 msgstr "Open records alongside the current page"
-
-#. js-lingui-id: p9J4lB
-#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
-msgid "Open records in"
-msgstr "Open records in"
 
 #. js-lingui-id: F7UdSk
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
@@ -14192,6 +14224,7 @@ msgid "Organize"
 msgstr "Organize"
 
 #. js-lingui-id: /IX/7x
+#: src/modules/ai/components/internal/AiChatQuestionOtherOption.tsx
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
@@ -14865,6 +14898,11 @@ msgstr "Prefilling your <0>workspace data</0>..."
 msgid "Prefix"
 msgstr "Prefix"
 
+#. js-lingui-id: dVCM1s
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
+msgid "Preparing Transcript"
+msgstr "Preparing Transcript"
+
 #. js-lingui-id: NwnQoz
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "Preset link"
@@ -14983,6 +15021,16 @@ msgstr "Pro plan"
 #: src/modules/activities/calendar/components/CalendarEventCallRecorderAvatar.tsx
 msgid "Processing"
 msgstr "Processing"
+
+#. js-lingui-id: HvAaN4
+#: src/modules/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody.tsx
+msgid "Processing Failed"
+msgstr "Processing Failed"
+
+#. js-lingui-id: 9YrAC6
+#: src/modules/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody.tsx
+msgid "Processing Recording"
+msgstr "Processing Recording"
 
 #. js-lingui-id: k1ifdL
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -16093,11 +16141,6 @@ msgstr "Roles"
 msgid "Rollover"
 msgstr "Rollover"
 
-#. js-lingui-id: ufKFGo
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
-msgid "Rollover credits"
-msgstr "Rollover credits"
-
 #. js-lingui-id: uJc01W
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Romanian"
@@ -16247,6 +16290,11 @@ msgstr "Save as new view"
 msgid "Save or cancel dashboard changes before editing the layout."
 msgstr "Save or cancel dashboard changes before editing the layout."
 
+#. js-lingui-id: bifv6N
+#: src/modules/settings/experience/components/UiScalePicker.tsx
+msgid "Scale"
+msgstr "Scale"
+
 #. js-lingui-id: gmB6oO
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
 msgid "Schedule"
@@ -16313,7 +16361,7 @@ msgstr "SDK"
 #. js-lingui-id: A1taO8
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
-#: src/modules/navigation/components/MobileNavigationBar.tsx
+#: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 #: src/modules/object-record/record-table-widget/components/RecordTableWidgetNestedRelationPickerDropdownContent.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
@@ -16999,10 +17047,10 @@ msgstr "Select value"
 msgid "Select which models appear as recommended in the workspace model picker"
 msgstr "Select which models appear as recommended in the workspace model picker"
 
-#. js-lingui-id: AXTJAW
+#. js-lingui-id: 7c7atJ
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Select your preferred language"
-msgstr "Select your preferred language"
+msgid "Select your language and adjust the size of the interface"
+msgstr "Select your language and adjust the size of the interface"
 
 #. js-lingui-id: JlFcis
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -17552,6 +17600,11 @@ msgstr "Sky"
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Small section heading"
 msgstr "Small section heading"
+
+#. js-lingui-id: OueVS2
+#: src/modules/settings/experience/components/UiScalePicker.tsx
+msgid "Smaller"
+msgstr "Smaller"
 
 #. js-lingui-id: 5J8ZFl
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -18504,6 +18557,16 @@ msgstr ""
 "\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
 
+#. js-lingui-id: VsxjzF
+#: src/modules/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody.tsx
+msgid "The call recording could not be processed."
+msgstr "The call recording could not be processed."
+
+#. js-lingui-id: +AFHx6
+#: src/modules/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody.tsx
+msgid "The call recording is still being processed…"
+msgstr "The call recording is still being processed…"
+
 #. js-lingui-id: /kfzmx
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "The Data Processing Agreement could not be loaded. Please try again."
@@ -18617,14 +18680,9 @@ msgid "The shared email you want to use."
 msgstr "The shared email you want to use."
 
 #. js-lingui-id: 9q0gnf
-#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
 msgid "The transcript could not be generated."
 msgstr "The transcript could not be generated."
-
-#. js-lingui-id: bkXHoz
-#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
-msgid "The transcript is empty."
-msgstr "The transcript is empty."
 
 #. js-lingui-id: qrhV2s
 #: src/modules/activities/emails/components/CampaignDetailsFields.tsx
@@ -19322,8 +19380,13 @@ msgstr "Total time"
 msgid "Track AI consumption across your workspace."
 msgstr "Track AI consumption across your workspace."
 
+#. js-lingui-id: U2CSqa
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
+msgid "Transcript Failed"
+msgstr "Transcript Failed"
+
 #. js-lingui-id: zDTPYv
-#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
+#: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody.tsx
 msgid "Transcript is being prepared…"
 msgstr "Transcript is being prepared…"
 
@@ -19584,11 +19647,6 @@ msgstr "Type"
 msgid "Type '/' for commands, '@' for mentions"
 msgstr "Type '/' for commands, '@' for mentions"
 
-#. js-lingui-id: vf2PjH
-#: src/modules/ai/components/AiChatQuestionCard.tsx
-msgid "Type anything to do differently."
-msgstr "Type anything to do differently."
-
 #. js-lingui-id: qzD6hf
 #: src/modules/side-panel/components/SidePanelTopBar.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsTab.tsx
@@ -19605,6 +19663,11 @@ msgstr "Type something or press \"/\" to see commands"
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemRecordSubPage.tsx
 msgid "Type to search records"
 msgstr "Type to search records"
+
+#. js-lingui-id: SILT51
+#: src/modules/ai/components/internal/AiChatQuestionOtherOption.tsx
+msgid "Type your own answer here"
+msgstr "Type your own answer here"
 
 #. js-lingui-id: D38O1A
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -19857,11 +19920,6 @@ msgstr "Unordered list with bullets"
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Unpaid"
 msgstr "Unpaid"
-
-#. js-lingui-id: fkuUW0
-#: src/modules/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage.ts
-msgid "Unrecognized transcript format."
-msgstr "Unrecognized transcript format."
 
 #. js-lingui-id: SMaFdc
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
@@ -20649,6 +20707,7 @@ msgstr "view"
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
+#: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 #: src/modules/side-panel/components/SidePanelObjectViewRecordInfo.tsx
@@ -20843,6 +20902,11 @@ msgstr "Visualize data model"
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "VS Code"
 msgstr "VS Code"
+
+#. js-lingui-id: mVkP/D
+#: src/modules/ai/hooks/useSubmitQuestionAnswer.ts
+msgid "Wait for files to finish uploading before answering."
+msgstr "Wait for files to finish uploading before answering."
 
 #. js-lingui-id: uUehLT
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx

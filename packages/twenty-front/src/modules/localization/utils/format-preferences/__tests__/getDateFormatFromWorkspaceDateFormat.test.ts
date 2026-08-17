@@ -2,7 +2,6 @@ import { DateFormat } from '@/localization/constants/DateFormat';
 import { getDateFormatFromWorkspaceDateFormat } from '@/localization/utils/format-preferences/getDateFormatFromWorkspaceDateFormat';
 import { WorkspaceMemberDateFormatEnum } from '~/generated-metadata/graphql';
 
-// Mock detectDateFormat
 jest.mock('@/localization/utils/detection/detectDateFormat', () => ({
   detectDateFormat: jest.fn(() => 'MONTH_FIRST'),
 }));

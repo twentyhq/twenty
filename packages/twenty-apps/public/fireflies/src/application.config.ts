@@ -26,14 +26,13 @@ export default defineApplication({
     FIREFLIES_API_KEY: {
       universalIdentifier: FIREFLIES_API_KEY_VARIABLE_UNIVERSAL_IDENTIFIER,
       description:
-        'API key from Fireflies (Integrations → Fireflies API → Generate). Used as a Bearer token against https://api.fireflies.ai/graphql to fetch full transcript content after a webhook fires.',
+        'Your Fireflies API key (Fireflies → Integrations → Fireflies API).',
       isSecret: true,
     },
     FIREFLIES_WEBHOOK_SECRET: {
       universalIdentifier:
         FIREFLIES_WEBHOOK_SECRET_VARIABLE_UNIVERSAL_IDENTIFIER,
-      description:
-        'Signing secret for verifying Fireflies Webhooks V2 payloads (sent in the X-Hub-Signature header as sha256=<hex-hmac-sha256-of-body>). Configure the same value on the Fireflies V2 webhook setup page.',
+      description: 'Signing secret from the Fireflies Webhooks V2 setup page.',
       isSecret: true,
     },
   },

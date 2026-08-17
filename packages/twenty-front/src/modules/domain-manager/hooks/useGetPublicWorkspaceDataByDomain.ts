@@ -64,7 +64,6 @@ export const useGetPublicWorkspaceDataByDomain = () => {
 
   useEffect(() => {
     if (error) {
-      // Only redirect to default domain if it's a workspace not found error
       if (CombinedGraphQLErrors.is(error)) {
         const isWorkspaceNotFoundError = error.errors?.some(
           (graphQLError) => graphQLError.extensions?.code === 'NOT_FOUND',

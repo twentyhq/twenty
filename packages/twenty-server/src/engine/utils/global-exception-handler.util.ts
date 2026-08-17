@@ -153,7 +153,6 @@ const convertHttpExceptionToGraphql = (exception: HttpException) => {
     );
   }
 
-  // Only show the stack trace in development mode
   if (process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT) {
     error.stack = exception.stack;
     error.extensions['response'] = exception.getResponse();

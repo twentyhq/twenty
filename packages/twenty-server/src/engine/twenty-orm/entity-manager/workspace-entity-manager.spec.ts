@@ -1,7 +1,8 @@
 import {
+  MetadataWritability,
+  ObjectOpenRecordIn,
   type FieldMetadataType,
   type ObjectsPermissions,
-  ObjectOpenRecordIn,
 } from 'twenty-shared/types';
 import { EntityManager } from 'typeorm';
 import { EntityPersistExecutor } from 'typeorm/persistence/EntityPersistExecutor';
@@ -125,6 +126,7 @@ describe('WorkspaceEntityManager', () => {
       isLabelSyncedWithName: false,
       isUIEditable: true,
       isUICreatable: true,
+      writability: MetadataWritability.OPEN,
       openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
       duplicateCriteria: null,
       createdAt: new Date().toISOString(),
@@ -162,6 +164,7 @@ describe('WorkspaceEntityManager', () => {
       isActive: true,
       isSystem: false,
       isUIEditable: true,
+      writability: MetadataWritability.OPEN,
       isUnique: false,
       options: null,
       settings: null,
@@ -323,7 +326,6 @@ describe('WorkspaceEntityManager', () => {
 
     setWorkspaceContext(mockWorkspaceContext);
 
-    // Mock TypeORM connection methods
     const mockWorkspaceDataSource = {
       getMetadata: jest.fn().mockReturnValue({
         name: 'test-entity',
@@ -386,7 +388,6 @@ describe('WorkspaceEntityManager', () => {
         return entityName;
       });
 
-    // Mock typeORM's EntityManager methods
     jest
       .spyOn(EntityManager.prototype, 'save')
       .mockImplementation(() => Promise.resolve({}));
@@ -415,7 +416,6 @@ describe('WorkspaceEntityManager', () => {
       .spyOn(PlainObjectToDatabaseEntityTransformer.prototype, 'transform')
       .mockImplementation(() => Promise.resolve({}));
 
-    // Mock metadata methods
     const mockMetadata = {
       hasAllPrimaryKeys: jest.fn().mockReturnValue(true),
       columns: [],
@@ -424,12 +424,10 @@ describe('WorkspaceEntityManager', () => {
       findColumnWithPropertyPath: jest.fn(),
     };
 
-    // Update mockWorkspaceDataSource to include metadata
     mockWorkspaceDataSource.getMetadata = jest
       .fn()
       .mockReturnValue(mockMetadata);
 
-    // Reset the mock before each test
     jest.clearAllMocks();
   });
 
@@ -480,6 +478,7 @@ describe('WorkspaceEntityManager', () => {
         selectedColumns: [],
         allFieldsSelected: false,
         updatedColumns: [],
+        authContext: mockWorkspaceContext.authContext,
       });
     });
 
@@ -589,6 +588,7 @@ describe('WorkspaceEntityManager', () => {
         selectedColumns: [],
         allFieldsSelected: false,
         updatedColumns: [],
+        authContext: mockWorkspaceContext.authContext,
       });
     });
   });

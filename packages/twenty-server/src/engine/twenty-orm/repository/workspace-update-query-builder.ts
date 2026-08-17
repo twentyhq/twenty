@@ -101,19 +101,47 @@ export class WorkspaceUpdateQueryBuilder<
     return workspaceUpdateQueryBuilder;
   }
 
-  override async execute(): Promise<UpdateResult> {
-    try {
-      if (this.manyInputs) {
-        return this.executeMany();
-      }
+  private validateQueryPermissionsOrThrow(): void {
+    validateQueryIsPermittedOrThrow({
+      expressionMap: this.expressionMap,
+      objectsPermissions: this.objectRecordsPermissions,
+      flatObjectMetadataMaps: this.internalContext.flatObjectMetadataMaps,
+      flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
+      objectIdByNameSingular: this.internalContext.objectIdByNameSingular,
+      shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      authContext: this.authContext,
+    });
+  }
+
+  private validateManyInputsPermissionsOrThrow(): void {
+    for (const input of this.manyInputs) {
+      const fakeExpressionMapToValidatePermissions = Object.assign(
+        {},
+        this.expressionMap,
+        {
+          wheres: input.criteria,
+          valuesSet: input.partialEntity,
+        },
+      );
+
       validateQueryIsPermittedOrThrow({
-        expressionMap: this.expressionMap,
+        expressionMap: fakeExpressionMapToValidatePermissions,
         objectsPermissions: this.objectRecordsPermissions,
         flatObjectMetadataMaps: this.internalContext.flatObjectMetadataMaps,
         flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
         objectIdByNameSingular: this.internalContext.objectIdByNameSingular,
         shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+        authContext: this.authContext,
       });
+    }
+  }
+
+  override async execute(): Promise<UpdateResult> {
+    try {
+      if (this.manyInputs) {
+        return this.executeMany();
+      }
+      this.validateQueryPermissionsOrThrow();
 
       const mainAliasTarget = this.getMainAliasTarget();
 
@@ -210,6 +238,8 @@ export class WorkspaceUpdateQueryBuilder<
 
         this.expressionMap.valuesSet =
           updatedValues.length === 1 ? updatedValues[0] : updatedValues;
+
+        this.validateQueryPermissionsOrThrow();
       }
 
       this.applyRowLevelPermissionPredicates();
@@ -299,25 +329,7 @@ export class WorkspaceUpdateQueryBuilder<
 
   public async executeMany(): Promise<UpdateResult> {
     try {
-      for (const input of this.manyInputs) {
-        const fakeExpressionMapToValidatePermissions = Object.assign(
-          {},
-          this.expressionMap,
-          {
-            wheres: input.criteria,
-            valuesSet: input.partialEntity,
-          },
-        );
-
-        validateQueryIsPermittedOrThrow({
-          expressionMap: fakeExpressionMapToValidatePermissions,
-          objectsPermissions: this.objectRecordsPermissions,
-          flatObjectMetadataMaps: this.internalContext.flatObjectMetadataMaps,
-          flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
-          objectIdByNameSingular: this.internalContext.objectIdByNameSingular,
-          shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
-        });
-      }
+      this.validateManyInputsPermissionsOrThrow();
 
       const mainAliasTarget = this.getMainAliasTarget();
 
@@ -411,6 +423,8 @@ export class WorkspaceUpdateQueryBuilder<
           criteria: this.manyInputs[index].criteria,
           partialEntity: updatedValue,
         }));
+
+        this.validateManyInputsPermissionsOrThrow();
       }
 
       const beforeRecordById = new Map<string, T>();
