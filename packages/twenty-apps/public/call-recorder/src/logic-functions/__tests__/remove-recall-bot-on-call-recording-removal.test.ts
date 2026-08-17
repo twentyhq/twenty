@@ -130,6 +130,32 @@ describe('removeRecallBotOnCallRecordingDeletionHandler', () => {
         }),
       }),
     );
+    expect(mutationMock).toHaveBeenCalledWith({
+      updateCallRecordings: {
+        __args: {
+          filter: {
+            id: { eq: 'call-recording-1' },
+            or: [
+              { deletedAt: { is: 'NULL' } },
+              { deletedAt: { is: 'NOT_NULL' } },
+            ],
+            externalBotId: { eq: 'recall-bot-1' },
+            botScheduleAttemptId: { is: 'NULL' },
+            botScheduleAttemptedAt: {
+              eq: '2026-01-01T10:00:00.000Z',
+            },
+            botScheduleIdempotencyKey: { eq: 'schedule-attempt-1' },
+          },
+          data: {
+            externalBotId: null,
+            botScheduleAttemptId: null,
+            botScheduleAttemptedAt: null,
+            botScheduleIdempotencyKey: null,
+          },
+        },
+        id: true,
+      },
+    });
   });
 
   it('skips a stale deletion retry after the recording was restored', async () => {
