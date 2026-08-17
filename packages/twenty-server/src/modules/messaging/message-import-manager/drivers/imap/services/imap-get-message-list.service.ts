@@ -17,7 +17,7 @@ import { createSyncCursor } from 'src/modules/messaging/message-import-manager/d
 import { resolveMailboxState } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/extract-mailbox-state.util';
 import { getImapFolderPath } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/get-imap-folder-path.util';
 import { isImapMailboxNotFoundError } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/is-imap-mailbox-not-found-error.util';
-import { normalizeImapMailboxPath } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/normalize-imap-mailbox-path.util';
+import { normalizeImapUnicode } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/normalize-imap-unicode.util';
 import { parseSyncCursor } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-sync-cursor.util';
 import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
 import {
@@ -101,10 +101,7 @@ export class ImapGetMessageListService {
       );
     }
 
-    const folderPath = normalizeImapMailboxPath(
-      messageExternalIdPrefix,
-      client,
-    );
+    const folderPath = normalizeImapUnicode(messageExternalIdPrefix, client);
 
     if (await this.canSkipFolderSync(client, folder)) {
       this.logger.log(`Skipping folder ${folder.name}: no new messages`);

@@ -16,7 +16,7 @@ import { shouldSyncFolderByDefault } from 'src/modules/messaging/message-folder-
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
 import { ImapFindSentFolderService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-find-sent-folder.service';
 import { getImapFolderPath } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/get-imap-folder-path.util';
-import { normalizeImapMailboxPath } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/normalize-imap-mailbox-path.util';
+import { normalizeImapUnicode } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/normalize-imap-unicode.util';
 import { getStandardFolderByRegex } from 'src/modules/messaging/message-import-manager/drivers/utils/get-standard-folder-by-regex';
 
 @Injectable()
@@ -71,10 +71,10 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
   ): Promise<DiscoveredMessageFolder[]> {
     const normalizedMailboxList = mailboxList.map((mailbox) => ({
       ...mailbox,
-      path: normalizeImapMailboxPath(mailbox.path, client),
-      name: normalizeImapMailboxPath(mailbox.name, client),
+      path: normalizeImapUnicode(mailbox.path, client),
+      name: normalizeImapUnicode(mailbox.name, client),
       parentPath: mailbox.parentPath
-        ? normalizeImapMailboxPath(mailbox.parentPath, client)
+        ? normalizeImapUnicode(mailbox.parentPath, client)
         : mailbox.parentPath,
     }));
     const existingExternalIdsByNormalizedId = new Map<string, string>();
@@ -82,7 +82,7 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
     for (const folder of existingFolders) {
       if (isDefined(folder.externalId)) {
         existingExternalIdsByNormalizedId.set(
-          normalizeImapMailboxPath(folder.externalId, client),
+          normalizeImapUnicode(folder.externalId, client),
           folder.externalId,
         );
       }
@@ -93,7 +93,7 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
     const sentFolder =
       await this.imapFindSentFolderService.findSentFolder(client);
     const sentFolderPath = isDefined(sentFolder)
-      ? normalizeImapMailboxPath(sentFolder.path, client)
+      ? normalizeImapUnicode(sentFolder.path, client)
       : undefined;
 
     const sentMailbox = isDefined(sentFolder)
