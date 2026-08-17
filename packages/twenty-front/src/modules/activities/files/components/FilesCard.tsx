@@ -1,61 +1,23 @@
-import { type ChangeEvent, useRef } from 'react';
+import { useRef } from 'react';
 
+import { AttachmentFileInput } from '@/activities/files/components/AttachmentFileInput';
 import { FilesCardContent } from '@/activities/files/components/FilesCardContent';
 import { useAttachments } from '@/activities/files/hooks/useAttachments';
-import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { useCanUploadAttachmentFiles } from '@/activities/files/hooks/useCanUploadAttachmentFiles';
+import { useUploadAttachmentFiles } from '@/activities/files/hooks/useUploadAttachmentFiles';
 import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import { styled } from '@linaria/react';
-import { isDefined } from 'twenty-shared/utils';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
-
-const StyledFileInput = styled.input`
-  display: none;
-`;
 
 export const FilesCard = () => {
   const targetRecord = useTargetRecord();
   const inputFileRef = useRef<HTMLInputElement>(null);
   const { attachments, loading, totalCountAttachments } =
     useAttachments(targetRecord);
-  const { uploadAttachmentFile } = useUploadAttachmentFile();
+  const { uploadAttachmentFiles } = useUploadAttachmentFiles();
+  const { canUploadFiles } = useCanUploadAttachmentFiles(targetRecord);
 
-  const onUploadFile = async (file: File) => {
-    await uploadAttachmentFile(file, targetRecord);
-  };
-
-  const onUploadFiles = async (files: File[]) => {
-    for (const file of files) {
-      await onUploadFile(file);
-    }
-  };
-
-  const handleFileInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    if (isDefined(event.target.files)) {
-      const files = Array.from(event.target.files);
-      event.target.value = '';
-      onUploadFiles(files);
-    }
-  };
-
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: targetRecord.targetObjectNameSingular,
-  });
-
-  const objectPermissions = useObjectPermissionsForObject(
-    objectMetadataItem.id,
-  );
-
-  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
-
-  const hasUploadPermission = useHasPermissionFlag(
-    PermissionFlagType.UPLOAD_FILE,
-  );
-
-  const canUploadFiles = hasObjectUpdatePermissions && hasUploadPermission;
+  const handleUploadFiles = (files: File[]) =>
+    uploadAttachmentFiles(files, targetRecord);
 
   const handleAddFileClick = () => {
     inputFileRef.current?.click();
@@ -64,18 +26,13 @@ export const FilesCard = () => {
   return (
     <>
       <WidgetHeaderCountEffect count={totalCountAttachments} />
-      <StyledFileInput
-        ref={inputFileRef}
-        onChange={handleFileInputChange}
-        type="file"
-        multiple
-      />
+      <AttachmentFileInput ref={inputFileRef} targetableObject={targetRecord} />
       <FilesCardContent
         attachments={attachments}
         canUploadFiles={canUploadFiles}
         loading={loading}
         onAddFile={handleAddFileClick}
-        onUploadFiles={onUploadFiles}
+        onUploadFiles={handleUploadFiles}
         targetRecord={targetRecord}
       />
     </>

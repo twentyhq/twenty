@@ -16,18 +16,20 @@ type WidgetCardHeaderStoryProps = {
   title: string;
   isInEditMode: boolean;
   count?: number;
+  widgetId?: string;
 };
 
 const WidgetCardHeaderStory = ({
   title,
   isInEditMode,
   count,
+  widgetId = WIDGET_ID,
 }: WidgetCardHeaderStoryProps) => (
   <PageLayoutTestWrapper instanceId={PAGE_LAYOUT_TEST_INSTANCE_ID}>
-    <WidgetComponentInstanceContext.Provider value={{ instanceId: WIDGET_ID }}>
+    <WidgetComponentInstanceContext.Provider value={{ instanceId: widgetId }}>
       <WidgetHeaderCountEffect count={count} />
       <WidgetCardHeader
-        widgetId={WIDGET_ID}
+        widgetId={widgetId}
         variant="dashboard"
         isInEditMode={isInEditMode}
         title={title}
@@ -63,11 +65,15 @@ export const Catalog: CatalogStory<Story, typeof WidgetCardHeaderStory> = {
           props: (headerStateVariant: string) => {
             switch (headerStateVariant) {
               case 'no count':
-                return { count: undefined };
+                return { count: undefined, widgetId: `${WIDGET_ID}-no-count` };
               case 'edit mode':
-                return { count: 5, isInEditMode: true };
+                return {
+                  count: 5,
+                  isInEditMode: true,
+                  widgetId: `${WIDGET_ID}-edit-mode`,
+                };
               default:
-                return { count: 42 };
+                return { count: 42, widgetId: `${WIDGET_ID}-count` };
             }
           },
         },

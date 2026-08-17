@@ -1,8 +1,6 @@
-import { WidgetType } from '~/generated-metadata/graphql';
+import { WIDGET_HEADER_ACTION_COMPONENT_BY_WIDGET_TYPE } from '@/page-layout/widgets/constants/WidgetHeaderActionComponentByWidgetType';
+import { type WidgetType } from '~/generated-metadata/graphql';
 
-export const WIDGET_TYPES_WITH_HEADER_ACTIONS: WidgetType[] = [
-  WidgetType.EMAILS,
-  WidgetType.TASKS,
-  WidgetType.NOTES,
-  WidgetType.FILES,
-];
+export const WIDGET_TYPES_WITH_HEADER_ACTIONS = Object.keys(
+  WIDGET_HEADER_ACTION_COMPONENT_BY_WIDGET_TYPE,
+) as WidgetType[];

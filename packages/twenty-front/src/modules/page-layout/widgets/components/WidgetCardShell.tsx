@@ -94,6 +94,7 @@ export const WidgetCardShell = ({
             widgetId={widget.id}
             variant={variant}
             isInEditMode={isEditable}
+            hasAccess={hasAccess}
             isResizing={isResizing}
             isReorderEnabled={isReorderEnabled}
             isDeletingWidgetEnabled={isDeletingWidgetEnabled}

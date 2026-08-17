@@ -20,6 +20,7 @@ export type WidgetCardHeaderProps = {
   widgetId: string;
   isInEditMode: boolean;
   isEmpty?: boolean;
+  hasAccess?: boolean;
   title: string;
   onRemove?: (e?: React.MouseEvent) => void;
   forbiddenDisplay?: ReactNode;
@@ -81,6 +82,7 @@ export const WidgetCardHeader = ({
   variant,
   isEmpty = false,
   isInEditMode = false,
+  hasAccess = true,
   isResizing = false,
   isReorderEnabled = true,
   isDeletingWidgetEnabled = true,
@@ -118,7 +120,9 @@ export const WidgetCardHeader = ({
         )}
       </StyledTitleContainer>
       <StyledRightContainer>
-        <WidgetCardHeaderActionsRenderer isInEditMode={isInEditMode} />
+        {hasAccess && (
+          <WidgetCardHeaderActionsRenderer isInEditMode={isInEditMode} />
+        )}
         {isDefined(forbiddenDisplay) && forbiddenDisplay}
         <AnimatePresence initial={false}>
           {!isResizing &&

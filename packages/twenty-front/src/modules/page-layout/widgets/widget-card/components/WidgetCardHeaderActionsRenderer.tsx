@@ -1,13 +1,8 @@
-import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { WidgetFieldActions } from '@/page-layout/widgets/components/WidgetFieldActions';
-import { WidgetActionEmailCompose } from '@/page-layout/widgets/emails/components/WidgetActionEmailCompose';
-import { WidgetActionFileAttach } from '@/page-layout/widgets/files/components/WidgetActionFileAttach';
-import { WidgetActionNoteCreate } from '@/page-layout/widgets/notes/components/WidgetActionNoteCreate';
-import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
-import { WidgetActionTaskCreate } from '@/page-layout/widgets/tasks/components/WidgetActionTaskCreate';
+import { WIDGET_HEADER_ACTION_COMPONENT_BY_WIDGET_TYPE } from '@/page-layout/widgets/constants/WidgetHeaderActionComponentByWidgetType';
+import { useCurrentWidgetOrNull } from '@/page-layout/widgets/hooks/useCurrentWidgetOrNull';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
-import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { isDefined } from 'twenty-shared/utils';
 import { WidgetType } from '~/generated-metadata/graphql';
 
@@ -26,20 +21,18 @@ const WidgetCardHeaderWidgetActions = ({
     return null;
   }
 
-  switch (widget.type) {
-    case WidgetType.FIELD:
-      return <WidgetFieldActions />;
-    case WidgetType.EMAILS:
-      return isInEditMode ? null : <WidgetActionEmailCompose />;
-    case WidgetType.TASKS:
-      return isInEditMode ? null : <WidgetActionTaskCreate />;
-    case WidgetType.NOTES:
-      return isInEditMode ? null : <WidgetActionNoteCreate />;
-    case WidgetType.FILES:
-      return isInEditMode ? null : <WidgetActionFileAttach />;
-    default:
-      return null;
+  if (widget.type === WidgetType.FIELD) {
+    return <WidgetFieldActions />;
   }
+
+  const HeaderActionComponent =
+    WIDGET_HEADER_ACTION_COMPONENT_BY_WIDGET_TYPE[widget.type];
+
+  if (!isDefined(HeaderActionComponent) || isInEditMode) {
+    return null;
+  }
+
+  return <HeaderActionComponent />;
 };
 
 type WidgetCardHeaderActionsRendererProps = {
@@ -49,17 +42,7 @@ type WidgetCardHeaderActionsRendererProps = {
 export const WidgetCardHeaderActionsRenderer = ({
   isInEditMode,
 }: WidgetCardHeaderActionsRendererProps) => {
-  const widgetComponentInstanceId = useComponentInstanceStateContext(
-    WidgetComponentInstanceContext,
-  );
-
-  const { currentPageLayout } = useCurrentPageLayout();
-
-  const widget = currentPageLayout?.tabs
-    ?.flatMap((tab) => tab.widgets)
-    .find(
-      (tabWidget) => tabWidget.id === widgetComponentInstanceId?.instanceId,
-    );
+  const widget = useCurrentWidgetOrNull();
 
   if (!isDefined(widget)) {
     return null;
