@@ -6,11 +6,13 @@ import { type ActivityTargetableObject } from '@/activities/types/ActivityTarget
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import {
   CoreObjectNameSingular,
+  FieldMetadataType,
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
@@ -35,6 +37,8 @@ export const useTimelineActivities = (
     });
 
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
+  const { objectMetadataItems: allObjectMetadataItems } =
+    useObjectMetadataItems();
 
   const noteObjectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) =>
@@ -56,11 +60,20 @@ export const useTimelineActivities = (
       ),
   );
 
-  const { recordGqlFields: depthOneRecordGqlFields } =
-    useGenerateDepthRecordGqlFieldsFromObject({
-      objectNameSingular: CoreObjectNameSingular.TimelineActivity,
-      depth: 1,
-    });
+  // Timeline rows render scalars and the author only, never the target records.
+  // Every requested morph target costs a dedicated relation query server-side,
+  // so a workspace with many custom objects would pay for dozens of unused ones.
+  const recordGqlFields = useMemo(
+    () =>
+      generateDepthRecordGqlFieldsFromFields({
+        objectMetadataItems: allObjectMetadataItems,
+        fields: timelineActivityMetadata.fields.filter(
+          (field) => field.type !== FieldMetadataType.MORPH_RELATION,
+        ),
+        depth: 1,
+      }),
+    [allObjectMetadataItems, timelineActivityMetadata.fields],
+  );
 
   const {
     records: timelineActivities,
@@ -76,7 +89,7 @@ export const useTimelineActivities = (
         createdAt: 'DescNullsFirst',
       },
     ],
-    recordGqlFields: depthOneRecordGqlFields,
+    recordGqlFields,
     fetchPolicy: 'cache-and-network',
   });
 
