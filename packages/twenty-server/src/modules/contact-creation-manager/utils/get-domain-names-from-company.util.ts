@@ -13,14 +13,14 @@ export const getDomainNamesFromCompany = (
   }
 
   const domainNames = isNonEmptyString(domainName.primaryLinkUrl)
-    ? [extractDomainFromLink(domainName.primaryLinkUrl)]
+    ? [extractDomainFromLink(domainName.primaryLinkUrl).toLowerCase()]
     : [];
 
   for (const link of parseArrayOrJsonStringToArray<LinkMetadata>(
     domainName.secondaryLinks,
   )) {
     if (isNonEmptyString(link.url)) {
-      domainNames.push(extractDomainFromLink(link.url));
+      domainNames.push(extractDomainFromLink(link.url).toLowerCase());
     }
   }
 

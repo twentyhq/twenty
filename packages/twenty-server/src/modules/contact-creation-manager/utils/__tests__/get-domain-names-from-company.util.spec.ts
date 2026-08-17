@@ -14,6 +14,16 @@ describe('getDomainNamesFromCompany', () => {
     ).toEqual(['twenty.com', 'twenty-crm.com', 'crm.dev']);
   });
 
+  it('should lowercase domains so they match the domain of an email handle', () => {
+    expect(
+      getDomainNamesFromCompany({
+        primaryLinkLabel: '',
+        primaryLinkUrl: 'https://Twenty.COM',
+        secondaryLinks: [{ url: 'Twenty-CRM.com', label: '' }],
+      }),
+    ).toEqual(['twenty.com', 'twenty-crm.com']);
+  });
+
   it('should ignore links without url', () => {
     expect(
       getDomainNamesFromCompany({
