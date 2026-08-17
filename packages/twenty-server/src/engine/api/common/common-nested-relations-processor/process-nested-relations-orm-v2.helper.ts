@@ -11,6 +11,7 @@ import {
   type ConcurrencyLimiter,
   createConcurrencyLimiter,
 } from 'src/engine/api/common/common-nested-relations-processor/utils/create-concurrency-limiter.util';
+import { getUniqueRelationIds } from 'src/engine/api/common/common-nested-relations-processor/utils/get-unique-relation-ids.util';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import {
   GraphqlQueryRunnerException,
@@ -235,7 +236,7 @@ export class ProcessNestedRelationsOrmV2Helper {
       name: sourceFieldName,
     });
 
-    const relationIds = this.getUniqueIds({
+    const relationIds = getUniqueRelationIds({
       records: parentObjectRecords,
       idField:
         relationType === RelationType.ONE_TO_MANY ? 'id' : joinColumnName,
@@ -373,18 +374,6 @@ export class ProcessNestedRelationsOrmV2Helper {
     const targetRelationName = targetRelation?.name;
 
     return { targetRelationName, targetObjectMetadata, targetRelation };
-  }
-
-  private getUniqueIds({
-    records,
-    idField,
-  }: {
-    records: ObjectRecord[];
-    idField: string;
-    // oxlint-disable-next-line typescript/no-explicit-any
-  }): any[] {
-    // Nullish join columns match nothing; keeping them issues a wasted `IN (NULL)` query per unset relation.
-    return [...new Set(records.map((item) => item[idField]).filter(isDefined))];
   }
 
   private async findRelations({
