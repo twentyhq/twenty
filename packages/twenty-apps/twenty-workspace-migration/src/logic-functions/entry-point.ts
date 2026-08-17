@@ -29,6 +29,9 @@ import { findWebhooks } from "src/logic-functions/data/targetWorkspace/find-webh
 import { createMetadataEntity } from "src/logic-functions/data/targetWorkspace/create-metadata-entity.util";
 import { findRoles } from "src/logic-functions/data/targetWorkspace/find-roles.util";
 import { upsertPermissionFlags, upsertObjectPermissions, upsertFieldPermissions } from "src/logic-functions/data/targetWorkspace/upsert-role-permissions.util";
+import { findPageLayouts } from "src/logic-functions/data/targetWorkspace/find-page-layouts.util";
+import { updatePageLayoutWithTabsAndWidgets } from "src/logic-functions/data/targetWorkspace/update-page-layout-with-tabs-and-widgets.util";
+import { type PageLayoutTab } from "src/logic-functions/types/dashboard.type";
 
 // Logic:
 // Read all apps
@@ -49,7 +52,19 @@ import { upsertPermissionFlags, upsertObjectPermissions, upsertFieldPermissions 
 // errors instead of pacing every request with a fixed delay.
 
 const fieldsToOmit = ['id', 'createdBy', 'updatedBy', 'createdAt', 'updatedAt', 'deletedAt', 'position', 'searchVector', 'timelineActivities', 'attachments', 'noteTargets', 'taskTargets'];
-const objectsToOmit = ['dashboard', 'workflow', 'workflowRun', 'workflowVersion', 'workflowAutomatedTrigger', 'timelineActivity'];
+const objectsToOmit = ['workflow', 'workflowRun', 'workflowVersion', 'workflowAutomatedTrigger', 'timelineActivity'];
+// workspaceMember/dashboard still need their SCHEMA synced (a workspace may have added custom
+// fields to either), so they stay out of objectsToOmit and go through Stage 2/3/4 normally -
+// but their RECORDS are skipped in Stage 5 specifically:
+// - workspaceMember: the server hard-blocks createOne/createMany for it regardless of
+//   caller/role (workspace members are provisioned by the real invite/sign-up flow, not the
+//   API). Existing target members are matched to source members by email instead (see
+//   mergedWorkspaceMembers) and fed into recordIdMap so other objects' relation fields
+//   (assignee, accountOwner, owner, ...) that point at a workspace member still get correctly
+//   remapped.
+// - dashboard: it needs the PageLayout tree built first (Stage 7) before the Dashboard record
+//   itself can point at it - the generic Stage 5 loop can't sequence that.
+const objectsToOmitFromRecordMigration = ['workspaceMember', 'dashboard'];
 const sourceAppsToOmit = ['OAUTH_ONLY', 'LOCAL'];
 
 function mapEntities<T extends { universalIdentifier: string }>(a: T[]) {
@@ -77,8 +92,6 @@ const areRelationsIdentical = (a: FieldRelationInfo, b: FieldRelationInfo) => {
     a.targetFieldMetadata.label === b.targetFieldMetadata.label;
 }
 
-// Order-independent: each morph target is matched to its counterpart by object name,
-// since the same set of targets can legitimately come back in a different array order.
 const areMorphRelationsIdentical = (a: FieldRelationInfo[], b: FieldRelationInfo[]) => {
   if (a.length !== b.length) {
     return false;
@@ -695,6 +708,242 @@ const migrateRoles = async (
   console.log(`Roles: created ${createdCount}`);
 };
 
+// The keys a widget's `configuration` blob can hold a fieldMetadataId under, across every
+// chart/field-bearing widget type (see find-page-layouts.util.ts for the confirmed per-type
+// field lists). Checking "does this key exist on the object" generically, rather than
+// branching per widget type, covers all of them without needing to know which type is which -
+// `viewId`/`frontComponentId` are deliberately left untouched: views and front components keep
+// the same id across workspaces (views are migrated with their source id reused in Stage 6;
+// front components belong to apps, already kept in sync by the Stage 1 app-version check).
+const WIDGET_CONFIGURATION_FIELD_METADATA_ID_KEYS = [
+  'aggregateFieldMetadataId',
+  'primaryAxisGroupByFieldMetadataId',
+  'secondaryAxisGroupByFieldMetadataId',
+  'groupByFieldMetadataId',
+  'fieldMetadataId',
+  'nestedRelationFieldMetadataId',
+];
+
+const remapWidgetConfiguration = (
+  configuration: Record<string, unknown>,
+  targetFieldIdBySourceFieldId: Map<string, string>,
+): Record<string, unknown> => {
+  const remapped = { ...configuration };
+  for (const key of WIDGET_CONFIGURATION_FIELD_METADATA_ID_KEYS) {
+    const sourceFieldId = remapped[key];
+    if (typeof sourceFieldId === 'string') {
+      remapped[key] = targetFieldIdBySourceFieldId.get(sourceFieldId) ?? null;
+    }
+  }
+  return remapped;
+};
+
+// Builds the `tabs` input for updatePageLayoutWithTabsAndWidgets: fresh client-minted ids for
+// every tab/widget (this mutation creates anything whose id isn't already found on the target
+// layout, so populating a brand-new empty layout works the same as updating an existing one),
+// widget objectMetadataId/configuration remapped against the target workspace, and VIEW-type
+// widgets skipped - the one widget type still rejected even through this bulk mutation.
+const buildPageLayoutTabsInput = (
+  sourceTabs: PageLayoutTab[],
+  targetObjectIdBySourceObjectId: Map<string, string>,
+  targetFieldIdBySourceFieldId: Map<string, string>,
+  warningContext: string,
+): Record<string, unknown>[] => {
+  return sourceTabs.map((tab) => {
+    const targetTabId = crypto.randomUUID();
+
+    const widgets = tab.widgets.flatMap((widget) => {
+      if (widget.type === 'VIEW') {
+        console.warn(`Skipping widget "${widget.title}" on ${warningContext}: VIEW-type widgets aren't supported by the API yet`);
+        return [];
+      }
+
+      const targetObjectMetadataId = widget.objectMetadataId !== null
+        ? targetObjectIdBySourceObjectId.get(widget.objectMetadataId)
+        : undefined;
+      if (widget.objectMetadataId !== null && targetObjectMetadataId === undefined) {
+        console.warn(`Skipping widget "${widget.title}" on ${warningContext}: target object not found for object ${widget.objectMetadataId}`);
+        return [];
+      }
+
+      return [{
+        id: crypto.randomUUID(),
+        pageLayoutTabId: targetTabId,
+        title: widget.title,
+        type: widget.type,
+        objectMetadataId: targetObjectMetadataId ?? null,
+        gridPosition: widget.gridPosition,
+        configuration: remapWidgetConfiguration(widget.configuration, targetFieldIdBySourceFieldId),
+      }];
+    });
+
+    return {
+      id: targetTabId,
+      title: tab.title,
+      position: tab.position,
+      layoutMode: tab.layoutMode,
+      widgets,
+    };
+  });
+};
+
+const applyPageLayoutTabsAndWidgets = async (
+  targetWorkspace: AxiosInstance,
+  targetPageLayoutId: string,
+  sourceTabs: PageLayoutTab[],
+  targetObjectIdBySourceObjectId: Map<string, string>,
+  targetFieldIdBySourceFieldId: Map<string, string>,
+  warningContext: string,
+): Promise<void> => {
+  const tabs = buildPageLayoutTabsInput(sourceTabs, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId, warningContext);
+  await executeWithRetry(() => updatePageLayoutWithTabsAndWidgets(targetWorkspace, targetPageLayoutId, tabs));
+};
+
+const migrateDashboards = async (
+  sourceWorkspace: AxiosInstance,
+  targetWorkspace: AxiosInstance,
+  targetObjectIdBySourceObjectId: Map<string, string>,
+  targetFieldIdBySourceFieldId: Map<string, string>,
+) => {
+  const readAllDashboards = async (client: AxiosInstance, selectionSet: string) => {
+    const nodes: Record<string, unknown>[] = [];
+    let after: string | null = null;
+    while (true) {
+      const page = await findManyRecords(client, 'dashboards', selectionSet, after);
+      nodes.push(...page.edges.map((edge) => edge.node));
+      if (!page.pageInfo.hasNextPage) {
+        break;
+      }
+      after = page.pageInfo.endCursor;
+    }
+    return nodes;
+  };
+
+  const sourceDashboards = await readAllDashboards(sourceWorkspace, 'title\npageLayoutId\nposition');
+  const targetDashboards = await readAllDashboards(targetWorkspace, 'id');
+  const existingTargetDashboardIds = new Set(targetDashboards.map((node) => node.id as string));
+
+  const sourcePageLayouts = await findPageLayouts(sourceWorkspace, 'DASHBOARD');
+  const sourcePageLayoutById = new Map(sourcePageLayouts.map((layout) => [layout.id, layout]));
+
+  let createdCount = 0;
+
+  for (const dashboard of sourceDashboards) {
+    const dashboardId = dashboard.id as string;
+    const title = dashboard.title as string;
+
+    // PageLayout has no client-settable id or natural key (unlike Dashboard itself), so
+    // re-run idempotency only works one level up: if a Dashboard with the reused source id
+    // already exists, its whole layout tree was already built in a prior run, and the entire
+    // dashboard - not just parts of it - is skipped.
+    if (existingTargetDashboardIds.has(dashboardId)) {
+      continue;
+    }
+
+    const sourcePageLayout = sourcePageLayoutById.get(dashboard.pageLayoutId as string);
+    if (sourcePageLayout === undefined) {
+      console.warn(`Skipping dashboard "${title}": its page layout was not found`);
+      continue;
+    }
+
+    try {
+      const targetLayoutObjectMetadataId = sourcePageLayout.objectMetadataId !== null
+        ? targetObjectIdBySourceObjectId.get(sourcePageLayout.objectMetadataId) ?? null
+        : null;
+
+      const createdPageLayout = await executeWithRetry(() => createMetadataEntity(targetWorkspace, 'createPageLayout', 'input', 'CreatePageLayoutInput', {
+        name: sourcePageLayout.name,
+        type: sourcePageLayout.type,
+        objectMetadataId: targetLayoutObjectMetadataId,
+      }));
+
+      await applyPageLayoutTabsAndWidgets(
+        targetWorkspace,
+        createdPageLayout.id,
+        sourcePageLayout.tabs,
+        targetObjectIdBySourceObjectId,
+        targetFieldIdBySourceFieldId,
+        `dashboard "${title}"`,
+      );
+
+      await executeWithRetry(() => createManyRecords(targetWorkspace, 'dashboards', [{
+        id: dashboardId,
+        title,
+        pageLayoutId: createdPageLayout.id,
+        position: dashboard.position,
+      }], new Set()));
+      createdCount += 1;
+    } catch (error) {
+      // A dashboard whose layout/tab/widget tree fails to apply can't be meaningfully
+      // partially migrated - skip it and move on to the rest.
+      console.warn(`Skipping dashboard "${title}": ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  console.log(`Dashboards: created ${createdCount}`);
+};
+
+const migrateRecordPageLayouts = async (
+  sourceWorkspace: AxiosInstance,
+  targetWorkspace: AxiosInstance,
+  targetObjectIdBySourceObjectId: Map<string, string>,
+  targetFieldIdBySourceFieldId: Map<string, string>,
+) => {
+  const sourcePageLayouts = await findPageLayouts(sourceWorkspace, 'RECORD_PAGE');
+  const targetPageLayouts = await findPageLayouts(targetWorkspace, 'RECORD_PAGE');
+
+  // Every object gets an auto-provisioned system RECORD_PAGE layout for free the moment the
+  // object itself is created (a side effect of createOneObject, not something this stage
+  // does) - only non-system layouts represent actual customization worth migrating.
+  const customSourcePageLayouts = sourcePageLayouts.filter((layout) => !layout.isSystemSideEffect);
+  // Dedup key: unlike Dashboard, there's no sibling record with a client-settable id to anchor
+  // idempotency on here, so this falls back to (target object, name) - not a database-enforced
+  // unique constraint, but the best available signal without one.
+  const existingTargetLayoutKeys = new Set(
+    targetPageLayouts
+      .filter((layout) => !layout.isSystemSideEffect)
+      .map((layout) => `${layout.objectMetadataId}::${layout.name}`),
+  );
+
+  let createdCount = 0;
+
+  for (const sourceLayout of customSourcePageLayouts) {
+    const targetObjectMetadataId = sourceLayout.objectMetadataId !== null
+      ? targetObjectIdBySourceObjectId.get(sourceLayout.objectMetadataId)
+      : undefined;
+    if (targetObjectMetadataId === undefined) {
+      console.warn(`Skipping record page layout "${sourceLayout.name}": target object not found for object ${sourceLayout.objectMetadataId}`);
+      continue;
+    }
+
+    if (existingTargetLayoutKeys.has(`${targetObjectMetadataId}::${sourceLayout.name}`)) {
+      continue;
+    }
+
+    try {
+      const createdPageLayout = await executeWithRetry(() => createMetadataEntity(targetWorkspace, 'createPageLayout', 'input', 'CreatePageLayoutInput', {
+        name: sourceLayout.name,
+        type: sourceLayout.type,
+        objectMetadataId: targetObjectMetadataId,
+      }));
+
+      await applyPageLayoutTabsAndWidgets(
+        targetWorkspace,
+        createdPageLayout.id,
+        sourceLayout.tabs,
+        targetObjectIdBySourceObjectId,
+        targetFieldIdBySourceFieldId,
+        `record page layout "${sourceLayout.name}"`,
+      );
+      createdCount += 1;
+    } catch (error) {
+      console.warn(`Skipping record page layout "${sourceLayout.name}": ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  console.log(`Record page layouts: created ${createdCount}`);
+};
+
 const handler = async () => {
   // Stage 1: read all apps
 
@@ -752,14 +1001,14 @@ const handler = async () => {
     return;
   }
   // merge both workspaceMembers arrays into one
-  const mergedWorkspaceMembers: {oldId: string, email: string, newId: string}[] = [];
+  const mergedWorkspaceMembers: {oldId: string, newId: string}[] = [];
   for (const sourceMember of sourceWorkspaceMembers) {
     const targetMember = targetWorkspaceMembers.find(mem => mem.userEmail === sourceMember.userEmail);
     if (targetMember === undefined) {
       console.warn(`Skipping workspace member "${sourceMember.userEmail}": no matching member found in target workspace`);
       continue;
     }
-    mergedWorkspaceMembers.push({ oldId: sourceMember.id, email: sourceMember.userEmail, newId: targetMember.id });
+    mergedWorkspaceMembers.push({ oldId: sourceMember.id, newId: targetMember.id });
   }
 
   // Stage 2: compare objects and fields between 2 workspaces
@@ -871,12 +1120,22 @@ const handler = async () => {
 
   // Stage 5: migrate records, in the same relation-dependency order used for schema creation,
   // but spanning both standard and custom objects (a standard object's records can depend on
-  // a custom object's records and vice versa).
+  // a custom object's records and vice versa). workspaceMember/dashboard are filtered out
+  // before sorting, not after: sortObjectsByDependency already treats a relation target that's
+  // absent from its input list as "no ordering constraint" (their target ids are resolved by
+  // other means - mergedWorkspaceMembers, Stage 7 - so no dependency edge is needed here).
   const recordMigrationOrder = sortObjectsByDependency([
     ...Array.from(systemSourceObjects.values()),
     ...Array.from(customSourceObjects.values()),
-  ]);
-  const recordIdMap = new Map<string, string>();
+  ].filter((object) => !objectsToOmitFromRecordMigration.includes(object.nameSingular)));
+  // Seeded with the source-to-target workspace member id mapping so that relation fields on
+  // other objects (task.assignee, company.accountOwner, opportunity.owner, ...) resolve
+  // through the same generic FK-remapping path buildRecordDataToCreate already uses for
+  // record-to-record relations - it doesn't care what object a foreign key points at, only
+  // whether the source id is a known key.
+  const recordIdMap = new Map<string, string>(
+    mergedWorkspaceMembers.map((member) => [member.oldId, member.newId]),
+  );
   const targetObjectIdByNameSingular = new Map(
     targetWorkspaceObjects.map((obj) => [obj.nameSingular, obj.id]),
   );
@@ -938,6 +1197,16 @@ const handler = async () => {
   const sourceRoles = await findRoles(sourceWorkspace);
   const targetRoles = await findRoles(targetWorkspace);
   await migrateRoles(targetWorkspace, sourceRoles, targetRoles, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId);
+
+  // Stage 7: migrate dashboards. Dashboard is a thin pointer (pageLayoutId) into the
+  // PageLayout/PageLayoutTab/PageLayoutWidget tree (the same system record-page layouts use),
+  // so it needs its own stage rather than falling into the generic Stage 5 record loop -
+  // `dashboard` stays in objectsToOmit for exactly that reason.
+  await migrateDashboards(sourceWorkspace, targetWorkspace, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId);
+
+  // Stage 8: migrate custom (non-system) RECORD_PAGE layouts - the tabs/widgets a workspace
+  // added on top of an object's auto-provisioned default record-page layout.
+  await migrateRecordPageLayouts(sourceWorkspace, targetWorkspace, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId);
 
   return;
 };
