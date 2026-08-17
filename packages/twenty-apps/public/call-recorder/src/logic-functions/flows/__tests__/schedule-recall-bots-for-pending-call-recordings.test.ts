@@ -119,7 +119,8 @@ class FakeCoreApiClient {
       const matchingCallRecordings = this.callRecordings.filter(
         (callRecording) =>
           callRecording.id === filter.id.eq &&
-          callRecording.deletedAt == null &&
+          (filter.deletedAt?.is !== 'NULL' ||
+            callRecording.deletedAt == null) &&
           callRecording.recordingRequestStatus ===
             filter.recordingRequestStatus.eq &&
           callRecording.status === filter.status.eq &&
