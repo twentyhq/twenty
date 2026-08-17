@@ -64,21 +64,29 @@ export class StripeInvoiceService {
       pending_invoice_items_behavior: 'exclude',
     });
 
-    await this.stripe.invoiceItems.create({
-      customer: stripeCustomerId,
-      subscription: stripeSubscriptionId,
-      invoice: invoice.id,
-      amount: diffAmountInCents,
-      currency,
-      description,
-    });
+    let finalizedInvoice: Stripe.Invoice;
 
-    const finalizedInvoice = await this.stripe.invoices.finalizeInvoice(
-      invoice.id,
-      {
-        auto_advance: true,
-      },
-    );
+    try {
+      await this.stripe.invoiceItems.create({
+        customer: stripeCustomerId,
+        subscription: stripeSubscriptionId,
+        invoice: invoice.id,
+        amount: diffAmountInCents,
+        currency,
+        description,
+      });
+
+      finalizedInvoice = await this.stripe.invoices.finalizeInvoice(
+        invoice.id,
+        {
+          auto_advance: true,
+        },
+      );
+    } catch (error) {
+      await this.deleteDraftUpgradeInvoice(invoice.id);
+
+      throw error;
+    }
 
     if (finalizedInvoice.status === 'paid') {
       return;
@@ -86,23 +94,28 @@ export class StripeInvoiceService {
 
     try {
       await this.stripe.invoices.pay(invoice.id);
-    } catch (error) {
-      await this.settleFailedUpgradeInvoiceOrThrow(invoice.id, error);
+    } catch (payError) {
+      await this.settleFailedUpgradeInvoiceOrThrow({
+        invoiceId: invoice.id,
+        payError,
+      });
     }
   }
 
-  private async settleFailedUpgradeInvoiceOrThrow(
-    invoiceId: string,
-    payError: unknown,
-  ): Promise<void> {
+  private async settleFailedUpgradeInvoiceOrThrow({
+    invoiceId,
+    payError,
+  }: {
+    invoiceId: string;
+    payError: unknown;
+  }): Promise<void> {
     const invoice = await this.stripe.invoices.retrieve(invoiceId);
 
     if (invoice.status === 'paid') {
       return;
     }
 
-    const payErrorMessage =
-      payError instanceof Error ? payError.message : 'unknown error';
+    const payErrorMessage = this.getErrorMessage(payError);
 
     try {
       await this.stripe.invoices.voidInvoice(invoiceId);
@@ -115,15 +128,34 @@ export class StripeInvoiceService {
 
       if (refreshedInvoice.status !== 'void') {
         throw new BillingException(
-          `Failed to void upgrade invoice ${invoiceId} after payment failure: ${payErrorMessage}`,
+          `Failed to void upgrade invoice ${invoiceId} after payment failure (${payErrorMessage}): ${this.getErrorMessage(voidError)}`,
           BillingExceptionCode.BILLING_UPGRADE_INVOICE_VOID_FAILED,
         );
       }
     }
 
+    const isCardDecline =
+      payError instanceof this.stripe.errors.StripeCardError;
+
     throw new BillingException(
       `Failed to pay upgrade invoice ${invoiceId}: ${payErrorMessage}`,
-      BillingExceptionCode.BILLING_UPGRADE_INVOICE_PAYMENT_FAILED,
+      isCardDecline
+        ? BillingExceptionCode.BILLING_UPGRADE_INVOICE_PAYMENT_FAILED
+        : BillingExceptionCode.BILLING_STRIPE_ERROR,
     );
+  }
+
+  private async deleteDraftUpgradeInvoice(invoiceId: string): Promise<void> {
+    try {
+      await this.stripe.invoices.del(invoiceId);
+    } catch (deleteError) {
+      this.logger.error(
+        `Failed to delete draft upgrade invoice ${invoiceId}: ${this.getErrorMessage(deleteError)}`,
+      );
+    }
+  }
+
+  private getErrorMessage(error: unknown): string {
+    return error instanceof Error ? error.message : 'unknown error';
   }
 }
