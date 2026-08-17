@@ -2,17 +2,16 @@ import { useCallback, useMemo } from 'react';
 
 import { useLinkedObjectsTitle } from '@/activities/timeline-activities/hooks/useLinkedObjectsTitle';
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
+import { getTimelineActivityRecordGqlFields } from '@/activities/timeline-activities/utils/getTimelineActivityRecordGqlFields';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { generateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromFields';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import {
   CoreObjectNameSingular,
-  FieldMetadataType,
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
@@ -60,17 +59,11 @@ export const useTimelineActivities = (
       ),
   );
 
-  // Timeline rows render scalars and the author only, never the target records.
-  // Every requested morph target costs a dedicated relation query server-side,
-  // so a workspace with many custom objects would pay for dozens of unused ones.
   const recordGqlFields = useMemo(
     () =>
-      generateDepthRecordGqlFieldsFromFields({
+      getTimelineActivityRecordGqlFields({
         objectMetadataItems: allObjectMetadataItems,
-        fields: timelineActivityMetadata.fields.filter(
-          (field) => field.type !== FieldMetadataType.MORPH_RELATION,
-        ),
-        depth: 1,
+        fields: timelineActivityMetadata.fields,
       }),
     [allObjectMetadataItems, timelineActivityMetadata.fields],
   );

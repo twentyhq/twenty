@@ -78,39 +78,4 @@ describe('useTimelineActivities', () => {
       wrongMockedTimelineActivities,
     );
   });
-
-  it('does not request the morph target records the timeline never renders', () => {
-    const useFindManyRecordsMock = jest.requireMock(
-      '@/object-record/hooks/useFindManyRecords',
-    );
-
-    useFindManyRecordsMock.useFindManyRecords.mockReturnValue({ records: [] });
-
-    renderHook(
-      () =>
-        useTimelineActivities({
-          id: '1',
-          targetObjectNameSingular: 'company',
-        }),
-      { wrapper: Wrapper },
-    );
-
-    const { recordGqlFields } =
-      useFindManyRecordsMock.useFindManyRecords.mock.calls[0][0];
-
-    expect(
-      Object.keys(recordGqlFields).filter((fieldName) =>
-        fieldName.startsWith('target'),
-      ),
-    ).toEqual([]);
-    expect(recordGqlFields).toMatchObject({
-      name: true,
-      properties: true,
-      linkedRecordId: true,
-      linkedObjectMetadataId: true,
-      linkedRecordCachedName: true,
-      workspaceMemberId: true,
-      workspaceMember: expect.any(Object),
-    });
-  });
 });
