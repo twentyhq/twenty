@@ -1,5 +1,6 @@
 import {
   FieldMetadataType,
+  MetadataWritability,
   ObjectOpenRecordIn,
   type ObjectRecord,
 } from 'twenty-shared/types';
@@ -43,6 +44,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     overrides: null,
     isUIEditable: true,
     isUICreatable: true,
+    writability: MetadataWritability.OPEN,
     openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
     labelIdentifierFieldMetadataId: null,
     imageIdentifierFieldMetadataId: null,
