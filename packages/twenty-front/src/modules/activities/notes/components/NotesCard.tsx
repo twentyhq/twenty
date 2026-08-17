@@ -1,9 +1,8 @@
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { NotesCardContent } from '@/activities/notes/components/NotesCardContent';
 import { useNotes } from '@/activities/notes/hooks/useNotes';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { useCanUpdateObjectRecords } from '@/object-record/hooks/useCanUpdateObjectRecords';
 import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 
@@ -22,15 +21,9 @@ export const NotesCard = () => {
     activityObjectNameSingular: CoreObjectNameSingular.Note,
   });
 
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: targetRecord.targetObjectNameSingular,
-  });
-
-  const objectPermissions = useObjectPermissionsForObject(
-    objectMetadataItem.id,
+  const { canUpdateObjectRecords } = useCanUpdateObjectRecords(
+    targetRecord.targetObjectNameSingular,
   );
-
-  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
 
   const handleCreateNote = () =>
     openCreateActivity({ targetableObjects: [targetRecord] });
@@ -41,7 +34,7 @@ export const NotesCard = () => {
       <NotesCardContent
         loading={loading}
         notes={notes}
-        onCreateNote={hasObjectUpdatePermissions ? handleCreateNote : undefined}
+        onCreateNote={canUpdateObjectRecords ? handleCreateNote : undefined}
         onLastRowVisible={handleLastRowVisible}
       />
     </>

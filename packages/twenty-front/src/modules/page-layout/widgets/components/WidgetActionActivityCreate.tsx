@@ -1,6 +1,5 @@
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { useCanUpdateObjectRecords } from '@/object-record/hooks/useCanUpdateObjectRecords';
 import { WidgetCardHeaderActionButton } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionButton';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { type CoreObjectNameSingular } from 'twenty-shared/types';
@@ -19,19 +18,15 @@ export const WidgetActionActivityCreate = ({
 }: WidgetActionActivityCreateProps) => {
   const targetRecord = useTargetRecord();
 
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: targetRecord.targetObjectNameSingular,
-  });
-
-  const objectPermissions = useObjectPermissionsForObject(
-    objectMetadataItem.id,
+  const { canUpdateObjectRecords } = useCanUpdateObjectRecords(
+    targetRecord.targetObjectNameSingular,
   );
 
   const openCreateActivity = useOpenCreateActivityDrawer({
     activityObjectNameSingular,
   });
 
-  if (!objectPermissions.canUpdateObjectRecords) {
+  if (!canUpdateObjectRecords) {
     return null;
   }
 

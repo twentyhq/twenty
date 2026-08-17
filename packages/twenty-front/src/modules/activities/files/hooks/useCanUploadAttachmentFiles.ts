@@ -1,18 +1,13 @@
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { useCanUpdateObjectRecords } from '@/object-record/hooks/useCanUpdateObjectRecords';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export const useCanUploadAttachmentFiles = (
   targetableObject: ActivityTargetableObject,
 ) => {
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: targetableObject.targetObjectNameSingular,
-  });
-
-  const objectPermissions = useObjectPermissionsForObject(
-    objectMetadataItem.id,
+  const { canUpdateObjectRecords } = useCanUpdateObjectRecords(
+    targetableObject.targetObjectNameSingular,
   );
 
   const hasUploadPermission = useHasPermissionFlag(
@@ -20,7 +15,6 @@ export const useCanUploadAttachmentFiles = (
   );
 
   return {
-    canUploadFiles:
-      objectPermissions.canUpdateObjectRecords && hasUploadPermission,
+    canUploadFiles: canUpdateObjectRecords && hasUploadPermission,
   };
 };
