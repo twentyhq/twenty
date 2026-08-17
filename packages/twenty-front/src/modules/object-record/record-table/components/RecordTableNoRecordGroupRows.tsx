@@ -2,7 +2,6 @@ import { pointerIntersection } from '@dnd-kit/collision';
 import { useDroppable } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { getContiguousIncrementalValues } from 'twenty-shared/utils';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { isDraggingRecordComponentState } from '@/object-record/record-drag/states/isDraggingRecordComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -22,12 +21,6 @@ const StyledNoRecordGroupContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-
-  // The mobile navigation bar floats over the page, so the rows reserve its
-  // footprint to keep the last one reachable.
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    padding-bottom: ${themeCssVariables.spacing[20]};
-  }
 `;
 
 const StyledEndDropZone = styled.div`
