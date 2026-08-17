@@ -1,4 +1,8 @@
-import { FieldMetadataType, ObjectOpenRecordIn } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  MetadataWritability,
+  ObjectOpenRecordIn,
+} from 'twenty-shared/types';
 
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -166,6 +170,7 @@ export const mockPersonFlatObjectMetadata = (
   overrides: null,
   isUIEditable: true,
   isUICreatable: true,
+  writability: MetadataWritability.OPEN,
   openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
   applicationUniversalIdentifier: 'test-application-id',
   fieldUniversalIdentifiers: mockFieldMetadatas.map(
