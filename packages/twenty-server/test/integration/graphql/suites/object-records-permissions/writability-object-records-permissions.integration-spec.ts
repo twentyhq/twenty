@@ -1,217 +1,246 @@
 import { randomUUID } from 'node:crypto';
 
-import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
-import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
+import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
+import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
+import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
+import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
-import { MetadataWritability } from 'twenty-shared/types';
+import { FieldMetadataType, MetadataWritability } from 'twenty-shared/types';
 
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
+const OBJECT_SINGULAR = 'writabilityTestObject';
+const OBJECT_PLURAL = 'writabilityTestObjects';
+const UPDATE_RESPONSE_KEY = 'updateWritabilityTestObject';
+const RECORD_GQL_FIELDS = `
+  id
+  guardedField
+  freeField
+`;
+
+// Writability has no API surface by design, so tests write the column
+// directly, then issue a no-op metadata update through the API: the
+// migration runner recomputes the workspace flat maps from the database,
+// which picks up the new writability value.
 const setObjectWritability = async (
   objectMetadataId: string,
   writability: MetadataWritability,
 ) => {
-  const objectMetadataRepository =
-    getCoreRepository<ObjectMetadataEntity>(ObjectMetadataEntity);
+  await getCoreRepository<ObjectMetadataEntity>(ObjectMetadataEntity).update(
+    objectMetadataId,
+    { writability },
+  );
 
-  await objectMetadataRepository.update(objectMetadataId, { writability });
-
-  await global.app
-    .get(WorkspaceCacheService, { strict: false })
-    .invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
-      'flatObjectMetadataMaps',
-    ]);
+  await updateOneObjectMetadata({
+    expectToFail: false,
+    input: {
+      idToUpdate: objectMetadataId,
+      updatePayload: { description: `writability set to ${writability}` },
+    },
+  });
 };
 
 const setFieldWritability = async (
   fieldMetadataId: string,
   writability: MetadataWritability,
 ) => {
-  const fieldMetadataRepository =
-    getCoreRepository<FieldMetadataEntity>(FieldMetadataEntity);
+  await getCoreRepository<FieldMetadataEntity>(FieldMetadataEntity).update(
+    fieldMetadataId,
+    { writability },
+  );
 
-  await fieldMetadataRepository.update(fieldMetadataId, { writability });
-
-  await global.app
-    .get(WorkspaceCacheService, { strict: false })
-    .invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['flatFieldMetadataMaps']);
+  await updateOneFieldMetadata({
+    expectToFail: false,
+    input: {
+      idToUpdate: fieldMetadataId,
+      updatePayload: { description: `writability set to ${writability}` },
+    },
+  });
 };
 
 describe('writabilityObjectRecordsPermissions', () => {
-  let personObjectMetadataId: string;
-  let personIntroFieldMetadataId: string;
-  let createdPersonId: string;
+  let objectMetadataId: string;
+  let guardedFieldMetadataId: string;
+  let recordId: string;
 
   beforeAll(async () => {
-    const objectMetadataRepository =
-      getCoreRepository<ObjectMetadataEntity>(ObjectMetadataEntity);
-    const personObjectMetadata = await objectMetadataRepository.findOneOrFail({
-      where: {
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        nameSingular: 'person',
+    const { data } = await createOneObjectMetadata({
+      input: {
+        nameSingular: OBJECT_SINGULAR,
+        namePlural: OBJECT_PLURAL,
+        labelSingular: 'Writability Test Object',
+        labelPlural: 'Writability Test Objects',
+        icon: 'IconLock',
+        isLabelSyncedWithName: false,
       },
     });
 
-    personObjectMetadataId = personObjectMetadata.id;
+    objectMetadataId = data.createOneObject.id;
 
-    const fieldMetadataRepository =
-      getCoreRepository<FieldMetadataEntity>(FieldMetadataEntity);
-    const personIntroFieldMetadata =
-      await fieldMetadataRepository.findOneOrFail({
-        where: {
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          objectMetadataId: personObjectMetadataId,
-          name: 'intro',
-        },
-      });
-
-    personIntroFieldMetadataId = personIntroFieldMetadata.id;
-
-    createdPersonId = randomUUID();
-
-    const graphqlOperation = createOneOperationFactory({
-      objectMetadataSingularName: 'person',
-      gqlFields: PERSON_GQL_FIELDS,
-      data: { id: createdPersonId },
+    const { data: guardedFieldData } = await createOneFieldMetadata({
+      input: {
+        name: 'guardedField',
+        label: 'Guarded Field',
+        type: FieldMetadataType.TEXT,
+        objectMetadataId,
+        isLabelSyncedWithName: false,
+      },
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    guardedFieldMetadataId = guardedFieldData.createOneField.id;
 
-    expect(response.body.data.createPerson.id).toBe(createdPersonId);
+    await createOneFieldMetadata({
+      input: {
+        name: 'freeField',
+        label: 'Free Field',
+        type: FieldMetadataType.TEXT,
+        objectMetadataId,
+        isLabelSyncedWithName: false,
+      },
+    });
+
+    recordId = randomUUID();
+
+    const response = await makeGraphqlAPIRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: OBJECT_SINGULAR,
+        gqlFields: RECORD_GQL_FIELDS,
+        data: { id: recordId },
+      }),
+    );
+
+    expect(response.body.errors).toBeUndefined();
   });
 
   afterAll(async () => {
-    await setObjectWritability(
-      personObjectMetadataId,
-      MetadataWritability.OPEN,
-    );
-    await setFieldWritability(
-      personIntroFieldMetadataId,
-      MetadataWritability.OPEN,
-    );
-    await deleteRecordsByIds('person', [createdPersonId]);
+    await setObjectWritability(objectMetadataId, MetadataWritability.OPEN);
+    await updateOneObjectMetadata({
+      expectToFail: false,
+      input: {
+        idToUpdate: objectMetadataId,
+        updatePayload: { isActive: false },
+      },
+    });
+    await deleteOneObjectMetadata({
+      input: { idToDelete: objectMetadataId },
+    });
   });
 
   describe('SYSTEM object writability', () => {
     beforeAll(async () => {
-      await setObjectWritability(
-        personObjectMetadataId,
-        MetadataWritability.SYSTEM,
-      );
+      await setObjectWritability(objectMetadataId, MetadataWritability.SYSTEM);
     });
 
     afterAll(async () => {
-      await setObjectWritability(
-        personObjectMetadataId,
-        MetadataWritability.OPEN,
-      );
+      await setObjectWritability(objectMetadataId, MetadataWritability.OPEN);
     });
 
     it('should refuse record creation even for an admin', async () => {
-      const graphqlOperation = createOneOperationFactory({
-        objectMetadataSingularName: 'person',
-        gqlFields: PERSON_GQL_FIELDS,
-        data: { id: randomUUID() },
-      });
-
-      const response = await makeGraphqlAPIRequest(graphqlOperation);
+      const response = await makeGraphqlAPIRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: OBJECT_SINGULAR,
+          gqlFields: RECORD_GQL_FIELDS,
+          data: { id: randomUUID() },
+        }),
+      );
 
       expect(response.body.errors).toBeDefined();
       expect(response.body.errors[0].message).toContain('not writable');
     });
 
     it('should refuse record update even for an admin', async () => {
-      const graphqlOperation = updateOneOperationFactory({
-        objectMetadataSingularName: 'person',
-        gqlFields: PERSON_GQL_FIELDS,
-        recordId: createdPersonId,
-        data: { intro: 'A short intro' },
-      });
-
-      const response = await makeGraphqlAPIRequest(graphqlOperation);
+      const response = await makeGraphqlAPIRequest(
+        updateOneOperationFactory({
+          objectMetadataSingularName: OBJECT_SINGULAR,
+          gqlFields: RECORD_GQL_FIELDS,
+          recordId,
+          data: { guardedField: 'blocked' },
+        }),
+      );
 
       expect(response.body.errors).toBeDefined();
       expect(response.body.errors[0].message).toContain('not writable');
     });
 
     it('should keep records readable', async () => {
-      const graphqlOperation = findManyOperationFactory({
-        objectMetadataSingularName: 'person',
-        objectMetadataPluralName: 'people',
-        gqlFields: PERSON_GQL_FIELDS,
-      });
-
-      const response = await makeGraphqlAPIRequest(graphqlOperation);
+      const response = await makeGraphqlAPIRequest(
+        findManyOperationFactory({
+          objectMetadataSingularName: OBJECT_SINGULAR,
+          objectMetadataPluralName: OBJECT_PLURAL,
+          gqlFields: RECORD_GQL_FIELDS,
+        }),
+      );
 
       expect(response.body.errors).toBeUndefined();
-      expect(response.body.data.people.edges.length).toBeGreaterThan(0);
+      expect(response.body.data[OBJECT_PLURAL].edges.length).toBeGreaterThan(0);
     });
   });
 
   describe('SYSTEM field writability on an OPEN object', () => {
     beforeAll(async () => {
       await setFieldWritability(
-        personIntroFieldMetadataId,
+        guardedFieldMetadataId,
         MetadataWritability.SYSTEM,
       );
     });
 
     afterAll(async () => {
       await setFieldWritability(
-        personIntroFieldMetadataId,
+        guardedFieldMetadataId,
         MetadataWritability.OPEN,
       );
     });
 
     it('should refuse writes to the protected field', async () => {
-      const graphqlOperation = updateOneOperationFactory({
-        objectMetadataSingularName: 'person',
-        gqlFields: PERSON_GQL_FIELDS,
-        recordId: createdPersonId,
-        data: { intro: 'A short intro' },
-      });
-
-      const response = await makeGraphqlAPIRequest(graphqlOperation);
+      const response = await makeGraphqlAPIRequest(
+        updateOneOperationFactory({
+          objectMetadataSingularName: OBJECT_SINGULAR,
+          gqlFields: RECORD_GQL_FIELDS,
+          recordId,
+          data: { guardedField: 'blocked' },
+        }),
+      );
 
       expect(response.body.errors).toBeDefined();
       expect(response.body.errors[0].message).toContain('not writable');
     });
 
     it('should allow writes to other fields of the same object', async () => {
-      const graphqlOperation = updateOneOperationFactory({
-        objectMetadataSingularName: 'person',
-        gqlFields: PERSON_GQL_FIELDS,
-        recordId: createdPersonId,
-        data: { jobTitle: 'CTO' },
-      });
-
-      const response = await makeGraphqlAPIRequest(graphqlOperation);
+      const response = await makeGraphqlAPIRequest(
+        updateOneOperationFactory({
+          objectMetadataSingularName: OBJECT_SINGULAR,
+          gqlFields: RECORD_GQL_FIELDS,
+          recordId,
+          data: { freeField: 'allowed' },
+        }),
+      );
 
       expect(response.body.errors).toBeUndefined();
-      expect(response.body.data.updatePerson.jobTitle).toBe('CTO');
+      expect(response.body.data[UPDATE_RESPONSE_KEY].freeField).toBe('allowed');
     });
   });
 
   describe('OPEN writability', () => {
     it('should keep record writes working as before', async () => {
-      const graphqlOperation = updateOneOperationFactory({
-        objectMetadataSingularName: 'person',
-        gqlFields: PERSON_GQL_FIELDS,
-        recordId: createdPersonId,
-        data: { intro: 'An updated intro' },
-      });
-
-      const response = await makeGraphqlAPIRequest(graphqlOperation);
+      const response = await makeGraphqlAPIRequest(
+        updateOneOperationFactory({
+          objectMetadataSingularName: OBJECT_SINGULAR,
+          gqlFields: RECORD_GQL_FIELDS,
+          recordId,
+          data: { guardedField: 'open again' },
+        }),
+      );
 
       expect(response.body.errors).toBeUndefined();
-      expect(response.body.data.updatePerson.intro).toBe('An updated intro');
+      expect(response.body.data[UPDATE_RESPONSE_KEY].guardedField).toBe(
+        'open again',
+      );
     });
   });
 });
