@@ -1,8 +1,11 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ParsedMediaQueryCondition } from '@/polyfills/media-query/types/ParsedMediaQueryCondition';
-import { parseMediaQueryLengthToPixels } from '@/polyfills/media-query/utils/parseMediaQueryLengthToPixels';
-import { parseMediaQueryResolutionToDevicePixelRatio } from '@/polyfills/media-query/utils/parseMediaQueryResolutionToDevicePixelRatio';
+import { parseMediaQueryColorSchemeCondition } from '@/polyfills/media-query/utils/parseMediaQueryColorSchemeCondition';
+import { parseMediaQueryComparisonPrefix } from '@/polyfills/media-query/utils/parseMediaQueryComparisonPrefix';
+import { parseMediaQueryDevicePixelRatioCondition } from '@/polyfills/media-query/utils/parseMediaQueryDevicePixelRatioCondition';
+import { parseMediaQueryDimensionCondition } from '@/polyfills/media-query/utils/parseMediaQueryDimensionCondition';
+import { parseMediaQueryResolutionCondition } from '@/polyfills/media-query/utils/parseMediaQueryResolutionCondition';
 
 const WEBKIT_FEATURE_PREFIX = '-webkit-';
 
@@ -36,74 +39,36 @@ export const parseMediaQueryCondition = (
   }
 
   if (featureName === 'prefers-color-scheme') {
-    if (
-      featureValue === 'light' ||
-      featureValue === 'dark' ||
-      featureValue === 'no-preference'
-    ) {
-      return { kind: 'color-scheme', value: featureValue };
-    }
-
-    return null;
+    return parseMediaQueryColorSchemeCondition(featureValue);
   }
 
-  let remainingFeatureName = WEBKIT_DEVICE_PIXEL_RATIO_FEATURES.has(featureName)
+  const unprefixedFeatureName = WEBKIT_DEVICE_PIXEL_RATIO_FEATURES.has(
+    featureName,
+  )
     ? featureName.slice(WEBKIT_FEATURE_PREFIX.length)
     : featureName;
 
-  let comparison: 'min' | 'max' | 'exact' = 'exact';
+  const { comparison, baseFeatureName } = parseMediaQueryComparisonPrefix(
+    unprefixedFeatureName,
+  );
 
-  if (remainingFeatureName.startsWith('min-')) {
-    comparison = 'min';
-    remainingFeatureName = remainingFeatureName.slice('min-'.length);
-  } else if (remainingFeatureName.startsWith('max-')) {
-    comparison = 'max';
-    remainingFeatureName = remainingFeatureName.slice('max-'.length);
+  if (baseFeatureName === 'width' || baseFeatureName === 'height') {
+    return parseMediaQueryDimensionCondition({
+      dimension: baseFeatureName,
+      comparison,
+      featureValue,
+    });
   }
 
-  if (remainingFeatureName === 'width' || remainingFeatureName === 'height') {
-    const valueInPixels = parseMediaQueryLengthToPixels(featureValue);
-
-    if (!isDefined(valueInPixels)) {
-      return null;
-    }
-
-    return {
-      kind: 'numeric',
-      source:
-        remainingFeatureName === 'width' ? 'viewportWidth' : 'viewportHeight',
+  if (baseFeatureName === 'device-pixel-ratio') {
+    return parseMediaQueryDevicePixelRatioCondition({
       comparison,
-      value: valueInPixels,
-    };
+      featureValue,
+    });
   }
 
-  if (remainingFeatureName === 'device-pixel-ratio') {
-    if (!/^(\d+(\.\d+)?|\.\d+)$/.test(featureValue)) {
-      return null;
-    }
-
-    return {
-      kind: 'numeric',
-      source: 'devicePixelRatio',
-      comparison,
-      value: Number(featureValue),
-    };
-  }
-
-  if (remainingFeatureName === 'resolution') {
-    const valueInDevicePixelRatio =
-      parseMediaQueryResolutionToDevicePixelRatio(featureValue);
-
-    if (!isDefined(valueInDevicePixelRatio)) {
-      return null;
-    }
-
-    return {
-      kind: 'numeric',
-      source: 'devicePixelRatio',
-      comparison,
-      value: valueInDevicePixelRatio,
-    };
+  if (baseFeatureName === 'resolution') {
+    return parseMediaQueryResolutionCondition({ comparison, featureValue });
   }
 
   return null;

@@ -1,8 +1,10 @@
+import { type MediaQueryComparison } from '@/polyfills/media-query/types/MediaQueryComparison';
+
 export type ParsedMediaQueryCondition =
   | {
       kind: 'numeric';
       source: 'viewportWidth' | 'viewportHeight' | 'devicePixelRatio';
-      comparison: 'min' | 'max' | 'exact';
+      comparison: MediaQueryComparison;
       value: number;
     }
   | {
