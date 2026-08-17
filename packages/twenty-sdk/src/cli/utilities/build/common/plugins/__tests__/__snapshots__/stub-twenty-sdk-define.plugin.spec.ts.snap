@@ -8,6 +8,7 @@ exports[`stub-twenty-sdk-define plugin > matches the recorded export partition 1
     "FieldMetadataSettingsOnClickAction",
     "FieldType",
     "HTTPMethod",
+    "MetadataWritability",
     "NavigationMenuItemType",
     "NumberDataType",
     "ObjectOpenRecordIn",
