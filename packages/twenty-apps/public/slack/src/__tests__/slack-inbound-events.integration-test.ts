@@ -1,13 +1,11 @@
 import { Response } from 'twenty-sdk/logic-function';
 import { afterEach, describe, expect, it } from 'vitest';
 
-import {
-  buildSlackAppHomeOpenedEventBody,
-  buildSlackAppMentionEventBody,
-  buildSlackMemberJoinedChannelEventBody,
-  buildSlackMessageEventBody,
-  buildSlackRoutePayload,
-} from 'src/__tests__/utils/build-slack-event-payloads.util';
+import { buildSlackAppHomeOpenedEventBody } from 'src/__tests__/utils/build-slack-app-home-opened-event-body.util';
+import { buildSlackAppMentionEventBody } from 'src/__tests__/utils/build-slack-app-mention-event-body.util';
+import { buildSlackMemberJoinedChannelEventBody } from 'src/__tests__/utils/build-slack-member-joined-channel-event-body.util';
+import { buildSlackMessageEventBody } from 'src/__tests__/utils/build-slack-message-event-body.util';
+import { buildSlackRoutePayload } from 'src/__tests__/utils/build-slack-route-payload.util';
 import { createSlackMessageTimestampSequence } from 'src/__tests__/utils/create-slack-message-timestamp-sequence.util';
 import { setupSlackIntegrationTest } from 'src/__tests__/utils/setup-slack-integration-test.util';
 import {

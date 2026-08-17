@@ -5,12 +5,10 @@ import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { functionExecute } from 'twenty-sdk/cli';
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import {
-  buildSlackAppMentionEventBody,
-  buildSlackRoutePayload,
-} from 'src/__tests__/utils/build-slack-event-payloads.util';
+import { buildSlackAppMentionEventBody } from 'src/__tests__/utils/build-slack-app-mention-event-body.util';
+import { buildSlackRoutePayload } from 'src/__tests__/utils/build-slack-route-payload.util';
 import { requireDefinedOrThrow } from 'src/__tests__/utils/require-defined-or-throw.util';
-import { SLACK_TEST_WEBHOOK_SECRET } from 'src/__tests__/constants/slack-test.constants';
+import { SLACK_TEST_WEBHOOK_SECRET } from 'src/__tests__/constants/slack-test-webhook-secret.constant';
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
 // These scenarios run the functions the way the server runs them - deployed,

@@ -35,8 +35,9 @@ carries its own:
   traffic passes through to that server; any other unmocked request fails the
   test with a 500, the way `http-mock.util.ts` does in `twenty-server`.
 
-Helpers follow the `twenty-server` integration test layout: `utils/*.util.ts`
-for behaviour, `constants/*.constants.ts` for shared test values.
+Helpers follow the `twenty-server` integration test layout, one export per
+file: `utils/*.util.ts` for behaviour, `types/*.type.ts` for shared shapes,
+`constants/*.constant.ts` for shared test values.
 
 `slack-deployed-functions.integration-test.ts` sits one level further out: it
 uses `functionExecute` from `twenty-sdk/cli` to run the functions the way the

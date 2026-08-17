@@ -1,113 +1,19 @@
 import { http, HttpResponse, type RequestHandler } from 'msw';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { type FakeSlackAssistantStatus } from 'src/__tests__/types/fake-slack-assistant-status.type';
+import { type FakeSlackAssistantTitle } from 'src/__tests__/types/fake-slack-assistant-title.type';
+import { type FakeSlackChannel } from 'src/__tests__/types/fake-slack-channel.type';
+import { type FakeSlackEphemeralMessage } from 'src/__tests__/types/fake-slack-ephemeral-message.type';
+import { type FakeSlackMessage } from 'src/__tests__/types/fake-slack-message.type';
+import { type FakeSlackReaction } from 'src/__tests__/types/fake-slack-reaction.type';
+import { type FakeSlackSuggestedPrompts } from 'src/__tests__/types/fake-slack-suggested-prompts.type';
+import { type FakeSlackUser } from 'src/__tests__/types/fake-slack-user.type';
+import { type SlackApiCall } from 'src/__tests__/types/slack-api-call.type';
+import { type SlackApiMock } from 'src/__tests__/types/slack-api-mock.type';
+import { type SlackApiMockOptions } from 'src/__tests__/types/slack-api-mock-options.type';
+
 const SLACK_API_BASE_URL = 'https://slack.com/api';
-
-type SlackApiCall = {
-  method: string;
-  args: Record<string, unknown>;
-};
-
-type FakeSlackChannel = {
-  id: string;
-  name: string;
-  isPrivate: boolean;
-  isArchived: boolean;
-  isMember: boolean;
-  isDirectMessage: boolean;
-  numMembers: number;
-  topic: string;
-  purpose: string;
-};
-
-type FakeSlackMessage = {
-  channelId: string;
-  timestamp: string;
-  threadTimestamp?: string;
-  userId?: string;
-  botId?: string;
-  text?: string;
-  markdownText?: string;
-  blocks?: unknown[];
-};
-
-type FakeSlackEphemeralMessage = {
-  channelId: string;
-  recipientUserId: string;
-  threadTimestamp?: string;
-  text?: string;
-  markdownText?: string;
-};
-
-type FakeSlackReaction = {
-  channelId: string;
-  messageTimestamp: string;
-  emojiName: string;
-};
-
-type FakeSlackAssistantStatus = {
-  channelId: string;
-  threadTimestamp: string;
-  status: string;
-};
-
-type FakeSlackAssistantTitle = {
-  channelId: string;
-  threadTimestamp: string;
-  title: string;
-};
-
-type FakeSlackSuggestedPrompts = {
-  channelId: string;
-  title: string;
-  prompts: unknown[];
-};
-
-type FakeSlackUser = {
-  id: string;
-  displayName?: string;
-  realName?: string;
-  email?: string;
-  teamId?: string;
-  isBot?: boolean;
-  isDeleted?: boolean;
-  isRestricted?: boolean;
-  isUltraRestricted?: boolean;
-  isEmailConfirmed?: boolean;
-};
-
-type SlackApiMockOptions = {
-  botToken?: string;
-  botUserId?: string;
-  teamId?: string;
-};
-
-export type SlackApiMock = {
-  handlers: RequestHandler[];
-  botToken: string;
-  botUserId: string;
-  teamId: string;
-  addChannel: (
-    channel: Pick<FakeSlackChannel, 'id' | 'name'> & Partial<FakeSlackChannel>,
-  ) => FakeSlackChannel;
-  addUser: (user: FakeSlackUser) => void;
-  addMessage: (
-    message: Pick<FakeSlackMessage, 'channelId'> & Partial<FakeSlackMessage>,
-  ) => FakeSlackMessage;
-  failNextCall: (method: string, errorCode: string) => void;
-  rejectMarkdownText: () => void;
-  rejectBlocks: () => void;
-  readonly calls: SlackApiCall[];
-  callsTo: (method: string) => SlackApiCall[];
-  lastCallTo: (method: string) => SlackApiCall | undefined;
-  messagesIn: (channelId: string) => FakeSlackMessage[];
-  readonly ephemeralMessages: FakeSlackEphemeralMessage[];
-  readonly reactions: FakeSlackReaction[];
-  readonly assistantStatuses: FakeSlackAssistantStatus[];
-  readonly assistantTitles: FakeSlackAssistantTitle[];
-  readonly suggestedPrompts: FakeSlackSuggestedPrompts[];
-  reset: () => void;
-};
 
 const DEFAULT_SLACK_BOT_TOKEN = 'xoxb-test-token';
 const DEFAULT_SLACK_BOT_USER_ID = 'U0BOTTEST0';

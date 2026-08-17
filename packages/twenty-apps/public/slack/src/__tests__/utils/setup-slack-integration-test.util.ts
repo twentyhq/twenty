@@ -1,66 +1,14 @@
 import { http, HttpResponse, passthrough } from 'msw';
 import { setupServer } from 'msw/node';
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { type AppConnection } from 'twenty-sdk/logic-function';
 import { afterAll, afterEach, beforeAll, beforeEach, vi } from 'vitest';
 
-import {
-  SLACK_TEST_CONNECTED_ACCOUNT_ID,
-  SLACK_TEST_WEBHOOK_SECRET,
-} from 'src/__tests__/constants/slack-test.constants';
-import {
-  createAppRuntimeMock,
-  type AppRuntimeMock,
-} from 'src/__tests__/utils/create-app-runtime-mock.util';
-import {
-  createSlackApiMock,
-  type SlackApiMock,
-} from 'src/__tests__/utils/create-slack-api-mock.util';
-
-type SlackIntegrationTestContext = {
-  slack: SlackApiMock;
-  appRuntime: AppRuntimeMock;
-  coreClient: CoreApiClient;
-  workspaceId: string;
-};
-
-const readWorkspaceIdFromTokenOrThrow = (token: string): string => {
-  const payload = ((): { workspaceId?: string } => {
-    try {
-      return JSON.parse(
-        Buffer.from(token.split('.')[1] ?? '', 'base64url').toString('utf8'),
-      );
-    } catch (error) {
-      throw new Error(
-        `TWENTY_API_KEY is not a readable JWT: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-      );
-    }
-  })();
-
-  if (payload.workspaceId === undefined) {
-    throw new Error('TWENTY_API_KEY carries no workspaceId claim');
-  }
-
-  return payload.workspaceId;
-};
-
-export const buildSlackAppConnection = (
-  accessToken: string,
-  overrides: Partial<AppConnection> = {},
-): AppConnection => ({
-  id: SLACK_TEST_CONNECTED_ACCOUNT_ID,
-  providerName: 'slack',
-  name: 'Twenty Test workspace',
-  handle: 'twenty-test',
-  visibility: 'workspace',
-  userWorkspaceId: 'user-workspace-1',
-  accessToken,
-  scopes: ['chat:write', 'channels:read'],
-  authFailedAt: null,
-  ...overrides,
-});
+import { SLACK_TEST_WEBHOOK_SECRET } from 'src/__tests__/constants/slack-test-webhook-secret.constant';
+import { type SlackIntegrationTestContext } from 'src/__tests__/types/slack-integration-test-context.type';
+import { buildSlackAppConnection } from 'src/__tests__/utils/build-slack-app-connection.util';
+import { createAppRuntimeMock } from 'src/__tests__/utils/create-app-runtime-mock.util';
+import { createSlackApiMock } from 'src/__tests__/utils/create-slack-api-mock.util';
+import { readWorkspaceIdFromTokenOrThrow } from 'src/__tests__/utils/read-workspace-id-from-token-or-throw.util';
 
 const localhostPassthroughHandlers = [
   http.all('http://127.0.0.1*', () => passthrough()),

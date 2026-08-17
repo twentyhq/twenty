@@ -6,38 +6,16 @@ import {
 } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { type AppKeyValueScope } from 'src/__tests__/types/app-key-value-scope.type';
+import { type AppRuntimeMock } from 'src/__tests__/types/app-runtime-mock.type';
+import { type AppRuntimeMockOptions } from 'src/__tests__/types/app-runtime-mock-options.type';
+import { type StoredKeyValueEntry } from 'src/__tests__/types/stored-key-value-entry.type';
+
 // The app runtime services (`kv`, `listConnections`, `getConnection`,
 // `runAgent`) are GraphQL calls the server only answers for an
 // application-scoped token, which a test workspace API key is not. They are
 // answered here instead, with the same semantics the server implements, while
 // every other request to /metadata and /graphql reaches the real server.
-type AppKeyValueScope = 'WORKSPACE' | 'SERVER';
-
-type StoredKeyValueEntry = {
-  value: unknown;
-  workspaceId: string | null;
-};
-
-type AppRuntimeMockOptions = {
-  apiUrl: string;
-  workspaceId: string;
-  connections?: AppConnection[];
-};
-
-export type AppRuntimeMock = {
-  handlers: RequestHandler[];
-  workspaceId: string;
-  setConnections: (connections: AppConnection[]) => void;
-  setAgentResult: (
-    implementation: RunAgentResult | ((input: RunAgentInput) => RunAgentResult),
-  ) => void;
-  readonly agentRuns: RunAgentInput[];
-  readonly lastAgentMessages: NonNullable<RunAgentInput['messages']>;
-  getKeyValue: (key: string, scope: AppKeyValueScope) => unknown;
-  seedKeyValue: (key: string, value: unknown, scope?: AppKeyValueScope) => void;
-  reset: () => void;
-};
-
 const buildKeyValueStoreKey = (key: string, scope: AppKeyValueScope): string =>
   scope === 'SERVER' ? `SERVER:${key}` : `WORKSPACE:${key}`;
 
