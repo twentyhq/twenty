@@ -7,9 +7,9 @@ import {
   buildSlackMemberJoinedChannelEventBody,
   buildSlackMessageEventBody,
   buildSlackRoutePayload,
-} from 'src/__tests__/utils/build-slack-event-payloads';
-import { createSlackMessageTimestampSequence } from 'src/__tests__/utils/create-slack-message-timestamp-sequence';
-import { setupSlackIntegrationTest } from 'src/__tests__/utils/setup-slack-integration-test';
+} from 'src/__tests__/utils/build-slack-event-payloads.util';
+import { createSlackMessageTimestampSequence } from 'src/__tests__/utils/create-slack-message-timestamp-sequence.util';
+import { setupSlackIntegrationTest } from 'src/__tests__/utils/setup-slack-integration-test.util';
 import {
   SLACK_CHANNEL_WELCOME_UNIVERSAL_IDENTIFIER,
   SLACK_EVENTS_ENQUEUE_UNIVERSAL_IDENTIFIER,

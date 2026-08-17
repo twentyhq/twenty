@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { createSlackMessageTimestampSequence } from 'src/__tests__/utils/create-slack-message-timestamp-sequence';
-import { requireDefinedOrThrow } from 'src/__tests__/utils/require-defined-or-throw';
-import { setupSlackIntegrationTest } from 'src/__tests__/utils/setup-slack-integration-test';
+import { createSlackMessageTimestampSequence } from 'src/__tests__/utils/create-slack-message-timestamp-sequence.util';
+import { requireDefinedOrThrow } from 'src/__tests__/utils/require-defined-or-throw.util';
+import { setupSlackIntegrationTest } from 'src/__tests__/utils/setup-slack-integration-test.util';
 import { SLACK_ASSISTANT_FAILURE_TEXT } from 'src/logic-functions/constants/slack-assistant-failure-text';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { SLACK_ASSISTANT_INITIAL_STATUS } from 'src/logic-functions/constants/slack-assistant-status-steps';

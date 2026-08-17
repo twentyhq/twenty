@@ -8,9 +8,9 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import {
   buildSlackAppMentionEventBody,
   buildSlackRoutePayload,
-} from 'src/__tests__/utils/build-slack-event-payloads';
-import { requireDefinedOrThrow } from 'src/__tests__/utils/require-defined-or-throw';
-import { SLACK_TEST_WEBHOOK_SECRET } from 'src/__tests__/utils/setup-slack-integration-test';
+} from 'src/__tests__/utils/build-slack-event-payloads.util';
+import { requireDefinedOrThrow } from 'src/__tests__/utils/require-defined-or-throw.util';
+import { SLACK_TEST_WEBHOOK_SECRET } from 'src/__tests__/constants/slack-test.constants';
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
 // These scenarios run the functions the way the server runs them - deployed,

@@ -2,7 +2,7 @@ import { createHmac } from 'crypto';
 
 import { type RoutePayload } from 'twenty-sdk/define';
 
-import { SLACK_TEST_WEBHOOK_SECRET } from 'src/__tests__/utils/setup-slack-integration-test';
+import { SLACK_TEST_WEBHOOK_SECRET } from 'src/__tests__/constants/slack-test.constants';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 
 const signSlackRequest = ({

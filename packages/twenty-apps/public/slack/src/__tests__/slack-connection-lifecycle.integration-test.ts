@@ -3,12 +3,12 @@ import { describe, expect, it } from 'vitest';
 import {
   buildSlackAppHomeOpenedEventBody,
   buildSlackMemberJoinedChannelEventBody,
-} from 'src/__tests__/utils/build-slack-event-payloads';
+} from 'src/__tests__/utils/build-slack-event-payloads.util';
+import { SLACK_TEST_CONNECTED_ACCOUNT_ID } from 'src/__tests__/constants/slack-test.constants';
 import {
   buildSlackAppConnection,
-  SLACK_TEST_CONNECTED_ACCOUNT_ID,
   setupSlackIntegrationTest,
-} from 'src/__tests__/utils/setup-slack-integration-test';
+} from 'src/__tests__/utils/setup-slack-integration-test.util';
 import { SLACK_BOT_USER_ID_KV_KEY } from 'src/logic-functions/constants/slack-bot-user-id-kv-key';
 import { SLACK_CHANNEL_WELCOME_TEXT } from 'src/logic-functions/constants/slack-channel-welcome-text';
 import { SLACK_CHANNEL_WELCOME_THREAD_TEXT } from 'src/logic-functions/constants/slack-channel-welcome-thread-text';

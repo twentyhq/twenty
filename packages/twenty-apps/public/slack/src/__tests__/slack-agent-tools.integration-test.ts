@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { setupSlackIntegrationTest } from 'src/__tests__/utils/setup-slack-integration-test';
+import { setupSlackIntegrationTest } from 'src/__tests__/utils/setup-slack-integration-test.util';
 import { slackAddReactionHandler } from 'src/logic-functions/handlers/slack-add-reaction-handler';
 import { slackDeleteMessageHandler } from 'src/logic-functions/handlers/slack-delete-message-handler';
 import { slackListChannelsHandler } from 'src/logic-functions/handlers/slack-list-channels-handler';
