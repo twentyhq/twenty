@@ -41,9 +41,11 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
         connectedAccount.id,
       );
 
+      const mailboxList = await client.list();
+
       const folders = await this.filterAndMapFolders(
         client,
-        await client.list(),
+        mailboxList,
         messageChannel,
         existingFolders,
       );
