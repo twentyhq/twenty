@@ -1,8 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { kv } from 'twenty-sdk/logic-function';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
-import { getSlackTeamKvKey } from 'src/logic-functions/utils/get-slack-team-kv-key';
+import { findClaimedWorkspaceId } from 'src/logic-functions/utils/find-claimed-workspace-id';
 
 export const resolveTargetWorkspaceId = async (
   body: SlackEventsRequestBody,
@@ -15,11 +15,9 @@ export const resolveTargetWorkspaceId = async (
     );
   }
 
-  const claimedWorkspaceId = await kv.get<string>(getSlackTeamKvKey(teamId), {
-    scope: 'SERVER',
-  });
+  const claimedWorkspaceId = await findClaimedWorkspaceId(teamId);
 
-  if (!isNonEmptyString(claimedWorkspaceId)) {
+  if (!isDefined(claimedWorkspaceId)) {
     throw new Error(
       `No workspace has claimed Slack team ${teamId}. Connect the Slack app in the target workspace first.`,
     );

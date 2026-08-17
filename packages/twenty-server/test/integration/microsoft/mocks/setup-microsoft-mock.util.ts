@@ -2,7 +2,10 @@ import { type Event, type MailFolder } from '@microsoft/microsoft-graph-types';
 import { http, HttpResponse } from 'msw';
 
 import { setupHttpMock } from 'test/integration/utils/http-mock.util';
-import { microsoftAuthHandlers } from 'test/integration/microsoft/mocks/microsoft-auth-handlers.util';
+import {
+  MICROSOFT_TOKEN_URL,
+  microsoftAuthHandlers,
+} from 'test/integration/microsoft/mocks/microsoft-auth-handlers.util';
 import { microsoftCalendarEventsHandlers } from 'test/integration/microsoft/mocks/microsoft-calendar-events-handlers.util';
 import { microsoftMailboxHandlers } from 'test/integration/microsoft/mocks/microsoft-mailbox-handlers.util';
 import {
@@ -34,6 +37,7 @@ export type MicrosoftMock = {
   failSubscriptionRenewal: () => void;
   failMessageDelta: (failure: MicrosoftGraphFailure) => void;
   failCalendarDelta: (failure: MicrosoftGraphFailure) => void;
+  declineTokenRefresh: () => void;
 };
 
 export type MicrosoftGraphFailure = {
@@ -184,6 +188,19 @@ export const setupMicrosoftMock = ({
       httpMock.use(
         http.get('*/me/calendar/events/delta', () =>
           microsoftGraphErrorResponse(failure),
+        ),
+      ),
+    declineTokenRefresh: () =>
+      httpMock.use(
+        http.post(MICROSOFT_TOKEN_URL, () =>
+          HttpResponse.json(
+            {
+              error: 'invalid_grant',
+              error_description:
+                'AADSTS50173: The provided grant has expired due to it being revoked',
+            },
+            { status: 400 },
+          ),
         ),
       ),
   };

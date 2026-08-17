@@ -466,15 +466,16 @@ const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_AP
 
 Los componentes de frontend pueden activar navegación, modales y notificaciones usando funciones de `twenty-sdk`:
 
-| Función                                         | Descripción                                  |
-| ----------------------------------------------- | -------------------------------------------- |
-| `navigate(to, params?, queryParams?, options?)` | Navegar a una página en la aplicación        |
-| `openSidePanelPage(params)`                     | Abrir un panel lateral                       |
-| `closeSidePanel()`                              | Cerrar el panel lateral                      |
-| `openCommandConfirmationModal(params)`          | Mostrar un cuadro de diálogo de confirmación |
-| `enqueueSnackbar(params)`                       | Mostrar una notificación tipo toast          |
-| `unmountFrontComponent()`                       | Desmontar el componente                      |
-| `updateProgress(progress)`                      | Actualizar un indicador de progreso          |
+| Función                                            | Descripción                                                                                                                                                                                 |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `navigate(to, params?, queryParams?, options?)`    | Navegar a una página en la aplicación                                                                                                                                                       |
+| `openSidePanelPage(params)`                        | Abrir un panel lateral                                                                                                                                                                      |
+| `closeSidePanel()`                                 | Cerrar el panel lateral                                                                                                                                                                     |
+| `openCommandConfirmationModal(params)`             | Mostrar un cuadro de diálogo de confirmación                                                                                                                                                |
+| `enqueueSnackbar(params)`                          | Mostrar una notificación tipo toast                                                                                                                                                         |
+| `unmountFrontComponent()`                          | Desmontar el componente                                                                                                                                                                     |
+| `updateProgress(progress)`                         | Actualizar un indicador de progreso                                                                                                                                                         |
+| `uploadFile(file, { fieldMetadataId, fileName? })` | Sube un `Blob` a un campo FILES; se resuelve en `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` o `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` |
 
 Aquí tienes un ejemplo que usa la API del host para mostrar un snackbar y cerrar el panel lateral después de que una acción finaliza:
 
@@ -773,24 +774,24 @@ Para hacer bifurcaciones explícitamente según el esquema activo, léelo con `u
 
 ## Limitaciones actuales
 
-Los componentes de Front están en desarrollo activo. El renderizado, el estilo y el manejo de eventos funcionan bien. Cualquier cosa que vaya *más allá* del renderizado (medir un elemento, llamar a un método del DOM en un ref, hacer portal fuera de tu árbol, acceder al almacenamiento del navegador) falta o está incompleta hoy, y la mayoría falla silenciosamente: no hay excepción ni error de TypeScript tampoco, ya que el andamiaje está tipado contra el DOM completo del navegador.
+Los componentes de Front están en desarrollo activo. El renderizado, el estilo, el manejo de eventos, la medición de elementos y el almacenamiento del navegador funcionan bien. Cualquier cosa que vaya *más allá* de eso (llamar a un método del DOM en un ref, observar cambios de tamaño de elementos, hacer portal fuera de tu árbol) falta o está incompleta hoy, y la mayoría falla silenciosamente: no hay excepción ni error de TypeScript tampoco, ya que el andamiaje está tipado contra el DOM completo del navegador.
 
 Si una de estas cosas te bloquea, [abre una incidencia](https://github.com/twentyhq/twenty/issues/new/choose) para que se priorice.
 
 ### Diseño y medición
 
-Nada puede medirse a sí mismo todavía.
+Los elementos pueden medirse a sí mismos: el host refleja la geometría en el sandbox, de modo que las lecturas se responden localmente pero pueden tener hasta un fotograma de desfase, y la primera lectura de un elemento nunca medido devuelve ceros. Después de escribir, vuelve a leer en un callback de `requestAnimationFrame` o en un efecto.
 
-| API                                                           | Qué ocurre                                                                                        |
-| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| `getBoundingClientRect()`, `getClientRects()`                 | Lanza una excepción                                                                               |
-| `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Silenciosamente `undefined`, por lo que `width ?? 0` produce `0` y `width > 600` siempre es falso |
-| `ResizeObserver`, `IntersectionObserver`                      | `ReferenceError` (las comprobaciones con `typeof` sí funcionan)                                   |
-| `window.matchMedia()`, `window.getComputedStyle()`            | Lanza una excepción                                                                               |
-| `window.innerWidth`, `innerHeight`, `devicePixelRatio`        | Silenciosamente `undefined`                                                                       |
-| `new MutationObserver(fn)`                                    | Se construye, luego `.observe()` lanza una excepción                                              |
+| API                                                                                      | Qué ocurre                                                                                                                         |
+| ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Funcionan, desde el espejo; asignar `scrollTop` / `scrollLeft` no tiene ningún efecto                                              |
+| `getClientRects()`, `window.matchMedia()`                                                | Lanza una excepción                                                                                                                |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY`             | Funcionan, informando el **viewport del navegador**; el tamaño propio de tu widget es `document.body.clientWidth` / `clientHeight` |
+| `window.getComputedStyle()`                                                              | Devuelve solo los estilos en línea del elemento, nunca la cascada calculada del host                                               |
+| `ResizeObserver`, `IntersectionObserver`                                                 | `ReferenceError` (las comprobaciones con `typeof` sí funcionan)                                                                    |
+| `MutationObserver`                                                                       | Funciona, incluyendo `subtree`, `attributeFilter`, valores antiguos y `takeRecords()`                                              |
 
-Así que `ResponsiveContainer` de recharts, Floating UI / Popper, la virtualización de listas y arrastrar-para-redimensionar todavía no funcionan. Haz el diseño en CSS en su lugar: tu hoja de estilos llega a la página real, por lo que flexbox, grid, `aspect-ratio`, `clamp()` y `@container` se comportan con normalidad.
+El posicionamiento mediante `getBoundingClientRect` ahora funciona, pero cualquier cosa que observe cambios de tamaño a través de `ResizeObserver` (el `ResponsiveContainer` de recharts, `autoUpdate` de Floating UI) todavía no funciona. Aun así, prefiere usar CSS para el diseño: tu hoja de estilos llega a la página real, por lo que flexbox, grid, `aspect-ratio`, `clamp()` y `@container` se comportan con normalidad, sin desfase de fotogramas.
 
 <Note>
 `requestAnimationFrame`, `fetch`, `setTimeout` y `queueMicrotask` funcionan sin el prefijo `window.`. Solo `window.requestAnimationFrame(...)` y similares lanzan una excepción.
@@ -800,14 +801,14 @@ Así que `ResponsiveContainer` de recharts, Floating UI / Popper, la virtualizac
 
 Un `ref` te da un elemento sandbox, no un `HTMLElement`.
 
-| Lo que escribes                                                                                             | Qué ocurre                                                     | Usa en su lugar                                                                                         |
-| ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Lanza una excepción                                            | Componentes controlados; lee los valores de `event.target`                                              |
-| `element.classList.add(...)`                                                                                | Lanza una excepción (`classList` es `undefined`)               | Construye tú mismo la cadena `className`                                                                |
-| `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | Lanza una excepción                                            | `querySelector()` / `querySelectorAll()`, que sí funcionan                                              |
-| `document.activeElement`                                                                                    | Siempre `undefined`                                            | Controla el foco con `onFocus` / `onBlur`                                                               |
-| `canvas`                                                                                                    | No renderiza nada, sin error                                   | SVG, o dibujar fuera de pantalla y mostrar el resultado en un elemento `img`                            |
-| `createPortal(node, document.body)`                                                                         | No renderiza nada, mientras que `isConnected` informa de éxito | Superposiciones en línea con `position: absolute`, o pasa a la biblioteca tu propio elemento contenedor |
+| Lo que escribes                                                                                             | Qué ocurre                                                     | Usa en su lugar                                                                                                                                                                             |
+| ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Lanza una excepción                                            | Componentes controlados; lee los valores de `event.target`                                                                                                                                  |
+| `element.classList.add(...)`                                                                                | Lanza una excepción (`classList` es `undefined`)               | Construye tú mismo la cadena `className`                                                                                                                                                    |
+| `document.createTreeWalker()`                                                                               | Lanza una excepción                                            | `querySelector()` / `querySelectorAll()` y `getElementById()` funcionan; `getElementsByClassName()` también funciona, pero devuelve una colección estática, no una `HTMLCollection` en vivo |
+| `document.activeElement`                                                                                    | Siempre `undefined`                                            | Controla el foco con `onFocus` / `onBlur`                                                                                                                                                   |
+| `canvas`                                                                                                    | No renderiza nada, sin error                                   | SVG, o dibujar fuera de pantalla y mostrar el resultado en un elemento `img`                                                                                                                |
+| `createPortal(node, document.body)`                                                                         | No renderiza nada, mientras que `isConnected` informa de éxito | Superposiciones en línea con `position: absolute`, o pasa a la biblioteca tu propio elemento contenedor                                                                                     |
 
 La brecha del portal es la razón por la que los popovers de Radix, Headless UI, MUI y react-select no renderizan nada de forma predeterminada. La mayoría acepta una prop de contenedor; apúntala a un elemento que hayas renderizado.
 
@@ -833,9 +834,13 @@ El CSS del componente, ya sea desde `import './styles.css'`, CSS-in-JS o un elem
 * Otros orígenes salen del sandbox con `Origin: null`, por lo que una API de terceros responde solo si envía `Access-Control-Allow-Origin: *`. Llámala desde una función de lógica en su lugar.
 * `fetch('/rest/people')` nunca se hace coincidir con la API de Twenty, porque el sandbox no tiene URL de página contra la que resolver una ruta relativa.
 
+### Captura de medios
+
+`navigator.mediaDevices.getUserMedia()` y `MediaRecorder` funcionan dentro de los front components mediante polyfills de sandbox, por lo que el código estándar de grabación se ejecuta sin cambios y `MediaRecorder.isTypeSupported` indica si se admite para combinaciones habituales de contenedor/códec. Se aceptan objetos de restricciones detalladas de `getUserMedia`, pero no se reenvían: el host captura con sus valores predeterminados para los tipos solicitados, y solo una captura puede estar activa a la vez entre aplicaciones. Almacena un `Blob` grabado con la función host `uploadFile`.
+
 ### Otras carencias
 
-* **Contenido de archivos.** Un `input` de tipo `file` solo proporciona a tu manejador los metadatos del archivo, no los bytes, por lo que `FileReader` y las subidas no son posibles todavía.
+* **Contenido de archivos.** Un `input` de tipo `file` solo proporciona a tu manejador los metadatos del archivo, no los bytes, por lo que `FileReader` no está disponible. Para subir un `Blob` que tu código ya tiene — por ejemplo, uno producido por `MediaRecorder` — usa la función host `uploadFile`.
 * **Cargas útiles de arrastrar y soltar.** Los eventos de arrastre se disparan, pero `event.dataTransfer` es `undefined`.
 * **Integraciones nativas de Node.** `fs`, `path` y `node:crypto` hacen que la compilación falle, así que mueve ese trabajo a una [función de lógica](/l/es/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` y `URL` están disponibles.
 * **`iframe`** siempre se vuelve a aislar sin `allow-same-origin`, por lo que un embed que depende de su propia sesión se renderiza como desconectado. Tampoco tiene `onLoad`.
