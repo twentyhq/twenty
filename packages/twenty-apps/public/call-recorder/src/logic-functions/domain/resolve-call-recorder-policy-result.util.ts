@@ -26,7 +26,6 @@ export const resolveCallRecorderPolicyResult = ({
     return botNotRequired('PREFERENCE_OFF');
   }
 
-  // An event without an explicit preference follows the workspace default.
   if (
     input.callRecorderPreference !== CallRecorderPreference.ON &&
     !input.isRecordByDefaultEnabled

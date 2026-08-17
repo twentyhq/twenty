@@ -400,6 +400,16 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
         callRecordingId: buildCustomerSyncCallRecordingId(),
       }),
     ]);
+    expect(client.callRecordings).toEqual([
+      expect.objectContaining({
+        id: buildCustomerSyncCallRecordingId(),
+        recordingRequestStatus: 'CANCELED',
+        externalBotId: null,
+      }),
+    ]);
+    expect(recallBotDeleteCalls().map(([requestUrl]) => requestUrl)).toEqual([
+      `${RECALL_API_BASE_URL}/bot/recall-bot-1/`,
+    ]);
     expect(recallBotCreateCalls()).toHaveLength(0);
   });
 
