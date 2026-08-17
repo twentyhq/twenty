@@ -19,7 +19,7 @@ const fetchMock = vi.fn();
 
 const RECALL_BOT_URL =
   'https://us-west-2.recall.ai/api/v1/bot/recall-bot-1/';
-const WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174000';
+const WORKSPACE_ID = '123e4567-e89b-42d3-a456-426614174000';
 
 const buildAccessToken = (payload: Record<string, unknown>): string =>
   [

@@ -145,6 +145,30 @@ class FakeCoreApiClient {
       };
     }
 
+    if (mutation.updateCallRecordings !== undefined) {
+      const { filter, data } = mutation.updateCallRecordings.__args;
+      const matchingCallRecordings = this.callRecordings.filter(
+        (callRecording) =>
+          callRecording.id === filter.id.eq &&
+          callRecording.recordingRequestStatus ===
+            filter.recordingRequestStatus.eq &&
+          callRecording.status === filter.status.eq &&
+          callRecording.externalBotId == null,
+      );
+
+      matchingCallRecordings.forEach((callRecording) => {
+        Object.assign(callRecording, data);
+      });
+      this.mutations.push({
+        name: 'updateCallRecordings',
+        args: { filter, data },
+      });
+
+      return {
+        updateCallRecordings: matchingCallRecordings.map(({ id }) => ({ id })),
+      };
+    }
+
     if (mutation.updateCallRecording !== undefined) {
       const { id, data } = mutation.updateCallRecording.__args;
       const callRecording = this.callRecordings.find(

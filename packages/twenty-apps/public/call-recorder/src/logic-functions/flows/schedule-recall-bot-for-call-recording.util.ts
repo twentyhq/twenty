@@ -9,6 +9,7 @@ import { buildRecallRoutingMetadata } from 'src/logic-functions/domain/build-rec
 import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
+import { recordCallRecordingBotScheduleAttemptIfActive } from 'src/logic-functions/data/record-call-recording-bot-schedule-attempt-if-active.util';
 import {
   computeRecallBotCreationIdempotencyKey,
   scheduleRecallBot,
@@ -75,14 +76,17 @@ export const scheduleRecallBotForCallRecording = async (
       ? freshCallRecording.botScheduleAttemptedAt
       : undefined;
 
-  await updateCallRecording(client, {
-    id: callRecording.id,
-    data: {
+  const didRecordScheduleAttempt =
+    await recordCallRecordingBotScheduleAttemptIfActive(client, {
+      callRecordingId: callRecording.id,
       botScheduleAttemptedAt:
         recordedAttemptTimestamp ?? new Date().toISOString(),
       botScheduleIdempotencyKey: idempotencyKey,
-    },
-  });
+    });
+
+  if (!didRecordScheduleAttempt) {
+    return false;
+  }
 
   const scheduleResult = await scheduleRecallBot({
     meetingUrl,
