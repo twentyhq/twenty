@@ -3,12 +3,12 @@ import { Field as FieldPrimitive } from '@base-ui/react/field';
 import { FieldDescription } from './internal/FieldDescription';
 import { FieldError } from './internal/FieldError';
 import { FieldLabel } from './internal/FieldLabel';
-import { FieldRoot } from './internal/FieldRoot';
 
 export const Field = {
-  Root: FieldRoot,
+  Root: FieldPrimitive.Root,
   Label: FieldLabel,
   Control: FieldPrimitive.Control,
   Description: FieldDescription,
   Error: FieldError,
+  Validity: FieldPrimitive.Validity,
 };
