@@ -5,11 +5,13 @@ import resumeRestoredCallRecordingLogicFunction, {
 } from 'src/logic-functions/resume-restored-call-recording';
 
 const mutationMock = vi.hoisted(() => vi.fn());
+const queryMock = vi.hoisted(() => vi.fn());
 const resumePendingCallRecordingMock = vi.hoisted(() => vi.fn());
 
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: class {
     mutation = mutationMock;
+    query = queryMock;
   },
 }));
 
@@ -31,6 +33,19 @@ const buildAccessToken = (payload: Record<string, unknown>): string =>
     'signature',
   ].join('.');
 
+const buildConnection = <Node>(nodes: Node[]) => ({
+  pageInfo: { hasNextPage: false, endCursor: undefined },
+  edges: nodes.map((node) => ({ node })),
+});
+
+const mockCurrentCallRecording = (
+  callRecording: Record<string, unknown>,
+): void => {
+  queryMock.mockResolvedValue({
+    callRecordings: buildConnection([callRecording]),
+  });
+};
+
 describe('resumeRestoredCallRecordingHandler', () => {
   beforeEach(() => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -43,6 +58,7 @@ describe('resumeRestoredCallRecordingHandler', () => {
     mutationMock.mockResolvedValue({
       updateCallRecordings: [{ id: 'call-recording-1' }],
     });
+    queryMock.mockReset();
     resumePendingCallRecordingMock.mockReset();
     resumePendingCallRecordingMock.mockResolvedValue({ status: 'scheduled' });
   });
@@ -54,6 +70,15 @@ describe('resumeRestoredCallRecordingHandler', () => {
   });
 
   it('removes stale ownership before resuming a restored recording', async () => {
+    mockCurrentCallRecording({
+      id: 'call-recording-1',
+      status: 'JOINING',
+      recordingRequestStatus: 'REQUESTED',
+      externalBotId: 'recall-bot-1',
+      botScheduleAttemptId: BOT_SCHEDULE_ATTEMPT_ID,
+      botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
+      botScheduleIdempotencyKey: 'schedule-attempt-1',
+    });
     const result = await resumeRestoredCallRecordingHandler({
       name: 'callRecording.restored',
       recordId: 'call-recording-1',
@@ -105,6 +130,12 @@ describe('resumeRestoredCallRecordingHandler', () => {
   });
 
   it('does not touch completed recordings when they are restored', async () => {
+    mockCurrentCallRecording({
+      id: 'call-recording-1',
+      status: 'COMPLETED',
+      recordingRequestStatus: 'REQUESTED',
+      externalBotId: 'recall-bot-1',
+    });
     const result = await resumeRestoredCallRecordingHandler({
       name: 'callRecording.restored',
       recordId: 'call-recording-1',
@@ -130,6 +161,15 @@ describe('resumeRestoredCallRecordingHandler', () => {
   });
 
   it('removes an active bot without retrying a restored failed recording', async () => {
+    mockCurrentCallRecording({
+      id: 'call-recording-1',
+      status: 'FAILED',
+      recordingRequestStatus: 'REQUESTED',
+      externalBotId: 'recall-bot-1',
+      botScheduleAttemptId: BOT_SCHEDULE_ATTEMPT_ID,
+      botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
+      botScheduleIdempotencyKey: 'schedule-attempt-1',
+    });
     const result = await resumeRestoredCallRecordingHandler({
       name: 'callRecording.restored',
       recordId: 'call-recording-1',
@@ -170,6 +210,12 @@ describe('resumeRestoredCallRecordingHandler', () => {
   });
 
   it('does not resume when the restored row changed during cleanup', async () => {
+    mockCurrentCallRecording({
+      id: 'call-recording-1',
+      status: 'SCHEDULED',
+      recordingRequestStatus: 'REQUESTED',
+      externalBotId: 'recall-bot-1',
+    });
     mutationMock.mockResolvedValue({ updateCallRecordings: [] });
 
     const result = await resumeRestoredCallRecordingHandler({
@@ -194,7 +240,61 @@ describe('resumeRestoredCallRecordingHandler', () => {
     expect(resumePendingCallRecordingMock).not.toHaveBeenCalled();
   });
 
+  it('does not remove a replacement that claimed the row after restoration', async () => {
+    const replacementBotScheduleAttemptId =
+      'fa4e7856-24f0-4b06-a3e5-28e888555313';
+
+    mockCurrentCallRecording({
+      id: 'call-recording-1',
+      status: 'JOINING',
+      recordingRequestStatus: 'REQUESTED',
+      externalBotId: 'recall-bot-replacement',
+      botScheduleAttemptId: replacementBotScheduleAttemptId,
+      botScheduleAttemptedAt: '2026-01-01T10:05:00.000Z',
+      botScheduleIdempotencyKey: 'replacement-attempt-key',
+    });
+
+    const restorationEventCallRecording = {
+      id: 'call-recording-1',
+      status: 'SCHEDULED',
+      recordingRequestStatus: 'REQUESTED',
+      externalBotId: 'recall-bot-old',
+      botScheduleAttemptId: BOT_SCHEDULE_ATTEMPT_ID,
+      botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
+      botScheduleIdempotencyKey: 'old-attempt-key',
+    };
+    const result = await resumeRestoredCallRecordingHandler({
+      recordId: 'call-recording-1',
+      properties: {
+        before: restorationEventCallRecording,
+        after: restorationEventCallRecording,
+        updatedFields: [],
+        diff: {},
+      },
+    });
+
+    expect(result).toEqual({
+      removedExternalBotIds: [],
+      result: {
+        status: 'deferred',
+        reason: 'call recording bot ownership changed after restoration',
+      },
+    });
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(mutationMock).not.toHaveBeenCalled();
+    expect(resumePendingCallRecordingMock).not.toHaveBeenCalled();
+  });
+
   it('defers restoration while its claimed bot may still be in flight', async () => {
+    mockCurrentCallRecording({
+      id: 'call-recording-1',
+      status: 'SCHEDULED',
+      recordingRequestStatus: 'REQUESTED',
+      externalBotId: null,
+      botScheduleAttemptId: BOT_SCHEDULE_ATTEMPT_ID,
+      botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
+      botScheduleIdempotencyKey: 'schedule-attempt-1',
+    });
     vi.stubEnv(
       'TWENTY_APP_ACCESS_TOKEN',
       buildAccessToken({ workspaceId: WORKSPACE_ID }),

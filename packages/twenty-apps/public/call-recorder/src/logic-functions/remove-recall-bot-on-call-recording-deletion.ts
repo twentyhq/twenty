@@ -1,11 +1,11 @@
 import {
   defineLogicFunction,
-  type DatabaseEventPayload,
   type ObjectRecordDeleteEvent,
 } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { REMOVE_RECALL_BOT_ON_CALL_RECORDING_DELETION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/remove-recall-bot-on-call-recording-deletion-logic-function-universal-identifier';
+import { clearCallRecordingBotStateAfterRemoval } from 'src/logic-functions/data/clear-call-recording-bot-state-after-removal.util';
 import { findCallRecordingsByFilter } from 'src/logic-functions/data/find-call-recordings-by-filter.util';
 import { getCallRecordingBotScheduleAttempt } from 'src/logic-functions/domain/call-recording-bot-schedule-attempt';
 import { isRecallBotRemovalCallRecordingStatus } from 'src/logic-functions/domain/is-recall-bot-removal-call-recording-status.util';
@@ -20,16 +20,16 @@ type CallRecordingForRemovalEvent = {
   botScheduleIdempotencyKey?: string | null;
 };
 
-type CallRecordingDeletionEvent = DatabaseEventPayload<
-  ObjectRecordDeleteEvent<CallRecordingForRemovalEvent>
->;
+type CallRecordingDeletionEvent =
+  ObjectRecordDeleteEvent<CallRecordingForRemovalEvent>;
 
 export const removeRecallBotOnCallRecordingDeletionHandler = async (
   event: CallRecordingDeletionEvent,
 ): Promise<{ removedExternalBotIds: string[] }> => {
+  const client = new CoreApiClient();
   const isStillDeleted =
     (
-      await findCallRecordingsByFilter(new CoreApiClient(), {
+      await findCallRecordingsByFilter(client, {
         id: { eq: event.recordId },
         deletedAt: { is: 'NOT_NULL' },
       })
@@ -61,6 +61,14 @@ export const removeRecallBotOnCallRecordingDeletionHandler = async (
     removedExternalBotIds.length === 0
   ) {
     throw new Error('Attempted Recall bot is not visible yet');
+  }
+
+  if (removedExternalBotIds.length > 0) {
+    await clearCallRecordingBotStateAfterRemoval(client, {
+      callRecordingId: event.recordId,
+      externalBotId,
+      botScheduleAttempt,
+    });
   }
 
   return { removedExternalBotIds };

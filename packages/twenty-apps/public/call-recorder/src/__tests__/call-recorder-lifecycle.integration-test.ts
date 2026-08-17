@@ -8,6 +8,8 @@ import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/fl
 import { retryFailedRecallCancellations } from 'src/logic-functions/flows/retry-failed-recall-cancellations.util';
 import { scheduleRecallBotsForPendingCallRecordings } from 'src/logic-functions/flows/schedule-recall-bots-for-pending-call-recordings.util';
 import { processRecallWebhookHandler } from 'src/logic-functions/process-recall-webhook';
+import { removeRecallBotOnCallRecordingDeletionHandler } from 'src/logic-functions/remove-recall-bot-on-call-recording-deletion';
+import { resumeRestoredCallRecordingHandler } from 'src/logic-functions/resume-restored-call-recording';
 
 // ---------------------------------------------------------------------------
 // Call Recorder end-to-end behavior against a live Twenty server.
@@ -549,7 +551,11 @@ describe('call recorder app lifecycle (integration)', () => {
       calendarEventId,
       callRecordingId: callRecording.id,
       botId: callRecording.externalBotId,
-      metadata: buildBotMetadata(callRecording.id, workspaceId),
+      metadata: buildBotMetadata(
+        callRecording.id,
+        workspaceId,
+        callRecording.botScheduleAttemptId,
+      ),
     };
   };
 
@@ -812,6 +818,101 @@ describe('call recorder app lifecycle (integration)', () => {
         (await fetchCallRecording(callRecordingId)).externalBotId,
       ).toBeFalsy();
       expect(recall.deletedBotIds).toContain(botId);
+    });
+  });
+
+  describe('recording restoration', () => {
+    it('schedules a replacement after ambiguous deletion cleanup completed', async () => {
+      const { callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      const scheduledCallRecording = await fetchCallRecording(callRecordingId);
+
+      await client.mutation({
+        updateCallRecording: {
+          __args: { id: callRecordingId, data: { externalBotId: null } },
+          id: true,
+        },
+      });
+      await client.mutation({
+        deleteCallRecording: {
+          __args: { id: callRecordingId },
+          id: true,
+        },
+      });
+
+      const deletedCallRecordingEventRecord = {
+        id: callRecordingId,
+        status: scheduledCallRecording.status,
+        externalBotId: null,
+        botScheduleAttemptId: scheduledCallRecording.botScheduleAttemptId,
+        botScheduleAttemptedAt:
+          scheduledCallRecording.botScheduleAttemptedAt,
+        botScheduleIdempotencyKey:
+          scheduledCallRecording.botScheduleIdempotencyKey,
+      };
+      const deletionEvent: Parameters<
+        typeof removeRecallBotOnCallRecordingDeletionHandler
+      >[0] = {
+        recordId: callRecordingId,
+        properties: {
+          before: deletedCallRecordingEventRecord,
+          after: deletedCallRecordingEventRecord,
+          updatedFields: [],
+          diff: {},
+        },
+      };
+
+      await removeRecallBotOnCallRecordingDeletionHandler(deletionEvent);
+      expect(recall.bots.has(botId)).toBe(false);
+
+      await client.mutation({
+        restoreCallRecording: {
+          __args: { id: callRecordingId },
+          id: true,
+        },
+      });
+      const restoredCallRecording = await fetchCallRecording(callRecordingId);
+      expect(restoredCallRecording.botScheduleAttemptId).toBeFalsy();
+      expect(restoredCallRecording.botScheduleAttemptedAt).toBeFalsy();
+      expect(restoredCallRecording.botScheduleIdempotencyKey).toBeFalsy();
+
+      // Model a restore event captured before deletion cleanup persisted its
+      // completion. The handler must use the current row, not this stale
+      // snapshot, or it will wait forever for the already-removed bot.
+      const restoredCallRecordingEventRecord = {
+        id: callRecordingId,
+        status: scheduledCallRecording.status,
+        recordingRequestStatus:
+          scheduledCallRecording.recordingRequestStatus,
+        externalBotId: null,
+        botScheduleAttemptId: scheduledCallRecording.botScheduleAttemptId,
+        botScheduleAttemptedAt:
+          scheduledCallRecording.botScheduleAttemptedAt,
+        botScheduleIdempotencyKey:
+          scheduledCallRecording.botScheduleIdempotencyKey,
+      };
+      const restorationEvent: Parameters<
+        typeof resumeRestoredCallRecordingHandler
+      >[0] = {
+        recordId: callRecordingId,
+        properties: {
+          before: restoredCallRecordingEventRecord,
+          after: restoredCallRecordingEventRecord,
+          updatedFields: [],
+          diff: {},
+        },
+      };
+
+      const restorationResult =
+        await resumeRestoredCallRecordingHandler(restorationEvent);
+      const resumedCallRecording = await fetchCallRecording(callRecordingId);
+
+      expect(restorationResult.result.status).toBe('scheduled');
+      expect(resumedCallRecording.externalBotId).toBeTruthy();
+      expect(resumedCallRecording.externalBotId).not.toBe(botId);
+      expect(recall.botForCallRecording(callRecordingId)?.id).toBe(
+        resumedCallRecording.externalBotId,
+      );
     });
   });
 

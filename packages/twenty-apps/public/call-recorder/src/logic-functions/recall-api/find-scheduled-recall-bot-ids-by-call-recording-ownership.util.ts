@@ -23,7 +23,7 @@ export const findScheduledRecallBotIdsByCallRecordingOwnership =
     const workspaceId = getCurrentWorkspaceId();
 
     if (isUndefined(workspaceId)) {
-      return { ok: true, externalBotIdsByCallRecordingId: new Map() };
+      return { ok: false };
     }
 
     const listResult = await listScheduledRecallBots({

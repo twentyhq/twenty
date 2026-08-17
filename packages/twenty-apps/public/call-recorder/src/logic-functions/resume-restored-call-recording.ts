@@ -2,13 +2,13 @@ import { isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import {
   defineLogicFunction,
-  type DatabaseEventPayload,
   type ObjectRecordRestoreEvent,
 } from 'twenty-sdk/define';
 
 import { RESUME_RESTORED_CALL_RECORDING_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/resume-restored-call-recording-logic-function-universal-identifier';
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { findCallRecordingsByFilter } from 'src/logic-functions/data/find-call-recordings-by-filter.util';
 import { resetRestoredCallRecordingBotState } from 'src/logic-functions/data/reset-restored-call-recording-bot-state.util';
 import { getCallRecordingBotScheduleAttempt } from 'src/logic-functions/domain/call-recording-bot-schedule-attempt';
 import { isRecallBotRemovalCallRecordingStatus } from 'src/logic-functions/domain/is-recall-bot-removal-call-recording-status.util';
@@ -28,9 +28,8 @@ type CallRecordingForRestorationEvent = {
   botScheduleIdempotencyKey?: string | null;
 };
 
-type CallRecordingRestorationEvent = DatabaseEventPayload<
-  ObjectRecordRestoreEvent<CallRecordingForRestorationEvent>
->;
+type CallRecordingRestorationEvent =
+  ObjectRecordRestoreEvent<CallRecordingForRestorationEvent>;
 
 export const resumeRestoredCallRecordingHandler = async (
   event: CallRecordingRestorationEvent,
@@ -38,7 +37,18 @@ export const resumeRestoredCallRecordingHandler = async (
   removedExternalBotIds: string[];
   result: ResumePendingCallRecordingResult;
 }> => {
-  const callRecording = event.properties.after;
+  const client = new CoreApiClient();
+  const callRecording = (
+    await findCallRecordingsByFilter(client, {
+      id: { eq: event.recordId },
+      deletedAt: { is: 'NULL' },
+    })
+  )[0];
+
+  if (isUndefined(callRecording)) {
+    throw new Error('Restored CallRecording is not visible yet');
+  }
+
   const status = callRecording.status ?? undefined;
 
   if (!isRecallBotRemovalCallRecordingStatus(status)) {
@@ -52,11 +62,35 @@ export const resumeRestoredCallRecordingHandler = async (
   }
 
   const externalBotId = callRecording.externalBotId ?? undefined;
-  const botScheduleAttempt =
-    getCallRecordingBotScheduleAttempt(callRecording);
+  const botScheduleAttempt = callRecording.botScheduleAttempt;
   const hasBotSchedulingState =
     !isUndefined(externalBotId) || !isUndefined(botScheduleAttempt);
-  const client = new CoreApiClient();
+  const restorationEventCallRecording = event.properties.after;
+  const restorationEventExternalBotId =
+    restorationEventCallRecording.externalBotId ?? undefined;
+  const restorationEventBotScheduleAttempt =
+    getCallRecordingBotScheduleAttempt(restorationEventCallRecording);
+  const doesCurrentBotStateMatchRestorationEvent =
+    externalBotId === restorationEventExternalBotId &&
+    botScheduleAttempt?.id === restorationEventBotScheduleAttempt?.id &&
+    botScheduleAttempt?.attemptedAt ===
+      restorationEventBotScheduleAttempt?.attemptedAt &&
+    botScheduleAttempt?.idempotencyKey ===
+      restorationEventBotScheduleAttempt?.idempotencyKey;
+
+  if (
+    hasBotSchedulingState &&
+    !doesCurrentBotStateMatchRestorationEvent
+  ) {
+    return {
+      removedExternalBotIds: [],
+      result: {
+        status: 'deferred',
+        reason: 'call recording bot ownership changed after restoration',
+      },
+    };
+  }
+
   const removedExternalBotIds = await removeRecallBotsForCallRecording({
     callRecordingId: event.recordId,
     status,
@@ -72,8 +106,15 @@ export const resumeRestoredCallRecordingHandler = async (
     throw new Error('Attempted Recall bot is not visible yet');
   }
 
+  const shouldResetRestoredCallRecordingState =
+    hasBotSchedulingState ||
+    (callRecording.recordingRequestStatus ===
+      CallRecordingRequestStatus.REQUESTED &&
+      status !== CallRecordingStatus.SCHEDULED &&
+      status !== CallRecordingStatus.FAILED);
+
   if (
-    hasBotSchedulingState &&
+    shouldResetRestoredCallRecordingState &&
     !(await resetRestoredCallRecordingBotState(client, {
       callRecordingId: event.recordId,
       status,
@@ -108,7 +149,7 @@ export const resumeRestoredCallRecordingHandler = async (
   // attempt markers, which are deliberately excluded from that trigger, so it
   // resumes inline below.
   if (
-    hasBotSchedulingState &&
+    shouldResetRestoredCallRecordingState &&
     callRecording.recordingRequestStatus ===
       CallRecordingRequestStatus.REQUESTED &&
     (status !== CallRecordingStatus.SCHEDULED ||

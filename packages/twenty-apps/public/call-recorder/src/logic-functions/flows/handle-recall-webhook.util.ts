@@ -242,6 +242,18 @@ const findMatchingCallRecording = async ({
       return undefined;
     }
 
+    // A legacy webhook without an attempt id cannot establish ownership of an
+    // id-less row. Recovery first attaches that bot by its scoped Recall
+    // lookup; once attached, subsequent legacy webhooks match by bot id.
+    if (
+      !isUndefined(callRecording) &&
+      isUndefined(callRecording.externalBotId) &&
+      isUndefined(callRecording.botScheduleAttempt?.id) &&
+      isUndefined(webhookEvent.botScheduleAttemptIdFromMetadata)
+    ) {
+      return undefined;
+    }
+
     if (
       !isUndefined(callRecording?.externalBotId) &&
       !isUndefined(webhookEvent.externalBotId) &&

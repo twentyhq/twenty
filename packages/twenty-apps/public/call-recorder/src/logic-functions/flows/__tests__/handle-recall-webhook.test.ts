@@ -456,7 +456,7 @@ describe('handleRecallWebhook', () => {
     });
   });
 
-  it('matches by metadata id when the recording carries no external bot id', async () => {
+  it('does not let an unkeyed legacy webhook claim an id-less recording', async () => {
     const client = new FakeCoreApiClient([
       {
         id: 'call-recording-1',
@@ -485,20 +485,11 @@ describe('handleRecallWebhook', () => {
     });
 
     expect(result).toEqual({
-      status: 'updated',
+      status: 'skipped',
       event: 'bot.status_change',
-      callRecordingId: 'call-recording-1',
-      callRecordingStatus: 'RECORDING',
+      reason: 'no matching call recording',
     });
-    expect(client.mutations).toEqual([
-      {
-        id: 'call-recording-1',
-        data: {
-          status: 'RECORDING',
-          externalBotId: 'recall-bot-1',
-        },
-      },
-    ]);
+    expect(client.mutations).toEqual([]);
   });
 
   it('matches an id-less recording only when the webhook carries its schedule attempt id', async () => {
@@ -576,6 +567,7 @@ describe('handleRecallWebhook', () => {
   });
 
   it('prefers the metadata id over a different recording carrying the bot id', async () => {
+    const botScheduleAttemptId = '1cd1080a-f9bd-489d-9f01-dd9c964609cb';
     const client = new FakeCoreApiClient([
       {
         id: 'call-recording-stale',
@@ -586,6 +578,7 @@ describe('handleRecallWebhook', () => {
         id: 'call-recording-current',
         status: 'SCHEDULED',
         externalBotId: null,
+        botScheduleAttemptId,
       },
     ]);
 
@@ -599,6 +592,7 @@ describe('handleRecallWebhook', () => {
             metadata: {
               twentyWorkspaceId: WORKSPACE_ID,
               twentyCallRecordingId: 'call-recording-current',
+              twentyBotScheduleAttemptId: botScheduleAttemptId,
             },
           },
           status: {

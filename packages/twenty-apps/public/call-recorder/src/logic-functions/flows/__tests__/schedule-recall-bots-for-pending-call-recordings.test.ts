@@ -575,6 +575,41 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     expect(client.callRecordings[0].externalBotId).toBeNull();
   });
 
+  it('preserves an unresolved attempt when the workspace id is unavailable', async () => {
+    vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', buildAccessToken({}));
+    const botScheduleAttemptId = 'db0b00b0-c9db-4e50-897e-3c18a0580c0d';
+    const client = new FakeCoreApiClient({
+      callRecordings: [
+        buildPendingCallRecording({
+          botScheduleAttemptId,
+          botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
+          botScheduleIdempotencyKey: 'unresolved-attempt-key',
+        }),
+      ],
+      calendarEvents: [buildCalendarEvent()],
+    });
+
+    const result = await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(result).toEqual({
+      attachedCallRecordingIds: [],
+      scheduledCallRecordingIds: [],
+      markedFailedCallRecordingIds: [],
+    });
+    expect(client.callRecordings[0]).toEqual(
+      expect.objectContaining({
+        botScheduleAttemptId,
+        botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
+        botScheduleIdempotencyKey: 'unresolved-attempt-key',
+      }),
+    );
+    expect(listBotRequestUrls()).toHaveLength(0);
+    expect(createBotCalls()).toHaveLength(0);
+  });
+
   it('re-sends the creation without any Recall lookup when the stored idempotency key still matches', async () => {
     const botScheduleAttemptId = '9d1a3e8d-d1de-4c89-9831-67d3219f3270';
     const unchangedIdempotencyKey = computeRecallBotCreationIdempotencyKey({

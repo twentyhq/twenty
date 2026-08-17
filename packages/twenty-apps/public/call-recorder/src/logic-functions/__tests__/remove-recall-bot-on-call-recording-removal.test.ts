@@ -8,10 +8,12 @@ import removeRecallBotOnCallRecordingDestructionLogicFunction, {
 } from 'src/logic-functions/remove-recall-bot-on-call-recording-destruction';
 
 const queryMock = vi.hoisted(() => vi.fn());
+const mutationMock = vi.hoisted(() => vi.fn());
 
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: class {
     query = queryMock;
+    mutation = mutationMock;
   },
 }));
 
@@ -44,6 +46,10 @@ describe('removeRecallBotOnCallRecordingDeletionHandler', () => {
     queryMock.mockReset();
     queryMock.mockResolvedValue({
       callRecordings: buildConnection([{ id: 'call-recording-1' }]),
+    });
+    mutationMock.mockReset();
+    mutationMock.mockResolvedValue({
+      updateCallRecordings: [{ id: 'call-recording-1' }],
     });
   });
 
