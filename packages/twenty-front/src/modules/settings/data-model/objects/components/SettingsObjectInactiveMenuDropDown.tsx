@@ -20,7 +20,7 @@ type SettingsObjectInactiveMenuDropDownProps = {
   onDelete: () => void;
   onEdit: () => void;
   objectMetadataItemNamePlural: string;
-  readonly?: boolean;
+  isReadOnly?: boolean;
 };
 
 export const SettingsObjectInactiveMenuDropDown = ({
@@ -29,7 +29,7 @@ export const SettingsObjectInactiveMenuDropDown = ({
   onDelete,
   onEdit,
   isCustomObject,
-  readonly = false,
+  isReadOnly = false,
 }: SettingsObjectInactiveMenuDropDownProps) => {
   const dropdownId = `${objectMetadataItemNamePlural}-settings-object-inactive-menu-dropdown`;
 
@@ -50,7 +50,7 @@ export const SettingsObjectInactiveMenuDropDown = ({
     closeDropdown(dropdownId);
   };
 
-  const isEditable = isCustomObject && !readonly;
+  const isEditable = isCustomObject && !isReadOnly;
 
   return (
     <Dropdown
@@ -70,14 +70,14 @@ export const SettingsObjectInactiveMenuDropDown = ({
               LeftIcon={isEditable ? IconPencil : IconEye}
               onClick={handleEdit}
             />
-            {!readonly && (
+            {!isReadOnly && (
               <MenuItem
                 text={t`Activate`}
                 LeftIcon={IconArchiveOff}
                 onClick={handleActivate}
               />
             )}
-            {isCustomObject && !readonly && (
+            {isCustomObject && !isReadOnly && (
               <MenuItem
                 text={t`Delete`}
                 LeftIcon={IconTrash}

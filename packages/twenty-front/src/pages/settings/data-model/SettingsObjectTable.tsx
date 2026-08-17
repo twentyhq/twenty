@@ -268,7 +268,7 @@ export const SettingsObjectTable = ({
                             isCustomObject={getIsMetadataItemCustom(
                               objectSettingsItem.objectMetadataItem,
                             )}
-                            readonly={isDDLLocked}
+                            isReadOnly={isDDLLocked}
                             objectMetadataItemNamePlural={
                               objectSettingsItem.objectMetadataItem.namePlural
                             }
