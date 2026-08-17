@@ -383,7 +383,10 @@ export class ProcessNestedRelationsOrmV2Helper {
     idField: string;
     // oxlint-disable-next-line typescript/no-explicit-any
   }): any[] {
-    return [...new Set(records.map((item) => item[idField]))];
+    // Nullish join column values match nothing, so keeping them would issue an
+    // `IN (NULL)` round trip per unset relation. On objects with many morph
+    // targets that is one wasted query per target on every read.
+    return [...new Set(records.map((item) => item[idField]).filter(isDefined))];
   }
 
   private async findRelations({
