@@ -18,8 +18,7 @@ export const useCurrentWidgetOrNull = (): PageLayoutWidget | null => {
   return (
     currentPageLayout?.tabs
       ?.flatMap((tab) => tab.widgets)
-      .find(
-        (widget) => widget.id === widgetComponentInstanceId.instanceId,
-      ) ?? null
+      .find((widget) => widget.id === widgetComponentInstanceId.instanceId) ??
+    null
   );
 };

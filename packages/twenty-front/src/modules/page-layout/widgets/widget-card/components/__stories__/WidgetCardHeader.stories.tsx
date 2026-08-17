@@ -6,7 +6,8 @@ import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/Widget
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import { useState } from 'react';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
@@ -85,5 +86,59 @@ export const Catalog: CatalogStory<Story, typeof WidgetCardHeaderStory> = {
 
     expect(await canvas.findByText('42')).toBeVisible();
     expect(await canvas.findByText('5')).toBeVisible();
+  },
+};
+
+const UnmountingContentStory = () => {
+  const [isContentMounted, setIsContentMounted] = useState(true);
+
+  return (
+    <PageLayoutTestWrapper instanceId={PAGE_LAYOUT_TEST_INSTANCE_ID}>
+      <WidgetComponentInstanceContext.Provider
+        value={{ instanceId: `${WIDGET_ID}-unmount` }}
+      >
+        {isContentMounted && <WidgetHeaderCountEffect count={42} />}
+        <WidgetCardHeader
+          widgetId={`${WIDGET_ID}-unmount`}
+          variant="dashboard"
+          isInEditMode={false}
+          title="Call recordings"
+        />
+        <button onClick={() => setIsContentMounted(false)}>
+          Unmount content
+        </button>
+      </WidgetComponentInstanceContext.Provider>
+    </PageLayoutTestWrapper>
+  );
+};
+
+export const CountClearsWhenContentUnmounts: Story = {
+  render: () => <UnmountingContentStory />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('42')).toBeVisible();
+
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Unmount content' }),
+    );
+
+    await waitFor(() => {
+      expect(canvas.queryByText('42')).toBeNull();
+    });
+  },
+};
+
+export const CountEffectNoOpsOutsideWidget: Story = {
+  render: () => (
+    <>
+      <WidgetHeaderCountEffect count={7} />
+      <div>Rendered without a widget</div>
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('Rendered without a widget')).toBeVisible();
   },
 };
