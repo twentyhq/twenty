@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import {
   computeRecordGqlOperationFilter,
   isDefined,
@@ -81,19 +82,28 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
 
     const recordFilters = workflowActionInput.filter?.recordFilters;
 
-    const gqlOperationFilter = isDefined(recordFilters)
-      ? computeRecordGqlOperationFilter({
-          fieldMetadataItems: Object.values(
-            flatFieldMetadataMaps.byUniversalIdentifier,
-          ).filter(isDefined),
-          recordFilters,
-          recordFilterGroups:
-            workflowActionInput.filter?.recordFilterGroups ?? [],
-          filterValueDependencies: {
-            timeZone: 'UTC',
-          },
-        })
-      : {};
+    let gqlOperationFilter: RecordGqlOperationFilter;
+
+    try {
+      gqlOperationFilter = isDefined(recordFilters)
+        ? computeRecordGqlOperationFilter({
+            fieldMetadataItems: Object.values(
+              flatFieldMetadataMaps.byUniversalIdentifier,
+            ).filter(isDefined),
+            recordFilters,
+            recordFilterGroups:
+              workflowActionInput.filter?.recordFilterGroups ?? [],
+            filterValueDependencies: {
+              timeZone: 'UTC',
+            },
+          })
+        : {};
+    } catch (error) {
+      throw new WorkflowStepExecutorException(
+        `Filter could not be computed: ${error.message}`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
+    }
 
     if (isNonEmptyArray(recordFilters) && isEmptyObject(gqlOperationFilter)) {
       throw new WorkflowStepExecutorException(

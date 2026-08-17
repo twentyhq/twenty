@@ -3244,6 +3244,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "timelineActivities": {
         "universalIdentifier": "20202020-e15b-47b8-94fe-8200e3c66615",
       },
+      "uiScale": {
+        "universalIdentifier": "20202020-1581-4bfb-b87d-58fa9cd5b817",
+      },
       "updatedAt": {
         "universalIdentifier": "2cf7a354-2311-5dbc-8b48-ae73a9ba5be0",
       },

@@ -12,8 +12,8 @@ import {
   WorkflowVersionStatus,
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/global-workspace-datasource/types/workspace-transaction-scope.type';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -111,12 +111,12 @@ export class WorkflowVersionCoreSyncService {
 
   async mirrorWorkflowVersionWrite({
     workspaceId,
-    entityManager,
+    transactionScope,
     workflowVersion,
     applicationId,
   }: {
     workspaceId: string;
-    entityManager: WorkspaceEntityManager;
+    transactionScope: WorkspaceTransactionScope;
     workflowVersion: WorkflowVersionWorkspaceEntity;
     applicationId?: string;
   }): Promise<{ coreWorkflowVersionId: string } | null> {
@@ -138,15 +138,7 @@ export class WorkflowVersionCoreSyncService {
       ? workflowVersion.coreWorkflowVersionId
       : uuidv4();
 
-    const queryRunner = entityManager.queryRunner;
-
-    if (!isDefined(queryRunner)) {
-      throw new Error(
-        'Transactional core mirror requires a transaction-scoped entity manager',
-      );
-    }
-
-    await queryRunner.query(
+    await transactionScope.executeRawQuery(
       `INSERT INTO core."workflowVersion"
          ("id", "workspaceId", "workflowId", "triggers", "steps", "status", "universalIdentifier", "applicationId")
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
@@ -171,11 +163,10 @@ export class WorkflowVersionCoreSyncService {
     );
 
     if (isNewLink) {
-      await this.writeBackCoreVersionIdOnManager(
-        workspaceId,
+      await this.writeBackCoreVersionIdInTransaction(
         workflowVersion.id,
         coreWorkflowVersionId,
-        entityManager,
+        transactionScope,
       );
     }
 
@@ -184,11 +175,11 @@ export class WorkflowVersionCoreSyncService {
 
   async mirrorWorkflowVersionWrites({
     workspaceId,
-    entityManager,
+    transactionScope,
     workflowVersions,
   }: {
     workspaceId: string;
-    entityManager: WorkspaceEntityManager;
+    transactionScope: WorkspaceTransactionScope;
     workflowVersions: WorkflowVersionWorkspaceEntity[];
   }): Promise<Map<string, string>> {
     const coreIdByWorkspaceRecordId = new Map<string, string>();
@@ -202,7 +193,7 @@ export class WorkflowVersionCoreSyncService {
     for (const workflowVersion of workflowVersions) {
       const result = await this.mirrorWorkflowVersionWrite({
         workspaceId,
-        entityManager,
+        transactionScope,
         workflowVersion,
         applicationId,
       });
@@ -222,53 +213,36 @@ export class WorkflowVersionCoreSyncService {
     workspaceId: string,
     write: (
       workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>,
-      entityManager: WorkspaceEntityManager,
+      transactionScope: WorkspaceTransactionScope,
     ) => Promise<string>,
   ): Promise<void> {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workflowVersionRepository =
-        await this.globalWorkspaceOrmManager.getV1Repository<WorkflowVersionWorkspaceEntity>(
-          workspaceId,
-          'workflowVersion',
-          { shouldBypassPermissionChecks: true },
-        );
+      await this.globalWorkspaceOrmManager.runInWorkspaceTransaction(
+        async (transactionScope) => {
+          const workflowVersionRepository =
+            transactionScope.getRepository<WorkflowVersionWorkspaceEntity>(
+              'workflowVersion',
+              { shouldBypassPermissionChecks: true },
+            );
 
-      const dataSource =
-        await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSourceWithEntityMetadatas();
-      const queryRunner = dataSource.createQueryRunner();
+          const workflowVersionId = await write(
+            workflowVersionRepository,
+            transactionScope,
+          );
 
-      await queryRunner.connect();
-      await queryRunner.startTransaction();
-
-      try {
-        const workflowVersionId = await write(
-          workflowVersionRepository,
-          queryRunner.manager,
-        );
-
-        const workflowVersion = await workflowVersionRepository.findOne(
-          { where: { id: workflowVersionId } },
-          queryRunner.manager,
-        );
-
-        if (isDefined(workflowVersion)) {
-          await this.mirrorWorkflowVersionWrite({
-            workspaceId,
-            entityManager: queryRunner.manager,
-            workflowVersion,
+          const workflowVersion = await workflowVersionRepository.findOne({
+            where: { id: workflowVersionId },
           });
-        }
 
-        await queryRunner.commitTransaction();
-      } catch (error) {
-        if (queryRunner.isTransactionActive) {
-          await queryRunner.rollbackTransaction();
-        }
-
-        throw error;
-      } finally {
-        await queryRunner.release();
-      }
+          if (isDefined(workflowVersion)) {
+            await this.mirrorWorkflowVersionWrite({
+              workspaceId,
+              transactionScope,
+              workflowVersion,
+            });
+          }
+        },
+      );
     }, buildSystemAuthContext(workspaceId));
 
     await this.invalidateAutomatedTriggerMaps(workspaceId);
@@ -301,7 +275,7 @@ export class WorkflowVersionCoreSyncService {
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const workflowVersionRepository =
-            await this.globalWorkspaceOrmManager.getV1Repository<WorkflowVersionWorkspaceEntity>(
+            await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
               workspaceId,
               'workflowVersion',
               { shouldBypassPermissionChecks: true },
@@ -328,7 +302,7 @@ export class WorkflowVersionCoreSyncService {
   ): Promise<void> {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowVersionRepository =
-        await this.globalWorkspaceOrmManager.getV1Repository<WorkflowVersionWorkspaceEntity>(
+        await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
           workspaceId,
           'workflowVersion',
           { shouldBypassPermissionChecks: true },
@@ -360,7 +334,7 @@ export class WorkflowVersionCoreSyncService {
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceWorkflowVersionRepository =
-        await this.globalWorkspaceOrmManager.getV1Repository<WorkflowVersionWorkspaceEntity>(
+        await this.globalWorkspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
           workspaceId,
           'workflowVersion',
           { shouldBypassPermissionChecks: true },
@@ -377,15 +351,13 @@ export class WorkflowVersionCoreSyncService {
     }, buildSystemAuthContext(workspaceId));
   }
 
-  private async writeBackCoreVersionIdOnManager(
-    workspaceId: string,
+  private async writeBackCoreVersionIdInTransaction(
     workflowVersionId: string,
     coreWorkflowVersionId: string,
-    entityManager: WorkspaceEntityManager,
+    transactionScope: WorkspaceTransactionScope,
   ): Promise<void> {
     const workspaceWorkflowVersionRepository =
-      await this.globalWorkspaceOrmManager.getV1Repository<WorkflowVersionWorkspaceEntity>(
-        workspaceId,
+      transactionScope.getRepository<WorkflowVersionWorkspaceEntity>(
         'workflowVersion',
         { shouldBypassPermissionChecks: true },
       );
@@ -393,8 +365,6 @@ export class WorkflowVersionCoreSyncService {
     await workspaceWorkflowVersionRepository.update(
       { id: workflowVersionId },
       { coreWorkflowVersionId },
-      undefined,
-      entityManager,
     );
   }
 

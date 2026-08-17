@@ -18,16 +18,36 @@ const buildRecordReferenceSection = (
   ].join('\n');
 };
 
+const buildPermissionSection = ({
+  runAsWorkspaceMemberId,
+}: {
+  runAsWorkspaceMemberId: string | undefined;
+}): string => {
+  const missingToolMeaning =
+    'Your tools are limited to what is permitted. A tool you need being absent means the action is not allowed, not that the object is missing, that the workspace is misconfigured or that the Slack connection is wrong. Say plainly what cannot be done and who to ask; never invite the requester to name the object, paste a record link or otherwise work around it.';
+
+  if (!isNonEmptyString(runAsWorkspaceMemberId)) {
+    return `You are answering with the app's own role, not the requester's. ${missingToolMeaning}`;
+  }
+
+  return [
+    `You are acting as workspace member ${runAsWorkspaceMemberId}, with that member's own permissions. When the request says me, my or mine, it means that member, and you can use their id directly.`,
+    missingToolMeaning,
+  ].join('\n\n');
+};
+
 export const buildSlackAssistantMessages = ({
   requestText,
   requesterName,
   conversationMessages,
+  runAsWorkspaceMemberId,
   timeoutSeconds,
   workspaceBaseUrl,
 }: {
   requestText: string;
   requesterName: string | undefined;
   conversationMessages: SlackAssistantAgentMessage[];
+  runAsWorkspaceMemberId: string | undefined;
   timeoutSeconds: number;
   workspaceBaseUrl: string | undefined;
 }): SlackAssistantAgentMessage[] => {
@@ -38,6 +58,7 @@ export const buildSlackAssistantMessages = ({
   const requestSections = [
     `This run is killed after ${timeoutSeconds} seconds and the member gets an error instead of an answer. Keep tool calls focused and reply as soon as you have enough to be useful.`,
     buildRecordReferenceSection(workspaceBaseUrl),
+    buildPermissionSection({ runAsWorkspaceMemberId }),
   ];
 
   if (isNonEmptyArray(conversationMessages)) {

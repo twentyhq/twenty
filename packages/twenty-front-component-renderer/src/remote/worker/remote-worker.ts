@@ -9,6 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { frontComponentHostCommunicationApi } from '@/remote/worker/thread/states/frontComponentHostCommunicationApi';
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToCustomElementTag';
+import { installClipboardPolyfill } from '@/polyfills/clipboard/utils/installClipboardPolyfill';
 import { installDocumentGetElementById } from '@/polyfills/dom/utils/installDocumentGetElementById';
 import { installGetComputedStyle } from '@/polyfills/dom/utils/installGetComputedStyle';
 import { installGetElementsByClassName } from '@/polyfills/dom/utils/installGetElementsByClassName';
@@ -18,7 +19,10 @@ import { workerGeometryStore } from '@/polyfills/geometry/states/workerGeometryS
 import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
 import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/installWindowGeometryPolyfill';
 import { installMatchMediaPolyfill } from '@/polyfills/media-query/utils/installMatchMediaPolyfill';
+import { workerMediaBridge } from '@/polyfills/media/states/workerMediaBridge';
+import { installMediaCapturePolyfills } from '@/polyfills/media/utils/installMediaCapturePolyfills';
 import { frontComponentStorageBridges } from '@/polyfills/storage/states/frontComponentStorageBridges';
+import { toGlobalScopeRecord } from '@/polyfills/utils/toGlobalScopeRecord';
 import { installStorageBridge } from '@/polyfills/storage/utils/installStorageBridge';
 import { exposeGlobals } from '@/utils/exposeGlobals';
 import { installStylePropertyOnRemoteElements } from '@/remote/elements/utils/installStylePropertyOnRemoteElements';
@@ -44,10 +48,10 @@ installGetElementsByClassName(Element.prototype);
 installGetElementsByClassName(document);
 installLocalStyleOnBaseElements(Element.prototype);
 
-installGetComputedStyle(globalThis as unknown as Record<string, unknown>);
+installGetComputedStyle(toGlobalScopeRecord(globalThis));
 
 installMutationObserver({
-  globalScope: globalThis as unknown as Record<string, unknown>,
+  globalScope: toGlobalScopeRecord(globalThis),
 });
 
 installElementGeometryPolyfill({
@@ -57,12 +61,12 @@ installElementGeometryPolyfill({
 });
 
 installWindowGeometryPolyfill({
-  globalScope: globalThis as unknown as Record<string, unknown>,
+  globalScope: toGlobalScopeRecord(globalThis),
   geometryStore: workerGeometryStore,
 });
 
 installMatchMediaPolyfill({
-  globalScope: globalThis as unknown as Record<string, unknown>,
+  globalScope: toGlobalScopeRecord(globalThis),
   geometryStore: workerGeometryStore,
   getColorScheme: getFrontComponentColorScheme,
   subscribeToColorSchemeUpdates:
@@ -70,8 +74,29 @@ installMatchMediaPolyfill({
 });
 
 installStorageBridge({
-  globalScope: globalThis as unknown as Record<string, unknown>,
+  globalScope: toGlobalScopeRecord(globalThis),
   storageBridges: frontComponentStorageBridges,
+});
+
+installClipboardPolyfill({
+  globalScope: toGlobalScopeRecord(globalThis),
+  // Resolved lazily: the host communication api is populated after worker
+  // boot, so the polyfill must not capture the function at install time.
+  copyToClipboard: (text) => {
+    const copyToClipboardFunction =
+      frontComponentHostCommunicationApi.copyToClipboard;
+
+    if (!isDefined(copyToClipboardFunction)) {
+      return Promise.reject(new Error('copyToClipboardFunction is not set'));
+    }
+
+    return copyToClipboardFunction(text);
+  },
+});
+
+installMediaCapturePolyfills({
+  globalScope: toGlobalScopeRecord(globalThis),
+  bridge: workerMediaBridge,
 });
 
 exposeGlobals({
@@ -115,6 +140,9 @@ const workerExports: WorkerExports = {
   pushGeometryUpdates: async (batch) => {
     workerGeometryStore.applyGeometryBatch(batch);
   },
+  pushMediaSessionEvents: async (batch) => {
+    workerMediaBridge.dispatchEvents(batch);
+  },
 };
 
 self.addEventListener('message', (event) => {
@@ -134,6 +162,7 @@ self.addEventListener('message', (event) => {
   hostThread = nextHostThread;
 
   workerGeometryStore.connectTransport(nextHostThread.imports);
+  workerMediaBridge.connectTransport(nextHostThread.imports);
 
   transferredPort.start();
 });
