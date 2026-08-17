@@ -3,12 +3,12 @@ import { isDefined } from 'twenty-sdk/utils';
 
 const SLACK_API_BASE_URL = 'https://slack.com/api';
 
-export type SlackApiCall = {
+type SlackApiCall = {
   method: string;
   args: Record<string, unknown>;
 };
 
-export type FakeSlackChannel = {
+type FakeSlackChannel = {
   id: string;
   name: string;
   isPrivate: boolean;
@@ -20,7 +20,7 @@ export type FakeSlackChannel = {
   purpose: string;
 };
 
-export type FakeSlackMessage = {
+type FakeSlackMessage = {
   channelId: string;
   timestamp: string;
   threadTimestamp?: string;
@@ -31,7 +31,7 @@ export type FakeSlackMessage = {
   blocks?: unknown[];
 };
 
-export type FakeSlackEphemeralMessage = {
+type FakeSlackEphemeralMessage = {
   channelId: string;
   recipientUserId: string;
   threadTimestamp?: string;
@@ -39,31 +39,31 @@ export type FakeSlackEphemeralMessage = {
   markdownText?: string;
 };
 
-export type FakeSlackReaction = {
+type FakeSlackReaction = {
   channelId: string;
   messageTimestamp: string;
   emojiName: string;
 };
 
-export type FakeSlackAssistantStatus = {
+type FakeSlackAssistantStatus = {
   channelId: string;
   threadTimestamp: string;
   status: string;
 };
 
-export type FakeSlackAssistantTitle = {
+type FakeSlackAssistantTitle = {
   channelId: string;
   threadTimestamp: string;
   title: string;
 };
 
-export type FakeSlackSuggestedPrompts = {
+type FakeSlackSuggestedPrompts = {
   channelId: string;
   title: string;
   prompts: unknown[];
 };
 
-export type FakeSlackUser = {
+type FakeSlackUser = {
   id: string;
   displayName?: string;
   realName?: string;
@@ -76,7 +76,7 @@ export type FakeSlackUser = {
   isEmailConfirmed?: boolean;
 };
 
-export type SlackApiMockOptions = {
+type SlackApiMockOptions = {
   botToken?: string;
   botUserId?: string;
   teamId?: string;
@@ -109,9 +109,9 @@ export type SlackApiMock = {
   reset: () => void;
 };
 
-export const DEFAULT_SLACK_BOT_TOKEN = 'xoxb-test-token';
-export const DEFAULT_SLACK_BOT_USER_ID = 'U0BOTTEST0';
-export const DEFAULT_SLACK_TEAM_ID = 'T0TESTTEAM';
+const DEFAULT_SLACK_BOT_TOKEN = 'xoxb-test-token';
+const DEFAULT_SLACK_BOT_USER_ID = 'U0BOTTEST0';
+const DEFAULT_SLACK_TEAM_ID = 'T0TESTTEAM';
 
 // Slack answers logical failures with HTTP 200 and `ok: false`; @slack/web-api
 // turns those into thrown errors carrying `data.error`.

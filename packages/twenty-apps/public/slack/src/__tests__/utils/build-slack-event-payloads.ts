@@ -5,7 +5,7 @@ import { type RoutePayload } from 'twenty-sdk/define';
 import { SLACK_TEST_WEBHOOK_SECRET } from 'src/__tests__/utils/setup-slack-integration-test';
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 
-export const signSlackRequest = ({
+const signSlackRequest = ({
   rawBody,
   timestampSeconds,
   secret = SLACK_TEST_WEBHOOK_SECRET,

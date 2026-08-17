@@ -11,14 +11,14 @@ import { isDefined } from 'twenty-sdk/utils';
 // application-scoped token, which a test workspace API key is not. They are
 // answered here instead, with the same semantics the server implements, while
 // every other request to /metadata and /graphql reaches the real server.
-export type AppKeyValueScope = 'WORKSPACE' | 'SERVER';
+type AppKeyValueScope = 'WORKSPACE' | 'SERVER';
 
 type StoredKeyValueEntry = {
   value: unknown;
   workspaceId: string | null;
 };
 
-export type AppRuntimeMockOptions = {
+type AppRuntimeMockOptions = {
   apiUrl: string;
   workspaceId: string;
   connections?: AppConnection[];
