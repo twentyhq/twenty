@@ -2,6 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
 import { findParentSteps } from 'src/modules/workflow/workflow-executor/utils/find-parent-steps.util';
+import { getEffectiveParentStatus } from 'src/modules/workflow/workflow-executor/utils/get-effective-parent-status.util';
 import { stepHasBeenStarted } from 'src/modules/workflow/workflow-executor/utils/step-has-been-started.util';
 import { getAllStepIdsInLoop } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/get-all-step-ids-in-loop.util';
 import {
@@ -38,10 +39,17 @@ export const shouldSkipIteratorStepExecution = ({
     return false;
   }
 
-  return parentSteps.every(
-    (parentStep) =>
-      stepInfos[parentStep.id]?.status === StepStatus.SKIPPED ||
-      stepInfos[parentStep.id]?.status === StepStatus.STOPPED ||
-      stepInfos[parentStep.id]?.status === StepStatus.FAILED_SAFELY,
-  );
+  return parentSteps.every((parentStep) => {
+    const status = getEffectiveParentStatus({
+      parentStep,
+      childStepId: step.id,
+      stepInfos,
+    });
+
+    return (
+      status === StepStatus.SKIPPED ||
+      status === StepStatus.STOPPED ||
+      status === StepStatus.FAILED_SAFELY
+    );
+  });
 };
