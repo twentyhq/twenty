@@ -111,9 +111,10 @@ export const createWorkerMediaQueryList = ({
 
       if (isDefined(onchangeListener)) {
         ensureEnvironmentSubscription();
-      } else {
-        releaseEnvironmentSubscriptionIfUnused();
+        return;
       }
+
+      releaseEnvironmentSubscriptionIfUnused();
     },
     addEventListener: (type: string, listener: WorkerMediaQueryListener) => {
       if (type !== 'change') {
