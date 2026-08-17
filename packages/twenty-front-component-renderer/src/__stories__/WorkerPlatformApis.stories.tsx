@@ -128,15 +128,13 @@ const matchMediaTest: Story['play'] = async ({ canvasElement }) => {
   expect(errorHandler).not.toHaveBeenCalled();
 };
 
-const createStory = ({
-  name,
-  play,
-  runtime,
-}: {
+type CreateStoryInput = {
   name: string;
   play: Story['play'];
   runtime?: 'preact';
-}): Story => ({
+};
+
+const createStory = ({ name, play, runtime }: CreateStoryInput): Story => ({
   args: {
     componentUrl: getBuiltStoryComponentPathForRender(
       `${name}.front-component`,
