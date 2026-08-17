@@ -51,6 +51,25 @@ const UNAUTHENTICATED_RESPONSE = JSON.stringify({
   errors: [{ extensions: { code: 'UNAUTHENTICATED' } }],
 });
 
+// What a guard rejecting an unhydrated request produces: Nest's own default
+// message, as opposed to the message a permission exception carries.
+const FORBIDDEN_RESOURCE_RESPONSE = JSON.stringify({
+  data: { trackAnalytics: null },
+  errors: [
+    { message: 'Forbidden resource', extensions: { code: 'FORBIDDEN' } },
+  ],
+});
+
+const PERMISSION_DENIED_RESPONSE = JSON.stringify({
+  data: { trackAnalytics: null },
+  errors: [
+    {
+      message: 'Entity performing the request does not have permission',
+      extensions: { code: 'FORBIDDEN' },
+    },
+  ],
+});
+
 const mockOnError = jest.fn();
 const mockOnNetworkError = jest.fn();
 const mockOnPayloadTooLarge = jest.fn();
@@ -123,13 +142,14 @@ const createMockOptions = (): Options => ({
   appVersion: '1.0.0',
 });
 
-const makeRequest = async () => {
+const makeRequestWithContext = async (context?: Record<string, unknown>) => {
   const options = createMockOptions();
   const apolloFactory = new ApolloFactory(options);
 
   const client = apolloFactory.getClient();
 
   await client.mutate({
+    context,
     mutation: gql`
       mutation TrackAnalytics(
         $type: AnalyticsType!
@@ -149,6 +169,8 @@ const makeRequest = async () => {
     `,
   });
 };
+
+const makeRequest = async () => makeRequestWithContext();
 
 describe('ApolloFactory', () => {
   beforeEach(() => {
@@ -432,6 +454,76 @@ describe('ApolloFactory', () => {
 
       expect(jotaiStore.get(isCookieAuthActiveState.atom)).toBe(false);
       expect(renewToken).toHaveBeenCalled();
+    });
+
+    // A server that never read the session cookie -- an old pod mid-rollout, or
+    // a cookie the browser no longer holds -- leaves the request with no
+    // credential at all, which the guards refuse as FORBIDDEN.
+    it('should fall back to the token pair when a credential-less request is refused', async () => {
+      setCookieAuthActive();
+      fetchMock
+        .mockResponseOnce(FORBIDDEN_RESOURCE_RESPONSE)
+        .mockResponseOnce(JSON.stringify({ data: { trackAnalytics: null } }));
+
+      await makeRequest();
+
+      expect(jotaiStore.get(isCookieAuthActiveState.atom)).toBe(false);
+      expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
+
+      const retryHeaders = fetchMock.mock.calls[1]?.[1]?.headers as Record<
+        string,
+        string
+      >;
+
+      expect(readHeader(retryHeaders, 'authorization')).toBe(
+        `Bearer ${CURRENT_TOKEN_PAIR.accessOrWorkspaceAgnosticToken.token}`,
+      );
+    });
+
+    it('should replay a credential-less refusal only once and never sign out', async () => {
+      setCookieAuthActive();
+      fetchMock.mockResponse(FORBIDDEN_RESOURCE_RESPONSE);
+
+      await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
+
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+      expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
+      expect(renewToken).not.toHaveBeenCalled();
+    });
+
+    // Permission denials are FORBIDDEN too, and must not cost a credential swap.
+    it('should leave a permission denial alone', async () => {
+      setCookieAuthActive();
+      fetchMock.mockResponse(PERMISSION_DENIED_RESPONSE);
+
+      await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
+
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(jotaiStore.get(isCookieAuthActiveState.atom)).toBe(true);
+      expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
+    });
+
+    it('should not fall back on a credential-less refusal while authenticating by token', async () => {
+      fetchMock.mockResponse(FORBIDDEN_RESOURCE_RESPONSE);
+
+      await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
+
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
+    });
+
+    // The probe sends no credential on purpose, so its refusal is the expected
+    // answer rather than a sign the cookie stopped working.
+    it('should not fall back on a credential-less refusal for the cookie session probe', async () => {
+      setCookieAuthActive();
+      fetchMock.mockResponse(FORBIDDEN_RESOURCE_RESPONSE);
+
+      await expect(
+        makeRequestWithContext({ skipAuthToken: true }),
+      ).rejects.toBeInstanceOf(CombinedGraphQLErrors);
+
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(jotaiStore.get(isCookieAuthActiveState.atom)).toBe(true);
     });
   });
 });

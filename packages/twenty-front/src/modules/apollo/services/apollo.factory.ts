@@ -23,6 +23,7 @@ import { type ApolloManager } from '@/apollo/types/apolloManager.interface';
 import { getIsCookieAuthActive } from '@/apollo/utils/getIsCookieAuthActive';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { setIsCookieAuthActive } from '@/apollo/utils/setIsCookieAuthActive';
+import { isMissingCredentialGraphQLError } from '@/apollo/utils/isMissingCredentialGraphQLError';
 import { isUnauthenticatedGraphQLError } from '@/apollo/utils/isUnauthenticatedGraphQLError';
 import { loggerLink } from '@/apollo/utils/loggerLink';
 import { StreamingRestLink } from '@/apollo/utils/streamingRestLink';
@@ -284,6 +285,37 @@ export class ApolloFactory implements ApolloManager {
         );
       };
 
+      // A dead session cookie makes every request credential-less, which the
+      // server refuses as FORBIDDEN rather than UNAUTHENTICATED, so the renewal
+      // path above never sees it. The cookie is httpOnly, so the client cannot
+      // tell that state from a working session either: without this the client
+      // stays "logged in" while every query returns null, forever.
+      //
+      // Deliberately narrower than handleTokenRenewal: it only swaps the
+      // credential back and replays, and never signs the user out. If the
+      // refusal was a real one the replay is refused again and surfaces
+      // unchanged, at the cost of one request and of cookie auth staying off
+      // until CookieSessionBootEffect re-probes on the next mount. If the
+      // retained access token has lapsed the replay comes back UNAUTHENTICATED,
+      // which the renewal path handles from there.
+      const handleMissingCredentialUnderCookieAuth = (
+        operation: ApolloLink.Operation,
+        forward: ApolloLink.ForwardFunction,
+      ) => {
+        setIsCookieAuthActive(false);
+        operation.setContext({ hasAttemptedCookieAuthFallback: true });
+
+        return forward(operation);
+      };
+
+      const canFallBackFromCookieAuth = (
+        operation: ApolloLink.Operation,
+      ): boolean =>
+        getIsCookieAuthActive() &&
+        operation.getContext().skipAuthToken !== true &&
+        operation.getContext().hasAttemptedCookieAuthFallback !== true &&
+        isDefined(getTokenPair()?.refreshToken?.token);
+
       const sendToSentry = ({
         graphQLError,
         operation,
@@ -350,6 +382,18 @@ export class ApolloFactory implements ApolloManager {
               // oxlint-disable-next-line no-console
               console.log('Unauthenticated, triggering token renewal');
               return handleTokenRenewal(operation, forward, error);
+            }
+
+            if (
+              isMissingCredentialGraphQLError(graphQLError) &&
+              canFallBackFromCookieAuth(operation)
+            ) {
+              // oxlint-disable-next-line no-console
+              console.log(
+                'Session cookie was not accepted, falling back to the token pair',
+              );
+
+              return handleMissingCredentialUnderCookieAuth(operation, forward);
             }
 
             switch (graphQLError?.extensions?.code) {
