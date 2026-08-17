@@ -122,8 +122,6 @@ export const validateOperationIsPermittedOrThrow = ({
     flatFieldMetadataMaps,
   );
 
-  // writability is structural ownership, checked before role permissions and
-  // before the system-object bypass so it applies to system objects too
   validateWritabilityOrThrow({
     operationType,
     objectMetadata,

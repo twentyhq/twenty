@@ -239,8 +239,6 @@ export class WorkspaceUpdateQueryBuilder<
         this.expressionMap.valuesSet =
           updatedValues.length === 1 ? updatedValues[0] : updatedValues;
 
-        // nested relation processing adds join columns, so the written
-        // columns must be validated again on the final values
         this.validateQueryPermissionsOrThrow();
       }
 
@@ -426,8 +424,6 @@ export class WorkspaceUpdateQueryBuilder<
           partialEntity: updatedValue,
         }));
 
-        // nested relation processing adds join columns, so the written
-        // columns must be validated again on the final values
         this.validateManyInputsPermissionsOrThrow();
       }
 

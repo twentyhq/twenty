@@ -223,8 +223,6 @@ export class WorkspaceInsertQueryBuilder<
 
         this.expressionMap.valuesSet = updatedValues;
 
-        // nested relation processing adds join columns, so the written
-        // columns must be validated again on the final values
         this.validateQueryPermissionsOrThrow();
       }
 
