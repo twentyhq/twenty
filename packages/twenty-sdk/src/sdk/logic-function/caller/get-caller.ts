@@ -15,7 +15,9 @@ const isLogicFunctionCaller = (
   if (candidate.kind === 'user') {
     return (
       typeof candidate.userId === 'string' &&
-      typeof candidate.userWorkspaceId === 'string'
+      typeof candidate.userWorkspaceId === 'string' &&
+      (candidate.workspaceMemberId === undefined ||
+        typeof candidate.workspaceMemberId === 'string')
     );
   }
 
