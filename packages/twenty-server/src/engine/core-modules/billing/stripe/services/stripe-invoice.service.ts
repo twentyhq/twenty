@@ -79,7 +79,7 @@ export class StripeInvoiceService {
       finalizedInvoice = await this.stripe.invoices.finalizeInvoice(
         invoice.id,
         {
-          auto_advance: true,
+          auto_advance: false,
         },
       );
     } catch (error) {
