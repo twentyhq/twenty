@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useEffect, useId, useState } from 'react';
+import { useId, useState } from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -31,25 +32,20 @@ export const EventRowDate = ({ createdAt }: EventRowDateProps) => {
 
   // the tooltip is mounted only once the date has been hovered or focused for
   // a while, so a long timeline does not keep one tooltip observer per row
-  const [isDateHighlighted, setIsDateHighlighted] = useState(false);
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+
+  const showTooltipAfterDelay = useDebouncedCallback(
+    () => setIsTooltipVisible(true),
+    TOOLTIP_SHOW_DELAY_IN_MS,
+  );
 
   const instanceId = useId();
   const dateElementId = `event-row-date-${instanceId.replace(/[^a-zA-Z0-9-_]/g, '-')}`;
 
-  useEffect(() => {
-    if (!isDateHighlighted) {
-      setIsTooltipVisible(false);
-      return;
-    }
-
-    const showTooltipTimer = setTimeout(
-      () => setIsTooltipVisible(true),
-      TOOLTIP_SHOW_DELAY_IN_MS,
-    );
-
-    return () => clearTimeout(showTooltipTimer);
-  }, [isDateHighlighted]);
+  const handleHideTooltip = () => {
+    showTooltipAfterDelay.cancel();
+    setIsTooltipVisible(false);
+  };
 
   if (!isNonEmptyString(createdAt)) {
     return null;
@@ -72,10 +68,10 @@ export const EventRowDate = ({ createdAt }: EventRowDateProps) => {
       <StyledEventRowDate
         id={dateElementId}
         tabIndex={0}
-        onMouseEnter={() => setIsDateHighlighted(true)}
-        onMouseLeave={() => setIsDateHighlighted(false)}
-        onFocus={() => setIsDateHighlighted(true)}
-        onBlur={() => setIsDateHighlighted(false)}
+        onMouseEnter={showTooltipAfterDelay}
+        onMouseLeave={handleHideTooltip}
+        onFocus={showTooltipAfterDelay}
+        onBlur={handleHideTooltip}
       >
         {relativeCreatedAt}
       </StyledEventRowDate>
