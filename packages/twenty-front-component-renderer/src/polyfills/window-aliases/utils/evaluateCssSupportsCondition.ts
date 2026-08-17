@@ -5,22 +5,31 @@ const COMPLEX_SUPPORTS_CONDITION_PATTERN = /\b(?:and|or|not|selector)\b/i;
 export const evaluateCssSupportsCondition = (condition: string): boolean => {
   const trimmedCondition = condition.trim();
 
-  if (COMPLEX_SUPPORTS_CONDITION_PATTERN.test(trimmedCondition)) {
+  const isComplexCondition =
+    COMPLEX_SUPPORTS_CONDITION_PATTERN.test(trimmedCondition);
+
+  if (isComplexCondition) {
     return false;
   }
 
-  const unwrappedCondition =
-    trimmedCondition.startsWith('(') && trimmedCondition.endsWith(')')
-      ? trimmedCondition.slice(1, -1).trim()
-      : trimmedCondition;
+  const isParenthesized =
+    trimmedCondition.startsWith('(') && trimmedCondition.endsWith(')');
 
-  if (unwrappedCondition.includes('(') || unwrappedCondition.includes(')')) {
+  const unwrappedCondition = isParenthesized
+    ? trimmedCondition.slice(1, -1).trim()
+    : trimmedCondition;
+
+  const hasRemainingParentheses =
+    unwrappedCondition.includes('(') || unwrappedCondition.includes(')');
+
+  if (hasRemainingParentheses) {
     return false;
   }
 
   const declarationSeparatorIndex = unwrappedCondition.indexOf(':');
+  const isPropertyValueDeclaration = declarationSeparatorIndex !== -1;
 
-  if (declarationSeparatorIndex === -1) {
+  if (!isPropertyValueDeclaration) {
     return false;
   }
 

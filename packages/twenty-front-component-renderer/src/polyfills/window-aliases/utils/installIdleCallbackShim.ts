@@ -10,9 +10,12 @@ export const installIdleCallbackShim = (
   const nativeRequestIdleCallback = globalScope.requestIdleCallback;
   const nativeCancelIdleCallback = globalScope.cancelIdleCallback;
 
-  const idleCallbackScheduler: IdleCallbackScheduler =
+  const hasNativeIdleCallbackScheduler =
     isFunction(nativeRequestIdleCallback) &&
-    isFunction(nativeCancelIdleCallback)
+    isFunction(nativeCancelIdleCallback);
+
+  const idleCallbackScheduler: IdleCallbackScheduler =
+    hasNativeIdleCallbackScheduler
       ? {
           requestIdleCallback: (callback, options) =>
             nativeRequestIdleCallback.call(globalScope, callback, options),
@@ -23,12 +26,17 @@ export const installIdleCallbackShim = (
       : createSetTimeoutIdleCallbackScheduler();
 
   for (const installTarget of resolveGlobalScopeInstallTargets(globalScope)) {
-    if (!('requestIdleCallback' in installTarget)) {
+    const targetAlreadyHasRequestIdleCallback =
+      'requestIdleCallback' in installTarget;
+    const targetAlreadyHasCancelIdleCallback =
+      'cancelIdleCallback' in installTarget;
+
+    if (!targetAlreadyHasRequestIdleCallback) {
       installTarget.requestIdleCallback =
         idleCallbackScheduler.requestIdleCallback;
     }
 
-    if (!('cancelIdleCallback' in installTarget)) {
+    if (!targetAlreadyHasCancelIdleCallback) {
       installTarget.cancelIdleCallback =
         idleCallbackScheduler.cancelIdleCallback;
     }

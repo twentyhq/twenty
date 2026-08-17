@@ -5,6 +5,7 @@ import { resolveGlobalScopeInstallTargets } from '@/polyfills/utils/resolveGloba
 export const installFetchWindowAlias = (
   globalScope: Record<string, unknown>,
 ): void => {
+  // Resolved at call time so the alias reaches a host fetch proxy installed later
   const delegateToCurrentGlobalFetch = (
     input: RequestInfo | URL,
     init?: RequestInit,
@@ -19,7 +20,10 @@ export const installFetchWindowAlias = (
   };
 
   for (const installTarget of resolveGlobalScopeInstallTargets(globalScope)) {
-    if (installTarget === globalScope || 'fetch' in installTarget) {
+    const isGlobalScopeTarget = installTarget === globalScope;
+    const targetAlreadyHasFetch = 'fetch' in installTarget;
+
+    if (isGlobalScopeTarget || targetAlreadyHasFetch) {
       continue;
     }
 

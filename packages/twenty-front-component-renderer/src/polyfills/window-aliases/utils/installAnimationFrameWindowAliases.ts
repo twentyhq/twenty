@@ -10,9 +10,12 @@ export const installAnimationFrameWindowAliases = (
   const nativeRequestAnimationFrame = globalScope.requestAnimationFrame;
   const nativeCancelAnimationFrame = globalScope.cancelAnimationFrame;
 
-  const animationFrameScheduler: AnimationFrameScheduler =
+  const hasNativeAnimationFrameScheduler =
     isFunction(nativeRequestAnimationFrame) &&
-    isFunction(nativeCancelAnimationFrame)
+    isFunction(nativeCancelAnimationFrame);
+
+  const animationFrameScheduler: AnimationFrameScheduler =
+    hasNativeAnimationFrameScheduler
       ? {
           requestAnimationFrame: (callback) =>
             nativeRequestAnimationFrame.call(globalScope, callback),
@@ -23,10 +26,11 @@ export const installAnimationFrameWindowAliases = (
       : createSetTimeoutAnimationFrameScheduler();
 
   for (const installTarget of resolveGlobalScopeInstallTargets(globalScope)) {
-    if (
+    const targetAlreadyHasAnimationFrameScheduler =
       'requestAnimationFrame' in installTarget &&
-      'cancelAnimationFrame' in installTarget
-    ) {
+      'cancelAnimationFrame' in installTarget;
+
+    if (targetAlreadyHasAnimationFrameScheduler) {
       continue;
     }
 

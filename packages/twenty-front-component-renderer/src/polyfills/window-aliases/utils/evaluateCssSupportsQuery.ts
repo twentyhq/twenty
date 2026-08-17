@@ -1,3 +1,5 @@
+// Backs the sandbox CSS.supports: unknown or complex input is conservatively false
+
 import { evaluateCssSupportsCondition } from '@/polyfills/window-aliases/utils/evaluateCssSupportsCondition';
 import { evaluateCssSupportsDeclaration } from '@/polyfills/window-aliases/utils/evaluateCssSupportsDeclaration';
 
@@ -6,14 +8,18 @@ export const evaluateCssSupportsQuery = (
 ): boolean => {
   const [firstArgument, secondArgument] = supportsArguments;
 
-  if (supportsArguments.length >= 2) {
+  const isPropertyValuePairForm = supportsArguments.length >= 2;
+
+  if (isPropertyValuePairForm) {
     return evaluateCssSupportsDeclaration({
       property: String(firstArgument),
       value: String(secondArgument),
     });
   }
 
-  if (supportsArguments.length === 1) {
+  const isConditionTextForm = supportsArguments.length === 1;
+
+  if (isConditionTextForm) {
     return evaluateCssSupportsCondition(String(firstArgument));
   }
 
