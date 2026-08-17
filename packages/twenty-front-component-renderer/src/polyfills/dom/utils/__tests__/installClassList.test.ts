@@ -19,9 +19,7 @@ const createSandbox = (installHooks?: (hooks: Partial<Hooks>) => void) => {
   );
 
   installMutationObserver({ globalScope });
-  installClassList(
-    (polyfillWindow.Element as unknown as { prototype: object }).prototype,
-  );
+  installClassList(polyfillWindow.Element.prototype);
 
   return {
     document: polyfillWindow.document as unknown as Document,

@@ -104,7 +104,7 @@ const classListTest: Story['play'] = async ({ canvasElement }) => {
   await waitFor(
     () => {
       expect(canvas.getByTestId('class-list-container').className).toBe(
-        'initial-class mapboxgl-map replaced toggled-on',
+        EXPECTED_CLASS_LIST_REPORT.value,
       );
     },
     { timeout: MOUNT_TIMEOUT },
@@ -113,11 +113,15 @@ const classListTest: Story['play'] = async ({ canvasElement }) => {
   expect(errorHandler).not.toHaveBeenCalled();
 };
 
-const createStory = (
-  name: string,
-  play: Story['play'],
-  runtime?: 'preact',
-): Story => ({
+const createStory = ({
+  name,
+  play,
+  runtime,
+}: {
+  name: string;
+  play: Story['play'];
+  runtime?: 'preact';
+}): Story => ({
   args: {
     componentUrl: getBuiltStoryComponentPathForRender(
       `${name}.front-component`,
@@ -127,21 +131,21 @@ const createStory = (
   play,
 });
 
-export const MutationObserverReact: Story = createStory(
-  'mutation-observer-example',
-  mutationObserverTest,
-);
-export const MutationObserverPreact: Story = createStory(
-  'mutation-observer-example',
-  mutationObserverTest,
-  'preact',
-);
-export const ClassListReact: Story = createStory(
-  'class-list-example',
-  classListTest,
-);
-export const ClassListPreact: Story = createStory(
-  'class-list-example',
-  classListTest,
-  'preact',
-);
+export const MutationObserverReact: Story = createStory({
+  name: 'mutation-observer-example',
+  play: mutationObserverTest,
+});
+export const MutationObserverPreact: Story = createStory({
+  name: 'mutation-observer-example',
+  play: mutationObserverTest,
+  runtime: 'preact',
+});
+export const ClassListReact: Story = createStory({
+  name: 'class-list-example',
+  play: classListTest,
+});
+export const ClassListPreact: Story = createStory({
+  name: 'class-list-example',
+  play: classListTest,
+  runtime: 'preact',
+});

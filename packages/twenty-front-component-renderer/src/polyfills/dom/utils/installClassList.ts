@@ -5,28 +5,31 @@ import { type WorkerClassTokenList } from '@/polyfills/dom/types/WorkerClassToke
 import { createClassTokenList } from '@/polyfills/dom/utils/createClassTokenList';
 
 export const installClassList = (elementPrototype: object): void => {
-  const classTokenListByElement = new WeakMap<object, WorkerClassTokenList>();
+  const classTokenListByElement = new WeakMap<
+    ElementWithClassAttribute,
+    WorkerClassTokenList
+  >();
 
-  const resolveClassTokenList = (element: object): WorkerClassTokenList => {
+  const resolveClassTokenList = (
+    element: ElementWithClassAttribute,
+  ): WorkerClassTokenList => {
     const existingClassTokenList = classTokenListByElement.get(element);
 
     if (isDefined(existingClassTokenList)) {
       return existingClassTokenList;
     }
 
-    const createdClassTokenList = createClassTokenList(
-      element as ElementWithClassAttribute,
-    );
+    const createdClassTokenList = createClassTokenList(element);
     classTokenListByElement.set(element, createdClassTokenList);
 
     return createdClassTokenList;
   };
 
   Object.defineProperty(elementPrototype, 'classList', {
-    get(this: object) {
+    get(this: ElementWithClassAttribute) {
       return resolveClassTokenList(this);
     },
-    set(this: object, newValue: unknown) {
+    set(this: ElementWithClassAttribute, newValue: unknown) {
       resolveClassTokenList(this).value = String(newValue);
     },
     configurable: true,
