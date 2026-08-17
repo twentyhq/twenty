@@ -15,13 +15,13 @@ export const clearCallRecordingBotStateAfterRemoval = async (
     externalBotId: string | undefined;
     botScheduleAttempt: CallRecordingBotScheduleAttempt | undefined;
   },
-): Promise<void> => {
+): Promise<boolean> => {
   const expectedAttemptFields =
     getCallRecordingBotScheduleAttemptMutationFields(botScheduleAttempt);
   const emptyAttemptFields =
     getCallRecordingBotScheduleAttemptMutationFields(undefined);
 
-  await coreApiClient.mutation({
+  const clearBotStateMutationResult = await coreApiClient.mutation({
     updateCallRecordings: {
       __args: {
         filter: {
@@ -46,4 +46,8 @@ export const clearCallRecordingBotStateAfterRemoval = async (
       id: true,
     },
   });
+
+  return (
+    clearBotStateMutationResult.updateCallRecordings ?? []
+  ).length > 0;
 };

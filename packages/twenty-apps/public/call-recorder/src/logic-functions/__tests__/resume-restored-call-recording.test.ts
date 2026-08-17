@@ -38,6 +38,31 @@ const buildConnection = <Node>(nodes: Node[]) => ({
   edges: nodes.map((node) => ({ node })),
 });
 
+type CallRecordingRestorationEvent = Parameters<
+  typeof resumeRestoredCallRecordingHandler
+>[0];
+type CallRecordingRestorationEventRecord =
+  CallRecordingRestorationEvent['properties']['after'];
+
+const buildCallRecordingRestorationEvent = (
+  callRecording: Omit<CallRecordingRestorationEventRecord, 'id'>,
+): CallRecordingRestorationEvent => {
+  const callRecordingEventRecord = {
+    id: 'call-recording-1',
+    ...callRecording,
+  };
+
+  return {
+    recordId: callRecordingEventRecord.id,
+    properties: {
+      before: callRecordingEventRecord,
+      after: callRecordingEventRecord,
+      updatedFields: [],
+      diff: {},
+    },
+  };
+};
+
 const mockCurrentCallRecording = (
   callRecording: Record<string, unknown>,
 ): void => {
@@ -79,20 +104,16 @@ describe('resumeRestoredCallRecordingHandler', () => {
       botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
       botScheduleIdempotencyKey: 'schedule-attempt-1',
     });
-    const result = await resumeRestoredCallRecordingHandler({
-      name: 'callRecording.restored',
-      recordId: 'call-recording-1',
-      properties: {
-        after: {
-          status: 'JOINING',
-          recordingRequestStatus: 'REQUESTED',
-          externalBotId: 'recall-bot-1',
-          botScheduleAttemptId: BOT_SCHEDULE_ATTEMPT_ID,
-          botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
-          botScheduleIdempotencyKey: 'schedule-attempt-1',
-        },
-      },
-    } as never);
+    const result = await resumeRestoredCallRecordingHandler(
+      buildCallRecordingRestorationEvent({
+        status: 'JOINING',
+        recordingRequestStatus: 'REQUESTED',
+        externalBotId: 'recall-bot-1',
+        botScheduleAttemptId: BOT_SCHEDULE_ATTEMPT_ID,
+        botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
+        botScheduleIdempotencyKey: 'schedule-attempt-1',
+      }),
+    );
 
     expect(result).toEqual({
       removedExternalBotIds: ['recall-bot-1'],
@@ -129,6 +150,182 @@ describe('resumeRestoredCallRecordingHandler', () => {
     expect(resumePendingCallRecordingMock).not.toHaveBeenCalled();
   });
 
+  it('preserves a terminal webhook status received while removing the old bot', async () => {
+    const callRecordingBeforeRemoval = {
+      id: 'call-recording-1',
+      status: 'JOINING',
+      recordingRequestStatus: 'REQUESTED',
+      externalBotId: 'recall-bot-1',
+      botScheduleAttemptId: BOT_SCHEDULE_ATTEMPT_ID,
+      botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
+      botScheduleIdempotencyKey: 'schedule-attempt-1',
+    };
+    const callRecordingAfterRemoval = {
+      ...callRecordingBeforeRemoval,
+      status: 'PROCESSING',
+      externalBotId: null,
+      botScheduleAttemptId: null,
+      botScheduleAttemptedAt: null,
+      botScheduleIdempotencyKey: null,
+    };
+
+    queryMock
+      .mockResolvedValueOnce({
+        callRecordings: buildConnection([callRecordingBeforeRemoval]),
+      })
+      .mockResolvedValueOnce({
+        callRecordings: buildConnection([callRecordingAfterRemoval]),
+      });
+
+    const result = await resumeRestoredCallRecordingHandler({
+      recordId: 'call-recording-1',
+      properties: {
+        before: callRecordingBeforeRemoval,
+        after: callRecordingBeforeRemoval,
+        updatedFields: [],
+        diff: {},
+      },
+    });
+
+    expect(result).toEqual({
+      removedExternalBotIds: ['recall-bot-1'],
+      result: {
+        status: 'skipped',
+        reason: 'call recording does not have a removable bot state',
+      },
+    });
+    expect(mutationMock).toHaveBeenCalledTimes(1);
+    expect(mutationMock).toHaveBeenCalledWith({
+      updateCallRecordings: {
+        __args: {
+          filter: {
+            id: { eq: 'call-recording-1' },
+            or: [
+              { deletedAt: { is: 'NULL' } },
+              { deletedAt: { is: 'NOT_NULL' } },
+            ],
+            externalBotId: { eq: 'recall-bot-1' },
+            botScheduleAttemptId: { eq: BOT_SCHEDULE_ATTEMPT_ID },
+            botScheduleAttemptedAt: {
+              eq: '2026-01-01T10:00:00.000Z',
+            },
+            botScheduleIdempotencyKey: { eq: 'schedule-attempt-1' },
+          },
+          data: {
+            externalBotId: null,
+            botScheduleAttemptId: null,
+            botScheduleAttemptedAt: null,
+            botScheduleIdempotencyKey: null,
+          },
+        },
+        id: true,
+      },
+    });
+    expect(resumePendingCallRecordingMock).not.toHaveBeenCalled();
+  });
+
+  it('lets the ownership-clear update resume an already scheduled recording', async () => {
+    const callRecordingBeforeRemoval = {
+      id: 'call-recording-1',
+      status: 'SCHEDULED',
+      recordingRequestStatus: 'REQUESTED',
+      externalBotId: 'recall-bot-1',
+      botScheduleAttemptId: BOT_SCHEDULE_ATTEMPT_ID,
+      botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
+      botScheduleIdempotencyKey: 'schedule-attempt-1',
+    };
+    const callRecordingAfterRemoval = {
+      ...callRecordingBeforeRemoval,
+      externalBotId: null,
+      botScheduleAttemptId: null,
+      botScheduleAttemptedAt: null,
+      botScheduleIdempotencyKey: null,
+    };
+
+    queryMock
+      .mockResolvedValueOnce({
+        callRecordings: buildConnection([callRecordingBeforeRemoval]),
+      })
+      .mockResolvedValueOnce({
+        callRecordings: buildConnection([callRecordingAfterRemoval]),
+      });
+
+    const result = await resumeRestoredCallRecordingHandler(
+      buildCallRecordingRestorationEvent(callRecordingBeforeRemoval),
+    );
+
+    expect(result).toEqual({
+      removedExternalBotIds: ['recall-bot-1'],
+      result: {
+        status: 'deferred',
+        reason: 'bot state reset; the update trigger will resume scheduling',
+      },
+    });
+    expect(mutationMock).toHaveBeenCalledTimes(1);
+    expect(resumePendingCallRecordingMock).not.toHaveBeenCalled();
+  });
+
+  it('resumes inline after removing an ambiguous bot with no stored id', async () => {
+    const callRecordingBeforeRemoval = {
+      id: 'call-recording-1',
+      status: 'SCHEDULED',
+      recordingRequestStatus: 'REQUESTED',
+      externalBotId: null,
+      botScheduleAttemptId: BOT_SCHEDULE_ATTEMPT_ID,
+      botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
+      botScheduleIdempotencyKey: 'schedule-attempt-1',
+    };
+    const callRecordingAfterRemoval = {
+      ...callRecordingBeforeRemoval,
+      botScheduleAttemptId: null,
+      botScheduleAttemptedAt: null,
+      botScheduleIdempotencyKey: null,
+    };
+
+    vi.stubEnv(
+      'TWENTY_APP_ACCESS_TOKEN',
+      buildAccessToken({ workspaceId: WORKSPACE_ID }),
+    );
+    fetchMock
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            next: null,
+            results: [
+              {
+                id: 'recall-bot-1',
+                metadata: {
+                  twentyWorkspaceId: WORKSPACE_ID,
+                  twentyCallRecordingId: 'call-recording-1',
+                  twentyBotScheduleAttemptId: BOT_SCHEDULE_ATTEMPT_ID,
+                },
+              },
+            ],
+          }),
+          { status: 200 },
+        ),
+      )
+      .mockResolvedValueOnce(new Response(undefined, { status: 204 }));
+    queryMock
+      .mockResolvedValueOnce({
+        callRecordings: buildConnection([callRecordingBeforeRemoval]),
+      })
+      .mockResolvedValueOnce({
+        callRecordings: buildConnection([callRecordingAfterRemoval]),
+      });
+
+    const result = await resumeRestoredCallRecordingHandler(
+      buildCallRecordingRestorationEvent(callRecordingBeforeRemoval),
+    );
+
+    expect(result).toEqual({
+      removedExternalBotIds: ['recall-bot-1'],
+      result: { status: 'scheduled' },
+    });
+    expect(mutationMock).toHaveBeenCalledTimes(1);
+    expect(resumePendingCallRecordingMock).toHaveBeenCalledTimes(1);
+  });
+
   it('does not touch completed recordings when they are restored', async () => {
     mockCurrentCallRecording({
       id: 'call-recording-1',
@@ -136,17 +333,13 @@ describe('resumeRestoredCallRecordingHandler', () => {
       recordingRequestStatus: 'REQUESTED',
       externalBotId: 'recall-bot-1',
     });
-    const result = await resumeRestoredCallRecordingHandler({
-      name: 'callRecording.restored',
-      recordId: 'call-recording-1',
-      properties: {
-        after: {
-          status: 'COMPLETED',
-          recordingRequestStatus: 'REQUESTED',
-          externalBotId: 'recall-bot-1',
-        },
-      },
-    } as never);
+    const result = await resumeRestoredCallRecordingHandler(
+      buildCallRecordingRestorationEvent({
+        status: 'COMPLETED',
+        recordingRequestStatus: 'REQUESTED',
+        externalBotId: 'recall-bot-1',
+      }),
+    );
 
     expect(result).toEqual({
       removedExternalBotIds: [],
@@ -170,20 +363,16 @@ describe('resumeRestoredCallRecordingHandler', () => {
       botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
       botScheduleIdempotencyKey: 'schedule-attempt-1',
     });
-    const result = await resumeRestoredCallRecordingHandler({
-      name: 'callRecording.restored',
-      recordId: 'call-recording-1',
-      properties: {
-        after: {
-          status: 'FAILED',
-          recordingRequestStatus: 'REQUESTED',
-          externalBotId: 'recall-bot-1',
-          botScheduleAttemptId: BOT_SCHEDULE_ATTEMPT_ID,
-          botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
-          botScheduleIdempotencyKey: 'schedule-attempt-1',
-        },
-      },
-    } as never);
+    const result = await resumeRestoredCallRecordingHandler(
+      buildCallRecordingRestorationEvent({
+        status: 'FAILED',
+        recordingRequestStatus: 'REQUESTED',
+        externalBotId: 'recall-bot-1',
+        botScheduleAttemptId: BOT_SCHEDULE_ATTEMPT_ID,
+        botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
+        botScheduleIdempotencyKey: 'schedule-attempt-1',
+      }),
+    );
 
     expect(result).toEqual({
       removedExternalBotIds: ['recall-bot-1'],
@@ -218,23 +407,20 @@ describe('resumeRestoredCallRecordingHandler', () => {
     });
     mutationMock.mockResolvedValue({ updateCallRecordings: [] });
 
-    const result = await resumeRestoredCallRecordingHandler({
-      name: 'callRecording.restored',
-      recordId: 'call-recording-1',
-      properties: {
-        after: {
-          status: 'SCHEDULED',
-          recordingRequestStatus: 'REQUESTED',
-          externalBotId: 'recall-bot-1',
-        },
-      },
-    } as never);
+    const result = await resumeRestoredCallRecordingHandler(
+      buildCallRecordingRestorationEvent({
+        status: 'SCHEDULED',
+        recordingRequestStatus: 'REQUESTED',
+        externalBotId: 'recall-bot-1',
+      }),
+    );
 
     expect(result).toEqual({
       removedExternalBotIds: ['recall-bot-1'],
       result: {
         status: 'deferred',
-        reason: 'call recording changed while its old bot was removed',
+        reason:
+          'call recording bot ownership changed while its old bot was removed',
       },
     });
     expect(resumePendingCallRecordingMock).not.toHaveBeenCalled();
@@ -306,20 +492,16 @@ describe('resumeRestoredCallRecordingHandler', () => {
     );
 
     await expect(
-      resumeRestoredCallRecordingHandler({
-        name: 'callRecording.restored',
-        recordId: 'call-recording-1',
-        properties: {
-          after: {
-            status: 'SCHEDULED',
-            recordingRequestStatus: 'REQUESTED',
-            externalBotId: null,
-            botScheduleAttemptId: BOT_SCHEDULE_ATTEMPT_ID,
-            botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
-            botScheduleIdempotencyKey: 'schedule-attempt-1',
-          },
-        },
-      } as never),
+      resumeRestoredCallRecordingHandler(
+        buildCallRecordingRestorationEvent({
+          status: 'SCHEDULED',
+          recordingRequestStatus: 'REQUESTED',
+          externalBotId: null,
+          botScheduleAttemptId: BOT_SCHEDULE_ATTEMPT_ID,
+          botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
+          botScheduleIdempotencyKey: 'schedule-attempt-1',
+        }),
+      ),
     ).rejects.toThrow('Attempted Recall bot is not visible yet');
 
     expect(mutationMock).not.toHaveBeenCalled();

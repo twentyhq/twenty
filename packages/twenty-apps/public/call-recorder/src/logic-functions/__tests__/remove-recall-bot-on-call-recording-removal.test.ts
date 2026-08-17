@@ -35,6 +35,49 @@ const buildConnection = <Node>(nodes: Node[]) => ({
   edges: nodes.map((node) => ({ node })),
 });
 
+type CallRecordingDeletionEvent = Parameters<
+  typeof removeRecallBotOnCallRecordingDeletionHandler
+>[0];
+type CallRecordingDeletionEventRecord =
+  CallRecordingDeletionEvent['properties']['before'];
+
+const buildCallRecordingDeletionEvent = (
+  callRecording: Omit<CallRecordingDeletionEventRecord, 'id'>,
+): CallRecordingDeletionEvent => {
+  const callRecordingEventRecord = {
+    id: 'call-recording-1',
+    ...callRecording,
+  };
+
+  return {
+    recordId: callRecordingEventRecord.id,
+    properties: {
+      before: callRecordingEventRecord,
+      after: callRecordingEventRecord,
+      updatedFields: [],
+      diff: {},
+    },
+  };
+};
+
+type CallRecordingDestructionEvent = Parameters<
+  typeof removeRecallBotOnCallRecordingDestructionHandler
+>[0];
+type CallRecordingDestructionEventRecord =
+  CallRecordingDestructionEvent['properties']['before'];
+
+const buildCallRecordingDestructionEvent = (
+  callRecording: Omit<CallRecordingDestructionEventRecord, 'id'>,
+): CallRecordingDestructionEvent => ({
+  recordId: 'call-recording-1',
+  properties: {
+    before: {
+      id: 'call-recording-1',
+      ...callRecording,
+    },
+  },
+});
+
 describe('removeRecallBotOnCallRecordingDeletionHandler', () => {
   beforeEach(() => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -60,18 +103,14 @@ describe('removeRecallBotOnCallRecordingDeletionHandler', () => {
   });
 
   it('removes a known bot on deletion without listing Recall bots', async () => {
-    const result = await removeRecallBotOnCallRecordingDeletionHandler({
-      name: 'callRecording.deleted',
-      recordId: 'call-recording-1',
-      properties: {
-        before: {
-          status: 'SCHEDULED',
-          externalBotId: 'recall-bot-1',
-          botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
-          botScheduleIdempotencyKey: 'schedule-attempt-1',
-        },
-      },
-    } as never);
+    const result = await removeRecallBotOnCallRecordingDeletionHandler(
+      buildCallRecordingDeletionEvent({
+        status: 'SCHEDULED',
+        externalBotId: 'recall-bot-1',
+        botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
+        botScheduleIdempotencyKey: 'schedule-attempt-1',
+      }),
+    );
 
     expect(result).toEqual({ removedExternalBotIds: ['recall-bot-1'] });
     expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -96,16 +135,12 @@ describe('removeRecallBotOnCallRecordingDeletionHandler', () => {
   it('skips a stale deletion retry after the recording was restored', async () => {
     queryMock.mockResolvedValue({ callRecordings: buildConnection([]) });
 
-    const result = await removeRecallBotOnCallRecordingDeletionHandler({
-      name: 'callRecording.deleted',
-      recordId: 'call-recording-1',
-      properties: {
-        before: {
-          status: 'SCHEDULED',
-          externalBotId: 'recall-bot-1',
-        },
-      },
-    } as never);
+    const result = await removeRecallBotOnCallRecordingDeletionHandler(
+      buildCallRecordingDeletionEvent({
+        status: 'SCHEDULED',
+        externalBotId: 'recall-bot-1',
+      }),
+    );
 
     expect(result).toEqual({ removedExternalBotIds: [] });
     expect(fetchMock).not.toHaveBeenCalled();
@@ -136,18 +171,14 @@ describe('removeRecallBotOnCallRecordingDeletionHandler', () => {
       )
       .mockResolvedValueOnce(new Response(undefined, { status: 204 }));
 
-    const result = await removeRecallBotOnCallRecordingDeletionHandler({
-      name: 'callRecording.deleted',
-      recordId: 'call-recording-1',
-      properties: {
-        before: {
-          status: 'SCHEDULED',
-          externalBotId: null,
-          botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
-          botScheduleIdempotencyKey: 'schedule-attempt-1',
-        },
-      },
-    } as never);
+    const result = await removeRecallBotOnCallRecordingDeletionHandler(
+      buildCallRecordingDeletionEvent({
+        status: 'SCHEDULED',
+        externalBotId: null,
+        botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
+        botScheduleIdempotencyKey: 'schedule-attempt-1',
+      }),
+    );
 
     expect(result).toEqual({ removedExternalBotIds: ['recall-bot-1'] });
     expect(fetchMock).toHaveBeenCalledTimes(2);
@@ -200,19 +231,15 @@ describe('removeRecallBotOnCallRecordingDeletionHandler', () => {
       )
       .mockResolvedValueOnce(new Response(undefined, { status: 204 }));
 
-    const result = await removeRecallBotOnCallRecordingDeletionHandler({
-      name: 'callRecording.deleted',
-      recordId: 'call-recording-1',
-      properties: {
-        before: {
-          status: 'SCHEDULED',
-          externalBotId: null,
-          botScheduleAttemptId,
-          botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
-          botScheduleIdempotencyKey: 'schedule-attempt-1',
-        },
-      },
-    } as never);
+    const result = await removeRecallBotOnCallRecordingDeletionHandler(
+      buildCallRecordingDeletionEvent({
+        status: 'SCHEDULED',
+        externalBotId: null,
+        botScheduleAttemptId,
+        botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
+        botScheduleIdempotencyKey: 'schedule-attempt-1',
+      }),
+    );
 
     expect(result).toEqual({ removedExternalBotIds: ['recall-bot-1'] });
     const listUrl = new URL(fetchMock.mock.calls[0][0] as string);
@@ -227,36 +254,28 @@ describe('removeRecallBotOnCallRecordingDeletionHandler', () => {
   });
 
   it('does not call Recall when scheduling was never attempted', async () => {
-    const result = await removeRecallBotOnCallRecordingDeletionHandler({
-      name: 'callRecording.deleted',
-      recordId: 'call-recording-1',
-      properties: {
-        before: {
-          status: 'SCHEDULED',
-          externalBotId: null,
-          botScheduleAttemptedAt: null,
-          botScheduleIdempotencyKey: null,
-        },
-      },
-    } as never);
+    const result = await removeRecallBotOnCallRecordingDeletionHandler(
+      buildCallRecordingDeletionEvent({
+        status: 'SCHEDULED',
+        externalBotId: null,
+        botScheduleAttemptedAt: null,
+        botScheduleIdempotencyKey: null,
+      }),
+    );
 
     expect(result).toEqual({ removedExternalBotIds: [] });
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it('does not retry cleanup for a completed recording with old attempt markers', async () => {
-    const result = await removeRecallBotOnCallRecordingDeletionHandler({
-      name: 'callRecording.deleted',
-      recordId: 'call-recording-1',
-      properties: {
-        before: {
-          status: 'COMPLETED',
-          externalBotId: null,
-          botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
-          botScheduleIdempotencyKey: 'schedule-attempt-1',
-        },
-      },
-    } as never);
+    const result = await removeRecallBotOnCallRecordingDeletionHandler(
+      buildCallRecordingDeletionEvent({
+        status: 'COMPLETED',
+        externalBotId: null,
+        botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
+        botScheduleIdempotencyKey: 'schedule-attempt-1',
+      }),
+    );
 
     expect(result).toEqual({ removedExternalBotIds: [] });
     expect(fetchMock).not.toHaveBeenCalled();
@@ -270,16 +289,12 @@ describe('removeRecallBotOnCallRecordingDeletionHandler', () => {
     );
 
     await expect(
-      removeRecallBotOnCallRecordingDeletionHandler({
-        name: 'callRecording.deleted',
-        recordId: 'call-recording-1',
-        properties: {
-          before: {
-            status: 'RECORDING',
-            externalBotId: 'recall-bot-1',
-          },
-        },
-      } as never),
+      removeRecallBotOnCallRecordingDeletionHandler(
+        buildCallRecordingDeletionEvent({
+          status: 'RECORDING',
+          externalBotId: 'recall-bot-1',
+        }),
+      ),
     ).rejects.toThrow('Failed to remove Recall bot recall-bot-1');
 
     expect(fetchMock).toHaveBeenCalledTimes(2);
@@ -314,17 +329,11 @@ describe('removeRecallBotOnCallRecordingDeletionHandler', () => {
         ),
       )
       .mockResolvedValueOnce(new Response(undefined, { status: 204 }));
-    const event = {
-      name: 'callRecording.deleted',
-      recordId: 'call-recording-1',
-      properties: {
-        before: {
-          status: 'SCHEDULED',
-          externalBotId: null,
-          botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
-        },
-      },
-    } as never;
+    const event = buildCallRecordingDeletionEvent({
+      status: 'SCHEDULED',
+      externalBotId: null,
+      botScheduleAttemptedAt: '2026-01-01T10:00:00.000Z',
+    });
 
     await expect(
       removeRecallBotOnCallRecordingDeletionHandler(event),
@@ -335,16 +344,12 @@ describe('removeRecallBotOnCallRecordingDeletionHandler', () => {
   });
 
   it('removes a bot from a failed recording because Recall may still be in the call', async () => {
-    const result = await removeRecallBotOnCallRecordingDeletionHandler({
-      name: 'callRecording.deleted',
-      recordId: 'call-recording-1',
-      properties: {
-        before: {
-          status: 'FAILED',
-          externalBotId: 'recall-bot-1',
-        },
-      },
-    } as never);
+    const result = await removeRecallBotOnCallRecordingDeletionHandler(
+      buildCallRecordingDeletionEvent({
+        status: 'FAILED',
+        externalBotId: 'recall-bot-1',
+      }),
+    );
 
     expect(result).toEqual({ removedExternalBotIds: ['recall-bot-1'] });
     expect(fetchMock).toHaveBeenCalledWith(
@@ -361,16 +366,12 @@ describe('removeRecallBotOnCallRecordingDeletionHandler', () => {
   });
 
   it('removes the bot from the before snapshot when a recording is destroyed', async () => {
-    const result = await removeRecallBotOnCallRecordingDestructionHandler({
-      name: 'callRecording.destroyed',
-      recordId: 'call-recording-1',
-      properties: {
-        before: {
-          status: 'JOINING',
-          externalBotId: 'recall-bot-1',
-        },
-      },
-    } as never);
+    const result = await removeRecallBotOnCallRecordingDestructionHandler(
+      buildCallRecordingDestructionEvent({
+        status: 'JOINING',
+        externalBotId: 'recall-bot-1',
+      }),
+    );
 
     expect(result).toEqual({ removedExternalBotIds: ['recall-bot-1'] });
     expect(fetchMock).toHaveBeenCalledWith(

@@ -1,6 +1,5 @@
 import {
   defineLogicFunction,
-  type DatabaseEventPayload,
   type ObjectRecordDestroyEvent,
 } from 'twenty-sdk/define';
 
@@ -18,9 +17,8 @@ type CallRecordingForDestructionEvent = {
   botScheduleIdempotencyKey?: string | null;
 };
 
-type CallRecordingDestructionEvent = DatabaseEventPayload<
-  ObjectRecordDestroyEvent<CallRecordingForDestructionEvent>
->;
+type CallRecordingDestructionEvent =
+  ObjectRecordDestroyEvent<CallRecordingForDestructionEvent>;
 
 export const removeRecallBotOnCallRecordingDestructionHandler = async (
   event: CallRecordingDestructionEvent,

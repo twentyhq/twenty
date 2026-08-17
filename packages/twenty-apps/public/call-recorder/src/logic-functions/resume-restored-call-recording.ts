@@ -8,6 +8,7 @@ import {
 import { RESUME_RESTORED_CALL_RECORDING_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/resume-restored-call-recording-logic-function-universal-identifier';
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { clearCallRecordingBotStateAfterRemoval } from 'src/logic-functions/data/clear-call-recording-bot-state-after-removal.util';
 import { findCallRecordingsByFilter } from 'src/logic-functions/data/find-call-recordings-by-filter.util';
 import { resetRestoredCallRecordingBotState } from 'src/logic-functions/data/reset-restored-call-recording-bot-state.util';
 import { getCallRecordingBotScheduleAttempt } from 'src/logic-functions/domain/call-recording-bot-schedule-attempt';
@@ -38,20 +39,21 @@ export const resumeRestoredCallRecordingHandler = async (
   result: ResumePendingCallRecordingResult;
 }> => {
   const client = new CoreApiClient();
-  const callRecording = (
+  const restoredCallRecordingBeforeRemoval = (
     await findCallRecordingsByFilter(client, {
       id: { eq: event.recordId },
       deletedAt: { is: 'NULL' },
     })
   )[0];
 
-  if (isUndefined(callRecording)) {
+  if (isUndefined(restoredCallRecordingBeforeRemoval)) {
     throw new Error('Restored CallRecording is not visible yet');
   }
 
-  const status = callRecording.status ?? undefined;
+  const statusBeforeRemoval =
+    restoredCallRecordingBeforeRemoval.status ?? undefined;
 
-  if (!isRecallBotRemovalCallRecordingStatus(status)) {
+  if (!isRecallBotRemovalCallRecordingStatus(statusBeforeRemoval)) {
     return {
       removedExternalBotIds: [],
       result: {
@@ -61,25 +63,29 @@ export const resumeRestoredCallRecordingHandler = async (
     };
   }
 
-  const externalBotId = callRecording.externalBotId ?? undefined;
-  const botScheduleAttempt = callRecording.botScheduleAttempt;
-  const hasBotSchedulingState =
-    !isUndefined(externalBotId) || !isUndefined(botScheduleAttempt);
+  const externalBotIdBeforeRemoval =
+    restoredCallRecordingBeforeRemoval.externalBotId ?? undefined;
+  const botScheduleAttemptBeforeRemoval =
+    restoredCallRecordingBeforeRemoval.botScheduleAttempt;
+  const hadBotSchedulingStateBeforeRemoval =
+    !isUndefined(externalBotIdBeforeRemoval) ||
+    !isUndefined(botScheduleAttemptBeforeRemoval);
   const restorationEventCallRecording = event.properties.after;
   const restorationEventExternalBotId =
     restorationEventCallRecording.externalBotId ?? undefined;
   const restorationEventBotScheduleAttempt =
     getCallRecordingBotScheduleAttempt(restorationEventCallRecording);
   const doesCurrentBotStateMatchRestorationEvent =
-    externalBotId === restorationEventExternalBotId &&
-    botScheduleAttempt?.id === restorationEventBotScheduleAttempt?.id &&
-    botScheduleAttempt?.attemptedAt ===
+    externalBotIdBeforeRemoval === restorationEventExternalBotId &&
+    botScheduleAttemptBeforeRemoval?.id ===
+      restorationEventBotScheduleAttempt?.id &&
+    botScheduleAttemptBeforeRemoval?.attemptedAt ===
       restorationEventBotScheduleAttempt?.attemptedAt &&
-    botScheduleAttempt?.idempotencyKey ===
+    botScheduleAttemptBeforeRemoval?.idempotencyKey ===
       restorationEventBotScheduleAttempt?.idempotencyKey;
 
   if (
-    hasBotSchedulingState &&
+    hadBotSchedulingStateBeforeRemoval &&
     !doesCurrentBotStateMatchRestorationEvent
   ) {
     return {
@@ -93,35 +99,95 @@ export const resumeRestoredCallRecordingHandler = async (
 
   const removedExternalBotIds = await removeRecallBotsForCallRecording({
     callRecordingId: event.recordId,
-    status,
-    externalBotId,
-    botScheduleAttempt,
+    status: statusBeforeRemoval,
+    externalBotId: externalBotIdBeforeRemoval,
+    botScheduleAttempt: botScheduleAttemptBeforeRemoval,
   });
 
   if (
-    hasBotSchedulingState &&
-    isUndefined(externalBotId) &&
+    hadBotSchedulingStateBeforeRemoval &&
+    isUndefined(externalBotIdBeforeRemoval) &&
     removedExternalBotIds.length === 0
   ) {
     throw new Error('Attempted Recall bot is not visible yet');
   }
 
+  let restoredCallRecordingAfterRemoval =
+    restoredCallRecordingBeforeRemoval;
+  const didRemoveExternalBot = removedExternalBotIds.length > 0;
+  const didClearStoredExternalBotId =
+    didRemoveExternalBot && !isUndefined(externalBotIdBeforeRemoval);
+
+  if (didRemoveExternalBot) {
+    const didClearRemovedBotState =
+      await clearCallRecordingBotStateAfterRemoval(client, {
+        callRecordingId: event.recordId,
+        externalBotId: externalBotIdBeforeRemoval,
+        botScheduleAttempt: botScheduleAttemptBeforeRemoval,
+      });
+
+    if (!didClearRemovedBotState) {
+      return {
+        removedExternalBotIds,
+        result: {
+          status: 'deferred',
+          reason:
+            'call recording bot ownership changed while its old bot was removed',
+        },
+      };
+    }
+
+    const refreshedRestoredCallRecording = (
+      await findCallRecordingsByFilter(client, {
+        id: { eq: event.recordId },
+        deletedAt: { is: 'NULL' },
+      })
+    )[0];
+
+    if (isUndefined(refreshedRestoredCallRecording)) {
+      throw new Error('Restored CallRecording is not visible after bot removal');
+    }
+
+    restoredCallRecordingAfterRemoval = refreshedRestoredCallRecording;
+  }
+
+  const statusAfterRemoval =
+    restoredCallRecordingAfterRemoval.status ?? undefined;
+
+  if (!isRecallBotRemovalCallRecordingStatus(statusAfterRemoval)) {
+    return {
+      removedExternalBotIds,
+      result: {
+        status: 'skipped',
+        reason: 'call recording does not have a removable bot state',
+      },
+    };
+  }
+
+  const externalBotIdAfterRemoval =
+    restoredCallRecordingAfterRemoval.externalBotId ?? undefined;
+  const botScheduleAttemptAfterRemoval =
+    restoredCallRecordingAfterRemoval.botScheduleAttempt;
+  const hasBotSchedulingStateAfterRemoval =
+    !isUndefined(externalBotIdAfterRemoval) ||
+    !isUndefined(botScheduleAttemptAfterRemoval);
+
   const shouldResetRestoredCallRecordingState =
-    hasBotSchedulingState ||
-    (callRecording.recordingRequestStatus ===
+    hasBotSchedulingStateAfterRemoval ||
+    (restoredCallRecordingAfterRemoval.recordingRequestStatus ===
       CallRecordingRequestStatus.REQUESTED &&
-      status !== CallRecordingStatus.SCHEDULED &&
-      status !== CallRecordingStatus.FAILED);
+      statusAfterRemoval !== CallRecordingStatus.SCHEDULED &&
+      statusAfterRemoval !== CallRecordingStatus.FAILED);
 
   if (
     shouldResetRestoredCallRecordingState &&
     !(await resetRestoredCallRecordingBotState(client, {
       callRecordingId: event.recordId,
-      status,
+      status: statusAfterRemoval,
       recordingRequestStatus:
-        callRecording.recordingRequestStatus ?? undefined,
-      externalBotId,
-      botScheduleAttempt,
+        restoredCallRecordingAfterRemoval.recordingRequestStatus ?? undefined,
+      externalBotId: externalBotIdAfterRemoval,
+      botScheduleAttempt: botScheduleAttemptAfterRemoval,
     }))
   ) {
     return {
@@ -133,7 +199,7 @@ export const resumeRestoredCallRecordingHandler = async (
     };
   }
 
-  if (status === CallRecordingStatus.FAILED) {
+  if (statusAfterRemoval === CallRecordingStatus.FAILED) {
     return {
       removedExternalBotIds,
       result: {
@@ -149,11 +215,12 @@ export const resumeRestoredCallRecordingHandler = async (
   // attempt markers, which are deliberately excluded from that trigger, so it
   // resumes inline below.
   if (
-    shouldResetRestoredCallRecordingState &&
-    callRecording.recordingRequestStatus ===
+    restoredCallRecordingAfterRemoval.recordingRequestStatus ===
       CallRecordingRequestStatus.REQUESTED &&
-    (status !== CallRecordingStatus.SCHEDULED ||
-      !isUndefined(externalBotId))
+    (didClearStoredExternalBotId ||
+      (shouldResetRestoredCallRecordingState &&
+        (statusAfterRemoval !== CallRecordingStatus.SCHEDULED ||
+          !isUndefined(externalBotIdAfterRemoval))))
   ) {
     return {
       removedExternalBotIds,
