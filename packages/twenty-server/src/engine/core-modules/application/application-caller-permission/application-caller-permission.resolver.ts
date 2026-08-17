@@ -2,6 +2,7 @@ import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
@@ -30,7 +31,7 @@ export class ApplicationCallerPermissionResolver {
     @Args('apiKeyId', { nullable: true })
     apiKeyId?: string,
   ): Promise<boolean> {
-    if (!userWorkspaceId && !apiKeyId) {
+    if (!isDefined(userWorkspaceId) && !isDefined(apiKeyId)) {
       return false;
     }
 
