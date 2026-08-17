@@ -24,10 +24,6 @@ const RECORD_GQL_FIELDS = `
   freeField
 `;
 
-// Writability has no API surface by design, so tests write the column
-// directly, then issue a no-op metadata update through the API: the
-// migration runner recomputes the workspace flat maps from the database,
-// which picks up the new writability value.
 const setObjectWritability = async (
   objectMetadataId: string,
   writability: MetadataWritability,
