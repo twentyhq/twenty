@@ -51,6 +51,7 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 type LastRanks = { tsRankCD: number; tsRank: number };
 
@@ -124,6 +125,7 @@ export class SearchService {
                 objectMetadataItem: flatObjectMetadata,
                 records: await this.buildSearchQueryAndGetRecordsWithFallback({
                   entityManager: repository,
+                  rolePermissionConfig,
                   flatObjectMetadata,
                   flatFieldMetadataMaps,
                   searchInput,
@@ -199,6 +201,7 @@ export class SearchService {
     Entity extends ObjectLiteral,
   >({
     entityManager,
+    rolePermissionConfig,
     flatObjectMetadata,
     flatFieldMetadataMaps,
     searchInput,
@@ -209,6 +212,7 @@ export class SearchService {
     after,
   }: {
     entityManager: WorkspaceRepository<Entity>;
+    rolePermissionConfig?: RolePermissionConfig;
     flatObjectMetadata: FlatObjectMetadata;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     searchInput: string;
@@ -239,6 +243,7 @@ export class SearchService {
 
     const fallbackResults = await this.buildIlikeFallbackQuery({
       entityManager,
+      rolePermissionConfig,
       flatObjectMetadata,
       flatFieldMetadataMaps,
       searchInput,
@@ -268,7 +273,9 @@ export class SearchService {
     filter: ObjectRecordFilterInput;
     after?: string;
   }) {
-    const queryBuilder = entityManager.createQueryBuilder();
+    const queryBuilder = entityManager.createQueryBuilder(
+      flatObjectMetadata.nameSingular,
+    );
 
     const { flatObjectMetadataMaps } = entityManager.internalContext;
 
@@ -298,7 +305,7 @@ export class SearchService {
         flatFieldMetadataMaps,
       ),
       ...imageIdentifierColumns,
-    ].map((field) => `"${field}"`);
+    ];
 
     const tsRankCDExpr = `ts_rank_cd("${SEARCH_VECTOR_FIELD.name}", to_tsquery('simple', public.unaccent_immutable(:searchTerms)))`;
 
@@ -311,8 +318,21 @@ export class SearchService {
       tsRankCDExpr,
     });
 
+    const [firstField, ...remainingFields] = fieldsToSelect;
+
+    queryBuilder.select(
+      `"${flatObjectMetadata.nameSingular}"."${firstField}"`,
+      firstField,
+    );
+
+    for (const field of remainingFields) {
+      queryBuilder.addSelect(
+        `"${flatObjectMetadata.nameSingular}"."${field}"`,
+        field,
+      );
+    }
+
     queryBuilder
-      .select(fieldsToSelect)
       .addSelect(tsRankCDExpr, 'tsRankCD')
       .addSelect(tsRankExpr, 'tsRank');
 
@@ -352,6 +372,7 @@ export class SearchService {
 
   private async buildIlikeFallbackQuery<Entity extends ObjectLiteral>({
     entityManager,
+    rolePermissionConfig,
     flatObjectMetadata,
     flatFieldMetadataMaps,
     searchInput,
@@ -359,6 +380,7 @@ export class SearchService {
     filter,
   }: {
     entityManager: WorkspaceRepository<Entity>;
+    rolePermissionConfig?: RolePermissionConfig;
     flatObjectMetadata: FlatObjectMetadata;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     searchInput: string;
@@ -369,30 +391,24 @@ export class SearchService {
       'SEARCH_ILIKE_FALLBACK_TIMEOUT_MS',
     );
 
-    // Must not run inside a caller transaction: SET LOCAL is transaction-scoped
-    // and would leak into the outer transaction.
     try {
-      return await entityManager.manager.transaction(
-        async (transactionManager) => {
-          const { queryRunner } = transactionManager;
-
-          if (!isDefined(queryRunner)) {
-            throw new Error(
-              'Expected queryRunner to be defined within transaction',
-            );
-          }
-
-          await queryRunner.query(
+      return await this.globalWorkspaceOrmManager.runInWorkspaceTransaction(
+        async (transactionScope) => {
+          await transactionScope.executeRawQuery(
             `SELECT set_config('statement_timeout', $1, true)`,
             [String(timeoutMs)],
           );
 
-          const queryBuilder = entityManager.createQueryBuilder(
-            undefined,
-            queryRunner,
+          const repository = transactionScope.getRepository<Entity>(
+            flatObjectMetadata.nameSingular,
+            rolePermissionConfig,
           );
 
-          const { flatObjectMetadataMaps } = entityManager.internalContext;
+          const queryBuilder = repository.createQueryBuilder(
+            flatObjectMetadata.nameSingular,
+          );
+
+          const { flatObjectMetadataMaps } = repository.internalContext;
 
           const queryParser = new GraphqlQueryParser(
             flatObjectMetadata,
@@ -420,9 +436,21 @@ export class SearchService {
               flatFieldMetadataMaps,
             ),
             ...imageIdentifierColumns,
-          ].map((field) => `"${field}"`);
+          ];
 
-          queryBuilder.select(fieldsToSelect);
+          const [firstField, ...remainingFields] = fieldsToSelect;
+
+          queryBuilder.select(
+            `"${flatObjectMetadata.nameSingular}"."${firstField}"`,
+            firstField,
+          );
+
+          for (const field of remainingFields) {
+            queryBuilder.addSelect(
+              `"${flatObjectMetadata.nameSingular}"."${field}"`,
+              field,
+            );
+          }
 
           const searchWords = searchInput
             .trim()
@@ -439,7 +467,7 @@ export class SearchService {
           });
 
           const rawResults = await queryBuilder
-            .orderBy('"id"', 'ASC')
+            .orderBy(`"${flatObjectMetadata.nameSingular}"."id"`, 'ASC')
             .take(limit)
             .getRawMany();
 

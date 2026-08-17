@@ -6,6 +6,8 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { formatDistanceToNow } from 'date-fns';
 import { useContext, useMemo } from 'react';
 
+import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
+
 import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
@@ -123,6 +125,7 @@ export const SettingsWorkspaceMembersInviteTab = () => {
 
   return (
     <>
+      <SettingsRolesQueryEffect />
       {currentWorkspace?.inviteHash &&
         currentWorkspace?.isPublicInviteLinkEnabled && (
           <Section>

@@ -1,4 +1,5 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { type SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 
@@ -12,11 +13,13 @@ export const updateSlackAssistantRequest = async (
     status,
     responseText,
     errorMessage,
+    workspaceMemberId,
   }: {
     id: string;
-    status: SlackAssistantRequestStatus;
+    status?: SlackAssistantRequestStatus;
     responseText?: string;
     errorMessage?: string;
+    workspaceMemberId?: string;
   },
 ): Promise<void> => {
   await client.mutation({
@@ -24,9 +27,10 @@ export const updateSlackAssistantRequest = async (
       __args: {
         id,
         data: {
-          status,
-          ...(responseText !== undefined ? { responseText } : {}),
-          ...(errorMessage !== undefined ? { errorMessage } : {}),
+          ...(isDefined(status) ? { status } : {}),
+          ...(isDefined(responseText) ? { responseText } : {}),
+          ...(isDefined(errorMessage) ? { errorMessage } : {}),
+          ...(isDefined(workspaceMemberId) ? { workspaceMemberId } : {}),
         },
       },
       id: true,

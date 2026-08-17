@@ -11,7 +11,7 @@ import { BillingUsageService } from 'src/engine/core-modules/billing/services/bi
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
-import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
+import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
 @Injectable()
@@ -46,7 +46,11 @@ export class AgentTitleGenerationService {
       const result = await generateText({
         model: defaultModel.model,
         prompt: `Generate a concise, descriptive title (maximum 60 characters) for a chat thread based on the following message. The title should capture the main topic or purpose of the conversation. Return only the title, nothing else. Message: "${messageContent}"`,
-        experimental_telemetry: AI_TELEMETRY_CONFIG,
+        experimental_telemetry: buildAiTelemetry({
+          functionId: 'agent-title-generation',
+          workspaceId,
+          userWorkspaceId,
+        }),
       });
 
       usage = result.usage;

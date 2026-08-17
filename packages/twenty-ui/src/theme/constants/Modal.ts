@@ -16,8 +16,8 @@ export const MODAL: {
       height: '800px',
     },
     fullscreen: {
-      width: '100dvw',
-      height: '100dvh',
+      width: 'calc(100dvw / var(--t-zoom, 1))',
+      height: 'calc(100dvh / var(--t-zoom, 1))',
     },
   },
 };

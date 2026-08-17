@@ -102,6 +102,32 @@ export type RequestAccessTokenRefreshFunction = () => Promise<string>;
 
 export type CopyToClipboardFunction = (text: string) => Promise<void>;
 
+export type UploadedFrontComponentFile = {
+  fileId: string;
+  path: string;
+  url: string;
+  size: number;
+  mimeType: string;
+};
+
+export type UploadFileParams = {
+  // Uploads target a FILES field so the file can be attached to a record;
+  // anything else would strand it as a temporary orphan.
+  fieldMetadataId: string;
+  fileName?: string;
+};
+
+export type UploadFileFailureReason = 'invalid-params' | 'upload-failed';
+
+export type UploadFileResult =
+  | { status: 'uploaded'; file: UploadedFrontComponentFile }
+  | { status: 'failed'; reason: UploadFileFailureReason };
+
+export type UploadFileFunction = (
+  file: Blob,
+  params: UploadFileParams,
+) => Promise<UploadFileResult>;
+
 export type OpenCommandConfirmationModalHostFunction = (
   params: Parameters<OpenCommandConfirmationModalFunction>[0],
 ) => Promise<void>;
@@ -131,6 +157,7 @@ export type FrontComponentHostCommunicationApiStore = {
   closeSidePanel?: CloseSidePanelFunction;
   updateProgress?: UpdateProgressFunction;
   copyToClipboard?: CopyToClipboardFunction;
+  uploadFile?: UploadFileFunction;
   storageSet?: StorageSetFunction;
   storageDelete?: StorageDeleteFunction;
   storageClear?: StorageClearFunction;

@@ -25,6 +25,7 @@ import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slac
 import { fetchWorkspaceBaseUrl } from 'src/logic-functions/utils/fetch-workspace-base-url';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
+import { resolveSlackRunAsForRequest } from 'src/logic-functions/utils/resolve-slack-run-as-for-request';
 import { runSlackAssistantAgentWithStatus } from 'src/logic-functions/utils/run-slack-assistant-agent-with-status';
 import { setSlackAssistantThreadTitle } from 'src/logic-functions/utils/set-slack-assistant-thread-title';
 import { subscribeSlackThread } from 'src/logic-functions/utils/subscribe-slack-thread';
@@ -62,9 +63,9 @@ export const slackAssistantWorkerHandler = async (
     status: SLACK_ASSISTANT_REQUEST_STATUS.PROCESSING,
   });
 
-  const isDirectMessage = record.slackChannelType === 'im';
-
-  const isThreadStartingMessage = !isNonEmptyString(record.slackThreadTimestamp);
+  const isThreadStartingMessage = !isNonEmptyString(
+    record.slackThreadTimestamp,
+  );
 
   const parentMessageTimestamp = getSlackAssistantParentMessageTimestamp({
     slackThreadTimestamp: record.slackThreadTimestamp,
@@ -79,23 +80,55 @@ export const slackAssistantWorkerHandler = async (
   };
 
   try {
-    const [{ conversationMessages, requesterName }, workspaceBaseUrl] =
-      await Promise.all([
-        fetchSlackAssistantContext({
-          slackChannelId,
-          parentMessageTimestamp,
-          slackUserId: record.slackUserId,
-          excludeMessageTimestamps: [slackMessageTimestamp],
-        }),
-        fetchWorkspaceBaseUrl(),
-      ]);
+    const [
+      {
+        conversationMessages,
+        requesterName,
+        requesterIdentity,
+        requestMessage,
+        threadMessages,
+        slackClient,
+        assistantBotUserId,
+        isDirectMessage,
+      },
+      workspaceBaseUrl,
+    ] = await Promise.all([
+      fetchSlackAssistantContext({
+        slackChannelId,
+        parentMessageTimestamp,
+        slackMessageTimestamp,
+        slackUserId: record.slackUserId,
+      }),
+      fetchWorkspaceBaseUrl(),
+    ]);
+
+    const runAsWorkspaceMemberId = await resolveSlackRunAsForRequest({
+      client,
+      slackClient,
+      assistantBotUserId,
+      identity: requesterIdentity,
+      requestId: record.id,
+      requestText,
+      requestMessage,
+      threadMessages,
+      isDirectMessage,
+    });
+
+    if (isNonEmptyString(runAsWorkspaceMemberId)) {
+      await updateSlackAssistantRequest(client, {
+        id: record.id,
+        workspaceMemberId: runAsWorkspaceMemberId,
+      }).catch(() => undefined);
+    }
 
     const agentResult = await runSlackAssistantAgentWithStatus({
       agentUniversalIdentifier: SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
+      runAsWorkspaceMemberId,
       messages: buildSlackAssistantMessages({
         requestText,
         requesterName,
         conversationMessages,
+        runAsWorkspaceMemberId,
         timeoutSeconds: SLACK_ASSISTANT_WORKER_TIMEOUT_SECONDS,
         workspaceBaseUrl,
       }),

@@ -211,6 +211,7 @@ export interface WorkspaceMember {
     name: FullName
     userEmail: Scalars['String']
     colorScheme: Scalars['String']
+    uiScale: Scalars['String']
     openRecordIn: OpenRecordIn
     avatarUrl?: Scalars['String']
     locale?: Scalars['String']
@@ -3469,6 +3470,7 @@ export interface WorkspaceMemberGenqlSelection{
     name?: FullNameGenqlSelection
     userEmail?: boolean | number
     colorScheme?: boolean | number
+    uiScale?: boolean | number
     openRecordIn?: boolean | number
     avatarUrl?: boolean | number
     locale?: boolean | number

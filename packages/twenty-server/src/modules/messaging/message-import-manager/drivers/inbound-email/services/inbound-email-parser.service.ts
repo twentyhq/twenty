@@ -13,22 +13,22 @@ import { sanitizeString } from 'src/modules/messaging/message-import-manager/uti
 export class InboundEmailParserService {
   async parse(
     rawMessage: Buffer,
-    s3Key: string,
+    reference: string,
   ): Promise<ParsedInboundMessage> {
     const parsedEmail = await PostalMime.parse(rawMessage);
-    const message = this.buildMessage(parsedEmail, s3Key);
+    const message = this.buildMessage(parsedEmail, reference);
 
     return { parsed: parsedEmail, message };
   }
 
   private buildMessage(
     parsedEmail: ParsedEmail,
-    s3Key: string,
+    reference: string,
   ): MessageWithParticipants {
     return {
-      externalId: `inbound-email:${s3Key}`,
+      externalId: `inbound-email:${reference}`,
       messageThreadExternalId: extractThreadIdFromParsedEmail(parsedEmail),
-      headerMessageId: parsedEmail.messageId?.trim() || `inbound-${s3Key}`,
+      headerMessageId: parsedEmail.messageId?.trim() || `inbound-${reference}`,
       subject: sanitizeString(parsedEmail.subject || ''),
       text: sanitizeString(parsedEmail.text || ''),
       receivedAt: parsedEmail.date ? new Date(parsedEmail.date) : new Date(),

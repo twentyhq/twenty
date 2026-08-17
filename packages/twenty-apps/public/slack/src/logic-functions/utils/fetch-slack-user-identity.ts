@@ -1,0 +1,58 @@
+import { type WebClient } from '@slack/web-api';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-sdk/utils';
+
+import { type SlackUserIdentity } from 'src/logic-functions/types/slack-user-identity.type';
+
+const SLACKBOT_USER_ID = 'USLACKBOT';
+
+const resolveDisplayName = (user: {
+  profile?: { display_name?: string };
+  real_name?: string;
+}): string | undefined => {
+  const displayName = user.profile?.display_name;
+
+  if (isNonEmptyString(displayName)) {
+    return displayName;
+  }
+
+  return isNonEmptyString(user.real_name) ? user.real_name : undefined;
+};
+
+export const fetchSlackUserIdentity = async ({
+  client,
+  slackUserId,
+}: {
+  client: WebClient;
+  slackUserId: string | undefined;
+}): Promise<SlackUserIdentity | undefined> => {
+  if (!isNonEmptyString(slackUserId)) {
+    return undefined;
+  }
+
+  const userInfo = await client.users
+    .info({ user: slackUserId })
+    .catch(() => undefined);
+
+  const user = userInfo?.user;
+
+  if (!isDefined(user)) {
+    return undefined;
+  }
+
+  const email = user.profile?.email;
+
+  return {
+    slackUserId,
+    slackTeamId: isNonEmptyString(user.team_id) ? user.team_id : undefined,
+    displayName: resolveDisplayName(user),
+    email: isNonEmptyString(email) ? email : undefined,
+    isRegularUserAccount:
+      user.id !== SLACKBOT_USER_ID &&
+      user.is_bot !== true &&
+      user.deleted !== true &&
+      user.is_restricted !== true &&
+      user.is_ultra_restricted !== true &&
+      user.is_email_confirmed === true,
+  };
+};

@@ -15,14 +15,21 @@ type ElementDimensions = {
 type UsePinnedCommandMenuItemsInlineLayoutParams = {
   pinnedCommandMenuItems: CommandMenuItemFieldsFragment[];
   layoutKey: PinnedCommandMenuItemsLayoutKey;
+  // Overrides the self-measured container width when an ancestor already
+  // knows how much space the inline buttons may occupy.
+  containerWidth?: number;
 };
 
 export const usePinnedCommandMenuItemsInlineLayout = ({
   pinnedCommandMenuItems,
   layoutKey,
+  containerWidth,
 }: UsePinnedCommandMenuItemsInlineLayoutParams) => {
   const [commandMenuPinnedInlineLayout, setCommandMenuPinnedInlineLayout] =
     useAtomFamilyState(commandMenuPinnedInlineLayoutFamilyState, layoutKey);
+
+  const effectiveContainerWidth =
+    containerWidth ?? commandMenuPinnedInlineLayout.containerWidth;
 
   const pinnedCommandMenuItemKeysInDisplayOrder = useMemo(
     () => pinnedCommandMenuItems.map((item) => item.id),
@@ -31,7 +38,7 @@ export const usePinnedCommandMenuItemsInlineLayout = ({
 
   const hasKnownPinnedInlineLayout = useMemo(
     () =>
-      commandMenuPinnedInlineLayout.containerWidth > 0 &&
+      effectiveContainerWidth > 0 &&
       pinnedCommandMenuItemKeysInDisplayOrder.every((commandMenuItemKey) =>
         isNumber(
           commandMenuPinnedInlineLayout.commandMenuItemWidthsByKey[
@@ -39,7 +46,11 @@ export const usePinnedCommandMenuItemsInlineLayout = ({
           ],
         ),
       ),
-    [commandMenuPinnedInlineLayout, pinnedCommandMenuItemKeysInDisplayOrder],
+    [
+      commandMenuPinnedInlineLayout,
+      effectiveContainerWidth,
+      pinnedCommandMenuItemKeysInDisplayOrder,
+    ],
   );
 
   const visiblePinnedCommandMenuItemCount = useMemo(
@@ -50,13 +61,13 @@ export const usePinnedCommandMenuItemsInlineLayout = ({
               pinnedCommandMenuItemKeysInDisplayOrder,
             commandMenuItemWidthsByKey:
               commandMenuPinnedInlineLayout.commandMenuItemWidthsByKey,
-            commandMenuItemsContainerWidth:
-              commandMenuPinnedInlineLayout.containerWidth,
+            commandMenuItemsContainerWidth: effectiveContainerWidth,
             commandMenuItemsGapWidth: PINNED_COMMAND_MENU_ITEMS_GAP,
           })
         : 0,
     [
       commandMenuPinnedInlineLayout,
+      effectiveContainerWidth,
       hasKnownPinnedInlineLayout,
       pinnedCommandMenuItemKeysInDisplayOrder,
     ],

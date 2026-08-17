@@ -92,10 +92,7 @@ export const PageCardHeader = ({
   const isMobile = useIsMobile();
   const isNavigationDrawerExpanded = useNavigationDrawerExpanded();
 
-  // Uncentered headers drop the title on mobile to fit a labelled action.
-  const hasTitleContent =
-    (!isMobile || centerTitle) &&
-    (isDefined(icon) || isDefined(title) || isDefined(tag));
+  const hasTitleContent = isDefined(icon) || isDefined(title) || isDefined(tag);
   const shouldCenterTitle = centerTitle && hasTitleContent;
 
   const titleContent = (

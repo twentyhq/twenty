@@ -109,16 +109,11 @@ export class WorkflowVersionWorkspaceService {
 
           await this.workflowVersionCoreSyncService.writeWorkflowVersionAndMirror(
             workspaceId,
-            async (scopedRepository, entityManager) => {
-              await scopedRepository.update(
-                existingDraftVersion.id,
-                {
-                  steps: newWorkflowVersionSteps,
-                  trigger: newWorkflowVersionTrigger,
-                },
-                undefined,
-                entityManager,
-              );
+            async (scopedRepository) => {
+              await scopedRepository.update(existingDraftVersion.id, {
+                steps: newWorkflowVersionSteps,
+                trigger: newWorkflowVersionTrigger,
+              });
 
               return existingDraftVersion.id;
             },
@@ -151,18 +146,15 @@ export class WorkflowVersionWorkspaceService {
 
         await this.workflowVersionCoreSyncService.writeWorkflowVersionAndMirror(
           workspaceId,
-          async (scopedRepository, entityManager) => {
-            const insertResult = await scopedRepository.insert(
-              {
-                workflowId,
-                name: `v${workflowVersionsCount + 1}`,
-                status: WorkflowVersionStatus.DRAFT,
-                steps: newWorkflowVersionSteps,
-                trigger: newWorkflowVersionTrigger,
-                position,
-              },
-              entityManager,
-            );
+          async (scopedRepository) => {
+            const insertResult = await scopedRepository.insert({
+              workflowId,
+              name: `v${workflowVersionsCount + 1}`,
+              status: WorkflowVersionStatus.DRAFT,
+              steps: newWorkflowVersionSteps,
+              trigger: newWorkflowVersionTrigger,
+              position,
+            });
 
             draftWorkflowVersion = insertResult
               .generatedMaps[0] as WorkflowVersionWorkspaceEntity;
@@ -339,18 +331,15 @@ export class WorkflowVersionWorkspaceService {
 
         await this.workflowVersionCoreSyncService.writeWorkflowVersionAndMirror(
           workspaceId,
-          async (scopedRepository, entityManager) => {
-            const insertVersionResult = await scopedRepository.insert(
-              {
-                workflowId: newWorkflowId,
-                name: 'v1',
-                status: WorkflowVersionStatus.DRAFT,
-                position: versionPosition,
-                steps: remappedSteps,
-                trigger: remappedTrigger,
-              },
-              entityManager,
-            );
+          async (scopedRepository) => {
+            const insertVersionResult = await scopedRepository.insert({
+              workflowId: newWorkflowId,
+              name: 'v1',
+              status: WorkflowVersionStatus.DRAFT,
+              position: versionPosition,
+              steps: remappedSteps,
+              trigger: remappedTrigger,
+            });
 
             newDraftVersion = insertVersionResult
               .generatedMaps[0] as WorkflowVersionWorkspaceEntity;
@@ -438,13 +427,8 @@ export class WorkflowVersionWorkspaceService {
 
       await this.workflowVersionCoreSyncService.writeWorkflowVersionAndMirror(
         workspaceId,
-        async (scopedRepository, entityManager) => {
-          await scopedRepository.update(
-            workflowVersionId,
-            updatePayload,
-            undefined,
-            entityManager,
-          );
+        async (scopedRepository) => {
+          await scopedRepository.update(workflowVersionId, updatePayload);
 
           return workflowVersionId;
         },

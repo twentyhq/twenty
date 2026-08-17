@@ -8,6 +8,8 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { InboundEmailS3ClientProvider } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/providers/inbound-email-s3-client.provider';
 import { InboundEmailParserService } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/services/inbound-email-parser.service';
 import { InboundEmailStorageService } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/services/inbound-email-storage.service';
+import { InboundEmailMessageSourceResolverService } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/sources/inbound-email-message-source-resolver.service';
+import { SesS3InboundEmailMessageSourceService } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/sources/ses-s3-inbound-email-message-source.service';
 
 @Module({
   imports: [
@@ -19,11 +21,15 @@ import { InboundEmailStorageService } from 'src/modules/messaging/message-import
     InboundEmailS3ClientProvider,
     InboundEmailStorageService,
     InboundEmailParserService,
+    SesS3InboundEmailMessageSourceService,
+    InboundEmailMessageSourceResolverService,
   ],
   exports: [
     InboundEmailS3ClientProvider,
     InboundEmailStorageService,
     InboundEmailParserService,
+    SesS3InboundEmailMessageSourceService,
+    InboundEmailMessageSourceResolverService,
   ],
 })
 export class MessagingInboundEmailDriverModule {}

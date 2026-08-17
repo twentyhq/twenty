@@ -8,6 +8,18 @@ type UpsertCallRecordingOrThrowResult = {
   created: boolean;
 };
 
+// twenty-client-sdk 2.31 mistypes the JSON scalar as an object, rejecting the
+// transcript array. Drop this cast once the app is on a fixed SDK.
+const toCallRecordingInputFields = ({
+  transcript,
+  ...scalarFields
+}: CallRecordingSyncFields) => ({
+  ...scalarFields,
+  ...(isDefined(transcript)
+    ? { transcript: transcript as unknown as Record<string, unknown> }
+    : {}),
+});
+
 const doesCallRecordingExist = async ({
   coreApiClient,
   callRecordingId,
@@ -45,7 +57,7 @@ const updateCallRecordingOrThrow = async ({
 }): Promise<void> => {
   await coreApiClient.mutation({
     updateCallRecording: {
-      __args: { id: callRecordingId, data: fields },
+      __args: { id: callRecordingId, data: toCallRecordingInputFields(fields) },
       id: true,
     },
   });
@@ -80,7 +92,12 @@ export const upsertCallRecordingOrThrow = async ({
   try {
     await coreApiClient.mutation({
       createCallRecording: {
-        __args: { data: { id: callRecordingId, ...createFields } },
+        __args: {
+          data: {
+            id: callRecordingId,
+            ...toCallRecordingInputFields(createFields),
+          },
+        },
         id: true,
       },
     });

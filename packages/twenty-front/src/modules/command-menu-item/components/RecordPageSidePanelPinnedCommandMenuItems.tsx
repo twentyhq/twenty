@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
 import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
+import { useSidePanelFooterPinnedItemsAvailableWidth } from '@/command-menu-item/hooks/useSidePanelFooterPinnedItemsAvailableWidth';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
@@ -10,6 +11,8 @@ export const RecordPageSidePanelPinnedCommandMenuItems = () => {
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
     contextStoreCurrentObjectMetadataItemIdComponentState,
   );
+
+  const availableWidth = useSidePanelFooterPinnedItemsAvailableWidth();
 
   if (!isDefined(contextStoreCurrentObjectMetadataItemId)) {
     return null;
@@ -21,7 +24,7 @@ export const RecordPageSidePanelPinnedCommandMenuItems = () => {
       displayType="button"
       containerType={CommandMenuItemContainerType.SidePanelFooter}
     >
-      <PinnedCommandMenuItemButtons />
+      <PinnedCommandMenuItemButtons containerWidth={availableWidth} />
     </CommandMenuContextProvider>
   );
 };

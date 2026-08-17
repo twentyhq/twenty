@@ -5,7 +5,9 @@ import {
   type DAVCalendar,
   type DAVClient,
   type DAVResponse,
+  DAVNamespace,
   DAVNamespaceShort,
+  getDAVAttribute,
 } from 'tsdav';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -14,7 +16,9 @@ import { extractICalData } from 'src/modules/calendar/calendar-event-import-mana
 import { isEventInTimeRange } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-event-in-time-range.util';
 import { isInvalidSyncTokenResponse } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-invalid-sync-token-response.util';
 import { isValidCalDavHref } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-valid-caldav-href.util';
+import { mapCalDavStatusToExceptionCode } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/map-caldav-status-to-exception-code.util';
 import { parseICalEvents } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/parse-ical-event.util';
+import { CalendarEventImportDriverException } from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
 
 type CalendarSyncResult = {
@@ -88,18 +92,14 @@ export class CalDavFetchEventsService {
     const calendarObjects = (
       await Promise.all(
         collectionUrls.map((collectionUrl) =>
-          client.calendarMultiGet({
-            url: collectionUrl,
-            props: {
-              [`${DAVNamespaceShort.DAV}:getetag`]: {},
-              [`${DAVNamespaceShort.CALDAV}:calendar-data`]: {},
-            },
-            objectUrls: eventHrefs.filter(
+          this.fetchCalendarObjects(
+            client,
+            collectionUrl,
+            eventHrefs.filter(
               (href) =>
                 this.resolveCollectionUrl(client, href) === collectionUrl,
             ),
-            depth: '1',
-          }),
+          ),
         ),
       )
     ).flat();
@@ -113,6 +113,88 @@ export class CalDavFetchEventsService {
         isEventInTimeRange(event, startDate, endDate),
       );
     });
+  }
+
+  private async fetchCalendarObjects(
+    client: DAVClient,
+    collectionUrl: string,
+    objectUrls: string[],
+  ): Promise<DAVResponse[]> {
+    const responses = await client.davRequest({
+      url: collectionUrl,
+      init: {
+        method: 'REPORT',
+        namespace: DAVNamespaceShort.CALDAV,
+        headers: { depth: '1' },
+        body: {
+          'calendar-multiget': {
+            _attributes: getDAVAttribute([
+              DAVNamespace.DAV,
+              DAVNamespace.CALDAV,
+            ]),
+            [`${DAVNamespaceShort.DAV}:prop`]: {
+              [`${DAVNamespaceShort.DAV}:getetag`]: {},
+              [`${DAVNamespaceShort.CALDAV}:calendar-data`]: {},
+            },
+            [`${DAVNamespaceShort.DAV}:href`]: objectUrls,
+          },
+        },
+      },
+    });
+
+    const unreadableResponses = responses.filter(
+      (response) => isDefined(response.status) && response.status >= 400,
+    );
+
+    const failedRequest = unreadableResponses.find((response) =>
+      this.isCollectionResponse(response, collectionUrl),
+    );
+
+    if (isDefined(failedRequest)) {
+      throw new CalendarEventImportDriverException(
+        `calendar-multiget on ${collectionUrl} failed: ${failedRequest.status} ${failedRequest.statusText}`,
+        mapCalDavStatusToExceptionCode(failedRequest.status),
+      );
+    }
+
+    const removedResponses = unreadableResponses.filter(
+      (response) => response.status === 404 || response.status === 410,
+    );
+    const unexpectedResponses = unreadableResponses.filter(
+      (response) => response.status !== 404 && response.status !== 410,
+    );
+
+    if (removedResponses.length > 0) {
+      this.logger.debug(
+        `Skipping ${removedResponses.length} calendar events removed from ${collectionUrl} since the last list fetch`,
+      );
+    }
+
+    if (unexpectedResponses.length > 0) {
+      this.logger.warn(
+        `Skipping ${unexpectedResponses.length} unreadable calendar events in ${collectionUrl}: ${unexpectedResponses
+          .map((response) => `${response.href} ${response.status}`)
+          .join(', ')}`,
+      );
+    }
+
+    return responses.filter(
+      (response) => !isDefined(response.status) || response.status < 400,
+    );
+  }
+
+  private isCollectionResponse(
+    response: DAVResponse,
+    collectionUrl: string,
+  ): boolean {
+    if (!isNonEmptyString(response.href)) {
+      return true;
+    }
+
+    return (
+      new URL(response.href, collectionUrl).href.replace(/\/$/, '') ===
+      new URL(collectionUrl).href.replace(/\/$/, '')
+    );
   }
 
   private resolveCollectionUrl(client: DAVClient, href: string): string {
@@ -173,8 +255,8 @@ export class CalDavFetchEventsService {
       .map((entry) => entry.href);
 
     const rawSyncToken = syncResult[0]?.raw?.multistatus?.syncToken;
-    const newSyncToken = isNonEmptyString(rawSyncToken)
-      ? rawSyncToken
+    const newSyncToken = isDefined(rawSyncToken)
+      ? String(rawSyncToken)
       : previousSyncToken;
 
     return {

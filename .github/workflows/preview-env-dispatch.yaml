@@ -65,7 +65,7 @@ jobs:
       # Preview envs run on the PUBLIC ci-public repo so the 5h keepalive job
       # consumes free Actions minutes (private repos bill them). ci-public holds
       # no privileged secret: it starts the tunnel and dispatches the URL back to
-      # ci-privileged for the PR comment *before* running any PR-controlled code.
+      # twenty-factory for the PR comment *before* running any PR-controlled code.
       - name: Mint ci-public dispatch token
         id: app-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0

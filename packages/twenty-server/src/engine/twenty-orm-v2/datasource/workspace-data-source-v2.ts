@@ -30,6 +30,10 @@ export type WorkspaceTransactionScopeV2 = {
     nameSingular: string,
     rolePermissionConfig?: RolePermissionConfig,
   ) => WorkspaceRepositoryV2;
+  executeRawQuery: (
+    sql: string,
+    parameters?: unknown[],
+  ) => Promise<Record<string, unknown>[]>;
 };
 
 export class WorkspaceDataSourceV2 {
@@ -78,6 +82,8 @@ export class WorkspaceDataSourceV2 {
             executor,
             isTransactional: true,
           }),
+        executeRawQuery: (sql, parameters = []) =>
+          executor.execute({ text: sql, values: parameters }),
       }),
     );
   }

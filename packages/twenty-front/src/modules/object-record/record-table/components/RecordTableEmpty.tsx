@@ -23,11 +23,17 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { styled } from '@linaria/react';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { MOBILE_VIEWPORT } from 'twenty-ui/theme-constants';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledEmptyStateContainer = styled.div<{ width: number }>`
   height: 100%;
   overflow: hidden;
   width: ${({ width }) => width}px;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    width: 100%;
+  }
 `;
 
 export interface RecordTableEmptyProps {
@@ -36,6 +42,8 @@ export interface RecordTableEmptyProps {
 
 export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
   const { visibleRecordFields, recordTableId } = useRecordTableContextOrThrow();
+
+  const isMobile = useIsMobile();
 
   const isRecordTableDragColumnHidden = useAtomComponentStateValue(
     isRecordTableDragColumnHiddenComponentState,
@@ -98,8 +106,17 @@ export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
   );
 
   const columnWidthStyles = useMemo(
-    () => getRecordTableColumnWidthInlineStyles({ visibleRecordFields }),
-    [visibleRecordFields],
+    () =>
+      getRecordTableColumnWidthInlineStyles({
+        visibleRecordFields,
+        isDragColumnHidden: isRecordTableDragColumnHidden,
+        isCheckboxColumnHidden: isRecordTableCheckboxColumnHidden,
+      }),
+    [
+      visibleRecordFields,
+      isRecordTableDragColumnHidden,
+      isRecordTableCheckboxColumnHidden,
+    ],
   );
 
   return (
@@ -109,7 +126,9 @@ export const RecordTableEmpty = ({ tableBodyRef }: RecordTableEmptyProps) => {
         style={columnWidthStyles}
         id={getRecordTableHtmlId(recordTableId)}
       >
-        <RecordTableHeader />
+        {/* An empty table has no cells to reveal, so the header would only add
+            a horizontal scroll to a screen with nothing to scroll to. */}
+        {!isMobile && <RecordTableHeader />}
       </RecordTableStyleWrapper>
       <RecordTableEmptyState />
       <RecordTableColumnWidthEffect />

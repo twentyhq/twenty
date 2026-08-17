@@ -466,15 +466,16 @@ const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_AP
 
 前端组件可以使用来自 `twenty-sdk` 的函数触发导航、模态框和通知：
 
-| 函数                                              | 描述            |
-| ----------------------------------------------- | ------------- |
-| `navigate(to, params?, queryParams?, options?)` | 在应用中导航到某个页面   |
-| `openSidePanelPage(params)`                     | 打开侧边栏         |
-| `closeSidePanel()`                              | 关闭侧边栏         |
-| `openCommandConfirmationModal(params)`          | 显示确认对话框       |
-| `enqueueSnackbar(params)`                       | 显示一条 Toast 通知 |
-| `unmountFrontComponent()`                       | 卸载该组件         |
-| `updateProgress(progress)`                      | 更新进度指示器       |
+| 函数                                                 | 描述                                                                                                                                                                     |
+| -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `navigate(to, params?, queryParams?, options?)`    | 在应用中导航到某个页面                                                                                                                                                            |
+| `openSidePanelPage(params)`                        | 打开侧边栏                                                                                                                                                                  |
+| `closeSidePanel()`                                 | 关闭侧边栏                                                                                                                                                                  |
+| `openCommandConfirmationModal(params)`             | 显示确认对话框                                                                                                                                                                |
+| `enqueueSnackbar(params)`                          | 显示一条 Toast 通知                                                                                                                                                          |
+| `unmountFrontComponent()`                          | 卸载该组件                                                                                                                                                                  |
+| `updateProgress(progress)`                         | 更新进度指示器                                                                                                                                                                |
+| `uploadFile(file, { fieldMetadataId, fileName? })` | 将一个 `Blob` 上传到 FILES 字段；返回 `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` 或 `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` |
 
 下面是一个示例，使用宿主 API 在操作完成后显示一条 snackbar 并关闭侧边栏：
 
@@ -773,24 +774,24 @@ const Card = () => {
 
 ## 目前的限制
 
-正在开发前台组件。 渲染、样式和处理活动效果良好。 任何达到*过去* 渲染(测量元素，在ref上调用DOM方法) 在你的树外端传输端口，触摸浏览器存储设备)今天不存在或不完整。 并且大部分失败：没有例外，也没有错误的 TypeScript ，因为scaffold 是与完整的浏览器 DOM键入的。
+正在开发前台组件。 渲染、样式处理、事件处理、元素测量以及浏览器存储都运行良好。 任何 *超出* 这些范围的操作（在 ref 上调用 DOM 方法、监听元素尺寸变化、在组件树之外进行传送）目前都缺失或不完整，并且其中大多数都会静默失败：既不会抛出异常，也不会有 TypeScript 错误，因为脚手架是基于完整的浏览器 DOM 进行类型定义的。
 
 如果其中任何一项阻碍了你，[打开一个 issue](https://github.com/twentyhq/twenty/issues/new/choose)，以便它能被优先处理。
 
 ### 布局和测量
 
-没有任何东西可以衡量自己。
+元素可以自行测量：宿主会将几何信息镜像到沙箱中，因此读取在本地完成，但可能会滞后一帧；而首次读取一个从未被测量过的元素时会返回零值。 写入之后，在 `requestAnimationFrame` 回调或 effect 中重新读取。
 
-| API                                                           | 发生了什么                                           |
-| ------------------------------------------------------------- | ----------------------------------------------- |
-| `getBoundingClientRect()`，`getClientRects()`                  | 投出                                              |
-| `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | 静默`未定义`, 所以`宽度 ?? 0` 当量`0` 当量时，`宽度 > 600` 时总是假的 |
-| `ResizeObserver`, `IntersectionObserver`                      | `ReferenceError` (`typeof`警卫干工作)                |
-| `window.matchMedia()`, `window.getComputedStyle()`            | 投出                                              |
-| `window.innerWidth`, `innerHight`, `devicePixelRatio`         | 静默`未定义`                                         |
-| `新的 MutationObserver(fn)`                                     | 构造，然后扔出 `.observe()`                            |
+| API                                                                                      | 发生了什么                                                                    |
+| ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | 可用，来自镜像；给 `scrollTop` / `scrollLeft` 赋值不会产生任何效果（no-op）                   |
+| `getClientRects()`, `window.matchMedia()`                                                | 投出                                                                       |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY`             | 可用，报告的是**浏览器视口**；你的组件自身的尺寸是 `document.body.clientWidth` / `clientHeight` |
+| `window.getComputedStyle()`                                                              | 仅返回元素的行内样式，而不会返回宿主计算得到的级联样式                                              |
+| `ResizeObserver`, `IntersectionObserver`                                                 | `ReferenceError` (`typeof`警卫干工作)                                         |
+| `MutationObserver`                                                                       | 可用，包括 `subtree`、`attributeFilter`、旧值和 `takeRecords()`                    |
 
-因此，调整导航“ResponsiveContainer”、浮动界面/弹出窗口、列表虚拟化和拖动到调整大小尚不可用。 在 CSS 中选择布局：您的样式表到达了真正的页面，所以弹性框、网格、`aspect-ratio`、`clamp()`和`@container`都是正常行为。
+基于 `getBoundingClientRect` 的定位现在可用了，但任何通过 `ResizeObserver` 监测尺寸变化的东西（recharts 的 `ResponsiveContainer`、Floating UI 的 `autoUpdate`）仍然不可用。 无论如何都应优先使用 CSS 进行布局：你的样式表可以作用到真实页面，因此 flexbox、grid、`aspect-ratio`、`clamp()` 和 `@container` 都会正常工作，没有帧延迟。
 
 <Note>
 `requestAnimationFramework`, `fetch`, `setTimeout` 和 `queueMicrotask` 在没有窗口前缀的情况下工作。 只有`window.requestAnimationFramework(...)`和朋友投掷.
@@ -800,14 +801,14 @@ const Card = () => {
 
 一个 `ref` 给予你一个沙盒元素，而不是一个 `HTMLEment` 。
 
-| 您写的内容                                                                                                       | 发生了什么                         | 改用                                             |
-| ----------------------------------------------------------------------------------------------------------- | ----------------------------- | ---------------------------------------------- |
-| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | 投出                            | 受控组件；从 `event.target` 读取值                      |
-| `element.classList.add(...)`                                                                                | 抛出(`classList` 是 `undefined`) | 构建您自己的 `className` 字符串                         |
-| `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | 投出                            | `querySelector()` / `querySelectorAll()`，它起作用。 |
-| `document.activeElement`                                                                                    | 总是`未定义`                       | 使用 `onFocus` / `onBlur` 跟踪重点                   |
-| `canvas`                                                                                                    | 渲染无任何东西，没有错误                  | SVG，或者在离屏位置绘制并在 `img` 元素中显示结果                  |
-| `createPortal(node, document.body)`                                                                         | 渲染无处不在，而`isConnected`报告成功     | 覆盖“位置：绝对位置”，或传递您自己的容器元素                        |
+| 您写的内容                                                                                                       | 发生了什么                         | 改用                                                                                                                                  |
+| ----------------------------------------------------------------------------------------------------------- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | 投出                            | 受控组件；从 `event.target` 读取值                                                                                                           |
+| `element.classList.add(...)`                                                                                | 抛出(`classList` 是 `undefined`) | 构建您自己的 `className` 字符串                                                                                                              |
+| `document.createTreeWalker()`                                                                               | 投出                            | `querySelector()` / `querySelectorAll()` 和 `getElementById()` 可用；`getElementsByClassName()` 也可用，但返回的是静态集合，而不是实时更新的 `HTMLCollection` |
+| `document.activeElement`                                                                                    | 总是`未定义`                       | 使用 `onFocus` / `onBlur` 跟踪重点                                                                                                        |
+| `canvas`                                                                                                    | 渲染无任何东西，没有错误                  | SVG，或者在离屏位置绘制并在 `img` 元素中显示结果                                                                                                       |
+| `createPortal(node, document.body)`                                                                         | 渲染无处不在，而`isConnected`报告成功     | 覆盖“位置：绝对位置”，或传递您自己的容器元素                                                                                                             |
 
 Portal间隙是为什么Radix、Headless UI、MUI和react-selected popover默认不会渲染任何内容。 大多数人接受一个容器prop；指向一个你渲染的元素。
 
@@ -833,9 +834,13 @@ Portal间隙是为什么Radix、Headless UI、MUI和react-selected popover默认
 * 其它来源将沙盒留给`原始：null`，所以第三方API只有在发送`Access-Control-Allow-ource：*`时才能解答。 从逻辑函数调用它。
 * `fetch('/rest/people)`永远不匹配20个API，因为沙盒没有页面URL解决相对路径。
 
+### 媒体捕获
+
+`navigator.mediaDevices.getUserMedia()` 和 `MediaRecorder` 通过 sandbox polyfill 在 front 组件中运行，因此标准录制代码可以不做修改地运行，并且 `MediaRecorder.isTypeSupported` 会对常见的容器/编解码器组合给出支持情况。 详细的 `getUserMedia` 约束对象会被接受但不会被转发 —— 宿主会使用其针对所请求媒体类型的默认设置进行捕获 —— 并且在应用之间同一时间只能有一个捕获处于活动状态。 使用 `uploadFile` 宿主函数存储已录制的 `Blob`。
+
 ### 其他差距
 
-* **文件内容。** 类型为 `file` 的 `input` 只会向你的处理函数提供文件的元数据，而不是字节本身，因此目前还无法使用 `FileReader` 和上传功能。
+* **文件内容。** 类型为 `file` 的 `input` 只会向你的处理函数提供文件的元数据，而不是字节本身，因此无法使用 `FileReader`。 要上传你的代码已经持有的 `Blob`（例如由 `MediaRecorder` 生成的 `Blob`），请使用 `uploadFile` 宿主函数。
 * **拖放payloads.** 拖动事件触发，但`event.dataTransfer` 是未定义的。
 * **Node 内置。** `fs`、`path` 和 `node:crypto` 失败，所以将其移动到一个[逻辑函数](/l/zh/developers/extend/apps/logic/logic-functions)。 Web Crypto, `fetch`, `TextEncoder` 和 `URL` 都是可用的。
 * **`iframe`** 始终会在没有 `allow-same-origin` 的情况下重新沙箱化，因此依赖其自身会话的嵌入内容会呈现为未登录状态。 它也没有`onLoad`文件。

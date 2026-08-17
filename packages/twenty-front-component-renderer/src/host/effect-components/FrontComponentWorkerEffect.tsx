@@ -7,6 +7,7 @@ import { buildHostFetchPolicyFromFrontComponentUrls } from '@/host/fetch/utils/b
 import { createFrontComponentHostThread } from '@/host/thread/utils/createFrontComponentHostThread';
 import { createHostFetchEnforcingPolicy } from '@/host/fetch/utils/createHostFetchEnforcingPolicy';
 import { type GeometryTracker } from '@/host/geometry/types/GeometryTracker';
+import { type FrontComponentMediaSessionHost } from '@/host/media/types/FrontComponentMediaSessionHost';
 import { fetchComponentSource } from '@/host/component-source/utils/fetchComponentSource';
 import { fetchSdkClientSources } from '@/host/component-source/utils/fetchSdkClientSources';
 import { buildFrontComponentStorageSnapshots } from '@/host/storage/utils/buildFrontComponentStorageSnapshots';
@@ -29,6 +30,7 @@ type FrontComponentWorkerEffectProps = {
   applicationVariables?: Record<string, string>;
   storageNamespace?: string;
   geometryTracker: GeometryTracker;
+  mediaSessionHost?: FrontComponentMediaSessionHost;
   setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
   setThread: React.Dispatch<React.SetStateAction<FrontComponentThread | null>>;
   setError: React.Dispatch<React.SetStateAction<Error | null>>;
@@ -44,6 +46,7 @@ export const FrontComponentWorkerEffect = ({
   applicationVariables,
   storageNamespace,
   geometryTracker,
+  mediaSessionHost,
   setReceiver,
   setThread,
   setError,
@@ -78,6 +81,7 @@ export const FrontComponentWorkerEffect = ({
       hostMessagePort: channel.port1,
       hostFetch,
       geometryTracker,
+      mediaSessionHost,
     });
 
     const handleSandboxMessage = createFrontComponentSandboxMessageHandler({
@@ -144,6 +148,8 @@ export const FrontComponentWorkerEffect = ({
           applicationVariables,
           initialViewportGeometry: geometryTracker.getViewportGeometry(),
           storageSnapshots,
+          mediaRecorderCapabilities:
+            mediaSessionHost?.getRecorderCapabilities(),
         });
       } catch (error) {
         if (!isCancelled) {
@@ -175,6 +181,7 @@ export const FrontComponentWorkerEffect = ({
     applicationVariables,
     storageNamespace,
     geometryTracker,
+    mediaSessionHost,
     setError,
     setReceiver,
     setThread,

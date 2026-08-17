@@ -69,6 +69,7 @@ export class WorkspaceMemberTranspiler {
       name,
       userEmail,
       colorScheme,
+      uiScale,
       openRecordIn,
       locale,
       timeFormat,
@@ -99,9 +100,10 @@ export class WorkspaceMemberTranspiler {
       avatarUrl,
       userWorkspaceId: userWorkspace.id,
       colorScheme,
-      // Workspaces upgrade after the code rolls out, so the field is absent
-      // until the 2-27 workspace command reaches them.
+      // Workspaces upgrade after the code rolls out, so these fields are
+      // absent until their workspace commands (2-27, 2-32) reach them.
       openRecordIn: (openRecordIn as OpenRecordIn) ?? OpenRecordIn.SIDE_PANEL,
+      uiScale: uiScale ?? 'Default',
       dateFormat: dateFormat as WorkspaceMemberDateFormatEnum,
       locale,
       timeFormat: timeFormat as WorkspaceMemberTimeFormatEnum,

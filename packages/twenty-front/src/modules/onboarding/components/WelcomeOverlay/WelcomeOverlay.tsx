@@ -92,7 +92,7 @@ const StyledTitle = styled.div`
   @media (max-width: 600px) {
     flex-wrap: wrap;
     font-size: 20px;
-    max-width: 90vw;
+    max-width: calc(90vw / var(--t-zoom, 1));
     padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[2]};
   }
 

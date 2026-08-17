@@ -737,6 +737,9 @@ export default {
             "colorScheme": [
                 1
             ],
+            "uiScale": [
+                1
+            ],
             "openRecordIn": [
                 34
             ],
