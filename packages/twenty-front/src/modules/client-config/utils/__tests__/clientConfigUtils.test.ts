@@ -63,12 +63,6 @@ describe('getClientConfig', () => {
 
     expect(fetch).toHaveBeenCalledWith(
       `${REACT_APP_SERVER_BASE_URL}/client-config`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
     );
     expect(result).toEqual(mockClientConfig);
   });

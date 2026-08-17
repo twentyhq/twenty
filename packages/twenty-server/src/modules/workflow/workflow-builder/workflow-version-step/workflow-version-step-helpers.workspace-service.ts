@@ -58,13 +58,8 @@ export class WorkflowVersionStepHelpersWorkspaceService {
 
     await this.workflowVersionCoreSyncService.writeWorkflowVersionAndMirror(
       workspaceId,
-      async (workflowVersionRepository, entityManager) => {
-        await workflowVersionRepository.update(
-          workflowVersionId,
-          updateData,
-          undefined,
-          entityManager,
-        );
+      async (workflowVersionRepository) => {
+        await workflowVersionRepository.update(workflowVersionId, updateData);
 
         return workflowVersionId;
       },

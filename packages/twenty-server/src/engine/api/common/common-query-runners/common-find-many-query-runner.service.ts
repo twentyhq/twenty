@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
+
 import { isDefined } from 'class-validator';
 import {
   QUERY_MAX_RECORDS,
@@ -29,8 +31,11 @@ import {
   FindManyQueryArgs,
 } from 'src/engine/api/common/types/common-query-args.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import { buildCursorPage } from 'src/engine/api/utils/build-cursor-page.util';
+import { getNonToOneJoinAliases } from 'src/engine/api/common/utils/get-non-to-one-join-aliases.util';
 import { getPageInfo } from 'src/engine/api/common/utils/get-page-info.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
+import { type ReadRecordQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/types/record-query-builder.type';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { getCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
@@ -57,7 +62,6 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<CommonFindManyOutput> {
     const {
-      repository,
       authContext,
       rolePermissionConfig,
       flatObjectMetadata,
@@ -67,9 +71,10 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       commonQueryParser,
     } = queryRunnerContext;
 
-    const queryBuilder = repository.createQueryBuilder(
-      flatObjectMetadata.nameSingular,
-    );
+    const readRepository = this.getReadRepository(queryRunnerContext);
+
+    const queryBuilder: ReadRecordQueryBuilder =
+      readRepository.createQueryBuilder(flatObjectMetadata.nameSingular);
 
     const aggregateQueryBuilder = queryBuilder.clone();
 
@@ -162,12 +167,27 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       flatFieldMetadataMaps,
     });
 
-    if (isDefined(args.offset)) {
-      queryBuilder.skip(args.offset);
+    queryBuilder.setFindOptions({ select: columnsToSelect });
+
+    // A join that can duplicate root rows makes a row-level LIMIT return fewer records than
+    // asked, so it is rejected rather than paginated with take/skip, which drops the LIMIT
+    // from the scan.
+    const nonToOneJoinAliases = getNonToOneJoinAliases(queryBuilder);
+
+    if (nonToOneJoinAliases.length > 0) {
+      throw new CommonQueryRunnerException(
+        `Cannot filter or order through ${nonToOneJoinAliases.join(', ')}: only to-one relations are supported`,
+        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        {
+          userFriendlyMessage: msg`Filtering or ordering through this relation is not supported.`,
+        },
+      );
     }
 
-    queryBuilder.setFindOptions({ select: columnsToSelect });
-    queryBuilder.take(limit + 1);
+    if (isDefined(args.offset)) {
+      queryBuilder.offset(args.offset);
+    }
+    queryBuilder.limit(limit + 1);
 
     // Add order columns AFTER setFindOptions (setFindOptions clears addSelect)
     // Pass columnsToSelect so we only add columns that aren't already selected
@@ -178,26 +198,30 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       columnsToSelect,
     );
 
-    const objectRecords = (await queryBuilder.getMany()) as ObjectRecord[];
-
-    const pageInfo = getPageInfo(
-      objectRecords,
-      orderByWithIdCondition,
+    const fetchedObjectRecords =
+      (await queryBuilder.getMany()) as ObjectRecord[];
+    const { items: objectRecords, pageInfo: cursorPageInfo } = buildCursorPage({
+      fetchedItems: fetchedObjectRecords,
       limit,
-      isForwardPagination,
+      direction: isForwardPagination ? 'forward' : 'backward',
+      // getCursor applies cursors on truthiness, so an empty-string cursor
+      // must not advertise navigation from a cursor.
+      hasAfterCursor: Boolean(args.after),
+      hasBeforeCursor: Boolean(args.before),
+    });
+    const pageInfo = getPageInfo({
+      records: objectRecords,
+      orderBy: orderByWithIdCondition,
+      pageInfo: cursorPageInfo,
       flatObjectMetadata,
       flatFieldMetadataMaps,
-    );
-
-    if (!isForwardPagination) {
-      objectRecords.reverse();
-    }
+    });
 
     const hasAggregatedFields =
       Object.keys(args.selectedFieldsResult.aggregate ?? {}).length > 0;
 
     const parentObjectRecordsAggregatedValues = hasAggregatedFields
-      ? await aggregateQueryBuilder.getRawOne()
+      ? await aggregateQueryBuilder.getRawOne<Record<string, number>>()
       : undefined;
 
     if (isDefined(args.selectedFieldsResult.relations)) {
@@ -217,6 +241,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
         workspaceDataSource,
         rolePermissionConfig,
         selectedFields: args.selectedFieldsResult.select,
+        ...this.getNestedRelationsReadPathOptions(queryRunnerContext),
       });
     }
 

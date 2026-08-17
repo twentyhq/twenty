@@ -12,10 +12,10 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export const MainNavigationDrawer = ({ className }: { className?: string }) => {
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const navigationDrawerActiveTab = useAtomStateValue(
     navigationDrawerActiveTabState,
   );
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
 
   const showAiChatContent =

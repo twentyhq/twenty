@@ -40,18 +40,19 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MessageChannelMetadataService } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
-import { renderCampaignBodyToHtml } from 'src/modules/emailing/utils/render-campaign-body.util';
+import { collectCampaignVariableNamesFromTemplates } from 'src/modules/emailing/utils/collect-campaign-variable-names-from-templates.util';
+import { compileCampaignEmailContent } from 'src/modules/emailing/utils/compile-campaign-email-content.util';
 import { renderCampaignTemplate } from 'src/modules/emailing/utils/render-campaign-template.util';
 import { sendableDraftCampaignSchema } from 'src/modules/emailing/zod-schemas/sendable-draft-campaign.zod-schema';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
@@ -59,7 +60,6 @@ import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/mes
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
-import { createHtmlToTextConverter } from 'src/modules/messaging/message-import-manager/utils/create-html-to-text-converter.util';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import {
   MessageParticipantRole,
@@ -113,8 +113,6 @@ const toRawRecipient = (person: {
 @Injectable()
 export class MessageCampaignService {
   private readonly logger = new Logger(MessageCampaignService.name);
-  private readonly htmlToText = createHtmlToTextConverter();
-
   constructor(
     @InjectWorkspaceScopedRepository(EmailingDomainEntity)
     private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
@@ -127,11 +125,12 @@ export class MessageCampaignService {
     private readonly userRoleService: UserRoleService,
     private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
     private readonly emailBillingService: EmailBillingService,
+    private readonly campaignVariableService: CampaignVariableService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleEmailing)
     private readonly cacheStorageService: CacheStorageService,
   ) {}
 
-  private getUserRepository<T extends ObjectLiteral>(
+  private getRoleScopedRepository<T extends ObjectLiteral>(
     workspaceId: string,
     entity: Type<T>,
     roleId: string,
@@ -195,7 +194,7 @@ export class MessageCampaignService {
             MAX_CAMPAIGN_RECIPIENTS,
           );
 
-          const campaignRepository = await this.getUserRepository(
+          const campaignRepository = await this.getRoleScopedRepository(
             workspaceId,
             MessageCampaignWorkspaceEntity,
             roleId,
@@ -256,11 +255,15 @@ export class MessageCampaignService {
       fromAddress,
     );
 
-    const variables = this.buildTemplateVariables(null);
+    const variables =
+      await this.campaignVariableService.buildVariablesForPerson(
+        workspaceId,
+        null,
+      );
     const renderedSubject = renderCampaignTemplate(subject, variables, {
       escapeValues: false,
     });
-    const renderedHtml = await renderCampaignBodyToHtml(html, variables);
+    const compiledContent = await compileCampaignEmailContent(html, variables);
 
     return this.emailingDomainSenderService.sendEmail(
       workspaceId,
@@ -269,8 +272,8 @@ export class MessageCampaignService {
         from: fromAddress,
         to: [toAddress],
         subject: renderedSubject,
-        text: this.htmlToText(renderedHtml),
-        html: renderedHtml,
+        text: compiledContent.plainText,
+        html: compiledContent.html,
         unsubscribeTopicId,
       },
     );
@@ -354,7 +357,6 @@ export class MessageCampaignService {
 
       if (recipientsToCreate.length > 0) {
         await this.materializeCampaignMessages({
-          workspaceId,
           campaignId,
           messageChannelId,
           fromAddress: campaign.fromAddress?.primaryEmail ?? '',
@@ -433,7 +435,11 @@ export class MessageCampaignService {
         where: { id: personId },
       });
 
-      const variables = this.buildTemplateVariables(person);
+      const variables =
+        await this.campaignVariableService.buildVariablesForPerson(
+          workspaceId,
+          person,
+        );
       const subject = renderCampaignTemplate(
         campaign.subject ?? '',
         variables,
@@ -441,11 +447,10 @@ export class MessageCampaignService {
           escapeValues: false,
         },
       );
-      const html = await renderCampaignBodyToHtml(
+      const compiledContent = await compileCampaignEmailContent(
         campaign.bodyTemplate ?? '',
         variables,
       );
-      const text = this.htmlToText(html);
       const fromAddress = campaign.fromAddress?.primaryEmail ?? '';
       const unsubscribeTopicId = campaign.unsubscribeTopicId ?? undefined;
 
@@ -471,8 +476,8 @@ export class MessageCampaignService {
               from: fromAddress,
               to: [recipientEmail],
               subject,
-              text,
-              html,
+              text: compiledContent.plainText,
+              html: compiledContent.html,
               unsubscribeTopicId,
             },
           );
@@ -515,7 +520,7 @@ export class MessageCampaignService {
           deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SENT,
           headerMessageId: result.messageId,
           subject,
-          text,
+          text: compiledContent.plainText,
         });
 
         await this.emailBillingService.billSentEmails({
@@ -585,7 +590,7 @@ export class MessageCampaignService {
     campaignId: string,
     roleId: string,
   ): Promise<SendableDraftCampaign> {
-    const campaignRepository = await this.getUserRepository(
+    const campaignRepository = await this.getRoleScopedRepository(
       workspaceId,
       MessageCampaignWorkspaceEntity,
       roleId,
@@ -613,11 +618,18 @@ export class MessageCampaignService {
       );
     }
 
+    await this.campaignVariableService.assertKnownVariables(
+      workspaceId,
+      collectCampaignVariableNamesFromTemplates({
+        subject: sendableCampaign.data.subject,
+        bodyTemplate: sendableCampaign.data.bodyTemplate,
+      }),
+    );
+
     return sendableCampaign.data;
   }
 
   private async materializeCampaignMessages({
-    workspaceId,
     campaignId,
     messageChannelId,
     fromAddress,
@@ -625,7 +637,6 @@ export class MessageCampaignService {
     bodyTemplate,
     recipients,
   }: {
-    workspaceId: string;
     campaignId: string;
     messageChannelId: string;
     fromAddress: string;
@@ -636,8 +647,9 @@ export class MessageCampaignService {
     const now = new Date();
     // The stored message keeps the unresolved template, so placeholders stay
     // visible on the campaign's message records.
-    const text = this.htmlToText(
-      await renderCampaignBodyToHtml(bodyTemplate, null),
+    const { plainText: text } = await compileCampaignEmailContent(
+      bodyTemplate,
+      null,
     );
     const rows = recipients.map((recipient) => ({
       recipient,
@@ -646,37 +658,30 @@ export class MessageCampaignService {
       temporaryExternalId: v4(),
     }));
 
-    const messageThreadRepository = await this.getSystemRepository(
-      workspaceId,
-      MessageThreadWorkspaceEntity,
-    );
-    const messageRepository = await this.getSystemRepository(
-      workspaceId,
-      MessageWorkspaceEntity,
-    );
-    const associationRepository = await this.getSystemRepository(
-      workspaceId,
-      MessageChannelMessageAssociationWorkspaceEntity,
-    );
-    const participantRepository = await this.getSystemRepository(
-      workspaceId,
-      MessageParticipantWorkspaceEntity,
-    );
+    await this.globalWorkspaceOrmManager.runInWorkspaceTransaction(
+      async (transactionScope) => {
+        const messageThreadRepository =
+          transactionScope.getRepository<MessageThreadWorkspaceEntity>(
+            'messageThread',
+            { shouldBypassPermissionChecks: true },
+          );
+        const messageRepository =
+          transactionScope.getRepository<MessageWorkspaceEntity>('message', {
+            shouldBypassPermissionChecks: true,
+          });
+        const associationRepository =
+          transactionScope.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+            'messageChannelMessageAssociation',
+            { shouldBypassPermissionChecks: true },
+          );
+        const participantRepository =
+          transactionScope.getRepository<MessageParticipantWorkspaceEntity>(
+            'messageParticipant',
+            { shouldBypassPermissionChecks: true },
+          );
 
-    const workspaceDataSource =
-      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
-
-    if (!workspaceDataSource) {
-      throw new Error(
-        `No workspace datasource available for workspace ${workspaceId}`,
-      );
-    }
-
-    await workspaceDataSource.transaction(
-      async (transactionManager: WorkspaceEntityManager) => {
         await messageThreadRepository.insert(
           rows.map((row) => ({ id: row.threadId })),
-          transactionManager,
         );
         await messageRepository.insert(
           rows.map((row) => ({
@@ -689,7 +694,6 @@ export class MessageCampaignService {
             messageCampaignId: campaignId,
             deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED,
           })),
-          transactionManager,
         );
         await associationRepository.insert(
           rows.map((row) => ({
@@ -700,7 +704,6 @@ export class MessageCampaignService {
             messageThreadExternalId: row.temporaryExternalId,
             direction: MessageDirection.OUTGOING,
           })),
-          transactionManager,
         );
         await participantRepository.insert(
           rows.flatMap((row) => [
@@ -721,7 +724,6 @@ export class MessageCampaignService {
               messageCampaignId: campaignId,
             },
           ]),
-          transactionManager,
         );
       },
     );
@@ -877,7 +879,7 @@ export class MessageCampaignService {
     listId: string,
     roleId: string,
   ): Promise<RawCampaignRecipient[]> {
-    const listMemberRepository = await this.getUserRepository(
+    const listMemberRepository = await this.getRoleScopedRepository(
       workspaceId,
       MessageListMemberWorkspaceEntity,
       roleId,
@@ -903,7 +905,7 @@ export class MessageCampaignService {
       return [];
     }
 
-    const personRepository = await this.getUserRepository(
+    const personRepository = await this.getRoleScopedRepository(
       workspaceId,
       PersonWorkspaceEntity,
       roleId,
@@ -914,20 +916,6 @@ export class MessageCampaignService {
     });
 
     return people.map(toRawRecipient);
-  }
-
-  private buildTemplateVariables(
-    person: PersonWorkspaceEntity | null,
-  ): Record<string, string> {
-    const firstName = person?.name?.firstName ?? '';
-    const lastName = person?.name?.lastName ?? '';
-
-    return {
-      firstName,
-      lastName,
-      fullName: [firstName, lastName].filter(Boolean).join(' '),
-      email: person?.emails?.primaryEmail ?? '',
-    };
   }
 
   private campaignMessageId(campaignId: string, personId: string): string {

@@ -11,6 +11,7 @@ export { AI_SDK_PACKAGE_LABELS } from './constants/ai-sdk-package-labels.const';
 export type { AiSdkPackage } from './constants/ai-sdk-packages.const';
 export { AI_SDK_PACKAGES } from './constants/ai-sdk-packages.const';
 export { ASK_QUESTIONS_TOOL_NAME } from './constants/ask-questions-tool-name.const';
+export { COMPLETE_WORKSPACE_SETUP_TOOL_NAME } from './constants/complete-workspace-setup-tool-name.const';
 export type { DataResidency } from './constants/data-residency.const';
 export { DATA_RESIDENCY_KEYS } from './constants/data-residency.const';
 export type { DatabaseCrudOperation } from './constants/database-crud-operation.const';
@@ -51,7 +52,10 @@ export type {
 export type { ExtendedUIMessagePart } from './types/ExtendedUIMessagePart';
 export type { ModelConfiguration } from './types/model-configuration.type';
 export type { NavigateAppToolOutput } from './types/NavigateAppToolOutput';
+export { formatRecordReference } from './utils/format-record-reference.util';
 export { inferAiSdkPackage } from './utils/infer-ai-sdk-package.util';
 export { isAiSdkPackage } from './utils/is-ai-sdk-package.util';
+export { isCompleteWorkspaceSetupToolPart } from './utils/is-complete-workspace-setup-tool-part.util';
 export { isDataResidency } from './utils/is-data-residency.util';
+export { isSucceededCompleteWorkspaceSetupToolPart } from './utils/is-succeeded-complete-workspace-setup-tool-part.util';
 export { isValidAgentResponseSchemaPropertyKey } from './utils/is-valid-agent-response-schema-property-key.util';

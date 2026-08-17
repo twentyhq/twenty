@@ -76,4 +76,4 @@ Das Scaffolding-Tool fixiert `twenty-sdk` und `twenty-client-sdk` auf seine eige
 
 Wenn eines der Pakete unter `dependencies` bleibt, wird es in das Runtime-Bundle der installierten App gezogen, wo es nur Ballast ist. `twenty dev:build` gibt eine Warnung aus, wenn eines von beiden weiterhin unter `dependencies` aufgeführt ist.
 
-Füge die eigenen Runtime-Abhängigkeiten deiner App (Bibliotheken, die deine Logikfunktionen zur Laufzeit tatsächlich importieren) wie gewohnt unter `dependencies` hinzu.
+Füge die eigenen Runtime-Abhängigkeiten deiner App (Bibliotheken, die deine Logikfunktionen zur Laufzeit tatsächlich importieren) wie gewohnt unter `dependencies` hinzu. Halte den Abhängigkeitsbaum schlank: `dependencies` werden in eine Laufzeitschicht installiert, die (entpackt) auf 250 MB begrenzt ist, und eine Synchronisierung oder eine Installation schlägt bei Überschreiten dieser Grenze mit einem Fehler zur Größe der Abhängigkeiten fehl — UI-Bibliotheken und Entwicklungstools gehören in `devDependencies`.

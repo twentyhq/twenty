@@ -204,7 +204,13 @@ Va trebui să creați un proiect în [Microsoft Azure](https://portal.azure.com/
 * Graph Microsoft: profile
 * Graph Microsoft: offline_access
 
-Notă: "Mail.ReadWrite" și "Mail.Send" sunt obligatorii doar dacă doriți să trimiteți e-mailuri utilizând acțiunile noastre de flux de lucru. Puteți utiliza "Mail.Read" dacă doriți doar să primiți e-mailuri.
+<Note>
+"Mail.ReadWrite" și "Mail.Send" sunt obligatorii doar dacă doriți să trimiteți e-mailuri utilizând acțiunile noastre de flux de lucru. Puteți utiliza "Mail.Read" dacă doriți doar să primiți e-mailuri.
+</Note>
+
+<Note>
+"Calendars.ReadWrite" este obligatoriu dacă doriți să creați evenimente de calendar utilizând acțiunile noastre de flux de lucru. Dacă doriți doar să sincronizați evenimente de calendar, utilizați "Calendars.Read".
+</Note>
 
 ### URIs de redirecționare autorizate
 
@@ -380,3 +386,29 @@ LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 <Note>
 Când utilizați `LOGIC_FUNCTION_TYPE=DISABLED` sau `CODE_INTERPRETER_TYPE=DISABLED`, orice încercare de execuție va returna o eroare. Acest lucru este util dacă doriți să rulați Twenty fără aceste capabilități.
 </Note>
+
+## API și interfața front-end pe gazde separate
+
+Este relevant doar dacă nu lași back-end-ul să servească front-end-ul. Implementările cu aceeași origine
+nu au nevoie de nimic aici.
+
+Declară fiecare origine de browser care comunică cu API-ul, separate prin virgulă. `SERVER_URL`
+și `FRONTEND_URL` sunt deja de încredere. Serverul înregistrează un avertisment în jurnale atunci când un browser
+îl apelează dintr-o origine nedeclarată.
+
+```bash
+AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com
+```
+
+<Warning>
+Partea de front-end trimite datele de autentificare la fiecare cerere, iar browserele resping un răspuns cu date de autentificare
+provenit de la o origine nedeclarată, astfel încât aplicația nu se încarcă până când nu configurați această opțiune.
+</Warning>
+
+Dacă cele două gazde se află pe domenii înregistrabile diferite (nu doar pe
+subdomenii diferite), setați, de asemenea, `AUTH_COOKIE_SAME_SITE=none`, ceea ce necesită HTTPS.
+
+Cu multi-workspace activat, nu listați aici fiecare subdomeniu de workspace.
+În schimb, direcționați căile API (`/graphql`, `/metadata`, `/rest`, `/auth/`,
+`/client-config`, `/file`) către back-end pe fiecare hostname de workspace, astfel încât fiecare
+workspace să rămână de aceeași origine — acesta este modul în care rulează Twenty Cloud.

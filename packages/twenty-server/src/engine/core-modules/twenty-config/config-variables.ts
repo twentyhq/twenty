@@ -46,7 +46,9 @@ import { CastToTypeORMLogLevelArray } from 'src/engine/core-modules/twenty-confi
 import { CastToUpperSnakeCase } from 'src/engine/core-modules/twenty-config/decorators/cast-to-upper-snake-case.decorator';
 import { ConfigVariablesMetadata } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
 import { IsAWSRegion } from 'src/engine/core-modules/twenty-config/decorators/is-aws-region.decorator';
-import { IsDuration } from 'src/engine/core-modules/twenty-config/decorators/is-duration.decorator';
+import { DEFAULT_WORKSPACE_AUTO_LOGIN_WINDOW } from 'src/engine/core-modules/auth/constants/default-workspace-auto-login-window.constant';
+import { IsNonNegativeDuration } from 'src/engine/core-modules/twenty-config/decorators/is-non-negative-duration.decorator';
+import { IsPositiveDuration } from 'src/engine/core-modules/twenty-config/decorators/is-positive-duration.decorator';
 import { IsOptionalOrEmptyString } from 'src/engine/core-modules/twenty-config/decorators/is-optional-or-empty-string.decorator';
 import { IsStrictlyLowerThan } from 'src/engine/core-modules/twenty-config/decorators/is-strictly-lower-than.decorator';
 import { IsTwentySemVer } from 'src/engine/core-modules/twenty-config/decorators/is-twenty-semver.decorator';
@@ -115,7 +117,7 @@ export class ConfigVariables {
     description: 'Duration for which the email verification token is valid',
     type: ConfigVariableType.STRING,
   })
-  @IsDuration()
+  @IsPositiveDuration()
   @IsOptional()
   EMAIL_VERIFICATION_TOKEN_EXPIRES_IN = '1h';
 
@@ -124,7 +126,7 @@ export class ConfigVariables {
     description: 'Duration for which the password reset token is valid',
     type: ConfigVariableType.STRING,
   })
-  @IsDuration()
+  @IsPositiveDuration()
   @IsOptional()
   PASSWORD_RESET_TOKEN_EXPIRES_IN = '5m';
 
@@ -329,7 +331,7 @@ export class ConfigVariables {
     description: 'Duration for which the access token is valid',
     type: ConfigVariableType.STRING,
   })
-  @IsDuration()
+  @IsPositiveDuration()
   @IsOptional()
   ACCESS_TOKEN_EXPIRES_IN = '30m';
 
@@ -338,7 +340,7 @@ export class ConfigVariables {
     description: 'Duration for which the workspace agnostic token is valid',
     type: ConfigVariableType.STRING,
   })
-  @IsDuration()
+  @IsPositiveDuration()
   @IsOptional()
   WORKSPACE_AGNOSTIC_TOKEN_EXPIRES_IN = '30m';
 
@@ -356,16 +358,74 @@ export class ConfigVariables {
       'Grace period allowing concurrent refresh token use (e.g. two tabs refreshing simultaneously). Reuse after this window triggers suspicious activity detection.',
     type: ConfigVariableType.STRING,
   })
-  @IsDuration()
+  @IsNonNegativeDuration()
   @IsOptional()
   REFRESH_TOKEN_REUSE_GRACE_PERIOD = '1m';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Enable cookie-based user sessions for the web app (dual-stack with token pairs during the migration)',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  AUTH_COOKIE_SESSIONS_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TOKENS_DURATION,
+    description:
+      'Absolute lifetime of a cookie-based user session, set at sign-in and never extended',
+    type: ConfigVariableType.STRING,
+  })
+  @IsPositiveDuration()
+  @IsOptional()
+  SESSION_ABSOLUTE_LIFETIME = '180d';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TOKENS_DURATION,
+    description:
+      'Duration of inactivity after which a cookie-based user session expires',
+    type: ConfigVariableType.STRING,
+  })
+  @IsPositiveDuration()
+  @IsOptional()
+  SESSION_IDLE_TIMEOUT = '30d';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TOKENS_DURATION,
+    description:
+      'Window after authenticating on the workspace-agnostic domain during which a user-level session can still auto-login into a workspace without re-authenticating',
+    type: ConfigVariableType.STRING,
+  })
+  @IsNonNegativeDuration()
+  @IsOptional()
+  WORKSPACE_AUTO_LOGIN_WINDOW: string = DEFAULT_WORKSPACE_AUTO_LOGIN_WINDOW;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'SameSite attribute of the user session cookie. Use none only for split-origin deployments, behind https',
+    type: ConfigVariableType.STRING,
+  })
+  @IsIn(['lax', 'strict', 'none'])
+  @IsOptional()
+  AUTH_COOKIE_SAME_SITE: 'lax' | 'strict' | 'none' = 'lax';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Comma-separated list of extra origins allowed to send credentialed cross-origin requests (split-origin deployments)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  AUTH_COOKIE_ALLOWED_ORIGINS = '';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TOKENS_DURATION,
     description: 'Duration for which the login token is valid',
     type: ConfigVariableType.STRING,
   })
-  @IsDuration()
+  @IsPositiveDuration()
   @IsOptional()
   LOGIN_TOKEN_EXPIRES_IN = '15m';
 
@@ -374,7 +434,7 @@ export class ConfigVariables {
     description: 'Duration for which the file token is valid',
     type: ConfigVariableType.STRING,
   })
-  @IsDuration()
+  @IsPositiveDuration()
   @IsOptional()
   FILE_TOKEN_EXPIRES_IN = '1d';
 
@@ -383,7 +443,7 @@ export class ConfigVariables {
     description: 'Duration for which the invitation token is valid',
     type: ConfigVariableType.STRING,
   })
-  @IsDuration()
+  @IsPositiveDuration()
   @IsOptional()
   INVITATION_TOKEN_EXPIRES_IN = '30d';
 
@@ -399,7 +459,7 @@ export class ConfigVariables {
     description: 'Duration for which an application access token is valid',
     type: ConfigVariableType.STRING,
   })
-  @IsDuration()
+  @IsPositiveDuration()
   @IsOptional()
   APPLICATION_ACCESS_TOKEN_EXPIRES_IN = '30m';
 
@@ -408,7 +468,7 @@ export class ConfigVariables {
     description: 'Duration for which an application refresh token is valid',
     type: ConfigVariableType.STRING,
   })
-  @IsDuration()
+  @IsPositiveDuration()
   @IsOptional()
   APPLICATION_REFRESH_TOKEN_EXPIRES_IN = '60d';
 
@@ -418,7 +478,7 @@ export class ConfigVariables {
       'Duration for which a playground token (in-app REST/GraphQL playground bearer) is valid',
     type: ConfigVariableType.STRING,
   })
-  @IsDuration()
+  @IsPositiveDuration()
   @IsOptional()
   PLAYGROUND_TOKEN_EXPIRES_IN = '2h';
 
@@ -494,14 +554,24 @@ export class ConfigVariables {
   IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS = true;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'When enabled, server admins can toggle any feature flag for any workspace from the admin panel. Always enabled in development mode and when billing is enabled.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_FEATURE_FLAG_MANAGEMENT_ENABLED = false;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
-      'Deployment region that determines the contracting DPA Processor entity, hosting region and governing law. EU (default) = Twenty.com SAS / Frankfurt / France; US = Twenty, Inc. / United States. Must match where Customer Personal Data actually lives.',
+      'Deployment region that determines the DPA hosting location shown to customers. The Processor entity (Twenty.com PBC) and governing law (Delaware, USA) are the same for all regions. EU (default) = Frankfurt, Germany; US = United States. Must match where Customer Personal Data actually lives.',
     type: ConfigVariableType.ENUM,
     options: Object.values(DpaRegion),
     // Deployment-fixed: must mirror where data actually lives. Allowing a
-    // runtime DB/admin override could produce a legally incorrect Processor
-    // entity, so this is only configurable via environment variable.
+    // runtime DB/admin override could advertise a hosting location that does
+    // not match where data resides, so this is only configurable via
+    // environment variable.
     isEnvOnly: true,
   })
   @IsOptional()
@@ -951,6 +1021,27 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
     description:
+      'Cap on the credits available in a period, as a multiple of the plan allowance. 2 means a workspace can hold at most its allowance plus one full allowance rolled over',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  BILLING_ROLLOVER_TOTAL_CAP_MULTIPLIER = 2;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BILLING_CONFIG,
+    description:
+      'Largest credit amount a single admin panel grant can hand out (in microCredits)',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsInt()
+  @IsOptional()
+  BILLING_MAX_ADMIN_CREDIT_GRANT_MICRO = 1_000_000_000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BILLING_CONFIG,
+    description:
       'Free credits granted for completing the import-contacts onboarding step (in microCredits)',
     type: ConfigVariableType.NUMBER,
   })
@@ -1018,6 +1109,18 @@ export class ConfigVariables {
   })
   @IsOptional()
   CALENDAR_BOOKING_PAGE_ID?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Minimum enriched company employee count required to show the book-a-call onboarding step. Leave unset or set to 0 to disable the step. The step also requires CALENDAR_BOOKING_PAGE_ID.',
+    isHiddenInAdminPanel: true,
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsInt()
+  @IsOptional()
+  ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT?: number;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGGING,
@@ -1288,7 +1391,6 @@ export class ConfigVariables {
     options: Object.values(NodeEnvironment),
     isEnvOnly: true,
   })
-  // @CastToUpperSnakeCase()
   NODE_ENV: NodeEnvironment = NodeEnvironment.PRODUCTION;
 
   @ConfigVariablesMetadata({
@@ -1335,23 +1437,6 @@ export class ConfigVariables {
   @IsUrl({ require_tld: false, require_protocol: true })
   @IsOptional()
   SERVER_URL = 'http://localhost:3000';
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVER_CONFIG,
-    description:
-      'When enabled, the served frontend resolves the API base URL from ' +
-      "the browser's current origin (window.location) instead of the " +
-      'baked-in SERVER_URL. Useful for self-hosted deployments reachable ' +
-      'from multiple hostnames (Tailscale IP, LAN DNS, SSH tunnel, public ' +
-      'DNS), where pinning a single SERVER_URL would break every other ' +
-      'host with CORS or unreachable-host errors. Read at startup by ' +
-      'generate-front-config; SERVER_URL is still used for all server-side ' +
-      'URL generation.',
-    type: ConfigVariableType.BOOLEAN,
-    isEnvOnly: true,
-  })
-  @IsOptional()
-  FRONT_AUTO_BASE_URL = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,

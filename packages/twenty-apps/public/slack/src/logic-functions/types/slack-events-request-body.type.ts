@@ -1,3 +1,13 @@
+type SlackEventAuthorization = {
+  user_id?: string;
+  is_bot?: boolean;
+};
+
+type SlackRevokedTokens = {
+  oauth?: string[];
+  bot?: string[];
+};
+
 type SlackInboundEvent = {
   type?: string;
   subtype?: string;
@@ -8,6 +18,8 @@ type SlackInboundEvent = {
   ts?: string;
   thread_ts?: string;
   channel?: string;
+  tab?: string;
+  tokens?: SlackRevokedTokens;
 };
 
 export type SlackEventsRequestBody = {
@@ -15,5 +27,6 @@ export type SlackEventsRequestBody = {
   challenge?: string;
   event_id?: string;
   team_id?: string;
+  authorizations?: SlackEventAuthorization[];
   event?: SlackInboundEvent;
 };

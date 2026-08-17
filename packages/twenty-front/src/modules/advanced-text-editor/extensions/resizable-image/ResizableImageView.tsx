@@ -10,11 +10,14 @@ const IMAGE_MAX_WIDTH = 600;
 const StyledNodeViewWrapperContainer = styled.div<{
   align?: string;
 }>`
+  display: flex;
   height: 100%;
-  margin-left: ${({ align }) =>
-    align === 'left' ? '0' : align === 'center' ? 'auto' : 'unset'};
-  margin-right: ${({ align }) =>
-    align === 'right' ? '0' : align === 'center' ? 'auto' : 'unset'};
+  justify-content: ${({ align }) =>
+    align === 'center'
+      ? 'center'
+      : align === 'right'
+        ? 'flex-end'
+        : 'flex-start'};
 `;
 
 const StyledImageWrapper = styled.div<{ width?: number }>`
@@ -63,13 +66,11 @@ export const ResizableImageView = (props: ResizableImageViewProps) => {
 
   const imageWrapperRef = useRef<HTMLDivElement>(null);
 
-  // Controls visibility of resize handles when hovering over the image
   const [isHovering, setIsHovering] = useState(false);
   const [width, setWidth] = useState(initialWidth || 0);
   // Controls actual resize operation state (null = not resizing, object = actively resizing)
   const [resizeParams, setResizeParams] = useState<ResizeParams | null>(null);
 
-  // Create stable event handlers using a closure approach
   const createMouseHandlers = useCallback(() => {
     let currentResizeParams: ResizeParams | null = null;
 

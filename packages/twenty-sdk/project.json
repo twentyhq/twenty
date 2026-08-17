@@ -90,7 +90,7 @@
       "executor": "nx:run-commands",
       "cache": true,
       "dependsOn": ["^build"],
-      "inputs": ["{projectRoot}/src/sdk/**/*"],
+      "inputs": ["{projectRoot}/src/sdk/**/*", "^production"],
       "outputs": [
         "{projectRoot}/dist/billing",
         "{projectRoot}/dist/define",

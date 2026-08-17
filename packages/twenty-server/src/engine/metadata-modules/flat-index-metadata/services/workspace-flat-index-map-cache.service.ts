@@ -20,7 +20,7 @@ import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/uti
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
-@WorkspaceCache('flatIndexMaps')
+@WorkspaceCache('flatIndexMaps', { packingPonderation: 8 })
 export class WorkspaceFlatIndexMapCacheService extends WorkspaceCacheProvider<
   FlatEntityMaps<FlatIndexMetadata>
 > {

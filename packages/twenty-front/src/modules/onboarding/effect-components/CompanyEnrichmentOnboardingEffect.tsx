@@ -1,17 +1,22 @@
 import { useMutation } from '@apollo/client/react';
+import { useStore } from 'jotai';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 
-import { isOnboardingAiChatEnabledState } from '@/client-config/states/isOnboardingAiChatEnabledState';
+import { currentUserState } from '@/auth/states/currentUserState';
+import { isCompanyEnrichmentEnabledState } from '@/client-config/states/isCompanyEnrichmentEnabledState';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
 import { hasAttemptedCompanyEnrichmentFetchState } from '@/onboarding/states/hasAttemptedCompanyEnrichmentFetchState';
 import { isCompanyEnrichmentFetchInFlightState } from '@/onboarding/states/isCompanyEnrichmentFetchInFlightState';
+import { getHasAdvancedPastBookCallStep } from '@/onboarding/utils/getHasAdvancedPastBookCallStep';
+import { setIsBookCallOnboardingStepPending } from '@/onboarding/utils/setIsBookCallOnboardingStepPending';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import {
+  CompleteBookCallOnboardingStepDocument,
   EnrichWorkspaceCompanyDocument,
   OnboardingStatus,
   WorkspaceCompanyEnrichmentOutcome,
@@ -27,12 +32,17 @@ export const CompanyEnrichmentOnboardingEffect = () => {
     setHasAttemptedCompanyEnrichmentFetch,
   ] = useAtomState(hasAttemptedCompanyEnrichmentFetchState);
   const [enrichWorkspaceCompany] = useMutation(EnrichWorkspaceCompanyDocument);
+  const [completeBookCallOnboardingStep] = useMutation(
+    CompleteBookCallOnboardingStepDocument,
+  );
   const setIsCompanyEnrichmentFetchInFlight = useSetAtomState(
     isCompanyEnrichmentFetchInFlightState,
   );
-  const isOnboardingAiChatEnabled = useAtomStateValue(
-    isOnboardingAiChatEnabledState,
+  const setCurrentUser = useSetAtomState(currentUserState);
+  const isCompanyEnrichmentEnabled = useAtomStateValue(
+    isCompanyEnrichmentEnabledState,
   );
+  const store = useStore();
 
   const isOnboardingInProgress =
     isDefined(onboardingStatus) &&
@@ -44,31 +54,63 @@ export const CompanyEnrichmentOnboardingEffect = () => {
       hasAttemptedCompanyEnrichmentFetch ||
       isDefined(companyEnrichment) ||
       !isOnboardingInProgress ||
-      !isOnboardingAiChatEnabled
+      !isCompanyEnrichmentEnabled
     ) {
       return;
     }
 
-    setHasAttemptedCompanyEnrichmentFetch(true);
     setIsCompanyEnrichmentFetchInFlight(true);
+    setHasAttemptedCompanyEnrichmentFetch(true);
 
     const fetchCompanyEnrichment = async () => {
       try {
         const { data } = await enrichWorkspaceCompany();
         const result = data?.enrichWorkspaceCompany;
 
-        if (result?.outcome !== WorkspaceCompanyEnrichmentOutcome.matched) {
+        if (!isDefined(result)) {
           return;
         }
+
+        // A response that lands after the settlement timeout must not reopen a
+        // step the user already moved past, so the server is told to drop it.
+        const hasAdvancedPastBookCallStep = getHasAdvancedPastBookCallStep(
+          store.get(currentUserState.atom)?.onboardingStatus,
+        );
+
+        const dropBookCallStep = async () => {
+          try {
+            await completeBookCallOnboardingStep({
+              variables: { hasBookedCall: false, isAutoSkipped: true },
+            });
+
+            return true;
+          } catch {
+            return false;
+          }
+        };
+
+        // The local flag mirrors what the server ended up with: a failed drop
+        // leaves the step pending on both sides instead of silently diverging.
+        const hasDroppedBookCallStep =
+          result.isBookCallOnboardingStepPending && hasAdvancedPastBookCallStep
+            ? await dropBookCallStep()
+            : false;
+
+        setCurrentUser((current) =>
+          setIsBookCallOnboardingStepPending(
+            current,
+            result.isBookCallOnboardingStepPending && !hasDroppedBookCallStep,
+          ),
+        );
 
         const enrichment: WorkspaceCompanyEnrichment | null =
-          result.enrichment ?? null;
+          result.outcome === WorkspaceCompanyEnrichmentOutcome.matched
+            ? (result.enrichment ?? null)
+            : null;
 
-        if (!isDefined(enrichment)) {
-          return;
+        if (isDefined(enrichment)) {
+          setCompanyEnrichment(enrichment);
         }
-
-        setCompanyEnrichment(enrichment);
       } catch {
         return;
       } finally {
@@ -81,11 +123,14 @@ export const CompanyEnrichmentOnboardingEffect = () => {
     hasAttemptedCompanyEnrichmentFetch,
     companyEnrichment,
     isOnboardingInProgress,
-    isOnboardingAiChatEnabled,
+    isCompanyEnrichmentEnabled,
     setHasAttemptedCompanyEnrichmentFetch,
     setIsCompanyEnrichmentFetchInFlight,
     setCompanyEnrichment,
+    setCurrentUser,
+    store,
     enrichWorkspaceCompany,
+    completeBookCallOnboardingStep,
   ]);
 
   return null;

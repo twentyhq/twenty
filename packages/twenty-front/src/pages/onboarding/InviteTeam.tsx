@@ -19,6 +19,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Controller } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
 import { IconX } from 'twenty-ui/icon';
+import { Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -56,6 +57,8 @@ export const InviteTeam = () => {
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
   const creditsRewardPerUser = onboardingConfig?.inviteTeamCreditsRewardPerUser;
   const transition = useOnboardingMotionTransition();
+
+  const canRemoveEmailField = fields.length > 1;
 
   return (
     <StyledOnboardingStepPage>
@@ -107,8 +110,10 @@ export const InviteTeam = () => {
                       onBlur={onBlur}
                       error={error?.message}
                       onChange={onChange}
-                      RightIcon={IconX}
-                      onRightIconClick={() => remove(index)}
+                      RightIcon={canRemoveEmailField ? IconX : undefined}
+                      onRightIconClick={
+                        canRemoveEmailField ? () => remove(index) : undefined
+                      }
                       noErrorHelper
                       fullWidth
                     />
@@ -124,6 +129,7 @@ export const InviteTeam = () => {
         <StyledFooter>
           <MainButton
             title={t`Invite`}
+            Icon={() => (isSubmitting || isNavigating ? <Loader /> : null)}
             disabled={!isValid || isSubmitting || isNavigating}
             onClick={handleSubmit(onSubmit)}
             fullWidth

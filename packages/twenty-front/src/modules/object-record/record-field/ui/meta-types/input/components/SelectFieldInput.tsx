@@ -49,7 +49,6 @@ export const SelectFieldInput = () => {
   const selectedOption = selectOptions.find(
     (option) => option.value === fieldValue,
   );
-  // handlers
   const handleClearField = () => {
     clearField();
     onCancel?.();

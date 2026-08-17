@@ -4,11 +4,6 @@ import {
 } from 'src/engine/core-modules/logger/interfaces';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-/**
- * Logger Module factory
- * @returns LoggerModuleOptions
- * @param twentyConfigService
- */
 export const loggerModuleFactory = async (
   twentyConfigService: TwentyConfigService,
 ): Promise<LoggerModuleOptions> => {

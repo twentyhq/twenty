@@ -191,7 +191,6 @@ describe('file-by-id.controller - GET /file/:fileFolder/:id', () => {
     expect(fileUrl).toBeDefined();
     expect(fileId).toBe(textFile.id);
 
-    // Extract path from full URL (remove domain)
     const urlPath = new URL(fileUrl).pathname + new URL(fileUrl).search;
 
     const downloadResponse = await request(global.app.getHttpServer()).get(
@@ -246,7 +245,6 @@ describe('file-by-id.controller - GET /file/:fileFolder/:id', () => {
     expect(fileUrl).toBeDefined();
     expect(createdRecord.filesField[0].extension).toBe('.txt');
 
-    // Extract path from full URL (remove domain)
     const urlPath = new URL(fileUrl).pathname + new URL(fileUrl).search;
 
     const downloadResponse = await request(global.app.getHttpServer()).get(

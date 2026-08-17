@@ -7,23 +7,29 @@ const StyledBackground = styled.div`
   background: ${themeCssVariables.background.secondary};
   display: flex;
   flex-direction: column;
-  height: 100dvh;
+  height: calc(100dvh / var(--t-zoom, 1));
   width: 100%;
 `;
 
 type OnboardingLayoutProps = {
   children: ReactNode;
   onBack?: () => void;
+  isBackDisabled?: boolean;
   freeCredits?: number;
 };
 
 export const OnboardingLayout = ({
   children,
   onBack,
+  isBackDisabled,
   freeCredits,
 }: OnboardingLayoutProps) => (
   <StyledBackground>
-    <OnboardingHeader onBack={onBack} freeCredits={freeCredits} />
+    <OnboardingHeader
+      onBack={onBack}
+      isBackDisabled={isBackDisabled}
+      freeCredits={freeCredits}
+    />
     {children}
   </StyledBackground>
 );

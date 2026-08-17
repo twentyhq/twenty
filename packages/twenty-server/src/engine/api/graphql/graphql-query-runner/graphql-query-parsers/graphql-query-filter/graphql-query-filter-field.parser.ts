@@ -1,9 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import {
-  Brackets,
-  type ObjectLiteral,
-  type WhereExpressionBuilder,
-} from 'typeorm';
+import { Brackets, type WhereExpressionBuilder } from 'typeorm';
 import { compositeTypeDefinitions, RelationType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
@@ -14,6 +10,8 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { addRelationJoinAliasToQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/add-relation-join-alias.util';
+import { resolveFilterKeyFieldMetadata } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/resolve-filter-key-field-metadata.util';
+import { assertArrayOperatorValueIsNonEmptyArray } from 'src/engine/api/graphql/graphql-query-runner/utils/assert-array-operator-value-is-non-empty-array.util';
 import { computeWhereConditionParts } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-where-condition-parts';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -28,11 +26,9 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/repository/workspace-select-query-builder';
 
 import { GraphqlQueryFilterConditionParser } from './graphql-query-filter-condition.parser';
-
-const ARRAY_OPERATORS = ['in', 'contains', 'notContains'];
+import { type RecordQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/types/record-query-builder.type';
 
 export class GraphqlQueryFilterFieldParser {
   private flatObjectMetadata: FlatObjectMetadata;
@@ -64,7 +60,7 @@ export class GraphqlQueryFilterFieldParser {
 
   public parse(
     queryBuilder: WhereExpressionBuilder,
-    outerQueryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>,
+    outerQueryBuilder: RecordQueryBuilder,
     objectNameSingular: string,
     key: string,
     // oxlint-disable-next-line typescript/no-explicit-any
@@ -72,14 +68,13 @@ export class GraphqlQueryFilterFieldParser {
     isFirst = false,
     useDirectTableReference = false,
   ): void {
-    const isFilterKeyARelation = isDefined(this.fieldIdByName[key]);
-    const fieldMetadataId =
-      this.fieldIdByName[`${key}`] || this.fieldIdByJoinColumnName[`${key}`];
-
-    const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: fieldMetadataId,
-      flatEntityMaps: this.flatFieldMetadataMaps,
-    });
+    const { fieldMetadata, isReferencedByFieldName } =
+      resolveFilterKeyFieldMetadata({
+        filterKey: key,
+        fieldIdByName: this.fieldIdByName,
+        fieldIdByJoinColumnName: this.fieldIdByJoinColumnName,
+        flatFieldMetadataMaps: this.flatFieldMetadataMaps,
+      });
 
     if (!isDefined(fieldMetadata)) {
       throw new Error(`Field metadata not found for field: ${key}`);
@@ -99,7 +94,7 @@ export class GraphqlQueryFilterFieldParser {
     }
 
     if (
-      isFilterKeyARelation &&
+      isReferencedByFieldName &&
       isMorphOrRelationFlatFieldMetadata(fieldMetadata) &&
       fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE
     ) {
@@ -125,16 +120,8 @@ export class GraphqlQueryFilterFieldParser {
     }
     const [[operator, value]] = Object.entries(filterValue);
 
-    if (
-      ARRAY_OPERATORS.includes(operator) &&
-      (!Array.isArray(value) || value.length === 0)
-    ) {
-      throw new GraphqlQueryRunnerException(
-        `Invalid filter value for field ${key}. Expected non-empty array`,
-        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-        { userFriendlyMessage: msg`Invalid filter value: "${String(value)}"` },
-      );
-    }
+    assertArrayOperatorValueIsNonEmptyArray({ operator, value, key });
+
     const { sql, params } = computeWhereConditionParts({
       operator,
       objectNameSingular,
@@ -153,7 +140,7 @@ export class GraphqlQueryFilterFieldParser {
 
   private parseRelationSubFilter(
     queryBuilder: WhereExpressionBuilder,
-    outerQueryBuilder: WorkspaceSelectQueryBuilder<ObjectLiteral>,
+    outerQueryBuilder: RecordQueryBuilder,
     parentAlias: string,
     fieldMetadata: FlatFieldMetadata,
     filterValue: Partial<ObjectRecordFilter>,
@@ -267,18 +254,11 @@ export class GraphqlQueryFilterFieldParser {
         subFieldFilter as Record<string, any>,
       );
 
-      if (
-        ARRAY_OPERATORS.includes(operator) &&
-        (!Array.isArray(value) || value.length === 0)
-      ) {
-        throw new GraphqlQueryRunnerException(
-          `Invalid filter value for field ${subFieldKey}. Expected non-empty array`,
-          GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
-          {
-            userFriendlyMessage: msg`Invalid filter value: "${String(value)}"`,
-          },
-        );
-      }
+      assertArrayOperatorValueIsNonEmptyArray({
+        operator,
+        value,
+        key: subFieldKey,
+      });
 
       const { sql, params } = computeWhereConditionParts({
         operator,

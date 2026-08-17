@@ -1,4 +1,5 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import { buildWidgetVisibilityContext } from '@/page-layout/utils/buildWidgetVisibilityContext';
 import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibleWidgets';
 import {
   WidgetConfigurationType,
@@ -10,6 +11,8 @@ describe('getTabsWithVisibleWidgets', () => {
     id: string,
     conditionalDisplay?: any,
   ): PageLayoutTab['widgets'][0] => ({
+    isSystemSideEffect: false,
+    universalIdentifier: 'universal-identifier-mock',
     __typename: 'PageLayoutWidget',
     id,
     applicationId: '',
@@ -40,6 +43,8 @@ describe('getTabsWithVisibleWidgets', () => {
     id: string,
     widgets: PageLayoutTab['widgets'],
   ): PageLayoutTab => ({
+    isSystemSideEffect: false,
+    universalIdentifier: 'universal-identifier-mock',
     __typename: 'PageLayoutTab',
     applicationId: '',
     id,
@@ -67,9 +72,11 @@ describe('getTabsWithVisibleWidgets', () => {
 
       const result = getTabsWithVisibleWidgets({
         tabs,
-        isMobile: false,
-        isInSidePanel: false,
         isEditMode: false,
+        context: buildWidgetVisibilityContext({
+          isMobile: false,
+          isInSidePanel: false,
+        }),
       });
 
       expect(result).toHaveLength(2);
@@ -91,9 +98,11 @@ describe('getTabsWithVisibleWidgets', () => {
 
       const result = getTabsWithVisibleWidgets({
         tabs,
-        isMobile: false,
-        isInSidePanel: false,
         isEditMode: false,
+        context: buildWidgetVisibilityContext({
+          isMobile: false,
+          isInSidePanel: false,
+        }),
       });
 
       expect(result).toHaveLength(1);
@@ -117,9 +126,11 @@ describe('getTabsWithVisibleWidgets', () => {
 
       const result = getTabsWithVisibleWidgets({
         tabs,
-        isMobile: false,
-        isInSidePanel: false,
         isEditMode: false,
+        context: buildWidgetVisibilityContext({
+          isMobile: false,
+          isInSidePanel: false,
+        }),
       });
 
       expect(result).toHaveLength(1);
@@ -135,9 +146,11 @@ describe('getTabsWithVisibleWidgets', () => {
 
       const result = getTabsWithVisibleWidgets({
         tabs,
-        isMobile: false,
-        isInSidePanel: false,
         isEditMode: false,
+        context: buildWidgetVisibilityContext({
+          isMobile: false,
+          isInSidePanel: false,
+        }),
       });
 
       expect(result).toHaveLength(1);
@@ -150,9 +163,11 @@ describe('getTabsWithVisibleWidgets', () => {
 
       const result = getTabsWithVisibleWidgets({
         tabs,
-        isMobile: false,
-        isInSidePanel: false,
         isEditMode: false,
+        context: buildWidgetVisibilityContext({
+          isMobile: false,
+          isInSidePanel: false,
+        }),
       });
 
       expect(result).toHaveLength(1);
@@ -175,9 +190,11 @@ describe('getTabsWithVisibleWidgets', () => {
 
       const result = getTabsWithVisibleWidgets({
         tabs,
-        isMobile: false,
-        isInSidePanel: false,
         isEditMode: true,
+        context: buildWidgetVisibilityContext({
+          isMobile: false,
+          isInSidePanel: false,
+        }),
       });
 
       expect(result).toHaveLength(3);
@@ -196,9 +213,11 @@ describe('getTabsWithVisibleWidgets', () => {
 
       const result = getTabsWithVisibleWidgets({
         tabs,
-        isMobile: false,
-        isInSidePanel: false,
         isEditMode: true,
+        context: buildWidgetVisibilityContext({
+          isMobile: false,
+          isInSidePanel: false,
+        }),
       });
 
       expect(result).toHaveLength(1);
@@ -212,9 +231,11 @@ describe('getTabsWithVisibleWidgets', () => {
 
       const result = getTabsWithVisibleWidgets({
         tabs,
-        isMobile: false,
-        isInSidePanel: false,
         isEditMode: true,
+        context: buildWidgetVisibilityContext({
+          isMobile: false,
+          isInSidePanel: false,
+        }),
       });
 
       expect(result).toHaveLength(2);
@@ -236,9 +257,11 @@ describe('getTabsWithVisibleWidgets', () => {
 
       const result = getTabsWithVisibleWidgets({
         tabs,
-        isMobile: false,
-        isInSidePanel: false,
         isEditMode: true,
+        context: buildWidgetVisibilityContext({
+          isMobile: false,
+          isInSidePanel: false,
+        }),
       });
 
       expect(result).toHaveLength(2);
@@ -251,9 +274,11 @@ describe('getTabsWithVisibleWidgets', () => {
     it('should handle empty tabs array', () => {
       const result = getTabsWithVisibleWidgets({
         tabs: [],
-        isMobile: false,
-        isInSidePanel: false,
         isEditMode: false,
+        context: buildWidgetVisibilityContext({
+          isMobile: false,
+          isInSidePanel: false,
+        }),
       });
 
       expect(result).toHaveLength(0);
@@ -272,9 +297,11 @@ describe('getTabsWithVisibleWidgets', () => {
 
       getTabsWithVisibleWidgets({
         tabs,
-        isMobile: false,
-        isInSidePanel: false,
         isEditMode: false,
+        context: buildWidgetVisibilityContext({
+          isMobile: false,
+          isInSidePanel: false,
+        }),
       });
 
       expect(tabs).toHaveLength(originalLength);
@@ -308,9 +335,11 @@ describe('getTabsWithVisibleWidgets', () => {
 
       const result = getTabsWithVisibleWidgets({
         tabs,
-        isMobile: false,
-        isInSidePanel: false,
         isEditMode: false,
+        context: buildWidgetVisibilityContext({
+          isMobile: false,
+          isInSidePanel: false,
+        }),
       });
 
       expect(result).toHaveLength(2);
@@ -318,6 +347,98 @@ describe('getTabsWithVisibleWidgets', () => {
       expect(result[0].widgets).toHaveLength(2);
       expect(result[1].id).toBe('tab-3');
       expect(result[1].widgets).toHaveLength(2);
+    });
+  });
+
+  describe('with record-gated widgets', () => {
+    const createRecordGatedWidget = (
+      id: string,
+      conditionalAvailabilityExpression: string,
+    ): PageLayoutTab['widgets'][0] => ({
+      ...createMockWidget(id),
+      conditionalAvailabilityExpression,
+    });
+
+    // The campaign layout's sent-only gate. `noneEquals` rather than
+    // `not everyEquals`: the two agree on a loaded record, but an empty
+    // selection makes the first false and the second true, and the selection is
+    // empty until the record loads.
+    const sentOnlyTab = () =>
+      createMockTab('sent-only', [
+        createRecordGatedWidget(
+          'widget-1',
+          'noneEquals(selectedRecords, "status", "DRAFT")',
+        ),
+      ]);
+
+    it('should drop a tab whose widgets are all gated out by the selected record', () => {
+      const result = getTabsWithVisibleWidgets({
+        tabs: [sentOnlyTab(), createMockTab('always', [createMockWidget('w')])],
+        isEditMode: false,
+        context: buildWidgetVisibilityContext({
+          isMobile: false,
+          isInSidePanel: false,
+          targetRecord: { id: 'record-1', status: 'DRAFT' },
+        }),
+      });
+
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe('always');
+    });
+
+    it('should keep a tab whose widgets the selected record allows', () => {
+      const result = getTabsWithVisibleWidgets({
+        tabs: [sentOnlyTab(), createMockTab('always', [createMockWidget('w')])],
+        isEditMode: false,
+        context: buildWidgetVisibilityContext({
+          isMobile: false,
+          isInSidePanel: false,
+          targetRecord: { id: 'record-1', status: 'SENT' },
+        }),
+      });
+
+      expect(result).toHaveLength(2);
+      expect(result[0].id).toBe('sent-only');
+    });
+
+    // The record store answers after the first render, so every campaign page
+    // load passes through this state: it must not show a tab it is about to
+    // take away. The second tab keeps the all-tabs-empty fallback, which would
+    // return the first tab regardless, from hiding the result.
+    it('should drop a record-gated tab while no record is given', () => {
+      const result = getTabsWithVisibleWidgets({
+        tabs: [sentOnlyTab(), createMockTab('always', [createMockWidget('w')])],
+        isEditMode: false,
+        context: buildWidgetVisibilityContext({
+          isMobile: false,
+          isInSidePanel: false,
+        }),
+      });
+
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe('always');
+    });
+
+    it('should drop a positively gated tab while no record is given', () => {
+      const result = getTabsWithVisibleWidgets({
+        tabs: [
+          createMockTab('draft-only', [
+            createRecordGatedWidget(
+              'widget-1',
+              'everyEquals(selectedRecords, "status", "DRAFT")',
+            ),
+          ]),
+          createMockTab('always', [createMockWidget('w')]),
+        ],
+        isEditMode: false,
+        context: buildWidgetVisibilityContext({
+          isMobile: false,
+          isInSidePanel: false,
+        }),
+      });
+
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe('always');
     });
   });
 });

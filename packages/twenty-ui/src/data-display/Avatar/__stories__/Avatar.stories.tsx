@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 
 import { AVATAR_URL_MOCK, ComponentDecorator } from '@ui/testing';
 
@@ -42,5 +43,19 @@ export const App: Story = {
     avatarUrl: '',
     placeholder: 'Acme',
     placeholderColorSeed: 'acme-app',
+  },
+};
+
+export const ImageFailingToLoadFallsBackToPlaceholder: Story = {
+  args: {
+    avatarUrl: 'data:image/png;base64,not-a-valid-image',
+    placeholder: 'Eldritch',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const placeholderChar = await canvas.findByText('E');
+
+    await expect(placeholderChar).toBeVisible();
   },
 };

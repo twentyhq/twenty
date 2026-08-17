@@ -30,7 +30,7 @@ const StyledDocumentViewerContainer = styled.div`
   background: ${themeCssVariables.background.secondary};
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 200px);
+  height: calc(100vh / var(--t-zoom, 1) - 200px);
   min-height: 500px;
   width: 100%;
 
@@ -44,7 +44,10 @@ const StyledDocumentViewerContainer = styled.div`
 
   #react-doc-viewer,
   #proxy-renderer,
-  #msdoc-renderer {
+  #msdoc-renderer,
+  #html-renderer,
+  #html-renderer iframe,
+  iframe {
     background: none;
     display: flex;
     flex-direction: column;

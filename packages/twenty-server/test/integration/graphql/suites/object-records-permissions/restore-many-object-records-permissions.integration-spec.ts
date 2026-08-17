@@ -15,7 +15,6 @@ describe('restoreManyObjectRecordsPermissions', () => {
   const personId2 = randomUUID();
 
   beforeAll(async () => {
-    // Create people
     const createGraphqlOperation = createManyOperationFactory({
       objectMetadataSingularName: 'person',
       objectMetadataPluralName: 'people',
@@ -32,7 +31,6 @@ describe('restoreManyObjectRecordsPermissions', () => {
 
     await makeGraphqlAPIRequest(createGraphqlOperation);
 
-    // Delete people
     const deleteGraphqlOperation = deleteManyOperationFactory({
       objectMetadataSingularName: 'person',
       objectMetadataPluralName: 'people',

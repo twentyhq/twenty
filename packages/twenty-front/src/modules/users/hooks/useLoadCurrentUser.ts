@@ -21,6 +21,7 @@ import { useApolloClient } from '@apollo/client/react';
 import { GetCurrentUserDocument } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import { type UiScale } from '@/workspace-member/types/WorkspaceMember';
 
 export const useLoadCurrentUser = () => {
   const setCurrentUser = useSetAtomState(currentUserState);
@@ -82,6 +83,7 @@ export const useLoadCurrentUser = () => {
           (user.currentUserWorkspace.objectsPermissions as Array<
             ObjectPermissions & { objectMetadataId: string }
           >) ?? [],
+        isImpersonating: user.currentUserWorkspace.isImpersonating ?? false,
       });
     }
 
@@ -89,6 +91,7 @@ export const useLoadCurrentUser = () => {
       workspaceMember = {
         ...user.workspaceMember,
         colorScheme: user.workspaceMember?.colorScheme as ColorScheme,
+        uiScale: user.workspaceMember?.uiScale as UiScale,
         openRecordIn: toOpenRecordInPreference(
           user.workspaceMember?.openRecordIn,
         ),
@@ -97,7 +100,6 @@ export const useLoadCurrentUser = () => {
 
       setCurrentWorkspaceMember(workspaceMember);
 
-      // Initialize unified format preferences state
       initializeFormatPreferences(workspaceMember);
       dynamicActivate(
         (workspaceMember.locale as keyof typeof APP_LOCALES) ?? SOURCE_LOCALE,

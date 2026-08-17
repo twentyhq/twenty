@@ -56,6 +56,8 @@ import {
 } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
+import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
+import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/types/user-session-revoked-reason.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { WorkspaceDomainConfig } from 'src/engine/core-modules/domain/workspace-domains/types/workspace-domain-config.type';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
@@ -72,7 +74,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
-// import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-migration/constant/default-feature-flags';
 
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
@@ -104,6 +105,7 @@ export class AuthService {
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly createSSOConnectedAccountService: CreateSSOConnectedAccountService,
+    private readonly userSessionService: UserSessionService,
   ) {}
 
   private async checkAccessAndUseInvitationOrThrow(
@@ -581,7 +583,6 @@ export class AuthService {
       }
     }
 
-    // Validate requested scopes are a subset of the registration's allowed scopes
     const parsedScopes = authorizeAppInput.scope
       ? authorizeAppInput.scope.split(' ').filter(Boolean)
       : [];
@@ -701,7 +702,6 @@ export class AuthService {
       passwordHash: newPasswordHash,
     });
 
-    // Invalidate all existing refresh tokens for this user across all workspaces
     await this.appTokenRepository.update(
       {
         userId,
@@ -712,6 +712,11 @@ export class AuthService {
         revokedAt: new Date(),
       },
     );
+
+    await this.userSessionService.revokeAllSessionsForUser({
+      userId,
+      reason: UserSessionRevokedReason.PasswordChanged,
+    });
 
     const emailTemplate = PasswordUpdateNotifyEmail({
       userName: `${user.firstName} ${user.lastName}`,
@@ -799,7 +804,10 @@ export class AuthService {
       .andWhere('"appToken".type IN (:...types)', {
         types: INVITATION_APP_TOKEN_TYPES,
       })
-      .andWhere('"appToken"."deletedAt" IS NULL');
+      .andWhere('"appToken"."deletedAt" IS NULL')
+      .andWhere('"appToken"."expiresAt" > :now', {
+        now: new Date(),
+      });
 
     if ('workspacePersonalInviteToken' in params) {
       qr.andWhere('"appToken".value = :personalInviteToken', {

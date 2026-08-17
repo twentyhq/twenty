@@ -21,7 +21,7 @@ config({
 
 const TEST_ROW_KEY_PREFIX = 'ENCRYPT_APP_VAR_TEST_';
 const CHECK_CONSTRAINT_NAME = 'CHK_applicationVariable_value_encrypted';
-const CHECK_CONSTRAINT_EXPR = `"isSecret" = false OR "value" = '' OR "value" LIKE '${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}%'`;
+const CHECK_CONSTRAINT_EXPR = `"value" LIKE '${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}%'`;
 
 const dropCheckConstraint = (dataSource: DataSource): Promise<unknown> =>
   dataSource.query(

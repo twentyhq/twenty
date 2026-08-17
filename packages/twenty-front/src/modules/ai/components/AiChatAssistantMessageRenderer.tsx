@@ -9,11 +9,13 @@ import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
 import { groupContiguousThinkingStepParts } from '@/ai/utils/groupContiguousThinkingStepParts';
 import { isCodeInterpreterToolPart } from '@/ai/utils/isCodeInterpreterToolPart';
+import { isHiddenCompleteWorkspaceSetupToolPart } from '@/ai/utils/isHiddenCompleteWorkspaceSetupToolPart';
 import { styled } from '@linaria/react';
 import { getToolName, isToolUIPart } from 'ai';
 import {
   ASK_QUESTIONS_TOOL_NAME,
   type ExtendedUIMessagePart,
+  isSucceededCompleteWorkspaceSetupToolPart,
 } from 'twenty-shared/ai';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -79,9 +81,13 @@ export const AiChatAssistantMessageRenderer = ({
   const hasCodeExecutionData = messageParts.some(
     (part) => part.type === 'data-code-execution',
   );
+  const hasSucceededCompleteWorkspaceSetupToolPart = messageParts.some(
+    isSucceededCompleteWorkspaceSetupToolPart,
+  );
   const filteredParts = messageParts.filter(
     (part) =>
       part.type !== 'data-thread-title' &&
+      !isHiddenCompleteWorkspaceSetupToolPart(part) &&
       !(hasCodeExecutionData && isCodeInterpreterToolPart(part)),
   );
   const renderItems = groupContiguousThinkingStepParts(filteredParts);
@@ -89,7 +95,9 @@ export const AiChatAssistantMessageRenderer = ({
   const lastRenderItemIndex = renderItems.length - 1;
 
   if (!renderItems.length && !hasError) {
-    return <AiChatInitialLoadingIndicator />;
+    return hasSucceededCompleteWorkspaceSetupToolPart ? null : (
+      <AiChatInitialLoadingIndicator />
+    );
   }
 
   return (

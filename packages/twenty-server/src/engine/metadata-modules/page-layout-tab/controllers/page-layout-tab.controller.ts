@@ -7,14 +7,18 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { paginateMetadataRestItems } from 'src/engine/api/rest/metadata/utils/paginate-metadata-rest-items.util';
+import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -34,7 +38,7 @@ import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout-ta
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
 
-@Controller('rest/metadata/pageLayoutTabs')
+@Controller(`${ApiPath.Rest}/metadata/pageLayoutTabs`)
 @UseGuards(WorkspaceAuthGuard)
 @UseFilters(
   PermissionsRestApiExceptionFilter,
@@ -48,9 +52,10 @@ export class PageLayoutTabController {
   @Get()
   @UseGuards(NoPermissionGuard)
   async findMany(
+    @Req() request: AuthenticatedRequest,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Query('pageLayoutId') pageLayoutId: string,
-  ): Promise<PageLayoutTabDTO[]> {
+  ) {
     if (!isDefined(pageLayoutId)) {
       throw new PageLayoutTabException(
         generatePageLayoutTabExceptionMessage(
@@ -60,10 +65,12 @@ export class PageLayoutTabController {
       );
     }
 
-    return this.pageLayoutTabService.findByPageLayoutId({
+    const items = await this.pageLayoutTabService.findByPageLayoutId({
       workspaceId: workspace.id,
       pageLayoutId,
     });
+
+    return paginateMetadataRestItems({ items, request });
   }
 
   @Get(':id')

@@ -45,7 +45,6 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<CommonFindDuplicatesOutputItem[]> {
     const {
-      repository,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -55,7 +54,9 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
       rolePermissionConfig,
     } = queryRunnerContext;
 
-    const existingRecordsQueryBuilder = repository.createQueryBuilder(
+    const readRepository = this.getReadRepository(queryRunnerContext);
+
+    const existingRecordsQueryBuilder = readRepository.createQueryBuilder(
       flatObjectMetadata.nameSingular,
     );
 
@@ -110,9 +111,8 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
             };
           }
 
-          const duplicateRecordsQueryBuilder = repository.createQueryBuilder(
-            flatObjectMetadata.nameSingular,
-          );
+          const duplicateRecordsQueryBuilder =
+            readRepository.createQueryBuilder(flatObjectMetadata.nameSingular);
 
           commonQueryParser.applyFilterToBuilder(
             duplicateRecordsQueryBuilder,
@@ -130,14 +130,16 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
           const aggregateQueryBuilder = duplicateRecordsQueryBuilder.clone();
           const totalCount = await aggregateQueryBuilder.getCount();
 
-          const { startCursor, endCursor } = getPageInfo(
-            duplicates,
-            [{ id: OrderByDirection.AscNullsFirst }],
-            QUERY_MAX_RECORDS,
-            true,
+          const { startCursor, endCursor } = getPageInfo({
+            records: duplicates,
+            orderBy: [{ id: OrderByDirection.AscNullsFirst }],
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+            },
             flatObjectMetadata,
             flatFieldMetadataMaps,
-          );
+          });
 
           return {
             records: duplicates,
@@ -168,6 +170,7 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
         workspaceDataSource,
         rolePermissionConfig,
         selectedFields: args.selectedFieldsResult.select,
+        ...this.getNestedRelationsReadPathOptions(queryRunnerContext),
       });
     }
 

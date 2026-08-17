@@ -45,6 +45,9 @@ export default defineConnectionProvider({
   // Optional: a logic function in this app to run right after a connection is
   // established. See "Run a logic function on connect".
   // onConnectLogicFunction: { universalIdentifier: '3a2b1c0d-...-...' },
+  // Optional: a logic function in this app to run right after a connection is
+  // removed. See "Run a logic function on disconnect".
+  // onDisconnectLogicFunction: { universalIdentifier: '4d5e6f70-...-...' },
 });
 ```
 
@@ -121,6 +124,42 @@ type OnConnectPayload = {
 ```
 
 من هناك استخدم `getConnection(connectedAccountId)` لقراءة رمز الوصول الجديد واستدعاء واجهة برمجة تطبيقات المزوّد (على سبيل المثال، Slack `auth.test`) أو حفظ تعيين باستخدام [مخزن المفاتيح والقيم](/l/ar/developers/extend/apps/logic/key-value-store).
+
+</Accordion>
+
+<Accordion title="تشغيل دالة منطقية عند قطع الاتصال" description="نظّف عند إزالة اتصال">
+
+أي شيء يطالب به تطبيق ما وقت الاتصال يجب تحريره عندما يزول الاتصال. على سبيل المثال، يجب على تكامل Slack الذي يطالب بـ `team_id` عند الاتصال تحرير تلك المطالبة حتى تتمكن مساحة عمل أخرى من ربط فريق Slack نفسه. عيِّن `onDisconnectLogicFunction` للإشارة إلى دالة منطقية في التطبيق نفسه، وسيتم تشغيلها مباشرة بعد حذف `ConnectedAccount`.
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  // Runs releaseSlackTeam after every Slack disconnection.
+  onDisconnectLogicFunction: {
+    universalIdentifier: '4470aba8-5ff5-4800-88db-2a427cd8677c',
+  },
+});
+```
+
+تمامًا مثل خطاف on-connect، يتم تشغيله **بشكل غير متزامن في مساحة العمل التي يتم قطع اتصالها** ولا يمنع عملية قطع الاتصال أبدًا. يتلقى المعالج نفس شكل الحمولة:
+
+```ts
+type OnDisconnectPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  connectedAccountId: string;
+};
+```
+
+يكون `ConnectedAccount` قد أُزيل بالفعل عندما يتم تشغيل الخطاف، لذلك لم يعد `getConnection(connectedAccountId)` يُرجع نتيجة. أي شيء يحتاجه إجراء التنظيف (مثل `team_id` أو معرّف اشتراك خارجي) يجب أن يكون قد كُتب في [مخزن القيم المفتاحية](/l/ar/developers/extend/apps/logic/key-value-store) في وقت الاتصال، مع استخدام `connectedAccountId` كمفتاح.
+
+يتم إطلاق الخطاف عندما تتم إزالة اتصال بمفرده. يؤدي إلغاء تثبيت التطبيق إلى حذف اتصالاته عبر حذف متسلسل في قاعدة البيانات، لذلك لا يتم تشغيل الخطاف في هذه الحالة. صرّح عن `uninstallLogicFunction` على `defineApplication` لذلك المسار: يتم تشغيله قبل حذف بيانات التعريف الخاصة بالتطبيق، لذا لا يزال بإمكانه استدعاء `listConnections` وتنظيف أي شيء متبقٍّ.
 
 </Accordion>
 

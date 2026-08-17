@@ -23,6 +23,8 @@ export const USER_QUERY_FRAGMENT = gql`
     canImpersonate
     supportUserHash
     onboardingStatus
+    previousOnboardingStatus
+    isWorkspaceCreator
     workspaceMember {
       ...WorkspaceMemberQueryFragment
     }
@@ -35,6 +37,7 @@ export const USER_QUERY_FRAGMENT = gql`
     currentUserWorkspace {
       id
       permissionFlags
+      isImpersonating
       objectsPermissions {
         ...ObjectPermissionFragment
       }

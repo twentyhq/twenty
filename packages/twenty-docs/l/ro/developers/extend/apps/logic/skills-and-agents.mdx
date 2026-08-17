@@ -100,7 +100,8 @@ Note despre schemă:
 </Accordion>
 <Accordion title="runAgent" description="Rulează un agent dintr-o funcție logică">
 
-`runAgent()` permite unei funcții logice să ruleze unul dintre agenții aplicației tale (cu abilitățile și instrumentele sale). Identifică agentul prin `universalIdentifier` pe care l-ai transmis către `defineAgent()`:
+`runAgent()` permite unei funcții logice să ruleze unul dintre agenții aplicației tale (cu abilitățile și instrumentele sale). Identifică agentul prin `universalIdentifier` pe care l-ai transmis către `defineAgent()`. Transmite fie un șir `prompt`, fie un istoric de conversație `messages`,
+nu ambele:
 
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
@@ -111,7 +112,25 @@ const { result, error, success } = await runAgent({
 });
 ```
 
+Pentru boți multi-turn (Slack, Discord, Teams, …), transmite istoricul firului de discuție ca
+`messages` în loc de un singur `prompt`:
+
+```ts src/logic-functions/reply-in-thread.ts
+import { runAgent } from 'twenty-sdk/logic-function';
+
+const { result, error, success } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  messages: [
+    { role: 'user', content: 'Who owns Acme?' },
+    { role: 'assistant', content: 'Sarah owns the Acme account.' },
+    { role: 'user', content: 'What was the last touchpoint?' },
+  ],
+});
+```
+
 Puncte cheie:
+* Furnizează **exact unul** dintre `prompt` (șir) sau `messages` (1 până la 100 de intrări
+  de `{ role: 'user' | 'assistant', content: string }`).
 * Agentul rulează **sincron** și poate citi/actualiza direct înregistrări prin propriile sale instrumente — `runAgent()` este rezolvat după ce rularea se încheie.
 * O aplicație poate rula doar propriii săi agenți.
 * [Rolul implicit](/l/ro/developers/extend/apps/config/roles) al aplicației trebuie să acorde indicatorul de permisiune `AI` — adaugă `SystemPermissionFlag.AI` la `permissionFlagUniversalIdentifiers` (sau setează `canAccessAllTools: true`).
@@ -132,6 +151,36 @@ export default defineApplicationRole({
 
 <Warning>
   **Evită buclele:** dacă apelezi `runAgent()` dintr-un declanșator de tip eveniment de bază de date `*.updated`, iar agentul actualizează aceeași înregistrare, restrânge declanșatorul cu `updatedFields` la un câmp pe care agentul nu îl scrie niciodată (de exemplu, URL-ul sursă) sau verifică dacă vreun câmp țintă este încă gol înainte de a apela `runAgent()`.
+</Warning>
+
+### Rulare în numele unui membru al spațiului de lucru
+
+Transmite `runAsWorkspaceMemberId` atunci când rularea este declanșată de o persoană — de exemplu, un chatbot care răspunde la un mesaj — astfel încât agentul să acționeze ca acel membru în loc să acționeze ca aplicația:
+
+```ts src/logic-functions/answer-question.ts
+const { result } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  prompt: 'How many open opportunities do we have?',
+  runAsWorkspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
+});
+```
+
+Rularea acționează apoi cu **propriul rol al membrului**: poate face orice
+poate face acel membru și nimic mai mult, înregistrările pe care le creează sunt atribuite lui, iar permisiunile lui la nivel de rând se aplică. Rolul agentului nu participă — este valoarea implicită a aplicației pentru rulările fără nicio persoană în spatele lor. Omite câmpul pentru
+rulările autonome (joburi programate, declanșatoare de evenimente din baza de date): acelea păstrează propriul rol al agentului. Aplicația care acționează rămâne atașată la contextul rulării
+pentru proveniență, fără a restrânge permisiunile membrului.
+
+Aplicația ta este responsabilă să facă asocierea dintre persoana care a declanșat rularea și un membru al spațiului de lucru. A denumi unul necesită un token de acces al aplicației, iar ceea ce poate denumi un token depinde dacă acesta are sau nu un utilizator asociat:
+
+* Un token **fără niciun utilizator atașat** poate denumi orice membru. O funcție logică rulează cu unul, la fel și tokenurile emise prin `client_credentials` sau dintr-o cheie API.
+* Un token emis **în numele unui utilizator**, așa cum primește un front component, poate
+  denumi doar propriul membru al acelui utilizator.
+
+Orice altceva — o sesiune simplă de utilizator, o cheie API fără un token al aplicației — nu poate denumi deloc un membru.
+
+<Warning>
+  `runAgent()` aruncă o eroare atunci când membrul spațiului de lucru nu poate fi identificat — un membru necunoscut sau eliminat, ori unul fără niciun rol. Nu revine niciodată la
+  propriul rol al agentului, deoarece acest lucru ar acorda mai mult acces decât a cerut apelantul.
 </Warning>
 
 </Accordion>

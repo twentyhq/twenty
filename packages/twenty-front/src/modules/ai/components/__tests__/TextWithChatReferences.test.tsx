@@ -70,9 +70,9 @@ describe('TextWithChatReferences', () => {
     expect(screen.queryByTestId('record-link')).not.toBeInTheDocument();
   });
 
-  it('should replace tagged record references with RecordLink chips', () => {
+  it('should replace record references with RecordLink chips', () => {
     render(
-      <TextWithChatReferences text="Contact [[record:company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:Acme[[/record]] next" />,
+      <TextWithChatReferences text="Contact [[record:company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:Acme]] next" />,
     );
 
     expect(screen.getByTestId('record-link')).toHaveTextContent('Acme');
@@ -80,18 +80,9 @@ describe('TextWithChatReferences', () => {
     expect(screen.queryByText(/\[\[record:company:/)).not.toBeInTheDocument();
   });
 
-  it('should still replace legacy ]] record references with RecordLink chips', () => {
-    render(
-      <TextWithChatReferences text="Contact [[record:company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:Acme]] next" />,
-    );
-
-    expect(screen.getByTestId('record-link')).toHaveTextContent('Acme');
-    expect(screen.getByText(/Contact/)).toHaveTextContent('Contact Acme next');
-  });
-
   it('should replace multiple record references in option-style labels', () => {
     render(
-      <TextWithChatReferences text="Merge [[person:11111111-1111-1111-1111-111111111111:Alice[[/record]] into [[person:22222222-2222-2222-2222-222222222222:Bob[[/record]]" />,
+      <TextWithChatReferences text="Merge [[person:11111111-1111-1111-1111-111111111111:Alice]] into [[person:22222222-2222-2222-2222-222222222222:Bob]]" />,
     );
 
     const recordLinks = screen.getAllByTestId('record-link');
@@ -102,23 +93,33 @@ describe('TextWithChatReferences', () => {
     expect(screen.queryByText(/\[\[/)).not.toBeInTheDocument();
   });
 
-  it('should chip tagged labels that contain backticks, brackets, colons, and ]]', () => {
+  it('should chip labels that contain backticks and colons', () => {
     render(
-      <TextWithChatReferences text="See [[record:workflow:a1b2c3d4-e5f6-7890-abcd-ef1234567890:Workflow `UPDATE_RECORD` step[[/record]] and [[record:company:b1b2c3d4-e5f6-7890-abcd-ef1234567890:[test] ]] [test] [test] ###[[/record]] then [[record:person:c1b2c3d4-e5f6-7890-abcd-ef1234567890:Doe: Jane[[/record]]" />,
+      <TextWithChatReferences text="See [[record:workflow:a1b2c3d4-e5f6-7890-abcd-ef1234567890:Workflow `UPDATE_RECORD` step]] then [[record:person:c1b2c3d4-e5f6-7890-abcd-ef1234567890:Doe: Jane]]" />,
     );
 
     const recordLinks = screen.getAllByTestId('record-link');
 
-    expect(recordLinks).toHaveLength(3);
+    expect(recordLinks).toHaveLength(2);
     expect(recordLinks[0]).toHaveTextContent('Workflow `UPDATE_RECORD` step');
-    expect(recordLinks[1]).toHaveTextContent('[test] ]] [test] [test] ###');
-    expect(recordLinks[2]).toHaveTextContent('Doe: Jane');
+    expect(recordLinks[1]).toHaveTextContent('Doe: Jane');
     expect(screen.queryByText(/\[\[record:/)).not.toBeInTheDocument();
+  });
+
+  it('should render a reference using a retired closing tag as plain text', () => {
+    render(
+      <TextWithChatReferences text="Contact [[record:company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:Acme[[/record]] next" />,
+    );
+
+    expect(screen.queryByTestId('record-link')).not.toBeInTheDocument();
+    expect(screen.getByText(/Contact/)).toHaveTextContent(
+      'Contact [[record:company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:Acme[[/record]] next',
+    );
   });
 
   it('should route each reference kind to its own chip', () => {
     render(
-      <TextWithChatReferences text="The [[view:44444444-4444-4444-4444-444444444444:Pipeline[[/view]] view of [[object:partner:Partners[[/object]] groups [[record:person:11111111-1111-1111-1111-111111111111:Alice[[/record]] by [[field:33333333-3333-3333-3333-333333333333:Stage[[/field]]" />,
+      <TextWithChatReferences text="The [[view:44444444-4444-4444-4444-444444444444:Pipeline]] view of [[object:partner:Partners]] groups [[record:person:11111111-1111-1111-1111-111111111111:Alice]] by [[field:33333333-3333-3333-3333-333333333333:Stage]]" />,
     );
 
     expect(screen.getByTestId('view-link')).toHaveAttribute(

@@ -55,3 +55,5 @@ Twenty 应用的**布局层**是用户看到的一切：应用在侧边栏中的
 | **命令菜单（Cmd+K）** | 固定的快速操作或隐藏命令                     | `defineCommandMenuItem`                   |
 
 前端组件在使用 Remote DOM 的隔离 Web Worker 内运行——它们在页面中*原生*渲染（而不是在 iframe 中），但无法直接访问宿主页面或 DOM。 与 Twenty 的通信通过消息传递的宿主 API 完成。
+
+它们仍在积极开发中：沙盒仅实现了部分 DOM，因此高级用法可能会失败。 请参阅[当前限制](/l/zh/developers/extend/apps/layout/front-components#current-limitations)。

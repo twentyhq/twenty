@@ -1,0 +1,58 @@
+{
+  "display_information": {
+    "name": "Twenty",
+    "description": "Conversational CRM assistant for Twenty",
+    "long_description": "Ask Twenty about your CRM from Slack: look up people, companies and opportunities, create and update records, and capture notes and tasks. Mention the bot in a channel or message it directly."
+  },
+  "features": {
+    "bot_user": {
+      "display_name": "Twenty",
+      "always_online": true
+    },
+    "app_home": {
+      "messages_tab_enabled": true,
+      "messages_tab_read_only_enabled": false
+    },
+    "agent_view": {
+      "agent_description": "Ask about your CRM: look up people, companies and opportunities, create and update records, and capture notes and tasks."
+    }
+  },
+  "oauth_config": {
+    "redirect_urls": ["<YOUR_TWENTY_SERVER_URL>/auth/apps/callback"],
+    "scopes": {
+      "bot": [
+        "channels:read",
+        "chat:write",
+        "chat:write.public",
+        "groups:read",
+        "reactions:write",
+        "app_mentions:read",
+        "channels:history",
+        "groups:history",
+        "im:history",
+        "im:read",
+        "users:read",
+        "users:read.email",
+        "assistant:write"
+      ]
+    }
+  },
+  "settings": {
+    "event_subscriptions": {
+      "request_url": "<YOUR_TWENTY_SERVER_URL>/webhooks/server/9ad6fa20-dff5-4d3f-ad5f-084f3c8b0b09",
+      "bot_events": [
+        "app_home_opened",
+        "app_mention",
+        "app_uninstalled",
+        "member_joined_channel",
+        "message.channels",
+        "message.groups",
+        "message.im",
+        "tokens_revoked"
+      ]
+    },
+    "org_deploy_enabled": false,
+    "socket_mode_enabled": false,
+    "token_rotation_enabled": false
+  }
+}

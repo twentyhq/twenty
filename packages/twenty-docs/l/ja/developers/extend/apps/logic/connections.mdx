@@ -45,6 +45,9 @@ export default defineConnectionProvider({
   // Optional: a logic function in this app to run right after a connection is
   // established. See "Run a logic function on connect".
   // onConnectLogicFunction: { universalIdentifier: '3a2b1c0d-...-...' },
+  // Optional: a logic function in this app to run right after a connection is
+  // removed. See "Run a logic function on disconnect".
+  // onDisconnectLogicFunction: { universalIdentifier: '4d5e6f70-...-...' },
 });
 ```
 
@@ -121,6 +124,42 @@ type OnConnectPayload = {
 ```
 
 そこから `getConnection(connectedAccountId)` を使用して最新のアクセストークンを読み取り、プロバイダーの API（例: Slack `auth.test`）を呼び出すか、[key-value store](/l/ja/developers/extend/apps/logic/key-value-store) を使ってマッピングを永続化します。
+
+</Accordion>
+
+<Accordion title="切断時にロジック関数を実行する" description="接続が削除されたときにクリーンアップを行う">
+
+アプリが接続時に確保したものは、接続が解除されたときに必ず解放しなければなりません。 例えば、接続時に `team_id` を確保する Slack 連携は、その確保を解放して、別のワークスペースが同じ Slack チームを接続できるようにしなければなりません。 同じアプリ内のロジック関数を参照するように `onDisconnectLogicFunction` を設定すると、`ConnectedAccount` が削除された直後にその関数が実行されます。
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  // Runs releaseSlackTeam after every Slack disconnection.
+  onDisconnectLogicFunction: {
+    universalIdentifier: '4470aba8-5ff5-4800-88db-2a427cd8677c',
+  },
+});
+```
+
+on-connect フックと同様に、**切断処理中のワークスペースで非同期に実行され**、切断をブロックすることはありません。 ハンドラーは同じペイロード構造を受け取ります:
+
+```ts
+type OnDisconnectPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  connectedAccountId: string;
+};
+```
+
+フックが実行される時点では `ConnectedAccount` はすでに削除されているため、`getConnection(connectedAccountId)` はもう解決されません。 クリーンアップに必要なもの（`team_id` や外部サブスクリプション ID など）は、接続時に `connectedAccountId` をキーとして [key-value store](/l/ja/developers/extend/apps/logic/key-value-store) に書き込まれている必要があります。
+
+このフックは、接続が単独で削除されたときに発火します。 アプリをアンインストールすると、代わりにデータベースのカスケードによって接続が削除されるため、その場合はこのフックは実行されません。 その経路用に `defineApplication` 上で `uninstallLogicFunction` を宣言します。これはアプリのメタデータが削除される前に実行されるため、まだ `listConnections` を呼び出して残っているものをクリーンアップできます。
 
 </Accordion>
 

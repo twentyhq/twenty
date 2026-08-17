@@ -98,17 +98,16 @@ jobs:
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
           npx nx run twenty-server:database:reset
 
+      # Cookie sessions are credentialed, so the front only authenticates from
+      # the API's own origin, workspace subdomains included.
+      - name: Serve the frontend from the server
+        run: cp -r packages/twenty-front/build packages/twenty-server/dist/front
+
       - name: Start server
         run: |
-          npx nx start twenty-server &
+          npx nx run twenty-server:start:ci &
           echo "Waiting for server to be ready..."
-          timeout 60 bash -c 'until curl -s http://localhost:3000/health; do sleep 2; done'
-
-      - name: Start frontend
-        run: |
-          npm_config_yes=true npx serve -s packages/twenty-front/build -l 3001 &
-          echo "Waiting for frontend to be ready..."
-          timeout 60 bash -c 'until curl -s http://localhost:3001; do sleep 2; done'
+          timeout 120 bash -c 'until curl -sf http://localhost:3000/healthz > /dev/null; do sleep 2; done'
 
       - name: Start worker
         run: |
@@ -116,6 +115,8 @@ jobs:
           echo "Worker started"
 
       - name: Run Playwright tests
+        env:
+          FRONTEND_BASE_URL: http://localhost:3000
         run: npx nx test twenty-e2e-testing
 
       - name: Upload Playwright results
