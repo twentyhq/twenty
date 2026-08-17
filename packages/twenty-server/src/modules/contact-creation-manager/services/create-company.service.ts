@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { type AxiosInstance } from 'axios';
 import uniqBy from 'lodash.uniqby';
 import { TWENTY_COMPANIES_BASE_URL } from 'twenty-shared/constants';
@@ -8,15 +9,16 @@ import {
   type FieldActorSource,
 } from 'twenty-shared/types';
 import { isDefined, normalizeUrlOrigin } from 'twenty-shared/utils';
-import { type DeepPartial, ILike } from 'typeorm';
+import { type DeepPartial, In } from 'typeorm';
 
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
-import { extractDomainFromLink } from 'src/modules/contact-creation-manager/utils/extract-domain-from-link.util';
+import { buildDomainNameUrlVariants } from 'src/modules/contact-creation-manager/utils/build-domain-name-url-variants.util';
 import { getCompanyNameFromDomainName } from 'src/modules/contact-creation-manager/utils/get-company-name-from-domain-name.util';
+import { getDomainNamesFromCompany } from 'src/modules/contact-creation-manager/utils/get-domain-names-from-company.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { computeDisplayName } from 'src/utils/compute-display-name';
 
@@ -76,26 +78,80 @@ export class CreateCompanyService {
           companiesWithoutTrailingSlash,
           'domainName',
         );
-        const conditions = uniqueCompanies.map((companyToCreate) => ({
-          domainName: {
-            primaryLinkUrl: ILike(`%${companyToCreate.domainName}%`),
-          },
-        }));
+        const domainNames = uniqueCompanies
+          .map((companyToCreate) => companyToCreate.domainName)
+          .filter(isNonEmptyString);
 
-        const existingCompanies = await companyRepository.find({
-          where: conditions,
+        if (domainNames.length === 0) {
+          return {};
+        }
+
+        const companiesMatchedOnPrimaryLink = await companyRepository.find({
+          where: {
+            domainName: {
+              primaryLinkUrl: In(
+                domainNames.flatMap(buildDomainNameUrlVariants),
+              ),
+            },
+          },
           withDeleted: true,
         });
+
+        const domainNamesWithoutCompany = domainNames.filter(
+          (domainName) =>
+            !isDefined(
+              this.findExistingCompanyByDomainName({
+                existingCompanies: companiesMatchedOnPrimaryLink,
+                domainName,
+              }),
+            ),
+        );
+
+        let companiesMatchedOnSecondaryLinks: CompanyWorkspaceEntity[] = [];
+
+        if (domainNamesWithoutCompany.length > 0) {
+          const secondaryLinksConditions = domainNamesWithoutCompany
+            .map(
+              (_, index) =>
+                `"company"."domainNameSecondaryLinks"::text ILIKE :domainName${index}`,
+            )
+            .join(' OR ');
+
+          const secondaryLinksParameters = Object.fromEntries(
+            domainNamesWithoutCompany.map((domainName, index) => [
+              `domainName${index}`,
+              `%${domainName}%`,
+            ]),
+          );
+
+          companiesMatchedOnSecondaryLinks = await companyRepository
+            .createQueryBuilder('company')
+            .where('"company"."domainNameSecondaryLinks" IS NOT NULL')
+            .andWhere(`(${secondaryLinksConditions})`, secondaryLinksParameters)
+            .withDeleted()
+            .getMany();
+        }
+
+        const matchedCompanyIds = new Set(
+          companiesMatchedOnPrimaryLink.map((company) => company.id),
+        );
+
+        const existingCompanies = [
+          ...companiesMatchedOnPrimaryLink,
+          ...companiesMatchedOnSecondaryLinks.filter(
+            (company) => !matchedCompanyIds.has(company.id),
+          ),
+        ];
+
         const existingCompanyIdsMap = this.createCompanyMap(existingCompanies);
 
         const newCompaniesToCreate = uniqueCompanies.filter(
           (company) =>
-            !existingCompanies.some(
-              (existingCompany) =>
-                existingCompany.domainName &&
-                extractDomainFromLink(
-                  existingCompany.domainName.primaryLinkUrl,
-                ) === company.domainName,
+            !isDefined(
+              this.findExistingCompanyByDomainName({
+                existingCompanies,
+                domainName: company.domainName,
+              }),
             ),
         );
 
@@ -159,18 +215,34 @@ export class CreateCompanyService {
     );
   }
 
+  private findExistingCompanyByDomainName({
+    existingCompanies,
+    domainName,
+  }: {
+    existingCompanies: CompanyWorkspaceEntity[];
+    domainName: string | undefined;
+  }): CompanyWorkspaceEntity | undefined {
+    if (!isNonEmptyString(domainName)) {
+      return undefined;
+    }
+
+    return existingCompanies.find((existingCompany) =>
+      getDomainNamesFromCompany(existingCompany.domainName).includes(
+        domainName,
+      ),
+    );
+  }
+
   private filterCompaniesToRestore(
     uniqueCompanies: CompanyToCreate[],
     existingCompanies: CompanyWorkspaceEntity[],
   ) {
     return uniqueCompanies
       .map((company) => {
-        const existingCompany = existingCompanies.find(
-          (existingCompany) =>
-            existingCompany.domainName &&
-            extractDomainFromLink(existingCompany.domainName.primaryLinkUrl) ===
-              company.domainName,
-        );
+        const existingCompany = this.findExistingCompanyByDomainName({
+          existingCompanies,
+          domainName: company.domainName,
+        });
 
         return isDefined(existingCompany)
           ? {
@@ -219,12 +291,15 @@ export class CreateCompanyService {
   ) {
     return companies.reduce(
       (acc, company) => {
-        if (!company.domainName?.primaryLinkUrl || !company.id) {
+        if (!company.id) {
           return acc;
         }
-        const key = extractDomainFromLink(company.domainName.primaryLinkUrl);
 
-        acc[key] = company.id;
+        for (const domainName of getDomainNamesFromCompany(
+          company.domainName,
+        )) {
+          acc[domainName] = company.id;
+        }
 
         return acc;
       },
