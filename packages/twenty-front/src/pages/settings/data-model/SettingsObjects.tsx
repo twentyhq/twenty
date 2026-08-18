@@ -1,25 +1,26 @@
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import DarkCoverImage from '@/settings/data-model/assets/cover-dark.png';
+import LightCoverImage from '@/settings/data-model/assets/cover-light.png';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
-  IconEye,
-  IconHierarchy2,
-  IconLink,
-  IconList,
-  IconPlus,
+    IconEye,
+    IconHierarchy2,
+    IconLink,
+    IconList,
+    IconPlus,
+    IconSparkle2,
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import DarkCoverImage from '@/settings/data-model/assets/cover-dark.png';
-import LightCoverImage from '@/settings/data-model/assets/cover-light.png';
+import { H2Title } from 'twenty-ui/typography';
 import { SettingsObjectTable } from '~/pages/settings/data-model/SettingsObjectTable';
 
 const SETTINGS_DATA_MODEL_HERO_INSTANCE_ID_PREFIX = 'settings-data-model-hero';
@@ -31,6 +32,13 @@ export const SettingsObjects = () => {
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
 
   const heroTabs = [
+    {
+      id: 'data_model_walkthrough',
+      title: t`Walkthrough`,
+      Icon: IconSparkle2,
+      vimeoId: '1217964359',
+      hasSound: true,
+    },
     {
       id: 'objects',
       title: t`Objects`,

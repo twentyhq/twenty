@@ -1,32 +1,32 @@
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
+import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsApiKeysTable } from '@/settings/developers/components/SettingsApiKeysTable';
 import { SettingsWebhooksTable } from '@/settings/developers/components/SettingsWebhooksTable';
-import { PlaygroundSetupForm } from '@/settings/mcp-and-apis/components/PlaygroundSetupForm';
-import { SettingsMcpSetup } from '@/settings/mcp-and-apis/components/SettingsMcpSetup';
-import McpCoverDark from '@/settings/mcp-and-apis/assets/mcp-cover-dark.png';
-import McpCoverLight from '@/settings/mcp-and-apis/assets/mcp-cover-light.png';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import PlaygroundCoverDark from '@/settings/mcp-and-apis/assets/cover-dark.png';
 import PlaygroundCoverLight from '@/settings/mcp-and-apis/assets/cover-light.png';
-import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
-import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
+import McpCoverDark from '@/settings/mcp-and-apis/assets/mcp-cover-dark.png';
+import McpCoverLight from '@/settings/mcp-and-apis/assets/mcp-cover-light.png';
+import { PlaygroundSetupForm } from '@/settings/mcp-and-apis/components/PlaygroundSetupForm';
+import { SettingsMcpSetup } from '@/settings/mcp-and-apis/components/SettingsMcpSetup';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
-  IconBrandGraphql,
-  IconPlus,
-  IconPlug,
-  IconSparkle2,
-  IconWebhook,
+    IconBrandGraphql,
+    IconPlug,
+    IconPlus,
+    IconSparkle2,
+    IconWebhook
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { H2Title } from 'twenty-ui/typography';
 import { SETTINGS_API_WEBHOOKS_TABS } from '~/pages/settings/api-webhooks/constants/SettingsApiWebhooksTabs';
 
 type TabKey =
@@ -112,8 +112,21 @@ export const SettingsApiWebhooks = () => {
             instanceIdPrefix={SETTINGS_API_HERO_INSTANCE_ID_PREFIX}
             tabs={
               isMcpTab
-                ? []
+                ? [{
+                id: 'mcp_api_webhook_walkthrough',
+                title: t`Walkthrough`,
+                Icon: IconSparkle2,
+                vimeoId: '1217967646',
+                hasSound: true,
+              }]
                 : [
+                    {
+                      id: 'api_webhook_walkthrough',
+                      title: t`Walkthrough`,
+                      Icon: IconSparkle2,
+                      vimeoId: '1217967646',
+                      hasSound: true,
+                    },
                     {
                       id: 'rest',
                       title: t`REST`,

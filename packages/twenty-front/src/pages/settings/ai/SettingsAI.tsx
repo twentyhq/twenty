@@ -8,12 +8,13 @@ import { getSettingsPath } from 'twenty-shared/utils';
 
 import { t } from '@lingui/core/macro';
 import {
-  IconChartBar,
-  IconCpu,
-  IconLayoutDashboard,
-  IconPlus,
-  IconSparkles,
-  IconTool,
+    IconChartBar,
+    IconCpu,
+    IconLayoutDashboard,
+    IconPlus,
+    IconSparkle2,
+    IconSparkles,
+    IconTool,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -118,6 +119,13 @@ export const SettingsAI = () => {
             darkSrc={AI_HERO_DARK}
             instanceIdPrefix={SETTINGS_AI_HERO_INSTANCE_ID_PREFIX}
             tabs={[
+              {
+                id: 'ai_walkthrough',
+                title: t`Walkthrough`,
+                Icon: IconSparkle2,
+                vimeoId: '1217964358',
+                hasSound: true,
+              },
               {
                 id: 'skills',
                 title: t`Skills`,

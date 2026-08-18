@@ -1,17 +1,23 @@
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconApps, IconCode, IconDownload, IconPlug } from 'twenty-ui/icon';
+import {
+    IconApps,
+    IconCode,
+    IconDownload,
+    IconPlug,
+    IconSparkle2,
+} from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/layout';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import coverDark from '~/pages/settings/applications/assets/cover-dark.png';
 import coverLight from '~/pages/settings/applications/assets/cover-light.png';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { SettingsApplicationsClaimErrorTabEffect } from '~/pages/settings/applications/components/SettingsApplicationsClaimErrorTabEffect';
 import { SettingsApplicationsAvailableTab } from '~/pages/settings/applications/tabs/SettingsApplicationsAvailableTab';
 import { SettingsApplicationsDeveloperTab } from '~/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab';
@@ -83,6 +89,13 @@ export const SettingsApplications = () => {
             darkSrc={coverDark}
             instanceIdPrefix={APPLICATIONS_HERO_INSTANCE_ID_PREFIX}
             tabs={[
+              {
+                id: 'app_marketplace_walkthrough',
+                title: t`Walkthrough`,
+                Icon: IconSparkle2,
+                vimeoId: '1217964666',
+                hasSound: true,
+              },
               {
                 id: 'browse',
                 title: t`Browse`,
