@@ -104,6 +104,13 @@ describe('computeTwentyOrmV2Exception', () => {
     expect(computeTwentyOrmV2Exception(error)).toBe(error);
   });
 
+  it('should wrap a non-Error throw rather than reading message off it', () => {
+    const result = computeTwentyOrmV2Exception('connection lost');
+
+    expect(result).toBeInstanceOf(Error);
+    expect(result.message).toBe('connection lost');
+  });
+
   it('should keep the original driver error as cause so its detail survives', () => {
     const error = buildPostgresError(
       'duplicate key value violates unique constraint "IDX_person_email"',

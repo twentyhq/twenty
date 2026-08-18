@@ -22,7 +22,7 @@ export class ClientQueryExecutor implements QueryExecutorV2 {
 
       return result.rows as Record<string, unknown>[];
     } catch (error) {
-      throw computeTwentyOrmV2Exception(error as Error);
+      throw computeTwentyOrmV2Exception(error);
     }
   }
 }
