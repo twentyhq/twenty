@@ -366,12 +366,12 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
 
     const conflictTargets = entities
       .map((item) =>
-        conflictPathNames.reduce<Record<string, unknown>>(
+        conflictPathNames.reduce<FindOptionsWhere<T>>(
           (target, path) => ({
             ...target,
-            [path]: (item as unknown as Record<string, unknown>)[path],
+            [path]: (item as Record<string, unknown>)[path],
           }),
-          {},
+          {} as FindOptionsWhere<T>,
         ),
       )
       .filter((target) =>
@@ -383,13 +383,10 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     }
 
     const foreignRow = await this.repository.findOne({
-      where: conflictTargets.map(
-        (target) =>
-          ({
-            ...target,
-            workspaceId: Not(workspaceId),
-          }) as unknown as FindOptionsWhere<T>,
-      ),
+      where: conflictTargets.map((target) => ({
+        ...target,
+        workspaceId: Not(workspaceId),
+      })),
       withDeleted: true,
     });
 
