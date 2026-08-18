@@ -1,7 +1,6 @@
 import { type ClassListTargetElement } from '@/polyfills/dom/types/ClassListTargetElement';
 import { type WorkerClassTokenList } from '@/polyfills/dom/types/WorkerClassTokenList';
 import { parseClassTokenList } from '@/polyfills/dom/utils/parseClassTokenList';
-import { resolveClassAttributeValue } from '@/polyfills/dom/utils/resolveClassAttributeValue';
 import { toValidClassTokenOrThrow } from '@/polyfills/dom/utils/toValidClassTokenOrThrow';
 
 export const createClassTokenList = (
@@ -22,7 +21,7 @@ export const createClassTokenList = (
   };
 
   const readCurrentTokens = (): string[] =>
-    parseTokensMemoized(resolveClassAttributeValue(element));
+    parseTokensMemoized(element.getAttribute('class'));
 
   // Unlike browsers, unchanged writes are skipped to avoid cross-thread host mutations
   const writeTokens = (
@@ -47,7 +46,7 @@ export const createClassTokenList = (
       return readCurrentTokens().length;
     },
     get value() {
-      return resolveClassAttributeValue(element) ?? '';
+      return element.getAttribute('class') ?? '';
     },
     set value(newValue: string) {
       element.setAttribute('class', newValue);
@@ -55,7 +54,7 @@ export const createClassTokenList = (
     add: (...tokens) => {
       const tokensToAdd = tokens.map(toValidClassTokenOrThrow);
 
-      const classAttributeValue = resolveClassAttributeValue(element);
+      const classAttributeValue = element.getAttribute('class');
       const currentTokens = parseTokensMemoized(classAttributeValue);
 
       writeTokens(classAttributeValue, [
@@ -65,7 +64,7 @@ export const createClassTokenList = (
     remove: (...tokens) => {
       const tokensToRemove = tokens.map(toValidClassTokenOrThrow);
 
-      const classAttributeValue = resolveClassAttributeValue(element);
+      const classAttributeValue = element.getAttribute('class');
 
       const remainingTokens = parseTokensMemoized(classAttributeValue).filter(
         (currentToken) => !tokensToRemove.includes(currentToken),
@@ -93,7 +92,7 @@ export const createClassTokenList = (
       const oldTokenToReplace = toValidClassTokenOrThrow(oldToken);
       const newTokenToInsert = toValidClassTokenOrThrow(newToken);
 
-      const classAttributeValue = resolveClassAttributeValue(element);
+      const classAttributeValue = element.getAttribute('class');
       const currentTokens = parseTokensMemoized(classAttributeValue);
 
       if (!currentTokens.includes(oldTokenToReplace)) {
@@ -129,7 +128,7 @@ export const createClassTokenList = (
     entries: () => readCurrentTokens().entries(),
     keys: () => readCurrentTokens().keys(),
     values: () => readCurrentTokens().values(),
-    toString: () => resolveClassAttributeValue(element) ?? '',
+    toString: () => element.getAttribute('class') ?? '',
     [Symbol.iterator]: () => readCurrentTokens().values(),
   };
 

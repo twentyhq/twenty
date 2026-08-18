@@ -3,13 +3,12 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type ElementLike } from '@/polyfills/dom/types/ElementLike';
 import { iterateElementSubtree } from '@/polyfills/dom/utils/iterateElementSubtree';
 import { parseClassTokenList } from '@/polyfills/dom/utils/parseClassTokenList';
-import { resolveClassAttributeValue } from '@/polyfills/dom/utils/resolveClassAttributeValue';
 
 const hasEveryClassNameToken = (
   element: ElementLike,
   classNameTokens: string[],
 ): boolean => {
-  const classNameValue = resolveClassAttributeValue(element);
+  const classNameValue = element.getAttribute?.('class');
 
   if (!isNonEmptyString(classNameValue)) {
     return false;

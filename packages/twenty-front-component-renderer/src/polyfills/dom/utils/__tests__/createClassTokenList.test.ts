@@ -15,7 +15,11 @@ class FakeElement {
 class FakeRemoteElement {
   className?: string;
 
-  getAttribute(): string | null {
+  getAttribute(attributeName: string): string | null {
+    if (attributeName === 'class') {
+      return this.className ?? null;
+    }
+
     return null;
   }
 
@@ -346,7 +350,7 @@ describe('createClassTokenList', () => {
   });
 
   describe('className reflection on remote elements', () => {
-    it('should read tokens from the className property when the attribute is absent', () => {
+    it('should read tokens through the getAttribute redirected to the className property', () => {
       const element = new FakeRemoteElement();
       element.className = 'from-react second';
       const classTokenList = createClassTokenList(element);

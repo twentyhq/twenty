@@ -2,7 +2,6 @@ import { installGetElementsByClassName } from '../installGetElementsByClassName'
 
 class FakeElement {
   childNodes: FakeElement[] = [];
-  className?: string;
   private attributes = new Map<string, string>();
 
   constructor(classAttribute?: string) {
@@ -17,6 +16,18 @@ class FakeElement {
 
   append(...children: FakeElement[]): void {
     this.childNodes.push(...children);
+  }
+}
+
+class FakeRemoteElement extends FakeElement {
+  className?: string;
+
+  override getAttribute(attributeName: string): string | null {
+    if (attributeName === 'class') {
+      return this.className ?? null;
+    }
+
+    return super.getAttribute(attributeName);
   }
 }
 
@@ -50,9 +61,9 @@ describe('installGetElementsByClassName', () => {
     expect(matches[0]).toBe(target);
   });
 
-  it('should match an element whose classes are reflected via the className property', () => {
+  it('should match a remote element whose getAttribute reads the className property', () => {
     const rootElement = new FakeElement();
-    const target = new FakeElement();
+    const target = new FakeRemoteElement();
     target.className = 'recharts-layer recharts-line';
 
     rootElement.append(target);
