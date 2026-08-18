@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_USER_LINK_SOURCE } from 'src/logic-functions/constants/slack-user-link-source';
 import { createSlackUserLink } from 'src/logic-functions/data/create-slack-user-link';
+import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
 import { findSlackUserLink } from 'src/logic-functions/data/find-slack-user-link';
 import { findWorkspaceMemberIdByEmail } from 'src/logic-functions/data/find-workspace-member-id-by-email';
 import { updateSlackUserLink } from 'src/logic-functions/data/update-slack-user-link';
@@ -22,8 +23,7 @@ const resolveLinkableEmail = async ({
     return undefined;
   }
 
-  const authResult = await slackClient.auth.test().catch(() => undefined);
-  const installedTeamId = authResult?.team_id;
+  const installedTeamId = await getInstalledSlackTeamId(slackClient);
 
   if (
     !isNonEmptyString(installedTeamId) ||

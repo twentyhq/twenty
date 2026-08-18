@@ -12,6 +12,8 @@ import { findSlackUserLink } from 'src/logic-functions/data/find-slack-user-link
 import { updateSlackUserLink } from 'src/logic-functions/data/update-slack-user-link';
 import { type SlackSetUserLinkInput } from 'src/logic-functions/types/slack-set-user-link-input.type';
 import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
+import { type SlackUserLink } from 'src/logic-functions/types/slack-user-link.type';
+import { getInstalledSlackTeamId } from 'src/logic-functions/utils/get-installed-slack-team-id';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 
 export const slackSetUserLinkHandler = async ({
@@ -38,10 +40,7 @@ export const slackSetUserLinkHandler = async ({
     };
   }
 
-  const authResult = await slackClientResult.client.auth
-    .test()
-    .catch(() => undefined);
-  const slackTeamId = authResult?.team_id;
+  const slackTeamId = await getInstalledSlackTeamId(slackClientResult.client);
 
   if (!isNonEmptyString(slackTeamId)) {
     return {
@@ -53,7 +52,7 @@ export const slackSetUserLinkHandler = async ({
 
   const client = new CoreApiClient();
 
-  let existingLink;
+  let existingLink: SlackUserLink | undefined;
 
   try {
     existingLink = await findSlackUserLink(client, {

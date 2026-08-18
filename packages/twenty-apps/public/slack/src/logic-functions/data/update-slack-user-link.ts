@@ -1,4 +1,5 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { isDefined } from 'twenty-sdk/utils';
 
 export const updateSlackUserLink = async (
   client: CoreApiClient,
@@ -14,7 +15,7 @@ export const updateSlackUserLink = async (
         id,
         data: {
           workspaceMemberId,
-          ...(source === undefined ? {} : { source }),
+          ...(isDefined(source) ? { source } : {}),
         },
       },
       id: true,
