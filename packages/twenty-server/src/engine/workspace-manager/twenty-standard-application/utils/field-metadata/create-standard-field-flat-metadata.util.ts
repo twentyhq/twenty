@@ -1,10 +1,10 @@
 import {
+  FieldMetadataType,
   MetadataWritability,
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
   type FieldMetadataDefaultValue,
   type FieldMetadataSettings,
-  type FieldMetadataType,
 } from 'twenty-shared/types';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
@@ -32,6 +32,7 @@ export type CreateStandardFieldArgs<
     isNullable?: boolean;
     isUnique?: boolean;
     isUIEditable?: boolean;
+    writability?: MetadataWritability;
     defaultValue?: FieldMetadataDefaultValue<T>;
     settings?: FieldMetadataSettings<T>;
     options?:
@@ -57,6 +58,7 @@ export const createStandardFieldFlatMetadata = <
     isNullable = true,
     isUnique = false,
     isUIEditable = true,
+    writability,
     defaultValue,
     settings,
     options: fieldOptions = null,
@@ -88,7 +90,12 @@ export const createStandardFieldFlatMetadata = <
     isNullable,
     isUnique,
     isUIEditable,
-    writability: MetadataWritability.OPEN,
+    // Search vectors are Postgres generated columns: nothing may write them.
+    writability:
+      writability ??
+      (type === FieldMetadataType.TS_VECTOR
+        ? MetadataWritability.SYSTEM
+        : MetadataWritability.OPEN),
     isLabelSyncedWithName: false,
     overrides: null,
     defaultValue: defaultValue ?? null,
