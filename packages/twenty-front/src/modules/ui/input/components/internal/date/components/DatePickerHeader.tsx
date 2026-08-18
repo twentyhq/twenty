@@ -11,7 +11,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Temporal } from 'temporal-polyfill';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, turnJSDateToPlainDate } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
@@ -36,6 +36,7 @@ const StyledCustomDatePickerHeader = styled.div`
 
 type DatePickerHeaderProps = {
   date: string | null;
+  monthDate?: Date;
   onChange?: (date: string | null) => void;
   onChangeMonth: (month: number) => void;
   onChangeYear: (year: number) => void;
@@ -48,6 +49,7 @@ type DatePickerHeaderProps = {
 
 export const DatePickerHeader = ({
   date,
+  monthDate,
   onChange,
   onChangeMonth,
   onChangeYear,
@@ -60,7 +62,12 @@ export const DatePickerHeader = ({
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const userLocale = currentWorkspaceMember?.locale ?? SOURCE_LOCALE;
 
-  const dateParsed = isDefined(date) ? Temporal.PlainDate.from(date) : null;
+  const plainDateFromMonthDate = isDefined(monthDate)
+    ? turnJSDateToPlainDate(monthDate)
+    : null;
+  const dateParsed = isDefined(date)
+    ? Temporal.PlainDate.from(date)
+    : plainDateFromMonthDate;
 
   return (
     <>
