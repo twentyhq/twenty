@@ -34,8 +34,7 @@ import { PageLayoutRestApiExceptionFilter } from 'src/engine/metadata-modules/pa
 import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
-import { getTwentyStandardApplicationIdOrThrow } from 'src/engine/metadata-modules/utils/get-twenty-standard-application-id-or-throw.util';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
 
 @Controller(`${ApiPath.Rest}/metadata/pageLayouts`)
@@ -49,7 +48,7 @@ import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/works
 export class PageLayoutController {
   constructor(
     private readonly pageLayoutService: PageLayoutService,
-    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
     private readonly i18nService: I18nService,
   ) {}
 
@@ -150,20 +149,18 @@ export class PageLayoutController {
     workspaceId: string;
     locale: keyof typeof APP_LOCALES | undefined;
   }): Promise<PageLayoutDTO[]> {
-    const { flatApplicationMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatApplicationMaps'],
-        },
-      );
+    const safeLocale = locale ?? SOURCE_LOCALE;
 
-    const standardApplicationId =
-      getTwentyStandardApplicationIdOrThrow(flatApplicationMaps);
+    const i18nInstance = this.i18nService.getI18nInstance(safeLocale);
 
-    const i18nInstance = this.i18nService.getI18nInstance(
-      locale ?? SOURCE_LOCALE,
-    );
+    const { standardApplicationId, catalogByApplicationId } =
+      await this.applicationTranslationCatalogService.getCatalogs({
+        applicationIds: pageLayouts.map(
+          (pageLayout) => pageLayout.applicationId,
+        ),
+        locale: safeLocale,
+        workspaceId,
+      });
 
     return pageLayouts.map((pageLayout) => ({
       ...pageLayout,
@@ -178,10 +175,9 @@ export class PageLayoutController {
           locale,
           i18nInstance,
           isStandardApp: pageLayout.applicationId === standardApplicationId,
-          // This REST path reads from the flat entity cache and has no
-          // dataloader, so installed-application catalogs are not resolved
-          // here the way they are in the GraphQL resolver.
-          applicationCatalog: undefined,
+          applicationCatalog: catalogByApplicationId.get(
+            pageLayout.applicationId,
+          ),
         },
       }),
     }));
