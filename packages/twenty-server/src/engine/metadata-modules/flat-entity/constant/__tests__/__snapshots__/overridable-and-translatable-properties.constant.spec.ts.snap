@@ -98,43 +98,36 @@ exports[`registry-derived override property maps derives the overridable propert
 
 exports[`registry-derived override property maps derives the translatable properties for every metadata entity 1`] = `
 {
-  "agent": [],
-  "applicationVariable": [],
-  "commandMenuItem": [],
-  "connectionProvider": [],
-  "fieldMetadata": [
-    "description",
+  "commandMenuItem": [
     "label",
+    "shortLabel",
   ],
-  "fieldPermission": [],
-  "frontComponent": [],
-  "index": [],
-  "logicFunction": [],
-  "navigationMenuItem": [],
-  "objectMetadata": [
+  "fieldMetadata": [
+    "label",
     "description",
-    "labelPlural",
-    "labelSingular",
   ],
-  "objectPermission": [],
-  "pageLayout": [],
-  "pageLayoutTab": [],
-  "pageLayoutWidget": [],
-  "permissionFlag": [],
-  "role": [],
-  "rolePermissionFlag": [],
-  "roleTarget": [],
-  "rowLevelPermissionPredicate": [],
-  "rowLevelPermissionPredicateGroup": [],
-  "searchFieldMetadata": [],
-  "skill": [],
-  "view": [],
-  "viewField": [],
-  "viewFieldGroup": [],
-  "viewFilter": [],
-  "viewFilterGroup": [],
-  "viewGroup": [],
-  "viewSort": [],
-  "webhook": [],
+  "navigationMenuItem": [
+    "name",
+  ],
+  "objectMetadata": [
+    "labelSingular",
+    "labelPlural",
+    "description",
+  ],
+  "pageLayout": [
+    "name",
+  ],
+  "pageLayoutTab": [
+    "title",
+  ],
+  "pageLayoutWidget": [
+    "title",
+  ],
+  "view": [
+    "name",
+  ],
+  "viewFieldGroup": [
+    "name",
+  ],
 }
 `;

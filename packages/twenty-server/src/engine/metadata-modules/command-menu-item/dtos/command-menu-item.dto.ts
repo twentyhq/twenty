@@ -13,6 +13,7 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
+import { type CommandMenuItemOverrides } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import {
   type CommandMenuItemPayload,
   CommandMenuItemPayloadUnion,
@@ -98,6 +99,12 @@ export class CommandMenuItemDTO {
 
   @HideField()
   workspaceId: string;
+
+  // Kept out of the schema but needed by the field resolvers: without it they
+  // cannot tell a standard label from one a workspace renamed, and would match
+  // the workspace's own copy against the standard catalog.
+  @HideField()
+  overrides?: CommandMenuItemOverrides | null;
 
   @Field(() => UUIDScalarType, { nullable: true })
   universalIdentifier?: string;

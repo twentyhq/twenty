@@ -1,8 +1,9 @@
-import { type I18n } from '@lingui/core';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
+import { generateMessageId } from 'twenty-shared/i18n';
+
+import { type MessageIdTranslator } from 'src/engine/metadata-modules/utils/message-id-translator.type';
 
 export const translateStandardLabel = ({
   sourceValue,
@@ -13,7 +14,7 @@ export const translateStandardLabel = ({
   sourceValue: string;
   isStandardApp: boolean;
   applicationCatalog: Record<string, string> | undefined;
-  i18nInstance: I18n;
+  i18nInstance: MessageIdTranslator;
 }): string => {
   if (!isNonEmptyString(sourceValue)) {
     return sourceValue ?? '';

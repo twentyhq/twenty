@@ -25,7 +25,6 @@ export const NonRecordPageWidgetRenderer = ({
       showHeader={state.showHeader}
       hasAccess={state.hasAccess}
       restriction={state.restriction}
-      actions={[]}
       isInVerticalListTab={state.isInVerticalListTab}
       isMobile={state.isMobile}
       isReorderEnabled={true}

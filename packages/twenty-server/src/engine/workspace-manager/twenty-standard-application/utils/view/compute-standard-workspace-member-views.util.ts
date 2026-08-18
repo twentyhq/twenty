@@ -6,6 +6,7 @@ import {
   createStandardViewFlatMetadata,
   type CreateStandardViewArgs,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/create-standard-view-flat-metadata.util';
+import { OBJECT_LABEL_PLURAL_PLACEHOLDER } from 'src/engine/metadata-modules/view/constants/object-label-plural-placeholder.constant';
 
 export const computeStandardWorkspaceMemberViews = (
   args: Omit<CreateStandardViewArgs<'workspaceMember'>, 'context'>,
@@ -16,7 +17,7 @@ export const computeStandardWorkspaceMemberViews = (
       objectName: 'workspaceMember',
       context: {
         viewName: 'allWorkspaceMembers',
-        name: 'All {objectLabelPlural}',
+        name: `All ${OBJECT_LABEL_PLURAL_PLACEHOLDER}`,
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,
