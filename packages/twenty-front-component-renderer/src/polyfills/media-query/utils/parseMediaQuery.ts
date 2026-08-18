@@ -23,10 +23,11 @@ export const parseMediaQuery = (
     MEDIA_QUERY_PART_SEPARATOR_PATTERN,
   );
 
-  const { isNegated, requiresMediaType, remainingFirstPart } =
-    parseMediaQueryModifier(firstQueryPart.trim());
+  const { modifier, remainingFirstPart } = parseMediaQueryModifier(
+    firstQueryPart.trim(),
+  );
 
-  if (requiresMediaType && isMediaQueryConditionPart(remainingFirstPart)) {
+  if (modifier === 'only' && isMediaQueryConditionPart(remainingFirstPart)) {
     return null;
   }
 
@@ -66,5 +67,5 @@ export const parseMediaQuery = (
     return null;
   }
 
-  return { isNegated, matchesMediaType, conditions };
+  return { isNegated: modifier === 'not', matchesMediaType, conditions };
 };

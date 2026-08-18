@@ -4,6 +4,7 @@ const setupMediaQueryList = (initialMatches = false) => {
   let matches = initialMatches;
   const environmentListeners = new Set<() => void>();
   const unsubscribe = jest.fn();
+  const reportListenerError = jest.fn();
 
   const subscribeToEnvironmentUpdates = jest.fn((listener: () => void) => {
     environmentListeners.add(listener);
@@ -18,6 +19,7 @@ const setupMediaQueryList = (initialMatches = false) => {
     media: '(min-width: 600px)',
     evaluateMatches: () => matches,
     subscribeToEnvironmentUpdates,
+    reportListenerError,
   });
 
   const setMatches = (nextMatches: boolean) => {
@@ -33,14 +35,11 @@ const setupMediaQueryList = (initialMatches = false) => {
     setMatches,
     subscribeToEnvironmentUpdates,
     unsubscribe,
+    reportListenerError,
   };
 };
 
 describe('createWorkerMediaQueryList', () => {
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
   it('should expose live matches without any listener attached', () => {
     const { mediaQueryList, setMatches } = setupMediaQueryList();
 
@@ -92,6 +91,41 @@ describe('createWorkerMediaQueryList', () => {
     }).not.toThrow();
   });
 
+  it('should notify listeners registered through the deprecated addListener alias', () => {
+    const { mediaQueryList, setMatches } = setupMediaQueryList();
+    const changeListener = jest.fn();
+
+    mediaQueryList.addListener(changeListener);
+
+    setMatches(true);
+    expect(changeListener).toHaveBeenCalledTimes(1);
+    expect(changeListener).toHaveBeenCalledWith({
+      type: 'change',
+      media: '(min-width: 600px)',
+      matches: true,
+    });
+
+    mediaQueryList.removeListener(changeListener);
+
+    setMatches(false);
+    expect(changeListener).toHaveBeenCalledTimes(1);
+  });
+
+  it('should invoke and clear the onchange handler', () => {
+    const { mediaQueryList, setMatches } = setupMediaQueryList();
+    const onchangeHandler = jest.fn();
+
+    mediaQueryList.onchange = onchangeHandler;
+
+    setMatches(true);
+    expect(onchangeHandler).toHaveBeenCalledTimes(1);
+
+    mediaQueryList.onchange = null;
+
+    setMatches(false);
+    expect(onchangeHandler).toHaveBeenCalledTimes(1);
+  });
+
   it('should not invoke a listener removed by an earlier listener during dispatch', () => {
     const { mediaQueryList, setMatches } = setupMediaQueryList();
 
@@ -110,11 +144,12 @@ describe('createWorkerMediaQueryList', () => {
   });
 
   it('should keep notifying remaining listeners when one of them throws', () => {
-    const { mediaQueryList, setMatches } = setupMediaQueryList();
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    const { mediaQueryList, setMatches, reportListenerError } =
+      setupMediaQueryList();
 
+    const listenerError = new Error('listener failure');
     const throwingListener = jest.fn(() => {
-      throw new Error('listener failure');
+      throw listenerError;
     });
     const secondListener = jest.fn();
 
@@ -123,5 +158,6 @@ describe('createWorkerMediaQueryList', () => {
 
     expect(() => setMatches(true)).not.toThrow();
     expect(secondListener).toHaveBeenCalledTimes(1);
+    expect(reportListenerError).toHaveBeenCalledWith(listenerError);
   });
 });

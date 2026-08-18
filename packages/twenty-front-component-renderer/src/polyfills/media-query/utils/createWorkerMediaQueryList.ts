@@ -11,17 +11,19 @@ type CreateWorkerMediaQueryListInput = {
   media: string;
   evaluateMatches: () => boolean;
   subscribeToEnvironmentUpdates: (listener: () => void) => () => void;
+  reportListenerError: (error: unknown) => void;
 };
 
 export const createWorkerMediaQueryList = ({
   media,
   evaluateMatches,
   subscribeToEnvironmentUpdates,
+  reportListenerError,
 }: CreateWorkerMediaQueryListInput): WorkerMediaQueryList => {
   const changeListeners = new Set<WorkerMediaQueryListener>();
 
   let onchangeListener: WorkerMediaQueryListener | null = null;
-  let lastNotifiedMatches = false;
+  let lastNotifiedMatches: boolean | null = null;
   let unsubscribeFromEnvironmentUpdates: (() => void) | null = null;
 
   const handleEnvironmentUpdate = () => {
@@ -39,26 +41,24 @@ export const createWorkerMediaQueryList = ({
       matches: nextMatches,
     };
 
-    const listenersToNotify = [...changeListeners];
-
-    if (isDefined(onchangeListener)) {
-      listenersToNotify.push(onchangeListener);
-    }
-
-    for (const listenerToNotify of listenersToNotify) {
-      const isStillRegistered =
-        changeListeners.has(listenerToNotify) ||
-        listenerToNotify === onchangeListener;
-
-      if (!isStillRegistered) {
-        continue;
-      }
-
+    const notifyListener = (listenerToNotify: WorkerMediaQueryListener) => {
       try {
         listenerToNotify(changeEvent);
       } catch (error) {
-        console.error(error);
+        reportListenerError(error);
       }
+    };
+
+    for (const changeListener of [...changeListeners]) {
+      if (!changeListeners.has(changeListener)) {
+        continue;
+      }
+
+      notifyListener(changeListener);
+    }
+
+    if (isDefined(onchangeListener)) {
+      notifyListener(onchangeListener);
     }
   };
 

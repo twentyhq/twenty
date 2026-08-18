@@ -1,23 +1,20 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { MEDIA_QUERY_LENGTH_UNIT_TO_PIXELS } from '@/polyfills/media-query/constants/MediaQueryLengthUnitToPixels';
-
-const MEDIA_QUERY_LENGTH_PATTERN = /^(\d+(?:\.\d+)?|\.\d+)([a-z%]*)$/;
+import { parseMediaQueryNumericValueParts } from '@/polyfills/media-query/utils/parseMediaQueryNumericValueParts';
 
 export const parseMediaQueryLengthToPixels = (
   lengthString: string,
 ): number | null => {
-  const lengthMatch = lengthString.match(MEDIA_QUERY_LENGTH_PATTERN);
+  const lengthParts = parseMediaQueryNumericValueParts(lengthString);
 
-  if (!isDefined(lengthMatch)) {
+  if (!isDefined(lengthParts)) {
     return null;
   }
 
-  const [, numericValuePart, unit] = lengthMatch;
-  const numericValue = Number(numericValuePart);
-  const isUnitless = unit === '';
+  const { numericValue, unit } = lengthParts;
 
-  if (isUnitless) {
+  if (unit === '') {
     const isZeroLength = numericValue === 0;
 
     return isZeroLength ? 0 : null;

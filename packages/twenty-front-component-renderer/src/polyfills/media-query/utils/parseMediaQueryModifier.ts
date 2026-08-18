@@ -8,8 +8,7 @@ export const parseMediaQueryModifier = (
 ): ParsedMediaQueryModifier => {
   if (firstQueryPart.startsWith(NOT_MODIFIER_PREFIX)) {
     return {
-      isNegated: true,
-      requiresMediaType: false,
+      modifier: 'not',
       remainingFirstPart: firstQueryPart
         .slice(NOT_MODIFIER_PREFIX.length)
         .trim(),
@@ -18,17 +17,12 @@ export const parseMediaQueryModifier = (
 
   if (firstQueryPart.startsWith(ONLY_MODIFIER_PREFIX)) {
     return {
-      isNegated: false,
-      requiresMediaType: true,
+      modifier: 'only',
       remainingFirstPart: firstQueryPart
         .slice(ONLY_MODIFIER_PREFIX.length)
         .trim(),
     };
   }
 
-  return {
-    isNegated: false,
-    requiresMediaType: false,
-    remainingFirstPart: firstQueryPart,
-  };
+  return { modifier: null, remainingFirstPart: firstQueryPart };
 };

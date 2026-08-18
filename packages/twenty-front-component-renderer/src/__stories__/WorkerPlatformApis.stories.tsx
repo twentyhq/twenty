@@ -77,20 +77,15 @@ const matchMediaTest: Story['play'] = async ({ canvasElement }) => {
     { timeout: MOUNT_TIMEOUT },
   );
 
-  await waitFor(
-    () => {
-      expect(canvas.getByTestId('match-media-min-width')).toHaveTextContent(
-        'min-width matches: true',
-      );
-      expect(canvas.getByTestId('match-media-unknown-query')).toHaveTextContent(
-        'unknown query matches: false',
-      );
-      expect(
-        canvas.getByTestId('match-media-light-color-scheme'),
-      ).toHaveTextContent('light color scheme matches: true');
-    },
-    { timeout: MOUNT_TIMEOUT },
+  expect(canvas.getByTestId('match-media-min-width')).toHaveTextContent(
+    'min-width matches: true',
   );
+  expect(canvas.getByTestId('match-media-unknown-query')).toHaveTextContent(
+    'unknown query matches: false',
+  );
+  expect(
+    canvas.getByTestId('match-media-light-color-scheme'),
+  ).toHaveTextContent('light color scheme matches: true');
 
   expect(errorHandler).not.toHaveBeenCalled();
 };

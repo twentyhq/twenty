@@ -1,5 +1,4 @@
 export type ParsedMediaQueryModifier = {
-  isNegated: boolean;
-  requiresMediaType: boolean;
+  modifier: 'not' | 'only' | null;
   remainingFirstPart: string;
 };
