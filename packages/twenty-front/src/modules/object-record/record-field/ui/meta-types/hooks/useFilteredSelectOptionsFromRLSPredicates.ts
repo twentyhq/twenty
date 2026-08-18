@@ -132,8 +132,7 @@ export const useFilteredSelectOptionsFromRLSPredicates = ({
       return { filteredOptions: options, canSelectEmpty: true };
     }
 
-    const predicateGroups =
-      objectPermissions.rowLevelPermissionPredicateGroups;
+    const predicateGroups = objectPermissions.rowLevelPermissionPredicateGroups;
 
     const predicateGroupById = new Map(
       predicateGroups.map((group) => [group.id, group]),
@@ -143,8 +142,11 @@ export const useFilteredSelectOptionsFromRLSPredicates = ({
       predicate: RowLevelPermissionPredicate,
     ): boolean => {
       let groupId = predicate.rowLevelPermissionPredicateGroupId;
+      const visitedGroupIds = new Set<string>();
 
-      while (isDefined(groupId)) {
+      while (isDefined(groupId) && !visitedGroupIds.has(groupId)) {
+        visitedGroupIds.add(groupId);
+
         const group = predicateGroupById.get(groupId);
 
         if (!isDefined(group)) {
@@ -168,15 +170,14 @@ export const useFilteredSelectOptionsFromRLSPredicates = ({
       (predicate) => !isPredicateInsideOrGroup(predicate),
     );
 
-    const hasIsEmptyPredicate = selectPredicates.some(
+    const hasIsEmptyPredicate = predicatesOutsideOrGroups.some(
       (predicate) =>
         predicate.operand === RowLevelPermissionPredicateOperand.IS_EMPTY,
     );
 
-    const hasIsNotEmptyPredicate = selectPredicates.some(
+    const hasIsNotEmptyPredicate = predicatesOutsideOrGroups.some(
       (predicate) =>
-        predicate.operand ===
-        RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
+        predicate.operand === RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
     );
 
     return {
