@@ -39,14 +39,23 @@ export class WorkflowCoreSyncService {
 
     const applicationId = await this.getCustomApplicationIdOrThrow(workspaceId);
 
+    const linkedCoreWorkflowIds = await this.resolveOwnedCoreWorkflowIds(
+      workspaceId,
+      workflows,
+    );
+
     const coreWorkflowIdByWorkspaceRecordId = new Map<string, string>();
 
     const coreRows = workflows.map((workflow) => {
-      const coreWorkflowId = isNonEmptyString(workflow.coreWorkflowId)
-        ? workflow.coreWorkflowId
+      const isLinked =
+        isNonEmptyString(workflow.coreWorkflowId) &&
+        linkedCoreWorkflowIds.has(workflow.coreWorkflowId);
+
+      const coreWorkflowId = isLinked
+        ? (workflow.coreWorkflowId as string)
         : uuidv4();
 
-      if (!isNonEmptyString(workflow.coreWorkflowId)) {
+      if (!isLinked) {
         coreWorkflowIdByWorkspaceRecordId.set(workflow.id, coreWorkflowId);
       }
 
@@ -69,6 +78,30 @@ export class WorkflowCoreSyncService {
       workspaceId,
       coreWorkflowIdByWorkspaceRecordId,
     );
+  }
+
+  // coreWorkflowId is a writable column on the workspace record, so a caller
+  // can point it at a core row owned by another workspace. Only ids that
+  // already resolve inside this workspace are honoured; anything else is
+  // treated as unlinked and gets a fresh row.
+  private async resolveOwnedCoreWorkflowIds(
+    workspaceId: string,
+    workflows: WorkflowWorkspaceEntity[],
+  ): Promise<Set<string>> {
+    const candidateIds = workflows
+      .map((workflow) => workflow.coreWorkflowId)
+      .filter(isNonEmptyString);
+
+    if (candidateIds.length === 0) {
+      return new Set();
+    }
+
+    const ownedRows = await this.coreWorkflowRepository.find(workspaceId, {
+      where: { id: In(candidateIds) },
+      select: { id: true },
+    });
+
+    return new Set(ownedRows.map((row) => row.id));
   }
 
   async deleteFromCore(
