@@ -17,9 +17,6 @@ type UseFieldWidgetActionVisibilityParams = {
   widget: PageLayoutWidget;
 };
 
-// Single owner of the rules deciding which header actions a field widget
-// shows. The action components render what this hook allows and decide
-// nothing themselves.
 export const useFieldWidgetActionVisibility = ({
   widget,
 }: UseFieldWidgetActionVisibilityParams) => {

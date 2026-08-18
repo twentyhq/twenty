@@ -23,7 +23,7 @@ export const AttachmentFileInput = ({
     if (isDefined(event.target.files)) {
       const files = Array.from(event.target.files);
       event.target.value = '';
-      uploadAttachmentFiles(files, targetableObject);
+      uploadAttachmentFiles({ files, targetableObject });
     }
   };
 

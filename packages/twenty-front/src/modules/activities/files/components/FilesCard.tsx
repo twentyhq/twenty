@@ -13,7 +13,7 @@ export const FilesCard = () => {
   const { canUploadFiles } = useCanUploadAttachmentFiles(targetRecord);
 
   const handleUploadFiles = (files: File[]) =>
-    uploadAttachmentFiles(files, targetRecord);
+    uploadAttachmentFiles({ files, targetableObject: targetRecord });
 
   return (
     <>

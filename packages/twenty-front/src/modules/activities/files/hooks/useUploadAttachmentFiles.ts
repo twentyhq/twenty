@@ -4,10 +4,13 @@ import { type ActivityTargetableObject } from '@/activities/types/ActivityTarget
 export const useUploadAttachmentFiles = () => {
   const { uploadAttachmentFile } = useUploadAttachmentFile();
 
-  const uploadAttachmentFiles = async (
-    files: File[],
-    targetableObject: ActivityTargetableObject,
-  ) => {
+  const uploadAttachmentFiles = async ({
+    files,
+    targetableObject,
+  }: {
+    files: File[];
+    targetableObject: ActivityTargetableObject;
+  }) => {
     for (const file of files) {
       await uploadAttachmentFile(file, targetableObject);
     }
