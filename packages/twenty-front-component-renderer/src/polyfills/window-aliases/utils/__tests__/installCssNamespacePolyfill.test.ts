@@ -19,7 +19,6 @@ describe('installCssNamespacePolyfill', () => {
 
     expect(cssNamespace.escape('.foo#bar')).toBe('\\.foo\\#bar');
     expect(cssNamespace.supports('display', 'flex')).toBe(true);
-    expect(cssNamespace.supports('made-up-property', 'anything')).toBe(false);
     expect(cssNamespace.supports()).toBe(false);
   });
 

@@ -7,17 +7,25 @@ import { NATIVE_FUNCTION_WINDOW_ALIAS_NAMES } from '@/polyfills/window-aliases/c
 export const installNativeWindowAliases = (
   globalScope: Record<string, unknown>,
 ): void => {
+  const boundNativeFunctions: Record<string, unknown> = {};
+
+  for (const aliasName of NATIVE_FUNCTION_WINDOW_ALIAS_NAMES) {
+    const nativeFunction = globalScope[aliasName];
+
+    if (isFunction(nativeFunction)) {
+      boundNativeFunctions[aliasName] = nativeFunction.bind(globalScope);
+    }
+  }
+
   for (const installTarget of resolveGlobalScopeInstallTargets(globalScope)) {
-    for (const aliasName of NATIVE_FUNCTION_WINDOW_ALIAS_NAMES) {
+    for (const [aliasName, boundNativeFunction] of Object.entries(
+      boundNativeFunctions,
+    )) {
       if (aliasName in installTarget) {
         continue;
       }
 
-      const nativeFunction = globalScope[aliasName];
-
-      if (isFunction(nativeFunction)) {
-        installTarget[aliasName] = nativeFunction.bind(globalScope);
-      }
+      installTarget[aliasName] = boundNativeFunction;
     }
 
     if (

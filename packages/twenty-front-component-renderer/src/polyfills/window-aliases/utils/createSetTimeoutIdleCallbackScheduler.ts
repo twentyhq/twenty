@@ -1,3 +1,5 @@
+// No browser exposes requestIdleCallback in workers, so this shim is the only path today
+
 import { IDLE_CALLBACK_FRAME_BUDGET_MS } from '@/polyfills/window-aliases/constants/IdleCallbackFrameBudgetMs';
 import { IDLE_CALLBACK_SCHEDULE_DELAY_MS } from '@/polyfills/window-aliases/constants/IdleCallbackScheduleDelayMs';
 import { type IdleCallbackScheduler } from '@/polyfills/window-aliases/types/IdleCallbackScheduler';

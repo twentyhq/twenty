@@ -17,20 +17,16 @@ export const installAnimationFrameWindowAliases = (
   const animationFrameScheduler: AnimationFrameScheduler =
     hasNativeAnimationFrameScheduler
       ? {
-          requestAnimationFrame: (callback) =>
-            nativeRequestAnimationFrame.call(globalScope, callback),
-          cancelAnimationFrame: (frameHandle) => {
-            nativeCancelAnimationFrame.call(globalScope, frameHandle);
-          },
+          requestAnimationFrame: nativeRequestAnimationFrame.bind(globalScope),
+          cancelAnimationFrame: nativeCancelAnimationFrame.bind(globalScope),
         }
       : createSetTimeoutAnimationFrameScheduler();
 
   for (const installTarget of resolveGlobalScopeInstallTargets(globalScope)) {
-    const targetAlreadyHasAnimationFrameScheduler =
+    if (
       'requestAnimationFrame' in installTarget &&
-      'cancelAnimationFrame' in installTarget;
-
-    if (targetAlreadyHasAnimationFrameScheduler) {
+      'cancelAnimationFrame' in installTarget
+    ) {
       continue;
     }
 

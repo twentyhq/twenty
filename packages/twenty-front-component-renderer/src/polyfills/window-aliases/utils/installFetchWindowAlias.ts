@@ -1,6 +1,7 @@
 import { isFunction } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
-import { resolveGlobalScopeInstallTargets } from '@/polyfills/utils/resolveGlobalScopeInstallTargets';
+import { resolvePolyfillWindow } from '@/polyfills/utils/resolvePolyfillWindow';
 
 export const installFetchWindowAlias = (
   globalScope: Record<string, unknown>,
@@ -19,14 +20,9 @@ export const installFetchWindowAlias = (
     return currentGlobalFetch.call(globalScope, input, init);
   };
 
-  for (const installTarget of resolveGlobalScopeInstallTargets(globalScope)) {
-    const isGlobalScopeTarget = installTarget === globalScope;
-    const targetAlreadyHasFetch = 'fetch' in installTarget;
+  const polyfillWindow = resolvePolyfillWindow(globalScope);
 
-    if (isGlobalScopeTarget || targetAlreadyHasFetch) {
-      continue;
-    }
-
-    installTarget.fetch = delegateToCurrentGlobalFetch;
+  if (isDefined(polyfillWindow) && !('fetch' in polyfillWindow)) {
+    polyfillWindow.fetch = delegateToCurrentGlobalFetch;
   }
 };

@@ -85,13 +85,40 @@ describe('installIdleCallbackShim', () => {
     )(idleCallback);
 
     expect(idleCallbackHandle).toBe(3);
-    expect(nativeRequestIdleCallback).toHaveBeenCalledWith(
-      idleCallback,
-      undefined,
-    );
+    expect(nativeRequestIdleCallback).toHaveBeenCalledWith(idleCallback);
 
     (polyfillWindow.cancelIdleCallback as CancelIdle)(idleCallbackHandle);
 
     expect(nativeCancelIdleCallback).toHaveBeenCalledWith(3);
+  });
+
+  it('should replace a partial native scheduler with a coherent fallback pair', () => {
+    jest.useFakeTimers();
+
+    const nativeRequestIdleCallback = jest.fn();
+    const polyfillWindow: Record<string, unknown> = {};
+    const globalScope: Record<string, unknown> = {
+      window: polyfillWindow,
+      requestIdleCallback: nativeRequestIdleCallback,
+    };
+
+    installIdleCallbackShim(globalScope);
+
+    expect(globalScope.requestIdleCallback).not.toBe(nativeRequestIdleCallback);
+    expect(globalScope.requestIdleCallback).toBe(
+      polyfillWindow.requestIdleCallback,
+    );
+
+    const canceledCallback = jest.fn();
+    const idleCallbackHandle = (globalScope.requestIdleCallback as RequestIdle)(
+      canceledCallback,
+    );
+
+    (globalScope.cancelIdleCallback as CancelIdle)(idleCallbackHandle);
+
+    jest.advanceTimersByTime(10);
+
+    expect(canceledCallback).not.toHaveBeenCalled();
+    expect(nativeRequestIdleCallback).not.toHaveBeenCalled();
   });
 });

@@ -1,3 +1,5 @@
+// Worker requestAnimationFrame is Chrome-only: Firefox and Safari need this fallback
+
 import { ANIMATION_FRAME_FALLBACK_INTERVAL_MS } from '@/polyfills/window-aliases/constants/AnimationFrameFallbackIntervalMs';
 import { type AnimationFrameScheduler } from '@/polyfills/window-aliases/types/AnimationFrameScheduler';
 

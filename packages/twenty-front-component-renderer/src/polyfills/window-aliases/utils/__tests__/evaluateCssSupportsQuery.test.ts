@@ -31,6 +31,13 @@ describe('evaluateCssSupportsQuery', () => {
     expect(evaluateCssSupportsQuery(['(display: made-up-value)'])).toBe(false);
   });
 
+  it('should accept an important priority in condition form only, like the native api', () => {
+    expect(evaluateCssSupportsQuery(['display: flex !important'])).toBe(true);
+    expect(evaluateCssSupportsQuery(['display', 'flex !important'])).toBe(
+      false,
+    );
+  });
+
   it('should return false for complex conditions instead of evaluating them', () => {
     expect(
       evaluateCssSupportsQuery(['(display: grid) and (position: sticky)']),

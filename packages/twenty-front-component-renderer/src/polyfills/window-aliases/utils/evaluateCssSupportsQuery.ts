@@ -8,18 +8,14 @@ export const evaluateCssSupportsQuery = (
 ): boolean => {
   const [firstArgument, secondArgument] = supportsArguments;
 
-  const isPropertyValuePairForm = supportsArguments.length >= 2;
-
-  if (isPropertyValuePairForm) {
+  if (supportsArguments.length >= 2) {
     return evaluateCssSupportsDeclaration({
       property: String(firstArgument),
       value: String(secondArgument),
     });
   }
 
-  const isConditionTextForm = supportsArguments.length === 1;
-
-  if (isConditionTextForm) {
+  if (supportsArguments.length === 1) {
     return evaluateCssSupportsCondition(String(firstArgument));
   }
 

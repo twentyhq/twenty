@@ -17,28 +17,21 @@ export const installIdleCallbackShim = (
   const idleCallbackScheduler: IdleCallbackScheduler =
     hasNativeIdleCallbackScheduler
       ? {
-          requestIdleCallback: (callback, options) =>
-            nativeRequestIdleCallback.call(globalScope, callback, options),
-          cancelIdleCallback: (idleCallbackHandle) => {
-            nativeCancelIdleCallback.call(globalScope, idleCallbackHandle);
-          },
+          requestIdleCallback: nativeRequestIdleCallback.bind(globalScope),
+          cancelIdleCallback: nativeCancelIdleCallback.bind(globalScope),
         }
       : createSetTimeoutIdleCallbackScheduler();
 
   for (const installTarget of resolveGlobalScopeInstallTargets(globalScope)) {
-    const targetAlreadyHasRequestIdleCallback =
-      'requestIdleCallback' in installTarget;
-    const targetAlreadyHasCancelIdleCallback =
-      'cancelIdleCallback' in installTarget;
-
-    if (!targetAlreadyHasRequestIdleCallback) {
-      installTarget.requestIdleCallback =
-        idleCallbackScheduler.requestIdleCallback;
+    if (
+      'requestIdleCallback' in installTarget &&
+      'cancelIdleCallback' in installTarget
+    ) {
+      continue;
     }
 
-    if (!targetAlreadyHasCancelIdleCallback) {
-      installTarget.cancelIdleCallback =
-        idleCallbackScheduler.cancelIdleCallback;
-    }
+    installTarget.requestIdleCallback =
+      idleCallbackScheduler.requestIdleCallback;
+    installTarget.cancelIdleCallback = idleCallbackScheduler.cancelIdleCallback;
   }
 };

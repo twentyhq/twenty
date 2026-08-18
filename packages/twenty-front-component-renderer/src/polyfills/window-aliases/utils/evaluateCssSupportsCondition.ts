@@ -1,14 +1,12 @@
 import { evaluateCssSupportsDeclaration } from '@/polyfills/window-aliases/utils/evaluateCssSupportsDeclaration';
+import { stripImportantPriorityFromCssValue } from '@/utils/css/stripImportantPriorityFromCssValue';
 
 const COMPLEX_SUPPORTS_CONDITION_PATTERN = /\b(?:and|or|not|selector)\b/i;
 
 export const evaluateCssSupportsCondition = (condition: string): boolean => {
   const trimmedCondition = condition.trim();
 
-  const isComplexCondition =
-    COMPLEX_SUPPORTS_CONDITION_PATTERN.test(trimmedCondition);
-
-  if (isComplexCondition) {
+  if (COMPLEX_SUPPORTS_CONDITION_PATTERN.test(trimmedCondition)) {
     return false;
   }
 
@@ -19,22 +17,20 @@ export const evaluateCssSupportsCondition = (condition: string): boolean => {
     ? trimmedCondition.slice(1, -1).trim()
     : trimmedCondition;
 
-  const hasRemainingParentheses =
-    unwrappedCondition.includes('(') || unwrappedCondition.includes(')');
-
-  if (hasRemainingParentheses) {
+  if (unwrappedCondition.includes('(') || unwrappedCondition.includes(')')) {
     return false;
   }
 
   const declarationSeparatorIndex = unwrappedCondition.indexOf(':');
-  const isPropertyValueDeclaration = declarationSeparatorIndex !== -1;
 
-  if (!isPropertyValueDeclaration) {
+  if (declarationSeparatorIndex === -1) {
     return false;
   }
 
   return evaluateCssSupportsDeclaration({
     property: unwrappedCondition.slice(0, declarationSeparatorIndex),
-    value: unwrappedCondition.slice(declarationSeparatorIndex + 1),
+    value: stripImportantPriorityFromCssValue(
+      unwrappedCondition.slice(declarationSeparatorIndex + 1),
+    ),
   });
 };

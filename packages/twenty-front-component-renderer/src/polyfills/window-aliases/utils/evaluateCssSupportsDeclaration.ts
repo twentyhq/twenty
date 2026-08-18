@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { CSS_WIDE_KEYWORDS } from '@/polyfills/window-aliases/constants/CssWideKeywords';
 import { SUPPORTED_CSS_PROPERTY_KEYWORDS } from '@/polyfills/window-aliases/constants/SupportedCssPropertyKeywords';
+import { normalizeCssPropertyName } from '@/utils/css/normalizeCssPropertyName';
 
 type EvaluateCssSupportsDeclarationInput = {
   property: string;
@@ -13,7 +14,7 @@ export const evaluateCssSupportsDeclaration = ({
   property,
   value,
 }: EvaluateCssSupportsDeclarationInput): boolean => {
-  const normalizedProperty = property.trim().toLowerCase();
+  const normalizedProperty = normalizeCssPropertyName(property.trim());
   const normalizedValue = value.trim().toLowerCase();
 
   const supportedKeywords = SUPPORTED_CSS_PROPERTY_KEYWORDS[normalizedProperty];
