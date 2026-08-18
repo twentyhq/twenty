@@ -10158,6 +10158,7 @@ msgstr "You must be authenticated to manage blocklist."
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
+#: src/engine/guards/workspace-auth.guard.ts
 msgid "You must be authenticated to perform this action."
 msgstr "You must be authenticated to perform this action."
 

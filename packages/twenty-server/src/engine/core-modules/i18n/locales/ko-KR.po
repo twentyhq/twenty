@@ -10163,6 +10163,7 @@ msgstr "차단 목록을 관리하려면 인증이 필요합니다."
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
+#: src/engine/guards/workspace-auth.guard.ts
 msgid "You must be authenticated to perform this action."
 msgstr "이 작업을 수행하려면 인증이 필요합니다."
 
