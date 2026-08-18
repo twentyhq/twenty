@@ -11,16 +11,18 @@ const LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER =
   'logic-function-universal-identifier';
 const OWNER_APPLICATION_ID = 'owner-application-id';
 const OTHER_APPLICATION_ID = 'other-application-id';
+const WORKSPACE_ID = 'workspace-id';
 
-const flatEntityMaps = {
+const flatEntityMaps: UniversalFlatEntityMaps<SyncableFlatEntity> = {
   byUniversalIdentifier: {
     [LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER]: {
       id: LOGIC_FUNCTION_ID,
       universalIdentifier: LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
       applicationId: OWNER_APPLICATION_ID,
+      workspaceId: WORKSPACE_ID,
     },
   },
-} as unknown as UniversalFlatEntityMaps<SyncableFlatEntity>;
+};
 
 describe('resolveApplicationReferenceIdOrThrow', () => {
   it('should return the entity id when the universal identifier resolves', () => {
