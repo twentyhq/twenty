@@ -210,6 +210,14 @@ export class ApolloFactory implements ApolloManager {
         }
       };
 
+      const canFallBackFromCookieAuth = (
+        operation: ApolloLink.Operation,
+      ): boolean =>
+        getIsCookieAuthActive() &&
+        operation.getContext().skipAuthToken !== true &&
+        operation.getContext().hasAttemptedCookieAuthFallback !== true &&
+        isDefined(getTokenPair()?.refreshToken?.token);
+
       const handleTokenRenewal = (
         operation: ApolloLink.Operation,
         forward: ApolloLink.ForwardFunction,
@@ -227,11 +235,7 @@ export class ApolloFactory implements ApolloManager {
         // rollback. Fall back to the retained token pair instead of signing the
         // user out. Attempted once per operation so a genuinely expired token
         // still reaches the renewal path below.
-        if (
-          getIsCookieAuthActive() &&
-          operation.getContext().hasAttemptedCookieAuthFallback !== true &&
-          isDefined(getTokenPair()?.refreshToken?.token)
-        ) {
+        if (canFallBackFromCookieAuth(operation)) {
           setIsCookieAuthActive(false);
           operation.setContext({ hasAttemptedCookieAuthFallback: true });
           // Deactivation is sticky for the rest of the mount by design. Both
@@ -284,17 +288,6 @@ export class ApolloFactory implements ApolloManager {
           ),
         );
       };
-
-      // Goes through handleTokenRenewal rather than replaying directly:
-      // ErrorLink subscribes a replay straight to the original observer, so an
-      // UNAUTHENTICATED on it never re-enters this handler to trigger renewal.
-      const canFallBackFromCookieAuth = (
-        operation: ApolloLink.Operation,
-      ): boolean =>
-        getIsCookieAuthActive() &&
-        operation.getContext().skipAuthToken !== true &&
-        operation.getContext().hasAttemptedCookieAuthFallback !== true &&
-        isDefined(getTokenPair()?.refreshToken?.token);
 
       const sendToSentry = ({
         graphQLError,
@@ -364,6 +357,9 @@ export class ApolloFactory implements ApolloManager {
               return handleTokenRenewal(operation, forward, error);
             }
 
+            // Goes through handleTokenRenewal rather than replaying directly:
+            // ErrorLink subscribes a replay straight to the original observer,
+            // so an UNAUTHENTICATED on it never re-enters this handler.
             if (
               isMissingCredentialGraphQLError(graphQLError) &&
               canFallBackFromCookieAuth(operation)
