@@ -10,6 +10,7 @@ import {
   SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
   SLACK_ASSISTANT_WORKER_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
+import { SLACK_ASSISTANT_EMPTY_RESPONSE_FALLBACK_TEXT } from 'src/logic-functions/constants/slack-assistant-empty-response-fallback-text';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { SLACK_ASSISTANT_WORKER_TIMEOUT_SECONDS } from 'src/logic-functions/constants/slack-assistant-worker-timeout-seconds';
 import { SLACK_MARKDOWN_BLOCK_MAX_LENGTH } from 'src/logic-functions/constants/slack-markdown-block-max-length';
@@ -21,10 +22,12 @@ import { buildSlackAssistantAnswerText } from 'src/logic-functions/utils/build-s
 import { buildSlackAssistantMessages } from 'src/logic-functions/utils/build-slack-assistant-messages';
 import { buildSlackAssistantRequestName } from 'src/logic-functions/utils/build-slack-assistant-request-name';
 import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agent-response-text';
+import { extractSlackAssistantRecordCard } from 'src/logic-functions/utils/extract-slack-assistant-record-card';
 import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slack-assistant-context';
 import { fetchWorkspaceBaseUrl } from 'src/logic-functions/utils/fetch-workspace-base-url';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
+import { resolveSlackAssistantRecordCard } from 'src/logic-functions/utils/resolve-slack-assistant-record-card';
 import { resolveSlackRunAsForRequest } from 'src/logic-functions/utils/resolve-slack-run-as-for-request';
 import { runSlackAssistantAgentWithStatus } from 'src/logic-functions/utils/run-slack-assistant-agent-with-status';
 import { setSlackAssistantThreadTitle } from 'src/logic-functions/utils/set-slack-assistant-thread-title';
@@ -143,14 +146,27 @@ export const slackAssistantWorkerHandler = async (
       });
     }
 
-    const responseText = extractAgentResponseText(agentResult);
+    const agentResponseText = extractAgentResponseText(agentResult);
 
-    if (responseText === undefined) {
+    if (agentResponseText === undefined) {
       return await finishSlackAssistantRequestWithFailure({
         ...failureContext,
         errorMessage: 'Agent returned an empty response',
       });
     }
+
+    const { answerText, recordCardPayload } =
+      extractSlackAssistantRecordCard(agentResponseText);
+
+    const responseText = isNonEmptyString(answerText)
+      ? answerText
+      : SLACK_ASSISTANT_EMPTY_RESPONSE_FALLBACK_TEXT;
+
+    const recordCard = resolveSlackAssistantRecordCard({
+      answerText: responseText,
+      recordCardPayload,
+      workspaceBaseUrl,
+    });
 
     const durationMilliseconds = Date.now() - startedAt;
 
@@ -171,6 +187,7 @@ export const slackAssistantWorkerHandler = async (
               responseText,
               durationMilliseconds,
               requestId: record.id,
+              recordCard,
             }),
     });
 

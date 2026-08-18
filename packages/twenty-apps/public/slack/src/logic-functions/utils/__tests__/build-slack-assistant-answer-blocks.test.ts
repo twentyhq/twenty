@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { buildSlackAssistantAnswerBlocks } from 'src/logic-functions/utils/build-slack-assistant-answer-blocks';
 
 const REQUEST_ID = '3f77d0b1-30a1-4c3d-9d02-2f2a9f6f9d10';
+const RECORD_ID = '9a11b2c3-44d5-4e6f-8a9b-0c1d2e3f4a5b';
+const RECORD_URL = `https://acme.twenty.com/object/company/${RECORD_ID}`;
 
 describe('buildSlackAssistantAnswerBlocks', () => {
   it('should render the answer as a markdown block followed by a duration footer and feedback buttons', () => {
@@ -56,4 +58,28 @@ describe('buildSlackAssistantAnswerBlocks', () => {
     expect(markdownBlock).toEqual({ type: 'markdown', text: responseText });
   });
 
+  it('should slot the record card between the answer and the duration footer', () => {
+    const blocks = buildSlackAssistantAnswerBlocks({
+      responseText: 'Moved **ACME** to Proposal.',
+      durationMilliseconds: 1000,
+      requestId: REQUEST_ID,
+      recordCard: {
+        recordId: RECORD_ID,
+        objectNameSingular: 'company',
+        recordUrl: RECORD_URL,
+        title: 'ACME',
+        fields: [{ label: 'Stage', value: 'Proposal' }],
+      },
+    });
+
+    expect(blocks.map((block) => block.type)).toEqual([
+      'markdown',
+      'divider',
+      'section',
+      'context',
+      'section',
+      'context',
+      'context_actions',
+    ]);
+  });
 });

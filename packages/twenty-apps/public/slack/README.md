@@ -12,6 +12,8 @@
 
 Mention the bot in a channel or DM it. It replies in the thread with your CRM data, using the recent conversation as context. Answers end with native thumbs up / thumbs down feedback buttons — except very long answers, which fall back to plain text without them — and ratings are stored on the matching Slack Assistant Request record in Twenty.
 
+When an answer is about a single record, the bot pins a card under it: the record name, what kind of record it is, the few values that answer the request, and an **Open in Twenty** button. Answers that name several records, or none, stay plain text.
+
 The bot runs with the **Slack Assistant** role, which by default can read, create, update and soft-delete people, companies, opportunities, notes and tasks. Workspace members stay read-only and hard delete is off. Tighten the role in **Settings → Roles** if you want a narrower bot.
 
 **It acts as whoever tagged it.** The first time someone mentions the bot, their Slack profile email is matched against workspace members and the pair is stored as a **Slack User Link** record. From then on the bot runs with that member's permissions *and* the Slack Assistant role: it can never do more than the person asking, and never more than the role allows. Someone with no link gets the Slack Assistant role on its own, exactly as before.

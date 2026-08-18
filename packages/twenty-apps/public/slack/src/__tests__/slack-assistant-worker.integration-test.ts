@@ -9,11 +9,13 @@ import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/sl
 import { SLACK_ASSISTANT_INITIAL_STATUS } from 'src/logic-functions/constants/slack-assistant-status-steps';
 import { SLACK_MARKDOWN_BLOCK_MAX_LENGTH } from 'src/logic-functions/constants/slack-markdown-block-max-length';
 import { slackAssistantWorkerHandler } from 'src/logic-functions/slack-assistant-worker';
+import { fetchWorkspaceBaseUrl } from 'src/logic-functions/utils/fetch-workspace-base-url';
 import { getSlackThreadKvKey } from 'src/logic-functions/utils/get-slack-thread-kv-key';
 
 const CHANNEL_ID = 'C0WORKERTEST';
 const DIRECT_MESSAGE_CHANNEL_ID = 'D0WORKERTEST';
 const REQUESTER_USER_ID = 'U0REQUESTER';
+const ACME_RECORD_ID = '3f77d0b1-30a1-4c3d-9d02-2f2a9f6f9d10';
 
 type SlackAssistantRequestStatus =
   (typeof SLACK_ASSISTANT_REQUEST_STATUS)[keyof typeof SLACK_ASSISTANT_REQUEST_STATUS];
@@ -404,6 +406,71 @@ describe('Slack assistant worker', () => {
 
     expect(postedAnswer?.blocks).toBeUndefined();
     expect(postedAnswer?.markdownText).toContain(longResponse);
+  });
+
+  it('should render a record card and keep its trailer out of the answer', async () => {
+    slack.addChannel({ id: CHANNEL_ID, name: 'sales' });
+    const slackMessageTimestamp = nextMessageTimestamp();
+    const workspaceBaseUrl = await fetchWorkspaceBaseUrl();
+    const recordUrl = `${workspaceBaseUrl}/object/company/${ACME_RECORD_ID}`;
+
+    appRuntime.setAgentResult({
+      success: true,
+      result: {
+        response: [
+          `Moved [Acme](${recordUrl}) to Proposal.`,
+          '',
+          '<record-card>',
+          `{"recordId":"${ACME_RECORD_ID}","title":"Acme","subtitle":"Software","fields":[{"label":"Stage","value":"Proposal"}]}`,
+          '</record-card>',
+        ].join('\n'),
+      },
+      error: null,
+    });
+
+    const request = await createRequestRecord({
+      slackChannelId: CHANNEL_ID,
+      slackMessageTimestamp,
+      requestText: 'move Acme to proposal',
+    });
+
+    await slackAssistantWorkerHandler(
+      buildRequestCreatedEvent({
+        ...request,
+        slackChannelId: CHANNEL_ID,
+        slackMessageTimestamp,
+        requestText: 'move Acme to proposal',
+      }),
+    );
+
+    const channelMessages = slack.messagesIn(CHANNEL_ID);
+    const postedAnswer = channelMessages[channelMessages.length - 1];
+    const postedBlocks = JSON.stringify(postedAnswer?.blocks ?? []);
+
+    expect(postedBlocks).not.toContain('record-card');
+    expect(postedAnswer?.blocks?.[0]).toEqual({
+      type: 'markdown',
+      text: `Moved [Acme](${recordUrl}) to Proposal.`,
+    });
+    const postedBlockTypes = (postedAnswer?.blocks ?? []).map(
+      (block) => (block as { type: string }).type,
+    );
+
+    expect(postedBlockTypes).toEqual([
+      'markdown',
+      'divider',
+      'section',
+      'context',
+      'section',
+      'context',
+      'context_actions',
+    ]);
+
+    await expect(readRequest(request.id)).resolves.toEqual(
+      expect.objectContaining({
+        responseText: `Moved [Acme](${recordUrl}) to Proposal.`,
+      }),
+    );
   });
 
   it('should skip a request that another worker already picked up', async () => {
