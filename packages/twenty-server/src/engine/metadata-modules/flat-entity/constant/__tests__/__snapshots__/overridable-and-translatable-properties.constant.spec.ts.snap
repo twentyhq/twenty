@@ -114,6 +114,9 @@ exports[`registry-derived override property maps derives the translatable proper
     "labelPlural",
     "description",
   ],
+  "pageLayout": [
+    "name",
+  ],
   "pageLayoutTab": [
     "title",
   ],
