@@ -28,9 +28,9 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { getTwentyStandardApplicationIdOrThrow } from 'src/engine/metadata-modules/utils/get-twenty-standard-application-id-or-throw.util';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 import { OBJECT_LABEL_PLURAL_PLACEHOLDER } from 'src/engine/metadata-modules/view/constants/object-label-plural-placeholder.constant';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { resolveViewName } from 'src/engine/metadata-modules/view/utils/resolve-view-name.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { CreateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-permission.guard';
@@ -64,6 +64,7 @@ export class ViewController {
   constructor(
     private readonly viewService: ViewService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
     private readonly i18nService: I18nService,
   ) {}
 
@@ -204,20 +205,24 @@ export class ViewController {
       return views;
     }
 
-    const { flatObjectMetadataMaps, flatApplicationMaps } =
+    const { flatObjectMetadataMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps', 'flatApplicationMaps'],
+          flatMapsKeys: ['flatObjectMetadataMaps'],
         },
       );
 
-    const standardApplicationId =
-      getTwentyStandardApplicationIdOrThrow(flatApplicationMaps);
+    const safeLocale = locale ?? SOURCE_LOCALE;
 
-    const i18nInstance = this.i18nService.getI18nInstance(
-      locale ?? SOURCE_LOCALE,
-    );
+    const i18nInstance = this.i18nService.getI18nInstance(safeLocale);
+
+    const { standardApplicationId, catalogByApplicationId } =
+      await this.applicationTranslationCatalogService.getCatalogs({
+        applicationIds: views.map((view) => view.applicationId),
+        locale: safeLocale,
+        workspaceId,
+      });
 
     return views.map((view) => {
       const objectMetadata = view.name.includes(OBJECT_LABEL_PLURAL_PLACEHOLDER)
@@ -250,10 +255,7 @@ export class ViewController {
             locale,
             i18nInstance,
             isStandardApp: view.applicationId === standardApplicationId,
-            // This REST path reads from the flat entity cache and has no
-            // dataloader, so installed-application catalogs are not resolved
-            // here the way they are in the GraphQL resolver.
-            applicationCatalog: undefined,
+            applicationCatalog: catalogByApplicationId.get(view.applicationId),
           },
         }),
       };
