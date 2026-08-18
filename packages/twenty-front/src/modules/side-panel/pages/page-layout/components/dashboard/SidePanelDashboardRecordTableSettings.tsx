@@ -442,7 +442,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
                   <SelectableListItem itemId="record-table-editable-records">
                     <CommandMenuItemToggle
                       LeftIcon={IconPencil}
-                      text={t`Editable records`}
+                      text={t`Allow editing`}
                       id="record-table-editable-records"
                       toggled={isRecordMutationEnabled}
                       onToggleChange={handleIsRecordMutationEnabledChange}
