@@ -72,6 +72,8 @@ if (response.status === 429 || response.status >= 500) {
 }
 ```
 
+Throw `RetryableLogicFunctionError` directly when possible. If you extend it, do not replace its `name`: Twenty recognizes the serialized name `RetryableLogicFunctionError` across execution runtimes.
+
 The queue delays retry attempts with exponential backoff and jitter. The exact delay is intentionally not guaranteed, so application code should not depend on a retry happening at a precise time.
 
 <Warning>
