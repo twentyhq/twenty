@@ -72,7 +72,11 @@ describe('generateCreateRecordInputSchema', () => {
       fields: [rawField],
     };
 
-    const schema = generateCreateRecordInputSchema(objectMetadata);
+    const schema = generateCreateRecordInputSchema(
+      objectMetadata,
+      undefined,
+      buildMockI18nContext(),
+    );
 
     expect(schema.shape.status.description).toBe(
       'Original status description',

@@ -6,8 +6,8 @@ import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/uti
 
 export const generateCreateRecordInputSchema = (
   objectMetadata: ObjectMetadataForToolSchema,
-  restrictedFields?: RestrictedFieldsPermissions,
-  i18nContext?: EffectiveEntityI18nContext,
+  restrictedFields: RestrictedFieldsPermissions | undefined,
+  i18nContext: EffectiveEntityI18nContext,
 ) => {
   return generateRecordPropertiesZodSchema(
     objectMetadata,

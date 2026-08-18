@@ -99,8 +99,8 @@ const getFieldZodType = (field: FlatFieldMetadata): z.ZodTypeAny => {
 export const generateRecordPropertiesZodSchema = (
   objectMetadata: ObjectMetadataForToolSchema,
   forResponse = false,
-  restrictedFields?: RestrictedFieldsPermissions,
-  i18nContext?: EffectiveEntityI18nContext,
+  restrictedFields: RestrictedFieldsPermissions | undefined,
+  i18nContext: EffectiveEntityI18nContext,
 ): z.ZodObject<Record<string, z.ZodTypeAny>> => {
   const shape: Record<string, z.ZodTypeAny> = {};
 
@@ -109,7 +109,7 @@ export const generateRecordPropertiesZodSchema = (
       ? resolveEffectiveEntityProperty({
           metadataName: 'fieldMetadata',
           baseValue: field.description,
-          overrides: field.overrides,
+          overrides: (field as any).overrides,
           property: 'description',
           i18nContext,
         })
