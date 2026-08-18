@@ -109,6 +109,7 @@ export class LogicFunctionExecutorService {
     userId,
     userWorkspaceId,
     executionMode,
+    workspaceDeletionRequestTimestamp,
   }: {
     logicFunctionId: string;
     workspaceId: string;
@@ -116,6 +117,7 @@ export class LogicFunctionExecutorService {
     userId?: string;
     userWorkspaceId?: string;
     executionMode?: LogicFunctionExecutionMode;
+    workspaceDeletionRequestTimestamp?: string;
   }): Promise<LogicFunctionExecuteResult> {
     const { flatApplication, flatLogicFunction, applicationVariableMaps } =
       await this.getFlatEntitiesOrThrow({
@@ -135,6 +137,7 @@ export class LogicFunctionExecutorService {
       applicationVariableMaps,
       userId,
       userWorkspaceId,
+      workspaceDeletionRequestTimestamp,
     });
 
     const driver = this.logicFunctionDriverFactory.getCurrentDriver();
@@ -324,20 +327,29 @@ export class LogicFunctionExecutorService {
     applicationVariableMaps,
     userId,
     userWorkspaceId,
+    workspaceDeletionRequestTimestamp,
   }: {
     workspaceId: string;
     flatApplication: FlatApplication;
     applicationVariableMaps: ApplicationVariableCacheMaps;
     userId?: string;
     userWorkspaceId?: string;
+    workspaceDeletionRequestTimestamp?: string;
   }) {
-    const applicationAccessToken =
-      await this.applicationTokenService.generateApplicationAccessToken({
-        workspaceId,
-        applicationId: flatApplication.id,
-        userId,
-        userWorkspaceId,
-      });
+    const applicationAccessToken = isDefined(workspaceDeletionRequestTimestamp)
+      ? await this.applicationTokenService.generateWorkspaceDeletionApplicationAccessToken(
+          {
+            workspaceId,
+            applicationId: flatApplication.id,
+            workspaceDeletionRequestTimestamp,
+          },
+        )
+      : await this.applicationTokenService.generateApplicationAccessToken({
+          workspaceId,
+          applicationId: flatApplication.id,
+          userId,
+          userWorkspaceId,
+        });
 
     const baseUrl = cleanServerUrl(this.twentyConfigService.get('SERVER_URL'));
     const functionsBaseUrl = await this.buildFunctionsBaseUrl({

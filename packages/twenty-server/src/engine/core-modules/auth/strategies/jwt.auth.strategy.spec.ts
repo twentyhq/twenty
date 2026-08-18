@@ -23,6 +23,7 @@ describe('JwtAuthStrategy', () => {
   let twentyConfigService: any;
   let workspaceCacheService: any;
   let coreEntityCacheService: any;
+  let workspaceRepository: any;
 
   const jwt = {
     sub: 'sub-default',
@@ -41,6 +42,9 @@ describe('JwtAuthStrategy', () => {
     apiKeyStore = {};
 
     userWorkspaceRepository = {
+      findOne: jest.fn(),
+    };
+    workspaceRepository = {
       findOne: jest.fn(),
     };
 
@@ -134,6 +138,7 @@ describe('JwtAuthStrategy', () => {
         permissionsService,
         twentyConfigService,
       ),
+      workspaceRepository,
     );
 
   describe('API_KEY validation', () => {
@@ -403,6 +408,71 @@ describe('JwtAuthStrategy', () => {
   });
 
   describe('APPLICATION_ACCESS token validation', () => {
+    it('allows a cleanup token for its exact pending workspace deletion', async () => {
+      const applicationId = randomUUID();
+      const workspaceId = randomUUID();
+      const workspaceDeletedAt = new Date('2026-08-18T10:00:00.000Z');
+      const workspace = Object.assign(new WorkspaceEntity(), {
+        id: workspaceId,
+        createdAt: new Date('2026-08-01T10:00:00.000Z'),
+        updatedAt: new Date('2026-08-18T10:00:00.000Z'),
+        deletedAt: workspaceDeletedAt,
+        applicationUninstallHooksCompletedAt: null,
+      });
+      const application = { id: applicationId };
+
+      workspaceRepository.findOne.mockResolvedValue(workspace);
+      applicationStore[workspaceId] = { [applicationId]: application };
+
+      strategy = createStrategy();
+
+      await expect(
+        strategy.validate({
+          sub: applicationId,
+          type: JwtTokenTypeEnum.APPLICATION_ACCESS,
+          applicationId,
+          workspaceId,
+          workspaceDeletionRequestTimestamp: workspaceDeletedAt.toISOString(),
+        } as JwtPayload),
+      ).resolves.toMatchObject({
+        application,
+        workspace: {
+          id: workspaceId,
+          deletedAt: workspaceDeletedAt.toISOString(),
+        },
+        tokenType: JwtTokenTypeEnum.APPLICATION_ACCESS,
+      });
+    });
+
+    it('rejects a cleanup token from a different workspace deletion request', async () => {
+      const applicationId = randomUUID();
+      const workspaceId = randomUUID();
+
+      workspaceRepository.findOne.mockResolvedValue(
+        Object.assign(new WorkspaceEntity(), {
+          id: workspaceId,
+          createdAt: new Date('2026-08-01T10:00:00.000Z'),
+          updatedAt: new Date('2026-08-18T10:00:00.000Z'),
+          deletedAt: new Date('2026-08-18T10:00:00.000Z'),
+          applicationUninstallHooksCompletedAt: null,
+        }),
+      );
+
+      strategy = createStrategy();
+
+      await expect(
+        strategy.validate({
+          sub: applicationId,
+          type: JwtTokenTypeEnum.APPLICATION_ACCESS,
+          applicationId,
+          workspaceId,
+          workspaceDeletionRequestTimestamp: '2026-08-17T10:00:00.000Z',
+        } as JwtPayload),
+      ).rejects.toMatchObject({
+        code: AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      });
+    });
+
     it('should throw AuthExceptionCode if type is APPLICATION_ACCESS, and application not found', async () => {
       const validApplicationId = randomUUID();
       const validWorkspaceId = randomUUID();

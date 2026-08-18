@@ -66,6 +66,56 @@ export class ApplicationTokenService {
     });
   }
 
+  async generateWorkspaceDeletionApplicationAccessToken({
+    workspaceId,
+    applicationId,
+    workspaceDeletionRequestTimestamp,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+    workspaceDeletionRequestTimestamp: string;
+  }): Promise<AuthToken> {
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id: workspaceId },
+      withDeleted: true,
+    });
+
+    if (
+      !workspace?.deletedAt ||
+      workspace.deletedAt.toISOString() !== workspaceDeletionRequestTimestamp ||
+      workspace.applicationUninstallHooksCompletedAt
+    ) {
+      throw new AuthException(
+        'Workspace deletion request not found',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    const application = await this.applicationRepository.findOne({
+      where: { id: applicationId, workspaceId },
+    });
+
+    assertIsDefinedOrThrow(
+      application,
+      new ApplicationException(
+        'Application not found',
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      ),
+    );
+
+    const expiresIn = this.twentyConfigService.get(
+      'APPLICATION_ACCESS_TOKEN_EXPIRES_IN',
+    );
+
+    return this.signApplicationToken({
+      workspaceId,
+      applicationId,
+      tokenType: JwtTokenTypeEnum.APPLICATION_ACCESS,
+      expiresIn,
+      workspaceDeletionRequestTimestamp,
+    });
+  }
+
   async generateApplicationTokenPair({
     workspaceId,
     applicationId,
@@ -237,6 +287,7 @@ export class ApplicationTokenService {
     userId,
     tokenType,
     expiresIn,
+    workspaceDeletionRequestTimestamp,
   }: {
     workspaceId: string;
     applicationId: string;
@@ -246,6 +297,7 @@ export class ApplicationTokenService {
       | JwtTokenTypeEnum.APPLICATION_ACCESS
       | JwtTokenTypeEnum.APPLICATION_REFRESH;
     expiresIn: string;
+    workspaceDeletionRequestTimestamp?: string;
   }): Promise<AuthToken> {
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
@@ -256,6 +308,9 @@ export class ApplicationTokenService {
       applicationId,
       workspaceId,
       type: tokenType,
+      ...(workspaceDeletionRequestTimestamp
+        ? { workspaceDeletionRequestTimestamp }
+        : {}),
       ...(userWorkspaceId ? { userWorkspaceId } : {}),
       ...(userId ? { userId } : {}),
     };

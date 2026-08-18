@@ -1,0 +1,2 @@
+export const ADD_APPLICATION_UNINSTALL_HOOKS_COMPLETED_AT_TO_WORKSPACE_UPGRADE_COMMAND_NAME =
+  '2.32.0_AddApplicationUninstallHooksCompletedAtToWorkspaceFastInstanceCommand_1787053798069';

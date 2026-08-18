@@ -26,6 +26,8 @@ import { JWT_SUPPORTED_VERIFY_ALGORITHMS } from 'src/engine/core-modules/jwt/con
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { type FlatUserWorkspace } from 'src/engine/core-modules/user-workspace/types/flat-user-workspace.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
@@ -40,6 +42,8 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly impersonationAuthorizationService: ImpersonationAuthorizationService,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {
     const secretOrKeyProvider: SecretOrKeyProvider = (
       _request,
@@ -326,15 +330,48 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   private async validateApplicationToken(
     payload: ApplicationAccessTokenJwtPayload,
   ): Promise<AuthContext> {
-    const workspace = await this.coreEntityCacheService.get(
+    let workspace = await this.coreEntityCacheService.get(
       'workspaceEntity',
       payload.workspaceId,
     );
+    let isValidatedWorkspaceDeletionToken = false;
+
+    if (
+      !isDefined(workspace) &&
+      isDefined(payload.workspaceDeletionRequestTimestamp)
+    ) {
+      const deletedWorkspace = await this.workspaceRepository.findOne({
+        where: { id: payload.workspaceId },
+        withDeleted: true,
+      });
+
+      if (
+        !isDefined(deletedWorkspace?.deletedAt) ||
+        payload.workspaceDeletionRequestTimestamp !==
+          deletedWorkspace.deletedAt.toISOString() ||
+        isDefined(deletedWorkspace.applicationUninstallHooksCompletedAt)
+      ) {
+        throw new AuthException(
+          'Workspace deletion is in progress',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
+
+      workspace = fromWorkspaceEntityToFlat(deletedWorkspace);
+      isValidatedWorkspaceDeletionToken = true;
+    }
 
     if (!isDefined(workspace)) {
       throw new AuthException(
         'Workspace not found',
         AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      );
+    }
+
+    if (isDefined(workspace.deletedAt) && !isValidatedWorkspaceDeletionToken) {
+      throw new AuthException(
+        'Workspace deletion is in progress',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
 

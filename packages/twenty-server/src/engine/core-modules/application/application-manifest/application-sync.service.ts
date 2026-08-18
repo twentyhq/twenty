@@ -36,6 +36,12 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
+type ApplicationForUninstallHook = {
+  uninstallLogicFunctionId: string | null;
+  universalIdentifier: string;
+  version: string | null;
+};
+
 @Injectable()
 export class ApplicationSyncService {
   private readonly logger = new Logger(ApplicationSyncService.name);
@@ -349,7 +355,7 @@ export class ApplicationSyncService {
     }
 
     if (shouldRunUninstallHook) {
-      await this.runUninstallHook({ application, workspaceId });
+      await this.runUninstallHookBestEffort({ application, workspaceId });
     }
 
     const flatEntityMapsCacheKeys = Object.values(ALL_METADATA_NAME).map(
@@ -409,40 +415,96 @@ export class ApplicationSyncService {
     return validateAndBuildResult.workspaceMigration;
   }
 
-  // The uninstall hook must run before the deletion migration: once the
-  // migration is applied, the hook's logic function metadata, code, and the
-  // application's data are gone, so nothing can be executed anymore. It is
-  // best-effort cleanup: a failure must never prevent the application from
-  // being removed. uninstallLogicFunctionId is resolved from the manifest at
-  // sync time, so it always points at the installed release, not at whatever
-  // the application registration currently publishes.
+  public async runUninstallHooksForWorkspaceApplications({
+    workspaceId,
+    workspaceDeletedAt,
+  }: {
+    workspaceId: string;
+    workspaceDeletedAt: Date;
+  }): Promise<void> {
+    const applications =
+      await this.applicationService.findManyInstalledFlatApplications(
+        workspaceId,
+      );
+    const applicationUninstallHookFailures: string[] = [];
+
+    for (const application of applications) {
+      try {
+        await this.runUninstallHook({
+          application,
+          workspaceId,
+          workspaceDeletedAt,
+        });
+      } catch (error) {
+        const applicationUninstallHookFailure = `${application.universalIdentifier}: ${error instanceof Error ? error.message : String(error)}`;
+
+        applicationUninstallHookFailures.push(applicationUninstallHookFailure);
+        this.logger.warn(
+          `Workspace deletion uninstall hook failed: ${applicationUninstallHookFailure}`,
+        );
+      }
+    }
+
+    if (applicationUninstallHookFailures.length > 0) {
+      throw new Error(
+        `Application uninstall hooks failed for workspace ${workspaceId}: ${applicationUninstallHookFailures.join('; ')}`,
+      );
+    }
+  }
+
   private async runUninstallHook({
     application,
     workspaceId,
+    workspaceDeletedAt,
   }: {
-    application: ApplicationEntity;
+    application: ApplicationForUninstallHook;
     workspaceId: string;
+    workspaceDeletedAt?: Date;
   }): Promise<void> {
     if (!isDefined(application.uninstallLogicFunctionId)) {
       return;
     }
 
+    this.logger.log(
+      `Executing uninstall hook for app ${application.universalIdentifier}`,
+    );
+
+    const workspaceDeletionRequestTimestamp = workspaceDeletedAt?.toISOString();
+    const idempotencyKey = isDefined(workspaceDeletionRequestTimestamp)
+      ? `workspace-deletion:${workspaceId}:${workspaceDeletionRequestTimestamp}:${application.universalIdentifier}`
+      : undefined;
+    const result = await this.logicFunctionExecutorService.execute({
+      logicFunctionId: application.uninstallLogicFunctionId,
+      workspaceId,
+      ...(isDefined(workspaceDeletionRequestTimestamp)
+        ? { workspaceDeletionRequestTimestamp }
+        : {}),
+      payload: {
+        version: application.version ?? undefined,
+        ...(isDefined(idempotencyKey) ? { idempotencyKey } : {}),
+      },
+    });
+
+    if (isDefined(result.error)) {
+      throw new Error(result.error.errorMessage);
+    }
+  }
+
+  // The uninstall hook must run before the deletion migration: once the
+  // migration is applied, the hook's logic function metadata, code, and the
+  // application's data are gone, so nothing can be executed anymore.
+  // uninstallLogicFunctionId is resolved from the manifest at sync time, so it
+  // always points at the installed release. A normal application uninstall
+  // remains best-effort so cleanup cannot block removal.
+  private async runUninstallHookBestEffort({
+    application,
+    workspaceId,
+  }: {
+    application: ApplicationForUninstallHook;
+    workspaceId: string;
+  }): Promise<void> {
     try {
-      this.logger.log(
-        `Executing uninstall hook for app ${application.universalIdentifier}`,
-      );
-
-      const result = await this.logicFunctionExecutorService.execute({
-        logicFunctionId: application.uninstallLogicFunctionId,
-        workspaceId,
-        payload: { version: application.version ?? undefined },
-      });
-
-      if (isDefined(result.error)) {
-        this.logger.warn(
-          `Uninstall hook failed for application ${application.universalIdentifier}: ${result.error.errorMessage}`,
-        );
-      }
+      await this.runUninstallHook({ application, workspaceId });
     } catch (error) {
       this.logger.warn(
         `Uninstall hook failed for application ${application.universalIdentifier}: ${error instanceof Error ? error.message : String(error)}`,

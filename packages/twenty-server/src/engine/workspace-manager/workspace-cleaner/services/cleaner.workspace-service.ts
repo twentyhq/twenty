@@ -337,6 +337,15 @@ export class CleanerWorkspaceService {
             await this.workspaceService.deleteWorkspace(workspace.id, true);
           }
         } else {
+          if (
+            await this.recoverApplicationUninstallHooksIfPending(
+              workspace,
+              dryRun,
+            )
+          ) {
+            continue;
+          }
+
           if (this.twentyConfigService.get('IS_BILLING_ENABLED')) {
             await this.billingSubscriptionService.assertSubscriptionCanceledOrNone(
               workspace.id,
@@ -369,6 +378,12 @@ export class CleanerWorkspaceService {
     workspace: WorkspaceEntity;
   }): Promise<WorkspaceEntity | undefined> {
     if (!isDefined(workspace.deletedAt)) {
+      return;
+    }
+
+    if (
+      await this.recoverApplicationUninstallHooksIfPending(workspace, dryRun)
+    ) {
       return;
     }
 
@@ -519,6 +534,12 @@ export class CleanerWorkspaceService {
         continue;
       }
 
+      if (
+        await this.recoverApplicationUninstallHooksIfPending(workspace, dryRun)
+      ) {
+        continue;
+      }
+
       if (this.twentyConfigService.get('IS_BILLING_ENABLED')) {
         const activeBillingSubscription =
           await this.billingSubscriptionRepository.findOne(workspace.id, {
@@ -551,5 +572,26 @@ export class CleanerWorkspaceService {
         `${dryRun ? 'DRY RUN - ' : ''}Destroyed workspace ${workspace.id}`,
       );
     }
+  }
+
+  private async recoverApplicationUninstallHooksIfPending(
+    workspace: WorkspaceEntity,
+    dryRun: boolean,
+  ): Promise<boolean> {
+    if (isDefined(workspace.applicationUninstallHooksCompletedAt)) {
+      return false;
+    }
+
+    this.logger.log(
+      `${dryRun ? 'DRY RUN - ' : ''}Recovering application uninstall hooks for workspace ${workspace.id}`,
+    );
+
+    if (!dryRun) {
+      await this.workspaceService.enqueueWorkspaceDeletionApplicationUninstall(
+        workspace.id,
+      );
+    }
+
+    return true;
   }
 }

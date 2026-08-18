@@ -50,6 +50,10 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WORKSPACE_FIELDS_UPDATABLE_BEFORE_ACTIVATION } from 'src/engine/core-modules/workspace/constants/workspace-fields-updatable-before-activation.constant';
+import {
+  WorkspaceDeletionApplicationUninstallJob,
+  type WorkspaceDeletionApplicationUninstallJobData,
+} from 'src/engine/core-modules/workspace/jobs/workspace-deletion-application-uninstall.job';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   WorkspaceException,
@@ -88,6 +92,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 // PENDING_CREATION) and may be retried. It is far longer than a real activation
 // takes, so a genuinely in-progress activation is never reclaimed.
 const WORKSPACE_ACTIVATION_STALE_LOCK_TIMEOUT_MS = 5 * 60 * 1000;
+const WORKSPACE_DELETION_APPLICATION_UNINSTALL_RETRY_LIMIT = 3;
 
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
@@ -550,6 +555,14 @@ export class WorkspaceService {
 
     assert(workspace, 'Workspace not found');
 
+    if (!softDelete) {
+      assert(
+        isDefined(workspace.deletedAt) &&
+          isDefined(workspace.applicationUninstallHooksCompletedAt),
+        `Application uninstall hooks must complete before hard deleting workspace ${id}`,
+      );
+    }
+
     const userWorkspaces = await this.userWorkspaceRepository.find({
       where: {
         workspaceId: id,
@@ -575,6 +588,10 @@ export class WorkspaceService {
 
       await this.workspaceRepository.softDelete({ id });
       await this.coreEntityCacheService.invalidate('workspaceEntity', id);
+
+      if (!isDefined(workspace.applicationUninstallHooksCompletedAt)) {
+        await this.enqueueWorkspaceDeletionApplicationUninstall(id);
+      }
 
       this.logger.log(`workspace ${id} soft deleted`);
 
@@ -626,6 +643,19 @@ export class WorkspaceService {
     this.logger.log(`workspace ${id} hard deleted`);
 
     return workspace;
+  }
+
+  async enqueueWorkspaceDeletionApplicationUninstall(
+    workspaceId: string,
+  ): Promise<void> {
+    await this.messageQueueService.add<WorkspaceDeletionApplicationUninstallJobData>(
+      WorkspaceDeletionApplicationUninstallJob.name,
+      { workspaceId },
+      {
+        id: `${WorkspaceDeletionApplicationUninstallJob.name}-${workspaceId}`,
+        retryLimit: WORKSPACE_DELETION_APPLICATION_UNINSTALL_RETRY_LIMIT,
+      },
+    );
   }
 
   private async deleteWorkspaceSyncableMetadataEntities(
