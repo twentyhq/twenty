@@ -118,8 +118,25 @@ export const Avatar = ({
     className,
   );
 
-  const avatarContent = (
-    <>
+  const isClickable = isDefined(onClick);
+
+  const clickableAriaLabel = isNonEmptyString(placeholder)
+    ? placeholder
+    : 'Avatar';
+
+  return (
+    // oxlint-disable-next-line jsx-a11y/no-static-element-interactions
+    <div
+      className={avatarClassName}
+      data-type={type ?? undefined}
+      data-clickable={isClickable || undefined}
+      role={isClickable ? 'button' : undefined}
+      tabIndex={isClickable ? 0 : undefined}
+      aria-label={isClickable ? clickableAriaLabel : undefined}
+      onClick={onClick}
+      onKeyDown={isClickable ? handleClickableElementKeyDown : undefined}
+      style={avatarStyle}
+    >
       {isNonEmptyString(avatarImageURI) && (
         <AvatarImageLoadErrorEffect
           avatarImageURI={avatarImageURI}
@@ -141,34 +158,6 @@ export const Avatar = ({
           }}
         />
       )}
-    </>
-  );
-
-  if (isDefined(onClick)) {
-    return (
-      <div
-        className={avatarClassName}
-        data-type={type ?? undefined}
-        data-clickable={true}
-        role="button"
-        tabIndex={0}
-        aria-label={isNonEmptyString(placeholder) ? placeholder : 'Avatar'}
-        onClick={onClick}
-        onKeyDown={handleClickableElementKeyDown}
-        style={avatarStyle}
-      >
-        {avatarContent}
-      </div>
-    );
-  }
-
-  return (
-    <div
-      className={avatarClassName}
-      data-type={type ?? undefined}
-      style={avatarStyle}
-    >
-      {avatarContent}
     </div>
   );
 };
