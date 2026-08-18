@@ -344,28 +344,127 @@ describe('buildWorkspaceSetupPromptText', () => {
     expect(result).toContain('validate_workflow');
   });
 
-  it('should let the agent choose what to propose instead of following a script', () => {
+  it('should route what comes next through a mandatory ask_questions call', () => {
     const result = buildWorkspaceSetupPromptText({
       companyEnrichment,
       locale: 'en',
     });
 
-    expect(result).toContain('Nothing after that is a fixed sequence');
-    expect(result).toContain('which single capability to propose next');
-    expect(result).toContain('Name the thing in their business it improves');
+    expect(result).toContain('## What comes next');
+    expect(result).toContain(
+      'Never stop after that report: the turn is unfinished until you call ask_questions letting them pick what comes next',
+    );
+    expect(result).not.toContain('Nothing after that is a fixed sequence');
+    expect(result).not.toContain('which single capability to propose next');
   });
 
-  it('should never close without naming the capabilities it did not build', () => {
+  it('should offer the remaining capabilities plus finishing the setup, never recommending the finish', () => {
     const result = buildWorkspaceSetupPromptText({
       companyEnrichment,
       locale: 'en',
     });
 
     expect(result).toContain(
+      'one line to each capability they do not have yet',
+    );
+    expect(result).toContain('naming the thing in their business it improves');
+    expect(result).toContain(
+      'exactly the capabilities they do not have yet plus finishing the setup',
+    );
+    expect(result).toContain('never the finishing one');
+  });
+
+  it('should keep the capability lines out of the picking, which happens in the call', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain('they are not a menu to restate as choices');
+  });
+
+  it('should repeat the same question after every build and skip it once nothing is left', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain(
+      'then report it and ask again the same way with what is left',
+    );
+    expect(result).toContain('each round is shorter than the last');
+    expect(result).toContain('Once nothing is left to offer, skip it');
+    expect(result).toContain('a question with one option is rejected');
+  });
+
+  it('should treat the pick as the approval and never confirm it', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain('needs no skill and no learn_tools step');
+    expect(result).toContain('Their pick is the approval');
+    expect(result).toContain('build it without asking again');
+    expect(result).toContain(
+      'when they pick finishing it, without asking them to confirm',
+    );
+  });
+
+  it('should handle a free-text answer and return to the same question', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain(
+      'When they answer in free text instead, do what they asked, then come back to the question',
+    );
+  });
+
+  it('should end every setup reply on one of the two calls, after its text', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain('## How every reply ends');
+    expect(result).toContain(
+      'ends in exactly one of two ways: the ask_questions call, or the complete_workspace_setup call',
+    );
+    expect(result).toContain('The only exception is the CSV upload request');
+    expect(result).toContain(
+      'come after the text of that reply, never instead of it',
+    );
+  });
+
+  it('should route between the two calls from what the user wants next', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain(
+      'while anything is still worth building, it is the ask_questions call',
+    );
+    expect(result).toContain(
+      'whether they picked the finishing option or told you so in their own words, it is complete_workspace_setup',
+    );
+  });
+
+  it('should close without pitching what they did not pick', () => {
+    const result = buildWorkspaceSetupPromptText({
+      companyEnrichment,
+      locale: 'en',
+    });
+
+    expect(result).toContain('a short recap of what was built');
+    expect(result).toContain('still there whenever they want it');
+    expect(result).toContain('without pitching it again');
+    expect(result).not.toContain(
       'never close while they are still unaware of the rest',
     );
-    expect(result).toContain('offer to set one up');
-    expect(result).toContain('Build only what they accept');
+    expect(result).not.toContain('offer to set one up');
   });
 
   it('should end the setup by calling the completion tool once nothing is left to build', () => {
@@ -376,10 +475,16 @@ describe('buildWorkspaceSetupPromptText', () => {
 
     expect(result).toContain('## Ending the setup');
     expect(result).toContain(
-      'end that same reply by calling complete_workspace_setup',
+      'The setup ends the moment they are done, whether they tell you so in their own words or pick the finishing option',
     );
+    expect(result).toContain('Ask nothing more once that happens');
+    expect(result).toContain('That last reply has two parts, in this order');
+    expect(result).toContain(
+      'Only then, as the last thing in the reply, you call complete_workspace_setup',
+    );
+    expect(result).toContain('never as the only content of a reply');
     expect(result).toContain('moving to a side panel');
-    expect(result).toContain('never make it twice');
+    expect(result).toContain('never twice');
   });
 
   it('should propose a dashboard built with the dashboard tools', () => {
