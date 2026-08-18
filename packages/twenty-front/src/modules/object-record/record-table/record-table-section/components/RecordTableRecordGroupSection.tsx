@@ -22,7 +22,8 @@ import { RECORD_TABLE_LABEL_IDENTIFIER_COLUMN_WIDTH_ON_MOBILE } from '@/object-r
 
 import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/record-index/states/recordIndexAggregateDisplayLabelComponentState';
 import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexAggregateDisplayValueForGroupValueComponentFamilyState';
-import { isRecordTableCellsNonEditableComponentState } from '@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState';
+import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
+import { useContext } from 'react';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
@@ -143,9 +144,8 @@ export const RecordTableRecordGroupSection = () => {
     currentRecordGroupId,
   );
 
-  const isRecordTableCellsNonEditable = useAtomComponentStateValue(
-    isRecordTableCellsNonEditableComponentState,
-  );
+  const isAggregateDropdownNonInteractive =
+    useContext(RecordTableWidgetContext)?.isPageLayoutInEditMode ?? false;
 
   const visibleRecordFieldsWithoutLabelIdentifier = visibleRecordFields.filter(
     filterOutByProperty(
@@ -188,8 +188,8 @@ export const RecordTableRecordGroupSection = () => {
           chevronWidth={RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}
         />
         <StyledAggregateDropdownContainer
-          isNonInteractive={isRecordTableCellsNonEditable}
-          inert={isRecordTableCellsNonEditable || undefined}
+          isNonInteractive={isAggregateDropdownNonInteractive}
+          inert={isAggregateDropdownNonInteractive || undefined}
         >
           <RecordGroupAggregateDropdown
             aggregateValue={recordIndexAggregateDisplayValueForGroupValue}
