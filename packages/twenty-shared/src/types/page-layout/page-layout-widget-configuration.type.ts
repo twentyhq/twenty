@@ -94,6 +94,7 @@ export type RecordTableConfiguration = {
   configurationType: 'RECORD_TABLE';
   viewId?: SerializedRelation | null;
   recordLimit?: number;
+  isRecordsEditable?: boolean;
 };
 
 export type FieldConfiguration = {
