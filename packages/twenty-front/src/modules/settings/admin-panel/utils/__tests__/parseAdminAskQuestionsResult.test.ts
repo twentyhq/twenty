@@ -86,14 +86,70 @@ describe('parseAdminAskQuestionsResult', () => {
     expect(result?.questions).toEqual(QUESTIONS);
   });
 
-  it('should default an unknown status to pending', () => {
+  it('should preserve an unrecognized status', () => {
     const result = parseAdminAskQuestionsResult(
       buildPart({
         toolOutput: { result: { questions: QUESTIONS, status: 'whatever' } },
       }),
     );
 
+    expect(result?.status).toBe('whatever');
+  });
+
+  it('should default to pending when the status is missing', () => {
+    const result = parseAdminAskQuestionsResult(
+      buildPart({ toolOutput: { result: { questions: QUESTIONS } } }),
+    );
+
     expect(result?.status).toBe('pending');
+  });
+
+  it('should return null when an option index is out of range', () => {
+    const result = parseAdminAskQuestionsResult(
+      buildPart({
+        toolOutput: {
+          result: {
+            questions: QUESTIONS,
+            status: 'answered',
+            answers: [{ questionIndex: 0, selectedOptionIndices: [5] }],
+          },
+        },
+      }),
+    );
+
+    expect(result).toBeNull();
+  });
+
+  it('should return null when an option index is not a number', () => {
+    const result = parseAdminAskQuestionsResult(
+      buildPart({
+        toolOutput: {
+          result: {
+            questions: QUESTIONS,
+            status: 'answered',
+            answers: [{ questionIndex: 0, selectedOptionIndices: [0, null] }],
+          },
+        },
+      }),
+    );
+
+    expect(result).toBeNull();
+  });
+
+  it('should return null when an answer references an unknown question', () => {
+    const result = parseAdminAskQuestionsResult(
+      buildPart({
+        toolOutput: {
+          result: {
+            questions: QUESTIONS,
+            status: 'answered',
+            answers: [{ questionIndex: 7, selectedOptionIndices: [0] }],
+          },
+        },
+      }),
+    );
+
+    expect(result).toBeNull();
   });
 
   it('should return null for another tool', () => {

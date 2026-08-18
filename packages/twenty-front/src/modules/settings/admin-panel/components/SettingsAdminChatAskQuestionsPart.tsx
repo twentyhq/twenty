@@ -1,21 +1,20 @@
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
-import {
-  type AskQuestionsToolResult,
-  type AskQuestionsToolStatus,
-} from 'twenty-shared/ai';
+import { type AskQuestionsToolStatus } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 import { Tag, type TagColor } from 'twenty-ui/data-display';
 import { IconHelpCircle } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SettingsAdminChatAskQuestionsQuestion } from '@/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion';
 import { SettingsAdminChatToolCallPart } from '@/settings/admin-panel/components/SettingsAdminChatToolCallPart';
+import { type AdminAskQuestionsResult } from '@/settings/admin-panel/types/AdminAskQuestionsResult';
 import { type AdminChatThreadMessagePart } from '@/settings/admin-panel/types/AdminChatThreadMessagePart';
 
 type SettingsAdminChatAskQuestionsPartProps = {
   part: AdminChatThreadMessagePart;
-  result: AskQuestionsToolResult;
+  result: AdminAskQuestionsResult;
 };
 
 const STATUS_TAG_COLORS: Record<AskQuestionsToolStatus, TagColor> = {
@@ -59,15 +58,23 @@ const StyledStatusTag = styled.div`
   margin-left: auto;
 `;
 
-const getStatusLabel = (status: AskQuestionsToolStatus) => {
+const getStatusLabel = (status: string) => {
   switch (status) {
     case 'answered':
       return t`Answered`;
     case 'skipped':
       return t`Skipped`;
-    default:
+    case 'pending':
       return t`Unanswered`;
+    default:
+      return status;
   }
+};
+
+const getStatusTagColor = (status: string): TagColor => {
+  const knownStatusColor = STATUS_TAG_COLORS[status as AskQuestionsToolStatus];
+
+  return isDefined(knownStatusColor) ? knownStatusColor : 'gray';
 };
 
 export const SettingsAdminChatAskQuestionsPart = ({
@@ -81,7 +88,7 @@ export const SettingsAdminChatAskQuestionsPart = ({
         {t`Questions`}
         <StyledStatusTag>
           <Tag
-            color={STATUS_TAG_COLORS[result.status]}
+            color={getStatusTagColor(result.status)}
             text={getStatusLabel(result.status)}
           />
         </StyledStatusTag>

@@ -4,20 +4,13 @@ import {
   type AskQuestionAnswer,
   type AskQuestionItem,
   type AskQuestionOption,
-  type AskQuestionsToolResult,
-  type AskQuestionsToolStatus,
 } from 'twenty-shared/ai';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
+import { type AdminAskQuestionsResult } from '@/settings/admin-panel/types/AdminAskQuestionsResult';
 import { type AdminChatThreadMessagePart } from '@/settings/admin-panel/types/AdminChatThreadMessagePart';
 import { getAdminToolDisplayName } from '@/settings/admin-panel/utils/getAdminToolDisplayName';
 import { parseAdminToolJson } from '@/settings/admin-panel/utils/parseAdminToolJson';
-
-const ASK_QUESTIONS_TOOL_STATUSES: AskQuestionsToolStatus[] = [
-  'pending',
-  'answered',
-  'skipped',
-];
 
 const parseOption = (value: unknown): AskQuestionOption | null => {
   if (!isPlainObject(value) || !isString(value.label)) {
@@ -58,7 +51,10 @@ const parseQuestion = (value: unknown): AskQuestionItem | null => {
   };
 };
 
-const parseAnswer = (value: unknown): AskQuestionAnswer | null => {
+const parseAnswer = (
+  value: unknown,
+  questions: AskQuestionItem[],
+): AskQuestionAnswer | null => {
   if (
     !isPlainObject(value) ||
     !isNumber(value.questionIndex) ||
@@ -67,9 +63,29 @@ const parseAnswer = (value: unknown): AskQuestionAnswer | null => {
     return null;
   }
 
+  const question = questions[value.questionIndex];
+
+  if (!isDefined(question)) {
+    return null;
+  }
+
+  const selectedOptionIndices = value.selectedOptionIndices.filter(isNumber);
+
+  if (selectedOptionIndices.length !== value.selectedOptionIndices.length) {
+    return null;
+  }
+
+  const hasOutOfRangeOption = selectedOptionIndices.some(
+    (optionIndex) => optionIndex < 0 || optionIndex >= question.options.length,
+  );
+
+  if (hasOutOfRangeOption) {
+    return null;
+  }
+
   return {
     questionIndex: value.questionIndex,
-    selectedOptionIndices: value.selectedOptionIndices.filter(isNumber),
+    selectedOptionIndices,
     freeText: isString(value.freeText) ? value.freeText : undefined,
   };
 };
@@ -84,15 +100,24 @@ const parseQuestions = (value: unknown): AskQuestionItem[] | null => {
   return questions.length === value.length ? questions : null;
 };
 
-const parseStatus = (value: unknown): AskQuestionsToolStatus =>
-  ASK_QUESTIONS_TOOL_STATUSES.find((status) => status === value) ?? 'pending';
+const parseAnswers = (
+  value: unknown,
+  questions: AskQuestionItem[],
+): AskQuestionAnswer[] | null => {
+  if (!isArray(value)) {
+    return null;
+  }
 
-const parseAnswers = (value: unknown): AskQuestionAnswer[] | undefined =>
-  isArray(value) ? value.map(parseAnswer).filter(isDefined) : undefined;
+  const answers = value
+    .map((answer) => parseAnswer(answer, questions))
+    .filter(isDefined);
+
+  return answers.length === value.length ? answers : null;
+};
 
 const parseResultFromToolOutput = (
   toolOutput: unknown,
-): AskQuestionsToolResult | null => {
+): AdminAskQuestionsResult | null => {
   if (!isPlainObject(toolOutput) || !isPlainObject(toolOutput.result)) {
     return null;
   }
@@ -103,16 +128,22 @@ const parseResultFromToolOutput = (
     return null;
   }
 
-  return {
-    questions,
-    status: parseStatus(toolOutput.result.status),
-    answers: parseAnswers(toolOutput.result.answers),
-  };
+  const status = isString(toolOutput.result.status)
+    ? toolOutput.result.status
+    : 'pending';
+
+  if (!isDefined(toolOutput.result.answers)) {
+    return { questions, status };
+  }
+
+  const answers = parseAnswers(toolOutput.result.answers, questions);
+
+  return isDefined(answers) ? { questions, status, answers } : null;
 };
 
 const parseResultFromToolInput = (
   toolInput: unknown,
-): AskQuestionsToolResult | null => {
+): AdminAskQuestionsResult | null => {
   if (!isPlainObject(toolInput)) {
     return null;
   }
@@ -124,7 +155,7 @@ const parseResultFromToolInput = (
 
 export const parseAdminAskQuestionsResult = (
   part: AdminChatThreadMessagePart,
-): AskQuestionsToolResult | null => {
+): AdminAskQuestionsResult | null => {
   if (getAdminToolDisplayName(part) !== ASK_QUESTIONS_TOOL_NAME) {
     return null;
   }
