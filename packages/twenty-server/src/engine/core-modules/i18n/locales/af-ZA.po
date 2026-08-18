@@ -281,8 +281,8 @@ msgid "A required field is missing."
 msgstr "’n Vereiste veld ontbreek."
 
 #. js-lingui-id: /ffPWJ
+#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 #: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
-#: src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "’n Vereiste veld ontbreek. Verskaf asseblief al die vereiste waardes en probeer weer."
 
@@ -3929,9 +3929,9 @@ msgid "Invalid input for application registration."
 msgstr "Ongeldige invoer vir toepassingsregistrasie."
 
 #. js-lingui-id: t7SpQO
+#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 #: src/engine/core-modules/application/application.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Invalid input provided."
 msgstr "Ongeldige invoer verskaf."
 
@@ -8382,8 +8382,8 @@ msgid "This operation is not supported."
 msgstr "Hierdie bewerking word nie ondersteun nie."
 
 #. js-lingui-id: fxy039
+#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 #: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
-#: src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Hierdie bewerking verwys na ’n rekord wat nie bestaan nie of nie gewysig kan word nie weens bestaande verwantskappe."
 
@@ -8409,14 +8409,13 @@ msgid "This question has already been answered."
 msgstr "Hierdie vraag is reeds beantwoord."
 
 #. js-lingui-id: TjUnO1
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
+#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 msgid "This record already exists. Please check your data and try again."
 msgstr "Hierdie rekord bestaan reeds. Gaan asseblief jou data na en probeer weer."
 
 #. js-lingui-id: BQ4MUY
+#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 #: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
-#: src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "Hierdie rekord kan nie geskrap word nie omdat ander rekords nog daarna verwys."
 
@@ -9386,7 +9385,7 @@ msgid "ViewId is required to create a view sort."
 msgstr "ViewId is benodig om 'n aansigsorteer te skep."
 
 #. js-lingui-id: xvV2NJ
-#: src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.ts
+#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 msgid "We are experiencing a temporary issue with our database. Please try again later."
 msgstr "Ons ondervind 'n tydelike probleem met ons databasis. Probeer asseblief later weer."
 
