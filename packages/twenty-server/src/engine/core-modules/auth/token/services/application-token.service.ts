@@ -82,10 +82,10 @@ export class ApplicationTokenService {
     });
 
     if (
-      !isWorkspaceDeletionRequestPending({
+      !isWorkspaceDeletionRequestPending(
         workspace,
         workspaceDeletionRequestTimestamp,
-      })
+      )
     ) {
       throw new AuthException(
         'Workspace deletion request not found',

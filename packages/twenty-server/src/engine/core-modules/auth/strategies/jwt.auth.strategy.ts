@@ -450,11 +450,10 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
 
     if (
-      !isWorkspaceDeletionRequestPending({
-        workspace: deletedWorkspace,
-        workspaceDeletionRequestTimestamp:
-          payload.workspaceDeletionRequestTimestamp,
-      })
+      !isWorkspaceDeletionRequestPending(
+        deletedWorkspace,
+        payload.workspaceDeletionRequestTimestamp,
+      )
     ) {
       throw new AuthException(
         'Workspace deletion is in progress',

@@ -3,26 +3,18 @@ import { isWorkspaceDeletionPending } from 'src/engine/core-modules/workspace/ut
 describe('isWorkspaceDeletionPending', () => {
   const workspaceDeletedAt = new Date('2026-08-18T10:00:00.000Z');
 
-  it('recognizes a pending workspace deletion', () => {
+  it('should return true when the workspace is soft deleted', () => {
     expect(
       isWorkspaceDeletionPending({
         deletedAt: workspaceDeletedAt,
-        applicationUninstallHooksCompletedAt: null,
       }),
     ).toBe(true);
   });
 
-  it('rejects an active or completed workspace deletion', () => {
+  it('should return false when the workspace is not soft deleted', () => {
     expect(
       isWorkspaceDeletionPending({
         deletedAt: undefined,
-        applicationUninstallHooksCompletedAt: null,
-      }),
-    ).toBe(false);
-    expect(
-      isWorkspaceDeletionPending({
-        deletedAt: workspaceDeletedAt,
-        applicationUninstallHooksCompletedAt: new Date(),
       }),
     ).toBe(false);
   });

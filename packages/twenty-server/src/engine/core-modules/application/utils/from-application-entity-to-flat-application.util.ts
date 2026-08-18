@@ -7,7 +7,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 export const fromApplicationEntityToFlatApplication = (
   applicationEntity: ApplicationEntity,
 ): FlatApplication =>
-  removePropertiesFromRecord(applicationEntity, [
-    ...APPLICATION_ENTITY_RELATION_PROPERTIES,
-    'workspaceDeletionUninstallHookCompletedForDeletedAt',
-  ]);
+  removePropertiesFromRecord(
+    applicationEntity,
+    APPLICATION_ENTITY_RELATION_PROPERTIES,
+  );

@@ -8,15 +8,16 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getWorkspaceApplicationUninstallLockName } from 'src/engine/core-modules/workspace/utils/get-workspace-application-uninstall-lock-name.util';
-import { isWorkspaceDeletionPending } from 'src/engine/core-modules/workspace/utils/is-workspace-deletion-pending.util';
+import { isWorkspaceSuspensionUninstallRequestPending } from 'src/engine/core-modules/workspace/utils/is-workspace-suspension-uninstall-request-pending.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
-export type WorkspaceDeletionApplicationUninstallJobData = {
+export type WorkspaceSuspensionApplicationUninstallJobData = {
   workspaceId: string;
+  workspaceSuspensionUninstallRequestedAt: string;
 };
 
 @Processor(MessageQueue.deleteCascadeQueue)
-export class WorkspaceDeletionApplicationUninstallJob {
+export class WorkspaceSuspensionApplicationUninstallJob {
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
@@ -24,10 +25,11 @@ export class WorkspaceDeletionApplicationUninstallJob {
     private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
   ) {}
 
-  @Process(WorkspaceDeletionApplicationUninstallJob.name)
+  @Process(WorkspaceSuspensionApplicationUninstallJob.name)
   async handle({
     workspaceId,
-  }: WorkspaceDeletionApplicationUninstallJobData): Promise<void> {
+    workspaceSuspensionUninstallRequestedAt,
+  }: WorkspaceSuspensionApplicationUninstallJobData): Promise<void> {
     const advisoryLockResult =
       await this.postgresAdvisoryLockService.tryWithLock(
         getWorkspaceApplicationUninstallLockName(workspaceId),
@@ -37,14 +39,19 @@ export class WorkspaceDeletionApplicationUninstallJob {
             withDeleted: true,
           });
 
-          if (!isWorkspaceDeletionPending(workspace)) {
+          if (
+            !isWorkspaceSuspensionUninstallRequestPending(
+              workspace,
+              workspaceSuspensionUninstallRequestedAt,
+            )
+          ) {
             return;
           }
 
-          await this.applicationUninstallService.runUninstallHooksForWorkspaceDeletion(
+          await this.applicationUninstallService.runUninstallHooksForWorkspaceSuspension(
             {
               workspaceId,
-              workspaceDeletedAt: workspace.deletedAt,
+              workspaceSuspendedAt: workspace.suspendedAt,
             },
           );
         },

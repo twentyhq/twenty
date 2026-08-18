@@ -38,6 +38,7 @@ import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { HandleWorkspaceMemberDeletedJob } from 'src/engine/core-modules/workspace/handle-workspace-member-deleted.job';
 import { WorkspaceDeletionApplicationUninstallJob } from 'src/engine/core-modules/workspace/jobs/workspace-deletion-application-uninstall.job';
+import { WorkspaceSuspensionApplicationUninstallJob } from 'src/engine/core-modules/workspace/jobs/workspace-suspension-application-uninstall.job';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { AiAgentMonitorModule } from 'src/engine/metadata-modules/ai/ai-agent-monitor/ai-agent-monitor.module';
@@ -115,6 +116,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     UpdateSubscriptionQuantityJob,
     HandleWorkspaceMemberDeletedJob,
     WorkspaceDeletionApplicationUninstallJob,
+    WorkspaceSuspensionApplicationUninstallJob,
     CleanWorkspaceDeletionWarningUserVarsJob,
     UpdateWorkspaceMemberEmailJob,
     GenerateSdkClientJob,

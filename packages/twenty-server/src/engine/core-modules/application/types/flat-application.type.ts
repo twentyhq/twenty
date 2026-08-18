@@ -3,6 +3,5 @@ import { type ApplicationEntityRelationProperties } from 'src/engine/core-module
 
 export type FlatApplication = Omit<
   ApplicationEntity,
-  | ApplicationEntityRelationProperties
-  | 'workspaceDeletionUninstallHookCompletedForDeletedAt'
+  ApplicationEntityRelationProperties
 >;

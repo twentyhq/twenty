@@ -408,7 +408,7 @@ describe('JwtAuthStrategy', () => {
   });
 
   describe('APPLICATION_ACCESS token validation', () => {
-    it('allows a cleanup token for its exact pending workspace deletion', async () => {
+    it('should allow a cleanup token when its exact workspace deletion is pending', async () => {
       const applicationId = randomUUID();
       const workspaceId = randomUUID();
       const workspaceDeletedAt = new Date('2026-08-18T10:00:00.000Z');
@@ -417,7 +417,6 @@ describe('JwtAuthStrategy', () => {
         createdAt: new Date('2026-08-01T10:00:00.000Z'),
         updatedAt: new Date('2026-08-18T10:00:00.000Z'),
         deletedAt: workspaceDeletedAt,
-        applicationUninstallHooksCompletedAt: null,
       });
       const application = { id: applicationId };
 
@@ -444,7 +443,7 @@ describe('JwtAuthStrategy', () => {
       });
     });
 
-    it('rejects a cleanup token from a different workspace deletion request', async () => {
+    it('should reject a cleanup token when it belongs to a different deletion request', async () => {
       const applicationId = randomUUID();
       const workspaceId = randomUUID();
 
@@ -459,7 +458,6 @@ describe('JwtAuthStrategy', () => {
           createdAt: new Date('2026-08-01T10:00:00.000Z'),
           updatedAt: new Date('2026-08-18T10:00:00.000Z'),
           deletedAt: new Date('2026-08-18T10:00:00.000Z'),
-          applicationUninstallHooksCompletedAt: null,
         }),
       );
 

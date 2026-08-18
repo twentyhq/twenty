@@ -1,0 +1,189 @@
+import { Injectable, Logger } from '@nestjs/common';
+
+import { isDefined } from 'twenty-shared/utils';
+
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import {
+  buildWorkspaceUninstallHookPayload,
+  type WorkspaceUninstallHookRequestType,
+} from 'src/engine/core-modules/application/application-manifest/utils/build-workspace-uninstall-hook-payload.util';
+import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+
+type ApplicationForUninstallHook = Pick<
+  ApplicationEntity,
+  'uninstallLogicFunctionId' | 'universalIdentifier' | 'version'
+>;
+
+type WorkspaceUninstallHookRequest = {
+  requestedAt: Date;
+  type: WorkspaceUninstallHookRequestType;
+};
+
+@Injectable()
+export class ApplicationUninstallService {
+  private readonly logger = new Logger(ApplicationUninstallService.name);
+
+  constructor(
+    private readonly applicationService: ApplicationService,
+    private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
+  ) {}
+
+  async runUninstallHooksForWorkspaceDeletion({
+    workspaceId,
+    workspaceDeletedAt,
+  }: {
+    workspaceId: string;
+    workspaceDeletedAt: Date;
+  }): Promise<void> {
+    await this.runUninstallHooksForWorkspaceRequest({
+      workspaceId,
+      workspaceUninstallHookRequest: {
+        requestedAt: workspaceDeletedAt,
+        type: 'workspace-deletion',
+      },
+    });
+  }
+
+  async runUninstallHooksForWorkspaceSuspension({
+    workspaceId,
+    workspaceSuspendedAt,
+  }: {
+    workspaceId: string;
+    workspaceSuspendedAt: Date;
+  }): Promise<void> {
+    await this.runUninstallHooksForWorkspaceRequest({
+      workspaceId,
+      workspaceUninstallHookRequest: {
+        requestedAt: workspaceSuspendedAt,
+        type: 'workspace-suspension',
+      },
+    });
+  }
+
+  // The hook must run before the application deletion migration removes its
+  // function metadata and code. Explicit application uninstall remains
+  // best-effort so external cleanup cannot block removing the application.
+  async runUninstallHookBestEffort({
+    application,
+    workspaceId,
+  }: {
+    application: ApplicationForUninstallHook;
+    workspaceId: string;
+  }): Promise<void> {
+    try {
+      await this.runUninstallHook({
+        application,
+        workspaceId,
+        payload: { version: application.version ?? undefined },
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Uninstall hook failed for application ${application.universalIdentifier}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+
+  private async runUninstallHooksForWorkspaceRequest({
+    workspaceId,
+    workspaceUninstallHookRequest,
+  }: {
+    workspaceId: string;
+    workspaceUninstallHookRequest: WorkspaceUninstallHookRequest;
+  }): Promise<void> {
+    const applications =
+      await this.applicationService.findManyApplications(workspaceId);
+    const applicationUninstallHookFailures: string[] = [];
+
+    for (const application of applications) {
+      try {
+        await this.runUninstallHookForWorkspaceRequest({
+          application,
+          workspaceId,
+          workspaceUninstallHookRequest,
+        });
+      } catch (error) {
+        const applicationUninstallHookFailure = `${application.universalIdentifier}: ${error instanceof Error ? error.message : String(error)}`;
+
+        applicationUninstallHookFailures.push(applicationUninstallHookFailure);
+        this.logger.warn(
+          `${workspaceUninstallHookRequest.type} uninstall hook failed: ${applicationUninstallHookFailure}`,
+        );
+      }
+    }
+
+    if (applicationUninstallHookFailures.length > 0) {
+      throw new ApplicationException(
+        `Application uninstall hooks failed for workspace ${workspaceId}: ${applicationUninstallHookFailures.join('; ')}`,
+        ApplicationExceptionCode.UNINSTALL_ERROR,
+      );
+    }
+  }
+
+  private async runUninstallHookForWorkspaceRequest({
+    application,
+    workspaceId,
+    workspaceUninstallHookRequest,
+  }: {
+    application: ApplicationForUninstallHook;
+    workspaceId: string;
+    workspaceUninstallHookRequest: WorkspaceUninstallHookRequest;
+  }): Promise<void> {
+    await this.runUninstallHook({
+      application,
+      workspaceId,
+      workspaceDeletionRequestTimestamp:
+        workspaceUninstallHookRequest.type === 'workspace-deletion'
+          ? workspaceUninstallHookRequest.requestedAt.toISOString()
+          : undefined,
+      payload: buildWorkspaceUninstallHookPayload({
+        applicationVersion: application.version,
+        applicationUniversalIdentifier: application.universalIdentifier,
+        workspaceId,
+        workspaceRequestAt: workspaceUninstallHookRequest.requestedAt,
+        workspaceUninstallHookRequestType: workspaceUninstallHookRequest.type,
+      }),
+    });
+  }
+
+  private async runUninstallHook({
+    application,
+    workspaceId,
+    payload,
+    workspaceDeletionRequestTimestamp,
+  }: {
+    application: ApplicationForUninstallHook;
+    workspaceId: string;
+    payload: object;
+    workspaceDeletionRequestTimestamp?: string;
+  }): Promise<void> {
+    if (!isDefined(application.uninstallLogicFunctionId)) {
+      return;
+    }
+
+    this.logger.log(
+      `Executing uninstall hook for application ${application.universalIdentifier}`,
+    );
+
+    const logicFunctionExecutionResult =
+      await this.logicFunctionExecutorService.execute({
+        logicFunctionId: application.uninstallLogicFunctionId,
+        workspaceId,
+        payload,
+        ...(isDefined(workspaceDeletionRequestTimestamp)
+          ? { workspaceDeletionRequestTimestamp }
+          : {}),
+      });
+
+    if (isDefined(logicFunctionExecutionResult.error)) {
+      throw new ApplicationException(
+        logicFunctionExecutionResult.error.errorMessage,
+        ApplicationExceptionCode.UNINSTALL_ERROR,
+      );
+    }
+  }
+}

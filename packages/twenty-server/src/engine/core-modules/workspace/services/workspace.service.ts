@@ -17,6 +17,7 @@ import {
   Repository,
 } from 'typeorm';
 
+import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -54,6 +55,11 @@ import {
   WorkspaceDeletionApplicationUninstallJob,
   type WorkspaceDeletionApplicationUninstallJobData,
 } from 'src/engine/core-modules/workspace/jobs/workspace-deletion-application-uninstall.job';
+import {
+  WorkspaceSuspensionApplicationUninstallJob,
+  type WorkspaceSuspensionApplicationUninstallJobData,
+} from 'src/engine/core-modules/workspace/jobs/workspace-suspension-application-uninstall.job';
+import { getWorkspaceApplicationUninstallLockName } from 'src/engine/core-modules/workspace/utils/get-workspace-application-uninstall-lock-name.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   WorkspaceException,
@@ -92,7 +98,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 // PENDING_CREATION) and may be retried. It is far longer than a real activation
 // takes, so a genuinely in-progress activation is never reclaimed.
 const WORKSPACE_ACTIVATION_STALE_LOCK_TIMEOUT_MS = 5 * 60 * 1000;
-const WORKSPACE_DELETION_APPLICATION_UNINSTALL_RETRY_LIMIT = 3;
+const WORKSPACE_APPLICATION_UNINSTALL_RETRY_LIMIT = 3;
 
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
@@ -162,6 +168,7 @@ export class WorkspaceService {
     private readonly upgradeMigrationService: UpgradeMigrationService,
     private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
     private readonly sdkClientGenerationService: SdkClientGenerationService,
+    private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
   ) {}
 
   async updateWorkspaceById({
@@ -501,6 +508,7 @@ export class WorkspaceService {
   }
 
   async suspendWorkspace(id: string): Promise<boolean> {
+    const workspaceSuspendedAt = new Date();
     const { affected } = await this.workspaceRepository.update(
       {
         id,
@@ -509,7 +517,7 @@ export class WorkspaceService {
       },
       {
         activationStatus: WorkspaceActivationStatus.SUSPENDED,
-        suspendedAt: new Date(),
+        suspendedAt: workspaceSuspendedAt,
       },
     );
 
@@ -517,34 +525,53 @@ export class WorkspaceService {
 
     if (hasBeenSuspended) {
       await this.coreEntityCacheService.invalidate('workspaceEntity', id);
+      await this.enqueueWorkspaceSuspensionApplicationUninstall({
+        workspaceId: id,
+        workspaceSuspensionUninstallRequestedAt: workspaceSuspendedAt,
+      });
     }
 
     return hasBeenSuspended;
   }
 
   async reactivateWorkspace(id: string): Promise<boolean> {
-    const { affected } = await this.workspaceRepository.update(
-      {
-        id,
-        activationStatus: In([
-          WorkspaceActivationStatus.SUSPENDED,
-          WorkspaceActivationStatus.CREATED,
-        ]),
-        deletedAt: IsNull(),
-      },
-      {
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
-        suspendedAt: null,
-      },
-    );
+    const advisoryLockResult =
+      await this.postgresAdvisoryLockService.tryWithLock(
+        getWorkspaceApplicationUninstallLockName(id),
+        async () => {
+          const { affected } = await this.workspaceRepository.update(
+            {
+              id,
+              activationStatus: In([
+                WorkspaceActivationStatus.SUSPENDED,
+                WorkspaceActivationStatus.CREATED,
+              ]),
+              deletedAt: IsNull(),
+            },
+            {
+              activationStatus: WorkspaceActivationStatus.ACTIVE,
+              suspendedAt: null,
+            },
+          );
 
-    const hasBeenReactivated = isDefined(affected) && affected > 0;
+          const hasBeenReactivated = isDefined(affected) && affected > 0;
 
-    if (hasBeenReactivated) {
-      await this.coreEntityCacheService.invalidate('workspaceEntity', id);
+          if (hasBeenReactivated) {
+            await this.coreEntityCacheService.invalidate('workspaceEntity', id);
+          }
+
+          return hasBeenReactivated;
+        },
+      );
+
+    if (!advisoryLockResult.acquired) {
+      throw new WorkspaceException(
+        `Cannot reactivate workspace ${id} while application uninstall is running`,
+        WorkspaceExceptionCode.APPLICATION_UNINSTALL_IN_PROGRESS,
+      );
     }
 
-    return hasBeenReactivated;
+    return advisoryLockResult.value;
   }
 
   async deleteWorkspace(id: string, softDelete = false) {
@@ -554,14 +581,6 @@ export class WorkspaceService {
     });
 
     assert(workspace, 'Workspace not found');
-
-    if (!softDelete) {
-      assert(
-        isDefined(workspace.deletedAt) &&
-          isDefined(workspace.applicationUninstallHooksCompletedAt),
-        `Application uninstall hooks must complete before hard deleting workspace ${id}`,
-      );
-    }
 
     const userWorkspaces = await this.userWorkspaceRepository.find({
       where: {
@@ -588,10 +607,7 @@ export class WorkspaceService {
 
       await this.workspaceRepository.softDelete({ id, deletedAt: IsNull() });
       await this.coreEntityCacheService.invalidate('workspaceEntity', id);
-
-      if (!isDefined(workspace.applicationUninstallHooksCompletedAt)) {
-        await this.enqueueWorkspaceDeletionApplicationUninstall(id);
-      }
+      await this.enqueueWorkspaceDeletionApplicationUninstall(id);
 
       this.logger.log(`workspace ${id} soft deleted`);
 
@@ -653,7 +669,28 @@ export class WorkspaceService {
       { workspaceId },
       {
         id: `${WorkspaceDeletionApplicationUninstallJob.name}-${workspaceId}`,
-        retryLimit: WORKSPACE_DELETION_APPLICATION_UNINSTALL_RETRY_LIMIT,
+        retryLimit: WORKSPACE_APPLICATION_UNINSTALL_RETRY_LIMIT,
+      },
+    );
+  }
+
+  async enqueueWorkspaceSuspensionApplicationUninstall({
+    workspaceId,
+    workspaceSuspensionUninstallRequestedAt,
+  }: {
+    workspaceId: string;
+    workspaceSuspensionUninstallRequestedAt: Date;
+  }): Promise<void> {
+    await this.messageQueueService.add<WorkspaceSuspensionApplicationUninstallJobData>(
+      WorkspaceSuspensionApplicationUninstallJob.name,
+      {
+        workspaceId,
+        workspaceSuspensionUninstallRequestedAt:
+          workspaceSuspensionUninstallRequestedAt.toISOString(),
+      },
+      {
+        id: `${WorkspaceSuspensionApplicationUninstallJob.name}-${workspaceId}-${workspaceSuspensionUninstallRequestedAt.toISOString()}`,
+        retryLimit: WORKSPACE_APPLICATION_UNINSTALL_RETRY_LIMIT,
       },
     );
   }

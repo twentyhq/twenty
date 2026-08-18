@@ -19,7 +19,6 @@ import {
 } from 'typeorm';
 
 import { ADD_WORKSPACE_DISCOVERABILITY_TO_WORKSPACE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-workspace-discoverability-to-workspace-upgrade-command-name.constant';
-import { ADD_APPLICATION_UNINSTALL_HOOK_DELETION_STATE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-33/add-application-uninstall-hook-deletion-state-upgrade-command-name.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
@@ -106,13 +105,6 @@ export class WorkspaceEntity {
   @Field({ nullable: true })
   @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt?: Date;
-
-  @WasIntroducedInUpgrade({
-    upgradeCommandName:
-      ADD_APPLICATION_UNINSTALL_HOOK_DELETION_STATE_UPGRADE_COMMAND_NAME,
-  })
-  @Column({ type: 'timestamptz', nullable: true })
-  applicationUninstallHooksCompletedAt: Date | null;
 
   @Field()
   @CreateDateColumn({ type: 'timestamptz' })
