@@ -91,11 +91,11 @@ export const SidePanelDashboardRecordTableSettings = () => {
       ? (configuration.recordLimit as number)
       : undefined;
 
-  const isRecordsEditable =
+  const isRecordEditable =
     isRecordTableConfiguration &&
     isDefined(configuration) &&
-    'isRecordsEditable' in configuration
-      ? (configuration.isRecordsEditable ?? false)
+    'isRecordEditable' in configuration
+      ? (configuration.isRecordEditable ?? false)
       : false;
 
   const {
@@ -120,9 +120,9 @@ export const SidePanelDashboardRecordTableSettings = () => {
     });
   };
 
-  const handleIsRecordsEditableChange = (nextIsRecordsEditable: boolean) => {
+  const handleIsRecordEditableChange = (nextIsRecordEditable: boolean) => {
     updateCurrentWidgetConfig({
-      configToUpdate: { isRecordsEditable: nextIsRecordsEditable },
+      configToUpdate: { isRecordEditable: nextIsRecordEditable },
     });
   };
 
@@ -442,8 +442,8 @@ export const SidePanelDashboardRecordTableSettings = () => {
                       LeftIcon={IconPencil}
                       text={t`Editable records`}
                       id="record-table-editable-records"
-                      toggled={isRecordsEditable}
-                      onToggleChange={handleIsRecordsEditableChange}
+                      toggled={isRecordEditable}
+                      onToggleChange={handleIsRecordEditableChange}
                     />
                   </SelectableListItem>
                 </>
