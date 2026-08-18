@@ -1,3 +1,4 @@
+import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { StyledWidgetTableOutline } from '@/page-layout/widgets/components/WidgetContentFrame';
 import { RecordTableWidgetRendererContent } from '@/page-layout/widgets/record-table/components/RecordTableWidgetRendererContent';
@@ -13,6 +14,8 @@ export const RecordTableWidgetRenderer = ({
 }: RecordTableWidgetRendererProps) => {
   const { configuration } = widget;
 
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
+
   const isRecordTableConfiguration =
     configuration.configurationType === WidgetConfigurationType.RECORD_TABLE;
 
@@ -26,6 +29,11 @@ export const RecordTableWidgetRenderer = ({
       ? (configuration.recordLimit as number | undefined)
       : undefined;
 
+  const isRecordsEditable =
+    isRecordTableConfiguration && 'isRecordsEditable' in configuration
+      ? (configuration.isRecordsEditable ?? false)
+      : false;
+
   if (!isDefined(widget.objectMetadataId) || !isDefined(viewId)) {
     return null;
   }
@@ -38,6 +46,7 @@ export const RecordTableWidgetRenderer = ({
         widgetId={widget.id}
         isEmptyStateHidden
         recordLimit={recordLimit}
+        isReadOnly={isPageLayoutInEditMode || !isRecordsEditable}
       />
     </StyledWidgetTableOutline>
   );

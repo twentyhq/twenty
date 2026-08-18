@@ -42,6 +42,7 @@ import {
   IconFilter,
   IconLayoutList,
   IconListDetails,
+  IconPencil,
 } from 'twenty-ui/icon';
 import {
   FeatureFlagKey,
@@ -90,6 +91,13 @@ export const SidePanelDashboardRecordTableSettings = () => {
       ? (configuration.recordLimit as number)
       : undefined;
 
+  const isRecordsEditable =
+    isRecordTableConfiguration &&
+    isDefined(configuration) &&
+    'isRecordsEditable' in configuration
+      ? (configuration.isRecordsEditable ?? false)
+      : false;
+
   const {
     sourceDescription,
     fieldsDescription,
@@ -109,6 +117,12 @@ export const SidePanelDashboardRecordTableSettings = () => {
 
     updateCurrentWidgetConfig({
       configToUpdate: { recordLimit: nextLimit },
+    });
+  };
+
+  const handleIsRecordsEditableChange = (nextIsRecordsEditable: boolean) => {
+    updateCurrentWidgetConfig({
+      configToUpdate: { isRecordsEditable: nextIsRecordsEditable },
     });
   };
 
@@ -205,6 +219,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
             ? ['record-table-hide-empty-groups']
             : []),
           ...(!isCalendarLayout && !hasGroupBy ? ['record-table-limit'] : []),
+          'record-table-editable-records',
         ]
       : []),
   ];
@@ -422,6 +437,15 @@ export const SidePanelDashboardRecordTableSettings = () => {
                       />
                     </SelectableListItem>
                   )}
+                  <SelectableListItem itemId="record-table-editable-records">
+                    <CommandMenuItemToggle
+                      LeftIcon={IconPencil}
+                      text={t`Editable records`}
+                      id="record-table-editable-records"
+                      toggled={isRecordsEditable}
+                      onToggleChange={handleIsRecordsEditableChange}
+                    />
+                  </SelectableListItem>
                 </>
               )}
             </SidePanelGroup>
