@@ -45,15 +45,12 @@ export class WorkspaceORMEntityMetadatasCacheService extends WorkspaceCacheProvi
   }
 
   async computeForCache(workspaceId: string): Promise<EntityMetadata[]> {
-    // Read the flag row directly: the cached featureFlagsMap can be stale for
-    // seconds after a flip, and a recompute that reads it would store an empty
-    // entry under a hash that validates as current on a v1 workspace.
     const ormV2FeatureFlag = await this.featureFlagRepository.findOne(
       workspaceId,
       { where: { key: FeatureFlagKey.IS_ORM_V2_READ_PATH_ENABLED } },
     );
 
-    if (ormV2FeatureFlag?.value === true) {
+    if (ormV2FeatureFlag?.value) {
       return [];
     }
 

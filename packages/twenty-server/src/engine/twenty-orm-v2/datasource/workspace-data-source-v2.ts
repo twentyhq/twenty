@@ -1,5 +1,3 @@
-import { Logger } from '@nestjs/common';
-
 import { type Pool } from 'pg';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -17,6 +15,7 @@ import {
   TwentyOrmV2Exception,
   TwentyOrmV2ExceptionCode,
 } from 'src/engine/twenty-orm-v2/exceptions/twenty-orm-v2.exception';
+import { runInRollbackSafeTransaction } from 'src/engine/twenty-orm-v2/datasource/utils/run-in-rollback-safe-transaction.util';
 import { WorkspaceRepositoryV2 } from 'src/engine/twenty-orm-v2/repository/workspace-repository-v2';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm-v2/table-shape/types/workspace-table-shape.type';
 import { buildWorkspaceTableShape } from 'src/engine/twenty-orm-v2/table-shape/utils/build-workspace-table-shape.util';
@@ -39,7 +38,6 @@ export type WorkspaceTransactionScopeV2 = {
 };
 
 export class WorkspaceDataSourceV2 {
-  private readonly logger = new Logger(WorkspaceDataSourceV2.name);
   private readonly pool: Pool;
   private readonly internalContext: WorkspaceInternalContext;
   private readonly authContext: WorkspaceAuthContext;
@@ -94,39 +92,10 @@ export class WorkspaceDataSourceV2 {
   private async runInClientTransaction<T>(
     work: (executor: QueryExecutorV2) => Promise<T>,
   ): Promise<T> {
-    const client = await this.pool.connect();
-    let shouldDestroyConnection = false;
-
-    try {
-      await client.query('BEGIN');
-
-      const result = await work(new ClientQueryExecutor({ client }));
-
-      await client.query('COMMIT');
-
-      return result;
-    } catch (error) {
-      try {
-        await client.query('ROLLBACK');
-      } catch (rollbackError) {
-        // The transaction may still be open on the server; releasing the client
-        // back to the shared pool would let a later checkout commit the aborted
-        // work. Destroy the connection and surface the original error.
-        shouldDestroyConnection = true;
-
-        this.logger.warn(
-          `Destroying connection after failed transaction ROLLBACK: ${
-            rollbackError instanceof Error
-              ? rollbackError.message
-              : String(rollbackError)
-          }`,
-        );
-      }
-
-      throw error;
-    } finally {
-      client.release(shouldDestroyConnection);
-    }
+    return runInRollbackSafeTransaction({
+      pool: this.pool,
+      work: (client) => work(new ClientQueryExecutor({ client })),
+    });
   }
 
   private buildRepository({
