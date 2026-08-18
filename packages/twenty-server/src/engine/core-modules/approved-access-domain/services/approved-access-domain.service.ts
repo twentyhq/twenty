@@ -268,10 +268,9 @@ export class ApprovedAccessDomainService {
     }
 
     const approvedAccessDomain =
-      await this.approvedAccessDomainRepository.insertAndReturnOne(
-        inWorkspace.id,
-        { domain },
-      );
+      await this.approvedAccessDomainRepository.insert(inWorkspace.id, {
+        domain,
+      });
 
     await this.sendApprovedAccessDomainValidationEmail(
       fromWorkspaceMember,

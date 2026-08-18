@@ -88,14 +88,11 @@ export class AgentChatService {
     id?: string;
     title?: string;
   }) {
-    const savedThread = await this.threadRepository.insertAndReturnOne(
-      workspaceId,
-      {
-        ...(isDefined(id) ? { id } : {}),
-        ...(isDefined(title) ? { title } : {}),
-        userWorkspaceId,
-      },
-    );
+    const savedThread = await this.threadRepository.insert(workspaceId, {
+      ...(isDefined(id) ? { id } : {}),
+      ...(isDefined(title) ? { title } : {}),
+      userWorkspaceId,
+    });
 
     await this.workspaceEventBroadcaster.broadcast({
       workspaceId,
@@ -243,12 +240,12 @@ export class AgentChatService {
     let actualTurnId = turnId;
 
     if (!actualTurnId) {
-      const turnInsertResult = await this.turnRepository.insert(workspaceId, {
+      const insertedTurn = await this.turnRepository.insert(workspaceId, {
         threadId,
         agentId: agentId ?? null,
       });
 
-      actualTurnId = turnInsertResult.identifiers[0].id as string;
+      actualTurnId = insertedTurn.id;
     }
 
     const messageValues = {
@@ -261,12 +258,12 @@ export class AgentChatService {
       ...(isDefined(isHidden) ? { isHidden } : {}),
     };
 
-    const insertResult = await this.messageRepository.insert(
+    const insertedMessage = await this.messageRepository.insert(
       workspaceId,
       messageValues,
     );
 
-    const savedMessageId = (id ?? insertResult.identifiers[0].id) as string;
+    const savedMessageId = id ?? insertedMessage.id;
 
     if (uiMessage.parts && uiMessage.parts.length > 0) {
       const dbParts = mapUIMessagePartsToDBParts(
@@ -505,12 +502,12 @@ export class AgentChatService {
       status: AgentMessageStatus.QUEUED,
     };
 
-    const insertResult = await this.messageRepository.insert(
+    const insertedMessage = await this.messageRepository.insert(
       workspaceId,
       messageValues,
     );
 
-    const savedMessageId = (id ?? insertResult.identifiers[0].id) as string;
+    const savedMessageId = id ?? insertedMessage.id;
 
     const validFiles =
       fileAttachments && fileAttachments.length > 0
@@ -633,12 +630,12 @@ export class AgentChatService {
     threadId: string;
     workspaceId: string;
   }): Promise<string | null> {
-    const turnInsertResult = await this.turnRepository.insert(workspaceId, {
+    const insertedTurn = await this.turnRepository.insert(workspaceId, {
       threadId,
       agentId: null,
     });
 
-    const savedTurnId = turnInsertResult.identifiers[0].id as string;
+    const savedTurnId = insertedTurn.id;
 
     const result = await this.messageRepository.update(
       workspaceId,

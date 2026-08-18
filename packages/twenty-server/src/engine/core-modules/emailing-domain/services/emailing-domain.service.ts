@@ -70,13 +70,15 @@ export class EmailingDomainService {
     const isVerifiedOnCreation =
       verificationResult.status === EmailingDomainStatus.VERIFIED;
 
-    const emailingDomain =
-      await this.emailingDomainRepository.insertAndReturnOne(workspaceId, {
+    const emailingDomain = await this.emailingDomainRepository.insert(
+      workspaceId,
+      {
         domain,
         status: verificationResult.status,
         verificationRecords: verificationResult.verificationRecords,
         verifiedAt: isVerifiedOnCreation ? new Date() : null,
-      });
+      },
+    );
 
     await this.unsubscribeHostnameService.sync(workspaceId, emailingDomain.id, {
       provision: true,

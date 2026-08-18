@@ -107,7 +107,7 @@ export class FeatureFlagService {
       );
     }
 
-    const result = await this.featureFlagRepository.upsertAndReturnOne(
+    const result = await this.featureFlagRepository.upsert(
       workspaceId,
       { key: featureFlag, value },
       ['workspaceId', 'key'],

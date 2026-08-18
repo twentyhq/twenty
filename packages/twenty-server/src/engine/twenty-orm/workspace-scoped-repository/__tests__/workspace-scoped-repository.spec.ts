@@ -28,8 +28,8 @@ const createMockRepository = (): jest.Mocked<Repository<FakeEntity>> =>
     delete: jest.fn(),
     softDelete: jest.fn(),
     insert: jest.fn(),
-    upsert: jest.fn(),
-    create: jest.fn(),
+    upsert: jest.fn().mockResolvedValue({ raw: [{}] }),
+    create: jest.fn().mockImplementation((row) => row),
     createQueryBuilder: jest.fn(),
   }) as unknown as jest.Mocked<Repository<FakeEntity>>;
 
@@ -64,14 +64,6 @@ describe('WorkspaceScopedRepository', () => {
       ['softDelete', () => scoped.softDelete(undefined as never, {})],
       ['insert', () => scoped.insert(undefined as never, {})],
       ['upsert', () => scoped.upsert(undefined as never, {}, ['id'])],
-      [
-        'upsertAndReturnOne',
-        () => scoped.upsertAndReturnOne(undefined as never, {}, ['id']),
-      ],
-      [
-        'insertAndReturnOne',
-        () => scoped.insertAndReturnOne(undefined as never, {}),
-      ],
       ['maximum', () => scoped.maximum(undefined as never, 'id')],
     ];
 
@@ -328,110 +320,6 @@ describe('WorkspaceScopedRepository', () => {
   });
 
   describe('insert', () => {
-    it('stamps workspaceId on a single entity', async () => {
-      await scoped.insert(WORKSPACE_ID, { id: 'a', status: 'queued' });
-
-      expect(repository.insert).toHaveBeenCalledWith({
-        id: 'a',
-        status: 'queued',
-        workspaceId: WORKSPACE_ID,
-      });
-    });
-
-    it('stamps workspaceId on each entity in an array', async () => {
-      await scoped.insert(WORKSPACE_ID, [
-        { id: 'a', status: 'queued' },
-        { id: 'b', status: 'sent' },
-      ]);
-
-      expect(repository.insert).toHaveBeenCalledWith([
-        { id: 'a', status: 'queued', workspaceId: WORKSPACE_ID },
-        { id: 'b', status: 'sent', workspaceId: WORKSPACE_ID },
-      ]);
-    });
-
-    it('overrides caller-supplied workspaceId on the entity', async () => {
-      await scoped.insert(WORKSPACE_ID, {
-        id: 'a',
-        workspaceId: OTHER_WORKSPACE_ID,
-      });
-
-      expect(repository.insert).toHaveBeenCalledWith({
-        id: 'a',
-        workspaceId: WORKSPACE_ID,
-      });
-    });
-  });
-
-  describe('upsert', () => {
-    it('stamps workspaceId on a single entity and forwards conflict opts', async () => {
-      await scoped.upsert(WORKSPACE_ID, { id: 'a', status: 'queued' }, ['id']);
-
-      expect(repository.upsert).toHaveBeenCalledWith(
-        { id: 'a', status: 'queued', workspaceId: WORKSPACE_ID },
-        ['id'],
-      );
-    });
-
-    it('stamps workspaceId on each entity in an array', async () => {
-      await scoped.upsert(
-        WORKSPACE_ID,
-        [
-          { id: 'a', status: 'queued' },
-          { id: 'b', status: 'sent' },
-        ],
-        { conflictPaths: ['id'] },
-      );
-
-      expect(repository.upsert).toHaveBeenCalledWith(
-        [
-          { id: 'a', status: 'queued', workspaceId: WORKSPACE_ID },
-          { id: 'b', status: 'sent', workspaceId: WORKSPACE_ID },
-        ],
-        { conflictPaths: ['id'] },
-      );
-    });
-  });
-
-  describe('upsertAndReturnOne', () => {
-    it('upserts with RETURNING and hydrates the row from generatedMaps', async () => {
-      const persistedRow = {
-        id: 'a',
-        status: 'queued',
-        workspaceId: WORKSPACE_ID,
-      };
-
-      (repository.upsert as jest.Mock).mockResolvedValue({
-        generatedMaps: [persistedRow],
-      });
-      (repository.create as jest.Mock).mockReturnValue(persistedRow);
-
-      const result = await scoped.upsertAndReturnOne(
-        WORKSPACE_ID,
-        { id: 'a', status: 'queued' },
-        ['id'],
-      );
-
-      expect(repository.upsert).toHaveBeenCalledWith(
-        { id: 'a', status: 'queued', workspaceId: WORKSPACE_ID },
-        { conflictPaths: ['id'], returning: '*' },
-      );
-      expect(repository.create).toHaveBeenCalledWith(persistedRow);
-      expect(result).toBe(persistedRow);
-    });
-
-    it('throws instead of returning a hollow entity when no row is returned', async () => {
-      (repository.upsert as jest.Mock).mockResolvedValue({ generatedMaps: [] });
-
-      await expect(
-        scoped.upsertAndReturnOne(WORKSPACE_ID, { id: 'a' }, ['id']),
-      ).rejects.toThrow(/upsert returned no row/);
-
-      expect(repository.create).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('insertAndReturnOne', () => {
     const mockInsertBuilder = (
       repo: jest.Mocked<Repository<FakeEntity>>,
       raw: unknown[],
@@ -448,17 +336,13 @@ describe('WorkspaceScopedRepository', () => {
       return builder;
     };
 
-    it('stamps workspaceId and hydrates the row from RETURNING', async () => {
-      const persistedRow = {
-        id: 'a',
-        status: 'queued',
-        workspaceId: WORKSPACE_ID,
-      };
+    it('stamps workspaceId and resolves to the persisted entity', async () => {
+      const persistedRow = { id: 'a', status: 'queued' };
       const builder = mockInsertBuilder(repository, [persistedRow]);
 
       (repository.create as jest.Mock).mockReturnValue(persistedRow);
 
-      const result = await scoped.insertAndReturnOne(WORKSPACE_ID, {
+      const result = await scoped.insert(WORKSPACE_ID, {
         id: 'a',
         status: 'queued',
       });
@@ -472,10 +356,30 @@ describe('WorkspaceScopedRepository', () => {
       expect(result).toBe(persistedRow);
     });
 
-    it('overrides a caller-supplied workspaceId on the entity', async () => {
+    it('resolves to an array when given an array', async () => {
+      const rows = [{ id: 'a' }, { id: 'b' }];
+      const builder = mockInsertBuilder(repository, rows);
+
+      (repository.create as jest.Mock).mockImplementation((row) => row);
+
+      const result = await scoped.insert(WORKSPACE_ID, [
+        { id: 'a', status: 'queued' },
+        { id: 'b', status: 'sent' },
+      ]);
+
+      expect(builder.values).toHaveBeenCalledWith([
+        { id: 'a', status: 'queued', workspaceId: WORKSPACE_ID },
+        { id: 'b', status: 'sent', workspaceId: WORKSPACE_ID },
+      ]);
+      expect(result).toEqual(rows);
+    });
+
+    it('overrides caller-supplied workspaceId on the entity', async () => {
       const builder = mockInsertBuilder(repository, [{ id: 'a' }]);
 
-      await scoped.insertAndReturnOne(WORKSPACE_ID, {
+      (repository.create as jest.Mock).mockImplementation((row) => row);
+
+      await scoped.insert(WORKSPACE_ID, {
         id: 'a',
         workspaceId: OTHER_WORKSPACE_ID,
       });
@@ -484,6 +388,75 @@ describe('WorkspaceScopedRepository', () => {
         id: 'a',
         workspaceId: WORKSPACE_ID,
       });
+    });
+
+    it('throws instead of returning a hollow entity when nothing came back', async () => {
+      mockInsertBuilder(repository, []);
+
+      await expect(scoped.insert(WORKSPACE_ID, { id: 'a' })).rejects.toThrow(
+        /insert: statement returned no row/,
+      );
+    });
+  });
+
+  describe('upsert', () => {
+    it('stamps workspaceId, forwards conflict opts and returns the row', async () => {
+      const persistedRow = { id: 'a', status: 'queued' };
+
+      (repository.upsert as jest.Mock).mockResolvedValue({
+        raw: [persistedRow],
+      });
+      (repository.create as jest.Mock).mockReturnValue(persistedRow);
+
+      const result = await scoped.upsert(
+        WORKSPACE_ID,
+        { id: 'a', status: 'queued' },
+        ['id'],
+      );
+
+      expect(repository.upsert).toHaveBeenCalledWith(
+        { id: 'a', status: 'queued', workspaceId: WORKSPACE_ID },
+        { conflictPaths: ['id'], returning: '*' },
+      );
+      expect(result).toBe(persistedRow);
+    });
+
+    it('preserves caller options alongside RETURNING', async () => {
+      (repository.upsert as jest.Mock).mockResolvedValue({
+        raw: [{ id: 'a' }],
+      });
+      (repository.create as jest.Mock).mockImplementation((row) => row);
+
+      await scoped.upsert(
+        WORKSPACE_ID,
+        [
+          { id: 'a', status: 'queued' },
+          { id: 'b', status: 'sent' },
+        ],
+        { conflictPaths: ['id'], skipUpdateIfNoValuesChanged: true },
+      );
+
+      expect(repository.upsert).toHaveBeenCalledWith(
+        [
+          { id: 'a', status: 'queued', workspaceId: WORKSPACE_ID },
+          { id: 'b', status: 'sent', workspaceId: WORKSPACE_ID },
+        ],
+        {
+          conflictPaths: ['id'],
+          skipUpdateIfNoValuesChanged: true,
+          returning: '*',
+        },
+      );
+    });
+
+    // skipUpdateIfNoValuesChanged suppresses the write, and RETURNING then
+    // yields nothing for that entity.
+    it('throws for a single entity when the write was suppressed', async () => {
+      (repository.upsert as jest.Mock).mockResolvedValue({ raw: [] });
+
+      await expect(
+        scoped.upsert(WORKSPACE_ID, { id: 'a' }, ['id']),
+      ).rejects.toThrow(/upsert: statement returned no row/);
     });
   });
 
@@ -545,14 +518,14 @@ describe('WorkspaceScopedRepository', () => {
       expect(repository.upsert).toHaveBeenCalled();
     });
 
-    it('guards upsertAndReturnOne as well', async () => {
+    it('guards a single-entity upsert as well', async () => {
       (repository.findOne as jest.Mock).mockResolvedValue({
         id: 'a',
         workspaceId: OTHER_WORKSPACE_ID,
       });
 
       await expect(
-        scoped.upsertAndReturnOne(WORKSPACE_ID, { id: 'a' }, ['id']),
+        scoped.upsert(WORKSPACE_ID, { id: 'a' }, ['id']),
       ).rejects.toThrow(/matches a row owned by another workspace/);
       expect(repository.upsert).not.toHaveBeenCalled();
     });
