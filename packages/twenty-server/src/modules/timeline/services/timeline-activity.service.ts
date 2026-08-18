@@ -2,41 +2,91 @@ import { Injectable } from '@nestjs/common';
 
 import { type ObjectRecordBaseEvent } from 'twenty-shared/database-events';
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { In } from 'typeorm';
+import { isNonEmptyString } from '@sniptt/guards';
+import { fromArrayToValuesByKeyRecord, isDefined } from 'twenty-shared/utils';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
-import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
-import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositories/timeline-activity.repository';
+import { TimelineActivityRuleResolverService } from 'src/modules/timeline/services/timeline-activity-rule-resolver.service';
+import {
+  resolveLinkedRecordCachedName,
+  type ResolvedTimelineActivityTarget,
+  TimelineActivityTargetResolverService,
+} from 'src/modules/timeline/services/timeline-activity-target-resolver.service';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload';
-import { extractObjectSingularNameFromTargetColumnName } from 'src/modules/timeline/utils/extract-object-singular-name-from-target-column-name.util';
+import {
+  type TimelineActivityRule,
+  type TimelineActivityRuleAction,
+} from 'src/modules/timeline/types/timeline-activity-rule.type';
 
-type ActivityType = 'note' | 'task';
+// An event on the junction object is a change to the link, not to the linked
+// record. `updated` covers a junction row being repointed at another target.
+const JUNCTION_EVENT_ACTIONS: Partial<
+  Record<DatabaseEventAction, TimelineActivityRuleAction>
+> = {
+  created: 'linked',
+  restored: 'linked',
+  updated: 'linked',
+  deleted: 'unlinked',
+};
+
+const SOURCE_EVENT_ACTIONS: Partial<
+  Record<DatabaseEventAction, TimelineActivityRuleAction>
+> = {
+  created: 'created',
+  updated: 'updated',
+  deleted: 'deleted',
+  restored: 'restored',
+};
+
+// Both event streams write the same row shape; only the linked record, its
+// cached name and the persisted properties differ.
+const buildLinkedPayload = ({
+  rule,
+  action,
+  target,
+  workspaceMemberId,
+  linkedRecordId,
+  linkedRecordCachedName,
+  properties,
+}: {
+  rule: TimelineActivityRule;
+  action: DatabaseEventAction;
+  target: ResolvedTimelineActivityTarget;
+  workspaceMemberId: string | undefined;
+  linkedRecordId: string;
+  linkedRecordCachedName: string | undefined;
+  properties: ObjectRecordBaseEvent['properties'];
+}): TimelineActivityPayload => ({
+  name: `linked-${rule.sourceFlatObjectMetadata.nameSingular}.${action}`,
+  objectSingularName: target.targetObjectNameSingular,
+  recordId: target.targetRecordId,
+  workspaceMemberId,
+  linkedRecordId,
+  linkedObjectMetadataId: rule.sourceFlatObjectMetadata.id,
+  linkedRecordCachedName,
+  properties,
+});
 
 @Injectable()
 export class TimelineActivityService {
   constructor(
     @InjectObjectMetadataRepository(TimelineActivityWorkspaceEntity)
     private readonly timelineActivityRepository: TimelineActivityRepository,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly timelineActivityRuleResolverService: TimelineActivityRuleResolverService,
+    private readonly timelineActivityTargetResolverService: TimelineActivityTargetResolverService,
   ) {}
-
-  private targetObjects: Record<ActivityType, string> = {
-    note: 'noteTarget',
-    task: 'taskTarget',
-  };
 
   async upsertEvents({
     events,
@@ -48,44 +98,59 @@ export class TimelineActivityService {
       return;
     }
 
-    const { objectSingularName } = parseEventNameOrThrow(name);
+    const { action } = parseEventNameOrThrow(name);
 
-    const eventsWithoutPositionDiff =
-      await this.excludePositionFieldsFromEventsDiff({
-        events,
-        objectMetadata,
+    const { sourceRules, junctionRules, flatFieldMetadataMaps } =
+      await this.timelineActivityRuleResolverService.getRulesForEventBatch({
         workspaceId,
+        flatObjectMetadata: objectMetadata,
       });
 
-    const timelineActivitiesPayloads =
-      await this.transformEventsToTimelineActivityPayloads({
-        events: eventsWithoutPositionDiff,
-        objectMetadata,
-        workspaceId,
-        name,
-      });
-
-    if (
-      !timelineActivitiesPayloads ||
-      timelineActivitiesPayloads.length === 0
-    ) {
+    if (sourceRules.length === 0 && junctionRules.length === 0) {
       return;
     }
 
-    const payloadsByObjectSingularName = timelineActivitiesPayloads.reduce(
-      (acc, payload) => {
-        const computedObjectSingularName =
-          payload.objectSingularName ?? objectSingularName;
+    const eventsWithoutPositionDiff = this.excludePositionFieldsFromEventsDiff({
+      events,
+      objectMetadata,
+      flatFieldMetadataMaps,
+    });
 
-        acc[computedObjectSingularName] = [
-          ...(acc[computedObjectSingularName] || []),
-          payload,
-        ];
+    const payloads = (
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        async () =>
+          Promise.all([
+            ...sourceRules.map((rule) =>
+              this.buildPayloadsForSourceRule({
+                rule,
+                events: eventsWithoutPositionDiff,
+                action,
+                workspaceId,
+                flatFieldMetadataMaps,
+              }),
+            ),
+            ...junctionRules.map((rule) =>
+              this.buildPayloadsForJunctionRule({
+                rule,
+                events: eventsWithoutPositionDiff,
+                action,
+                workspaceId,
+                flatFieldMetadataMaps,
+              }),
+            ),
+          ]),
+        buildSystemAuthContext(workspaceId),
+      )
+    ).flat();
 
-        return acc;
-      },
-      {} as Record<string, TimelineActivityPayload[]>,
-    );
+    if (payloads.length === 0) {
+      return;
+    }
+
+    const payloadsByObjectSingularName = fromArrayToValuesByKeyRecord({
+      array: payloads,
+      key: 'objectSingularName',
+    });
 
     for (const objectSingularName in payloadsByObjectSingularName) {
       await this.timelineActivityRepository.upsertTimelineActivities({
@@ -96,17 +161,191 @@ export class TimelineActivityService {
     }
   }
 
+  private ruleMatchesEvent({
+    rule,
+    ruleAction,
+    event,
+  }: {
+    rule: TimelineActivityRule;
+    ruleAction: TimelineActivityRuleAction;
+    event: ObjectRecordBaseEvent;
+  }): boolean {
+    if (!rule.actions.includes(ruleAction)) {
+      return false;
+    }
+
+    if (ruleAction !== 'updated' || !isDefined(rule.triggerFieldNames)) {
+      return true;
+    }
+
+    const diff = event.properties.diff;
+
+    if (!isDefined(diff)) {
+      return false;
+    }
+
+    return rule.triggerFieldNames.some((fieldName) =>
+      isDefined((diff as Record<string, unknown>)[fieldName]),
+    );
+  }
+
+  private async buildPayloadsForSourceRule({
+    rule,
+    events,
+    action,
+    workspaceId,
+    flatFieldMetadataMaps,
+  }: {
+    rule: TimelineActivityRule;
+    events: ObjectRecordBaseEvent[];
+    action: DatabaseEventAction;
+    workspaceId: string;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  }): Promise<TimelineActivityPayload[]> {
+    const ruleAction = SOURCE_EVENT_ACTIONS[action];
+
+    if (!isDefined(ruleAction)) {
+      return [];
+    }
+
+    const matchingEvents = events.filter((event) =>
+      this.ruleMatchesEvent({ rule, ruleAction, event }),
+    );
+
+    if (matchingEvents.length === 0) {
+      return [];
+    }
+
+    const { nameSingular } = rule.sourceFlatObjectMetadata;
+
+    if (rule.targetShape.kind === 'SELF') {
+      return matchingEvents.map((event) => ({
+        name: `${nameSingular}.${action}`,
+        objectSingularName: nameSingular,
+        recordId: event.recordId,
+        workspaceMemberId: event.workspaceMemberId,
+        properties: event.properties,
+      }));
+    }
+
+    const targetsBySourceRecordId =
+      await this.timelineActivityTargetResolverService.resolveTargetsBySourceRecordId(
+        {
+          rule,
+          sourceRecordIds: matchingEvents.map((event) => event.recordId),
+          workspaceId,
+        },
+      );
+
+    return matchingEvents.flatMap((event) =>
+      (targetsBySourceRecordId.get(event.recordId) ?? []).map((target) =>
+        buildLinkedPayload({
+          rule,
+          action,
+          target,
+          workspaceMemberId: event.workspaceMemberId,
+          linkedRecordId: event.recordId,
+          linkedRecordCachedName: resolveLinkedRecordCachedName({
+            rule,
+            record: event.properties.after as ObjectRecord | undefined,
+            flatFieldMetadataMaps,
+          }),
+          properties: event.properties,
+        }),
+      ),
+    );
+  }
+
+  private async buildPayloadsForJunctionRule({
+    rule,
+    events,
+    action,
+    workspaceId,
+    flatFieldMetadataMaps,
+  }: {
+    rule: TimelineActivityRule;
+    events: ObjectRecordBaseEvent[];
+    action: DatabaseEventAction;
+    workspaceId: string;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  }): Promise<TimelineActivityPayload[]> {
+    const ruleAction = JUNCTION_EVENT_ACTIONS[action];
+
+    if (!isDefined(ruleAction) || rule.targetShape.kind !== 'JUNCTION') {
+      return [];
+    }
+
+    const { junctionSourceJoinColumnName } = rule.targetShape;
+
+    const eventsWithJunctionRecord = events
+      .filter((event) => this.ruleMatchesEvent({ rule, ruleAction, event }))
+      .map((event) => {
+        const junctionRecord = event.properties.after as
+          | ObjectRecord
+          | undefined;
+
+        const target =
+          this.timelineActivityTargetResolverService.resolveTargetFromJunctionRecord(
+            { rule, junctionRecord },
+          );
+
+        const sourceRecordId = junctionRecord?.[junctionSourceJoinColumnName];
+
+        if (!isDefined(target) || !isNonEmptyString(sourceRecordId)) {
+          return undefined;
+        }
+
+        return { event, target, sourceRecordId };
+      })
+      .filter(isDefined);
+
+    if (eventsWithJunctionRecord.length === 0) {
+      return [];
+    }
+
+    const sourceRecordsByRecordId =
+      await this.timelineActivityTargetResolverService.findSourceRecordsByRecordId(
+        {
+          rule,
+          recordIds: eventsWithJunctionRecord.map(
+            ({ sourceRecordId }) => sourceRecordId,
+          ),
+          workspaceId,
+        },
+      );
+
+    return eventsWithJunctionRecord
+      .filter(({ sourceRecordId }) =>
+        sourceRecordsByRecordId.has(sourceRecordId),
+      )
+      .map(({ event, target, sourceRecordId }) =>
+        buildLinkedPayload({
+          rule,
+          action,
+          target,
+          workspaceMemberId: event.workspaceMemberId,
+          linkedRecordId: sourceRecordId,
+          linkedRecordCachedName: resolveLinkedRecordCachedName({
+            rule,
+            record: sourceRecordsByRecordId.get(sourceRecordId),
+            flatFieldMetadataMaps,
+          }),
+          properties: {},
+        }),
+      );
+  }
+
   // Position changes reach other consumers (SSE, webhooks, workflows) but render
   // blank in the timeline, so exclude them to avoid empty activity rows.
-  private async excludePositionFieldsFromEventsDiff({
+  private excludePositionFieldsFromEventsDiff({
     events,
     objectMetadata,
-    workspaceId,
+    flatFieldMetadataMaps,
   }: {
     events: ObjectRecordBaseEvent[];
     objectMetadata: FlatObjectMetadata;
-    workspaceId: string;
-  }): Promise<ObjectRecordBaseEvent[]> {
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  }): ObjectRecordBaseEvent[] {
     const someEventHasDiff = events.some((event) =>
       isDefined(event.properties.diff),
     );
@@ -114,14 +353,6 @@ export class TimelineActivityService {
     if (!someEventHasDiff) {
       return events;
     }
-
-    const { flatFieldMetadataMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatFieldMetadataMaps'],
-        },
-      );
 
     const positionFieldNames = new Set(
       getFlatFieldsFromFlatObjectMetadata(objectMetadata, flatFieldMetadataMaps)
@@ -151,299 +382,5 @@ export class TimelineActivityService {
         properties: { ...event.properties, diff: diffWithoutPositionFields },
       };
     });
-  }
-
-  private async transformEventsToTimelineActivityPayloads({
-    events,
-    workspaceId,
-    objectMetadata,
-    name,
-  }: WorkspaceEventBatch<ObjectRecordBaseEvent>): Promise<
-    TimelineActivityPayload[] | undefined
-  > {
-    const { objectSingularName } = parseEventNameOrThrow(name);
-
-    if (objectSingularName === 'note') {
-      const noteEventsTimelineActivities =
-        await this.computeTimelineActivityPayloadsForActivities({
-          events: events as ObjectRecordBaseEvent<NoteWorkspaceEntity>[],
-          activityType: 'note',
-          workspaceId,
-          objectMetadata,
-          name,
-        });
-
-      return [
-        ...noteEventsTimelineActivities,
-        ...(events.map((event) => ({
-          name,
-          objectSingularName,
-          recordId: event.recordId,
-          workspaceMemberId: event.workspaceMemberId,
-          properties: event.properties,
-        })) satisfies TimelineActivityPayload[]),
-      ];
-    }
-
-    if (objectSingularName === 'task') {
-      const taskEventsTimelineActivities =
-        await this.computeTimelineActivityPayloadsForActivities({
-          events: events as ObjectRecordBaseEvent<TaskWorkspaceEntity>[],
-          activityType: 'task',
-          workspaceId,
-          objectMetadata,
-          name,
-        });
-
-      return [
-        ...taskEventsTimelineActivities,
-        ...(events.map((event) => ({
-          name,
-          objectSingularName,
-          recordId: event.recordId,
-          workspaceMemberId: event.workspaceMemberId,
-          properties: event.properties,
-        })) satisfies TimelineActivityPayload[]),
-      ];
-    }
-
-    if (
-      objectSingularName === 'noteTarget' ||
-      objectSingularName === 'taskTarget'
-    ) {
-      return await this.computeTimelineActivityPayloadsForActivityTargets({
-        events,
-        activityType: objectSingularName === 'noteTarget' ? 'note' : 'task',
-        workspaceId,
-        objectMetadata,
-        name,
-      });
-    }
-
-    return events.map((event) => ({
-      name,
-      objectSingularName,
-      recordId: event.recordId,
-      workspaceMemberId: event.workspaceMemberId,
-      properties: event.properties,
-    })) satisfies TimelineActivityPayload[];
-  }
-
-  private async computeTimelineActivityPayloadsForActivities({
-    events,
-    activityType,
-    name,
-    workspaceId,
-    objectMetadata,
-  }: WorkspaceEventBatch<
-    ObjectRecordBaseEvent<NoteWorkspaceEntity | TaskWorkspaceEntity>
-  > & {
-    activityType: ActivityType;
-  }): Promise<TimelineActivityPayload[]> {
-    if (!isDefined(workspaceId)) {
-      return [];
-    }
-
-    const { action } = parseEventNameOrThrow(name);
-
-    const authContext = buildSystemAuthContext(workspaceId);
-
-    const activityTargets =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const activityTargetRepository =
-            await this.globalWorkspaceOrmManager.getRepository(
-              workspaceId,
-              this.targetObjects[activityType],
-              {
-                shouldBypassPermissionChecks: true,
-              },
-            );
-
-          return activityTargetRepository.find({
-            where: {
-              [`${activityType}Id`]: In(events.map((event) => event.recordId)),
-            },
-          });
-        },
-        authContext,
-      );
-
-    if (activityTargets.length === 0) {
-      return [];
-    }
-
-    return events
-      .flatMap((event) => {
-        const correspondingActivityTargets = activityTargets.filter(
-          (activityTarget) =>
-            activityTarget[`${activityType}Id`] === event.recordId,
-        );
-
-        if (correspondingActivityTargets.length === 0) {
-          return;
-        }
-
-        return correspondingActivityTargets.map((activityTarget) => {
-          const targetColumn: string | undefined = Object.entries(
-            activityTarget,
-          ).find(
-            ([columnName, columnValue]: [string, string]) =>
-              columnName !== activityType + 'Id' &&
-              columnName.endsWith('Id') &&
-              columnValue !== null,
-          )?.[0];
-
-          if (!isDefined(targetColumn)) {
-            return;
-          }
-
-          const activityTitle = event.properties.diff?.title?.after;
-          const activityId = event.recordId;
-
-          if (!isDefined(activityTitle)) {
-            return;
-          }
-
-          return {
-            name: `linked-${activityType}.${action}`,
-            workspaceMemberId: event.workspaceMemberId,
-            recordId: activityTarget[targetColumn.replace(/Id$/, '')],
-            linkedRecordCachedName: activityTitle,
-            linkedRecordId: activityId,
-            linkedObjectMetadataId: objectMetadata.id,
-            properties: event.properties,
-            objectSingularName: objectMetadata.nameSingular,
-          } satisfies TimelineActivityPayload;
-        });
-      })
-      .filter(isDefined);
-  }
-
-  private async computeTimelineActivityPayloadsForActivityTargets({
-    events,
-    activityType,
-    name,
-    objectMetadata,
-    workspaceId,
-  }: WorkspaceEventBatch<ObjectRecordBaseEvent> & {
-    activityType: ActivityType;
-  }): Promise<TimelineActivityPayload[]> {
-    const { action } = parseEventNameOrThrow(name);
-
-    const authContext = buildSystemAuthContext(workspaceId);
-
-    const activities =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const activityRepository =
-            await this.globalWorkspaceOrmManager.getRepository(
-              workspaceId,
-              activityType,
-              {
-                shouldBypassPermissionChecks: true,
-              },
-            );
-
-          return activityRepository.find({
-            where: {
-              id: In(
-                events
-                  .map((event) =>
-                    this.extractActivityIdFromActivityTargetEvent(
-                      event,
-                      activityType,
-                    ),
-                  )
-                  .filter(isDefined),
-              ),
-            },
-          });
-        },
-        authContext,
-      );
-
-    if (activities.length === 0) {
-      return [];
-    }
-
-    const { flatFieldMetadataMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatFieldMetadataMaps'],
-        },
-      );
-
-    const fields = getFlatFieldsFromFlatObjectMetadata(
-      objectMetadata,
-      flatFieldMetadataMaps,
-    );
-
-    const activityObjectMetadataId = fields.find(
-      (field) => field.name === activityType,
-    )?.relationTargetObjectMetadataId;
-
-    return events
-      .map((event) => {
-        const activity = activities.find(
-          (activity) =>
-            activity.id ===
-            this.extractActivityIdFromActivityTargetEvent(event, activityType),
-        );
-
-        if (!isDefined(activity)) {
-          return;
-        }
-
-        if (!isDefined(activityObjectMetadataId)) {
-          return;
-        }
-
-        if (!isDefined(event.properties.after)) {
-          return;
-        }
-
-        const targetColumnName = Object.entries(event.properties.after).find(
-          ([columnName, columnValue]: [string, string]) =>
-            columnName !== activityType + 'Id' &&
-            columnName.endsWith('Id') &&
-            columnValue !== null,
-        )?.[0];
-
-        if (!isDefined(targetColumnName)) {
-          return;
-        }
-
-        const recordId = (event.properties.after as ObjectRecord)[
-          targetColumnName
-        ];
-
-        const objectSingularName =
-          extractObjectSingularNameFromTargetColumnName(targetColumnName);
-
-        return {
-          name: `linked-${activityType}.${action}`,
-          objectSingularName,
-          recordId,
-          linkedRecordCachedName: activity.title,
-          linkedRecordId: activity.id,
-          linkedObjectMetadataId: activityObjectMetadataId,
-          workspaceMemberId: event.workspaceMemberId,
-          properties: {},
-        } satisfies TimelineActivityPayload;
-      })
-      .filter(isDefined);
-  }
-
-  private extractActivityIdFromActivityTargetEvent(
-    event: ObjectRecordBaseEvent,
-    activityType: ActivityType,
-  ): string | undefined {
-    const activityId = (event.properties.after as ObjectRecord)?.[
-      `${activityType}Id`
-    ];
-
-    return activityId;
   }
 }

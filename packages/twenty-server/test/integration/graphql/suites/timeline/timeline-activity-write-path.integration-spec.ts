@@ -1,6 +1,7 @@
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
+import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
@@ -115,12 +116,20 @@ const NOTE_COMPANY_ID = '20202020-7171-4000-8000-000000000004';
 const NOTE_ID = '20202020-7171-4000-8000-000000000005';
 const NOTE_TARGET_ID = '20202020-7171-4000-8000-000000000006';
 const MESSAGE_LIST_ID = '20202020-7171-4000-8000-000000000007';
+const BATCH_COMPANY_IDS = [
+  '20202020-7171-4000-8000-000000000008',
+  '20202020-7171-4000-8000-000000000009',
+];
 
 const CREATED_RECORD_IDS: { objectMetadataSingularName: string; id: string }[] =
   [
     { objectMetadataSingularName: 'noteTarget', id: NOTE_TARGET_ID },
     { objectMetadataSingularName: 'note', id: NOTE_ID },
     { objectMetadataSingularName: 'messageList', id: MESSAGE_LIST_ID },
+    ...BATCH_COMPANY_IDS.map((id) => ({
+      objectMetadataSingularName: 'company',
+      id,
+    })),
     { objectMetadataSingularName: 'company', id: NOTE_COMPANY_ID },
     { objectMetadataSingularName: 'company', id: MERGE_COMPANY_ID },
     { objectMetadataSingularName: 'company', id: POSITION_COMPANY_ID },
@@ -227,6 +236,48 @@ describe('timeline activity write path (integration)', () => {
       });
     });
 
+    it('should merge every record of a multi record batch', async () => {
+      for (const [index, id] of BATCH_COMPANY_IDS.entries()) {
+        await createRecord({
+          objectMetadataSingularName: 'company',
+          data: { id, name: `Batch ${index}` },
+        });
+      }
+
+      const updateBatchTo = async (name: string) => {
+        const response = await makeGraphqlAPIRequest(
+          updateManyOperationFactory({
+            objectMetadataSingularName: 'company',
+            objectMetadataPluralName: 'companies',
+            gqlFields: 'id',
+            data: { name },
+            filter: { id: { in: BATCH_COMPANY_IDS } },
+          }),
+        );
+
+        expect(response.body.errors).toBeUndefined();
+      };
+
+      await updateBatchTo('Batch renamed once');
+      await waitForAllJobsToFinish();
+
+      await updateBatchTo('Batch renamed twice');
+
+      for (const [index, id] of BATCH_COMPANY_IDS.entries()) {
+        const timelineActivities = await findTimelineActivities({
+          targetCompanyId: { eq: id },
+          name: { eq: 'company.updated' },
+        });
+
+        expect(timelineActivities).toHaveLength(1);
+        expect(timelineActivities[0].properties).toEqual({
+          diff: {
+            name: { before: `Batch ${index}`, after: 'Batch renamed twice' },
+          },
+        });
+      }
+    });
+
     it('should not write an entry for a position only change', async () => {
       await createRecord({
         objectMetadataSingularName: 'company',
@@ -293,45 +344,59 @@ describe('timeline activity write path (integration)', () => {
       expect(timelineActivities).toHaveLength(1);
     });
 
-    // Known defect: computeTimelineActivityPayloadsForActivities reads the
-    // relation property instead of its join column, so the entry lands with no
-    // target at all rather than on the linked company.
-    it('should write an orphan linked entry when the note title changes', async () => {
-      // Orphan rows carry no target, so nothing cascades them away when the
-      // company is destroyed and they accumulate across runs: count the
-      // difference rather than the total, which a previous run would satisfy.
-      const orphanRowCountBefore = (
-        await findTimelineActivityRowsByLinkedRecordId({
-          name: 'linked-note.updated',
-          linkedRecordId: NOTE_ID,
-        })
-      ).length;
-
+    it('should write a linked entry on the company when the note title changes', async () => {
       await updateRecord({
         objectMetadataSingularName: 'note',
         recordId: NOTE_ID,
         data: { title: 'Linked note renamed' },
       });
-      await waitForAllJobsToFinish();
 
       const onCompany = await findTimelineActivities({
         targetCompanyId: { eq: NOTE_COMPANY_ID },
         name: { eq: 'linked-note.updated' },
       });
 
-      expect(onCompany).toHaveLength(0);
-
-      const orphanRows = await findTimelineActivityRowsByLinkedRecordId({
-        name: 'linked-note.updated',
-        linkedRecordId: NOTE_ID,
+      expect(onCompany).toHaveLength(1);
+      expect(onCompany[0].linkedRecordId).toBe(NOTE_ID);
+      expect(onCompany[0].linkedRecordCachedName).toBe('Linked note renamed');
+      expect(onCompany[0].properties).toEqual({
+        diff: {
+          title: { before: 'Linked note', after: 'Linked note renamed' },
+        },
       });
 
-      expect(orphanRows).toHaveLength(orphanRowCountBefore + 1);
-      expect(
-        orphanRows.every(
-          (row) => row.targetCompanyId === null && row.targetNoteId === null,
-        ),
-      ).toBe(true);
+      const rowsWithoutTarget = (
+        await findTimelineActivityRowsByLinkedRecordId({
+          name: 'linked-note.updated',
+          linkedRecordId: NOTE_ID,
+        })
+      ).filter((row) => row.targetCompanyId === null);
+
+      expect(rowsWithoutTarget).toHaveLength(0);
+    });
+
+    // The note rule only fans out on its trigger field, so editing the body
+    // leaves the linked timelines alone.
+    it('should not write a linked entry when a non trigger field changes', async () => {
+      await updateRecord({
+        objectMetadataSingularName: 'note',
+        recordId: NOTE_ID,
+        data: {
+          bodyV2: { blocknote: null, markdown: 'Body only change' },
+        },
+      });
+
+      const onCompany = await findTimelineActivities({
+        targetCompanyId: { eq: NOTE_COMPANY_ID },
+        name: { eq: 'linked-note.updated' },
+      });
+
+      expect(onCompany).toHaveLength(1);
+      expect(onCompany[0].properties).toEqual({
+        diff: {
+          title: { before: 'Linked note', after: 'Linked note renamed' },
+        },
+      });
     });
 
     it('should write a linked entry on the company when the note target is deleted', async () => {
