@@ -48,9 +48,12 @@ describe('WorkspaceService deletion lifecycle', () => {
 
     await createService().deleteWorkspace('workspace-id', true);
 
-    expect(workspaceRepository.softDelete).toHaveBeenCalledWith({
-      id: 'workspace-id',
-    });
+    expect(workspaceRepository.softDelete).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: 'workspace-id',
+        deletedAt: expect.anything(),
+      }),
+    );
     expect(messageQueueService.add).toHaveBeenCalledWith(
       WorkspaceDeletionApplicationUninstallJob.name,
       { workspaceId: 'workspace-id' },

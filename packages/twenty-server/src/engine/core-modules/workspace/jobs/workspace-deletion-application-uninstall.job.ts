@@ -31,40 +31,41 @@ export class WorkspaceDeletionApplicationUninstallJob {
   async handle({
     workspaceId,
   }: WorkspaceDeletionApplicationUninstallJobData): Promise<void> {
-    const result = await this.postgresAdvisoryLockService.tryWithLock(
-      `workspace-deletion-application-uninstall-${workspaceId}`,
-      async () => {
-        const workspace = await this.workspaceRepository.findOne({
-          where: { id: workspaceId },
-          withDeleted: true,
-        });
+    const advisoryLockResult =
+      await this.postgresAdvisoryLockService.tryWithLock(
+        `workspace-deletion-application-uninstall-${workspaceId}`,
+        async () => {
+          const workspace = await this.workspaceRepository.findOne({
+            where: { id: workspaceId },
+            withDeleted: true,
+          });
 
-        if (
-          !workspace?.deletedAt ||
-          workspace.applicationUninstallHooksCompletedAt
-        ) {
-          return;
-        }
+          if (
+            !workspace?.deletedAt ||
+            workspace.applicationUninstallHooksCompletedAt
+          ) {
+            return;
+          }
 
-        await this.applicationSyncService.runUninstallHooksForWorkspaceApplications(
-          {
-            workspaceId,
-            workspaceDeletedAt: workspace.deletedAt,
-          },
-        );
+          await this.applicationSyncService.runUninstallHooksForWorkspaceApplications(
+            {
+              workspaceId,
+              workspaceDeletedAt: workspace.deletedAt,
+            },
+          );
 
-        await this.workspaceRepository.update(
-          {
-            id: workspaceId,
-            deletedAt: workspace.deletedAt,
-            applicationUninstallHooksCompletedAt: IsNull(),
-          },
-          { applicationUninstallHooksCompletedAt: new Date() },
-        );
-      },
-    );
+          await this.workspaceRepository.update(
+            {
+              id: workspaceId,
+              deletedAt: workspace.deletedAt,
+              applicationUninstallHooksCompletedAt: IsNull(),
+            },
+            { applicationUninstallHooksCompletedAt: new Date() },
+          );
+        },
+      );
 
-    if (!result.acquired) {
+    if (!advisoryLockResult.acquired) {
       this.logger.log(
         `Skipping workspace ${workspaceId} uninstall hooks because another worker holds the lock`,
       );

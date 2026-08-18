@@ -448,6 +448,11 @@ describe('JwtAuthStrategy', () => {
       const applicationId = randomUUID();
       const workspaceId = randomUUID();
 
+      workspaceStore[workspaceId] = Object.assign(new WorkspaceEntity(), {
+        id: workspaceId,
+        deletedAt: null,
+      });
+
       workspaceRepository.findOne.mockResolvedValue(
         Object.assign(new WorkspaceEntity(), {
           id: workspaceId,
@@ -470,6 +475,10 @@ describe('JwtAuthStrategy', () => {
         } as JwtPayload),
       ).rejects.toMatchObject({
         code: AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      });
+      expect(workspaceRepository.findOne).toHaveBeenCalledWith({
+        where: { id: workspaceId },
+        withDeleted: true,
       });
     });
 

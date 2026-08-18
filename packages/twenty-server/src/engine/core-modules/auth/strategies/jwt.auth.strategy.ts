@@ -26,6 +26,7 @@ import { JWT_SUPPORTED_VERIFY_ALGORITHMS } from 'src/engine/core-modules/jwt/con
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { type FlatUserWorkspace } from 'src/engine/core-modules/user-workspace/types/flat-user-workspace.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -330,36 +331,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   private async validateApplicationToken(
     payload: ApplicationAccessTokenJwtPayload,
   ): Promise<AuthContext> {
-    let workspace = await this.coreEntityCacheService.get(
-      'workspaceEntity',
-      payload.workspaceId,
-    );
-    let isValidatedWorkspaceDeletionToken = false;
-
-    if (
-      !isDefined(workspace) &&
-      isDefined(payload.workspaceDeletionRequestTimestamp)
-    ) {
-      const deletedWorkspace = await this.workspaceRepository.findOne({
-        where: { id: payload.workspaceId },
-        withDeleted: true,
-      });
-
-      if (
-        !isDefined(deletedWorkspace?.deletedAt) ||
-        payload.workspaceDeletionRequestTimestamp !==
-          deletedWorkspace.deletedAt.toISOString() ||
-        isDefined(deletedWorkspace.applicationUninstallHooksCompletedAt)
-      ) {
-        throw new AuthException(
-          'Workspace deletion is in progress',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
-      }
-
-      workspace = fromWorkspaceEntityToFlat(deletedWorkspace);
-      isValidatedWorkspaceDeletionToken = true;
-    }
+    const workspace = await this.resolveWorkspaceForApplicationToken(payload);
 
     if (!isDefined(workspace)) {
       throw new AuthException(
@@ -368,7 +340,10 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       );
     }
 
-    if (isDefined(workspace.deletedAt) && !isValidatedWorkspaceDeletionToken) {
+    if (
+      isDefined(workspace.deletedAt) &&
+      !isDefined(payload.workspaceDeletionRequestTimestamp)
+    ) {
       throw new AuthException(
         'Workspace deletion is in progress',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
@@ -456,6 +431,36 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     }
 
     return context;
+  }
+
+  private async resolveWorkspaceForApplicationToken(
+    payload: ApplicationAccessTokenJwtPayload,
+  ): Promise<FlatWorkspace | null> {
+    if (!isDefined(payload.workspaceDeletionRequestTimestamp)) {
+      return this.coreEntityCacheService.get(
+        'workspaceEntity',
+        payload.workspaceId,
+      );
+    }
+
+    const deletedWorkspace = await this.workspaceRepository.findOne({
+      where: { id: payload.workspaceId },
+      withDeleted: true,
+    });
+
+    if (
+      !isDefined(deletedWorkspace?.deletedAt) ||
+      payload.workspaceDeletionRequestTimestamp !==
+        deletedWorkspace.deletedAt.toISOString() ||
+      isDefined(deletedWorkspace.applicationUninstallHooksCompletedAt)
+    ) {
+      throw new AuthException(
+        'Workspace deletion is in progress',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    return fromWorkspaceEntityToFlat(deletedWorkspace);
   }
 
   private isLegacyApiKeyPayload(

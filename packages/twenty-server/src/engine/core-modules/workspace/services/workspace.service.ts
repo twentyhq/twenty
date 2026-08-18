@@ -586,7 +586,7 @@ export class WorkspaceService {
         await this.billingSubscriptionService.cancelSubscription(workspace.id);
       }
 
-      await this.workspaceRepository.softDelete({ id });
+      await this.workspaceRepository.softDelete({ id, deletedAt: IsNull() });
       await this.coreEntityCacheService.invalidate('workspaceEntity', id);
 
       if (!isDefined(workspace.applicationUninstallHooksCompletedAt)) {
