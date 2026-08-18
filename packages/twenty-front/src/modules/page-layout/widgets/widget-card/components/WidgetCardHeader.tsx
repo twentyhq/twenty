@@ -1,30 +1,29 @@
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { WidgetActionRenderer } from '@/page-layout/widgets/components/WidgetActionRenderer';
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
-import { widgetHeaderInfoComponentFamilyState } from '@/page-layout/widgets/states/widgetHeaderInfoComponentFamilyState';
-import { type WidgetAction } from '@/page-layout/widgets/types/WidgetAction';
+import { widgetHeaderCountComponentFamilyState } from '@/page-layout/widgets/states/widgetHeaderCountComponentFamilyState';
+import { WidgetCardHeaderActionsRenderer } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionsRenderer';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ReactNode, useContext } from 'react';
 import { IconTrash } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { IconButton, LightIconButton } from 'twenty-ui/input';
+import { IconButton } from 'twenty-ui/input';
 
 import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
 import { WidgetGrip } from '@/page-layout/widgets/widget-card/components/WidgetGrip';
 import { AnimatePresence, motion } from 'framer-motion';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 export type WidgetCardHeaderProps = {
   variant: WidgetCardVariant;
   widgetId: string;
   isInEditMode: boolean;
   isEmpty?: boolean;
+  hasAccess?: boolean;
   title: string;
   onRemove?: (e?: React.MouseEvent) => void;
   forbiddenDisplay?: ReactNode;
-  actions?: WidgetAction[];
   className?: string;
   isResizing?: boolean;
   isReorderEnabled?: boolean;
@@ -71,12 +70,6 @@ const StyledRightContainer = styled.div`
   gap: ${themeCssVariables.spacing[0.5]};
 `;
 
-const StyledActionsContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
 const StyledIconButtonContainerBase = styled.div`
   align-items: center;
   display: flex;
@@ -89,13 +82,13 @@ export const WidgetCardHeader = ({
   variant,
   isEmpty = false,
   isInEditMode = false,
+  hasAccess = true,
   isResizing = false,
   isReorderEnabled = true,
   isDeletingWidgetEnabled = true,
   title,
   onRemove,
   forbiddenDisplay,
-  actions,
   className,
 }: WidgetCardHeaderProps) => {
   const { theme } = useContext(ThemeContext);
@@ -105,13 +98,10 @@ export const WidgetCardHeader = ({
     widgetId,
   );
 
-  const widgetHeaderInfo = useAtomComponentFamilyStateValue(
-    widgetHeaderInfoComponentFamilyState,
+  const widgetHeaderCount = useAtomComponentFamilyStateValue(
+    widgetHeaderCountComponentFamilyState,
     widgetId,
   );
-
-  const count = widgetHeaderInfo?.count;
-  const primaryAction = widgetHeaderInfo?.primaryAction;
 
   return (
     <StyledWidgetCardHeader variant={variant} className={className}>
@@ -125,27 +115,12 @@ export const WidgetCardHeader = ({
       </AnimatePresence>
       <StyledTitleContainer variant={variant}>
         <OverflowingTextWithTooltip text={isEmpty ? t`Add Widget` : title} />
-        {isDefined(count) && <StyledCount>{formatNumber(count)}</StyledCount>}
+        {isDefined(widgetHeaderCount) && (
+          <StyledCount>{formatNumber(widgetHeaderCount)}</StyledCount>
+        )}
       </StyledTitleContainer>
       <StyledRightContainer>
-        {!isInEditMode && isDefined(primaryAction) && (
-          <LightIconButton
-            Icon={primaryAction.Icon}
-            aria-label={primaryAction.label}
-            title={primaryAction.label}
-            accent="tertiary"
-            size="small"
-            onClick={primaryAction.onClick}
-            disabled={primaryAction.disabled}
-          />
-        )}
-        {isNonEmptyArray(actions) && (
-          <StyledActionsContainer>
-            {actions.map((action) => (
-              <WidgetActionRenderer key={action.id} action={action} />
-            ))}
-          </StyledActionsContainer>
-        )}
+        {hasAccess && <WidgetCardHeaderActionsRenderer />}
         {isDefined(forbiddenDisplay) && forbiddenDisplay}
         <AnimatePresence initial={false}>
           {!isResizing &&

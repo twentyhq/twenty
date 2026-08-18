@@ -1,44 +1,30 @@
-import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useGetIsMetadataItemFromStandardApplication } from '@/object-metadata/hooks/useGetIsMetadataItemFromStandardApplication';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
-import { useResolveFieldMetadataIdFromNameOrId } from '@/page-layout/hooks/useResolveFieldMetadataIdFromNameOrId';
+import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
+import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { useFieldWidgetFieldDefinition } from '@/page-layout/widgets/field/hooks/useFieldWidgetFieldDefinition';
 import { isFieldWidget } from '@/page-layout/widgets/field/utils/isFieldWidget';
-import { type WidgetAction } from '@/page-layout/widgets/types/WidgetAction';
 import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { isDefined } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
 
-type UseWidgetActionsParams = {
+type UseFieldWidgetActionVisibilityParams = {
   widget: PageLayoutWidget;
 };
 
-export const useWidgetActions = ({
+export const useFieldWidgetActionVisibility = ({
   widget,
-}: UseWidgetActionsParams): WidgetAction[] => {
+}: UseFieldWidgetActionVisibilityParams) => {
   const targetRecord = useTargetRecord();
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: targetRecord.targetObjectNameSingular,
-  });
-
-  const fieldMetadataId = isFieldWidget(widget)
-    ? widget.configuration.fieldMetadataId
-    : undefined;
-
-  const resolvedFieldMetadataId = useResolveFieldMetadataIdFromNameOrId(
-    fieldMetadataId ?? '',
-  );
-
-  const { fieldMetadataItem } = useFieldMetadataItemById(
-    resolvedFieldMetadataId ?? '',
-  );
+  const { objectMetadataItem, fieldMetadataItem, fieldDefinition } =
+    useFieldWidgetFieldDefinition(widget);
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const getIsMetadataItemFromStandardApplication =
@@ -49,41 +35,33 @@ export const useWidgetActions = ({
     objectMetadataId: objectMetadataItem.id,
   });
 
-  const actions: WidgetAction[] = [];
-
   if (
     !isFieldWidget(widget) ||
     !isDefined(fieldMetadataItem) ||
-    !fieldMetadataItem.isActive
+    !fieldMetadataItem.isActive ||
+    !isDefined(fieldDefinition)
   ) {
-    return actions;
+    return { showSeeAll: false, showEdit: false };
   }
 
-  const fieldDefinition = formatFieldMetadataItemAsColumnDefinition({
-    field: fieldMetadataItem,
-    position: 0,
-    objectMetadataItem,
-    showLabel: true,
-    labelWidth: 90,
-  });
+  const relationMetadata = isFieldRelation(fieldDefinition)
+    ? fieldDefinition.metadata
+    : null;
 
   const isOneToManyRelation =
-    isFieldRelation(fieldDefinition) &&
-    fieldDefinition.metadata.relationType === RelationType.ONE_TO_MANY;
+    relationMetadata?.relationType === RelationType.ONE_TO_MANY;
 
   // "See all" links to the relation field's own index, which lists the first
   // hop. A nested widget lists the second hop, so the link would point at a
   // different object than the widget shows.
-  const isNestedRelationWidget =
-    isFieldWidget(widget) &&
-    isDefined(widget.configuration.nestedRelationFieldMetadataId);
+  const isNestedRelationWidget = isDefined(
+    widget.configuration.nestedRelationFieldMetadataId,
+  );
 
-  if (isOneToManyRelation && !isNestedRelationWidget) {
-    actions.push({
-      id: 'see-all',
-      position: 0,
-    });
-  }
+  const isJunctionRelation = hasJunctionConfig(relationMetadata?.settings);
+
+  const showSeeAll =
+    isOneToManyRelation && !isNestedRelationWidget && !isJunctionRelation;
 
   const isFieldReadOnly = isRecordFieldReadOnly({
     isRecordReadOnly,
@@ -102,12 +80,10 @@ export const useWidgetActions = ({
     objectPermissionsByObjectMetadataId,
   });
 
-  if (!isFieldReadOnly) {
-    actions.push({
-      id: 'edit',
-      position: 1,
-    });
-  }
+  // The read-only chain already hides edit during layout customization
+  // (useIsRecordReadOnly returns true then); the explicit check states the
+  // rule here instead of leaving it implicit.
+  const showEdit = !isPageLayoutInEditMode && !isFieldReadOnly;
 
-  return actions.sort((a, b) => a.position - b.position);
+  return { showSeeAll, showEdit };
 };
