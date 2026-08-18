@@ -63,6 +63,10 @@ export const createMediaQueryEnvironmentSource = ({
   return {
     readEnvironment,
     subscribeToEnvironmentUpdates: (listener: () => void) => {
+      if (environmentUpdateListeners.size === 0) {
+        lastNotifiedEnvironment = readEnvironment();
+      }
+
       environmentUpdateListeners.add(listener);
 
       return () => {

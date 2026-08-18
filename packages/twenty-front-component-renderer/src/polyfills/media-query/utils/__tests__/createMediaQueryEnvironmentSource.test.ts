@@ -133,6 +133,20 @@ describe('createMediaQueryEnvironmentSource', () => {
     expect(environmentUpdateListener).toHaveBeenCalledTimes(2);
   });
 
+  it('should notify when the environment reverts to a value cached while unobserved', () => {
+    const { environmentSource, pushViewportSnapshot } =
+      setupEnvironmentSource();
+    const environmentUpdateListener = jest.fn();
+
+    pushViewportSnapshot({ innerWidth: 1024 });
+
+    environmentSource.subscribeToEnvironmentUpdates(environmentUpdateListener);
+
+    pushViewportSnapshot({ innerWidth: 0 });
+
+    expect(environmentUpdateListener).toHaveBeenCalledTimes(1);
+  });
+
   it('should stop notifying after unsubscribe', () => {
     const { environmentSource, pushViewportSnapshot } =
       setupEnvironmentSource();
