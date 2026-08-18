@@ -2526,6 +2526,9 @@ export default {
             "recordLimit": [
                 26
             ],
+            "isRecordMutationEnabled": [
+                8
+            ],
             "__typename": [
                 1
             ]
