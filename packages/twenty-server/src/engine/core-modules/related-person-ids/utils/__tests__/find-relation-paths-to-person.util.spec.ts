@@ -281,22 +281,8 @@ describe('findRelationPathsToPerson', () => {
   it('targets the morph field owning the join column rather than the morph group name', () => {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       buildGraphFixtures({
-        note: [
-          {
-            fieldName: 'peopleWithLastActivityItem',
-            relationType: RelationType.ONE_TO_MANY,
-            targetObjectNameSingular: 'person',
-            inverseFieldName: 'lastActivityItemNote',
-          },
-        ],
-        task: [
-          {
-            fieldName: 'peopleWithLastActivityItem',
-            relationType: RelationType.ONE_TO_MANY,
-            targetObjectNameSingular: 'person',
-            inverseFieldName: 'lastActivityItemTask',
-          },
-        ],
+        note: [],
+        task: [],
         person: [
           {
             fieldName: 'lastActivityItemNote',
