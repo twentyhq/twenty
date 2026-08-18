@@ -24,8 +24,6 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 export class ApplicationCallerPermissionResolver {
   constructor(private readonly permissionsService: PermissionsService) {}
 
-  // The identity being checked comes from the application access token, never
-  // from the request: an application cannot ask about someone it did not serve.
   @Query(() => Boolean)
   async appCallerHasPermissionFlag(
     @AuthApplication() _application: FlatApplication,

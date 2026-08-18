@@ -16,8 +16,6 @@ export type RawAuthContext = {
   workspaceMember?: WorkspaceMemberWorkspaceEntity;
   workspace?: FlatWorkspace;
   application?: FlatApplication | null | undefined;
-  // Who triggered the application code holding this token. Purely informational:
-  // it never widens what the token itself is allowed to do.
   applicationCaller?: LogicFunctionCaller;
   userWorkspaceId?: string;
   userWorkspace?: FlatUserWorkspace;
