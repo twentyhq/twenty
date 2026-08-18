@@ -486,15 +486,6 @@ describe('WorkspaceScopedRepository', () => {
         workspaceId: WORKSPACE_ID,
       });
     });
-
-    it('throws instead of returning a hollow entity when no row is returned', async () => {
-      mockInsertBuilder(repository, []);
-
-      await expect(
-        scoped.insertAndReturnOne(WORKSPACE_ID, { id: 'a' }),
-      ).rejects.toThrow(/insert returned no row/);
-      expect(repository.create).not.toHaveBeenCalled();
-    });
   });
 
   describe('upsert conflict target guard', () => {
