@@ -1,5 +1,6 @@
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { AttachmentList } from '@/activities/files/components/AttachmentList';
+import { AttachmentUploadTrigger } from '@/activities/files/components/AttachmentUploadTrigger';
 import { DropZone } from '@/activities/files/components/DropZone';
 import { type Attachment } from '@/activities/files/types/Attachment';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
@@ -32,7 +33,6 @@ type FilesCardContentProps = {
   attachments: Attachment[];
   canUploadFiles: boolean;
   loading: boolean;
-  onAddFile: () => void;
   onUploadFiles: (files: File[]) => Promise<void>;
   targetRecord: ActivityTargetableObject;
 };
@@ -41,7 +41,6 @@ export const FilesCardContent = ({
   attachments,
   canUploadFiles,
   loading,
-  onAddFile,
   onUploadFiles,
   targetRecord,
 }: FilesCardContentProps) => {
@@ -76,12 +75,16 @@ export const FilesCardContent = ({
               </AnimatedPlaceholderEmptySubTitle>
             </AnimatedPlaceholderEmptyTextContainer>
             {canUploadFiles && (
-              <Button
-                Icon={IconPlus}
-                title={t`Add file`}
-                variant="secondary"
-                onClick={onAddFile}
-              />
+              <AttachmentUploadTrigger targetableObject={targetRecord}>
+                {({ openFilePicker }) => (
+                  <Button
+                    Icon={IconPlus}
+                    title={t`Add file`}
+                    variant="secondary"
+                    onClick={openFilePicker}
+                  />
+                )}
+              </AttachmentUploadTrigger>
             )}
           </AnimatedPlaceholderEmptyContainer>
         )}
