@@ -12,7 +12,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { type APP_LOCALES } from 'twenty-shared/translations';
+import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -28,7 +28,10 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { getTwentyStandardApplicationIdOrThrow } from 'src/engine/metadata-modules/utils/get-twenty-standard-application-id-or-throw.util';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
+import { OBJECT_LABEL_PLURAL_PLACEHOLDER } from 'src/engine/metadata-modules/view/constants/object-label-plural-placeholder.constant';
+import { resolveViewName } from 'src/engine/metadata-modules/view/utils/resolve-view-name.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { CreateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-permission.guard';
 import { DeleteViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-permission.guard';
@@ -194,63 +197,65 @@ export class ViewController {
     locale?: keyof typeof APP_LOCALES,
   ): Promise<ViewDTO[]> {
     const hasTemplates = views.some((view) =>
-      view.name.includes('{objectLabelPlural}'),
+      view.name.includes(OBJECT_LABEL_PLURAL_PLACEHOLDER),
     );
 
     if (!hasTemplates && views.every((view) => view.isCustom)) {
       return views;
     }
 
-    const { flatObjectMetadataMaps } =
+    const { flatObjectMetadataMaps, flatApplicationMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps'],
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatApplicationMaps'],
         },
       );
 
+    const standardApplicationId =
+      getTwentyStandardApplicationIdOrThrow(flatApplicationMaps);
+
+    const i18nInstance = this.i18nService.getI18nInstance(
+      locale ?? SOURCE_LOCALE,
+    );
+
     return views.map((view) => {
-      let processedName = view.name;
+      const objectMetadata = view.name.includes(OBJECT_LABEL_PLURAL_PLACEHOLDER)
+        ? findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: view.objectMetadataId,
+            flatEntityMaps: flatObjectMetadataMaps,
+          })
+        : undefined;
 
-      if (view.name.includes('{objectLabelPlural}')) {
-        const objectMetadata = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: view.objectMetadataId,
-          flatEntityMaps: flatObjectMetadataMaps,
-        });
-
-        if (objectMetadata) {
-          const i18n = this.i18nService.getI18nInstance(locale ?? 'en');
-          const translatedObjectLabel = resolveEffectiveEntityProperty({
+      const objectLabelPlural = isDefined(objectMetadata)
+        ? resolveEffectiveEntityProperty({
             metadataName: 'objectMetadata',
             baseValue: objectMetadata.labelPlural,
             overrides: objectMetadata.overrides ?? undefined,
             property: 'labelPlural',
             i18nContext: {
               locale,
-              i18nInstance: i18n,
+              i18nInstance,
               isStandardApp: belongsToTwentyStandardApp(objectMetadata),
             },
-          });
-
-          processedName = this.viewService.processViewNameWithTemplate(
-            view.name,
-            view.isCustom,
-            translatedObjectLabel,
-            locale,
-          );
-        }
-      } else {
-        processedName = this.viewService.processViewNameWithTemplate(
-          view.name,
-          view.isCustom,
-          undefined,
-          locale,
-        );
-      }
+          })
+        : undefined;
 
       return {
         ...view,
-        name: processedName,
+        name: resolveViewName({
+          view,
+          objectLabelPlural,
+          i18nContext: {
+            locale,
+            i18nInstance,
+            isStandardApp: view.applicationId === standardApplicationId,
+            // This REST path reads from the flat entity cache and has no
+            // dataloader, so installed-application catalogs are not resolved
+            // here the way they are in the GraphQL resolver.
+            applicationCatalog: undefined,
+          },
+        }),
       };
     });
   }
