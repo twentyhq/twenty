@@ -9,7 +9,7 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { useIsCurrentWidgetLastOfTab } from '@/page-layout/widgets/hooks/useIsCurrentWidgetLastOfTab';
 import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
 import { useWidgetPermissions } from '@/page-layout/widgets/hooks/useWidgetPermissions';
-import { WIDGET_TYPES_WITH_HEADER_ACTIONS } from '@/page-layout/widgets/constants/WidgetTypesWithHeaderActions';
+import { WIDGET_TYPES_WITH_ALWAYS_VISIBLE_SOLO_HEADER } from '@/page-layout/widgets/constants/WidgetTypesWithAlwaysVisibleSoloHeader';
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
 import { widgetHasHeaderCountComponentFamilySelector } from '@/page-layout/widgets/states/selectors/widgetHasHeaderCountComponentFamilySelector';
 import { getWidgetCardVariant } from '@/page-layout/widgets/utils/getWidgetCardVariant';
@@ -65,7 +65,7 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
 
   const hasWidgetHeaderInfo =
     hasWidgetHeaderCount ||
-    WIDGET_TYPES_WITH_HEADER_ACTIONS.includes(widget.type);
+    WIDGET_TYPES_WITH_ALWAYS_VISIBLE_SOLO_HEADER.includes(widget.type);
 
   const isHeaderHiddenInViewMode =
     widget.type === WidgetType.STANDALONE_RICH_TEXT ||
