@@ -1,14 +1,5 @@
-export type LogicFunctionUserCaller = {
-  type: 'user';
-  userId: string;
-  userWorkspaceId: string;
-  workspaceMemberId?: string;
-};
-
-export type LogicFunctionApiKeyCaller = {
-  type: 'apiKey';
-  apiKeyId: string;
-};
+import { type LogicFunctionApiKeyCaller } from './logicFunctionApiKeyCallerType';
+import { type LogicFunctionUserCaller } from './logicFunctionUserCallerType';
 
 export type LogicFunctionCaller =
   | LogicFunctionUserCaller

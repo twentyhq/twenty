@@ -110,17 +110,15 @@ export type {
 export type { FrontComponentSharedDependenciesManifest } from './frontComponentSharedDependenciesManifestType';
 export type { IndexFieldManifest } from './indexFieldManifestType';
 export type { IndexManifest } from './indexManifestType';
-export type {
-  LogicFunctionUserCaller,
-  LogicFunctionApiKeyCaller,
-  LogicFunctionCaller,
-} from './logicFunctionCallerType';
+export type { LogicFunctionApiKeyCaller } from './logicFunctionApiKeyCallerType';
+export type { LogicFunctionCaller } from './logicFunctionCallerType';
 export type {
   LogicFunctionManifest,
   CronTriggerSettings,
   DatabaseEventTriggerSettings,
   HttpRouteTriggerSettings,
 } from './logicFunctionManifestType';
+export type { LogicFunctionUserCaller } from './logicFunctionUserCallerType';
 export type { TranslationsManifest, Manifest } from './manifestType';
 export type { NavigationMenuItemManifest } from './navigationMenuItemManifestType';
 export type { OAuthConnectionProviderConfig } from './oauthConnectionProviderConfigType';
