@@ -128,7 +128,6 @@
       "files": [
         "src/engine/core-modules/i18n/**",
         "src/engine/core-modules/tool-provider/**",
-        "src/engine/metadata-modules/utils/resolve-effective-entity-property.util.ts",
         "src/engine/metadata-modules/utils/__tests__/**",
         "test/**"
       ],
