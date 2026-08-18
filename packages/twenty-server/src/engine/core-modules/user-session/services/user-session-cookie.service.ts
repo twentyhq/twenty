@@ -35,15 +35,7 @@ export class UserSessionCookieService {
     return isHttpsUrl(serverUrl) || sameSite === 'none';
   }
 
-  private areCookieSessionsEnabled(): boolean {
-    return this.twentyConfigService.get('AUTH_COOKIE_SESSIONS_ENABLED');
-  }
-
   extractSessionTokenFromRequest(request: Request): string | undefined {
-    if (!this.areCookieSessionsEnabled()) {
-      return undefined;
-    }
-
     return extractUserSessionTokenFromRequestCookie(request, {
       secureCookieName: USER_SESSION_SECURE_COOKIE_NAME,
       insecureCookieName: USER_SESSION_COOKIE_NAME,
@@ -54,10 +46,6 @@ export class UserSessionCookieService {
   extractImpersonatorSessionTokenFromRequest(
     request: Request,
   ): string | undefined {
-    if (!this.areCookieSessionsEnabled()) {
-      return undefined;
-    }
-
     return extractUserSessionTokenFromRequestCookie(request, {
       secureCookieName: USER_SESSION_IMPERSONATOR_SECURE_COOKIE_NAME,
       insecureCookieName: USER_SESSION_IMPERSONATOR_COOKIE_NAME,
@@ -91,10 +79,6 @@ export class UserSessionCookieService {
     sessionToken: string,
     expiresAt: Date,
   ): void {
-    if (!this.areCookieSessionsEnabled()) {
-      return;
-    }
-
     const { cookieName, options } = this.resolveCookieSettings();
 
     response.cookie(cookieName, sessionToken, {
@@ -107,10 +91,6 @@ export class UserSessionCookieService {
     response: Response,
     sessionToken: string,
   ): void {
-    if (!this.areCookieSessionsEnabled()) {
-      return;
-    }
-
     response.cookie(
       this.isSecureDeployment()
         ? USER_SESSION_IMPERSONATOR_SECURE_COOKIE_NAME
@@ -121,10 +101,6 @@ export class UserSessionCookieService {
   }
 
   clearImpersonatorSessionCookie(response: Response): void {
-    if (!this.areCookieSessionsEnabled()) {
-      return;
-    }
-
     const options = this.resolveCookieOptions();
 
     response.clearCookie(USER_SESSION_IMPERSONATOR_SECURE_COOKIE_NAME, options);
@@ -132,10 +108,6 @@ export class UserSessionCookieService {
   }
 
   hasSessionCookie(request: Request): boolean {
-    if (!this.areCookieSessionsEnabled()) {
-      return false;
-    }
-
     const cookieHeader = request.headers.cookie;
 
     if (!isNonEmptyString(cookieHeader)) {
@@ -151,10 +123,6 @@ export class UserSessionCookieService {
   }
 
   clearSessionCookie(response: Response): void {
-    if (!this.areCookieSessionsEnabled()) {
-      return;
-    }
-
     const { options } = this.resolveCookieSettings();
 
     // Both names, so an instance that switched to https drops the cookie it

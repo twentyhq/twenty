@@ -13,14 +13,11 @@ import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils
 
 import { ALLOWED_ORIGIN } from 'test/integration/graphql/suites/auth/user-sessions/constants/session-origins.constants';
 import { IS_SECURE_DEPLOYMENT } from 'test/integration/graphql/suites/auth/user-sessions/constants/is-secure-deployment.constant';
-import { setupDatabaseConfigOverrideForSuite } from 'test/integration/graphql/suites/auth/user-sessions/utils/setup-database-config-override.util';
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 const SESSION_ABSOLUTE_LIFETIME_MS = 180 * ONE_DAY_MS;
 
 describe('successful user session creation on auth exchanges (integration)', () => {
-  setupDatabaseConfigOverrideForSuite('AUTH_COOKIE_SESSIONS_ENABLED', true);
-
   let firstSessionToken: string;
   let firstSessionCookieHeader: string;
 

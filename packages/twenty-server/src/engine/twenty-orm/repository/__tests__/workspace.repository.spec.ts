@@ -1,6 +1,7 @@
 import {
   FeatureFlagKey,
   FieldMetadataType,
+  MetadataWritability,
   type ObjectsPermissions,
 } from 'twenty-shared/types';
 import {
@@ -75,6 +76,7 @@ describe('WorkspaceRepository', () => {
       isUnique: true,
       isSystem: true,
       isUIEditable: true,
+      writability: MetadataWritability.OPEN,
       isLabelSyncedWithName: false,
       label: 'ID',
       description: 'Record ID',
