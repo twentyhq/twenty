@@ -61,6 +61,12 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
   const isManualLink =
     existingLink?.source === SLACK_USER_LINK_SOURCE.MANUAL;
 
+  if (isManualLink) {
+    return isNonEmptyString(existingLink?.workspaceMemberId)
+      ? existingLink.workspaceMemberId
+      : undefined;
+  }
+
   const linkableEmail = await resolveLinkableEmail({ slackClient, identity });
 
   if (!isNonEmptyString(linkableEmail)) {
@@ -87,7 +93,7 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
     return workspaceMemberId;
   }
 
-  if (!isManualLink && existingLink.workspaceMemberId !== workspaceMemberId) {
+  if (existingLink.workspaceMemberId !== workspaceMemberId) {
     await updateSlackUserLink(client, {
       id: existingLink.id,
       workspaceMemberId,
