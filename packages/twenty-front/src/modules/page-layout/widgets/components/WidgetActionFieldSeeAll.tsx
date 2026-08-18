@@ -1,5 +1,4 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { useFieldWidgetFieldDefinition } from '@/page-layout/widgets/field/hooks/useFieldWidgetFieldDefinition';
@@ -36,7 +35,7 @@ export const WidgetActionFieldSeeAll = ({
 
   const relationMetadata =
     isDefined(fieldDefinition) && isFieldRelation(fieldDefinition)
-      ? (fieldDefinition.metadata as FieldRelationMetadata)
+      ? fieldDefinition.metadata
       : null;
 
   const { objectMetadataItems } = useObjectMetadataItems();

@@ -2,7 +2,6 @@ import { useGetIsMetadataItemFromStandardApplication } from '@/object-metadata/h
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
-import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
@@ -49,7 +48,7 @@ export const useFieldWidgetActionVisibility = ({
   }
 
   const relationMetadata = isFieldRelation(fieldDefinition)
-    ? (fieldDefinition.metadata as FieldRelationMetadata)
+    ? fieldDefinition.metadata
     : null;
 
   const isOneToManyRelation =
