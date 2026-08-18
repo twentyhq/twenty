@@ -501,19 +501,15 @@ describe('ApolloFactory', () => {
     // The one case that does end the session: nothing the client holds works.
     it('should sign out when the refresh token is rejected during the fallback', async () => {
       setCookieAuthActive();
-      jest
-        .mocked(renewToken)
-        .mockRejectedValue(
-          new CombinedGraphQLErrors(
-            {
-              data: null,
-              errors: [
-                { message: 'x', extensions: { code: 'UNAUTHENTICATED' } },
-              ],
-            },
-            [{ message: 'x', extensions: { code: 'UNAUTHENTICATED' } }],
-          ),
-        );
+      jest.mocked(renewToken).mockRejectedValue(
+        new CombinedGraphQLErrors(
+          {
+            data: null,
+            errors: [{ message: 'x', extensions: { code: 'UNAUTHENTICATED' } }],
+          },
+          [{ message: 'x', extensions: { code: 'UNAUTHENTICATED' } }],
+        ),
+      );
       fetchMock.mockResponse(FORBIDDEN_RESOURCE_RESPONSE);
 
       await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
