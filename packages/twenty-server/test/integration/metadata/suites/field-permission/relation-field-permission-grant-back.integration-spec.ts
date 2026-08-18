@@ -43,6 +43,32 @@ describe('Relation field permission grant-back', () => {
     return role.fieldPermissions ?? [];
   };
 
+  const restrictFieldUpdate = (field: {
+    objectMetadataId: string;
+    fieldMetadataId: string;
+  }) =>
+    upsertFieldPermissions({
+      expectToFail: false,
+      input: {
+        roleId: createdRoleId,
+        fieldPermissions: [{ ...field, canUpdateFieldValue: false }],
+      },
+    });
+
+  const grantBackField = (field: {
+    objectMetadataId: string;
+    fieldMetadataId: string;
+  }) =>
+    upsertFieldPermissions({
+      expectToFail: false,
+      input: {
+        roleId: createdRoleId,
+        fieldPermissions: [
+          { ...field, canReadFieldValue: null, canUpdateFieldValue: null },
+        ],
+      },
+    });
+
   beforeAll(async () => {
     const { data: roleData } = await createOneRole({
       expectToFail: false,
@@ -144,64 +170,72 @@ describe('Relation field permission grant-back', () => {
     }
   });
 
-  it('should mirror an edit restriction on a relation field onto the inverse relation field', async () => {
-    await upsertFieldPermissions({
-      expectToFail: false,
-      input: {
-        roleId: createdRoleId,
-        fieldPermissions: [
-          {
-            objectMetadataId: sourceObjectMetadataId,
-            fieldMetadataId: relationFieldMetadataId,
-            canUpdateFieldValue: false,
-          },
-        ],
-      },
+  describe.each([
+    {
+      side: 'many-to-one',
+      restricted: () => ({
+        objectMetadataId: sourceObjectMetadataId,
+        fieldMetadataId: relationFieldMetadataId,
+      }),
+      mirrored: () => ({
+        objectMetadataId: targetObjectMetadataId,
+        fieldMetadataId: inverseRelationFieldMetadataId,
+      }),
+    },
+    {
+      side: 'one-to-many',
+      restricted: () => ({
+        objectMetadataId: targetObjectMetadataId,
+        fieldMetadataId: inverseRelationFieldMetadataId,
+      }),
+      mirrored: () => ({
+        objectMetadataId: sourceObjectMetadataId,
+        fieldMetadataId: relationFieldMetadataId,
+      }),
+    },
+  ])('restricting the $side side', ({ restricted, mirrored }) => {
+    afterEach(async () => {
+      await grantBackField(restricted());
     });
 
-    const fieldPermissions = await findFieldPermissionsForRole();
+    it('should mirror the edit restriction onto the inverse relation field', async () => {
+      await restrictFieldUpdate(restricted());
 
-    expect(fieldPermissions).toHaveLength(2);
-    expect(fieldPermissions).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          objectMetadataId: sourceObjectMetadataId,
-          fieldMetadataId: relationFieldMetadataId,
-          canUpdateFieldValue: false,
-        }),
-        expect.objectContaining({
-          objectMetadataId: targetObjectMetadataId,
-          fieldMetadataId: inverseRelationFieldMetadataId,
-          canUpdateFieldValue: false,
-        }),
-      ]),
-    );
-  });
+      const fieldPermissions = await findFieldPermissionsForRole();
 
-  it('should delete the mirrored inverse field permission when the relation field is granted back', async () => {
-    const grantBackRelationField = () =>
-      upsertFieldPermissions({
-        expectToFail: false,
-        input: {
-          roleId: createdRoleId,
-          fieldPermissions: [
-            {
-              objectMetadataId: sourceObjectMetadataId,
-              fieldMetadataId: relationFieldMetadataId,
-              canReadFieldValue: null,
-              canUpdateFieldValue: null,
-            },
-          ],
-        },
-      });
+      expect(fieldPermissions).toHaveLength(2);
+      expect(fieldPermissions).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            ...restricted(),
+            canReadFieldValue: null,
+            canUpdateFieldValue: false,
+          }),
+          expect.objectContaining({
+            ...mirrored(),
+            canReadFieldValue: null,
+            canUpdateFieldValue: false,
+          }),
+        ]),
+      );
+    });
 
-    await grantBackRelationField();
+    it('should delete both rows when the restricted field is granted back', async () => {
+      await restrictFieldUpdate(restricted());
 
-    expect(await findFieldPermissionsForRole()).toHaveLength(0);
+      expect(await findFieldPermissionsForRole()).toHaveLength(2);
 
-    // Granting back a field that has no rows left must not create empty ones
-    await grantBackRelationField();
+      await grantBackField(restricted());
 
-    expect(await findFieldPermissionsForRole()).toHaveLength(0);
+      expect(await findFieldPermissionsForRole()).toHaveLength(0);
+    });
+
+    it('should not create empty rows when granting back a field that has no permissions', async () => {
+      expect(await findFieldPermissionsForRole()).toHaveLength(0);
+
+      await grantBackField(restricted());
+
+      expect(await findFieldPermissionsForRole()).toHaveLength(0);
+    });
   });
 });

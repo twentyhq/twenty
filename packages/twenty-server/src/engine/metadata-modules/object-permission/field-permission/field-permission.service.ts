@@ -153,11 +153,17 @@ export class FieldPermissionService {
       );
     }
 
-    this.addRelatedFieldPermissionsToDesired({
+    const mirroredFieldKeys = this.addRelatedFieldPermissionsToDesired({
       desiredMap,
       inputFieldPermissions: input.fieldPermissions,
       flatFieldMetadataMaps,
     });
+
+    const inputFieldKeys = new Set(
+      input.fieldPermissions.map((fp) =>
+        keyFrom(fp.objectMetadataId, fp.fieldMetadataId),
+      ),
+    );
 
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -177,7 +183,7 @@ export class FieldPermissionService {
       ]),
     );
 
-    for (const [, desired] of desiredMap) {
+    for (const [key, desired] of desiredMap) {
       const current = currentByKey.get(
         keyFrom(desired.objectMetadataId, desired.fieldMetadataId),
       );
@@ -186,7 +192,6 @@ export class FieldPermissionService {
         const canReadFieldValue = desired.canReadFieldValue ?? null;
         const canUpdateFieldValue = desired.canUpdateFieldValue ?? null;
 
-        // A row with no restriction left grants nothing: creating it would only add noise
         if (!isDefined(canReadFieldValue) && !isDefined(canUpdateFieldValue)) {
           continue;
         }
@@ -216,12 +221,21 @@ export class FieldPermissionService {
             ? desired.canUpdateFieldValue
             : current.canUpdateFieldValue;
 
-        // Once both flags are cleared the row no longer restricts anything: delete it
-        // instead of keeping an empty row (mirrored relation permissions land here on grant-back)
         if (!isDefined(effectiveCanRead) && !isDefined(effectiveCanUpdate)) {
-          flatEntityToDelete.push(
-            toUniversalFlatFieldPermissionToDelete(current),
-          );
+          // The mirror pass only owns rows it could have written itself, so a row
+          // another application declared is left alone rather than silently dropped
+          const isForeignMirroredRow =
+            mirroredFieldKeys.has(key) &&
+            !inputFieldKeys.has(key) &&
+            current.applicationUniversalIdentifier !==
+              workspaceCustomFlatApplication.universalIdentifier;
+
+          if (!isForeignMirroredRow) {
+            flatEntityToDelete.push(
+              toUniversalFlatFieldPermissionToDelete(current),
+            );
+          }
+
           continue;
         }
 
@@ -248,12 +262,6 @@ export class FieldPermissionService {
         }
       }
     }
-
-    const inputFieldKeys = new Set(
-      input.fieldPermissions.map((fp) =>
-        keyFrom(fp.objectMetadataId, fp.fieldMetadataId),
-      ),
-    );
 
     for (const current of currentFieldPermissionsForRole) {
       const key = keyFrom(current.objectMetadataId, current.fieldMetadataId);
@@ -436,12 +444,13 @@ export class FieldPermissionService {
     desiredMap: Map<string, DesiredFieldPermission>;
     inputFieldPermissions: UpsertFieldPermissionsInput['fieldPermissions'];
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-  }) {
+  }): Set<string> {
     const inputKeys = new Set(
       inputFieldPermissions.map((fp) =>
         keyFrom(fp.objectMetadataId, fp.fieldMetadataId),
       ),
     );
+    const mirroredKeys = new Set<string>();
 
     for (const fieldPermission of inputFieldPermissions) {
       const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
@@ -500,11 +509,8 @@ export class FieldPermissionService {
         continue;
       }
 
-      // Restricting a relation field mirrors the restriction onto the inverse
-      // field, so clearing it must mirror the clear as well: null propagates
-      // (clears the flag on the inverse side) while undefined leaves it as is.
-      // Otherwise the mirrored row survives as an orphan that keeps blocking
-      // updates on the relation's join column after the admin granted the field back.
+      // A cleared source row is dropped from desiredMap by the bothNull gate above,
+      // so the mirror has to be told to clear explicitly or it survives as an orphan
       const sourceIsCleared =
         !isDefined(fieldPermission.canReadFieldValue) &&
         !isDefined(fieldPermission.canUpdateFieldValue);
@@ -519,6 +525,9 @@ export class FieldPermissionService {
           ? null
           : fieldPermission.canUpdateFieldValue,
       });
+      mirroredKeys.add(targetKey);
     }
+
+    return mirroredKeys;
   }
 }
