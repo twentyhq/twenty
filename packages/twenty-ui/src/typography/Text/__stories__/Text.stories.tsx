@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 
 import { ComponentDecorator } from '@ui/testing';
 
@@ -25,6 +26,16 @@ export const Truncate: Story = {
   parameters: {
     container: { width: 160 },
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const text = await canvas.findByText(LONG_TEXT);
+    const { textOverflow, whiteSpace } = getComputedStyle(text);
+
+    await expect(whiteSpace).toBe('nowrap');
+    await expect(textOverflow).toBe('ellipsis');
+    await expect(text.scrollWidth).toBeGreaterThan(text.clientWidth);
+  },
 };
 
 export const LineClamp: Story = {
@@ -34,5 +45,15 @@ export const LineClamp: Story = {
   },
   parameters: {
     container: { width: 160 },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const text = await canvas.findByText(LONG_TEXT);
+    const { overflow, webkitLineClamp } = getComputedStyle(text);
+
+    await expect(webkitLineClamp).toBe('2');
+    await expect(overflow).toBe('hidden');
+    await expect(text.scrollHeight).toBeGreaterThan(text.clientHeight);
   },
 };

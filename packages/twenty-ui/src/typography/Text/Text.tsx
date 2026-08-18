@@ -22,7 +22,7 @@ export const Text = forwardRef<HTMLDivElement, TextProps>(
       props: {
         ...props,
         className: clsx(
-          truncate === true && styles.truncate,
+          truncate && styles.truncate,
           shouldClamp && styles.lineClamp,
           className,
         ),
