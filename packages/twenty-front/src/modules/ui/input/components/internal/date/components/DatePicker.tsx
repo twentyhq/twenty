@@ -293,11 +293,12 @@ export const DatePicker = ({
               ) : (
                 <DatePickerHeader
                   date={plainDate?.toString() ?? null}
+                  calendarMonthDate={monthDate}
                   onChange={onChange}
                   onChangeMonth={handleChangeMonth}
                   onChangeYear={handleChangeYear}
-                  onAddMonth={handleAddMonth}
-                  onSubtractMonth={handleSubtractMonth}
+                  onAddMonth={increaseMonth}
+                  onSubtractMonth={decreaseMonth}
                   prevMonthButtonDisabled={prevMonthButtonDisabled}
                   nextMonthButtonDisabled={nextMonthButtonDisabled}
                   hideInput={hideHeaderInput}

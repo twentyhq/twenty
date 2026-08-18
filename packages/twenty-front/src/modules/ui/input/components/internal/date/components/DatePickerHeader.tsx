@@ -36,6 +36,7 @@ const StyledCustomDatePickerHeader = styled.div`
 
 type DatePickerHeaderProps = {
   date: string | null;
+  calendarMonthDate?: Date;
   onChange?: (date: string | null) => void;
   onChangeMonth: (month: number) => void;
   onChangeYear: (year: number) => void;
@@ -48,6 +49,7 @@ type DatePickerHeaderProps = {
 
 export const DatePickerHeader = ({
   date,
+  calendarMonthDate,
   onChange,
   onChangeMonth,
   onChangeYear,
@@ -61,6 +63,12 @@ export const DatePickerHeader = ({
   const userLocale = currentWorkspaceMember?.locale ?? SOURCE_LOCALE;
 
   const dateParsed = isDefined(date) ? Temporal.PlainDate.from(date) : null;
+  const currentMonth = isDefined(calendarMonthDate)
+    ? calendarMonthDate.getMonth() + 1
+    : (dateParsed?.month ?? Temporal.Now.plainDateISO().month);
+  const currentYear = isDefined(calendarMonthDate)
+    ? calendarMonthDate.getFullYear()
+    : (dateParsed?.year ?? Temporal.Now.plainDateISO().year);
 
   return (
     <>
@@ -75,7 +83,7 @@ export const DatePickerHeader = ({
             dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}
             options={getMonthSelectOptions(userLocale)}
             onChange={onChangeMonth}
-            value={dateParsed?.month}
+            value={currentMonth}
             fullWidth
           />
         </ClickOutsideListenerContext.Provider>
@@ -87,7 +95,7 @@ export const DatePickerHeader = ({
           <Select
             dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
             onChange={onChangeYear}
-            value={dateParsed?.year}
+            value={currentYear}
             options={YEARS_SELECT_OPTIONS}
             fullWidth
           />
