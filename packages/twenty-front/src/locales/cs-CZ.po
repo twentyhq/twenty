@@ -1283,8 +1283,8 @@ msgid "Add Field"
 msgstr "Přidat pole"
 
 #. js-lingui-id: T7RGT6
-#: src/modules/activities/files/components/FilesCard.tsx
-#: src/modules/activities/files/components/FilesCard.tsx
+#: src/modules/activities/files/components/FilesCardContent.tsx
+#: src/modules/page-layout/widgets/files/components/WidgetActionFileAttach.tsx
 msgid "Add file"
 msgstr "Přidat soubor"
 
@@ -2034,7 +2034,7 @@ msgid "All system objects are already in the sidebar"
 msgstr "Všechny systémové objekty už jsou v postranním panelu"
 
 #. js-lingui-id: p+lpde
-#: src/modules/activities/tasks/components/TaskGroups.tsx
+#: src/modules/activities/tasks/components/TaskGroupsContent.tsx
 msgid "All tasks addressed. Maintain the momentum."
 msgstr "Všechny úkoly vyřízeny. Udržujte tempo."
 
@@ -4356,7 +4356,7 @@ msgid "Component name"
 msgstr "Název komponenty"
 
 #. js-lingui-id: QOhkyl
-#: src/modules/activities/emails/components/EmailsCard.tsx
+#: src/modules/page-layout/widgets/emails/components/WidgetActionEmailCompose.tsx
 msgid "Compose"
 msgstr ""
 
@@ -12062,7 +12062,7 @@ msgid "Missing email draft permission."
 msgstr "Chybí oprávnění pro vytváření konceptů e-mailů."
 
 #. js-lingui-id: mibKsa
-#: src/modules/activities/tasks/components/TaskGroups.tsx
+#: src/modules/activities/tasks/components/TaskGroupsContent.tsx
 msgid "Mission accomplished!"
 msgstr "Mise splněna!"
 
@@ -12622,8 +12622,8 @@ msgid "New Model"
 msgstr "Nový model"
 
 #. js-lingui-id: zPPcuu
-#: src/modules/activities/notes/components/NotesCard.tsx
-#: src/modules/activities/notes/components/NotesCard.tsx
+#: src/modules/activities/notes/components/NotesCardContent.tsx
+#: src/modules/page-layout/widgets/notes/components/WidgetActionNoteCreate.tsx
 msgid "New note"
 msgstr "Nová poznámka"
 
@@ -12672,8 +12672,8 @@ msgid "New Tab"
 msgstr "Nová karta"
 
 #. js-lingui-id: wl18ST
-#: src/modules/activities/tasks/components/TaskGroups.tsx
-#: src/modules/activities/tasks/components/TaskGroups.tsx
+#: src/modules/activities/tasks/components/TaskGroupsContent.tsx
+#: src/modules/page-layout/widgets/tasks/components/WidgetActionTaskCreate.tsx
 msgid "New task"
 msgstr "Nový úkol"
 
@@ -13053,12 +13053,12 @@ msgid "No event logs found"
 msgstr "Nebyly nalezeny žádné protokoly událostí"
 
 #. js-lingui-id: l7y8S8
-#: src/modules/activities/calendar/components/CalendarEventsCard.tsx
+#: src/modules/activities/calendar/components/CalendarEventsCardContent.tsx
 msgid "No Events"
 msgstr "Žádné události"
 
 #. js-lingui-id: wY82y3
-#: src/modules/activities/calendar/components/CalendarEventsCard.tsx
+#: src/modules/activities/calendar/components/CalendarEventsCardContent.tsx
 msgid "No events have been scheduled with this {objectName} yet."
 msgstr "S tímto {objectName} zatím nejsou naplánovány žádné události."
 
@@ -13083,7 +13083,7 @@ msgid "No fields to display"
 msgstr "K zobrazení nejsou žádná pole."
 
 #. js-lingui-id: 23Rceg
-#: src/modules/activities/files/components/FilesCard.tsx
+#: src/modules/activities/files/components/FilesCardContent.tsx
 msgid "No Files"
 msgstr "Žádné soubory"
 
@@ -13197,7 +13197,7 @@ msgid "No models available. Please configure AI models in your workspace setting
 msgstr "Nejsou dostupné žádné modely. Prosím, nakonfigurujte AI modely v nastavení vašeho pracovního prostoru."
 
 #. js-lingui-id: 9VrTfZ
-#: src/modules/activities/notes/components/NotesCard.tsx
+#: src/modules/activities/notes/components/NotesCardContent.tsx
 msgid "No notes"
 msgstr "Žádné poznámky"
 
@@ -18731,12 +18731,12 @@ msgid "then"
 msgstr "poté"
 
 #. js-lingui-id: l2fWLK
-#: src/modules/activities/files/components/FilesCard.tsx
+#: src/modules/activities/files/components/FilesCardContent.tsx
 msgid "There are no associated files with this record."
 msgstr "Tento záznam nemá žádné přidružené soubory."
 
 #. js-lingui-id: 6g0c8y
-#: src/modules/activities/notes/components/NotesCard.tsx
+#: src/modules/activities/notes/components/NotesCardContent.tsx
 msgid "There are no associated notes with this record."
 msgstr "S tímto záznamem nejsou spojeny žádné poznámky."
 

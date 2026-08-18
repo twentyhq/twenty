@@ -1283,8 +1283,8 @@ msgid "Add Field"
 msgstr "Προσθήκη Πεδίου"
 
 #. js-lingui-id: T7RGT6
-#: src/modules/activities/files/components/FilesCard.tsx
-#: src/modules/activities/files/components/FilesCard.tsx
+#: src/modules/activities/files/components/FilesCardContent.tsx
+#: src/modules/page-layout/widgets/files/components/WidgetActionFileAttach.tsx
 msgid "Add file"
 msgstr "Προσθήκη αρχείου"
 
@@ -2034,7 +2034,7 @@ msgid "All system objects are already in the sidebar"
 msgstr "Όλα τα αντικείμενα συστήματος βρίσκονται ήδη στην πλευρική γραμμή"
 
 #. js-lingui-id: p+lpde
-#: src/modules/activities/tasks/components/TaskGroups.tsx
+#: src/modules/activities/tasks/components/TaskGroupsContent.tsx
 msgid "All tasks addressed. Maintain the momentum."
 msgstr "Όλες οι εργασίες αντιμετωπίστηκαν. Διατηρήστε τον ρυθμό."
 
@@ -4356,7 +4356,7 @@ msgid "Component name"
 msgstr "Όνομα στοιχείου"
 
 #. js-lingui-id: QOhkyl
-#: src/modules/activities/emails/components/EmailsCard.tsx
+#: src/modules/page-layout/widgets/emails/components/WidgetActionEmailCompose.tsx
 msgid "Compose"
 msgstr ""
 
@@ -12062,7 +12062,7 @@ msgid "Missing email draft permission."
 msgstr "Λείπει η άδεια για σύνταξη προσχεδίων email."
 
 #. js-lingui-id: mibKsa
-#: src/modules/activities/tasks/components/TaskGroups.tsx
+#: src/modules/activities/tasks/components/TaskGroupsContent.tsx
 msgid "Mission accomplished!"
 msgstr "Αποστολή ολοκληρώθηκε!"
 
@@ -12622,8 +12622,8 @@ msgid "New Model"
 msgstr "Νέο μοντέλο"
 
 #. js-lingui-id: zPPcuu
-#: src/modules/activities/notes/components/NotesCard.tsx
-#: src/modules/activities/notes/components/NotesCard.tsx
+#: src/modules/activities/notes/components/NotesCardContent.tsx
+#: src/modules/page-layout/widgets/notes/components/WidgetActionNoteCreate.tsx
 msgid "New note"
 msgstr "Νέα σημείωση"
 
@@ -12672,8 +12672,8 @@ msgid "New Tab"
 msgstr "Νέα καρτέλα"
 
 #. js-lingui-id: wl18ST
-#: src/modules/activities/tasks/components/TaskGroups.tsx
-#: src/modules/activities/tasks/components/TaskGroups.tsx
+#: src/modules/activities/tasks/components/TaskGroupsContent.tsx
+#: src/modules/page-layout/widgets/tasks/components/WidgetActionTaskCreate.tsx
 msgid "New task"
 msgstr "Νέα εργασία"
 
@@ -13053,12 +13053,12 @@ msgid "No event logs found"
 msgstr "Δεν βρέθηκαν αρχεία καταγραφής συμβάντων"
 
 #. js-lingui-id: l7y8S8
-#: src/modules/activities/calendar/components/CalendarEventsCard.tsx
+#: src/modules/activities/calendar/components/CalendarEventsCardContent.tsx
 msgid "No Events"
 msgstr "Δεν υπάρχουν συμβάντα"
 
 #. js-lingui-id: wY82y3
-#: src/modules/activities/calendar/components/CalendarEventsCard.tsx
+#: src/modules/activities/calendar/components/CalendarEventsCardContent.tsx
 msgid "No events have been scheduled with this {objectName} yet."
 msgstr "Δεν έχουν προγραμματιστεί ακόμη συμβάντα με αυτό το {objectName}."
 
@@ -13083,7 +13083,7 @@ msgid "No fields to display"
 msgstr "Δεν υπάρχουν πεδία προς εμφάνιση"
 
 #. js-lingui-id: 23Rceg
-#: src/modules/activities/files/components/FilesCard.tsx
+#: src/modules/activities/files/components/FilesCardContent.tsx
 msgid "No Files"
 msgstr "Χωρίς αρχεία"
 
@@ -13197,7 +13197,7 @@ msgid "No models available. Please configure AI models in your workspace setting
 msgstr "Δεν υπάρχουν διαθέσιμα μοντέλα. Παρακαλούμε ρυθμίστε τα μοντέλα AI στις ρυθμίσεις χώρου εργασίας σας."
 
 #. js-lingui-id: 9VrTfZ
-#: src/modules/activities/notes/components/NotesCard.tsx
+#: src/modules/activities/notes/components/NotesCardContent.tsx
 msgid "No notes"
 msgstr "Δεν υπάρχουν σημειώσεις"
 
@@ -18733,12 +18733,12 @@ msgid "then"
 msgstr "έπειτα"
 
 #. js-lingui-id: l2fWLK
-#: src/modules/activities/files/components/FilesCard.tsx
+#: src/modules/activities/files/components/FilesCardContent.tsx
 msgid "There are no associated files with this record."
 msgstr "Δεν υπάρχουν συσχετισμένα αρχεία με αυτήν την καταχώρηση."
 
 #. js-lingui-id: 6g0c8y
-#: src/modules/activities/notes/components/NotesCard.tsx
+#: src/modules/activities/notes/components/NotesCardContent.tsx
 msgid "There are no associated notes with this record."
 msgstr "Δεν υπάρχουν συσχετισμένες σημειώσεις με αυτήν την εγγραφή."
 
