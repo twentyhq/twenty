@@ -126,11 +126,8 @@ export const createClassTokenList = (
       );
     },
     forEach: (callback, thisArg) => {
-      let tokenIndex = 0;
-
-      for (const token of readCurrentTokens()) {
+      for (const [tokenIndex, token] of readCurrentTokens().entries()) {
         callback.call(thisArg, token, tokenIndex, classTokenList);
-        tokenIndex += 1;
       }
     },
     *entries() {
