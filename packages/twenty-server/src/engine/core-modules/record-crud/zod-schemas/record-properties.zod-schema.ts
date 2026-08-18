@@ -32,7 +32,9 @@ import {
   UuidValueSchema,
 } from 'src/engine/core-modules/record-crud/zod-schemas/shared-value-defs.zod-schema';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/utils/effective-entity-i18n-context.type';
 import { resolveEffectiveEntity } from 'src/engine/metadata-modules/utils/resolve-effective-entity.util';
+import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 const isFieldAvailable = (field: FlatFieldMetadata, forResponse: boolean) => {
@@ -99,11 +101,26 @@ export const generateRecordPropertiesZodSchema = (
   objectMetadata: ObjectMetadataForToolSchema,
   forResponse = false,
   restrictedFields?: RestrictedFieldsPermissions,
+  i18nContext?: EffectiveEntityI18nContext,
 ): z.ZodObject<Record<string, z.ZodTypeAny>> => {
   const shape: Record<string, z.ZodTypeAny> = {};
 
   objectMetadata.fields.forEach((rawField) => {
-    const field = resolveEffectiveEntity(rawField);
+    const effectiveDescription = isDefined(i18nContext)
+      ? resolveEffectiveEntityProperty({
+          metadataName: 'fieldMetadata',
+          baseValue: rawField.description,
+          overrides: rawField.overrides,
+          property: 'description',
+          i18nContext,
+        })
+      : ((rawField.overrides?.description as string | undefined) ??
+        rawField.description);
+
+    const field = {
+      ...resolveEffectiveEntity(rawField),
+      description: effectiveDescription,
+    };
 
     if (
       !isFieldAvailable(field, forResponse) ||
