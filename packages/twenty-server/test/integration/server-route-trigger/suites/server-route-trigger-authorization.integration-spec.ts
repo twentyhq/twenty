@@ -189,12 +189,12 @@ describe('ServerRouteTrigger authorization (integration)', () => {
       });
     });
 
-    it('dispatches a server-route-exposed resolver, queues the target, and acks with 202', async () => {
+    it('dispatches a server-route-exposed resolver, queues the target, and acks with 200', async () => {
       const response = await request(baseUrl)
         .post(`/webhooks/server/${EXPOSED_RESOLVER_UNIVERSAL_IDENTIFIER}`)
         .send({ any: 'payload' });
 
-      expect(response.status).toBe(202);
+      expect(response.status).toBe(200);
       expect(response.body).toEqual({ queued: true });
     }, 60000);
 

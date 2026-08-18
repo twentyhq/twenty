@@ -381,6 +381,7 @@ export class WorkspaceSelectQueryBuilder<
       flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
       objectIdByNameSingular: this.internalContext.objectIdByNameSingular,
       shouldBypassPermissionChecks: this.shouldBypassPermissionChecks,
+      authContext: this.authContext,
     });
   }
 

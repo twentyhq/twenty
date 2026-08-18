@@ -80,6 +80,7 @@ export default defineObject({
 * 각 필드는 `name`, `type`, `label` 및 고유하고 안정적인 `universalIdentifier`가 필요합니다.
 * `fields` 배열은 선택 사항입니다. 사용자 정의 필드 없이도 개체를 정의할 수 있습니다.
 * `openRecordIn`은 이 오브젝트의 레코드를 클릭했을 때 어디에서 열릴지 설정합니다: `ObjectOpenRecordIn.USER_CHOICE`(기본값이며, 각 워크스페이스 구성원이 Settings → Experience에서 지정한 개인 설정을 따릅니다), `ObjectOpenRecordIn.SIDE_PANEL`, 또는 `ObjectOpenRecordIn.RECORD_PAGE`. 워크플로와 대시보드처럼 전체 페이지에서 사용해야 하는 레코드의 경우 `RECORD_PAGE`에 고정하고, 캘린더 이벤트처럼 빠른 패널로 볼 때만 의미가 있는 레코드의 경우 `SIDE_PANEL`에 고정하세요.
+* `writability`는 역할 권한이 적용되기 전에, 해당 객체의 레코드를 누가 전반적으로 쓸 수 있는지를 제어합니다. `MetadataWritability.OPEN`(기본값 — 워크스페이스 역할이 결정함), `MetadataWritability.APPLICATION`(앱 자체의 로직 함수만 레코드를 생성, 업데이트 또는 삭제할 수 있음; 레코드가 동작을 부여하는 구성 항목과 유사한 객체에 사용하여, 광범위한 레코드 액세스를 가진 워크스페이스 구성원이 API를 통해 이를 편집하지 못하도록 함), 또는 `MetadataWritability.SYSTEM`(플랫폼이 관리하는 데이터용으로 예약됨) 중 하나입니다. 읽기 작업에는 영향을 주지 않습니다. 이는 서버 측에서 강제되며, UI 제공 요소만 숨기는 `isUIEditable`과는 다릅니다. 이는 필드 단위로도 존재하며, 이 경우 객체 수준보다 더 엄격하게만 설정할 수 있습니다.
 * 여기에서 정의된 인라인 필드는 `objectUniversalIdentifier`가 **필요하지 않습니다** — 상위 개체에서 상속됩니다. 소유하지 않은 개체에 필드를 추가하려면 [`defineField()`](/l/ko/developers/extend/apps/data/extending-objects)를 사용하세요.
 * `yarn twenty dev:add object`를 사용하여 새 개체를 스캐폴딩할 수 있으며, 이름, 필드, 관계 설정 과정을 안내합니다. [Architecture → Scaffolding entities](/l/ko/developers/extend/apps/getting-started/scaffolding)를 참조하세요.
 

@@ -1,5 +1,8 @@
 import { faker } from '@faker-js/faker';
-import { type FieldMetadataType } from 'twenty-shared/types';
+import {
+  type FieldMetadataType,
+  MetadataWritability,
+} from 'twenty-shared/types';
 
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -37,6 +40,7 @@ export const getMockFieldMetadataEntity = <
     isLabelSyncedWithName: false,
     isNullable: null,
     isUIEditable: true,
+    writability: MetadataWritability.OPEN,
     isSystem: false,
     isUnique: null,
     object: {} as ObjectMetadataEntity,

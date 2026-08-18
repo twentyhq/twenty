@@ -1,12 +1,12 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
+import { EventRowDate } from '@/activities/timeline-activities/rows/components/EventRowDate';
 import { type EventRowDynamicComponentProps } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types';
 import { EventRowItem } from '@/activities/timeline-activities/rows/components/EventRowItem';
 import {
   StyledEventRowContainer,
   StyledEventRowContent,
-  StyledEventRowDate,
   StyledEventRowLinkedRecord,
 } from '@/activities/timeline-activities/rows/components/EventRowStyles';
 import { isTimelineActivityWithLinkedRecord } from '@/activities/timeline-activities/types/TimelineActivity';
@@ -89,7 +89,7 @@ export const EventRowActivity = ({
             <OverflowingTextWithTooltip text={activityTitle} />
           </StyledEventRowLinkedRecord>
         </StyledEventRowContent>
-        <StyledEventRowDate>{createdAt}</StyledEventRowDate>
+        <EventRowDate createdAt={createdAt} />
       </StyledEventRowContainer>
     </StyledEventRow>
   );

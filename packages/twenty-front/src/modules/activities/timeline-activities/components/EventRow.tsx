@@ -15,8 +15,6 @@ import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectReco
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
-import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { allowRequestsToTwentyIconsState } from '@/client-config/states/allowRequestsToTwentyIcons';
 
@@ -95,16 +93,10 @@ export const EventRow = ({
     allowRequestsToTwentyIconsState,
   );
 
-  const { localeCatalog } = useAtomStateValue(dateLocaleState);
-
   const { recordId } = useContext(TimelineActivityContext);
 
   const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
-  const beautifiedCreatedAt = beautifyPastDateRelativeToNow(
-    event.createdAt,
-    localeCatalog,
-  );
   const linkedObjectMetadataItem = useLinkedObjectObjectMetadataItem(
     event.linkedObjectMetadataId,
   );
@@ -159,7 +151,7 @@ export const EventRow = ({
               event={event}
               mainObjectMetadataItem={mainObjectMetadataItem}
               linkedObjectMetadataItem={linkedObjectMetadataItem}
-              createdAt={beautifiedCreatedAt}
+              createdAt={event.createdAt}
             />
           </StyledSummary>
         </StyledItemContainer>

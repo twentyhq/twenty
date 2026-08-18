@@ -12,15 +12,12 @@ import { UserSessionEntity } from 'src/engine/core-modules/user-session/user-ses
 import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
 
 import { ALLOWED_ORIGIN } from 'test/integration/graphql/suites/auth/user-sessions/constants/session-origins.constants';
-import { setupDatabaseConfigOverrideForSuite } from 'test/integration/graphql/suites/auth/user-sessions/utils/setup-database-config-override.util';
 
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
 // Sessions created here are never resolved before the row is tampered with,
 // so the read-through cache holds no entry and the checks hit the database.
 describe('failing session expiration (integration)', () => {
-  setupDatabaseConfigOverrideForSuite('AUTH_COOKIE_SESSIONS_ENABLED', true);
-
   const signInAndTamper = async (
     tamper: Partial<Pick<UserSessionEntity, 'expiresAt' | 'lastActiveAt'>>,
   ): Promise<string> => {

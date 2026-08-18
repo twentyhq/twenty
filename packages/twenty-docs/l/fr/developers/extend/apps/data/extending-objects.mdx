@@ -43,6 +43,8 @@ export default defineField({
 
 * L’emplacement du fichier est à votre discrétion. La convention est `src/fields/\<name>.field.ts`, mais le SDK détecte les champs n'importe où dans `src/`.
 
+* La `writability` peut également être définie par champ : `MetadataWritability.APPLICATION` limite les écritures à la logique interne de votre application, `MetadataWritability.SYSTEM` est réservé aux données gérées par la plateforme. La `writability` d’un champ ne peut être que plus stricte que le niveau de son objet, et les lectures ne sont pas affectées. Voir [Objects](/l/fr/developers/extend/apps/data/objects) pour la sémantique complète.
+
 * Pour ajouter un onglet à une mise en page standard (par exemple la page de détail de Task ou de Company), utilisez [`definePageLayoutTab`](/l/fr/developers/extend/apps/layout/page-layouts#definepagelayouttab) avec `STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS` depuis `twenty-sdk/define`.
 
 ## Ajouter une relation à un objet existant

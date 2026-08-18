@@ -321,7 +321,6 @@ jobs:
       # and its heap grows across suites, so it shards on suite count, not on
       # the 16-way split the unflagged shards use.
       ORM_V2_SHARD_COUNTER: 5
-      AUTH_COOKIE_SESSIONS_ENABLED: ${{ contains(github.event.pull_request.labels.*.name, 'ci:auth-cookie-sessions') }}
       TEST_FORCED_FEATURE_FLAGS: ${{ matrix.orm-v2 && 'IS_ORM_V2_READ_PATH_ENABLED' || '' }}
       ORM_V2_TEST_PATH_PATTERN: '(find-many|find-one|find-duplicates|group-by|composite-field-pagination|filter-by-relation-field|order-by-relation-field|nested-relation|soft-deleted-relation|relation-join-rls|object-records-permissions|merge-many|mutate-by-relation-field|mutation-relation-filter-rls|upsert|unique-field|object-generated|files-field)'
     steps:
@@ -334,7 +333,6 @@ jobs:
       - name: Update .env.test for integrations tests
         run: |
           echo "" >> .env.test
-          echo "AUTH_COOKIE_SESSIONS_ENABLED=$AUTH_COOKIE_SESSIONS_ENABLED" >> .env.test
           echo "IS_BILLING_ENABLED=true" >> .env.test
           echo "BILLING_STRIPE_API_KEY=test-api-key" >> .env.test
           echo "BILLING_STRIPE_BASE_PLAN_PRODUCT_ID=test-base-plan-product-id" >> .env.test

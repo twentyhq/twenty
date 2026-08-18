@@ -1,17 +1,14 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 
-import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 import { findClaimedWorkspaceId } from 'src/logic-functions/utils/find-claimed-workspace-id';
 
 export const resolveTargetWorkspaceId = async (
-  body: SlackEventsRequestBody,
+  teamId: string | undefined,
 ): Promise<string> => {
-  const teamId = body.team_id;
-
   if (!isNonEmptyString(teamId)) {
     throw new Error(
-      'Slack event has no team_id; cannot resolve the target workspace',
+      'Slack request has no team id; cannot resolve the target workspace',
     );
   }
 

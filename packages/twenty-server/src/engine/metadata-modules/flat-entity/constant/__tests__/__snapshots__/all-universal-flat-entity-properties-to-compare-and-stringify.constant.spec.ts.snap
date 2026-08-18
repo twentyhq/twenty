@@ -82,6 +82,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "overrides",
       "universalSettings",
       "isUIEditable",
+      "writability",
       "isNullable",
     ],
     "propertiesToStringify": [
@@ -181,6 +182,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "labelIdentifierFieldMetadataUniversalIdentifier",
       "overrides",
       "isUIEditable",
+      "writability",
       "isUICreatable",
       "isSearchable",
       "imageIdentifierFieldMetadataUniversalIdentifier",

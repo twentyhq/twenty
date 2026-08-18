@@ -173,7 +173,7 @@ export class ServerRouteTriggerService {
       { retryLimit: QUEUED_TARGET_RETRY_LIMIT },
     );
 
-    return { statusCode: 202, headers: {}, body: { queued: true } };
+    return { statusCode: 200, headers: {}, body: { queued: true } };
   }
 
   private async findLogicFunctionOrFail({

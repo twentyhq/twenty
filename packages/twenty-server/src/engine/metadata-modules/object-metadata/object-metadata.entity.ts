@@ -9,9 +9,10 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { ObjectOpenRecordIn } from 'twenty-shared/types';
+import { MetadataWritability, ObjectOpenRecordIn } from 'twenty-shared/types';
 
 import { ADD_METADATA_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-metadata-overrides-column-upgrade-command-name.constant';
+import { ADD_METADATA_WRITABILITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-32/add-metadata-writability-upgrade-command-name.constant';
 import { ADD_OBJECT_METADATA_OPEN_RECORD_IN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-27/add-object-metadata-open-record-in-upgrade-command-name.constant';
 import { DROP_METADATA_STANDARD_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-20/drop-metadata-standard-overrides-column-upgrade-command-name.constant';
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
@@ -137,6 +138,16 @@ export class ObjectMetadataEntity
   })
   @Column({ default: true })
   isUICreatable: boolean;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_METADATA_WRITABILITY_UPGRADE_COMMAND_NAME,
+  })
+  @Column({
+    type: 'enum',
+    enum: Object.values(MetadataWritability),
+    default: MetadataWritability.OPEN,
+  })
+  writability: MetadataWritability;
 
   @Column({ default: true })
   isAuditLogged: boolean;

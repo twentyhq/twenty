@@ -15,7 +15,7 @@ import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZInde
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export { HorizontalScrollBoxShadowCSS, VerticalScrollBoxShadowCSS };
 
@@ -76,6 +76,12 @@ const StyledTable = styled.div<{
   position: relative;
 
   width: 100%;
+
+  // The mobile navigation bar floats over the page, so the table reserves its
+  // footprint to keep its last row reachable, grouped or not.
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    padding-bottom: ${themeCssVariables.spacing[20]};
+  }
 
   div.header-cell {
     z-index: ${TABLE_Z_INDEX.headerColumns.headerColumnsNormal};

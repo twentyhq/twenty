@@ -43,6 +43,8 @@ export default defineField({
 
 * Der Speicherort der Datei liegt bei Ihnen. Die Konvention ist `src/fields/\<name>.field.ts`, aber das SDK erkennt Felder überall in `src/`.
 
+* Die `writability` kann auch pro Feld festgelegt werden: `MetadataWritability.APPLICATION` beschränkt Schreibvorgänge auf die eigenen Logikfunktionen deiner App, `MetadataWritability.SYSTEM` ist für plattformverwaltete Daten reserviert. Die Schreibbarkeit eines Felds kann nur strenger sein als die Ebene seines Objekts, und Lesevorgänge werden nicht beeinträchtigt. Siehe [Objekte](/l/de/developers/extend/apps/data/objects) für die vollständige Semantik.
+
 * Um eine Registerkarte zu einem Standard-Seitenlayout hinzuzufügen (z. B. der Aufgaben- oder Unternehmensdetailseite), verwenden Sie [`definePageLayoutTab`](/l/de/developers/extend/apps/layout/page-layouts#definepagelayouttab) mit `STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS` aus `twenty-sdk/define`.
 
 ## Hinzufügen einer Relation zu einem bestehenden Objekt

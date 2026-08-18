@@ -1,4 +1,5 @@
 import {
+  MetadataWritability,
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
   type FieldMetadataDefaultValue,
@@ -87,6 +88,7 @@ export const createStandardFieldFlatMetadata = <
     isNullable,
     isUnique,
     isUIEditable,
+    writability: MetadataWritability.OPEN,
     isLabelSyncedWithName: false,
     overrides: null,
     defaultValue: defaultValue ?? null,
