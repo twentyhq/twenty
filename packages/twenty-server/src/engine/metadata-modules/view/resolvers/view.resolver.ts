@@ -10,6 +10,10 @@ import {
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { ViewType, ViewVisibility } from 'twenty-shared/types';
+import {
+  hasObjectMetadataLabelPlaceholder,
+  type MetadataLabelPlaceholderValues,
+} from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -24,8 +28,7 @@ import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
-import { OBJECT_LABEL_PLURAL_PLACEHOLDER } from 'src/engine/metadata-modules/view/constants/object-label-plural-placeholder.constant';
+import { buildViewNameObjectLabels } from 'src/engine/metadata-modules/view/utils/build-view-name-object-labels.util';
 import { resolveViewName } from 'src/engine/metadata-modules/view/utils/resolve-view-name.util';
 import { ViewFieldGroupDTO } from 'src/engine/metadata-modules/view-field-group/dtos/view-field-group.dto';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
@@ -71,11 +74,12 @@ export class ViewResolver {
 
     return resolveViewName({
       view,
-      objectLabelPlural: await this.resolveObjectLabelPlural({
-        view,
-        context,
-        workspace,
-      }),
+      objectLabelPlaceholderValues:
+        await this.resolveObjectLabelPlaceholderValues({
+          view,
+          context,
+          workspace,
+        }),
       i18nContext,
     });
   }
@@ -83,7 +87,7 @@ export class ViewResolver {
   // The object label is resolved against the object's own application, which is
   // not necessarily the view's -- a workspace-custom view can point at a
   // standard object.
-  private async resolveObjectLabelPlural({
+  private async resolveObjectLabelPlaceholderValues({
     view,
     context,
     workspace,
@@ -91,8 +95,8 @@ export class ViewResolver {
     view: ViewDTO;
     context: { loaders: IDataloaders } & I18nContext;
     workspace: WorkspaceEntity;
-  }): Promise<string | undefined> {
-    if (!view.name.includes(OBJECT_LABEL_PLURAL_PLACEHOLDER)) {
+  }): Promise<MetadataLabelPlaceholderValues | undefined> {
+    if (!hasObjectMetadataLabelPlaceholder(view.name)) {
       return undefined;
     }
 
@@ -105,17 +109,18 @@ export class ViewResolver {
       return undefined;
     }
 
-    return resolveEffectiveEntityProperty({
-      metadataName: 'objectMetadata',
-      baseValue: objectMetadata.labelPlural,
-      overrides: objectMetadata.overrides ?? undefined,
-      property: 'labelPlural',
-      i18nContext: await this.i18nService.buildEffectiveEntityI18nContext({
+    const objectI18nContext =
+      await this.i18nService.buildEffectiveEntityI18nContext({
         applicationId: objectMetadata.applicationId,
         loaders: context.loaders,
         locale: context.req.locale,
         workspaceId: workspace.id,
-      }),
+      });
+
+    return buildViewNameObjectLabels({
+      viewName: view.name,
+      objectMetadata,
+      i18nContext: objectI18nContext,
     });
   }
 

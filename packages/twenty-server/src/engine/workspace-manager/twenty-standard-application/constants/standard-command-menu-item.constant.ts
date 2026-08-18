@@ -8,7 +8,7 @@ import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-applicat
 export const STANDARD_COMMAND_MENU_ITEMS = {
   navigateToNextRecord: {
     universalIdentifier: '3db2457d-8e96-4b8e-94c9-ed95d3f95738',
-    label: 'Navigate to next ${capitalize(objectMetadataItem.labelSingular)}',
+    label: i18nLabel(msg`Navigate to next {objectLabelSingular}`),
     icon: 'IconChevronDown',
     isPinned: true,
     position: 1,
@@ -23,8 +23,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   navigateToPreviousRecord: {
     universalIdentifier: 'ec10f871-415b-420b-8150-7e09f6f04833',
-    label:
-      'Navigate to previous ${capitalize(objectMetadataItem.labelSingular)}',
+    label: i18nLabel(msg`Navigate to previous {objectLabelSingular}`),
     icon: 'IconChevronUp',
     isPinned: true,
     position: 2,
@@ -39,11 +38,11 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   createNewRecord: {
     universalIdentifier: '08d255bf-58cd-47a5-bd82-78c5c58592f1',
-    label: 'Create new ${capitalize(objectMetadataItem.labelSingular)}',
+    label: i18nLabel(msg`Create new {objectLabelSingular}`),
     icon: 'IconPlus',
     isPinned: true,
     position: 3,
-    shortLabel: 'New ${capitalize(objectMetadataItem.labelSingular)}',
+    shortLabel: i18nLabel(msg`New {objectLabelSingular}`),
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
     conditionalAvailabilityExpression:
       'pageType == "INDEX_PAGE" and objectPermissions.canUpdateObjectRecords and not hasAnySoftDeleteFilterOnView and objectMetadataItem.isUICreatable and objectMetadataItem.isUIEditable and not objectMetadataItem.isRemote',
@@ -54,7 +53,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   deleteRecords: {
     universalIdentifier: 'd5a55d57-ed1d-4791-89b8-53b7e121d69d',
-    label: 'Delete ${capitalize(objectMetadataLabel)}',
+    label: i18nLabel(msg`Delete {objectLabel}`),
     icon: 'IconTrash',
     isPinned: false,
     position: 4,
@@ -69,7 +68,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   restoreRecords: {
     universalIdentifier: '2d733846-8cc5-4314-ab79-916ae0801baa',
-    label: 'Restore ${capitalize(objectMetadataLabel)}',
+    label: i18nLabel(msg`Restore {objectLabel}`),
     icon: 'IconRefresh',
     isPinned: true,
     position: 5,
@@ -84,7 +83,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   destroyRecords: {
     universalIdentifier: '0ea2ebc4-02ca-4d15-b424-5352b9e487df',
-    label: 'Permanently destroy ${capitalize(objectMetadataLabel)}',
+    label: i18nLabel(msg`Permanently destroy {objectLabel}`),
     icon: 'IconTrashX',
     isPinned: false,
     position: 6,
@@ -144,7 +143,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   exportRecords: {
     universalIdentifier: 'c6f5c54d-d52b-4e75-8188-2190d77126f2',
-    label: 'Export ${capitalize(objectMetadataLabel)}',
+    label: i18nLabel(msg`Export {objectLabel}`),
     icon: 'IconFileExport',
     isPinned: false,
     position: 10,
@@ -158,7 +157,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   updateMultipleRecords: {
     universalIdentifier: '2e080651-f098-4a78-bea9-7a70002dc57c',
-    label: 'Update ${capitalize(objectMetadataItem.labelPlural)}',
+    label: i18nLabel(msg`Update {objectLabelPlural}`),
     icon: 'IconEdit',
     isPinned: true,
     position: 11,
@@ -173,7 +172,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   mergeMultipleRecords: {
     universalIdentifier: '6c14eb04-8e7e-4d47-93c0-8ec4834e2e60',
-    label: 'Merge ${capitalize(objectMetadataItem.labelPlural)}',
+    label: i18nLabel(msg`Merge {objectLabelPlural}`),
     icon: 'IconArrowMerge',
     isPinned: false,
     position: 12,
@@ -188,7 +187,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   importRecords: {
     universalIdentifier: 'a2dc9de7-4798-422e-bb55-bfad7b9bdbe8',
-    label: 'Import ${capitalize(objectMetadataItem.labelPlural)}',
+    label: i18nLabel(msg`Import {objectLabelPlural}`),
     icon: 'IconFileImport',
     isPinned: false,
     position: 13,
@@ -218,11 +217,11 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   seeDeletedRecords: {
     universalIdentifier: 'd63c21c3-9785-4750-be87-5f36269b8e0d',
-    label: 'See deleted ${capitalize(objectMetadataItem.labelPlural)}',
+    label: i18nLabel(msg`See deleted {objectLabelPlural}`),
     icon: 'IconRotate2',
     isPinned: false,
     position: 15,
-    shortLabel: 'Deleted ${capitalize(objectMetadataItem.labelPlural)}',
+    shortLabel: i18nLabel(msg`Deleted {objectLabelPlural}`),
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
     conditionalAvailabilityExpression:
       'pageType == "INDEX_PAGE" and not hasAnySoftDeleteFilterOnView',
@@ -248,7 +247,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   hideDeletedRecords: {
     universalIdentifier: '1420db7f-0fba-49e2-b23e-4b7caa0fafa0',
-    label: 'Hide deleted ${capitalize(objectMetadataItem.labelPlural)}',
+    label: i18nLabel(msg`Hide deleted {objectLabelPlural}`),
     icon: 'IconEyeOff',
     isPinned: false,
     position: 17,

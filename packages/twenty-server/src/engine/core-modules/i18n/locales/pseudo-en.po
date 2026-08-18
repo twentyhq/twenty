@@ -593,6 +593,11 @@ msgstr ""
 msgid "AI agent step execution failed."
 msgstr ""
 
+#. js-lingui-id: pdOYzu
+#: src/engine/metadata-modules/view/constants/index-view-name.constant.ts
+msgid "All {objectLabelPlural}"
+msgstr ""
+
 #. js-lingui-id: wgGOAj
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
 msgid "All recipients are suppressed for this email domain."
@@ -2086,6 +2091,11 @@ msgstr ""
 msgid "Create Calendar Event"
 msgstr ""
 
+#. js-lingui-id: JebCxX
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Create new {objectLabelSingular}"
+msgstr ""
+
 #. js-lingui-id: x65syA
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgid "Create new Campaign"
@@ -2524,6 +2534,16 @@ msgstr ""
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgid "Delete"
+msgstr ""
+
+#. js-lingui-id: 2nRIIp
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Delete {objectLabel}"
+msgstr ""
+
+#. js-lingui-id: 3YbUg3
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Deleted {objectLabelPlural}"
 msgstr ""
 
 #. js-lingui-id: QN9ahV
@@ -2988,6 +3008,11 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgid "Export"
+msgstr ""
+
+#. js-lingui-id: 12/HVt
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Export {objectLabel}"
 msgstr ""
 
 #. js-lingui-id: q46CjD
@@ -3680,6 +3705,11 @@ msgstr ""
 msgid "GitHub authentication failed. Try connecting your GitHub account again."
 msgstr ""
 
+#. js-lingui-id: zvT1NK
+#: src/engine/metadata-modules/flat-command-menu-item/utils/build-navigation-flat-command-menu-item.util.ts
+msgid "Go to {objectLabelPlural}"
+msgstr ""
+
 #. js-lingui-id: yLNxLB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgid "Go to Accounts Settings"
@@ -3828,6 +3858,11 @@ msgstr ""
 msgid "Hide deleted"
 msgstr ""
 
+#. js-lingui-id: B4dPub
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Hide deleted {objectLabelPlural}"
+msgstr ""
+
 #. js-lingui-id: i0qMbr
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgid "Home"
@@ -3923,6 +3958,11 @@ msgstr ""
 #. js-lingui-id: l3s5ri
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgid "Import"
+msgstr ""
+
+#. js-lingui-id: 29+qV2
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Import {objectLabelPlural}"
 msgstr ""
 
 #. js-lingui-id: /LCAwL
@@ -5286,6 +5326,11 @@ msgstr ""
 msgid "Merge"
 msgstr ""
 
+#. js-lingui-id: rPeiFM
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Merge {objectLabelPlural}"
+msgstr ""
+
 #. js-lingui-id: xDAtGP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -5643,6 +5688,16 @@ msgstr ""
 msgid "Navigate App"
 msgstr ""
 
+#. js-lingui-id: 3iSsSA
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Navigate to next {objectLabelSingular}"
+msgstr ""
+
+#. js-lingui-id: /BSJnN
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Navigate to previous {objectLabelSingular}"
+msgstr ""
+
 #. js-lingui-id: RJyaoR
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -5687,6 +5742,11 @@ msgstr ""
 #. js-lingui-id: isRobC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgid "New"
+msgstr ""
+
+#. js-lingui-id: LfvvW4
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "New {objectLabelSingular}"
 msgstr ""
 
 #. js-lingui-id: yGfI61
@@ -6530,6 +6590,11 @@ msgstr ""
 msgid "Per-step observability payload (token usage, tool calls, log entries)"
 msgstr ""
 
+#. js-lingui-id: x1CdxO
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Permanently destroy {objectLabel}"
+msgstr ""
+
 #. js-lingui-id: 3zRddX
 #: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
 msgid "Permission flag already exists."
@@ -7170,6 +7235,11 @@ msgstr ""
 msgid "Restore"
 msgstr ""
 
+#. js-lingui-id: 8KyDbM
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Restore {objectLabel}"
+msgstr ""
+
 #. js-lingui-id: 6gRgw8
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -7558,6 +7628,11 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgid "See Active Version"
+msgstr ""
+
+#. js-lingui-id: nTgzRr
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "See deleted {objectLabelPlural}"
 msgstr ""
 
 #. js-lingui-id: dcr/0m
@@ -9355,6 +9430,11 @@ msgstr ""
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgid "Update"
+msgstr ""
+
+#. js-lingui-id: LMjQtQ
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Update {objectLabelPlural}"
 msgstr ""
 
 #. js-lingui-id: 0gY5lO
