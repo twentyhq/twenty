@@ -28,9 +28,9 @@ export const RecordTableWidgetRenderer = ({
       ? (configuration.recordLimit as number | undefined)
       : undefined;
 
-  const isRecordsEditable =
-    isRecordTableConfiguration && 'isRecordsEditable' in configuration
-      ? (configuration.isRecordsEditable ?? false)
+  const isRecordEditable =
+    isRecordTableConfiguration && 'isRecordEditable' in configuration
+      ? (configuration.isRecordEditable ?? false)
       : false;
 
   if (!isDefined(widget.objectMetadataId) || !isDefined(viewId)) {
@@ -44,7 +44,7 @@ export const RecordTableWidgetRenderer = ({
       widgetId={widget.id}
       isEmptyStateHidden
       recordLimit={recordLimit}
-      isReadOnly={isPageLayoutInEditMode || !isRecordsEditable}
+      isReadOnly={isPageLayoutInEditMode || !isRecordEditable}
     />
   );
 };
