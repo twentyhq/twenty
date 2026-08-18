@@ -85,6 +85,17 @@ describe('slackSetUserLinkHandler', () => {
     expect(createSlackUserLinkMock).not.toHaveBeenCalled();
   });
 
+  it('should fail without creating when the link lookup errors', async () => {
+    findSlackUserLinkMock.mockRejectedValue(new Error('GraphQL error'));
+
+    const result = await slackSetUserLinkHandler(INPUT);
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe('GraphQL error');
+    expect(createSlackUserLinkMock).not.toHaveBeenCalled();
+    expect(updateSlackUserLinkMock).not.toHaveBeenCalled();
+  });
+
   it('should create a manual link when none exists', async () => {
     const result = await slackSetUserLinkHandler({ ...INPUT, name: 'Ada' });
 

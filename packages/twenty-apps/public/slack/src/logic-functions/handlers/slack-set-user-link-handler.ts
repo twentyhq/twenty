@@ -52,10 +52,21 @@ export const slackSetUserLinkHandler = async ({
   }
 
   const client = new CoreApiClient();
-  const existingLink = await findSlackUserLink(client, {
-    slackTeamId,
-    slackUserId,
-  }).catch(() => undefined);
+
+  let existingLink;
+
+  try {
+    existingLink = await findSlackUserLink(client, {
+      slackTeamId,
+      slackUserId,
+    });
+  } catch (error) {
+    return {
+      success: false,
+      message: 'Could not look up the existing link',
+      error: error instanceof Error ? error.message : String(error),
+    };
+  }
 
   if (isDefined(existingLink)) {
     await updateSlackUserLink(client, {
