@@ -188,181 +188,288 @@ metadata-only change that deletes that TODO and turns the note/task fan-out from
 a special case into an instance of a general concept. It is the prerequisite for
 everything below.
 
-## 3. What the rule has to express
+## 3. Two directions, two mechanisms
 
-Once junction relations are declared, "which related object produces a timeline
-activity on its parent" reduces to naming a single relation field, because the
-metadata already knows how to walk it.
+"Which related object produces a timeline activity on its parent" has a twin that
+gets asked just as often: show people's activity on the company timeline, show
+company activity on the opportunity timeline, and sometimes the reverse. These are
+not the same feature, and the difference is not cosmetic. The cost profiles are
+inverted.
 
-For a rule with a source object and one target relation field, the engine
-supports exactly three field shapes and rejects a fourth:
+Take any relation edge between a child object A holding the foreign key and a
+parent object B:
 
-| Field shape | Traversal | Fan-out | Example |
-| --- | --- | --- | --- |
-| none (`null`) | the source record itself | 1 | today's default for every object |
-| `MANY_TO_ONE` | read the join column from `properties.after`, no query | 1 | `contract.company` |
-| `ONE_TO_MANY` + `junctionTargetFieldId` | query junction rows by the source FK, read the junction target join column, expanding morph members | number of junction rows | `note.noteTargets` |
-| `ONE_TO_MANY` without junction | **rejected** | unbounded downward | `company.people` |
+- Putting **A's activity on B's timeline** is cheap to materialize, because each A
+  record has exactly one B, so one event writes one extra row. It is expensive to
+  resolve at read time, because reading B means reaching across all of its A
+  records.
+- Putting **B's activity on A's timeline** is the mirror image. Materializing it
+  means one event on B writes a row on every one of its A records, which is
+  unbounded. Resolving it at read time is a join to a single record.
 
-That closed set covers every behavior we have today and every one we have asked
-for, and the rejection is the cardinality guard: a rule may never make one write
-fan out across an unbounded child collection.
+The mechanism should follow whichever direction is bounded. That gives two
+constructs, and the model needs both.
 
-### 3.1 One rule covers both the source and its junction
+**Emission (materialized, write time).** Events on this object produce a timeline
+entry on the records reached through this relation. Selective: an emission carries
+its own actions, trigger fields, label and aggregation. The self rule and the
+note/task fan-out are emissions.
 
-A junction relation implies two event sources:
+**Inheritance (resolved, read time).** This object's timeline also shows the
+entries already targeting the records reached through this relation. Whole-feed:
+it creates nothing, it widens a query.
 
-- events on the source object (`note.updated`) mean "the linked thing changed"
-- events on the junction object (`noteTarget.created` / `.deleted`) mean "the link
-  itself changed"
+### 3.1 Inheritance composes with emission, which is why there is no path array
 
-Today those are the two near-identical private methods. With the junction
-declared in metadata the engine derives the second subscription from the rule, so
-one row expresses "note activity appears on its targets" and covers editing,
-linking and unlinking. This is the strongest argument for keying rules on a
-relation field rather than on a generic path array: the path array would have
-needed two rows and no way to know they were the same user-facing switch.
+The case that breaks a pure emission model is "notes attached to a person should
+appear on the company timeline". That is `note -> person -> company`, two hops, and
+no bounded emission expresses it. An earlier draft of this document proposed a path
+array to cover it.
 
-The `name` written stays exactly as today: the action comes from whichever event
-fired, and the `linked-` prefix is now derivable ("the rule has a target field")
-instead of stringly-typed.
+It is not needed. The note emission already writes a row targeting the person, and
+the company inherits rows targeting its people, so the note appears on the company
+timeline with no extra rule and no extra write:
+
+```
+note.updated
+  -> emission (note -> note.noteTargets)      writes row { targetPersonId: P }
+                                              writes row { targetCompanyId: C } (direct link)
+read company C's timeline
+  -> own rows                                 { targetCompanyId: C }
+  -> inheritance (company -> company.people)  { targetPersonId IN people(C) }  <- the note on P
+```
+
+Single-hop emissions plus inheritance edges cover the transitive cases. Every hop
+in the chain stays bounded, and no rule ever needs to describe more than one
+relation. This is the main reason to add inheritance rather than multi-hop paths.
+
+Note the dependency: inheritance surfaces rows that exist. Person rows exist only
+because `person` has a self emission. Turning off an object's self emission
+silently empties whatever inherits from it.
+
+### 3.2 The validity matrix
+
+For a rule attached to an object, walking one relation field, with an explicit
+resolution:
+
+| Field shape | `MATERIALIZED` (emission) | `INHERITED` |
+| --- | --- | --- |
+| `null` (self) | the default self rule | meaningless, rejected |
+| `MANY_TO_ONE`, e.g. `person.company` | person events write on the company, fan-out 1 | company rows show on the person, join to 1 |
+| `ONE_TO_MANY` + `junctionTargetFieldId`, e.g. `note.noteTargets` | note events write on the targets, bounded by junction rows | target rows show on the note |
+| `ONE_TO_MANY` plain, e.g. `company.people` | **rejected**, unbounded write fan-out | people rows show on the company, one subquery |
+
+One rejection, and it is the only cell where the work is unbounded. The shape that
+the emission-only model had to reject outright is exactly the shape inheritance
+handles correctly. Every request we have on file lands somewhere in this table:
+
+| Ask | Rule |
+| --- | --- |
+| notes and tasks on their targets | `MATERIALIZED note -> note.noteTargets` (standard) |
+| people's activity on the company timeline | `INHERITED company -> company.people` |
+| notes on a person visible on the company | falls out of the two rows above |
+| company activity on the opportunity timeline | `INHERITED opportunity -> opportunity.company` |
+| opportunity activity on the company timeline | either `INHERITED company -> company.opportunities` or `MATERIALIZED opportunity -> opportunity.company` |
+
+The last row is the interesting one: both directions are valid and the choice is a
+real tradeoff. Inheritance is retroactive and costs nothing to write, but it is
+all-or-nothing. Emission is selective (only stage changes, with its own label and
+aggregation) and cheap to read, but it applies only from the moment it is enabled.
+
+### 3.3 Resolution is explicit, not derived
+
+It is tempting to derive the resolution from the field shape, since three of the
+four rows above have only one valid cell. Junctions break it: `note.noteTargets`
+and `company.noteTargets` are both `ONE_TO_MANY` + junction, and they mean opposite
+things. So `resolution` is a stored column, validated against the matrix.
+
+### 3.4 What inheritance costs
+
+Inheritance needs a read path that today does not exist. The frontend currently
+queries `timelineActivity` through the generic `useFindManyRecords` with
+`{ targetCompanyId: { eq: X } }`. Widening that to inherited sources must not
+happen by expanding child ids into an `in` filter: a company with ten thousand
+people would ship ten thousand UUIDs through the API.
+
+It needs a dedicated resolver that builds the predicate server-side:
+
+```sql
+WHERE ta."targetCompanyId" = $1
+   OR ta."targetPersonId" IN (SELECT id FROM person WHERE "companyId" = $1)
+```
+
+Three properties make this much less alarming than it sounds:
+
+- **It stays inside one table.** Inheritance never unions heterogeneous sources, so
+  ordering and cursor pagination remain a single ordinary query. This is the
+  decisive difference from the messages and calendar read-time resolvers, which do
+  union different tables and are correspondingly awkward.
+- **It is where permission filtering belongs anyway.** Inheriting person rows onto
+  a company timeline means a reader with company access but not person access would
+  otherwise see person activity, so server-side filtering stops being a nice-to-have
+  and becomes a precondition. The same resolver fixes finding 1.4.5 for every row,
+  inherited or not.
+- **It is the convergence point.** Once a `recordTimeline` resolver exists, the
+  messages and calendar sources have somewhere to live, which is the beginning of an
+  answer to the two-mechanisms problem in section 10.
+
+Two limits to set from the start: inheritance does **not** chain (depth 1), so
+reading an opportunity that inherits its company does not also pull in what the
+company inherits, and the edge set must be validated acyclic so
+`company -> people -> company` cannot be configured. Depth 1 keeps the read query
+non-recursive; depth N is a later decision, not a later accident.
+
+Index note: each `target<Object>Id` has a single-column index today
+(`compute-timeline-activity-standard-flat-index-metadata.util.ts`). An inheritance
+predicate sorted by `createdAt DESC LIMIT n` wants composite
+`(target<Object>Id, createdAt DESC)` indexes, which should land with the resolver,
+not before.
 
 ## 4. Decisions
 
-Six choices that shape the entity. Each is a recommendation, with the reasoning
-and the cost of getting it wrong.
-
 ### 4.1 Default rules are derived, not materialized
 
-**Recommended: derive defaults from metadata, persist only overrides.**
+**Derive defaults from metadata, persist only overrides.**
 
-`isTimelineLogged` is never added, and the existence of a row is not the
-indicator either. A pure function turns object and field metadata into the
-effective rule set; rows exist only where someone changed something. This mirrors
-how standard metadata already handles `overrides`.
+`isTimelineLogged` is never added, and the existence of a row is not the indicator
+either. A pure function turns object and field metadata into the effective rule
+set; rows exist only where someone changed something. This mirrors how standard
+metadata already handles `overrides`.
 
 ```ts
 computeEffectiveTimelineActivityRules({
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   flatTimelineActivityRuleMaps,
-}): Map<sourceObjectMetadataId, EffectiveTimelineActivityRule[]>
+}): Map<objectMetadataId, EffectiveTimelineActivityRule[]>
 ```
 
 Derivation, chosen to reproduce today exactly:
 
-- a **self rule** for every object where `isAuditLogged && !isSystem`
+- a **self emission** for every object where `isAuditLogged && !isSystem`
 - nothing for system objects, so `attachment`, `workspaceMember` and
   `workflowVersion` stay silent exactly as the current allowlist makes them
-- the note and task **fan-out rules are not derived**. Deriving one per junction
-  relation would silently switch on `messageList.members`. They ship as two
-  explicit rows owned by the twenty-standard-application, created by the same sync
-  that creates every other standard metadata row, so there is no backfill command
+- **no derived inheritance at all**, so the read path starts empty
+- the note and task fan-out emissions are **not** derived either. Deriving one per
+  junction relation would silently switch on `messageList.members`. They ship as
+  two explicit rows owned by the twenty-standard-application, created by the same
+  sync that creates every other standard metadata row, so there is no backfill
+  command
 
-Persisted rows merge onto derived ones by the natural key
-`(sourceObjectMetadataId, targetFieldMetadataId)`. A row with `isActive: false`
-disables its derived counterpart, which is how a timeline is turned off without a
-boolean column. `isAuditLogged` keeps its current meaning, because the derivation
-reads it.
+Persisted rows merge onto derived ones by the natural key. A row with
+`isActive: false` disables its derived counterpart, which is how a timeline is
+turned off without a boolean column. `isAuditLogged` keeps its current meaning,
+because the derivation reads it.
 
-The alternatives were materializing a self rule per object (uniform, but a
-backfill of every object of every workspace and a row per custom object forever)
-and keeping a boolean for self with rows only for fan-out (no backfill, but the
-self rule then cannot carry field filters or aggregation, and settings has to
-render two mechanisms for one question).
+The alternatives were materializing a self rule per object (uniform, but a backfill
+of every object of every workspace and a row per custom object forever) and keeping
+a boolean for self with rows only for fan-out (no backfill, but the self rule then
+cannot carry field filters or aggregation, and settings has to render two
+mechanisms for one question).
 
-API consequence: queries return **effective** rules with `id: string | null`,
-where `null` means derived and not yet persisted. Mutations upsert on the natural
-key, not on `id`. Editing a derived rule materializes it, and the frontend never
-has to know which kind it is looking at.
+API consequence: queries return **effective** rules with `id: string | null`, where
+`null` means derived and not yet persisted. Mutations upsert on the natural key,
+not on `id`. Editing a derived rule materializes it, and the frontend never has to
+know which kind it is looking at.
 
 ### 4.2 Rules are keyed on the relation, presented per target object
 
-**Recommended: one row per `(source, target relation)`, with an optional
+**One row per `(object, relation field, resolution)`, with an optional
 `targetObjectMetadataIds` filter for morph members.**
 
-The tension is real: storage wants the relation ("where do note changes show
-up?"), but a settings screen reads better target-first ("what shows up in
-Company's timeline?"). The resolution is that these need not match, because the
-target set of a rule is derivable from the flat maps with no query:
-`targetFieldMetadataId` to `junctionTargetFieldId` to a morph member to its
-`morphId` to every member to each `relationTargetObjectMetadataId`.
+Storage wants the relation; a settings screen reads better target-first. These need
+not match, because a rule's target set is derivable from the flat maps with no
+query: `relationFieldMetadataId` to `junctionTargetFieldId` to a morph member to its
+`morphId` to every member to each `relationTargetObjectMetadataId`. So the API can
+expose a target-first index over relation-keyed rows.
 
-So the API can expose a target-first index over relation-keyed rows. Storage stays
-proportional to relations rather than to relations times objects, which matters
-because a morph junction gains a member every time a custom object is created.
-Target-keyed storage would have needed a new row per custom object per rule.
+Storage then stays proportional to relations rather than to relations times
+objects, which matters because a morph junction gains a member every time a custom
+object is created. Target-keyed storage would have needed a new row per custom
+object per rule.
 
-`targetObjectMetadataIds` is a filter, not part of the identity, so two rules on
-the same relation with different morph subsets are deliberately not
-representable.
+Inheritance rows are already reader-keyed, so the target-first view is native for
+half the model and derived for the other half.
 
-### 4.3 Source actions and link actions are separate lists
+`targetObjectMetadataIds` is a filter, not part of the identity, so two rules on the
+same relation with different morph subsets are deliberately not representable.
 
-**Recommended: two columns, `sourceActions` and `linkActions`.**
+### 4.3 One `actions` list, with `linked` and `unlinked` as first-class actions
 
-A junction relation has two event sources: the source record changing
-(`note.updated`) and the link itself changing (`noteTarget.created`). One rule
-covers both, because the engine derives the junction subscription from the rule.
-But whether they are toggled together is a separate question, and splitting one
-jsonb column into two now is free, whereas retrofitting it later costs an upgrade
-command through the whole metadata pipeline.
+A junction relation has two event streams: the source record changing
+(`note.updated`) and the link itself changing (`noteTarget.created`). An earlier
+draft split these into `sourceActions` and `linkActions`. That is worse, because
+`created` then means two different things depending on which list it appears in.
 
-Precision matters on the defaults. Today **both** paths accept every action that
-arrives, so the faithful default is
-`sourceActions = linkActions = [created, updated, deleted, restored]`. Shipping
-`linkActions: [created, deleted]` instead is probably what we want, but it is a
-behavior change and belongs in phase 6, not smuggled into the refactor.
+A single list over an enum with distinct values has no such ambiguity:
 
-`linkActions` is meaningless for a self rule and, in the initial engine, for a
-`MANY_TO_ONE` target (see 4.5), where it is ignored.
+```
+created | updated | deleted | restored | linked | unlinked
+```
 
-### 4.4 Rules apply from now on, with no backfill
+`linked` already exists in the shared `TimelineActivityAction` union; only
+`unlinked` needs adding. What produces a link event depends on the target field:
 
-**Recommended: enabling a rule creates no history, and the settings UI says so.**
+| Target field | `linked` / `unlinked` mean |
+| --- | --- |
+| `null` (self) | never emitted |
+| junction | a junction row was created / deleted |
+| `MANY_TO_ONE` | the foreign key started / stopped pointing at the record (see 4.5) |
 
-This is not just the cheap option. Reconstructing a timeline row needs the diff as
-it was at the time of the event, and only the timeline write path captures that.
-The ClickHouse event log is the one other record of the past, it is optional
-(`workspaceEventSinkService.isEnabled()`), and it is actively pruned by
+This is what makes 4.5 fall out cleanly rather than needing its own mechanism: a
+foreign key moving is a link and an unlink, exactly like a junction row appearing
+and disappearing.
+
+To stay faithful, phase 2 keeps writing today's names, so a junction row created
+still stores `name: "linked-note.created"`. The structured `action` column
+introduced in phase 3 carries the true value (`linked`), and it is authoritative;
+`name` is legacy compatibility. Frontend readers migrate to the column in phase 6.
+
+### 4.4 Emissions apply from now on; inheritance is retroactive
+
+**Enabling an emission creates no history. Enabling an inheritance surfaces all of
+it immediately.**
+
+No backfill for emissions, and not merely because it is cheaper. A timeline row
+needs the diff as it was at the time of the event, and only the timeline write path
+captures that. The ClickHouse event log is the one other record of the past, it is
+optional (`workspaceEventSinkService.isEnabled()`), and it is actively pruned by
 `event-logs/cleanup/crons/event-log-cleanup.cron.job.ts`. A backfill built on it
 would be silently partial, which is worse than none.
 
-If retroactive sources become a requirement, the answer is read-time composition
-for those sources specifically, not a backfill job.
+Inheritance has the opposite property for free, since it only widens a query. That
+asymmetry is a genuine product difference the settings UI has to communicate, and
+it is a good reason to prefer inheritance when a user's motivation is "I want to see
+the history I already have".
 
-### 4.5 A changed many-to-one emits on the new value only
+### 4.5 A changed many-to-one emits on both sides
 
-**Recommended: read the FK from `properties.after`, ignore `properties.before`,
-for now.**
+When `contract.companyId` moves from A to B, A's timeline gets an `unlinked` entry
+and B's gets a `linked` entry, in addition to the ordinary `updated` entry that the
+rule's `sourceActions` may produce on B.
 
-When `contract.companyId` moves from A to B, B's timeline gets the update and A
-gets nothing. Emitting an "unlinked" row on A is genuinely useful, but it is new
-behavior and needs an `unlinked` action added to the shared
-`TimelineActivityAction` union, which the frontend switches on. Defer it to phase
-6 as an explicit `emitOnRelationChange` behavior.
+Mechanically: on an `updated` event, the engine compares the relation's join column
+in `properties.before` and `properties.after`. If it changed, it emits `unlinked`
+against the before-value and `linked` against the after-value.
 
-Note the consequence of the simple rule: once a `contract -> company` rule exists,
-**every** contract update writes a row on the company timeline, not only FK
-changes. That is the intended feature, and `triggerFieldMetadataIds` is how a user
-narrows it.
+This introduces no behavior change, because no `MANY_TO_ONE` emission rule can
+exist before the API ships. It therefore lands with phase 5 rather than in phase 6,
+so that the first user-created many-to-one rule has complete semantics from the
+start.
+
+Worth being explicit about the consequence of the ordinary case: once a
+`contract -> company` emission exists, **every** contract update writes a row on the
+company timeline, not only foreign key changes. That is the feature, and
+`triggerFieldMetadataIds` is how a user narrows it.
 
 ### 4.6 The listener keeps its current gate
 
-**Recommended: keep enqueuing the job on `isAuditLogged`, let the job consult the
-rules.**
-
 `EntityEventsToDbListener` is on the hot path and does not have the flat maps
 cache. Computing "is this object the source or the junction of any effective
-rule?" there would mean a cache read per batch. Enqueuing exactly as today costs
-some queue traffic for objects with no rules, and the job discards them
-immediately. Optimize later with a cached `Set<objectMetadataId>` if the queue
-volume shows up.
-
-Corollary: `name` keeps its current format
-(`<object>.<action>` / `linked-<object>.<action>`) indefinitely, because three
-frontend call sites parse it. The structured columns in 5.3 are additive, and new
-readers prefer them.
+emission?" there would mean a cache read per batch. Enqueuing exactly as today
+costs some queue traffic for objects with no rules, and the job discards them
+immediately. Optimize later with a cached `Set<objectMetadataId>` if queue volume
+shows up. Inheritance never touches this path at all.
 
 ## 5. Proposed entity
 
@@ -373,33 +480,33 @@ export class TimelineActivityRuleEntity extends SyncableEntity {
   id: string;
   workspaceId: string;
 
-  // object whose database events trigger this rule
-  sourceObjectMetadataId: string;
+  // MATERIALIZED: the object whose events trigger this rule
+  // INHERITED: the object whose timeline is widened by this rule
+  objectMetadataId: string;
 
-  // relation field to walk from the source to the record receiving the entry.
-  // null = the source record itself. Must be MANY_TO_ONE, or ONE_TO_MANY with
-  // a junctionTargetFieldId
-  targetFieldMetadataId: string | null;
+  // the single relation field to walk. null = the record itself, and is only
+  // valid for MATERIALIZED
+  relationFieldMetadataId: string | null;
+
+  resolution: 'MATERIALIZED' | 'INHERITED';
 
   // for morph junction targets, restrict to specific members. null = all
   targetObjectMetadataIds: string[] | null;
 
-  // actions on the source record
-  sourceActions: JsonbProperty<TimelineActivityRuleAction[]>;
+  // MATERIALIZED only. created | updated | deleted | restored | linked | unlinked
+  actions: JsonbProperty<TimelineActivityRuleAction[]>;
 
-  // actions on the junction row. Ignored unless the target field is a junction
-  linkActions: JsonbProperty<TimelineActivityRuleAction[]>;
-
-  // null = any field. Only meaningful for `updated`
+  // MATERIALIZED only, null = any field. Only meaningful for `updated`
   triggerFieldMetadataIds: string[] | null;
 
-  // diff keys to persist. null = all
+  // MATERIALIZED only, diff keys to persist. null = all
   payloadFieldMetadataIds: string[] | null;
 
-  // supplies linkedRecordCachedName. null = source object's label identifier,
-  // which is what replaces the hardcoded `title` lookup
+  // MATERIALIZED only. Supplies linkedRecordCachedName. null = the object's label
+  // identifier, which is what replaces the hardcoded `title` lookup
   labelFieldMetadataId: string | null;
 
+  // MATERIALIZED only
   aggregation: JsonbProperty<TimelineActivityRuleAggregation> | null;
 
   isActive: boolean;
@@ -407,35 +514,44 @@ export class TimelineActivityRuleEntity extends SyncableEntity {
 }
 ```
 
+The `MATERIALIZED only` columns being null for inheritance rows is the one wart of
+keeping both constructs in one table. It buys a single pass through the ~40 file
+metadata pipeline in section 8 instead of two, which is worth more than the purity.
+A discriminated DTO keeps the API honest even though the table is not.
+
 Uniqueness needs two partial indexes, because Postgres does not dedupe NULLs:
 
 ```sql
-CREATE UNIQUE INDEX ... ON "timelineActivityRule" ("workspaceId", "sourceObjectMetadataId")
-  WHERE "targetFieldMetadataId" IS NULL;
-CREATE UNIQUE INDEX ... ON "timelineActivityRule" ("workspaceId", "sourceObjectMetadataId", "targetFieldMetadataId")
-  WHERE "targetFieldMetadataId" IS NOT NULL;
+CREATE UNIQUE INDEX ... ON "timelineActivityRule" ("workspaceId", "objectMetadataId")
+  WHERE "relationFieldMetadataId" IS NULL;
+CREATE UNIQUE INDEX ... ON "timelineActivityRule"
+  ("workspaceId", "objectMetadataId", "relationFieldMetadataId", "resolution")
+  WHERE "relationFieldMetadataId" IS NOT NULL;
 ```
+
+`resolution` is part of the key because emitting along an edge and inheriting along
+the same edge are independent and can coexist.
 
 ### 5.1 Today's behavior as rules
 
-| Rule | source | target field | origin |
-| --- | --- | --- | --- |
-| self changes | every object with `isAuditLogged && !isSystem` | `null` | derived, no row |
-| notes on their targets | `note` | `note.noteTargets` | standard row |
-| tasks on their targets | `task` | `task.taskTargets` | standard row |
+| Rule | object | relation field | resolution | origin |
+| --- | --- | --- | --- | --- |
+| self changes | every object with `isAuditLogged && !isSystem` | `null` | MATERIALIZED | derived, no row |
+| notes on their targets | `note` | `note.noteTargets` | MATERIALIZED | standard row |
+| tasks on their targets | `task` | `task.taskTargets` | MATERIALIZED | standard row |
 
 Three concepts replace four hardcoded branches, two of which were duplicates of
-each other. The note and task rows differ from a user-created rule only in who
-owns them.
+each other. The note and task rows differ from a user-created rule only in who owns
+them.
 
-### 5.2 Engine
+### 5.2 Write engine
 
 ```
 UpsertTimelineActivityFromInternalEvent
   -> TimelineActivityRuleResolverService
-       effective rules for (sourceObjectMetadataId, action), plus rules whose
-       junction object is this object. Read from the flat entity maps cache,
-       memoized per metadata version, no query per event
+       MATERIALIZED rules for (objectMetadataId, action), plus rules whose junction
+       object is this object. Read from the flat entity maps cache, memoized per
+       metadata version, no query per event
   -> TimelineActivityTargetResolverService
        walks the single relation hop in batch (one query per junction, In(ids)),
        returns { targetObjectMetadataId, targetRecordId } per event
@@ -447,7 +563,20 @@ UpsertTimelineActivityFromInternalEvent
 listener are untouched. The POSITION-field strip becomes a property of the engine
 rather than of any rule: no rule should ever emit a position change.
 
-### 5.3 Structured columns on `timelineActivity`
+### 5.3 Read engine
+
+```
+recordTimeline(objectNameSingular, recordId, first, after)
+  -> TimelineActivityRuleResolverService
+       INHERITED rules for objectMetadataId
+  -> TimelineActivityFilterBuilder
+       own target column = recordId
+       OR, per inherited edge, an IN (SELECT ...) over the reachable records
+  -> one ordinary paginated query on timelineActivity
+  -> permission filter on properties.diff by field permissions
+```
+
+### 5.4 Structured columns on `timelineActivity`
 
 Additive: `timelineActivityRuleId` (nullable, no FK, so workspace data does not
 depend on a metadata delete), `sourceObjectMetadataId`, `action`. They remove the
@@ -458,7 +587,7 @@ keeps being written unchanged.
 
 Two things get conflated under this word and should not share a model.
 
-**Feed compaction** belongs on the rule:
+**Feed compaction** belongs on a MATERIALIZED rule:
 
 ```ts
 type TimelineActivityRuleAggregation = {
@@ -477,20 +606,43 @@ and is the reason messages and calendar events are read-time today. Fixing the
 
 The current read-then-merge is racy: two workers can both miss the existing row. A
 partial unique index on the group key plus a bucket column
-(`floor(happensAt / windowSeconds)`) and `INSERT ... ON CONFLICT DO UPDATE` makes
-it correct, at the cost of turning sliding windows into fixed buckets. That is a
+(`floor(happensAt / windowSeconds)`) and `INSERT ... ON CONFLICT DO UPDATE` makes it
+correct, at the cost of turning sliding windows into fixed buckets. That is a
 visible behavior change and therefore a separate, later step.
+
+Inheritance deliberately has no aggregation. Compacting a feed assembled at read
+time means grouping after the fact, which breaks cursor pagination. If a
+high-volume source needs compaction, it should be emitted with a `COUNT` rule
+rather than inherited.
 
 **Record-level rollups** (`company.noteCount`) do not belong here. They are
 aggregate fields, with different storage and different invalidation: a rollup must
 be recomputed on delete, a timeline row must not. At most they will share the
 target resolver later.
 
-## 7. Cost of a new metadata entity
+## 7. Validation rules
+
+Enforced by the flat validator service, so both the API and application sync get
+them:
+
+- `resolution` and field shape must be a valid cell of the 3.2 matrix
+- `relationFieldMetadataId` must belong to `objectMetadataId`
+- `triggerFieldMetadataIds`, `payloadFieldMetadataIds` and `labelFieldMetadataId`
+  must belong to `objectMetadataId`
+- every terminal object must be timeline-capable, meaning it has a
+  `target<Object>Id` morph member on `timelineActivity`
+- `targetObjectMetadataIds`, when set, must be a subset of the morph members the
+  relation actually reaches
+- INHERITED edges must form an acyclic graph, and are not traversed transitively
+  (depth 1)
+- per-object caps: a maximum number of INHERITED edges (read cost) and a maximum
+  `maxFanOutPerEvent` for MATERIALIZED junction rules (write cost)
+
+## 8. Cost of a new metadata entity
 
 Adding `timelineActivityRule` to `ALL_METADATA_NAME` pulls in the full metadata
-pipeline. Using `searchFieldMetadata` as the reference implementation, the
-checklist is roughly 40 non-generated files:
+pipeline. Using `searchFieldMetadata` as the reference implementation, the checklist
+is roughly 40 non-generated files:
 
 - entity, module, DTO, exceptions under `metadata-modules/timeline-activity-rule/`
 - flat entity type, maps type, map cache service and converters under
@@ -513,70 +665,80 @@ checklist is roughly 40 non-generated files:
 - a fast instance command for the table
 
 Nothing here is novel work, but it is the dominant cost and the reason to settle
-section 4 before writing code.
+section 4 before writing code. Holding both resolutions in one entity is what keeps
+this to one pass.
 
-## 8. Plan
+## 9. Plan
 
 Behavior-preserving through phase 5.
 
-**Phase 0: pin current behavior.** Integration tests for self changes on a
-standard and a custom object, note and task create/update/link/unlink, the POSITION
+**Phase 0: pin current behavior.** Integration tests for self changes on a standard
+and a custom object, note and task create/update/link/unlink, the POSITION
 exclusion, the system-object gate, and the 10-minute merge. This is where finding
 1.4.1 is confirmed and where we decide whether the refactor reproduces the bug or
 fixes it. No production code changes.
 
-**Phase 1: declare the junctions.** Add `junctionTargetFieldUniversalIdentifier`
-to `note.noteTargets` and `task.taskTargets`, pointing at
+**Phase 1: declare the junctions.** Add `junctionTargetFieldUniversalIdentifier` to
+`note.noteTargets` and `task.taskTargets`, pointing at
 `STANDARD_OBJECTS.noteTarget.fields.targetPerson.universalIdentifier` and its task
 equivalent (any morph member; the engine expands the group via `morphId`). Delete
 the `flatField.name === 'note' || flatField.name === 'task'` special case in
 `get-is-flat-field-a-junction-relation-field.ts` and its TODO. Add a workspace
 command to backfill the setting on existing workspaces, mirroring
 `2-25-workspace-command-...-backfill-message-list-members-junction-target.command.ts`.
-Small, independently valuable, and a prerequisite for phase 2.
+Small, independently valuable, prerequisite for phase 2.
 
-**Phase 2: extract the engine, rules in code.** Introduce the rule type, the rule
-resolver, the target resolver and the payload builder. Effective rules come from
-the derivation function plus a `STANDARD_TIMELINE_ACTIVITY_RULES` constant holding
-the two fan-out rules. Delete the four hardcoded branches and
+**Phase 2: extract the write engine, rules in code.** Introduce the rule type, the
+rule resolver, the target resolver and the payload builder. Effective rules come
+from the derivation function plus a `STANDARD_TIMELINE_ACTIVITY_RULES` constant
+holding the two fan-out emissions. Delete the four hardcoded branches and
 `SYSTEM_OBJECTS_WITH_TIMELINE_ACTIVITIES`. Fix the `take: 1` batch bug. No schema
 change, no API change, phase 0 tests unchanged.
 
 **Phase 3: structured columns.** Add `timelineActivityRuleId`,
-`sourceObjectMetadataId` and `action` to `timelineActivity`, populate going
-forward, keep writing `name`. Fast instance command.
+`sourceObjectMetadataId` and `action` to `timelineActivity`, populate going forward,
+keep writing `name`. Fast instance command.
 
-**Phase 4: rules become metadata.** Add the entity and the pipeline from section 7.
-The two standard rules move from the constant into the standard application. The
-resolver merges persisted rows onto derived rules. Still no behavior change,
-because the merged result equals the previous constant.
+**Phase 4: rules become metadata.** Add the entity and the pipeline from section 8,
+with the validator rejecting `INHERITED` until phase 6. The two standard rules move
+from the constant into the standard application. The resolver merges persisted rows
+onto derived rules. Still no behavior change, because the merged result equals the
+previous constant.
 
-**Phase 5: expose read APIs.** Metadata queries and mutations over effective rules,
-permission-flagged like other metadata, upserting on the natural key. Validation
-lives here: the target field must be one of the three supported shapes, terminal
-objects must be timeline-capable (they need a `target<Object>Id` morph column),
-field ids must belong to the right object, and the fan-out bound must hold. This is
-where frontend work can start.
+**Phase 5: emission API.** Metadata queries and mutations over effective rules,
+permission-flagged like other metadata, upserting on the natural key, with the
+validation of section 7. Add `unlinked` to the shared action union and implement the
+many-to-one link/unlink pair from 4.5. Frontend work on emissions can start.
 
-**Phase 6: new capabilities**, each a deliberate behavior change with its own
-decision: default `linkActions` to `[created, deleted]`, let attachments fan out,
-add `COUNT` aggregation, add `unlinked` and `emitOnRelationChange`, filter diffs by
-permissions server-side.
+**Phase 6: inheritance.** Add the `recordTimeline` resolver, the composite
+`(target<Object>Id, createdAt DESC)` indexes, and server-side permission filtering
+of diffs for every row. Allow `INHERITED` rules. Migrate the frontend timeline query
+off the generic `findMany`, and migrate its `name` parsing onto the structured
+`action` column.
 
-## 9. Remaining risks
+**Phase 7: the remaining behavior changes**, each with its own decision: let
+attachments fan out, add `COUNT` aggregation, switch junction link rows from
+`.created`/`.deleted` to `.linked`/`.unlinked` in `name`, and decide whether
+messages and calendar events move into the `recordTimeline` resolver.
 
-- **Write amplification.** Every enabled rule multiplies inserts by its fan-out. A
-  hard `maxFanOutPerEvent` and a per-workspace rule cap are needed before rules are
-  user-editable, not after.
-- **Permissions.** Fanning a child's changes onto a parent means a reader of the
-  parent sees data about the child. Server-side diff filtering should land in the
-  same release as the settings UI.
-- **Metadata deletion.** Proposal: timeline rows survive (they are workspace data
-  and `name` remains self-describing), rules cascade with their source object, and
-  a rule whose target field was deleted is deactivated rather than deleted, so the
-  failure is visible.
+## 10. Remaining risks
+
+- **Write amplification.** Every enabled emission multiplies inserts by its fan-out.
+  The `maxFanOutPerEvent` cap and a per-workspace rule cap are needed before rules
+  are user-editable, not after. Steering users toward inheritance where it fits is
+  the better mitigation.
+- **Read amplification.** Every inherited edge adds a subquery to every timeline
+  read for that object. The per-object edge cap and the composite indexes are the
+  mitigation; a company with a very large `people` set is the shape to benchmark
+  before shipping phase 6.
+- **Permissions.** Inheritance makes server-side diff filtering mandatory rather
+  than optional, which is why it is scheduled in the same phase.
+- **Metadata deletion.** Timeline rows survive (they are workspace data and `name`
+  remains self-describing), rules cascade with their object, and a rule whose
+  relation field was deleted is deactivated rather than deleted, so the failure is
+  visible.
 - **Two timeline mechanisms.** Messages and calendar events are read-time,
-  everything else is materialized. Whether to unify them under this rule model with
-  a `materialization` discriminator is the largest open architectural question, and
-  it decides whether the settings UI shows one list or two. It does not block
-  phases 0 through 4.
+  everything else is materialized. The `recordTimeline` resolver from phase 6 is the
+  first place they could genuinely converge, but they union heterogeneous tables
+  where inheritance does not, so unifying them is a real design exercise rather than
+  a move. It does not block phases 0 through 6.
