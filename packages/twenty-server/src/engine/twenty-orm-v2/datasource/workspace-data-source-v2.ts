@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+
 import { type Pool } from 'pg';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -37,6 +39,7 @@ export type WorkspaceTransactionScopeV2 = {
 };
 
 export class WorkspaceDataSourceV2 {
+  private readonly logger = new Logger(WorkspaceDataSourceV2.name);
   private readonly pool: Pool;
   private readonly internalContext: WorkspaceInternalContext;
   private readonly authContext: WorkspaceAuthContext;
@@ -92,6 +95,7 @@ export class WorkspaceDataSourceV2 {
     work: (executor: QueryExecutorV2) => Promise<T>,
   ): Promise<T> {
     const client = await this.pool.connect();
+    let shouldDestroyConnection = false;
 
     try {
       await client.query('BEGIN');
@@ -102,11 +106,26 @@ export class WorkspaceDataSourceV2 {
 
       return result;
     } catch (error) {
-      await client.query('ROLLBACK');
+      try {
+        await client.query('ROLLBACK');
+      } catch (rollbackError) {
+        // The transaction may still be open on the server; releasing the client
+        // back to the shared pool would let a later checkout commit the aborted
+        // work. Destroy the connection and surface the original error.
+        shouldDestroyConnection = true;
+
+        this.logger.warn(
+          `Destroying connection after failed transaction ROLLBACK: ${
+            rollbackError instanceof Error
+              ? rollbackError.message
+              : String(rollbackError)
+          }`,
+        );
+      }
 
       throw error;
     } finally {
-      client.release();
+      client.release(shouldDestroyConnection);
     }
   }
 
