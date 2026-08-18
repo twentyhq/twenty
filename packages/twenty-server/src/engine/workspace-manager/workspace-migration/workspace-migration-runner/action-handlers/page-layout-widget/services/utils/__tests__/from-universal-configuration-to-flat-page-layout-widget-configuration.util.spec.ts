@@ -1,7 +1,10 @@
-import { type ChartFilter, ViewFilterOperand } from 'twenty-shared/types';
+import {
+  AggregateOperations,
+  type UniversalChartFilter,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
 
 import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
-import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/page-layout-widget/services/utils/from-universal-configuration-to-flat-page-layout-widget-configuration.util';
 
@@ -34,39 +37,48 @@ const flatFieldMetadataMaps = {
 
 const emptyMaps = { byUniversalIdentifier: {} };
 
+const getChartRecordFilters = (
+  recordFilters: NonNullable<UniversalChartFilter['recordFilters']>,
+) => {
+  const configuration =
+    fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration({
+      universalConfiguration: {
+        configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+        aggregateFieldMetadataUniversalIdentifier:
+          AGGREGATE_FIELD_UNIVERSAL_IDENTIFIER,
+        aggregateOperation: AggregateOperations.SUM,
+        filter: { recordFilters },
+      },
+      flatFieldMetadataMaps,
+      flatFrontComponentMaps:
+        emptyMaps as MetadataFlatEntityMaps<'frontComponent'>,
+      flatViewMaps: emptyMaps as MetadataFlatEntityMaps<'view'>,
+      flatViewFieldGroupMaps:
+        emptyMaps as MetadataFlatEntityMaps<'viewFieldGroup'>,
+    });
+
+  if (
+    configuration.configurationType !== WidgetConfigurationType.AGGREGATE_CHART
+  ) {
+    throw new Error('Expected an aggregate chart configuration');
+  }
+
+  return configuration.filter?.recordFilters;
+};
+
 describe('fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration', () => {
   it('should resolve the relation target universal identifier of a relation-traversal chart filter back to a field metadata id', () => {
-    const configuration =
-      fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration({
-        universalConfiguration: {
-          configurationType: WidgetConfigurationType.AGGREGATE_CHART,
-          aggregateFieldMetadataUniversalIdentifier:
-            AGGREGATE_FIELD_UNIVERSAL_IDENTIFIER,
-          filter: {
-            recordFilters: [
-              {
-                fieldMetadataUniversalIdentifier:
-                  RELATION_FIELD_UNIVERSAL_IDENTIFIER,
-                relationTargetFieldMetadataUniversalIdentifier:
-                  TARGET_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
-                operand: ViewFilterOperand.DOES_NOT_CONTAIN,
-                value: 'foo',
-              },
-            ],
-          },
-        } as unknown as FlatPageLayoutWidget['universalConfiguration'],
-        flatFieldMetadataMaps,
-        flatFrontComponentMaps:
-          emptyMaps as MetadataFlatEntityMaps<'frontComponent'>,
-        flatViewMaps: emptyMaps as MetadataFlatEntityMaps<'view'>,
-        flatViewFieldGroupMaps:
-          emptyMaps as MetadataFlatEntityMaps<'viewFieldGroup'>,
-      });
+    const recordFilters = getChartRecordFilters([
+      {
+        fieldMetadataUniversalIdentifier: RELATION_FIELD_UNIVERSAL_IDENTIFIER,
+        relationTargetFieldMetadataUniversalIdentifier:
+          TARGET_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
+        operand: ViewFilterOperand.DOES_NOT_CONTAIN,
+        value: 'foo',
+      },
+    ]);
 
-    expect(
-      (configuration as unknown as { filter: ChartFilter }).filter
-        .recordFilters,
-    ).toEqual([
+    expect(recordFilters).toEqual([
       {
         fieldMetadataId: RELATION_FIELD_ID,
         relationTargetFieldMetadataId: TARGET_TEXT_FIELD_ID,

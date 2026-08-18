@@ -1,10 +1,11 @@
 import {
+  AggregateOperations,
+  type ChartFilter,
   type UniversalChartFilter,
   ViewFilterOperand,
 } from 'twenty-shared/types';
 
 import { fromPageLayoutWidgetConfigurationToUniversalConfiguration } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-configuration-to-universal-configuration.util';
-import { type PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 
 const RELATION_FIELD_ID = '11111111-1111-4111-8111-000000000001';
@@ -25,27 +26,27 @@ const fieldMetadataUniversalIdentifierById = {
 };
 
 const getUniversalRecordFilters = (
-  recordFilters: {
-    fieldMetadataId: string;
-    relationTargetFieldMetadataId?: string;
-    operand: string;
-    value: string;
-  }[],
-) => {
+  recordFilters: NonNullable<ChartFilter['recordFilters']>,
+): UniversalChartFilter['recordFilters'] => {
   const universalConfiguration =
     fromPageLayoutWidgetConfigurationToUniversalConfiguration({
       configuration: {
         configurationType: WidgetConfigurationType.AGGREGATE_CHART,
         aggregateFieldMetadataId: AGGREGATE_FIELD_ID,
-        aggregateOperation: 'SUM',
-        displayType: 'number',
+        aggregateOperation: AggregateOperations.SUM,
         filter: { recordFilters },
-      } as unknown as PageLayoutWidgetEntity['configuration'],
+      },
       fieldMetadataUniversalIdentifierById,
     });
 
-  return (universalConfiguration as unknown as { filter: UniversalChartFilter })
-    .filter.recordFilters;
+  if (
+    universalConfiguration.configurationType !==
+    WidgetConfigurationType.AGGREGATE_CHART
+  ) {
+    throw new Error('Expected an aggregate chart universal configuration');
+  }
+
+  return universalConfiguration.filter?.recordFilters;
 };
 
 describe('fromPageLayoutWidgetConfigurationToUniversalConfiguration', () => {
