@@ -59,18 +59,51 @@ unset GIT_DIR GIT_COMMON_DIR GIT_INDEX_FILE GIT_WORK_TREE GIT_PREFIX \
 # decision somebody has to own afterwards.
 # ---------------------------------------------------------------------------
 if [ "${SKIP_VERIFY:-}" = "1" ] || [ "${PANGOLIN_SKIP_VERIFY:-}" = "1" ]; then
+  # The bypass may be taken. It may not be taken SILENTLY.
+  #
+  # The log already recorded who bypassed, in which repo, at which commit — every
+  # column except the only one a reader actually asks for afterwards: why. That was
+  # left to whoever remembered to write a paragraph into an audit doc by hand, which
+  # is to say it was left to nobody. An OPTIONAL reason field would not have fixed
+  # that: a field offered on the path taken under pressure is a field that stays
+  # empty. So the reason is REQUIRED, and an empty one refuses the push.
+  #
+  # The value is free text and the log is TAB-delimited, so tabs and newlines are
+  # scrubbed before it is written — a reason must never be able to forge a column —
+  # and it is capped so one paste cannot bloat the log.
+  _reason=$(printf '%s' "${SKIP_VERIFY_REASON:-}" | tr '\t\r\n' '   ' | cut -c1-200)
+  if [ -z "$(printf '%s' "$_reason" | tr -d '[:space:]')" ]; then
+    printf '\n' >&2
+    printf 'pre-push: SKIP_VERIFY is set, but SKIP_VERIFY_REASON is empty — REFUSING.\n' >&2
+    printf 'pre-push: the gate may be overridden; it may not be overridden silently.\n' >&2
+    printf 'pre-push: state the reason in one line, and push again:\n' >&2
+    printf '\n' >&2
+    printf '    SKIP_VERIFY=1 SKIP_VERIFY_REASON="why this override is right" git push\n' >&2
+    printf '\n' >&2
+    exit 1
+  fi
+
   _log="${CLAUDE_VERIFY_BYPASS_LOG:-$HOME/.claude/cache/verify-bypass.log}"
   mkdir -p "$(dirname "$_log")" 2>/dev/null || true
-  printf '%s\t%s\t%s\t%s\t%s\n' \
+
+  # EVERY field is scrubbed, not just the reason. `cmd || echo '?'` captures BOTH
+  # when a command prints and then fails — `git rev-parse --abbrev-ref HEAD` in a
+  # repo with no commits yields "HEAD" AND a non-zero status, so the field became
+  # "HEAD\n?" and the row split across two lines. One row silently became two, in
+  # the log a session start parses by column. A field must never forge a column.
+  _scrub() { printf '%s' "$1" | tr '\t\r\n' '   '; }
+  printf '%s\t%s\t%s\t%s\t%s\t%s\n' \
     "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
-    "$(basename "$REPO_ROOT")" \
-    "$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo '?')" \
-    "$(git rev-parse --short HEAD 2>/dev/null || echo '?')" \
-    "${USER:-unknown}@$(hostname -s 2>/dev/null || echo '?')" \
+    "$(_scrub "$(basename "$REPO_ROOT")")" \
+    "$(_scrub "$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo '?')")" \
+    "$(_scrub "$(git rev-parse --short HEAD 2>/dev/null || echo '?')")" \
+    "$(_scrub "${USER:-unknown}@$(hostname -s 2>/dev/null || echo '?')")" \
+    "$_reason" \
     >>"$_log" 2>/dev/null || true
 
   printf '\n'
   printf '!!  pre-push: SKIP_VERIFY=1 — the gate was BYPASSED, not passed.\n'
+  printf '!!  Reason given: %s\n' "$_reason"
   printf '!!  Nothing in this push has been linted, type-checked or tested.\n'
   printf '!!  CI cannot check it either (org Actions billing). You are the only gate there was.\n'
   printf '!!  Logged to %s — the next session start will say so.\n' "$_log"
@@ -93,5 +126,6 @@ fi
 
 printf '\n'
 printf 'pre-push: GATES FAILED — push refused.\n' >&2
-printf 'pre-push: fix the code. To override deliberately: SKIP_VERIFY=1 git push\n' >&2
+printf 'pre-push: fix the code. To override deliberately, saying why:\n' >&2
+printf '    SKIP_VERIFY=1 SKIP_VERIFY_REASON="why" git push\n' >&2
 exit 1
