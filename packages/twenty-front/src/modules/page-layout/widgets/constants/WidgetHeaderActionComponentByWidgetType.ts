@@ -1,3 +1,4 @@
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { WidgetFieldActions } from '@/page-layout/widgets/components/WidgetFieldActions';
 import { WidgetActionEmailCompose } from '@/page-layout/widgets/emails/components/WidgetActionEmailCompose';
 import { WidgetActionFileAttach } from '@/page-layout/widgets/files/components/WidgetActionFileAttach';
@@ -6,8 +7,12 @@ import { WidgetActionTaskCreate } from '@/page-layout/widgets/tasks/components/W
 import { type ComponentType } from 'react';
 import { WidgetType } from '~/generated-metadata/graphql';
 
+export type WidgetHeaderActionComponentProps = {
+  widget: PageLayoutWidget;
+};
+
 export const WIDGET_HEADER_ACTION_COMPONENT_BY_WIDGET_TYPE: Partial<
-  Record<WidgetType, ComponentType>
+  Record<WidgetType, ComponentType<WidgetHeaderActionComponentProps>>
 > = {
   [WidgetType.FIELD]: WidgetFieldActions,
   [WidgetType.EMAILS]: WidgetActionEmailCompose,

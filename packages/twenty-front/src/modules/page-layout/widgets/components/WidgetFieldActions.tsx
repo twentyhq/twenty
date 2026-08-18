@@ -1,16 +1,19 @@
-import { WidgetActionRenderer } from '@/page-layout/widgets/components/WidgetActionRenderer';
-import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
-import { useWidgetActions } from '@/page-layout/widgets/hooks/useWidgetActions';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { WidgetActionFieldEdit } from '@/page-layout/widgets/components/WidgetActionFieldEdit';
+import { WidgetActionFieldSeeAll } from '@/page-layout/widgets/components/WidgetActionFieldSeeAll';
+import { useFieldWidgetActionVisibility } from '@/page-layout/widgets/field/hooks/useFieldWidgetActionVisibility';
 
-export const WidgetFieldActions = () => {
-  const widget = useCurrentWidget();
-  const actions = useWidgetActions({ widget });
+type WidgetFieldActionsProps = {
+  widget: PageLayoutWidget;
+};
+
+export const WidgetFieldActions = ({ widget }: WidgetFieldActionsProps) => {
+  const { showSeeAll, showEdit } = useFieldWidgetActionVisibility({ widget });
 
   return (
     <>
-      {actions.map((action) => (
-        <WidgetActionRenderer key={action.id} action={action} />
-      ))}
+      {showSeeAll && <WidgetActionFieldSeeAll widget={widget} />}
+      {showEdit && <WidgetActionFieldEdit widget={widget} />}
     </>
   );
 };
