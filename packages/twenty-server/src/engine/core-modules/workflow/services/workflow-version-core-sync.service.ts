@@ -52,15 +52,17 @@ export class WorkflowVersionCoreSyncService {
     const coreVersionIdByWorkspaceRecordId = new Map<string, string>();
 
     const coreRows = workflowVersions.map((workflowVersion) => {
-      const isLinked =
-        isNonEmptyString(workflowVersion.coreWorkflowVersionId) &&
-        linkedCoreVersionIds.has(workflowVersion.coreWorkflowVersionId);
+      const candidateCoreVersionId = workflowVersion.coreWorkflowVersionId;
 
-      const coreWorkflowVersionId = isLinked
-        ? (workflowVersion.coreWorkflowVersionId as string)
-        : uuidv4();
+      const linkedCoreVersionId =
+        isNonEmptyString(candidateCoreVersionId) &&
+        linkedCoreVersionIds.has(candidateCoreVersionId)
+          ? candidateCoreVersionId
+          : null;
 
-      if (!isLinked) {
+      const coreWorkflowVersionId = linkedCoreVersionId ?? uuidv4();
+
+      if (!isDefined(linkedCoreVersionId)) {
         coreVersionIdByWorkspaceRecordId.set(
           workflowVersion.id,
           coreWorkflowVersionId,
@@ -162,18 +164,20 @@ export class WorkflowVersionCoreSyncService {
     const resolvedApplicationId =
       applicationId ?? (await this.getCustomApplicationIdOrThrow(workspaceId));
 
-    const isLinked =
-      isNonEmptyString(workflowVersion.coreWorkflowVersionId) &&
+    const candidateCoreVersionId = workflowVersion.coreWorkflowVersionId;
+
+    const linkedCoreVersionId =
+      isNonEmptyString(candidateCoreVersionId) &&
       (await this.isCoreVersionOwnedByWorkspace({
-        coreWorkflowVersionId: workflowVersion.coreWorkflowVersionId,
+        coreWorkflowVersionId: candidateCoreVersionId,
         workspaceId,
         transactionScope,
-      }));
+      }))
+        ? candidateCoreVersionId
+        : null;
 
-    const isNewLink = !isLinked;
-    const coreWorkflowVersionId = isLinked
-      ? (workflowVersion.coreWorkflowVersionId as string)
-      : uuidv4();
+    const isNewLink = !isDefined(linkedCoreVersionId);
+    const coreWorkflowVersionId = linkedCoreVersionId ?? uuidv4();
 
     // The conflict target is the primary key alone, so without the workspaceId
     // predicate a core row owned by another workspace would have its triggers
