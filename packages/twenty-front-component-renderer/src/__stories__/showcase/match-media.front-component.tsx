@@ -1,24 +1,13 @@
-import { useEffect, useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 
 const MatchMediaComponent = () => {
-  const [matchResults, setMatchResults] = useState({
-    minWidth: '',
-    unknownQuery: '',
-    lightColorScheme: '',
-  });
-
-  useEffect(() => {
-    setMatchResults({
-      minWidth: String(window.matchMedia('(min-width: 1px)').matches),
-      unknownQuery: String(
-        window.matchMedia('(orientation: portrait)').matches,
-      ),
-      lightColorScheme: String(
-        window.matchMedia('(prefers-color-scheme: light)').matches,
-      ),
-    });
-  }, []);
+  const minWidthMatches = String(window.matchMedia('(min-width: 1px)').matches);
+  const unknownQueryMatches = String(
+    window.matchMedia('(orientation: portrait)').matches,
+  );
+  const lightColorSchemeMatches = String(
+    window.matchMedia('(prefers-color-scheme: light)').matches,
+  );
 
   return (
     <div
@@ -26,13 +15,13 @@ const MatchMediaComponent = () => {
       style={{ fontFamily: 'system-ui, sans-serif', padding: 16 }}
     >
       <p data-testid="match-media-min-width">
-        min-width matches: {matchResults.minWidth}
+        min-width matches: {minWidthMatches}
       </p>
       <p data-testid="match-media-unknown-query">
-        unknown query matches: {matchResults.unknownQuery}
+        unknown query matches: {unknownQueryMatches}
       </p>
       <p data-testid="match-media-light-color-scheme">
-        light color scheme matches: {matchResults.lightColorScheme}
+        light color scheme matches: {lightColorSchemeMatches}
       </p>
     </div>
   );

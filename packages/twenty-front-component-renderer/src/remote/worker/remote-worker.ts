@@ -20,6 +20,7 @@ import { installSelectorMethodsPolyfill } from '@/polyfills/selectors/utils/inst
 import { workerGeometryStore } from '@/polyfills/geometry/states/workerGeometryStore';
 import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
 import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/installWindowGeometryPolyfill';
+import { createMediaQueryEnvironmentSource } from '@/polyfills/media-query/utils/createMediaQueryEnvironmentSource';
 import { workerMediaBridge } from '@/polyfills/media/states/workerMediaBridge';
 import { installMediaCapturePolyfills } from '@/polyfills/media/utils/installMediaCapturePolyfills';
 import { installMatchMediaPolyfill } from '@/polyfills/media-query/utils/installMatchMediaPolyfill';
@@ -38,7 +39,7 @@ import { installErrorEventBridge } from '@/remote/worker/thread/utils/installErr
 import { renderFrontComponent } from '@/remote/worker/rendering/utils/renderFrontComponent';
 import { getFrontComponentColorScheme } from '@/remote/worker/environment/utils/getFrontComponentColorScheme';
 import { setFrontComponentExecutionContext } from '@/remote/worker/environment/utils/setFrontComponentExecutionContext';
-import { subscribeToFrontComponentColorSchemeUpdates } from '@/remote/worker/environment/utils/subscribeToFrontComponentColorSchemeUpdates';
+import { subscribeToFrontComponentExecutionContextUpdates } from '@/remote/worker/environment/utils/subscribeToFrontComponentExecutionContextUpdates';
 import { type FrontComponentHostThread } from '@/types/FrontComponentHostThread';
 import { type FrontComponentHostThreadExports } from '@/types/FrontComponentHostThreadExports';
 import { type WorkerExports } from '@/types/WorkerExports';
@@ -90,10 +91,13 @@ installWindowAliasesPolyfill({
 });
 
 installMatchMediaPolyfill({
-  globalScope: globalThis as unknown as Record<string, unknown>,
-  geometryStore: workerGeometryStore,
-  getColorScheme: getFrontComponentColorScheme,
-  subscribeToColorSchemeUpdates: subscribeToFrontComponentColorSchemeUpdates,
+  globalScope: toGlobalScopeRecord(globalThis),
+  environmentSource: createMediaQueryEnvironmentSource({
+    geometryStore: workerGeometryStore,
+    getColorScheme: getFrontComponentColorScheme,
+    subscribeToColorSchemeUpdates:
+      subscribeToFrontComponentExecutionContextUpdates,
+  }),
 });
 
 installStorageBridge({

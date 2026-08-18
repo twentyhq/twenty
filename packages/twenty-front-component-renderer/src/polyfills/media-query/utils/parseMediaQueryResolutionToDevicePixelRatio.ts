@@ -1,29 +1,23 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { MEDIA_QUERY_RESOLUTION_UNIT_TO_DEVICE_PIXEL_RATIO } from '@/polyfills/media-query/constants/MediaQueryResolutionUnitToDevicePixelRatio';
-
-const MEDIA_QUERY_RESOLUTION_PATTERN = /^(\d+(?:\.\d+)?|\.\d+)([a-z]+)$/;
+import { parseMediaQueryNumericValueParts } from '@/polyfills/media-query/utils/parseMediaQueryNumericValueParts';
 
 export const parseMediaQueryResolutionToDevicePixelRatio = (
   resolutionString: string,
 ): number | null => {
-  const resolutionMatch = resolutionString.match(
-    MEDIA_QUERY_RESOLUTION_PATTERN,
-  );
+  const resolutionParts = parseMediaQueryNumericValueParts(resolutionString);
 
-  if (!isDefined(resolutionMatch)) {
+  if (!isDefined(resolutionParts)) {
     return null;
   }
 
-  const [, numericValuePart, unit] = resolutionMatch;
-  const numericValue = Number(numericValuePart);
-
   const devicePixelRatioPerUnit =
-    MEDIA_QUERY_RESOLUTION_UNIT_TO_DEVICE_PIXEL_RATIO[unit];
+    MEDIA_QUERY_RESOLUTION_UNIT_TO_DEVICE_PIXEL_RATIO[resolutionParts.unit];
 
   if (!isDefined(devicePixelRatioPerUnit)) {
     return null;
   }
 
-  return numericValue * devicePixelRatioPerUnit;
+  return resolutionParts.numericValue * devicePixelRatioPerUnit;
 };
