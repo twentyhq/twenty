@@ -977,6 +977,7 @@ export interface RecordTableConfiguration {
     configurationType: WidgetConfigurationType
     viewId?: Scalars['String']
     recordLimit?: Scalars['Int']
+    isRecordMutationEnabled?: Scalars['Boolean']
     __typename: 'RecordTableConfiguration'
 }
 
@@ -4311,6 +4312,7 @@ export interface RecordTableConfigurationGenqlSelection{
     configurationType?: boolean | number
     viewId?: boolean | number
     recordLimit?: boolean | number
+    isRecordMutationEnabled?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

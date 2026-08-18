@@ -205,7 +205,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         configurationType
         viewId
         recordLimit
-        isRecordEditable
+        isRecordMutationEnabled
       }
       ... on WorkflowConfiguration {
         configurationType

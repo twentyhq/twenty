@@ -1299,6 +1299,7 @@ type RecordTableConfiguration {
   configurationType: WidgetConfigurationType!
   viewId: String
   recordLimit: Int
+  isRecordMutationEnabled: Boolean
 }
 
 type WorkflowConfiguration {
