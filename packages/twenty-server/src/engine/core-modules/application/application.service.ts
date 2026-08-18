@@ -155,6 +155,23 @@ export class ApplicationService {
     });
   }
 
+  async markWorkspaceDeletionUninstallHookAsCompleted({
+    applicationId,
+    workspaceId,
+    workspaceDeletedAt,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+    workspaceDeletedAt: Date;
+  }): Promise<void> {
+    await this.applicationRepository.update(
+      { id: applicationId, workspaceId },
+      {
+        workspaceDeletionUninstallHookCompletedForDeletedAt: workspaceDeletedAt,
+      },
+    );
+  }
+
   async findManyInstalledFlatApplications(
     workspaceId: string,
   ): Promise<FlatApplication[]> {

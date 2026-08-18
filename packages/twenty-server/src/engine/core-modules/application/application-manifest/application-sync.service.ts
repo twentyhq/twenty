@@ -12,6 +12,7 @@ import { v4 } from 'uuid';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
 import { buildWorkspaceDeletionUninstallHookPayload } from 'src/engine/core-modules/application/application-manifest/utils/build-workspace-deletion-uninstall-hook-payload.util';
+import { isApplicationUninstallHookCompletedForWorkspaceDeletion } from 'src/engine/core-modules/application/application-manifest/utils/is-application-uninstall-hook-completed-for-workspace-deletion.util';
 import { enrichApplicationManifestSyncError } from 'src/engine/core-modules/application/application-manifest/utils/enrich-application-manifest-sync-error.util';
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
 import { ApplicationTranslationSyncService } from 'src/engine/core-modules/application/application-translation/application-translation-sync.service';
@@ -38,9 +39,11 @@ import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migra
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 type ApplicationForUninstallHook = {
+  id: string;
   uninstallLogicFunctionId: string | null;
   universalIdentifier: string;
   version: string | null;
+  workspaceDeletionUninstallHookCompletedForDeletedAt: Date | null;
 };
 
 @Injectable()
@@ -177,6 +180,7 @@ export class ApplicationSyncService {
       defaultRole: null,
       settingsCustomTabFrontComponentId: null,
       uninstallLogicFunctionId: null,
+      workspaceDeletionUninstallHookCompletedForDeletedAt: null,
       canBeUninstalled: true,
       autoUpgrade: false,
       isSdkLayerStale: false,
@@ -424,18 +428,33 @@ export class ApplicationSyncService {
     workspaceDeletedAt: Date;
   }): Promise<void> {
     const applications =
-      await this.applicationService.findManyInstalledFlatApplications(
-        workspaceId,
-      );
+      await this.applicationService.findManyApplications(workspaceId);
     const applicationUninstallHookFailures: string[] = [];
 
     for (const application of applications) {
+      if (
+        isApplicationUninstallHookCompletedForWorkspaceDeletion({
+          workspaceDeletionUninstallHookCompletedForDeletedAt:
+            application.workspaceDeletionUninstallHookCompletedForDeletedAt,
+          workspaceDeletedAt,
+        })
+      ) {
+        continue;
+      }
+
       try {
         await this.runUninstallHook({
           application,
           workspaceId,
           workspaceDeletedAt,
         });
+        await this.applicationService.markWorkspaceDeletionUninstallHookAsCompleted(
+          {
+            applicationId: application.id,
+            workspaceId,
+            workspaceDeletedAt,
+          },
+        );
       } catch (error) {
         const applicationUninstallHookFailure = `${application.universalIdentifier}: ${error instanceof Error ? error.message : String(error)}`;
 
