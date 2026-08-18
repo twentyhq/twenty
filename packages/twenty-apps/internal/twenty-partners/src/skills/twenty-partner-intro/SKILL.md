@@ -29,7 +29,8 @@ Three things are needed. Ask for whatever is missing rather than guessing.
 1. **The partners**, by name, as the user stated them. Never re-derive the list, and never
    add a partner they did not name. If they name someone who was not on the shortlist, take
    them: overriding the shortlist is the point of the review step.
-2. **The lead folder**, for `partner-shortlist.md` and the brief.
+2. **The lead folder**, for `partner-shortlist.md` and the brief. `twenty-partner-shortlist`
+   names it at the end of its run.
 3. **The Opportunity**, created by `twenty-lead-brief` at Step 6. Search by company name. If
    there is none, say so and ask whether to create one here or go back and run
    `/twenty-lead-brief`.

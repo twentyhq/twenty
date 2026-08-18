@@ -136,7 +136,9 @@ Without this the user can only remove, never add. Adding is half of what the rev
 
 ## Phase 3 — Save and stop
 
-Save the whole output to `partner-shortlist.md` in the lead folder.
+Save the whole output to `partner-shortlist.md` in the lead folder. Working from an
+Opportunity, there is no folder yet: create `partners-experience/<company>/` and save it
+there, so `twenty-partner-intro` has somewhere to write. Say which folder you used.
 
 Then **stop**. Tell the user they can add, remove or change any candidate, and that
 `/twenty-partner-intro` takes the names they settle on.

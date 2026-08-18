@@ -50,7 +50,7 @@ def load_creds():
 def fetch_all_partners(url, key):
     recs, after = [], None
     while True:
-        path = f"{url}/rest/partners?limit=60&depth=1" + (f"&starting_after={after}" if after else "")
+        path = f"{url}/rest/partners?limit=200&depth=1" + (f"&starting_after={after}" if after else "")
         req = urllib.request.Request(path, headers={"Authorization": f"Bearer {key}", "User-Agent": "Mozilla/5.0"})
         data = json.load(urllib.request.urlopen(req))
         page = data["data"]["partners"]
