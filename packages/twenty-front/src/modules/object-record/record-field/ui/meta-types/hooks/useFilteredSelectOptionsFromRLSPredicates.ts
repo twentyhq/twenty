@@ -5,6 +5,7 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { useMemo } from 'react';
 import {
   type RowLevelPermissionPredicate,
+  RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -131,6 +132,42 @@ export const useFilteredSelectOptionsFromRLSPredicates = ({
       return { filteredOptions: options, canSelectEmpty: true };
     }
 
+    const predicateGroups =
+      objectPermissions.rowLevelPermissionPredicateGroups;
+
+    const predicateGroupById = new Map(
+      predicateGroups.map((group) => [group.id, group]),
+    );
+
+    const isPredicateInsideOrGroup = (
+      predicate: RowLevelPermissionPredicate,
+    ): boolean => {
+      let groupId = predicate.rowLevelPermissionPredicateGroupId;
+
+      while (isDefined(groupId)) {
+        const group = predicateGroupById.get(groupId);
+
+        if (!isDefined(group)) {
+          break;
+        }
+
+        if (
+          group.logicalOperator ===
+          RowLevelPermissionPredicateGroupLogicalOperator.OR
+        ) {
+          return true;
+        }
+
+        groupId = group.parentRowLevelPermissionPredicateGroupId;
+      }
+
+      return false;
+    };
+
+    const predicatesOutsideOrGroups = selectPredicates.filter(
+      (predicate) => !isPredicateInsideOrGroup(predicate),
+    );
+
     const hasIsEmptyPredicate = selectPredicates.some(
       (predicate) =>
         predicate.operand === RowLevelPermissionPredicateOperand.IS_EMPTY,
@@ -138,16 +175,21 @@ export const useFilteredSelectOptionsFromRLSPredicates = ({
 
     const hasIsNotEmptyPredicate = selectPredicates.some(
       (predicate) =>
-        predicate.operand === RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
+        predicate.operand ===
+        RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
     );
 
     return {
-      filteredOptions: filterOptionsByPredicates(options, selectPredicates),
+      filteredOptions: filterOptionsByPredicates(
+        options,
+        predicatesOutsideOrGroups,
+      ),
       canSelectEmpty: hasIsEmptyPredicate && !hasIsNotEmptyPredicate,
     };
   }, [
     objectMetadataId,
     objectPermissions.rowLevelPermissionPredicates,
+    objectPermissions.rowLevelPermissionPredicateGroups,
     fieldMetadataId,
     options,
   ]);
