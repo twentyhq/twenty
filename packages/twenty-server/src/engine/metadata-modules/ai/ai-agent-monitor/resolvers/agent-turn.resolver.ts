@@ -70,9 +70,8 @@ export class AgentTurnResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<AgentTurnEntity> {
-    // Resolver-level ownership check: throws if the agent doesn't belong
-    // to the caller's workspace. Defense in depth: the job also re-fetches
-    // the agent through a workspace-scoped repository.
+    // Defense in depth: the job also re-fetches the agent through a
+    // workspace-scoped repository.
     await this.agentService.findOneAgentById({
       id: agentId,
       workspaceId: workspace.id,

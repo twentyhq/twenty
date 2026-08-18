@@ -28,8 +28,7 @@ export class ApiKeyService {
   ) {}
 
   async create(
-    apiKeyData: Pick<ApiKeyEntity, 'name' | 'expiresAt'> & {
-      revokedAt?: Date;
+    apiKeyData: Pick<ApiKeyEntity, 'name' | 'expiresAt' | 'revokedAt'> & {
       roleId: string;
       workspaceId: string;
     },

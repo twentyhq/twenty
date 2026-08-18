@@ -236,10 +236,7 @@ export class ApprovedAccessDomainService {
       { isValidated: true },
     );
 
-    return this.approvedAccessDomainRepository.findOneOrFail(
-      approvedAccessDomain.workspaceId,
-      { where: { id: approvedAccessDomain.id } },
-    );
+    return { ...approvedAccessDomain, isValidated: true };
   }
 
   async createApprovedAccessDomain(

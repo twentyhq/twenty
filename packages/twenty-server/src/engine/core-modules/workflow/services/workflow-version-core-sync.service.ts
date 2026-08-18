@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -92,10 +92,7 @@ export class WorkflowVersionCoreSyncService {
     await this.invalidateAutomatedTriggerMaps(workspaceId);
   }
 
-  // coreWorkflowVersionId is a writable column on the workspace record, so a
-  // caller can point it at a core row owned by another workspace. Only ids
-  // that already resolve inside this workspace are honoured; anything else is
-  // treated as unlinked and gets a fresh row.
+  // Same caller-writable column as coreWorkflowId, see WorkflowCoreSyncService.
   private async resolveOwnedCoreVersionIds(
     workspaceId: string,
     workflowVersions: WorkflowVersionWorkspaceEntity[],
@@ -165,22 +162,22 @@ export class WorkflowVersionCoreSyncService {
     const resolvedApplicationId =
       applicationId ?? (await this.getCustomApplicationIdOrThrow(workspaceId));
 
-    const ownedCoreWorkflowVersionId = isNonEmptyString(
-      workflowVersion.coreWorkflowVersionId,
-    )
-      ? await this.resolveOwnedCoreVersionIdInTransaction({
-          coreWorkflowVersionId: workflowVersion.coreWorkflowVersionId,
-          workspaceId,
-          transactionScope,
-        })
-      : null;
+    const isLinked =
+      isNonEmptyString(workflowVersion.coreWorkflowVersionId) &&
+      (await this.isCoreVersionOwnedByWorkspace({
+        coreWorkflowVersionId: workflowVersion.coreWorkflowVersionId,
+        workspaceId,
+        transactionScope,
+      }));
 
-    const isNewLink = !isDefined(ownedCoreWorkflowVersionId);
-    const coreWorkflowVersionId = ownedCoreWorkflowVersionId ?? uuidv4();
+    const isNewLink = !isLinked;
+    const coreWorkflowVersionId = isLinked
+      ? (workflowVersion.coreWorkflowVersionId as string)
+      : uuidv4();
 
-    // The DO UPDATE is guarded on workspaceId as well: the conflict target is
-    // the primary key alone, so without it a core row owned by another
-    // workspace would have its triggers and steps overwritten.
+    // The conflict target is the primary key alone, so without the workspaceId
+    // predicate a core row owned by another workspace would have its triggers
+    // and steps overwritten.
     await transactionScope.executeRawQuery(
       `INSERT INTO core."workflowVersion"
          ("id", "workspaceId", "workflowId", "triggers", "steps", "status", "universalIdentifier", "applicationId")
@@ -217,10 +214,9 @@ export class WorkflowVersionCoreSyncService {
     return { coreWorkflowVersionId };
   }
 
-  // coreWorkflowVersionId comes from a writable column on the workspace record,
-  // so it can point at a core row owned by another workspace. Resolve it inside
-  // the transaction and treat anything not owned here as a new link.
-  private async resolveOwnedCoreVersionIdInTransaction({
+  // Must run inside the caller's transaction so the ownership answer cannot go
+  // stale before the insert below uses it.
+  private async isCoreVersionOwnedByWorkspace({
     coreWorkflowVersionId,
     workspaceId,
     transactionScope,
@@ -228,13 +224,13 @@ export class WorkflowVersionCoreSyncService {
     coreWorkflowVersionId: string;
     workspaceId: string;
     transactionScope: WorkspaceTransactionScope;
-  }): Promise<string | null> {
+  }): Promise<boolean> {
     const rows = await transactionScope.executeRawQuery(
-      `SELECT "id" FROM core."workflowVersion" WHERE "id" = $1 AND "workspaceId" = $2`,
+      `SELECT 1 FROM core."workflowVersion" WHERE "id" = $1 AND "workspaceId" = $2`,
       [coreWorkflowVersionId, workspaceId],
     );
 
-    return rows.length > 0 ? coreWorkflowVersionId : null;
+    return isNonEmptyArray(rows);
   }
 
   async mirrorWorkflowVersionWrites({

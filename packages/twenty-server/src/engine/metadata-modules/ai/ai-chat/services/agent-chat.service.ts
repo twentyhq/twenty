@@ -164,8 +164,6 @@ export class AgentChatService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<(AgentChatThreadEntity & { lastMessageAt: Date | null })[]> {
-    // Query builder uses the scoped wrapper's escape hatch; we add the
-    // workspaceId predicate manually below.
     const rankedThreads = await this.threadRepository
       .createQueryBuilder('thread')
       .select('thread.id', 'id')
