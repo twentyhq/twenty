@@ -6,10 +6,12 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Text.module.scss';
 
-type TextProps = Omit<useRender.ComponentProps<'div'>, 'ref'> & {
-  truncate?: boolean;
-  lineClamp?: number;
-};
+type TextTruncationProps =
+  | { truncate?: boolean; lineClamp?: never }
+  | { truncate?: never; lineClamp?: number };
+
+type TextProps = Omit<useRender.ComponentProps<'div'>, 'ref'> &
+  TextTruncationProps;
 
 export const Text = forwardRef<HTMLDivElement, TextProps>(
   ({ render, truncate, lineClamp, className, style, ...props }, ref) => {
