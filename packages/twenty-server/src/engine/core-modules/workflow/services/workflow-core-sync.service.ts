@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -39,21 +39,21 @@ export class WorkflowCoreSyncService {
 
     const applicationId = await this.getCustomApplicationIdOrThrow(workspaceId);
 
-    const linkedCoreWorkflowIds = await this.resolveOwnedCoreWorkflowIds(
-      workspaceId,
-      workflows,
-    );
+    const ownedUniversalIdentifierByCoreWorkflowId =
+      await this.resolveOwnedCoreWorkflows(workspaceId, workflows);
 
     const coreWorkflowIdByWorkspaceRecordId = new Map<string, string>();
 
     const coreRows = workflows.map((workflow) => {
       const candidateCoreWorkflowId = workflow.coreWorkflowId;
 
-      const linkedCoreWorkflowId =
-        isNonEmptyString(candidateCoreWorkflowId) &&
-        linkedCoreWorkflowIds.has(candidateCoreWorkflowId)
-          ? candidateCoreWorkflowId
-          : null;
+      const ownedUniversalIdentifier = isNonEmptyString(candidateCoreWorkflowId)
+        ? ownedUniversalIdentifierByCoreWorkflowId.get(candidateCoreWorkflowId)
+        : undefined;
+
+      const linkedCoreWorkflowId = isDefined(ownedUniversalIdentifier)
+        ? candidateCoreWorkflowId
+        : null;
 
       const coreWorkflowId = linkedCoreWorkflowId ?? uuidv4();
 
@@ -69,7 +69,7 @@ export class WorkflowCoreSyncService {
         )
           ? workflow.lastPublishedVersionId
           : null,
-        universalIdentifier: uuidv4(),
+        universalIdentifier: ownedUniversalIdentifier ?? uuidv4(),
         applicationId,
       };
     });
@@ -84,24 +84,24 @@ export class WorkflowCoreSyncService {
 
   // coreWorkflowId is a writable column on the workspace record, so a caller
   // can point it at a core row owned by another workspace.
-  private async resolveOwnedCoreWorkflowIds(
+  private async resolveOwnedCoreWorkflows(
     workspaceId: string,
     workflows: WorkflowWorkspaceEntity[],
-  ): Promise<Set<string>> {
+  ): Promise<Map<string, string>> {
     const candidateIds = workflows
       .map((workflow) => workflow.coreWorkflowId)
       .filter(isNonEmptyString);
 
-    if (candidateIds.length === 0) {
-      return new Set();
+    if (!isNonEmptyArray(candidateIds)) {
+      return new Map();
     }
 
     const ownedRows = await this.coreWorkflowRepository.find(workspaceId, {
       where: { id: In(candidateIds) },
-      select: { id: true },
+      select: { id: true, universalIdentifier: true },
     });
 
-    return new Set(ownedRows.map((row) => row.id));
+    return new Map(ownedRows.map((row) => [row.id, row.universalIdentifier]));
   }
 
   async deleteFromCore(

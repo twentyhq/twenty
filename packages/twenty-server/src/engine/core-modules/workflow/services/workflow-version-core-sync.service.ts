@@ -44,21 +44,21 @@ export class WorkflowVersionCoreSyncService {
 
     const applicationId = await this.getCustomApplicationIdOrThrow(workspaceId);
 
-    const linkedCoreVersionIds = await this.resolveOwnedCoreVersionIds(
-      workspaceId,
-      workflowVersions,
-    );
+    const ownedUniversalIdentifierByCoreVersionId =
+      await this.resolveOwnedCoreVersions(workspaceId, workflowVersions);
 
     const coreVersionIdByWorkspaceRecordId = new Map<string, string>();
 
     const coreRows = workflowVersions.map((workflowVersion) => {
       const candidateCoreVersionId = workflowVersion.coreWorkflowVersionId;
 
-      const linkedCoreVersionId =
-        isNonEmptyString(candidateCoreVersionId) &&
-        linkedCoreVersionIds.has(candidateCoreVersionId)
-          ? candidateCoreVersionId
-          : null;
+      const ownedUniversalIdentifier = isNonEmptyString(candidateCoreVersionId)
+        ? ownedUniversalIdentifierByCoreVersionId.get(candidateCoreVersionId)
+        : undefined;
+
+      const linkedCoreVersionId = isDefined(ownedUniversalIdentifier)
+        ? candidateCoreVersionId
+        : null;
 
       const coreWorkflowVersionId = linkedCoreVersionId ?? uuidv4();
 
@@ -77,7 +77,7 @@ export class WorkflowVersionCoreSyncService {
           : null,
         steps: workflowVersion.steps ?? null,
         status: workflowVersion.status as unknown as WorkflowVersionStatus,
-        universalIdentifier: uuidv4(),
+        universalIdentifier: ownedUniversalIdentifier ?? uuidv4(),
         applicationId,
       };
     });
@@ -95,27 +95,27 @@ export class WorkflowVersionCoreSyncService {
   }
 
   // Same caller-writable column as coreWorkflowId, see WorkflowCoreSyncService.
-  private async resolveOwnedCoreVersionIds(
+  private async resolveOwnedCoreVersions(
     workspaceId: string,
     workflowVersions: WorkflowVersionWorkspaceEntity[],
-  ): Promise<Set<string>> {
+  ): Promise<Map<string, string>> {
     const candidateIds = workflowVersions
       .map((workflowVersion) => workflowVersion.coreWorkflowVersionId)
       .filter(isNonEmptyString);
 
-    if (candidateIds.length === 0) {
-      return new Set();
+    if (!isNonEmptyArray(candidateIds)) {
+      return new Map();
     }
 
     const ownedRows = await this.coreWorkflowVersionRepository.find(
       workspaceId,
       {
         where: { id: In(candidateIds) },
-        select: { id: true },
+        select: { id: true, universalIdentifier: true },
       },
     );
 
-    return new Set(ownedRows.map((row) => row.id));
+    return new Map(ownedRows.map((row) => [row.id, row.universalIdentifier]));
   }
 
   async deleteFromCore(
