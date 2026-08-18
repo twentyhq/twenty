@@ -68,7 +68,7 @@ describe('getCaller', () => {
 
   it('should return null for a user caller with a non-string workspaceMemberId', () => {
     process.env[DEFAULT_CALLER_NAME] = JSON.stringify({
-      kind: 'user',
+      type: 'user',
       userId: 'user-1',
       userWorkspaceId: 'user-workspace-1',
       workspaceMemberId: 42,
