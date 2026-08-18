@@ -5,7 +5,7 @@ import type { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
 describe('generateCreateRecordInputSchema', () => {
-  it('uses standardOverrides description when present on a field via overrides', () => {
+  it('resolves overridden description when present on a field via overrides', () => {
     const rawField = {
       id: 'field-1',
       name: 'dueAt',
@@ -38,16 +38,14 @@ describe('generateCreateRecordInputSchema', () => {
     );
   });
 
-  it('uses standardOverrides property directly when present on a raw field', () => {
+  it('falls back to default description when overrides description is not set', () => {
     const rawField = {
       id: 'field-2',
       name: 'status',
       type: FieldMetadataType.TEXT,
       isNullable: true,
       description: 'Original status description',
-      standardOverrides: {
-        description: 'Customized status description override',
-      },
+      overrides: null,
     } as unknown as FlatFieldMetadata;
 
     const objectMetadata = {
@@ -65,8 +63,6 @@ describe('generateCreateRecordInputSchema', () => {
 
     const statusProperty = schema.shape.status;
 
-    expect(statusProperty.description).toBe(
-      'Customized status description override',
-    );
+    expect(statusProperty.description).toBe('Original status description');
   });
 });

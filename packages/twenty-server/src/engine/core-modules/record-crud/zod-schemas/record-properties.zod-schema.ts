@@ -103,14 +103,7 @@ export const generateRecordPropertiesZodSchema = (
   const shape: Record<string, z.ZodTypeAny> = {};
 
   objectMetadata.fields.forEach((rawField) => {
-    const effectiveField = resolveEffectiveEntity(rawField);
-    const standardOverrides = (rawField as Record<string, unknown>)
-      .standardOverrides as Record<string, unknown> | undefined;
-
-    const field = {
-      ...effectiveField,
-      ...standardOverrides,
-    };
+    const field = resolveEffectiveEntity(rawField);
 
     if (
       !isFieldAvailable(field, forResponse) ||
