@@ -4,6 +4,7 @@ import { createSlackMessageTimestampSequence } from 'src/__tests__/utils/create-
 import { requireDefinedOrThrow } from 'src/__tests__/utils/require-defined-or-throw.util';
 import { setupSlackIntegrationTest } from 'src/__tests__/utils/setup-slack-integration-test.util';
 import { SLACK_ASSISTANT_FAILURE_TEXT } from 'src/logic-functions/constants/slack-assistant-failure-text';
+import { SLACK_ASSISTANT_FEEDBACK_ACTION_ID } from 'src/logic-functions/constants/slack-assistant-feedback-action-id';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { SLACK_ASSISTANT_INITIAL_STATUS } from 'src/logic-functions/constants/slack-assistant-status-steps';
 import { SLACK_MARKDOWN_BLOCK_MAX_LENGTH } from 'src/logic-functions/constants/slack-markdown-block-max-length';
@@ -223,6 +224,18 @@ describe('Slack assistant worker', () => {
           { type: 'mrkdwn', text: expect.stringMatching(/^Answered in \d+s$/) },
         ],
       },
+      // The feedback buttons carry the request record id, which is how a click
+      // finds the answer it rates.
+      expect.objectContaining({
+        type: 'context_actions',
+        block_id: request.id,
+        elements: [
+          expect.objectContaining({
+            type: 'feedback_buttons',
+            action_id: SLACK_ASSISTANT_FEEDBACK_ACTION_ID,
+          }),
+        ],
+      }),
     ]);
     // Record links in the answer must not turn into Slack previews.
     expect(slack.lastCallTo('chat.postMessage')?.args).toEqual(
