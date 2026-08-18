@@ -7,24 +7,26 @@ import {
 const isLogicFunctionCaller = (
   value: unknown,
 ): value is LogicFunctionCaller => {
-  if (typeof value !== 'object' || value === null || !('type' in value)) {
+  if (typeof value !== 'object' || value === null) {
     return false;
   }
 
-  if (value.type === 'user') {
+  const candidate = value as Record<string, unknown>;
+
+  if (candidate.type === 'user') {
+    const hasValidWorkspaceMemberId =
+      candidate.workspaceMemberId === undefined ||
+      isNonEmptyString(candidate.workspaceMemberId);
+
     return (
-      'userId' in value &&
-      isNonEmptyString(value.userId) &&
-      'userWorkspaceId' in value &&
-      isNonEmptyString(value.userWorkspaceId) &&
-      (!('workspaceMemberId' in value) ||
-        value.workspaceMemberId === undefined ||
-        isNonEmptyString(value.workspaceMemberId))
+      isNonEmptyString(candidate.userId) &&
+      isNonEmptyString(candidate.userWorkspaceId) &&
+      hasValidWorkspaceMemberId
     );
   }
 
-  if (value.type === 'apiKey') {
-    return 'apiKeyId' in value && isNonEmptyString(value.apiKeyId);
+  if (candidate.type === 'apiKey') {
+    return isNonEmptyString(candidate.apiKeyId);
   }
 
   return false;
