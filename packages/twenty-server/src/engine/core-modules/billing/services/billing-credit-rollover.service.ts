@@ -165,7 +165,6 @@ export class BillingCreditRolloverService {
     await this.billingCreditService.refreshWorkspaceCreditState({
       workspaceId,
       availableDeltaMicro: carriedForwardMicro,
-      addsCredits: true,
       isReplay: hasReplayedGrant,
       adjustmentKey: buildRolloverAdjustmentKey(nextPeriodStart),
     });

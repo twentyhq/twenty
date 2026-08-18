@@ -12,6 +12,10 @@ export const isTwentyOrmV2UserInputError = (
     case TwentyOrmV2ExceptionCode.UNKNOWN_COLUMN:
     case TwentyOrmV2ExceptionCode.UNKNOWN_RELATION:
     case TwentyOrmV2ExceptionCode.UNSUPPORTED_OPERATION:
+    case TwentyOrmV2ExceptionCode.TOO_MANY_RECORDS_TO_UPDATE:
+    case TwentyOrmV2ExceptionCode.ENTITY_NOT_FOUND:
+    case TwentyOrmV2ExceptionCode.DUPLICATE_ENTRY_DETECTED:
+    case TwentyOrmV2ExceptionCode.INVALID_INPUT:
       return true;
     default:
       return false;

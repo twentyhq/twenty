@@ -1,6 +1,5 @@
 import { computeDeterministicUuid } from '@/application/deterministic-identifier/compute-deterministic-uuid.util';
 
-// A tab is identified by its title within its page layout.
 export const getSystemPageLayoutTabUniversalIdentifier = ({
   objectMetadataApplicationUniversalIdentifier,
   pageLayoutUniversalIdentifier,

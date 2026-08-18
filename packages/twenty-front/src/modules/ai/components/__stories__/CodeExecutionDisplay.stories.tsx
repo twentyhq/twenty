@@ -74,7 +74,6 @@ export const Success: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     expect(await canvas.findByText('Completed')).toBeVisible();
-    // Output content is inside a scrollable container
     expect(await canvas.findByText(/Total Revenue/)).toBeInTheDocument();
   },
 };

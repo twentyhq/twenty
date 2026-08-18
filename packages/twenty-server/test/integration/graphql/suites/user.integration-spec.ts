@@ -93,7 +93,6 @@ describe('deleteUser', () => {
         );
       });
 
-    // Sign up a new user into the current workspace via public invite link
     const testEmail = `test_user_${Date.now()}@example.com`;
     const signUpMutation = signUpOperationFactory({
       email: testEmail,
@@ -105,7 +104,6 @@ describe('deleteUser', () => {
     expect(signUpResponse.status).toBe(200);
     expect(signUpResponse.body.errors).toBeUndefined();
 
-    // Query workspace members and find the created user by email to get workspaceMemberId
     const newWorkspaceMemberQuery = {
       query: `
         query WorkspaceMember($workspaceMemberFilter: WorkspaceMemberFilterInput!) {

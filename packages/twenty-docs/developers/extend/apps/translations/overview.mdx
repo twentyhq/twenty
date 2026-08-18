@@ -55,8 +55,8 @@ const Card = ({ count, name }: { count: number; name: string }) => {
 
 ### When to use which
 
-- **`<Trans>…</Trans>`** — static text in JSX. Use the `message` and `values`
-  props for interpolation (`<Trans message="Hi {name}" values={{ name }} />`);
+- **`Trans`** — static text in JSX. Use the `message` and `values` props for
+  interpolation, as in `Trans message="Hi {name}" values={{ name }}`;
   interpolating directly in the children is not statically extractable.
 - **`useTranslate().t`** — dynamic strings inside a component. Re-renders when the
   user switches language. Prefer this inside render.
@@ -85,7 +85,7 @@ twenty dev:translations-extract                  # collect strings into locales/
 twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 ```
 
-Extraction collects both your manifest labels and the `t()`/`msg()`/`<Trans>`
+Extraction collects both your manifest labels and the `t()`/`msg()`/`Trans`
 strings from your front-component source into `locales/<locale>.json`, keyed by
 source string. Fill in the translations:
 
@@ -108,7 +108,7 @@ current user: manifest labels are resolved server-side, and front-component
 catalogs are baked into each component bundle. At runtime a component reads the
 locale from its execution context (the host's current language) and resolves
 each string against its catalog, falling back to the source when a translation
-is missing. Switching language in the host re-renders `<Trans>` and
+is missing. Switching language in the host re-renders `Trans` and
 `useTranslate().t` strings live.
 
 Because catalogs are compiled at build time, updating a translation means
@@ -120,6 +120,13 @@ continuous `twenty dev` watch shows source strings, so test localized output
 with a one-off build.
 </Note>
 
-`<Trans>` text children may span multiple lines — whitespace is collapsed the
-same way JSX collapses it, so `<Trans>Welcome\n  back</Trans>` and the extracted
-key both become `Welcome back`.
+`Trans` text children may span multiple lines — whitespace is collapsed the
+same way JSX collapses it, so both of these extract to the key `Welcome back`:
+
+```tsx
+<Trans>Welcome back</Trans>
+<Trans>
+  Welcome
+  back
+</Trans>
+```

@@ -143,7 +143,6 @@ export class TimelineActivitySeederService {
       { type: 'opportunity', seeds: OPPORTUNITY_DATA_SEEDS },
     ];
 
-    // Calendar events and messages only appear as linked activities
     const linkableConfigs: EntityConfig[] = [
       { type: 'calendarEvent', seeds: CALENDAR_EVENT_DATA_SEEDS },
       { type: 'message', seeds: MESSAGE_DATA_SEEDS },
@@ -183,7 +182,6 @@ export class TimelineActivitySeederService {
       });
     });
 
-    // Create only linked activities for calendar events and messages
     linkableConfigs.forEach(({ type, seeds }) => {
       seeds.forEach((seed, index) => {
         const linkedObjectMetadataId = this.getLinkedObjectMetadataId(
@@ -299,7 +297,6 @@ export class TimelineActivitySeederService {
       happensAt: creationDate,
     };
 
-    // Set the appropriate target entity ID for entities that have target columns
     const entitiesWithTargetColumns = new Set([
       'note',
       'task',
@@ -594,13 +591,11 @@ export class TimelineActivitySeederService {
       happensAt: creationDate,
     };
 
-    // Set target ID (person, company, or opportunity)
     const targetIdKey = `target${capitalize(targetInfo.targetType)}Id`;
 
     // @ts-expect-error - This is okay for morph
     linkedActivity[targetIdKey] = targetInfo.targetId;
 
-    // Only set target activity ID for entities that have corresponding columns
     const entitiesWithTargetColumns = new Set(['note', 'task']);
 
     if (entitiesWithTargetColumns.has(activityType)) {
@@ -676,7 +671,6 @@ export class TimelineActivitySeederService {
       this.ENTITY_CODES[type as keyof typeof this.ENTITY_CODES] || '0000';
     const targetCode =
       this.TARGET_CODES[targetType as keyof typeof this.TARGET_CODES] || '0000';
-    // Ensure the last segment is exactly 12 hex characters
     const indexHex = (index % 0xffffffff).toString(16).padStart(8, '0');
 
     return `${prefix}-${entityCode}-${targetCode}-8001-${indexHex}0001`;

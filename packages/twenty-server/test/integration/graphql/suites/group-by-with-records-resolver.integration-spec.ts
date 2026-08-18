@@ -292,7 +292,6 @@ describe('basic group-by with records', () => {
   });
 
   it('groups by stage and createdAt with records and filters', async () => {
-    // Test with filter to only include NEW stage opportunities
     const response = await makeGraphqlAPIRequest({
       query: gql`
         query OpportunitiesGroupBy(

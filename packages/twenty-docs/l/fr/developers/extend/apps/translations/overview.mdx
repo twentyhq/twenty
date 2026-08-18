@@ -55,8 +55,8 @@ const Card = ({ count, name }: { count: number; name: string }) => {
 
 ### Quand utiliser quoi
 
-* **`<Trans>…</Trans>`** — texte statique dans JSX. Utilisez les props `message` et `values`
-  pour l’interpolation (`<Trans message="Hi {name}" values={{ name }} />`) ;
+* **`Trans`** — texte statique dans JSX. Utilisez les props `message` et `values` pour
+  l’interpolation, comme dans `Trans message="Hi {name}" values={{ name }}`;
   l’interpolation directement dans les enfants n’est pas extractible statiquement.
 * **`useTranslate().t`** — chaînes dynamiques à l’intérieur d’un composant. Se réaffiche lorsque
   l’utilisateur change de langue. À privilégier à l’intérieur du rendu.
@@ -85,7 +85,7 @@ twenty dev:translations-extract                  # collect strings into locales/
 twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 ```
 
-L’extraction collecte à la fois les libellés de votre manifeste et les chaînes `t()`/`msg()`/`\<Trans>`
+L’extraction collecte à la fois les libellés de votre manifeste et les chaînes `t()`/`msg()`/`Trans`
 provenant de votre source front-component dans `locales/\<locale>.json`, indexées par
 chaîne source. Renseignez les traductions :
 
@@ -108,7 +108,7 @@ l’utilisateur actuel : les libellés du manifeste sont résolus côté serveur
 front-component sont intégrés à chaque bundle de composant. À l’exécution, un composant lit la
 locale depuis son contexte d’exécution (la langue actuelle de l’hôte) et résout
 chaque chaîne à partir de son catalogue, en revenant à la source lorsqu’une traduction
-manque. Changer la langue dans l’hôte réaffiche en direct les chaînes `\<Trans>` et
+manque. Changer la langue dans l’hôte réaffiche en direct les chaînes `Trans` et
 `useTranslate().t`.
 
 Comme les catalogues sont compilés au moment de la build, mettre à jour une traduction implique
@@ -120,6 +120,13 @@ surveillance continue `twenty dev` affiche les chaînes source, donc testez la s
 avec une build ponctuelle.
 </Note>
 
-Les enfants texte de `<Trans>` peuvent s’étendre sur plusieurs lignes — les espaces sont compressés de
-la même façon que JSX les compresse, donc `<Trans>Welcome\n  back</Trans>` et la clé extraite
-deviendront toutes deux `Welcome back`.
+Les enfants textuels de `Trans` peuvent s’étendre sur plusieurs lignes — les espaces sont réduits
+de la même façon que JSX les réduit, donc ces deux exemples sont extraits avec la clé `Welcome back` :
+
+```tsx
+<Trans>Welcome back</Trans>
+<Trans>
+  Welcome
+  back
+</Trans>
+```

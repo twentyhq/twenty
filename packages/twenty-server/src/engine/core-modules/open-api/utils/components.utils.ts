@@ -201,7 +201,6 @@ const computeSchemaComponent = ({
 
   const withRequiredFields = !forResponse && !forUpdate;
 
-  // Create a temporary object that looks like ObjectMetadataEntity for the converter
   const tempItem = {
     ...item,
     fields: flatFieldMetadatas,

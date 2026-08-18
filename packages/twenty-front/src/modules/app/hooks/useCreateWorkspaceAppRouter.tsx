@@ -117,6 +117,12 @@ const AiChatPage = lazy(() =>
   })),
 );
 
+const MobileHomePage = lazy(() =>
+  import('~/pages/mobile-home/MobileHomePage').then((module) => ({
+    default: module.MobileHomePage,
+  })),
+);
+
 const NotFound = lazy(() =>
   import('~/pages/not-found/NotFound').then((module) => ({
     default: module.NotFound,
@@ -181,6 +187,14 @@ const createWorkspaceAppRouter = (
                 element={
                   <LazyRoute>
                     <AiChatPage />
+                  </LazyRoute>
+                }
+              />
+              <Route
+                path={AppPath.Home}
+                element={
+                  <LazyRoute>
+                    <MobileHomePage />
                   </LazyRoute>
                 }
               />

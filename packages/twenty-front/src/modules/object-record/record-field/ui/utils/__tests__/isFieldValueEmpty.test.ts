@@ -194,7 +194,6 @@ describe('isFieldValueEmpty', () => {
       }),
     ).toBe(true);
 
-    // Multiple secondary links with mix of valid and invalid
     expect(
       isFieldValueEmpty({
         fieldDefinition: linksFieldDefinition,

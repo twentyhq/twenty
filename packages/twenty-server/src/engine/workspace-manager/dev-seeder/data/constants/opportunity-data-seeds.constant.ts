@@ -62,7 +62,6 @@ const GENERATE_OPPORTUNITY_IDS = (): Record<string, string> => {
 
 export const OPPORTUNITY_DATA_SEED_IDS = GENERATE_OPPORTUNITY_IDS();
 
-// Credible opportunity names for Apple selling to various companies
 const OPPORTUNITY_TEMPLATES = [
   { name: 'Enterprise iPad Deployment', amount: 2500000, stage: 'PROPOSAL' },
   { name: 'MacBook Pro Fleet Upgrade', amount: 1800000, stage: 'MEETING' },

@@ -211,6 +211,7 @@ export interface WorkspaceMember {
     name: FullName
     userEmail: Scalars['String']
     colorScheme: Scalars['String']
+    uiScale: Scalars['String']
     openRecordIn: OpenRecordIn
     avatarUrl?: Scalars['String']
     locale?: Scalars['String']
@@ -1828,11 +1829,15 @@ export interface MarketplaceAppDetail {
 export interface WorkspaceCompanyEnrichmentResult {
     outcome: WorkspaceCompanyEnrichmentOutcome
     enrichment?: Scalars['JSON']
+    personOutcome: WorkspacePersonEnrichmentOutcome
+    personEnrichment?: Scalars['JSON']
     isBookCallOnboardingStepPending: Scalars['Boolean']
     __typename: 'WorkspaceCompanyEnrichmentResult'
 }
 
 export type WorkspaceCompanyEnrichmentOutcome = 'matched' | 'unavailable' | 'transientError'
+
+export type WorkspacePersonEnrichmentOutcome = 'matched' | 'unavailable' | 'transientError'
 
 export interface Field {
     id: Scalars['UUID']
@@ -3469,6 +3474,7 @@ export interface WorkspaceMemberGenqlSelection{
     name?: FullNameGenqlSelection
     userEmail?: boolean | number
     colorScheme?: boolean | number
+    uiScale?: boolean | number
     openRecordIn?: boolean | number
     avatarUrl?: boolean | number
     locale?: boolean | number
@@ -5136,6 +5142,8 @@ export interface MarketplaceAppDetailGenqlSelection{
 export interface WorkspaceCompanyEnrichmentResultGenqlSelection{
     outcome?: boolean | number
     enrichment?: boolean | number
+    personOutcome?: boolean | number
+    personEnrichment?: boolean | number
     isBookCallOnboardingStepPending?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -6548,14 +6556,14 @@ export interface MutationGenqlSelection{
     createChatThread?: AgentChatThreadGenqlSelection
     sendChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], text: Scalars['String'], messageId: Scalars['UUID'], browsingContext?: (Scalars['JSON'] | null), modelId?: (Scalars['String'] | null), fileAttachments?: (FileAttachmentInput[] | null)} })
     retryChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], modelId?: (Scalars['String'] | null)} })
-    answerAgentChatQuestion?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], messageId: Scalars['UUID'], answers: AgentChatQuestionAnswerInput[], modelId?: (Scalars['String'] | null)} })
+    answerAgentChatQuestion?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], messageId: Scalars['UUID'], answers: AgentChatQuestionAnswerInput[], modelId?: (Scalars['String'] | null), fileAttachments?: (FileAttachmentInput[] | null)} })
     stopAgentChatStream?: { __args: {threadId: Scalars['UUID']} }
     renameChatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID'], title: Scalars['String']} })
     archiveChatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
     unarchiveChatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
     deleteChatThread?: { __args: {id: Scalars['UUID']} }
     deleteQueuedChatMessage?: { __args: {messageId: Scalars['UUID']} }
-    startWorkspaceSetupChat?: (StartWorkspaceSetupChatResultGenqlSelection & { __args?: {companyContext?: (Scalars['JSON'] | null)} })
+    startWorkspaceSetupChat?: (StartWorkspaceSetupChatResultGenqlSelection & { __args?: {companyContext?: (Scalars['JSON'] | null), personContext?: (Scalars['JSON'] | null)} })
     createSkill?: (SkillGenqlSelection & { __args: {input: CreateSkillInput} })
     updateSkill?: (SkillGenqlSelection & { __args: {input: UpdateSkillInput} })
     deleteSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -9709,6 +9717,12 @@ export const enumCaptchaDriverType = {
 }
 
 export const enumWorkspaceCompanyEnrichmentOutcome = {
+   matched: 'matched' as const,
+   unavailable: 'unavailable' as const,
+   transientError: 'transientError' as const
+}
+
+export const enumWorkspacePersonEnrichmentOutcome = {
    matched: 'matched' as const,
    unavailable: 'unavailable' as const,
    transientError: 'transientError' as const

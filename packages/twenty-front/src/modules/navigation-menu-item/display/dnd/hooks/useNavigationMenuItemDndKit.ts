@@ -219,7 +219,6 @@ export const useNavigationMenuItemDndKit = (
         return;
       }
 
-      // Branch 2: sortable-to-droppable-slot (includes insert-before zones)
       if (resolved !== null && sourceIsSortable) {
         setActiveDropTargetId(resolved.effectiveDropTargetId);
         setAddToNavigationFallbackDestination(resolved.destination);
@@ -278,7 +277,6 @@ export const useNavigationMenuItemDndKit = (
     const targetIsSortable = target !== null && isSortable(target);
     const resolved = resolveDropTarget(target, getNavItemById, sectionType);
 
-    // Workspace fast path: sortable-to-sortable within workspace
     if (
       isWorkspaceSection &&
       sourceIsSortable &&

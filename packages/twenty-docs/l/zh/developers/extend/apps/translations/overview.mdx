@@ -52,7 +52,7 @@ const Card = ({ count, name }: { count: number; name: string }) => {
 
 ### 何时使用哪一种
 
-* **`<Trans>…</Trans>`** —— JSX 中的静态文本。 使用 `message` 和 `values` 属性进行插值（`<Trans message="Hi {name}" values={{ name }} />`）；直接在子节点中插值无法被静态提取。
+* **`Trans`** —— JSX 中的静态文本。 使用 `message` 和 `values` 属性进行插值，如 `Trans message="Hi {name}" values={{ name }}`；直接在子节点中插值无法被静态提取。
 * **`useTranslate().t`** —— 组件内部的动态字符串。 当用户切换语言时会重新渲染。 在渲染逻辑中优先使用这个。
 * **`t(...)`**（直接导入）—— 可在**任何地方**使用的即时翻译，包括事件处理函数、辅助函数和模块作用域——不仅仅在渲染逻辑中。
 * **`msg(...)`** —— 以数据形式（常量、配置）声明字符串的惰性描述符。 在之后通过 `t(descriptor)` 来解析它。
@@ -76,7 +76,7 @@ twenty dev:translations-extract                  # collect strings into locales/
 twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 ```
 
-提取会收集你的 manifest 标签以及前端组件源码中的 `t()`/`msg()`/`\<Trans>` 字符串，并将它们放入 `locales/\<locale>.json` 中，以源字符串作为键。 填写翻译：
+提取会收集你的 manifest 标签以及前端组件源码中的 `t()`/`msg()`/`Trans` 字符串，并将它们放入 `locales/\<locale>.json` 中，以源字符串作为键。 填写翻译：
 
 ```json
 // locales/fr-FR.json
@@ -91,7 +91,7 @@ twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 
 ## 运行方式
 
-`twenty dev:build` 会编译目录并为当前用户提供正确的语言：manifest 标签在服务端解析，前端组件目录被打包进每个组件 bundle 中。 在运行时，组件会从其执行上下文（宿主的当前语言）中读取语言环境，并将每个字符串在其目录中解析，当翻译缺失时回退到源文本。 在宿主中切换语言会实时重新渲染 `\<Trans>` 和 `useTranslate().t` 的字符串。
+`twenty dev:build` 会编译目录并为当前用户提供正确的语言：manifest 标签在服务端解析，前端组件目录被打包进每个组件 bundle 中。 在运行时，组件会从其执行上下文（宿主的当前语言）中读取语言环境，并将每个字符串在其目录中解析，当翻译缺失时回退到源文本。 在宿主中切换语言会实时重新渲染 `Trans` 和 `useTranslate().t` 的字符串。
 
 由于目录在构建时被编译，更新翻译意味着需要重新运行 `twenty dev:build`（并重新部署），这和其他任何更改一样。
 
@@ -99,4 +99,12 @@ twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 翻译由 `twenty dev:build`（以及 `twenty apply`）编译。 持续运行的 `twenty dev` 监视会显示源字符串，因此请使用一次性构建来测试本地化输出。
 </Note>
 
-`<Trans>` 的文本子节点可以跨多行——空白会以与 JSX 相同的方式被折叠，因此 `<Trans>Welcome\n  back</Trans>` 和提取出的键都会变成 `Welcome back`。
+`Trans` 的文本子节点可以跨多行——空白会以与 JSX 相同的方式被折叠，因此这两种写法都会被提取为键 `Welcome back`：
+
+```tsx
+<Trans>Welcome back</Trans>
+<Trans>
+  Welcome
+  back
+</Trans>
+```

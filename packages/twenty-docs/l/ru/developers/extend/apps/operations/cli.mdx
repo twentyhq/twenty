@@ -4,7 +4,25 @@ description: Команды `yarn twenty` для выполнения функц
 icon: terminal
 ---
 
-Помимо `dev`, `dev:build`, `dev:add` и `dev:typecheck`, CLI `yarn twenty` предоставляет команды для выполнения функций, просмотра логов и управления установками приложений.
+CLI `yarn twenty` — ваш инструмент для всего, что связано с приложением. Полный список команд:
+
+| Команда                                         | Что делает                                                                               | Описано в                                                                                          |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `dev`                                           | Отслеживает исходные файлы и синхронизирует изменения в реальном времени                 | [Краткое руководство](/l/ru/developers/extend/apps/getting-started/quick-start)                         |
+| `план`                                          | Предпросмотр изменений метаданных без их применения                                      | [Syncing & recovery](/l/ru/developers/extend/apps/operations/sync-and-recovery#previewing-changes-plan) |
+| `применить`                                     | Применить изменения метаданных после показа плана                                        | [Syncing & recovery](/l/ru/developers/extend/apps/operations/sync-and-recovery)                         |
+| `dev:build`                                     | Скомпилировать приложение и сгенерировать API‑клиент (`--tarball` для упаковки в `.tgz`) | [Публикация](/l/ru/developers/extend/apps/operations/publishing)                                        |
+| `dev:typecheck`                                 | Запустить проверку типов TypeScript                                                      | [Тестирование](/l/ru/developers/extend/apps/operations/testing)                                         |
+| `dev:add`                                       | Создать каркас новой сущности                                                            | [Создание каркаса](/l/ru/developers/extend/apps/getting-started/scaffolding)                            |
+| `dev:generate-client`                           | Повторно сгенерировать типизированный API‑клиент                                         | эта страница                                                                                       |
+| `dev:function:exec` / `dev:function:logs`       | Выполнять функции и транслировать их логи                                                | эта страница                                                                                       |
+| `dev:translations-extract`                      | Извлечь переводимые строки в каталоги `locales/`                                         | [Переводы](/l/ru/developers/extend/apps/translations/overview)                                          |
+| `dev:catalog-sync`                              | Запустить синхронизацию каталога маркетплейса                                            | [Публикация](/l/ru/developers/extend/apps/operations/publishing#how-marketplace-discovery-works)        |
+| `app:publish` / `app:install` / `app:uninstall` | Жизненный цикл релиза                                                                    | [Публикация](/l/ru/developers/extend/apps/operations/publishing) и эта страница                         |
+| `docker:*`                                      | Управлять локальным контейнером сервера Twenty                                           | [Локальный сервер](/l/ru/developers/extend/apps/getting-started/local-server)                           |
+| `remote:*`                                      | Управлять подключениями к серверам                                                       | эта страница                                                                                       |
+
+Каждая команда принимает параметр `-r, --remote \<name>`, чтобы указать конкретное удалённое подключение вместо подключения по умолчанию.
 
 ## Выполнение функций (`yarn twenty dev:function:exec`)
 
@@ -20,8 +38,10 @@ yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 # Pass a JSON payload
 yarn twenty dev:function:exec -n create-new-post-card -p '{"name": "Hello"}'
 
-# Execute the post-install function
+# Execute the install and uninstall hooks
 yarn twenty dev:function:exec --postInstall
+yarn twenty dev:function:exec --preInstall
+yarn twenty dev:function:exec --uninstall
 ```
 
 ## Просмотр логов функций (`yarn twenty dev:function:logs`)
@@ -100,6 +120,12 @@ yarn twenty remote:list
 
 # Set the active remote
 yarn twenty remote:use <name>
+
+# Check that the active remote's authentication is still valid
+yarn twenty remote:status
+
+# Remove a remote
+yarn twenty remote:remove <name>
 ```
 
 Ваши учётные данные хранятся в `~/.twenty/config.json`.

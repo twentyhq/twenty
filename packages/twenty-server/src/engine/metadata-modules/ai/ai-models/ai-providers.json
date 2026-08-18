@@ -942,6 +942,18 @@
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio"],
         "supportsReasoning": true
+      },
+      {
+        "name": "gemini-3.7-flash",
+        "label": "Gemini 3.7 Flash",
+        "modelFamily": "GEMINI",
+        "inputCostPerMillionTokens": 0.75,
+        "outputCostPerMillionTokens": 3.75,
+        "cachedInputCostPerMillionTokens": 0.075,
+        "contextWindowTokens": 1048576,
+        "maxOutputTokens": 65536,
+        "modalities": ["image", "video", "audio", "pdf"],
+        "supportsReasoning": true
       }
     ]
   },

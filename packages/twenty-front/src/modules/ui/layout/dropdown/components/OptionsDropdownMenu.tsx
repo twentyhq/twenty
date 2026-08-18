@@ -70,7 +70,7 @@ export const OptionsDropdownMenu = ({
           Icon={IconDotsVertical}
           ariaLabel={t`Options`}
           size="small"
-          variant="tertiary"
+          variant="primary"
         />
       }
       dropdownPlacement="top-end"

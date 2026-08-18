@@ -193,7 +193,6 @@ const GENERATE_CALENDAR_EVENT_SEEDS = (): CalendarEventDataSeed[] => {
 
     const IS_CANCELLED = Math.random() < 0.05;
 
-    // Generate conference link if it's an online meeting
     const CONFERENCE_LINK = ['Zoom', 'Teams', 'Google Meet'].includes(
       CONFERENCE_SOLUTION,
     )

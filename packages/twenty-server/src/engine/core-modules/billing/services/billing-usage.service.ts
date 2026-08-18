@@ -21,7 +21,6 @@ import { BillingCreditGrantService } from 'src/engine/core-modules/billing/servi
 import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/services/billing-subscription-item.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
-import { BillingUsageCapService } from 'src/engine/core-modules/billing/services/billing-usage-cap.service';
 import { buildBillingCreditStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-credit-state-lock-key.util';
 import { getBillingSubscriptionPeriod } from 'src/engine/core-modules/billing/utils/get-billing-subscription-period.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
@@ -50,6 +49,13 @@ type ResolvedAvailableCredits = {
   isCounterWarm: boolean;
 };
 
+export type CreditAvailability =
+  | { hasAvailableCredits: true }
+  | {
+      hasAvailableCredits: false;
+      reason: 'workspace-suspended' | 'no-subscription' | 'no-credits';
+    };
+
 // This gate runs before every credit-consuming execution, so it waits far less
 // than a writer does and falls back to computing unlocked rather than failing
 // the execution outright.
@@ -72,7 +78,6 @@ export class BillingUsageService {
     private readonly billingSubscriptionRepository: WorkspaceScopedRepository<BillingSubscriptionEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly clickHouseService: ClickHouseService,
-    private readonly billingUsageCapService: BillingUsageCapService,
     private readonly cacheLockService: CacheLockService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
@@ -264,25 +269,13 @@ export class BillingUsageService {
     // that may predate it: incrementing an absent key would install
     // -usedCredits as the whole balance. Compute this turn locally instead and
     // let the next read rebuild once the marker lapses.
-    const decrementedAvailableCredits = isCounterWarm
+    return isCounterWarm
       ? await this.billingUsageCacheService.adjustAvailableCredits(
           workspaceId,
           currentPeriodStart,
           -usedCredits,
         )
       : availableCredits - usedCredits;
-
-    const hasJustReachedCap =
-      availableCredits > 0 && decrementedAvailableCredits <= 0;
-
-    if (hasJustReachedCap) {
-      await this.billingUsageCapService.setSubscriptionItemHasReachedCap(
-        workspaceId,
-        true,
-      );
-    }
-
-    return decrementedAvailableCredits;
   }
 
   // Warming is a read of the ledger followed by a write of what it implies, so
@@ -363,9 +356,11 @@ export class BillingUsageService {
     return { availableCredits, isCounterWarm: true };
   }
 
-  async hasAvailableCredits(workspaceId: string): Promise<boolean> {
+  async getCreditAvailability(
+    workspaceId: string,
+  ): Promise<CreditAvailability> {
     if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
-      return true;
+      return { hasAvailableCredits: true };
     }
 
     const workspace = await this.coreEntityCacheService.get(
@@ -377,7 +372,7 @@ export class BillingUsageService {
       isDefined(workspace) &&
       workspace.activationStatus === WorkspaceActivationStatus.SUSPENDED
     ) {
-      return false;
+      return { hasAvailableCredits: false, reason: 'workspace-suspended' };
     }
 
     const { currentBillingSubscription } =
@@ -386,7 +381,7 @@ export class BillingUsageService {
       ]);
 
     if (currentBillingSubscription === NO_BILLING_SUBSCRIPTION) {
-      return false;
+      return { hasAvailableCredits: false, reason: 'no-subscription' };
     }
 
     const subscription = currentBillingSubscription;
@@ -397,7 +392,16 @@ export class BillingUsageService {
       currentPeriodEnd: subscription.currentPeriodEnd,
     });
 
-    return availableCredits > 0;
+    return availableCredits > 0
+      ? { hasAvailableCredits: true }
+      : { hasAvailableCredits: false, reason: 'no-credits' };
+  }
+
+  async hasAvailableCredits(workspaceId: string): Promise<boolean> {
+    const { hasAvailableCredits } =
+      await this.getCreditAvailability(workspaceId);
+
+    return hasAvailableCredits;
   }
 
   async hasAvailableCreditsOrThrow(workspaceId: string): Promise<void> {

@@ -74,7 +74,6 @@ export class ObjectMetadataWithRelationsGqlObjectTypeGenerator {
 
     const config = gqlType.toConfig();
 
-    // Recreate the same object type with the new fields
     this.gqlTypesStorage.addGqlType(
       key,
       new GraphQLObjectType({

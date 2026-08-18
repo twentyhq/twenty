@@ -37,6 +37,11 @@ msgstr "\"{0}\"은(는) 복합 필드가 아닙니다. 하위 필드 선택을 �
 msgid "\"{0}\" is not a valid sub-field of \"{1}\"."
 msgstr "\"{0}\"은(는) \"{1}\"의 올바른 하위 필드가 아닙니다."
 
+#. js-lingui-id: gKGO2f
+#: src/engine/core-modules/user/utils/assert-workspace-member-update-values-are-valid.util.ts
+msgid "\"{fieldName}\" received an invalid value."
+msgstr ""
+
 #. js-lingui-id: SsRDX3
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
 msgid "\"{payloadKey}\" is not a valid workspace member field."
@@ -276,8 +281,8 @@ msgid "A required field is missing."
 msgstr "필수 필드가 누락되었습니다."
 
 #. js-lingui-id: /ffPWJ
+#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 #: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
-#: src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.ts
 msgid "A required field is missing. Please provide all required values and try again."
 msgstr "필수 필드가 누락되었습니다. 모든 필수 값을 입력한 후 다시 시도하세요."
 
@@ -458,6 +463,11 @@ msgstr "기업용 계정 소유자"
 msgid "Account Owner For Companies"
 msgstr "기업용 계정 소유자"
 
+#. js-lingui-id: bPwFdf
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Accounts"
+msgstr ""
+
 #. js-lingui-id: j0DfGR
 #: src/engine/core-modules/auth/services/reset-password.service.ts
 msgid "Action Needed to Reset Password"
@@ -467,6 +477,16 @@ msgstr "비밀번호 재설정을 위한 조치가 필요합니다"
 #: src/engine/core-modules/auth/services/reset-password.service.ts
 msgid "Action Needed to Set Password"
 msgstr "비밀번호 설정을 위한 조치가 필요합니다"
+
+#. js-lingui-id: FQBaXG
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Activate"
+msgstr ""
+
+#. js-lingui-id: tu8A/k
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Activate Workflow"
+msgstr ""
 
 #. js-lingui-id: F6pfE9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
@@ -484,10 +504,21 @@ msgstr "실제 녹화 종료 시간"
 msgid "Actual recording start"
 msgstr "실제 녹화 시작 시간"
 
+#. js-lingui-id: 4z3e0b
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Add a Node"
+msgstr ""
+
 #. js-lingui-id: ffpvxH
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
 msgid "Add at least one field to update."
 msgstr "업데이트할 필드를 최소 한 개 이상 추가하세요."
+
+#. js-lingui-id: NgFERn
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Add to Favorites"
+msgstr ""
 
 #. js-lingui-id: Du6bPw
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -498,6 +529,11 @@ msgstr "주소"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgid "Address of the company"
 msgstr "회사 주소"
+
+#. js-lingui-id: g1in8j
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Admin Panel"
+msgstr ""
 
 #. js-lingui-id: VmatbA
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -551,6 +587,11 @@ msgstr "그래프 위젯 \"{widgetTitle}\"에는 집계 연산이 필수입니�
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Aggregated / filtered event to be displayed on the timeline"
 msgstr "타임라인에 표시할 집계/필터링된 이벤트"
+
+#. js-lingui-id: jsQZMk
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "AI"
+msgstr ""
 
 #. js-lingui-id: WG8+0x
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
@@ -643,6 +684,11 @@ msgstr "기회"
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "An unexpected billing error occurred."
 msgstr "예상치 못한 결제 오류가 발생했습니다."
+
+#. js-lingui-id: U8C7oj
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "An unexpected billing error occurred. Please contact support."
+msgstr ""
 
 #. js-lingui-id: acTNEg
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
@@ -812,6 +858,11 @@ msgstr "승인된 접근 도메인은 이미 검증되었습니다"
 msgid "Approved access domain not found."
 msgstr "승인된 액세스 도메인을 찾을 수 없음."
 
+#. js-lingui-id: VDvaN2
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Apps"
+msgstr ""
+
 #. js-lingui-id: naCW6Z
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "April"
@@ -826,6 +877,12 @@ msgstr "압축 파일"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgid "Archived"
 msgstr "보관됨"
+
+#. js-lingui-id: xWEvuo
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Ask AI"
+msgstr ""
 
 #. js-lingui-id: Ek7xGj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -1002,6 +1059,11 @@ msgstr "아바타 URL"
 msgid "Bcc"
 msgstr "숨은 참조"
 
+#. js-lingui-id: R+w/Va
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Billing"
+msgstr ""
+
 #. js-lingui-id: rkIGWa
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Billing customer not found."
@@ -1026,6 +1088,11 @@ msgstr "결제 가격을 찾을 수 없음."
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Billing product not found."
 msgstr "결제 상품을 찾을 수 없음."
+
+#. js-lingui-id: JEzhsu
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Block Settings"
+msgstr ""
 
 #. js-lingui-id: K1172m
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -1303,6 +1370,11 @@ msgstr ""
 msgid "Calendar widget views only support the month layout"
 msgstr ""
 
+#. js-lingui-id: EUpfsd
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Calendars"
+msgstr ""
+
 #. js-lingui-id: 9e+AU2
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Call Recording"
@@ -1321,6 +1393,7 @@ msgid "Call Recordings"
 msgstr "통화 녹음"
 
 #. js-lingui-id: D02dD9
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1352,6 +1425,16 @@ msgstr "{connectFieldName}에 연결할 수 없습니다. 조건에 맞는 고�
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "Can't impersonate user via api key"
 msgstr "API 키를 통해 사용자를 가장할 수 없습니다."
+
+#. js-lingui-id: dEgA5A
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Cancel"
+msgstr ""
+
+#. js-lingui-id: HYLdMN
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Cancel Edition"
+msgstr ""
 
 #. js-lingui-id: GGWsTU
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -1662,6 +1745,11 @@ msgstr ""
 msgid "Commas and dot"
 msgstr "쉼표와 마침표"
 
+#. js-lingui-id: chL5IG
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Community"
+msgstr ""
+
 #. js-lingui-id: s2QZS6
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Companies"
@@ -1699,6 +1787,21 @@ msgstr "스팸 신고 수"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 msgid "Completed"
 msgstr "완료됨"
+
+#. js-lingui-id: QOhkyl
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Compose"
+msgstr ""
+
+#. js-lingui-id: jjRhGA
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Compose Campaign"
+msgstr ""
+
+#. js-lingui-id: avabab
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Compose Email"
+msgstr ""
 
 #. js-lingui-id: L1uQuF
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -1988,6 +2091,17 @@ msgstr "생성"
 msgid "Create Calendar Event"
 msgstr "캘린더 이벤트 생성"
 
+#. js-lingui-id: x65syA
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Create new Campaign"
+msgstr ""
+
+#. js-lingui-id: 3D0MXY
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Create View"
+msgstr ""
+
 #. js-lingui-id: NCIYDF
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -2169,6 +2283,11 @@ msgstr "대시보드 제목"
 msgid "Dashboards"
 msgstr "대시보드"
 
+#. js-lingui-id: 4BuYDo
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Data Model"
+msgstr ""
+
 #. js-lingui-id: Bv/LBb
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Data structure is invalid."
@@ -2225,6 +2344,16 @@ msgstr "레코드가 삭제된 날짜"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgid "Day First"
 msgstr "일 우선"
+
+#. js-lingui-id: 5y3O+A
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Deactivate"
+msgstr ""
+
+#. js-lingui-id: 4tpC8V
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Deactivate Workflow"
+msgstr ""
 
 #. js-lingui-id: yAT3be
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
@@ -2298,6 +2427,7 @@ msgstr "기본값은 고유해야 합니다."
 #. js-lingui-id: cnGeoo
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgid "Delete"
 msgstr "삭제"
 
@@ -2349,6 +2479,16 @@ msgstr ""
 msgid "Description"
 msgstr "설명"
 
+#. js-lingui-id: f8fH8W
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Design"
+msgstr ""
+
+#. js-lingui-id: 2xxBws
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Destroy"
+msgstr ""
+
 #. js-lingui-id: m2jBI/
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "Direct upload is not supported for this file type."
@@ -2358,6 +2498,12 @@ msgstr "이 파일 유형은 직접 업로드를 지원하지 않습니다."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgid "Direction"
 msgstr "방향"
+
+#. js-lingui-id: zAg2B9
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Discard Draft"
+msgstr ""
 
 #. js-lingui-id: 0gS7M5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -2387,6 +2533,11 @@ msgstr "도메인은 이미 공용 도메인으로 등록되었습니다."
 msgid "Domain Name"
 msgstr "도메인 이름"
 
+#. js-lingui-id: AZ4xlc
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Domains"
+msgstr ""
+
 #. js-lingui-id: DPfwMq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 msgid "Done"
@@ -2414,16 +2565,48 @@ msgstr "이메일 초안"
 msgid "Due Date"
 msgstr "마감일"
 
+#. js-lingui-id: euc6Ns
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Duplicate"
+msgstr ""
+
+#. js-lingui-id: MR2sZ1
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Duplicate Dashboard"
+msgstr ""
+
 #. js-lingui-id: UrzTjS
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
 msgid "Duplicate root resolver found. Each root resolver can only be called once per document."
 msgstr "중복된 루트 리졸버가 발견되었습니다. 각 루트 리졸버는 문서당 한 번만 호출할 수 있습니다."
+
+#. js-lingui-id: 2RpRNn
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Duplicate Workflow"
+msgstr ""
 
 #. js-lingui-id: BXtAxc
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Duplicated option {field}"
 msgstr "중복된 옵션 {field}"
+
+#. js-lingui-id: ePK91l
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Edit"
+msgstr ""
+
+#. js-lingui-id: GpnfNN
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Edit Dashboard"
+msgstr ""
+
+#. js-lingui-id: NZubw3
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Edit Layout"
+msgstr ""
 
 #. js-lingui-id: n6jNyT
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
@@ -2533,6 +2716,7 @@ msgstr "이메일 인증이 필요하지 않습니다."
 #. js-lingui-id: BXEcos
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgid "Emails"
 msgstr "이메일"
@@ -2698,6 +2882,28 @@ msgstr "실행자"
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
 msgid "Expected the same constraint fields to be used consistently across all operations for {connectFieldName}."
 msgstr "{connectFieldName}의 모든 작업에서 동일한 제약 필드를 일관되게 사용하는 것이 기대됩니다."
+
+#. js-lingui-id: bKBhgb
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Experience"
+msgstr ""
+
+#. js-lingui-id: GS+Mus
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Export"
+msgstr ""
+
+#. js-lingui-id: q46CjD
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Export to PDF"
+msgstr ""
+
+#. js-lingui-id: gcpThs
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Export View"
+msgstr ""
 
 #. js-lingui-id: QhJOSq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -3358,6 +3564,7 @@ msgstr "함수를 찾을 수 없음."
 
 #. js-lingui-id: Weq9zb
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgid "General"
 msgstr "일반"
 
@@ -3376,6 +3583,91 @@ msgstr "GIN 인덱스는 multi-select, 배열, JSON 및 search-vector 열에서 
 #. js-lingui-id: odCOaU
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "GitHub authentication failed. Try connecting your GitHub account again."
+msgstr ""
+
+#. js-lingui-id: yLNxLB
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Go to Accounts Settings"
+msgstr ""
+
+#. js-lingui-id: bXK4Dw
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Go to Admin Panel Settings"
+msgstr ""
+
+#. js-lingui-id: PURhOU
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Go to AI Settings"
+msgstr ""
+
+#. js-lingui-id: 9c7c5Q
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Go to Apps Settings"
+msgstr ""
+
+#. js-lingui-id: f0UZyy
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Go to Billing Settings"
+msgstr ""
+
+#. js-lingui-id: grGWgf
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Go to Calendars Settings"
+msgstr ""
+
+#. js-lingui-id: XYZBO5
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Go to Community Settings"
+msgstr ""
+
+#. js-lingui-id: xzAcR6
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Go to Data Model Settings"
+msgstr ""
+
+#. js-lingui-id: m+Jq8B
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Go to Domains Settings"
+msgstr ""
+
+#. js-lingui-id: vijApc
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Go to Emails Settings"
+msgstr ""
+
+#. js-lingui-id: hGyIXg
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Go to Experience Settings"
+msgstr ""
+
+#. js-lingui-id: 7NpkPs
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Go to General Settings"
+msgstr ""
+
+#. js-lingui-id: t4V8bk
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Go to MCP & APIs Settings"
+msgstr ""
+
+#. js-lingui-id: NAtWEL
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Go to Members Settings"
+msgstr ""
+
+#. js-lingui-id: 2MkyHT
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Go to Roles Settings"
+msgstr ""
+
+#. js-lingui-id: x4VP/P
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Go to Security Settings"
+msgstr ""
+
+#. js-lingui-id: mT57+Q
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Go to Settings"
 msgstr ""
 
 #. js-lingui-id: cvJ2e6
@@ -3435,6 +3727,11 @@ msgstr "handlerName은 올바른 JavaScript 식별자이거나 점으로 구분�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 msgid "Header message Id"
 msgstr "헤더 메시지 ID"
+
+#. js-lingui-id: OlbYor
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Hide deleted"
+msgstr ""
 
 #. js-lingui-id: i0qMbr
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
@@ -3528,6 +3825,11 @@ msgstr "정의된 기본값은 최소한 하나의 값을 포함해야 합니다
 msgid "Image"
 msgstr "이미지"
 
+#. js-lingui-id: l3s5ri
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Import"
+msgstr ""
+
 #. js-lingui-id: /LCAwL
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
 msgid "In progress"
@@ -3609,6 +3911,11 @@ msgstr "캘린더에 액세스할 권한이 부족합니다."
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "Insufficient permissions."
 msgstr "권한이 부족합니다."
+
+#. js-lingui-id: HTEaVD
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgid "Interface Scale"
+msgstr ""
 
 #. js-lingui-id: 4bX5tI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -3914,9 +4221,9 @@ msgid "Invalid input for application registration."
 msgstr "애플리케이션 등록을 위한 입력이 유효하지 않습니다."
 
 #. js-lingui-id: t7SpQO
+#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 #: src/engine/core-modules/application/application.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
-#: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Invalid input provided."
 msgstr "잘못된 입력이 제공되었습니다."
 
@@ -4852,6 +5159,11 @@ msgstr "maxNumberOfValues는 설정에서 정의되어 있어야 하며 0보다 
 msgid "May"
 msgstr "5월"
 
+#. js-lingui-id: r9gSmi
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "MCP & APIs"
+msgstr ""
+
 #. js-lingui-id: EnfPm2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -4869,9 +5181,15 @@ msgid "Meeting title from the calendar event"
 msgstr "캘린더 이벤트의 회의 제목"
 
 #. js-lingui-id: wlQNTg
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
 msgid "Members"
 msgstr "회원"
+
+#. js-lingui-id: UODtG8
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Merge"
+msgstr ""
 
 #. js-lingui-id: xDAtGP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -5270,6 +5588,11 @@ msgstr "응답 필요"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgid "New"
 msgstr "신규"
+
+#. js-lingui-id: yGfI61
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "New Campaign"
+msgstr ""
 
 #. js-lingui-id: TYhxR+
 #: src/engine/core-modules/user/services/user.service.ts
@@ -5741,6 +6064,11 @@ msgstr ""
 #. placeholder {0}: allowedOperands.join(', ')
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-incompatible-view-filter-operand-error.util.ts
 msgid "Operand \"{operand}\" is not supported on field type \"{filterType}\". Supported operands: {0}."
+msgstr ""
+
+#. js-lingui-id: iD+jGc
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Operand \"{operand}\" requires a value, an empty predicate would remove the row restriction entirely"
 msgstr ""
 
 #. js-lingui-id: Rh2dh5
@@ -6353,10 +6681,26 @@ msgstr "위치는 유한한 숫자여야 합니다"
 msgid "Prebuilt bundle is not installed on the function. Rebuild and try again."
 msgstr "Prebuilt bundle이 해당 function에 설치되어 있지 않습니다. 다시 빌드한 후 재시도하세요."
 
+#. js-lingui-id: OAanPr
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Predicate is missing a value"
+msgstr ""
+
+#. js-lingui-id: a/WH2z
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Predicate value is not valid for this operand"
+msgstr ""
+
 #. js-lingui-id: TTHIbk
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgid "Preferred color scheme"
 msgstr "선호하는 색상 구성"
+
+#. js-lingui-id: QG76Gf
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgid "Preferred interface scale"
+msgstr ""
 
 #. js-lingui-id: 5v4qYi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -6367,6 +6711,11 @@ msgstr "선호하는 언어"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 msgid "Presentation"
 msgstr "프레젠테이션"
+
+#. js-lingui-id: 2WAUd8
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Previous AI Chats"
+msgstr ""
 
 #. js-lingui-id: +DJKfQ
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-bar-chart-configuration.util.ts
@@ -6619,10 +6968,21 @@ msgstr "원격 객체는 아직 지원되지 않습니다"
 msgid "Remote objects are not supported yet"
 msgstr "원격 객체는 아직 지원되지 않습니다"
 
+#. js-lingui-id: uDbQPV
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Remove from Favorites"
+msgstr ""
+
 #. js-lingui-id: yFLhnq
 #: src/engine/metadata-modules/flat-permission-flag/validators/utils/validate-permission-flag-not-in-use-cross-entity.util.ts
 msgid "Remove this permission from all roles before deleting it"
 msgstr "이 권한을 삭제하기 전에 모든 역할에서 제거하십시오"
+
+#. js-lingui-id: ImOQa9
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Reply"
+msgstr ""
 
 #. js-lingui-id: P2j6h/
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -6704,6 +7064,17 @@ msgstr "유형이 \"text\"인 응답 형식에는 스키마를 포함해서는 �
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
 msgid "Response Status"
 msgstr "응답 상태"
+
+#. js-lingui-id: yKu/3Y
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Restore"
+msgstr ""
+
+#. js-lingui-id: 6gRgw8
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Retry"
+msgstr ""
 
 #. js-lingui-id: 1AYnSb
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
@@ -6848,6 +7219,11 @@ msgstr "역할 대상을 찾을 수 없음."
 msgid "Role target with this universal identifier already exists"
 msgstr "이 범용 식별자를 가진 역할 대상이 이미 존재합니다"
 
+#. js-lingui-id: 5dJK4M
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Roles"
+msgstr ""
+
 #. js-lingui-id: Ub8R48
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "Roles and permissions configuration not found."
@@ -6952,9 +7328,19 @@ msgstr "실행"
 msgid "Saturday"
 msgstr "토요일"
 
+#. js-lingui-id: tfDRzk
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Save"
+msgstr ""
+
 #. js-lingui-id: H2SymB
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
 msgid "Save Campaign"
+msgstr ""
+
+#. js-lingui-id: 7GK4Vt
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Save Dashboard"
 msgstr ""
 
 #. js-lingui-id: 4ba0NE
@@ -6975,6 +7361,10 @@ msgstr "SDK 클라이언트 아카이브를 찾을 수 없습니다. 이 애플�
 
 #. js-lingui-id: A1taO8
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgid "Search"
 msgstr "검색"
 
@@ -7059,10 +7449,76 @@ msgstr "검색 벡터 필드는 동일한 객체에 속해야 합니다."
 msgid "Search vector field not found"
 msgstr "검색 벡터 필드를 찾을 수 없습니다."
 
+#. js-lingui-id: a3LDKx
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Security"
+msgstr ""
+
+#. js-lingui-id: T7LCe3
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "See Active Version"
+msgstr ""
+
+#. js-lingui-id: dcr/0m
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "See Runs"
+msgstr ""
+
+#. js-lingui-id: GtENl6
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "See Version"
+msgstr ""
+
+#. js-lingui-id: I3NHuN
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "See Versions"
+msgstr ""
+
+#. js-lingui-id: qhdneQ
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "See Versions History"
+msgstr ""
+
+#. js-lingui-id: TVoxl2
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "See Workflow"
+msgstr ""
+
+#. js-lingui-id: JlFcis
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Send"
+msgstr ""
+
+#. js-lingui-id: b7hiQs
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Send Campaign"
+msgstr ""
+
 #. js-lingui-id: i/TzEU
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgid "Send Email"
 msgstr "이메일 보내기"
+
+#. js-lingui-id: 89aQ3n
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Send Test Email"
+msgstr ""
 
 #. js-lingui-id: +KBxqW
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -7136,6 +7592,7 @@ msgid "Set up two-factor authentication before impersonating users in another wo
 msgstr "다른 워크스페이스에서 사용자를 가장하기 전에 2단계 인증을 설정하세요."
 
 #. js-lingui-id: Tz0i8g
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 msgid "Settings"
 msgstr "설정"
@@ -7343,6 +7800,12 @@ msgstr "단계 로그"
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
 msgid "Stock market (Iframe)"
 msgstr "주식시장 (Iframe)"
+
+#. js-lingui-id: ygCKqB
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Stop"
+msgstr ""
 
 #. js-lingui-id: NnvXp5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -7587,6 +8050,12 @@ msgstr "임시 파일은 다운로드할 수 없습니다."
 msgid "Tentative"
 msgstr "미정"
 
+#. js-lingui-id: NnH3pK
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Test"
+msgstr ""
+
 #. js-lingui-id: M10it4
 #: src/utils/__test__/custom-exception.spec.ts
 #: src/utils/__test__/custom-exception.spec.ts
@@ -7598,6 +8067,11 @@ msgstr "테스트 오류"
 #: src/utils/__test__/custom-exception.spec.ts
 msgid "Test user friendly message"
 msgstr "사용자 친화적 테스트 메시지"
+
+#. js-lingui-id: bU9B27
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Test Workflow"
+msgstr ""
 
 #. js-lingui-id: xeiujy
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -8346,8 +8820,8 @@ msgid "This operation is not supported."
 msgstr "이 작업은 지원되지 않습니다."
 
 #. js-lingui-id: fxy039
+#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 #: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
-#: src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "이 작업은 존재하지 않거나 기존 관계로 인해 수정할 수 없는 레코드를 참조합니다."
 
@@ -8373,14 +8847,13 @@ msgid "This question has already been answered."
 msgstr "이 질문에는 이미 답변이 제공되었습니다."
 
 #. js-lingui-id: TjUnO1
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
-#: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
+#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 msgid "This record already exists. Please check your data and try again."
 msgstr "이 레코드는 이미 존재합니다. 데이터를 확인하고 다시 시도하십시오."
 
 #. js-lingui-id: BQ4MUY
+#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 #: src/engine/twenty-orm/error-handling/__tests__/compute-twenty-orm-exception.spec.ts
-#: src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.ts
 msgid "This record cannot be deleted because it is still referenced by other records."
 msgstr "이 레코드는 다른 레코드에서 계속 참조하고 있으므로 삭제할 수 없습니다."
 
@@ -8475,6 +8948,11 @@ msgstr "이 버전은 현재 배포된 버전보다 높지 않습니다. 다시 
 msgid "This version of the application is already installed in this workspace."
 msgstr "이 애플리케이션의 해당 버전은 이 워크스페이스에 이미 설치되어 있습니다."
 
+#. js-lingui-id: o/Kt/Y
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "This workspace already has a subscription."
+msgstr ""
+
 #. js-lingui-id: IdEnkZ
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This workspace's upgrade state could not be determined. Please try again once the workspace has finished upgrading."
@@ -8499,6 +8977,16 @@ msgstr "메시징 제공업체의 스레드 ID"
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "Thursday"
 msgstr "목요일"
+
+#. js-lingui-id: 5g/sE8
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Tidy up"
+msgstr ""
+
+#. js-lingui-id: sweMEg
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Tidy up Workflow"
+msgstr ""
 
 #. js-lingui-id: n9nSNJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -8765,6 +9253,7 @@ msgstr "제목 없는 서식 있는 텍스트"
 #. js-lingui-id: EkH9pt
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgid "Update"
 msgstr "업데이트"
 
@@ -8834,6 +9323,12 @@ msgstr "위젯 \"{widgetTitle}\"의 URL은 문자열이어야 합니다"
 #. js-lingui-id: P7NKk0
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Usage could not be read. Please try again later."
+msgstr ""
+
+#. js-lingui-id: QOJEhr
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "Use as Draft"
 msgstr ""
 
 #. js-lingui-id: GkcfmO
@@ -8929,11 +9424,13 @@ msgid "User workspace role configuration not found."
 msgstr "사용자 워크스페이스 역할 구성을 찾을 수 없음."
 
 #. js-lingui-id: sFN4Dx
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-value-error.util.ts
 msgid "Value \"{stringifiedValue}\" is not valid for operand \"{operand}\" on field type \"{filterType}\"."
 msgstr ""
 
 #. js-lingui-id: ccqQWi
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-value-error.util.ts
 msgid "Value \"{stringifiedValue}\" is not valid for operand \"{operand}\" on field type \"{filterType}\". {hint}"
 msgstr ""
@@ -8946,6 +9443,11 @@ msgstr ""
 #. js-lingui-id: JaflDh
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
 msgid "Value \"{stringifiedValue}\" of a chart filter of widget \"{widgetTitle}\" is not valid for operand \"{operand}\" on field type \"{filterType}\". {hint}"
+msgstr ""
+
+#. js-lingui-id: l+Dvh5
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Value \"{stringifiedValue}\" resolves to no record for operand \"{operand}\", the current record is not available to a row level permission predicate"
 msgstr ""
 
 #. js-lingui-id: UBPzFQ
@@ -9241,6 +9743,11 @@ msgstr "upsert 후 View를 찾을 수 없음"
 msgid "View not found for widget"
 msgstr "위젯의 View를 찾을 수 없음"
 
+#. js-lingui-id: ecVcAx
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+msgid "View Previous AI Chats"
+msgstr ""
+
 #. js-lingui-id: ipFNcM
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
@@ -9338,7 +9845,7 @@ msgid "ViewId is required to create a view sort."
 msgstr "뷰 정렬을 생성하려면 ViewId가 필요합니다."
 
 #. js-lingui-id: xvV2NJ
-#: src/engine/twenty-orm/error-handling/compute-twenty-orm-exception.ts
+#: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 msgid "We are experiencing a temporary issue with our database. Please try again later."
 msgstr "현재 데이터베이스에 일시적인 문제가 발생했습니다. 나중에 다시 시도해 주세요."
 
@@ -9675,6 +10182,7 @@ msgid "WorkflowRun"
 msgstr ""
 
 #. js-lingui-id: woYYQq
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Workflows"
 msgstr "워크플로우"
@@ -9938,6 +10446,8 @@ msgid "You can only update one record with files field at once."
 msgstr "파일 필드가 있는 레코드는 한 번에 하나만 업데이트할 수 있습니다."
 
 #. js-lingui-id: 4ysDL0
+#: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
+#: src/engine/twenty-orm-v2/repository/workspace-repository-v2.ts
 #: src/engine/twenty-orm/repository/workspace-update-query-builder.ts
 msgid "You can only update up to {QUERY_MAX_RECORDS} records at once."
 msgstr ""
@@ -10114,6 +10624,7 @@ msgstr "차단 목록을 관리하려면 인증이 필요합니다."
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
+#: src/engine/guards/workspace-auth.guard.ts
 msgid "You must be authenticated to perform this action."
 msgstr "이 작업을 수행하려면 인증이 필요합니다."
 
@@ -10141,6 +10652,11 @@ msgstr ""
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Your Password Has Been Successfully Changed"
 msgstr "비밀번호가 성공적으로 변경되었습니다"
+
+#. js-lingui-id: AKLZnk
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Your payment method was declined. Please update it and try again."
+msgstr ""
 
 #. js-lingui-id: XxkUFT
 #: src/engine/metadata-modules/permissions/permissions.service.ts

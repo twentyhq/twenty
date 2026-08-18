@@ -193,7 +193,6 @@ export class TimelineCalendarEventService {
             )?.id ?? null)
           : null;
 
-        // Find which connected accounts the current user owns (1 query)
         const connectedAccountIds = [
           ...new Set(
             calendarChannels.map((channel) => channel.connectedAccountId),

@@ -127,7 +127,6 @@ export class MessagingMessagesImportService {
               messageChannel,
             );
 
-          // Map external folder IDs to internal folder IDs
           const messageFolders = messageChannel.messageFolders ?? [];
           const foldersWithExternalId = messageFolders.filter(
             (folder): folder is typeof folder & { externalId: string } =>

@@ -237,7 +237,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
           ? [
               {
                 Icon: IconCoins,
-                label: t`Rollover credits`,
+                label: t`Granted credits`,
                 value: formatCredits(usage.rolloverCredits),
               },
             ]

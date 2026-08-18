@@ -57,8 +57,11 @@ const createMockTab = (
 });
 
 describe('filterPageLayoutTabsByFeatureFlags', () => {
-  it('removes a native call recording tab when the feature is disabled', () => {
+  it('removes native call recording tabs when the feature is disabled', () => {
     const tabs = [
+      createMockTab('summary-tab', [
+        createMockWidget('summary-widget', WidgetType.CALL_RECORDING_SUMMARY),
+      ]),
       createMockTab('transcript-tab', [
         createMockWidget(
           'transcript-widget',
@@ -110,6 +113,9 @@ describe('filterPageLayoutTabsByFeatureFlags', () => {
 
   it('returns all tabs unchanged when the feature is enabled', () => {
     const tabs = [
+      createMockTab('summary-tab', [
+        createMockWidget('summary-widget', WidgetType.CALL_RECORDING_SUMMARY),
+      ]),
       createMockTab('transcript-tab', [
         createMockWidget(
           'transcript-widget',

@@ -244,6 +244,7 @@ export const LocalePicker = () => {
     <StyledContainer>
       <Select
         dropdownId="preferred-locale"
+        label={t`Language`}
         dropdownWidthAuto
         fullWidth
         withSearchInput

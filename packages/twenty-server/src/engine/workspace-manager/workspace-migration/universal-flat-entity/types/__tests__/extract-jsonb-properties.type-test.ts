@@ -61,6 +61,5 @@ type Assertions = [
 
   Expect<Equal<ExtractJsonbProperties<EmptyObject>, never>>,
 
-  // Object with no JsonbProperty fields returns never
   Expect<Equal<ExtractJsonbProperties<{ a: string; b: number }>, never>>,
 ];

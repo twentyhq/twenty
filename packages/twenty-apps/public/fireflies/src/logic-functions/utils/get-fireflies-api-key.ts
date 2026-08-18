@@ -1,11 +1,11 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-export const FIREFLIES_API_KEY_ENV_VAR = 'FIREFLIES_API_KEY';
+import { FIREFLIES_API_KEY_VARIABLE_KEY } from 'src/constants/fireflies-api-key-variable-key.constant';
 
 export const getFirefliesApiKey = ():
   | { success: true; apiKey: string }
   | { success: false; error: string } => {
-  const apiKey = process.env[FIREFLIES_API_KEY_ENV_VAR];
+  const apiKey = process.env[FIREFLIES_API_KEY_VARIABLE_KEY];
 
   if (!isNonEmptyString(apiKey)) {
     return {

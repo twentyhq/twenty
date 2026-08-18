@@ -13,6 +13,7 @@ import { v4 } from 'uuid';
 
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
+import { OBJECT_LABEL_PLURAL_PLACEHOLDER } from 'src/engine/metadata-modules/view/constants/object-label-plural-placeholder.constant';
 
 type SystemViewObjectMetadata = Pick<
   UniversalFlatObjectMetadata,
@@ -24,7 +25,7 @@ type SystemViewObjectMetadata = Pick<
 const SYSTEM_VIEW_PROPERTIES_BY_VIEW_KEY = {
   [SYSTEM_VIEW_KEYS.INDEX]: {
     type: ViewType.TABLE,
-    computeName: () => 'All {objectLabelPlural}',
+    computeName: () => `All ${OBJECT_LABEL_PLURAL_PLACEHOLDER}`,
   },
   [SYSTEM_VIEW_KEYS.FIELDS_WIDGET]: {
     type: ViewType.FIELDS_WIDGET,

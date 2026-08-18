@@ -1,3 +1,4 @@
+import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import {
   type Decorator,
   type Meta,
@@ -109,7 +110,7 @@ const createDecorator =
           <CommandMenuContext.Provider
             value={{
               displayType: 'listItem',
-              containerType: 'command-menu-list',
+              containerType: CommandMenuItemContainerType.CommandMenuList,
               commandMenuItems,
               commandMenuContextApi: EMPTY_COMMAND_MENU_CONTEXT_API,
               isInPreviewMode: false,

@@ -1,6 +1,11 @@
-import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
+import {
+  type WorkspaceCompanyEnrichment,
+  type WorkspacePersonEnrichment,
+} from 'twenty-shared/workspace';
 
+import { type WorkspaceSetupWorkspaceContext } from 'src/engine/metadata-modules/ai/ai-chat/types/workspace-setup-workspace-context.type';
 import { buildCompanyContextMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-company-context-message-text.util';
+import { buildPersonContextMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-person-context-message-text.util';
 import { buildWorkspaceSetupPromptText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-prompt-text.util';
 
 const companyEnrichment: WorkspaceCompanyEnrichment = {
@@ -20,12 +25,42 @@ const companyEnrichment: WorkspaceCompanyEnrichment = {
   country: 'United States',
 };
 
+const personEnrichment: WorkspacePersonEnrichment = {
+  email: 'admin@acme.com',
+  enrichedAt: '2026-07-21T10:00:00.000Z',
+  fullName: 'Ada Lovelace',
+  jobTitle: 'Head of Sales',
+  jobTitleLevels: ['director'],
+  jobCompanyName: 'Acme Inc',
+  industry: 'computer software',
+  headline: 'Selling anvils at scale',
+  linkedinUrl: 'linkedin.com/in/ada',
+  skills: ['sales', 'negotiation'],
+  locality: 'Paris',
+  region: 'Ile-de-France',
+  country: 'France',
+};
+
+const workspaceContext: WorkspaceSetupWorkspaceContext = {
+  workspaceDisplayName: 'Acme',
+  workspaceSubdomain: 'acme',
+  userEmail: 'admin@acme.com',
+};
+
+const buildPrompt = (
+  overrides: Partial<Parameters<typeof buildWorkspaceSetupPromptText>[0]> = {},
+) =>
+  buildWorkspaceSetupPromptText({
+    companyEnrichment,
+    personEnrichment: null,
+    workspaceContext,
+    locale: 'en',
+    ...overrides,
+  });
+
 describe('buildWorkspaceSetupPromptText', () => {
   it('should embed the company context message text when a full enrichment is provided', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment,
-      locale: 'en',
-    });
+    const result = buildPrompt();
 
     expect(result).toContain(buildCompanyContextMessageText(companyEnrichment));
     expect(result).toContain('Domain: acme.com');
@@ -33,10 +68,7 @@ describe('buildWorkspaceSetupPromptText', () => {
   });
 
   it('should instruct a tailored greeting without a discovery question when a full enrichment is provided', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment,
-      locale: 'en',
-    });
+    const result = buildPrompt();
 
     expect(result).toContain('tailored to their business');
     expect(result).toContain('Do not greet them again');
@@ -48,15 +80,11 @@ describe('buildWorkspaceSetupPromptText', () => {
   });
 
   it('should forbid every first-reply tool except ask_questions when a full enrichment is provided', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment,
-      locale: 'en',
-    });
+    const result = buildPrompt();
 
     expect(result).toContain('required ask_questions call');
-    expect(result).toContain('A written question does not count');
     expect(result).toContain(
-      'a heading with nothing under it is not an ending',
+      'reply is unfinished until the ask_questions call is made',
     );
     expect(result).toContain('needs no skill and no learn_tools step');
     expect(result).toContain(
@@ -65,10 +93,7 @@ describe('buildWorkspaceSetupPromptText', () => {
   });
 
   it('should require explicit approval before building and name the metadata tools when a full enrichment is provided', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment,
-      locale: 'en',
-    });
+    const result = buildPrompt();
 
     expect(result).toContain('Only propose until the user explicitly approves');
     expect(result).toContain(
@@ -82,20 +107,14 @@ describe('buildWorkspaceSetupPromptText', () => {
   });
 
   it('should state that no company information is available when the enrichment is null', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment: null,
-      locale: 'en',
-    });
+    const result = buildPrompt({ companyEnrichment: null });
 
     expect(result).toContain('No information about the company');
     expect(result).not.toContain('Domain:');
   });
 
   it('should instruct an ask_questions discovery when the enrichment is null', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment: null,
-      locale: 'en',
-    });
+    const result = buildPrompt({ companyEnrichment: null });
 
     expect(result).toContain('You do not know what this company does yet');
     expect(result).toContain('ask_questions to learn what the business does');
@@ -109,10 +128,7 @@ describe('buildWorkspaceSetupPromptText', () => {
   ])(
     'should open with the migration-or-scratch question when %s is provided',
     (_label, enrichment) => {
-      const result = buildWorkspaceSetupPromptText({
-        companyEnrichment: enrichment,
-        locale: 'en',
-      });
+      const result = buildPrompt({ companyEnrichment: enrichment });
 
       expect(result).toContain(
         'moving over from another CRM or starting fresh',
@@ -121,11 +137,38 @@ describe('buildWorkspaceSetupPromptText', () => {
     },
   );
 
+  it.each([
+    ['a full enrichment', companyEnrichment],
+    ['a null enrichment', null],
+  ])(
+    'should make the migration-or-scratch question a tool call rather than text when %s is provided',
+    (_label, enrichment) => {
+      const result = buildPrompt({ companyEnrichment: enrichment });
+
+      expect(result).toContain(
+        'Then stop writing and make the ask_questions call',
+      );
+      expect(result).toContain('its options');
+      expect(result).toContain('never give that question a title of its own');
+      expect(result).not.toContain('Close this reply with an ask_questions');
+    },
+  );
+
+  it.each([
+    ['a full enrichment', companyEnrichment],
+    ['a null enrichment', null],
+  ])(
+    'should leave an unlisted CRM to the free-text answer when %s is provided',
+    (_label, enrichment) => {
+      const result = buildPrompt({ companyEnrichment: enrichment });
+
+      expect(result).toContain('leaving any other CRM to the free-text answer');
+      expect(result).not.toContain('another CRM, and starting fresh');
+    },
+  );
+
   it('should request the CRM export in plain text so the upload composer stays available', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment,
-      locale: 'en',
-    });
+    const result = buildPrompt();
 
     expect(result).toContain('end that reply without calling ask_questions');
     expect(result).toContain('cannot take attachments');
@@ -133,10 +176,7 @@ describe('buildWorkspaceSetupPromptText', () => {
   });
 
   it('should tolerate spreadsheets, propose right away, and fall back to scratch without an export', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment,
-      locale: 'en',
-    });
+    const result = buildPrompt();
 
     expect(result).toContain('spreadsheet their CRM produces');
     expect(result).toContain('as separate files');
@@ -145,10 +185,7 @@ describe('buildWorkspaceSetupPromptText', () => {
   });
 
   it('should inspect uploaded exports through code_interpreter before proposing the model', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment,
-      locale: 'en',
-    });
+    const result = buildPrompt();
 
     expect(result).toContain('code_interpreter');
     expect(result).toContain('headers and a few sample rows');
@@ -156,10 +193,7 @@ describe('buildWorkspaceSetupPromptText', () => {
   });
 
   it('should import migrated rows with the Bulk Import recipe right after the model is built', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment,
-      locale: 'en',
-    });
+    const result = buildPrompt();
 
     expect(result).toContain('data-manipulation');
     expect(result).toContain('Bulk Import recipe');
@@ -173,10 +207,7 @@ describe('buildWorkspaceSetupPromptText', () => {
   ])(
     'should stay invisible and never claim tools are already loaded when %s is provided',
     (_label, enrichment) => {
-      const result = buildWorkspaceSetupPromptText({
-        companyEnrichment: enrichment,
-        locale: 'en',
-      });
+      const result = buildPrompt({ companyEnrichment: enrichment });
 
       expect(result).toContain('invisible');
       expect(result).toContain('follow these rules silently');
@@ -185,10 +216,7 @@ describe('buildWorkspaceSetupPromptText', () => {
   );
 
   it('should ask about the data model with the ask_questions tool', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment,
-      locale: 'en',
-    });
+    const result = buildPrompt();
 
     expect(result).toContain('Never stop after presenting the proposal');
     expect(result).toContain(
@@ -200,10 +228,7 @@ describe('buildWorkspaceSetupPromptText', () => {
   });
 
   it('should not instruct any view work since new fields are visible by default', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment,
-      locale: 'en',
-    });
+    const result = buildPrompt();
 
     expect(result).toContain('New fields land visible on their object');
     expect(result).not.toContain('view-building');
@@ -218,10 +243,7 @@ describe('buildWorkspaceSetupPromptText', () => {
   ])(
     'should introduce the agent and the walkthrough when %s is provided',
     (_label, enrichment) => {
-      const result = buildWorkspaceSetupPromptText({
-        companyEnrichment: enrichment,
-        locale: 'en',
-      });
+      const result = buildPrompt({ companyEnrichment: enrichment });
 
       expect(result).toContain(
         'you are an AI agent who will walk them through Twenty',
@@ -230,10 +252,7 @@ describe('buildWorkspaceSetupPromptText', () => {
   );
 
   it('should teach each capability where it comes up', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment,
-      locale: 'en',
-    });
+    const result = buildPrompt();
 
     expect(result).toContain('one plain sentence');
     expect(result).toContain('before proposing anything that uses it');
@@ -244,10 +263,7 @@ describe('buildWorkspaceSetupPromptText', () => {
   });
 
   it('should require a title per reply and chips for objects', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment,
-      locale: 'en',
-    });
+    const result = buildPrompt();
 
     expect(result).toContain('Open each reply with a short plain title');
     expect(result).toContain('title each new step');
@@ -255,29 +271,28 @@ describe('buildWorkspaceSetupPromptText', () => {
   });
 
   it('should never re-ask for something the user already approved', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment,
-      locale: 'en',
-    });
+    const result = buildPrompt();
 
     expect(result).toContain('ask_questions is for new decisions');
     expect(result).toContain('Load a skill before proposing what it builds');
   });
 
+  it('should name the plain-text question as the failure mode to avoid', () => {
+    const result = buildPrompt();
+
+    expect(result).toContain(
+      'a question mark in your text means the call is missing',
+    );
+  });
+
   it('should keep ask_questions options within the single-recommended limit', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment,
-      locale: 'en',
-    });
+    const result = buildPrompt();
 
     expect(result).toContain('at most one of them marked recommended');
   });
 
   it('should anchor the proposal on admission tests instead of numeric bands', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment,
-      locale: 'en',
-    });
+    const result = buildPrompt();
 
     expect(result).toContain('filter, sort, or report on it');
     expect(result).toContain('own lifecycle');
@@ -288,10 +303,7 @@ describe('buildWorkspaceSetupPromptText', () => {
   });
 
   it('should propose tailored workflows built with the workflow tools', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment,
-      locale: 'en',
-    });
+    const result = buildPrompt();
 
     expect(result).toContain('workflow-building');
     expect(result).toContain('create_complete_workflow');
@@ -299,10 +311,7 @@ describe('buildWorkspaceSetupPromptText', () => {
   });
 
   it('should let the agent choose what to propose instead of following a script', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment,
-      locale: 'en',
-    });
+    const result = buildPrompt();
 
     expect(result).toContain('Nothing after that is a fixed sequence');
     expect(result).toContain('which single capability to propose next');
@@ -310,10 +319,7 @@ describe('buildWorkspaceSetupPromptText', () => {
   });
 
   it('should never close without naming the capabilities it did not build', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment,
-      locale: 'en',
-    });
+    const result = buildPrompt();
 
     expect(result).toContain(
       'never close while they are still unaware of the rest',
@@ -323,10 +329,7 @@ describe('buildWorkspaceSetupPromptText', () => {
   });
 
   it('should end the setup by calling the completion tool once nothing is left to build', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment,
-      locale: 'en',
-    });
+    const result = buildPrompt();
 
     expect(result).toContain('## Ending the setup');
     expect(result).toContain(
@@ -337,10 +340,7 @@ describe('buildWorkspaceSetupPromptText', () => {
   });
 
   it('should propose a dashboard built with the dashboard tools', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment,
-      locale: 'en',
-    });
+    const result = buildPrompt();
 
     expect(result).toContain('dashboard-building');
     expect(result).toContain('create_complete_dashboard');
@@ -348,10 +348,7 @@ describe('buildWorkspaceSetupPromptText', () => {
   });
 
   it('should propose roles and build them with the role tools', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment,
-      locale: 'en',
-    });
+    const result = buildPrompt();
 
     expect(result).toContain('roles skill');
     expect(result).toContain('list_roles');
@@ -361,10 +358,7 @@ describe('buildWorkspaceSetupPromptText', () => {
   });
 
   it('should require English names with labels in the user language', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment,
-      locale: 'fr-FR',
-    });
+    const result = buildPrompt({ locale: 'fr-FR' });
 
     expect(result).toContain('names must be in English');
     expect(result).toContain("must be in the user's language");
@@ -378,10 +372,7 @@ describe('buildWorkspaceSetupPromptText', () => {
   ])(
     'should end with the locale instruction when the locale is %s',
     (locale, languageName) => {
-      const result = buildWorkspaceSetupPromptText({
-        companyEnrichment,
-        locale,
-      });
+      const result = buildPrompt({ locale });
 
       expect(
         result.endsWith(
@@ -392,13 +383,36 @@ describe('buildWorkspaceSetupPromptText', () => {
   );
 
   it('should fall back to the raw locale when it is not a structurally valid language tag', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment,
-      locale: '!',
-    });
+    const result = buildPrompt({ locale: '!' });
 
     expect(result).toContain(
       'The user locale is !, please continue the discussion in that language.',
+    );
+  });
+
+  it('should embed the person context and its first-reply addendum when a person enrichment is provided', () => {
+    const result = buildPrompt({ personEnrichment });
+
+    expect(result).toContain(buildPersonContextMessageText(personEnrichment));
+    expect(result).toContain('Job title: Head of Sales');
+    expect(result).toContain('fold at most one specific detail');
+    expect(result).not.toContain('No third-party information about the person');
+  });
+
+  it('should state that no person information is available when the person enrichment is null', () => {
+    const result = buildPrompt();
+
+    expect(result).toContain(
+      'No third-party information about the person setting up this workspace is available.',
+    );
+    expect(result).not.toContain('fold at most one specific detail');
+  });
+
+  it('should always embed the workspace context line', () => {
+    const result = buildPrompt();
+
+    expect(result).toContain(
+      'This workspace is named "Acme" (subdomain: acme). The admin setting it up signed up with admin@acme.com.',
     );
   });
 });

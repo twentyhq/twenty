@@ -12,7 +12,6 @@ type TestedRecord = {
   plainStringNullable: string | null;
   plainStringOptional?: string;
 
-  // SerializedRelation fields - should be extracted
   relation: SerializedRelation;
   relationNullable: SerializedRelation | null;
   relationUndefinable: SerializedRelation | undefined;
@@ -35,12 +34,10 @@ type Assertions = [
     >
   >,
 
-  // Object with no SerializedRelation fields returns never
   Expect<
     Equal<ExtractSerializedRelationProperties<{ a: string; b: number }>, never>
   >,
 
-  // Primitives return never (tests T extends object branch)
   Expect<Equal<ExtractSerializedRelationProperties<string>, never>>,
   Expect<Equal<ExtractSerializedRelationProperties<number>, never>>,
   Expect<Equal<ExtractSerializedRelationProperties<null>, never>>,

@@ -18,6 +18,10 @@ export type ClickHouseInsertOptions = {
   asyncInsertBusyTimeoutMaxMs?: number;
 };
 
+export type ClickHouseInsertResult =
+  | { success: true }
+  | { success: false; error: Error };
+
 @Injectable()
 export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
   private mainClient: ClickHouseClient | undefined;
@@ -51,7 +55,6 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
       return undefined;
     }
 
-    // Wait for a bit before trying again if another initialization is in progress
     while (this.isClientInitializing.get(clientId)) {
       await new Promise((resolve) => setTimeout(resolve, 10));
     }
@@ -137,14 +140,19 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
     table: string,
     values: T[],
     options: ClickHouseInsertOptions = {},
-  ): Promise<{ success: boolean }> {
+  ): Promise<ClickHouseInsertResult> {
     try {
       const client = options.clientId
         ? await this.connectToClient(options.clientId)
         : this.mainClient;
 
       if (!client) {
-        return { success: false };
+        return {
+          success: false,
+          error: new Error(
+            `No ClickHouse client available${options.clientId ? ` for client ${options.clientId}` : ''}`,
+          ),
+        };
       }
 
       await this.insertInChunks(client, table, values, {
@@ -157,7 +165,13 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
     } catch (err) {
       this.logger.error('Error inserting data into ClickHouse', err);
 
-      return { success: false };
+      return {
+        success: false,
+        error:
+          err instanceof Error
+            ? err
+            : Object.assign(new Error(String(err)), { cause: err }),
+      };
     }
   }
 

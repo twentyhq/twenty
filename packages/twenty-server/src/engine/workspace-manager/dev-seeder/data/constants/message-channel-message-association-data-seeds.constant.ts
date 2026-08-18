@@ -87,7 +87,6 @@ const GENERATE_MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_SEEDS =
         CHANNEL_ID = MESSAGE_CHANNEL_DATA_SEED_IDS.SALES;
       }
 
-      // 50/50 split between incoming and outgoing messages
       const DIRECTION: MessageDirection =
         Math.random() < 0.5
           ? MessageDirection.INCOMING

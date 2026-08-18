@@ -1010,7 +1010,6 @@ export const WithManyToOneRelationFieldWidget: Story = {
       recordStoreFamilyState.atomFamily(TEST_RECORD_ID),
       mockCompanyRecord,
     );
-    // Set the related WorkspaceMember record for relation field display
     if (
       mockCompanyRecord.accountOwner !== null &&
       mockCompanyRecord.accountOwner !== undefined
@@ -1252,7 +1251,6 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
       recordStoreFamilyState.atomFamily(TEST_PERSON_RECORD_ID),
       mockPersonRecord,
     );
-    // Set hover state to make the "See all" button visible
     jotaiStore.set(
       widgetCardHoveredComponentFamilyState.atomFamily({
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -1306,7 +1304,6 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
 
     expect(seeAllLink).toBeVisible();
 
-    // Verify it has a well-formed link (should contain the filter query params)
     expect(seeAllLink).toHaveAttribute('href');
     const href = seeAllLink.getAttribute('href');
     expect(href).toContain('/objects/people');
@@ -1658,7 +1655,6 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
       );
     }
 
-    // currentUserWorkspaceState is now a Jotai state, set it directly
     if (isRestricted === true) {
       jotaiStore.set(currentUserWorkspaceState.atom, {
         permissionFlags: [],

@@ -41,7 +41,6 @@ describe('Order by relation field (e2e)', () => {
         { id: TEST_COMPANY_IDS.ALPHA, name: 'Alpha Corp' },
         { id: TEST_COMPANY_IDS.BETA, name: 'Beta Inc' },
         { id: TEST_COMPANY_IDS.GAMMA, name: 'Gamma LLC' },
-        // Companies for case-insensitive sorting tests (lowercase vs uppercase)
         { id: TEST_COMPANY_IDS.ACME_LOWER, name: 'acme' },
         { id: TEST_COMPANY_IDS.ACME_UPPER, name: 'ACME' },
         { id: TEST_COMPANY_IDS.ZEBRA, name: 'Zebra' },
@@ -51,7 +50,6 @@ describe('Order by relation field (e2e)', () => {
 
     await makeGraphqlAPIRequest(createCompanies);
 
-    // Create test people with company relations and some without (for null testing)
     const createPeople = createManyOperationFactory({
       objectMetadataSingularName: 'person',
       objectMetadataPluralName: 'people',
@@ -63,7 +61,6 @@ describe('Order by relation field (e2e)', () => {
         { id: TEST_PERSON_IDS[3], companyId: TEST_COMPANY_IDS.BETA },
         { id: TEST_PERSON_IDS[4], companyId: TEST_COMPANY_IDS.GAMMA },
         { id: TEST_PERSON_IDS[5], companyId: TEST_COMPANY_IDS.GAMMA },
-        // People without companies (for testing NULLS LAST)
         { id: TEST_PERSON_IDS[6], companyId: null },
         { id: TEST_PERSON_IDS[7], companyId: null },
         { id: TEST_PERSON_IDS[8], companyId: null },
@@ -126,7 +123,6 @@ describe('Order by relation field (e2e)', () => {
     expect(Array.isArray(edges)).toBe(true);
     expect(edges.length).toBeGreaterThan(0);
 
-    // Verify company names are in ascending order (excluding nulls at the end)
     const companyNames = edges
       .map(
         (edge: { node: { company?: { name: string } } }) =>
@@ -180,7 +176,6 @@ describe('Order by relation field (e2e)', () => {
     expect(Array.isArray(edges)).toBe(true);
     expect(edges.length).toBeGreaterThan(0);
 
-    // Verify company names are in descending order (excluding nulls at the end)
     const companyNames = edges
       .map(
         (edge: { node: { company?: { name: string } } }) =>
@@ -286,7 +281,6 @@ describe('Order by relation field (e2e)', () => {
     expect(firstPageEdges.length).toBeGreaterThan(0);
     expect(totalCount).toBeGreaterThan(3);
 
-    // Second request using offset (matching frontend behavior)
     const secondQueryData = {
       query: gql`
         query People(
@@ -381,7 +375,6 @@ describe('Order by relation field (e2e)', () => {
     expect(pageInfo.hasNextPage).toBe(true);
     expect(pageInfo.endCursor).toBeDefined();
 
-    // Try to use cursor with relation orderBy - should fail with clear error
     const secondQueryData = {
       query: gql`
         query People(
@@ -486,7 +479,6 @@ describe('Order by relation field (e2e)', () => {
 
     expect(companyNames.length).toBe(3);
 
-    // Both "acme" and "ACME" should come before "Zebra" in case-insensitive sort
     const zebraIndex = companyNames.findIndex(
       (name: string) => name.toLowerCase() === 'zebra',
     );
@@ -539,7 +531,6 @@ describe('Order by relation field (e2e)', () => {
 
     expect(companyNames.length).toBe(3);
 
-    // In descending case-insensitive order, "Zebra" should come first
     const zebraIndex = companyNames.findIndex(
       (name: string) => name.toLowerCase() === 'zebra',
     );
@@ -549,7 +540,6 @@ describe('Order by relation field (e2e)', () => {
       )
       .filter((index: number) => index !== -1);
 
-    // Zebra should appear before all ACME variants in descending order
     for (const acmeIndex of acmeIndices) {
       expect(zebraIndex).toBeLessThan(acmeIndex);
     }

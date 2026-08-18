@@ -125,7 +125,6 @@ const buildRecordFilterForRole = ({
           return null;
         }
 
-        // Validate that workspace member enum value is compatible with target field enum options
         const isEnumValueCompatible = validateEnumValueCompatibility({
           workspaceMemberFieldMetadata,
           targetFieldMetadata: fieldMetadata,

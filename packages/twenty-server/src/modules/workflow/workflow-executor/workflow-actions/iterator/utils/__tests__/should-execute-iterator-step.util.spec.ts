@@ -378,7 +378,6 @@ describe('shouldExecuteIteratorStep', () => {
         stepInfos,
       });
 
-      // Should return false because step-2 info is undefined
       expect(result).toBe(false);
     });
 
@@ -476,7 +475,6 @@ describe('shouldExecuteIteratorStep', () => {
         stepInfos,
       });
 
-      // getAllStepIdsInLoop should not be called if initialLoopStepIds is undefined
       expect(getAllStepIdsInLoop).not.toHaveBeenCalled();
       expect(result).toBe(true);
     });

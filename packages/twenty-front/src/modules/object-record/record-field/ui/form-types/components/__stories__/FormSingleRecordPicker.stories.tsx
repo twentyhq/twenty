@@ -90,7 +90,6 @@ export const Disabled: Story = {
     const dropdown = canvas.queryByRole('button');
     expect(dropdown).not.toBeInTheDocument();
 
-    // Variable picker should not be visible when disabled
     const variablePicker = canvas.queryByText('VariablePicker');
     expect(variablePicker).not.toBeInTheDocument();
 

@@ -466,15 +466,16 @@ const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_AP
 
 Frontendové komponenty mohou pomocí funkcí z `twenty-sdk` vyvolávat navigaci, modály a oznámení:
 
-| Funkce                                          | Popis                          |
-| ----------------------------------------------- | ------------------------------ |
-| `navigate(to, params?, queryParams?, options?)` | Přejít na stránku v aplikaci   |
-| `openSidePanelPage(params)`                     | Otevřít postranní panel        |
-| `closeSidePanel()`                              | Zavřít postranní panel         |
-| `openCommandConfirmationModal(params)`          | Zobrazit potvrzovací dialog    |
-| `enqueueSnackbar(params)`                       | Zobrazit oznámení typu toast   |
-| `unmountFrontComponent()`                       | Odpojit komponentu             |
-| `updateProgress(progress)`                      | Aktualizovat indikátor průběhu |
+| Funkce                                             | Popis                                                                                                                                                                              |
+| -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `navigate(to, params?, queryParams?, options?)`    | Přejít na stránku v aplikaci                                                                                                                                                       |
+| `openSidePanelPage(params)`                        | Otevřít postranní panel                                                                                                                                                            |
+| `closeSidePanel()`                                 | Zavřít postranní panel                                                                                                                                                             |
+| `openCommandConfirmationModal(params)`             | Zobrazit potvrzovací dialog                                                                                                                                                        |
+| `enqueueSnackbar(params)`                          | Zobrazit oznámení typu toast                                                                                                                                                       |
+| `unmountFrontComponent()`                          | Odpojit komponentu                                                                                                                                                                 |
+| `updateProgress(progress)`                         | Aktualizovat indikátor průběhu                                                                                                                                                     |
+| `uploadFile(file, { fieldMetadataId, fileName? })` | Nahraje `Blob` do pole FILES; vrátí `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` nebo `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` |
 
 Zde je příklad, který používá hostitelské API k zobrazení snackbaru a zavření postranního panelu po dokončení akce:
 
@@ -519,6 +520,39 @@ export default defineFrontComponent({
   component: ArchiveRecord,
 });
 ```
+
+### Úložiště
+
+`localStorage` a `sessionStorage` fungují stejně jako na běžné stránce, se standardním synchronním API. Vaše klíče jsou omezené na instalaci vaší aplikace a přihlášeného uživatele: žádná jiná aplikace je nemůže číst a jiný uživatel, který se přihlásí ve stejném prohlížeči, začne s prázdným úložištěm. Hodnoty zapsané do `localStorage` zůstávají v zařízení i po opětovném načtení; `sessionStorage` trvá po dobu relace prohlížeče.
+
+```tsx src/front-components/note-draft.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const NoteDraft = () => {
+  const [draft, setDraft] = useState(() => localStorage.getItem('draft') ?? '');
+
+  const handleChange = (nextDraft: string) => {
+    setDraft(nextDraft);
+    localStorage.setItem('draft', nextDraft);
+  };
+
+  return (
+    <textarea value={draft} onChange={(event) => handleChange(event.target.value)} />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-def0-890123456789',
+  name: 'note-draft',
+  description: 'Keeps an unsaved note on this device',
+  component: NoteDraft,
+});
+```
+
+Twenty ukládá hodnoty jménem vaší aplikace, takže zápis se provede lokálně okamžitě a na pozadí se uloží. Operace čtení nikdy nečekají na hostitele. Nic se nesynchronizuje: hodnoty uživatele se s ním nepřenášejí do jiného prohlížeče nebo počítače, takže pro cokoli, co musí přežít změnu zařízení, použijte [úložiště klíč–hodnota](/l/cs/developers/extend/apps/logic/key-value-store) logické funkce.
+
+Zápisy mají limity a všechny limity počítají znaky místo bajtů: klíče mohou mít nejvýše 512 znaků, jedna hodnota nejvýše 262 144 znaků a každé úložiště nejvýše 1 048 576 znaků na aplikaci a uživatele. Zápis, který překročí některý limit, vyvolá `QuotaExceededError`, podobně jako rozhraní API prohlížeče.
 
 ### Práce s více záznamy
 
@@ -740,24 +774,24 @@ Chcete-li se explicitně větvit podle aktivního schématu, načtěte jej pomoc
 
 ## Aktuální omezení
 
-Komponenty Front jsou aktivně vyvíjeny. Renderování, stylování a obsluha událostí fungují dobře. Cokoli, co sahá *mimo* samotné renderování (měření prvku, volání metody DOM na refu, vytváření portálu mimo váš strom, práce s úložištěm prohlížeče), dnes chybí nebo je nekompletní a většinou to selhává tiše: bez výjimky a bez chyby TypeScriptu, protože kostra je typovaná proti plnému DOMu prohlížeče.
+Komponenty Front jsou aktivně vyvíjeny. Renderování, stylování, obsluha událostí, měření prvků a úložiště prohlížeče fungují dobře. Cokoli, co sahá *mimo* tyto oblasti (volání metody DOM na refu, sledování změn velikosti prvku, vytváření portálu mimo váš strom) dnes chybí nebo je nekompletní a většinou selhává tiše: bez vyvolání výjimky a bez chyby TypeScriptu, protože kostra je typovaná proti plnému DOMu prohlížeče.
 
 Pokud vás něco z toho blokuje, [vytvořte issue](https://github.com/twentyhq/twenty/issues/new/choose), aby to bylo upřednostněno.
 
 ### Rozvržení a měření
 
-Zatím se nic nemůže samo změřit.
+Prvky se mohou měřit samy: hostitel zrcadlí geometrii do sandboxu, takže čtení jsou obsloužena lokálně, ale mohou být zastaralá až o jeden snímek, a první čtení nikdy dříve neměřeného prvku vrátí nuly. Po zápisu znovu přečtěte v callbacku `requestAnimationFrame` nebo v efektu.
 
-| API                                                           | Co se stane                                                                     |
-| ------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `getBoundingClientRect()`, `getClientRects()`                 | Vyvolá výjimku                                                                  |
-| `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Tiše `undefined`, takže `width ?? 0` vrátí `0` a `width > 600` je vždycky false |
-| `ResizeObserver`, `IntersectionObserver`                      | `ReferenceError` (ochrany pomocí `typeof` fungují)                              |
-| `window.matchMedia()`, `window.getComputedStyle()`            | Vyvolá výjimku                                                                  |
-| `window.innerWidth`, `innerHeight`, `devicePixelRatio`        | Tiše `undefined`                                                                |
-| `new MutationObserver(fn)`                                    | Zkonstruuje se, pak `.observe()` vyvolá výjimku                                 |
+| API                                                                                      | Co se stane                                                                                                             |
+| ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Funguje, z pohledu zrcadla; přiřazení `scrollTop` / `scrollLeft` nic neudělá (no-op)                                    |
+| `getClientRects()`, `window.matchMedia()`                                                | Vyvolá výjimku                                                                                                          |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY`             | Funguje, hlásí **viewport prohlížeče**; vlastní velikost vašeho widgetu je `document.body.clientWidth` / `clientHeight` |
+| `window.getComputedStyle()`                                                              | Vrací pouze inline styly prvku, nikdy hostem vypočtenou kaskádu                                                         |
+| `ResizeObserver`, `IntersectionObserver`                                                 | `ReferenceError` (ochrany pomocí `typeof` fungují)                                                                      |
+| `MutationObserver`                                                                       | Funguje, včetně `subtree`, `attributeFilter`, starých hodnot a `takeRecords()`                                          |
 
-Takže recharts `ResponsiveContainer`, Floating UI / Popper, virtualizace seznamů a táhnutí pro změnu velikosti zatím nefungují. Místo toho dělejte rozvržení v CSS: váš stylesheet se dostane ke skutečné stránce, takže flexbox, grid, `aspect-ratio`, `clamp()` i `@container` se chovají normálně.
+Pozicování pomocí `getBoundingClientRect` nyní funguje, ale vše, co sleduje změny velikosti přes `ResizeObserver` (recharts `ResponsiveContainer`, `autoUpdate` z Floating UI), stále nefunguje. Stejně dávejte přednost CSS pro rozvržení: váš stylesheet se dostane ke skutečné stránce, takže flexbox, grid, `aspect-ratio`, `clamp()` a `@container` se chovají normálně, bez zpoždění o snímek.
 
 <Note>
 `requestAnimationFrame`, `fetch`, `setTimeout` a `queueMicrotask` fungují bez prefixu `window.`. Pouze `window.requestAnimationFrame(...)` a podobné volání vyvolají výjimku.
@@ -767,32 +801,32 @@ Takže recharts `ResponsiveContainer`, Floating UI / Popper, virtualizace seznam
 
 `ref` vám dává sandboxový prvek, ne `HTMLElement`.
 
-| Co napíšete                                                                                                 | Co se stane                                         | Co použít místo toho                                                                                    |
-| ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Vyvolá výjimku                                      | Řízené komponenty; čtěte hodnoty z `event.target`                                                       |
-| `element.classList.add(...)`                                                                                | Vyvolá výjimku (`classList` je `undefined`)         | Sestavte si řetězec `className` sami                                                                    |
-| `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | Vyvolá výjimku                                      | `querySelector()` / `querySelectorAll()`, které fungují                                                 |
-| `document.activeElement`                                                                                    | Vždy `undefined`                                    | Sledujte fokus pomocí `onFocus` / `onBlur`                                                              |
-| `\<canvas>`                                                                                | Nerenderuje nic, žádná chyba                        | SVG, nebo kreslete offscreen a zobrazte `<img src={dataUrl}>`                                           |
-| `createPortal(node, document.body)`                                                                         | Nerenderuje nic, zatímco `isConnected` hlásí úspěch | Překryvné prvky inline pomocí `position: absolute`, nebo knihovně předávejte vlastní kontejnerový prvek |
+| Co napíšete                                                                                                 | Co se stane                                         | Co použít místo toho                                                                                                                                                  |
+| ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Vyvolá výjimku                                      | Řízené komponenty; čtěte hodnoty z `event.target`                                                                                                                     |
+| `element.classList.add(...)`                                                                                | Vyvolá výjimku (`classList` je `undefined`)         | Sestavte si řetězec `className` sami                                                                                                                                  |
+| `document.createTreeWalker()`                                                                               | Vyvolá výjimku                                      | `querySelector()` / `querySelectorAll()` a `getElementById()` fungují; `getElementsByClassName()` také funguje, ale vrací statickou kolekci, ne živý `HTMLCollection` |
+| `document.activeElement`                                                                                    | Vždy `undefined`                                    | Sledujte fokus pomocí `onFocus` / `onBlur`                                                                                                                            |
+| `canvas`                                                                                                    | Nerenderuje nic, žádná chyba                        | SVG, nebo kreslit mimo obrazovku a výsledek zobrazit v prvku `img`                                                                                                    |
+| `createPortal(node, document.body)`                                                                         | Nerenderuje nic, zatímco `isConnected` hlásí úspěch | Překryvné prvky inline pomocí `position: absolute`, nebo knihovně předávejte vlastní kontejnerový prvek                                                               |
 
 Kvůli této mezeře v portálu popovery Radix, Headless UI, MUI a react-select ve výchozím stavu nic nevyrenderují. Většina z nich přijímá prop pro kontejner; nasměrujte ho na prvek, který jste vyrenderovali.
 
 ### Události
 
-Události myši, ukazatele, dotyku, tažení, klávesnice, fokusu, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` a `animationend`/`transitionend` přecházejí do hostitele, plus několik specifických pro prvek: `load`/`error` na `<img>`, schránka a kompozice na `<input>`/`\<textarea>`, média na `\<video>`/`\<audio>`, `toggle` na `\<details>`/`\<dialog>`. Cokoli dalšího (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, zachycení ukazatele (pointer capture), `onLoad` na `<img>`) je bez varování zahazováno.
+Události myši, ukazatele, dotyku, přetažení, klávesnice, fokusu, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` a `animationend`/`transitionend` se předávají hostiteli, a navíc několik dalších podle typu prvku: `load`/`error` na `img`, schránka a skládání (composition) na `input`/`textarea`, média na `video`/`audio`, `toggle` na `details`/`dialog`. Cokoli dalšího (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, zachycení ukazatele (pointer capture), `onLoad` na `img`) je bez varování zahazováno.
 
 `document.addEventListener()` a `window.addEventListener()` se zaregistrují bez chyby, ale nikdy se nespustí, což je důvod, proč se přetažení zastaví, jakmile ukazatel opustí prvek, na kterém začalo. Ani `event.preventDefault()` se nepřenáší; odeslání formuláře, `dragover`/`drop` a kliknutí na odkazy jsou už za vás ošetřené.
 
 ### Atributy a stylování
 
-Každý prvek předává své vlastní vlastnosti do hostitelského DOMu (`href` na `\<a>`, `src`/`alt` na `<img>`, `value`/`placeholder`/`disabled` na `<input>` atd.) plus společnou sadu na každém prvku: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` a jakýkoli atribut `aria-*` / `data-*` (s pomlčkou, takže `ariaLabel` je zahozena). Cokoli mimo tento rozsah je tiše zahazováno, takže vlastní stav vyjádřete jako `data-*`.
+Každý prvek předává své vlastní vlastnosti do hostitelského DOM (`href` na `a`, `src`/`alt` na `img`, `value`/`placeholder`/`disabled` na `input` atd.), a navíc má každý prvek společnou sadu: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` a jakýkoli atribut `aria-*` / `data-*` (s pomlčkou; `ariaLabel` je proto ignorována). Cokoli mimo tento rozsah je tiše zahazováno, takže vlastní stav vyjádřete jako `data-*`.
 
-Komponentové CSS, ať už z `import './styles.css'`, CSS-in-JS nebo z prvku `\<style>`, je do `\<head>` hostitelské stránky vkládáno **bez ohraničení (unscoped)**. Třídy se tak střetávají s vlastními třídami Twenty (přidávejte jim předpony a nikdy nepište holé `div { ... }` selektory) a `@media` se vztahuje k oknu prohlížeče, nikoli k vašemu widgetu (použijte `@container` s vlastním `container-type`). Inline propy `style` nejsou ovlivněny.
+Komponentové CSS, ať už z `import './styles.css'`, CSS-in-JS nebo z prvku `style`, je do `head` hostitelské stránky vkládáno **bez ohraničení (unscoped)**. Třídy se tak střetávají s vlastními třídami Twenty (přidávejte jim předpony a nikdy nepište holé `div { ... }` selektory) a `@media` se vztahuje k oknu prohlížeče, nikoli k vašemu widgetu (použijte `@container` s vlastním `container-type`). Inline propy `style` nejsou ovlivněny.
 
 ### Úložiště a síť
 
-`localStorage`, `sessionStorage`, IndexedDB, cookies, Cache API a `BroadcastChannel` nejsou vůbec k dispozici, protože komponenta běží ve workeru na neprůhledném (opaque) původu. Pro uchování stavu zavolejte [logickou funkci](/l/cs/developers/extend/apps/logic/logic-functions) a použijte její [úložiště klíč–hodnota](/l/cs/developers/extend/apps/logic/key-value-store).
+`localStorage` a `sessionStorage` poskytuje Twenty, nikoli prohlížeč: komponenta běží ve workeru v neprůhledném původu, takže hostitel ukládá hodnoty jménem vaší aplikace. Jejich rozsah a limity najdete v části [úložiště](#storage). IndexedDB, cookies, Cache API a `BroadcastChannel` jsou nadále nedostupné. Pro uchování stavu mezi zařízeními zavolejte [logickou funkci](/l/cs/developers/extend/apps/logic/logic-functions) a použijte její [úložiště klíč–hodnota](/l/cs/developers/extend/apps/logic/key-value-store).
 
 `fetch` funguje, s výhradami:
 
@@ -800,9 +834,13 @@ Komponentové CSS, ať už z `import './styles.css'`, CSS-in-JS nebo z prvku `\<
 * Jiné původy opouštějí sandbox s `Origin: null`, takže API třetí strany odpoví jen tehdy, pokud posílá `Access-Control-Allow-Origin: *`. Místo toho jej volejte z logické funkce.
 * `fetch('/rest/people')` se nikdy nespáruje s Twenty API, protože sandbox nemá URL stránky, podle které by vyhodnotil relativní cestu.
 
+### Zachytávání médií
+
+`navigator.mediaDevices.getUserMedia()` a `MediaRecorder` fungují uvnitř frontendových komponent díky sandboxovým polyfillům, takže standardní kód pro nahrávání běží beze změn a `MediaRecorder.isTypeSupported` udává, zda jsou podporovány běžné kombinace kontejneru/kodeku. Detailní objekty omezení `getUserMedia` jsou akceptovány, ale nejsou předávány dál — hostitel zachytává s výchozím nastavením pro požadované druhy — a napříč aplikacemi může být v daný čas aktivní pouze jedno zachytávání. Uložte zaznamenaný `Blob` pomocí hostitelské funkce `uploadFile`.
+
 ### Další omezení
 
-* **Obsah souborů.** `<input type="file">` poskytuje vašemu handleru pouze metadata souboru, nikoli samotné bajty, takže `FileReader` a nahrávání zatím nejsou možná.
+* **Obsah souborů.** `input` typu `file` poskytuje vašemu handleru pouze metadata souboru, nikoli samotné bajty, takže `FileReader` není k dispozici. Chcete-li nahrát `Blob`, který váš kód již má k dispozici — např. jeden vytvořený pomocí `MediaRecorder` — použijte hostitelskou funkci `uploadFile`.
 * **Payloady drag-and-drop.** Události tažení se spouštějí, ale `event.dataTransfer` je `undefined`.
 * **Vestavěné moduly Node.** `fs`, `path` a `node:crypto` způsobí chybu při sestavení, takže tuto práci přesuňte do [logické funkce](/l/cs/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` a `URL` jsou k dispozici.
-* **`\<iframe>`** je vždy znovu zasandboxováno bez `allow-same-origin`, takže vložený obsah spoléhající se na vlastní relaci se vykreslí jako odhlášený. Nemá ani `onLoad`.
+* **`iframe`** je vždy znovu zasandboxováno bez `allow-same-origin`, takže vložený obsah spoléhající se na vlastní relaci se vykreslí jako odhlášený. Nemá ani `onLoad`.

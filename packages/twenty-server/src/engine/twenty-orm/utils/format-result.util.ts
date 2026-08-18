@@ -190,7 +190,6 @@ function formatResultRecursively<T>(
     newData[key] = formattedFieldValue;
   }
 
-  // After assembling composite fields, handle those with missing required subfields
   handleEmptyCompositeFields(
     newData,
     objectCache.compositeFieldMetadataWithRequiredProperties,
@@ -308,7 +307,6 @@ function getCompositeFieldMetadataMapFromCollection(
 
       if (!compositeType) return [];
 
-      // Map each composite property to a [key, value] pair
       return compositeType.properties.map((compositeProperty) => [
         computeCompositeColumnName(fieldMetadata.name, compositeProperty),
         {

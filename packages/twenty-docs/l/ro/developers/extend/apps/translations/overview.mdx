@@ -54,9 +54,9 @@ const Card = ({ count, name }: { count: number; name: string }) => {
 
 ### Când să utilizaţi care
 
-* **`<Trans>…</Trans>`** — text static în JSX. Utilizaţi `message` şi `values`
-  props pentru interpolare (`<Trans message="Hi {name}" values={{ name }} />`);
-  interpolând direct la copii nu poate fi extras static.
+* **`Trans`** — text static în JSX. Folosește proprietățile `message` și `values` pentru
+  interpolare, ca în `Trans message="Hi {name}" values={{ name }}`;
+  interpolarea direct în elementele copil nu poate fi extrasă static.
 * **`useTranslate().t`** - șiruri dinamice în interiorul unei componente. Re-randează atunci când utilizatorul
   schimbă limba. Preferă acest lucru în redare.
 * **`t(...)`** (importat direct) - traducerea mai ușoară **oriunde**,
@@ -84,9 +84,9 @@ twenty dev:translations-extract                  # collect strings into locales/
 twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 ```
 
-Extragerea colectează atât etichetele manifestului cât şi `t()`/`msg()`/`\<Trans>`
-din sursa componentei front-line în `locales/\<locale>. son`, keyed by
-source string. Completează traducerile:
+Procesul de extragere colectează atât etichetele manifestului, cât și șirurile `t()`/`msg()`/`Trans`
+din sursa front-component în `locales/\<locale>.json`, indexate după
+șirul sursă. Completează traducerile:
 
 ```json
 // locales/fr-FR.json
@@ -107,8 +107,8 @@ Localnicii ca `{name}` sunt substituiți la timp - țineți-le în traducerea
 sunt copite în fiecare pachet de componente. La runtime, o componentă citește localizarea
 din contextul de execuție (limba curentă a gazdei) și rezolvă
 fiecare șir din catalog, revenind la sursă atunci când lipsește o traducere
-. Schimbarea limbii în șir rerandează `\<Trans>` și
-șirurile `useTranslate().t` live.
+. Schimbarea limbii în gazdă reafișează în timp real șirurile `Trans` și
+`useTranslate().t`.
 
 Deoarece cataloagele sunt compilate la ora de construcție, actualizarea unei traduceri înseamnă
 repornirea `douăzeci dev:build` (și redistribuirea), la fel ca orice altă schimbare.
@@ -119,6 +119,13 @@ ceasul continuu `douăzeci de dev` arată șirurile sursă, așa că testează r
 cu o singură construcție.
 </Note>
 
-`<Trans>` text copii pot parcurge mai multe linii - spațiul alb este prăbușit
-la fel cum JSX o destramă, Așa că '<Trans>Bun venit\n  înapoi</Trans>' iar cheia
-a fost extrasă devin 'Bine ați revenit'.
+Elementele text copil ale `Trans` pot acoperi mai multe linii — spațiile albe sunt comprimate în
+același mod în care JSX le comprimă, astfel încât ambele variante sunt extrase cu cheia `Welcome back`:
+
+```tsx
+<Trans>Welcome back</Trans>
+<Trans>
+  Welcome
+  back
+</Trans>
+```

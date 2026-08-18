@@ -9,10 +9,8 @@ export const extractColumnNamesFromAggregateExpression = (
   const concatMatches = selection.match(/CONCAT\("([^"]+)"(?:,"([^"]+)")*\)/g);
 
   if (concatMatches) {
-    // Extract all column names between quotes after CONCAT
     const columnNames = selection.match(/"([^"]+)"/g)?.map((match) => {
       const fullColumn = match.slice(1, -1);
-      // If there's a dot, extract only the column name (part after the dot)
       const parts = fullColumn.split('.');
 
       return parts[parts.length - 1];
@@ -28,7 +26,6 @@ export const extractColumnNamesFromAggregateExpression = (
   if (tableColumnMatches) {
     const columnNames = tableColumnMatches
       .map((match) => {
-        // Extract the column name from "table"."column" pattern
         const columnMatch = match.match(/"[^"]+"\."([^"]+)"/);
 
         return columnMatch ? columnMatch[1] : null;

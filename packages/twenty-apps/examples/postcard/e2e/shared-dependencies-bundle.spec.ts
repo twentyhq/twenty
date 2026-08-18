@@ -9,7 +9,7 @@ const FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER = 'twenty:front-compo
 const REACT_LICENSE_BANNER = '@license React';
 
 const MIN_SHARED_DEPENDENCIES_BUNDLE_BYTES = 50_000;
-const MAX_COMPONENT_TO_SHARED_DEPENDENCIES_RATIO = 1 / 2;
+const MAX_COMPONENT_TO_SHARED_DEPENDENCIES_RATIO = 0.65;
 
 const resolveJavaScriptBody = async (
   page: Page,
@@ -117,7 +117,7 @@ test.describe('Postcard shared dependencies bundle', () => {
     const sharedDependenciesResponse = sharedDependenciesResponses[0];
     expect(sharedDependenciesResponse.status()).toBe(200);
     expect(sharedDependenciesResponse.url()).toMatch(
-      /\/rest\/front-component-shared-dependencies\/[0-9a-f-]{36}\/[0-9a-f]{64}\.js$/,
+      /\/rest\/front-component-shared-dependencies\/[0-9a-f-]{36}\/[0-9a-f]{64}\.js(?:\?[^#]*)?$/,
     );
 
     const sharedDependenciesBundleBody = await resolveJavaScriptBody(

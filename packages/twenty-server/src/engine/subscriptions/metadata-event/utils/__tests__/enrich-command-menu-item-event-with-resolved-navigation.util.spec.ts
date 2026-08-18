@@ -1,4 +1,3 @@
-import { type I18n } from '@lingui/core';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
@@ -15,7 +14,7 @@ import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty
 
 const mockI18nInstance = {
   _: (messageId: string) => messageId,
-} as unknown as I18n;
+};
 
 const OBJECT_METADATA_ID = 'obj-id-1';
 
@@ -83,7 +82,7 @@ describe('enrichCommandMenuItemEventWithResolvedNavigation', () => {
     expect(result.icon).toBe('IconUser');
   });
 
-  it('should return record unchanged for non-NAVIGATION items', () => {
+  it('should not interpolate a non-NAVIGATION item', () => {
     const flatObjectMetadata = makeFlatObjectMetadata();
     const flatObjectMetadataMaps =
       makeFlatObjectMetadataMaps(flatObjectMetadata);
@@ -103,10 +102,10 @@ describe('enrichCommandMenuItemEventWithResolvedNavigation', () => {
       i18nInstance: mockI18nInstance,
     });
 
-    expect(result).toBe(record);
+    expect(result).toEqual(record);
   });
 
-  it('should return record unchanged when payload has no objectMetadataItemId', () => {
+  it('should not interpolate when payload has no objectMetadataItemId', () => {
     const flatObjectMetadata = makeFlatObjectMetadata();
     const flatObjectMetadataMaps =
       makeFlatObjectMetadataMaps(flatObjectMetadata);
@@ -122,10 +121,10 @@ describe('enrichCommandMenuItemEventWithResolvedNavigation', () => {
       i18nInstance: mockI18nInstance,
     });
 
-    expect(result).toBe(record);
+    expect(result).toEqual(record);
   });
 
-  it('should return record unchanged when object metadata is not found in maps', () => {
+  it('should not interpolate when object metadata is not found in maps', () => {
     const emptyMaps: FlatEntityMaps<FlatObjectMetadata> = {
       byUniversalIdentifier: {},
       universalIdentifierById: {},
@@ -141,7 +140,7 @@ describe('enrichCommandMenuItemEventWithResolvedNavigation', () => {
       i18nInstance: mockI18nInstance,
     });
 
-    expect(result).toBe(record);
+    expect(result).toEqual(record);
   });
 
   it('should apply standard overrides when resolving templates', () => {
@@ -193,7 +192,7 @@ describe('enrichCommandMenuItemEventWithResolvedNavigation', () => {
     expect(result.icon).toBe('IconBuilding');
   });
 
-  it('should return record unchanged when payload is null', () => {
+  it('should not interpolate when payload is null', () => {
     const flatObjectMetadata = makeFlatObjectMetadata();
     const flatObjectMetadataMaps =
       makeFlatObjectMetadataMaps(flatObjectMetadata);
@@ -207,7 +206,7 @@ describe('enrichCommandMenuItemEventWithResolvedNavigation', () => {
       i18nInstance: mockI18nInstance,
     });
 
-    expect(result).toBe(record);
+    expect(result).toEqual(record);
   });
 
   it('should pass through already-resolved literal labels', () => {
@@ -231,5 +230,31 @@ describe('enrichCommandMenuItemEventWithResolvedNavigation', () => {
     expect(result.label).toBe('Go to People');
     expect(result.shortLabel).toBe('People');
     expect(result.icon).toBe('IconUser');
+  });
+  it('translates a non-NAVIGATION item so the event does not carry a source-locale label', () => {
+    const flatObjectMetadata = makeFlatObjectMetadata();
+    const flatObjectMetadataMaps =
+      makeFlatObjectMetadataMaps(flatObjectMetadata);
+
+    const record = makeNavigationRecord({
+      engineComponentKey: EngineComponentKey.CREATE_NEW_RECORD,
+      applicationUniversalIdentifier:
+        TWENTY_STANDARD_APPLICATION.universalIdentifier,
+      label: 'Export View',
+      shortLabel: undefined,
+      icon: 'IconPlus',
+      payload: undefined,
+    });
+
+    const result = enrichCommandMenuItemEventWithResolvedNavigation({
+      record,
+      flatObjectMetadataMaps,
+      locale: SOURCE_LOCALE,
+      i18nInstance: {
+        _: (messageId: string) => `translated:${messageId}`,
+      },
+    });
+
+    expect(result.label).toMatch(/^translated:/);
   });
 });

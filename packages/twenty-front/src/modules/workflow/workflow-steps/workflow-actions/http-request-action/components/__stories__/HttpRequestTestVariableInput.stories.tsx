@@ -127,7 +127,6 @@ export const ReadonlyMode: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // In readonly mode, variables should still be displayed
     expect(await canvas.findByText('user.id')).toBeVisible();
     expect(await canvas.findByText('auth.token')).toBeVisible();
   },
@@ -211,7 +210,6 @@ export const ComplexNestedVariables: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Should have 10 input fields for all the nested variables
     const inputs = canvas.getAllByRole('textbox');
     expect(inputs).toHaveLength(10);
 

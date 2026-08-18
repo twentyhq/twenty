@@ -3,7 +3,7 @@ import { type FrontComponentStorageType } from 'twenty-sdk/front-component';
 
 import { STORAGE_PERSISTENCE_FAILURE_WARNING } from '@/polyfills/storage/constants/StoragePersistenceFailureWarning';
 import { type FrontComponentStorageBridge } from '@/polyfills/storage/types/FrontComponentStorageBridge';
-import { type FrontComponentHostCommunicationApiStore } from '@/types/FrontComponentHostCommunicationApiStore';
+import { type WorkerFrontComponentHostCommunicationApi } from '@/types/WorkerFrontComponentHostCommunicationApi';
 import { getFrontComponentStorageViolationMessage } from '@/utils/getFrontComponentStorageViolationMessage';
 
 export const createFrontComponentStorageBridge = ({
@@ -14,7 +14,7 @@ export const createFrontComponentStorageBridge = ({
   const entries = new Map<string, string>();
   const pendingPersistOperations: (() => void)[] = [];
 
-  let hostCommunicationApi: FrontComponentHostCommunicationApiStore | null =
+  let hostCommunicationApi: WorkerFrontComponentHostCommunicationApi | null =
     null;
   let cachedKeys: string[] | null = null;
 
@@ -26,7 +26,7 @@ export const createFrontComponentStorageBridge = ({
 
   const runPersist = (
     persistOperation: (
-      connectedHostCommunicationApi: FrontComponentHostCommunicationApiStore,
+      connectedHostCommunicationApi: WorkerFrontComponentHostCommunicationApi,
     ) => Promise<void> | undefined,
   ): void => {
     if (!isDefined(hostCommunicationApi)) {
@@ -40,7 +40,7 @@ export const createFrontComponentStorageBridge = ({
 
   const persist = (
     persistOperation: (
-      connectedHostCommunicationApi: FrontComponentHostCommunicationApiStore,
+      connectedHostCommunicationApi: WorkerFrontComponentHostCommunicationApi,
     ) => Promise<void> | undefined,
   ): void => {
     if (isDefined(hostCommunicationApi)) {

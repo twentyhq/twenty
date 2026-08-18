@@ -102,6 +102,39 @@ describe('ORM v2 SQL injection invariants', () => {
     });
   });
 
+  describe('write values', () => {
+    it.each(HOSTILE_VALUES)(
+      'should bind %j written through a SET clause instead of inlining it',
+      (hostileValue) => {
+        const queryBuilder = buildQueryBuilder(['id', 'name', 'deletedAt']);
+
+        const [text, values] = queryBuilder
+          .where('"person"."id" = :id', { id: 'id-1' })
+          .update()
+          .set({ name: hostileValue })
+          .returning(['id'])
+          .getQueryAndParameters();
+
+        expect(text).not.toContain(hostileValue);
+        expect(text).toContain('$1');
+        expect(values).toContain(hostileValue);
+      },
+    );
+
+    it('should reject a SET column whose name did not come from the table shape', () => {
+      const queryBuilder = buildQueryBuilder(['id', 'name', 'deletedAt']);
+
+      expect(() =>
+        queryBuilder
+          .where('"person"."id" = :id', { id: 'id-1' })
+          .update()
+          .set({ "name\" = ''); DROP TABLE person; --": 'x' })
+          .returning(['id'])
+          .getQuery(),
+      ).toThrow('does not exist on');
+    });
+  });
+
   describe('identifiers', () => {
     it.each(HOSTILE_IDENTIFIERS)(
       'should keep %j inside one quoted identifier',

@@ -157,7 +157,6 @@ describe('prepareGridLayoutItemsWithPlaceholders', () => {
       const result = prepareGridLayoutItemsWithPlaceholders(widgets, true);
 
       expect(result).toHaveLength(6);
-      // Check that the last item is the pending placeholder
       const lastItem = result[result.length - 1];
       expect(lastItem).toEqual({
         id: PENDING_WIDGET_PLACEHOLDER_LAYOUT_KEY,

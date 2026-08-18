@@ -16,6 +16,7 @@ export enum BillingExceptionCode {
   BILLING_SUBSCRIPTION_NOT_FOUND = 'BILLING_SUBSCRIPTION_NOT_FOUND',
   BILLING_SUBSCRIPTION_ITEM_NOT_FOUND = 'BILLING_SUBSCRIPTION_ITEM_NOT_FOUND',
   BILLING_SUBSCRIPTION_INVALID = 'BILLING_SUBSCRIPTION_INVALID',
+  BILLING_SUBSCRIPTION_ALREADY_EXISTS = 'BILLING_SUBSCRIPTION_ALREADY_EXISTS',
   BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND = 'BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND',
   BILLING_CUSTOMER_EVENT_WORKSPACE_NOT_FOUND = 'BILLING_CUSTOMER_EVENT_WORKSPACE_NOT_FOUND',
   BILLING_ACTIVE_SUBSCRIPTION_NOT_FOUND = 'BILLING_ACTIVE_SUBSCRIPTION_NOT_FOUND',
@@ -39,6 +40,8 @@ export enum BillingExceptionCode {
   BILLING_CREDIT_GRANT_VALIDITY_INVALID = 'BILLING_CREDIT_GRANT_VALIDITY_INVALID',
   BILLING_USAGE_UNAVAILABLE = 'BILLING_USAGE_UNAVAILABLE',
   BILLING_CREDIT_GRANT_TYPE_NOT_GRANTABLE = 'BILLING_CREDIT_GRANT_TYPE_NOT_GRANTABLE',
+  BILLING_UPGRADE_INVOICE_PAYMENT_FAILED = 'BILLING_UPGRADE_INVOICE_PAYMENT_FAILED',
+  BILLING_UPGRADE_INVOICE_VOID_FAILED = 'BILLING_UPGRADE_INVOICE_VOID_FAILED',
 }
 
 const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
@@ -59,6 +62,8 @@ const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
       return msg`Subscription item not found.`;
     case BillingExceptionCode.BILLING_SUBSCRIPTION_INVALID:
       return msg`Invalid subscription.`;
+    case BillingExceptionCode.BILLING_SUBSCRIPTION_ALREADY_EXISTS:
+      return msg`This workspace already has a subscription.`;
     case BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND:
       return msg`Workspace not found for subscription event.`;
     case BillingExceptionCode.BILLING_CUSTOMER_EVENT_WORKSPACE_NOT_FOUND:
@@ -105,6 +110,10 @@ const getBillingExceptionUserFriendlyMessage = (code: BillingExceptionCode) => {
       return msg`Usage could not be read. Please try again later.`;
     case BillingExceptionCode.BILLING_CREDIT_GRANT_TYPE_NOT_GRANTABLE:
       return msg`This kind of credit grant cannot be created by hand.`;
+    case BillingExceptionCode.BILLING_UPGRADE_INVOICE_PAYMENT_FAILED:
+      return msg`Your payment method was declined. Please update it and try again.`;
+    case BillingExceptionCode.BILLING_UPGRADE_INVOICE_VOID_FAILED:
+      return msg`An unexpected billing error occurred. Please contact support.`;
     default:
       assertUnreachable(code);
   }

@@ -4,7 +4,7 @@ import {
 } from 'twenty-shared/types';
 import { type EntityMetadata } from 'typeorm';
 
-import { type EncodedFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/types/encoded-flat-field-metadata-maps.type';
+import { type CompactFlatFieldMetadataMaps } from 'src/engine/metadata-modules/flat-field-metadata/types/compact-flat-field-metadata-maps.type';
 import { type ResolverNameMapEntry } from 'src/engine/api/graphql/direct-execution/utils/build-resolver-name-map.util';
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { type ApplicationVariableCacheMaps } from 'src/engine/core-modules/application/application-variable/types/application-variable-cache-maps.type';
@@ -57,5 +57,5 @@ export type WorkspaceCacheStoredDataMap = Omit<
 > & {
   flatFieldMetadataMaps:
     | WorkspaceCacheDataMap['flatFieldMetadataMaps']
-    | EncodedFlatFieldMetadataMaps;
+    | CompactFlatFieldMetadataMaps;
 };

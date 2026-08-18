@@ -104,7 +104,6 @@ async function runMigrations() {
 
     console.log(`⚡ Running ${file}...`);
 
-    // Split by semicolons and filter out empty statements/comments
     const statements = sql
       .split(';')
       .map((stmt) => stmt.trim())

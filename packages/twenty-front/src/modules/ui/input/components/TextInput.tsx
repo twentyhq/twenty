@@ -1,7 +1,6 @@
-import { InputErrorHelper } from '@/ui/input/components/InputErrorHelper';
+import { InputHint, InputLabel } from 'twenty-ui/input';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { InputLabel } from '@/ui/input/components/InputLabel';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import React, {
@@ -25,6 +24,10 @@ const StyledContainer = styled.div<Pick<TextInputComponentProps, 'fullWidth'>>`
   flex-direction: column;
   position: relative;
   width: ${({ fullWidth }) => (fullWidth ? `100%` : 'auto')};
+`;
+
+const StyledErrorHelper = styled.div`
+  position: absolute;
 `;
 
 const StyledInputContainer = styled.div`
@@ -400,7 +403,9 @@ const TextInputComponent = forwardRef<
           </StyledTrailingIconContainer>
         </StyledInputContainer>
         {!noErrorHelper && error && (
-          <InputErrorHelper>{error}</InputErrorHelper>
+          <StyledErrorHelper aria-live="polite">
+            <InputHint danger>{error}</InputHint>
+          </StyledErrorHelper>
         )}
       </StyledContainer>
     );

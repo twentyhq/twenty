@@ -43,7 +43,6 @@ export const validateFlatEntityCircularDependency = <
     };
   }
 
-  // Traverse ancestor chain to detect cycles and measure depth
   const visited = new Set<string>();
   let currentParentUniversalIdentifier: string | null | undefined =
     flatEntityParentUniversalIdentifier;
@@ -66,7 +65,6 @@ export const validateFlatEntityCircularDependency = <
       };
     }
 
-    // Check for cycle in ancestors (already visited node)
     if (visited.has(currentParentUniversalIdentifier)) {
       return {
         status: 'fail',

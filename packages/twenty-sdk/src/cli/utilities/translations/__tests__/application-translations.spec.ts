@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 import { getTranslationCatalogKey } from '@/sdk/front-component/translations/message';
 import { collectTranslatableStrings } from '@/cli/utilities/translations/collect-translatable-strings';
 import { compileApplicationTranslations } from '@/cli/utilities/translations/compile-application-translations';
-import { generateMessageId } from '@/cli/utilities/translations/generate-message-id';
+import { generateMessageId } from 'twenty-shared/i18n';
 import { type Manifest } from 'twenty-shared/application';
 
 const buildManifest = (overrides: Record<string, unknown>): Manifest =>
@@ -59,6 +59,44 @@ describe('collectTranslatableStrings', () => {
       'Companies',
       'Company',
       'Name',
+    ]);
+  });
+
+  // Pins every manifest collection the shared registry maps, so a change to
+  // TRANSLATABLE_PROPERTIES_BY_METADATA_NAME that silently drops a collection
+  // shows up here rather than as an app shipping untranslatable strings.
+  it('collects every translatable property of every mapped manifest collection', () => {
+    const manifest = buildManifest({
+      objects: [
+        {
+          labelSingular: 'Rocket',
+          labelPlural: 'Rockets',
+          description: 'A rocket',
+        },
+      ],
+      fields: [{ label: 'Thrust', description: 'Newtons' }],
+      views: [{ name: 'All Rockets' }],
+      pageLayoutTabs: [{ title: 'Telemetry' }],
+      commandMenuItems: [{ label: 'Launch Rocket', shortLabel: 'Launch' }],
+      navigationMenuItems: [{ name: 'Missions' }],
+      pageLayouts: [
+        { tabs: [{ title: 'Overview', widgets: [{ title: 'Fuel level' }] }] },
+      ],
+    });
+
+    expect(collectTranslatableStrings(manifest)).toEqual([
+      'A rocket',
+      'All Rockets',
+      'Fuel level',
+      'Launch',
+      'Launch Rocket',
+      'Missions',
+      'Newtons',
+      'Overview',
+      'Rocket',
+      'Rockets',
+      'Telemetry',
+      'Thrust',
     ]);
   });
 });

@@ -94,7 +94,6 @@ describe('evaluateFilterConditions', () => {
         expect(result).toBe(true);
       });
 
-      // Enhanced relation filter tests with object id extraction
       it('should extract id from left operand object for relation comparison', () => {
         const uuid1 = '550e8400-e29b-41d4-a716-446655440000';
         const leftObject = { id: uuid1, name: 'John Doe' };

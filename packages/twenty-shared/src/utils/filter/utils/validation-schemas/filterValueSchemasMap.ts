@@ -32,13 +32,31 @@ type FilterValueSchemasMap = {
     Partial<Record<ViewFilterOperand, z.ZodType>>;
 };
 
+// The reader drops a relation filter resolving to no record id, which turns a
+// row level permission rule into no restriction at all rather than no match.
 const relationFilterValueSchema = jsonRelationFilterValueSchema
   .refine(
     ({ selectedRecordIds }) =>
       strictArrayOfUuidOrVariableSchema.safeParse(selectedRecordIds).success,
     'Expected selectedRecordIds to contain UUIDs or variables',
   )
-  .or(strictArrayOfUuidOrVariableSchema);
+  .refine(
+    ({
+      selectedRecordIds,
+      isCurrentWorkspaceMemberSelected,
+      isCurrentRecordSelected,
+    }) =>
+      selectedRecordIds.length > 0 ||
+      isCurrentWorkspaceMemberSelected === true ||
+      isCurrentRecordSelected === true,
+    'Expected at least one selected record',
+  )
+  .or(
+    strictArrayOfUuidOrVariableSchema.refine(
+      (recordIds) => recordIds.length > 0,
+      'Expected at least one selected record',
+    ),
+  );
 
 // Mirrors normalizeSelectFilterValues: a value that is not JSON is a legacy scalar option.
 const selectFilterValueSchema = nonEmptyStringFilterValueSchema.refine(

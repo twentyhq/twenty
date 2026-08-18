@@ -20,7 +20,6 @@ export const useResolveFieldMetadataIdFromNameOrId = (
       return fieldByName.id;
     }
 
-    // If not found by name, check if it's already an ID
     const fieldById = objectMetadataItem.fields.find(
       (field) => field.id === fieldMetadataIdOrName,
     );

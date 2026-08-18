@@ -70,7 +70,26 @@ const CALENDAR_EVENT_PAGE_TABS = {
       },
     },
   },
-  // Reserve position 30 for the upcoming Summary tab.
+  summary: {
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
+        .summary.universalIdentifier,
+    title: 'Summary',
+    position: 30,
+    icon: 'IconFileText',
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+    widgets: {
+      summary: {
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage
+            .tabs.summary.widgets.summary.universalIdentifier,
+        title: 'Summary',
+        type: WidgetType.CALL_RECORDING_SUMMARY,
+        gridPosition: GRID_POSITIONS.FULL_WIDTH,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
+      },
+    },
+  },
   callRecording: {
     universalIdentifier:
       STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs

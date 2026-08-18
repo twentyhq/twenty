@@ -6,7 +6,6 @@ import { updateLogicFunctionSource } from 'test/integration/metadata/suites/logi
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 
-// Default template function code that matches the expected behavior
 const DEFAULT_TEMPLATE_FUNCTION_CODE = `export const main = async (params: { a: string; b: number }): Promise<object> => {
   return { message: \`Toto: \${params.a} and \${params.b}\` };
 };`;
@@ -45,7 +44,6 @@ describe('Logic Function Execution', () => {
   });
 
   it('should execute the default logic function template', async () => {
-    // Create the function with default template code
     const { data: createData } = await createOneLogicFunction({
       input: {
         name: 'Test Default Function',
@@ -94,7 +92,6 @@ describe('Logic Function Execution', () => {
   });
 
   it('should execute a function with external packages (lodash.groupby)', async () => {
-    // Create the function with the external packages code
     const { data: createData } = await createOneLogicFunction({
       input: {
         name: 'External Packages Test',
@@ -157,7 +154,6 @@ describe('Logic Function Execution', () => {
   });
 
   it('should create logic function without source', async () => {
-    // Create the function with default template code
     const { data: createData } = await createOneLogicFunction({
       input: {
         name: 'Test Default Function',
@@ -193,7 +189,6 @@ describe('Logic Function Execution', () => {
   });
 
   it('should create logic function with source', async () => {
-    // Create the function with default template code
     const { data: createData } = await createOneLogicFunction({
       input: {
         name: 'Test Default Function',
@@ -255,7 +250,6 @@ describe('Logic Function Execution', () => {
       expectToFail: false,
     });
 
-    // Execute with shouldFail = false (should succeed)
     const { data: successData } = await executeLogicFunction({
       input: {
         id: functionId,
@@ -271,7 +265,6 @@ describe('Logic Function Execution', () => {
       success: true,
     });
 
-    // Execute with shouldFail = true (should return error status)
     const { data: errorData } = await executeLogicFunction({
       input: {
         id: functionId,

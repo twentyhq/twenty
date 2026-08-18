@@ -118,7 +118,6 @@ type RecordSeedConfig = {
   recordSeeds: Record<string, unknown>[];
 };
 
-// Organize seeds into dependency batches for parallel insertion
 const getRecordSeedsBatches = (
   workspaceId: string,
   attachmentSeeds: RecordSeedConfig['recordSeeds'],
@@ -443,7 +442,6 @@ export class DevSeederDataService {
         )
       : join(__dirname, '../sample-files');
 
-    // Read each sample file once and cache the buffer
     const sampleFileBuffers: Buffer[] = [];
 
     for (const sampleFile of ATTACHMENT_SAMPLE_FILES) {

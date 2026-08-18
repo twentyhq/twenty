@@ -1,13 +1,16 @@
+import { useCalendarEventCallRecording } from '@/page-layout/widgets/calendar-event-call-recording/hooks/useCalendarEventCallRecording';
 import { CallRecordingTranscriptBody } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody';
-import { useCalendarEventCallRecordingTranscript } from '@/page-layout/widgets/call-recording-transcript/hooks/useCalendarEventCallRecordingTranscript';
 
 export const CallRecordingTranscriptWidgetContent = () => {
-  const { callRecordingTranscriptState } =
-    useCalendarEventCallRecordingTranscript();
+  const { callRecording, loading, error, restriction } =
+    useCalendarEventCallRecording({ queryScope: 'call-recording-transcript' });
 
   return (
     <CallRecordingTranscriptBody
-      callRecordingTranscriptState={callRecordingTranscriptState}
+      callRecording={callRecording}
+      loading={loading}
+      error={error}
+      restriction={restriction}
     />
   );
 };

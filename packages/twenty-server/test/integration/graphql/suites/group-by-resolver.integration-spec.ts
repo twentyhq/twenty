@@ -579,7 +579,6 @@ describe('group-by resolver (integration)', () => {
         expect(groups).toBeDefined();
         expect(groups.length).toBe(3);
 
-        // Group starting week of saturday dec 28th, 2024
         const saturdayDec28thGroup = groups.find((group: any) =>
           group.groupByDimensionValues[0].startsWith('2024-12-28'),
         );
@@ -849,7 +848,6 @@ describe('group-by resolver (integration)', () => {
         }),
       );
 
-      // create a view with a filter: city eq cityToKeep
       const { data: createViewData } = await createOneView({
         input: {
           name: 'People View City Keep',
@@ -1000,7 +998,6 @@ describe('group-by resolver (integration)', () => {
       };
 
       beforeAll(async () => {
-        // Create companies with different createdAt dates for grouping
         await makeGraphqlAPIRequest(
           createOneOperationFactory({
             objectMetadataSingularName: 'company',
@@ -1362,7 +1359,6 @@ describe('group-by resolver (integration)', () => {
           }),
         );
 
-        // Create people linked to companies and listings
         await makeGraphqlAPIRequest(
           createOneOperationFactory({
             objectMetadataSingularName: 'person',
@@ -1559,7 +1555,6 @@ describe('group-by resolver (integration)', () => {
           }),
         );
 
-        // Create pets linked to rockets via morph relation
         await makeGraphqlAPIRequest(
           createOneOperationFactory({
             objectMetadataSingularName: 'pet',
@@ -1667,7 +1662,6 @@ describe('group-by resolver (integration)', () => {
       let originalMemberRoleId: string;
 
       beforeAll(async () => {
-        // Get the original Member role ID for restoration later
         const getRolesQuery = {
           query: `
             query GetRoles {
@@ -1709,7 +1703,6 @@ describe('group-by resolver (integration)', () => {
         petObjectId = petObject.id;
         rocketObjectId = rocketObject.id;
 
-        // Create a custom role with pet read permission but no rocket read permission
         const createRoleOperation = {
           query: gql`
             mutation CreateOneRole {
@@ -1736,7 +1729,6 @@ describe('group-by resolver (integration)', () => {
 
         customRoleId = createRoleResponse.body.data.createOneRole.id;
 
-        // Set object permissions: allow reading pets but not rockets
         const upsertObjectPermissionsOperation = {
           query: gql`
             mutation UpsertObjectPermissions(

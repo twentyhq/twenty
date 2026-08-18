@@ -203,7 +203,6 @@ describe('group-by resolvers - order by', () => {
         totalCount: g.totalCount,
       }));
 
-      // Order by dayOfWeek (chronological) then avgEmployees then city
       expect(groupInfos).toEqual([
         {
           city: 'Dallas',
@@ -283,7 +282,6 @@ describe('group-by resolvers - order by', () => {
         totalCount: g.totalCount,
       }));
 
-      // Order by dayOfWeek (chronological) then addressCity then avgEmployees
       expect(groupInfos).toEqual([
         {
           city: 'Anvers',

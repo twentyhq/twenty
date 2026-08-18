@@ -280,7 +280,6 @@ describe('turnSortsIntoOrderBy', () => {
         companyObjectMetadataItem,
       ]);
 
-      // Should produce nested structure for GraphQL: { company: { name: 'AscNullsFirst' } }
       expect(result).toEqual([
         { company: { name: 'AscNullsFirst' } },
         { position: 'AscNullsFirst' },
@@ -300,7 +299,6 @@ describe('turnSortsIntoOrderBy', () => {
         companyObjectMetadataItem,
       ]);
 
-      // Should produce nested structure for GraphQL: { company: { name: 'DescNullsLast' } }
       expect(result).toEqual([
         { company: { name: 'DescNullsLast' } },
         { position: 'AscNullsFirst' },
@@ -316,7 +314,6 @@ describe('turnSortsIntoOrderBy', () => {
         },
       ];
 
-      // Pass empty objectMetadataItems array - related object not found
       const result = turnSortsIntoOrderBy(personObjectMetadataItem, sorts, []);
 
       expect(result).toEqual([

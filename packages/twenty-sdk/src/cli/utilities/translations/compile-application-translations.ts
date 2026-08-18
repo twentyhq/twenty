@@ -4,7 +4,7 @@ import path from 'path';
 import { parseTranslationCatalogKey } from '@/sdk/front-component/translations/message';
 import { pathExists, readJson } from '@/cli/utilities/file/fs-utils';
 import { LOCALES_DIR } from '@/cli/utilities/translations/constants';
-import { generateMessageId } from '@/cli/utilities/translations/generate-message-id';
+import { generateMessageId } from 'twenty-shared/i18n';
 import { type TranslationsManifest } from 'twenty-shared/application';
 import {
   APP_LOCALES,

@@ -57,7 +57,6 @@ const GENERATE_CALENDAR_CHANNEL_EVENT_ASSOCIATION_SEEDS =
     ];
 
     EVENT_IDS.forEach((eventId, index) => {
-      // Distribute events across channels with weighted distribution
       let CHANNEL_ID: string;
       const CHANNEL_RAND = Math.random();
 

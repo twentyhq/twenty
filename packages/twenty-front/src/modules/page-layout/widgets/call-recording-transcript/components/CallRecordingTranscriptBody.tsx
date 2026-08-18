@@ -1,67 +1,90 @@
+import { CallRecordingWidgetEmptyStateDisplay } from '@/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetEmptyStateDisplay';
+import { CallRecordingWidgetForbiddenDisplay } from '@/page-layout/widgets/calendar-event-call-recording/components/CallRecordingWidgetForbiddenDisplay';
+import { type CalendarEventCallRecordingCandidate } from '@/page-layout/widgets/calendar-event-call-recording/types/CalendarEventCallRecordingCandidate';
+import { isCallRecordingTranscriptFailed } from '@/page-layout/widgets/calendar-event-call-recording/utils/isCallRecordingTranscriptFailed';
+import { isCallRecordingTranscriptPending } from '@/page-layout/widgets/calendar-event-call-recording/utils/isCallRecordingTranscriptPending';
 import { CallRecordingTranscriptEntryList } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList';
-import { type CalendarEventCallRecordingTranscriptWidgetState } from '@/page-layout/widgets/call-recording-transcript/types/CalendarEventCallRecordingTranscriptWidgetState';
-import { getCallRecordingTranscriptStateMessage } from '@/page-layout/widgets/call-recording-transcript/utils/getCallRecordingTranscriptStateMessage';
 import { PageLayoutWidgetErrorDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetErrorDisplay';
-import { PageLayoutWidgetForbiddenDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay';
-import { PageLayoutWidgetMessageDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetMessageDisplay';
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
-import { styled } from '@linaria/react';
-import { IconFileText } from 'twenty-ui/icon';
-
-const StyledForbiddenContainer = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: center;
-`;
+import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
+import { t } from '@lingui/core/macro';
+import {
+  isDefined,
+  isNonEmptyArray,
+  parseCallRecordingTranscriptEntries,
+} from 'twenty-shared/utils';
 
 type CallRecordingTranscriptBodyProps = {
-  callRecordingTranscriptState: CalendarEventCallRecordingTranscriptWidgetState;
+  callRecording: CalendarEventCallRecordingCandidate | undefined;
+  loading: boolean;
+  error: Error | undefined;
+  restriction: WidgetAccessDenialInfo | undefined;
 };
 
 export const CallRecordingTranscriptBody = ({
-  callRecordingTranscriptState,
+  callRecording,
+  loading,
+  error,
+  restriction,
 }: CallRecordingTranscriptBodyProps) => {
   const widget = useCurrentWidget();
 
-  if (callRecordingTranscriptState.state === 'LOADING') {
+  if (isDefined(restriction)) {
+    return <CallRecordingWidgetForbiddenDisplay restriction={restriction} />;
+  }
+
+  if (loading) {
     return <WidgetSkeletonLoader />;
   }
 
-  if (callRecordingTranscriptState.state === 'READY') {
+  if (isDefined(error)) {
+    return <PageLayoutWidgetErrorDisplay widgetId={widget.id} error={error} />;
+  }
+
+  if (!isDefined(callRecording)) {
     return (
-      <CallRecordingTranscriptEntryList
-        entries={callRecordingTranscriptState.entries}
+      <CallRecordingWidgetEmptyStateDisplay
+        animatedPlaceholderType="noMatchRecord"
+        title={t`No Call Recording`}
+        subTitle={t`No call recording exists for this calendar event yet.`}
       />
     );
   }
 
-  if (callRecordingTranscriptState.state === 'QUERY_ERROR') {
+  const transcriptEntries = parseCallRecordingTranscriptEntries(
+    callRecording.transcript,
+  );
+
+  if (isNonEmptyArray(transcriptEntries)) {
+    return <CallRecordingTranscriptEntryList entries={transcriptEntries} />;
+  }
+
+  if (isCallRecordingTranscriptPending(callRecording)) {
     return (
-      <PageLayoutWidgetErrorDisplay
-        widgetId={widget.id}
-        error={callRecordingTranscriptState.error}
+      <CallRecordingWidgetEmptyStateDisplay
+        animatedPlaceholderType="loadingMessages"
+        title={t`Preparing Transcript`}
+        subTitle={t`Transcript is being prepared…`}
       />
     );
   }
 
-  if (callRecordingTranscriptState.state === 'FORBIDDEN') {
+  if (isCallRecordingTranscriptFailed(callRecording)) {
     return (
-      <StyledForbiddenContainer>
-        <PageLayoutWidgetForbiddenDisplay
-          widgetId={widget.id}
-          restriction={callRecordingTranscriptState.restriction}
-        />
-      </StyledForbiddenContainer>
+      <CallRecordingWidgetEmptyStateDisplay
+        animatedPlaceholderType="errorIndex"
+        title={t`Transcript Failed`}
+        subTitle={t`The transcript could not be generated.`}
+      />
     );
   }
 
   return (
-    <PageLayoutWidgetMessageDisplay
-      Icon={IconFileText}
-      message={getCallRecordingTranscriptStateMessage(
-        callRecordingTranscriptState.state,
-      )}
+    <CallRecordingWidgetEmptyStateDisplay
+      animatedPlaceholderType="noMatchRecord"
+      title={t`No Transcript`}
+      subTitle={t`No transcript is available for this recording.`}
     />
   );
 };

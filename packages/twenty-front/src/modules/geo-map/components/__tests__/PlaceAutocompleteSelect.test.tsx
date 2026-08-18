@@ -3,7 +3,6 @@ import { type PlaceAutocompleteResult } from '@/geo-map/types/placeApi';
 describe('PlaceAutocompleteSelect Component', () => {
   describe('component interface', () => {
     it('should have correct prop types', () => {
-      // Test that the component accepts the expected props
       const mockProps = {
         list: [] as PlaceAutocompleteResult[],
         onChange: jest.fn(),
@@ -151,7 +150,6 @@ describe('PlaceAutocompleteSelect Component', () => {
 
   describe('component requirements', () => {
     it('should require all mandatory props', () => {
-      // Test that all required props are defined in the interface
       const requiredProps = ['list', 'onChange', 'dropdownId'];
 
       requiredProps.forEach((prop) => {

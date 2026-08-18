@@ -254,7 +254,7 @@ export class WorkspaceEntityManager extends EntityManager {
       permissionOptions,
     )
       .insert()
-      .setWorkspaceAuthContext(authContext ?? ({} as WorkspaceAuthContext))
+      .setWorkspaceAuthContext(authContext ?? this.authContext)
       .values(entity)
       .returning(selectedColumns)
       .execute();
@@ -485,6 +485,7 @@ export class WorkspaceEntityManager extends EntityManager {
       selectedColumns,
       allFieldsSelected: false,
       updatedColumns,
+      authContext: this.authContext,
     });
   }
 
@@ -705,7 +706,6 @@ export class WorkspaceEntityManager extends EntityManager {
     permissionOptions?: PermissionOptions,
     selectedColumns: string[] | '*' = '*',
   ): Promise<UpdateResult> {
-    // if user passed empty criteria or empty list of criterias, then throw an error
     if (
       criteria === undefined ||
       criteria === null ||
@@ -756,7 +756,6 @@ export class WorkspaceEntityManager extends EntityManager {
     permissionOptions?: PermissionOptions,
     selectedColumns: string[] | '*' = '*',
   ): Promise<UpdateResult> {
-    // if user passed empty criteria or empty list of criterias, then throw an error
     if (
       criteria === undefined ||
       criteria === null ||

@@ -99,7 +99,6 @@ export const beautifyPastDateRelativeToNow = (
       (now.getTime() - parsedDate.getTime()) / 1000,
     );
 
-    // For very recent times (less than 30 seconds), show "now"
     if (diffInSeconds < 30) {
       return t`now`;
     }
@@ -169,19 +168,16 @@ export const beautifyDateDiff = (
   short = false,
   locale?: Locale,
 ) => {
-  // For simple cases, use date-fns which has excellent locale support
   if (!short && isDefined(locale)) {
     const fromDate = new Date(date);
     const toDate = dateToCompareWith ? new Date(dateToCompareWith) : new Date();
     return formatDistance(fromDate, toDate, { locale });
   }
 
-  // Manual implementation for complex cases or when locale is not available
   const fromDate = parseISO(date);
   const toDate = dateToCompareWith ? parseISO(dateToCompareWith) : new Date();
 
   const years = differenceInYears(fromDate, toDate);
-  // Calculate remaining days after accounting for full years
   const startDateForDayCalculation = new Date(toDate);
   startDateForDayCalculation.setFullYear(
     startDateForDayCalculation.getFullYear() + years,
