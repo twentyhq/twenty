@@ -15,7 +15,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { ADD_APPLICATION_UNINSTALL_HOOK_DELETION_STATE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-32/add-application-uninstall-hook-deletion-state-upgrade-command-name.constant';
+import { ADD_APPLICATION_UNINSTALL_HOOK_DELETION_STATE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-33/add-application-uninstall-hook-deletion-state-upgrade-command-name.constant';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';

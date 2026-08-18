@@ -13,13 +13,3 @@ export const isWorkspaceDeletionPending = (
   isDefined(workspace) &&
   isDefined(workspace.deletedAt) &&
   !isDefined(workspace.applicationUninstallHooksCompletedAt);
-
-export const isWorkspaceDeletionRequestPending = ({
-  workspace,
-  workspaceDeletionRequestTimestamp,
-}: {
-  workspace: WorkspaceDeletionState | null | undefined;
-  workspaceDeletionRequestTimestamp: string;
-}): workspace is WorkspaceDeletionState & { deletedAt: Date } =>
-  isWorkspaceDeletionPending(workspace) &&
-  workspace.deletedAt.toISOString() === workspaceDeletionRequestTimestamp;

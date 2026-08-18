@@ -38,13 +38,14 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
-type ApplicationForUninstallHook = {
-  id: string;
-  uninstallLogicFunctionId: string | null;
-  universalIdentifier: string;
-  version: string | null;
-  workspaceDeletionUninstallHookCompletedForDeletedAt: Date | null;
-};
+type ApplicationForUninstallHook = Pick<
+  ApplicationEntity,
+  | 'id'
+  | 'uninstallLogicFunctionId'
+  | 'universalIdentifier'
+  | 'version'
+  | 'workspaceDeletionUninstallHookCompletedForDeletedAt'
+>;
 
 @Injectable()
 export class ApplicationSyncService {
