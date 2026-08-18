@@ -84,24 +84,30 @@ export const findRelationPathsToPerson = ({
           continue;
         }
 
-        const joinColumnOwner =
+        const joinColumnOwnerFlatFieldMetadata =
           relation.type === RelationType.MANY_TO_ONE
-            ? {
-                object: relation.sourceObjectMetadata,
-                field: relation.sourceFieldMetadata,
-              }
-            : {
-                object: relation.targetObjectMetadata,
-                field: relation.targetFieldMetadata,
-              };
+            ? field
+            : findFlatEntityByIdInFlatEntityMaps({
+                flatEntityId: field.relationTargetFieldMetadataId,
+                flatEntityMaps: flatFieldMetadataMaps,
+              });
+
+        if (!isDefined(joinColumnOwnerFlatFieldMetadata)) {
+          continue;
+        }
+
+        const joinColumnOwnerObjectMetadata =
+          relation.type === RelationType.MANY_TO_ONE
+            ? relation.sourceObjectMetadata
+            : relation.targetObjectMetadata;
 
         const nextPath: RelationPathToPerson = [
           ...path,
           {
             direction: relation.type,
-            queryObjectNameSingular: joinColumnOwner.object.nameSingular,
+            queryObjectNameSingular: joinColumnOwnerObjectMetadata.nameSingular,
             joinColumnName: computeMorphOrRelationFieldJoinColumnName({
-              name: joinColumnOwner.field.name,
+              name: joinColumnOwnerFlatFieldMetadata.name,
             }),
           },
         ];
