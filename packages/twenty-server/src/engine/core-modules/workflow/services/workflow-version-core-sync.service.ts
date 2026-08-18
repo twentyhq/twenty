@@ -165,13 +165,22 @@ export class WorkflowVersionCoreSyncService {
     const resolvedApplicationId =
       applicationId ?? (await this.getCustomApplicationIdOrThrow(workspaceId));
 
-    const isNewLink = !isNonEmptyString(workflowVersion.coreWorkflowVersionId);
-    const coreWorkflowVersionId = isNonEmptyString(
+    const ownedCoreWorkflowVersionId = isNonEmptyString(
       workflowVersion.coreWorkflowVersionId,
     )
-      ? workflowVersion.coreWorkflowVersionId
-      : uuidv4();
+      ? await this.resolveOwnedCoreVersionIdInTransaction({
+          coreWorkflowVersionId: workflowVersion.coreWorkflowVersionId,
+          workspaceId,
+          transactionScope,
+        })
+      : null;
 
+    const isNewLink = !isDefined(ownedCoreWorkflowVersionId);
+    const coreWorkflowVersionId = ownedCoreWorkflowVersionId ?? uuidv4();
+
+    // The DO UPDATE is guarded on workspaceId as well: the conflict target is
+    // the primary key alone, so without it a core row owned by another
+    // workspace would have its triggers and steps overwritten.
     await transactionScope.executeRawQuery(
       `INSERT INTO core."workflowVersion"
          ("id", "workspaceId", "workflowId", "triggers", "steps", "status", "universalIdentifier", "applicationId")
@@ -179,7 +188,8 @@ export class WorkflowVersionCoreSyncService {
        ON CONFLICT ("id") DO UPDATE SET
          "triggers" = EXCLUDED."triggers",
          "steps" = EXCLUDED."steps",
-         "status" = EXCLUDED."status"`,
+         "status" = EXCLUDED."status"
+       WHERE core."workflowVersion"."workspaceId" = EXCLUDED."workspaceId"`,
       [
         coreWorkflowVersionId,
         workspaceId,
@@ -205,6 +215,26 @@ export class WorkflowVersionCoreSyncService {
     }
 
     return { coreWorkflowVersionId };
+  }
+
+  // coreWorkflowVersionId comes from a writable column on the workspace record,
+  // so it can point at a core row owned by another workspace. Resolve it inside
+  // the transaction and treat anything not owned here as a new link.
+  private async resolveOwnedCoreVersionIdInTransaction({
+    coreWorkflowVersionId,
+    workspaceId,
+    transactionScope,
+  }: {
+    coreWorkflowVersionId: string;
+    workspaceId: string;
+    transactionScope: WorkspaceTransactionScope;
+  }): Promise<string | null> {
+    const rows = await transactionScope.executeRawQuery(
+      `SELECT "id" FROM core."workflowVersion" WHERE "id" = $1 AND "workspaceId" = $2`,
+      [coreWorkflowVersionId, workspaceId],
+    );
+
+    return rows.length > 0 ? coreWorkflowVersionId : null;
   }
 
   async mirrorWorkflowVersionWrites({
