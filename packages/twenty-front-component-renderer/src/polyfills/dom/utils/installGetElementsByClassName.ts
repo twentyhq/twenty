@@ -1,34 +1,21 @@
-import { isFunction, isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { type ElementLike } from '@/polyfills/dom/types/ElementLike';
 import { iterateElementSubtree } from '@/polyfills/dom/utils/iterateElementSubtree';
-
-const resolveClassNameValue = (element: ElementLike): string | null => {
-  if (isFunction(element.getAttribute)) {
-    const classAttribute = element.getAttribute('class');
-
-    if (isNonEmptyString(classAttribute)) {
-      return classAttribute;
-    }
-  }
-
-  const reflectedClassName = (element as ElementLike & { className?: unknown })
-    .className;
-
-  return isNonEmptyString(reflectedClassName) ? reflectedClassName : null;
-};
+import { parseClassTokenList } from '@/polyfills/dom/utils/parseClassTokenList';
+import { resolveClassAttributeValue } from '@/polyfills/dom/utils/resolveClassAttributeValue';
 
 const hasEveryClassNameToken = (
   element: ElementLike,
   classNameTokens: string[],
 ): boolean => {
-  const classNameValue = resolveClassNameValue(element);
+  const classNameValue = resolveClassAttributeValue(element);
 
   if (!isNonEmptyString(classNameValue)) {
     return false;
   }
 
-  const elementTokens = classNameValue.split(/\s+/);
+  const elementTokens = parseClassTokenList(classNameValue);
 
   return classNameTokens.every((classNameToken) =>
     elementTokens.includes(classNameToken),
@@ -38,9 +25,7 @@ const hasEveryClassNameToken = (
 export const installGetElementsByClassName = (installTarget: object): void => {
   Object.defineProperty(installTarget, 'getElementsByClassName', {
     value: function (this: ElementLike, classNames: string) {
-      const classNameTokens = String(classNames)
-        .split(/\s+/)
-        .filter(isNonEmptyString);
+      const classNameTokens = parseClassTokenList(String(classNames));
 
       const matches: ElementLike[] = [];
 
