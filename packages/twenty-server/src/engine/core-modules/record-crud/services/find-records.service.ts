@@ -73,6 +73,7 @@ export class FindRecordsService {
               flatFieldMetadataMaps,
               flatObjectMetadataMaps,
               selectedFields: allSelectableFields,
+              objectsPermissions,
               selectableRelationFields: getRelationsSelectFields({
                 flatObjectMetadataMaps,
                 flatFieldMetadataMaps,

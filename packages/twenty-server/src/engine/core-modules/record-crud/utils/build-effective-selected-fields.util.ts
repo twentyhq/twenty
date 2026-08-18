@@ -1,5 +1,8 @@
 import Fuse from 'fuse.js';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  type ObjectsPermissions,
+} from 'twenty-shared/types';
 
 import { isNull, isObject } from '@sniptt/guards';
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
@@ -169,6 +172,7 @@ export const buildEffectiveSelectedFields = ({
   flatObjectMetadataMaps,
   selectedFields,
   selectableRelationFields = {},
+  objectsPermissions,
 }: {
   select: string[];
   filter?:
@@ -183,6 +187,7 @@ export const buildEffectiveSelectedFields = ({
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   selectedFields: CommonSelectedFields;
   selectableRelationFields?: CommonSelectedFields;
+  objectsPermissions?: ObjectsPermissions;
 }): { effectiveSelectedFields: CommonSelectedFields; warnings: string[] } => {
   const filterFieldNames = extractFilterFieldNames(filter);
   const orderByFieldNames = extractOrderByFieldNames(orderBy);
@@ -203,6 +208,7 @@ export const buildEffectiveSelectedFields = ({
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
       selectableRelationFields,
+      objectsPermissions,
     });
 
   const {

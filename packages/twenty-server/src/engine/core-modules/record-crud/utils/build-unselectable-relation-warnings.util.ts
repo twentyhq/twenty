@@ -1,3 +1,5 @@
+import { type ObjectsPermissions } from 'twenty-shared/types';
+
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -12,12 +14,14 @@ export const buildUnselectableRelationWarningsByFieldName = ({
   flatFieldMetadataMaps,
   flatObjectMetadataMaps,
   selectableRelationFields,
+  objectsPermissions,
 }: {
   objectName: string;
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   selectableRelationFields: CommonSelectedFields;
+  objectsPermissions?: ObjectsPermissions;
 }): Map<string, string> => {
   const warningsByFieldName = new Map<string, string>();
 
@@ -35,6 +39,18 @@ export const buildUnselectableRelationWarningsByFieldName = ({
       !isMorphOrRelationFlatFieldMetadata(field) ||
       isDefined(selectableRelationFields[field.name])
     ) {
+      continue;
+    }
+
+    const isSourceFieldRestricted =
+      objectsPermissions?.[flatObjectMetadata.id]?.restrictedFields[field.id]
+        ?.canRead === false;
+
+    if (isSourceFieldRestricted) {
+      warningsByFieldName.set(
+        field.name,
+        `Field '${field.name}' on ${objectName} cannot be selected because your role restricts access to this field.`,
+      );
       continue;
     }
 

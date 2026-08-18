@@ -487,6 +487,10 @@ describe('buildEffectiveSelectedFields', () => {
     });
 
     it('should not hydrate a relation whose source field is restricted', () => {
+      const objectsPermissions = buildObjectsPermissions({
+        sourceRestrictedFields: { 'fund-field': { canRead: false } },
+      });
+
       const { effectiveSelectedFields, warnings } =
         buildEffectiveSelectedFields({
           select: ['name', 'fund'],
@@ -497,16 +501,14 @@ describe('buildEffectiveSelectedFields', () => {
           flatObjectMetadata: investorLeadObjectMetadata,
           flatFieldMetadataMaps: relationFieldMaps,
           selectedFields: { id: true, name: true, fund: true },
-          selectableRelationFields: buildSelectableRelationFields(
-            buildObjectsPermissions({
-              sourceRestrictedFields: { 'fund-field': { canRead: false } },
-            }),
-          ),
+          selectableRelationFields:
+            buildSelectableRelationFields(objectsPermissions),
+          objectsPermissions,
         });
 
       expect(effectiveSelectedFields).toEqual({ id: true, name: true });
       expect(warnings).toEqual([
-        "Field 'fund' on investorLead cannot be selected because you do not have read access to company.",
+        "Field 'fund' on investorLead cannot be selected because your role restricts access to this field.",
       ]);
     });
 
