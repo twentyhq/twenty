@@ -8,6 +8,7 @@ import { ApplicationSyncService } from 'src/engine/core-modules/application/appl
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { isWorkspaceDeletionPending } from 'src/engine/core-modules/workspace/utils/is-workspace-deletion-pending.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export type WorkspaceDeletionApplicationUninstallJobData = {
@@ -40,10 +41,7 @@ export class WorkspaceDeletionApplicationUninstallJob {
             withDeleted: true,
           });
 
-          if (
-            !workspace?.deletedAt ||
-            workspace.applicationUninstallHooksCompletedAt
-          ) {
+          if (!isWorkspaceDeletionPending(workspace)) {
             return;
           }
 

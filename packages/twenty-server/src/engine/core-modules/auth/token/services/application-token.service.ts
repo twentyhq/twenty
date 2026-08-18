@@ -8,6 +8,7 @@ import ms from 'ms';
 
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { isWorkspaceDeletionRequestPending } from 'src/engine/core-modules/workspace/utils/is-workspace-deletion-pending.util';
 import { type ApplicationAccessTokenJwtPayload } from 'src/engine/core-modules/auth/types/application-access-token-jwt-payload.type';
 import { type ApplicationRefreshTokenJwtPayload } from 'src/engine/core-modules/auth/types/application-refresh-token-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
@@ -81,9 +82,10 @@ export class ApplicationTokenService {
     });
 
     if (
-      !workspace?.deletedAt ||
-      workspace.deletedAt.toISOString() !== workspaceDeletionRequestTimestamp ||
-      workspace.applicationUninstallHooksCompletedAt
+      !isWorkspaceDeletionRequestPending({
+        workspace,
+        workspaceDeletionRequestTimestamp,
+      })
     ) {
       throw new AuthException(
         'Workspace deletion request not found',

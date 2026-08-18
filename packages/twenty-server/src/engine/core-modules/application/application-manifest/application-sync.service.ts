@@ -11,6 +11,7 @@ import { v4 } from 'uuid';
 
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
+import { buildWorkspaceDeletionUninstallHookPayload } from 'src/engine/core-modules/application/application-manifest/utils/build-workspace-deletion-uninstall-hook-payload.util';
 import { enrichApplicationManifestSyncError } from 'src/engine/core-modules/application/application-manifest/utils/enrich-application-manifest-sync-error.util';
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
 import { ApplicationTranslationSyncService } from 'src/engine/core-modules/application/application-translation/application-translation-sync.service';
@@ -446,8 +447,9 @@ export class ApplicationSyncService {
     }
 
     if (applicationUninstallHookFailures.length > 0) {
-      throw new Error(
+      throw new ApplicationException(
         `Application uninstall hooks failed for workspace ${workspaceId}: ${applicationUninstallHookFailures.join('; ')}`,
+        ApplicationExceptionCode.UNINSTALL_ERROR,
       );
     }
   }
@@ -470,23 +472,27 @@ export class ApplicationSyncService {
     );
 
     const workspaceDeletionRequestTimestamp = workspaceDeletedAt?.toISOString();
-    const idempotencyKey = isDefined(workspaceDeletionRequestTimestamp)
-      ? `workspace-deletion:${workspaceId}:${workspaceDeletionRequestTimestamp}:${application.universalIdentifier}`
-      : undefined;
     const result = await this.logicFunctionExecutorService.execute({
       logicFunctionId: application.uninstallLogicFunctionId,
       workspaceId,
       ...(isDefined(workspaceDeletionRequestTimestamp)
         ? { workspaceDeletionRequestTimestamp }
         : {}),
-      payload: {
-        version: application.version ?? undefined,
-        ...(isDefined(idempotencyKey) ? { idempotencyKey } : {}),
-      },
+      payload: isDefined(workspaceDeletedAt)
+        ? buildWorkspaceDeletionUninstallHookPayload({
+            applicationVersion: application.version,
+            applicationUniversalIdentifier: application.universalIdentifier,
+            workspaceId,
+            workspaceDeletedAt,
+          })
+        : { version: application.version ?? undefined },
     });
 
     if (isDefined(result.error)) {
-      throw new Error(result.error.errorMessage);
+      throw new ApplicationException(
+        result.error.errorMessage,
+        ApplicationExceptionCode.UNINSTALL_ERROR,
+      );
     }
   }
 

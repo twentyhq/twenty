@@ -28,6 +28,7 @@ import { type FlatUserWorkspace } from 'src/engine/core-modules/user-workspace/t
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
+import { isWorkspaceDeletionRequestPending } from 'src/engine/core-modules/workspace/utils/is-workspace-deletion-pending.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
@@ -449,10 +450,11 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
 
     if (
-      !isDefined(deletedWorkspace?.deletedAt) ||
-      payload.workspaceDeletionRequestTimestamp !==
-        deletedWorkspace.deletedAt.toISOString() ||
-      isDefined(deletedWorkspace.applicationUninstallHooksCompletedAt)
+      !isWorkspaceDeletionRequestPending({
+        workspace: deletedWorkspace,
+        workspaceDeletionRequestTimestamp:
+          payload.workspaceDeletionRequestTimestamp,
+      })
     ) {
       throw new AuthException(
         'Workspace deletion is in progress',

@@ -26,6 +26,7 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { isWorkspaceDeletionPending } from 'src/engine/core-modules/workspace/utils/is-workspace-deletion-pending.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -578,7 +579,7 @@ export class CleanerWorkspaceService {
     workspace: WorkspaceEntity,
     dryRun: boolean,
   ): Promise<boolean> {
-    if (isDefined(workspace.applicationUninstallHooksCompletedAt)) {
+    if (!isWorkspaceDeletionPending(workspace)) {
       return false;
     }
 
