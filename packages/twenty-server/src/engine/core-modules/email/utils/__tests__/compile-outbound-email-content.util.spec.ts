@@ -156,6 +156,76 @@ describe('compileOutboundEmailContent', () => {
     expect(html).toContain('max-width:600px');
   });
 
+  it('should emit dark color scheme overrides alongside the light inline styles', async () => {
+    const html = await compileDocument({
+      type: 'doc',
+      attrs: {
+        canvasTheme: {
+          pageBackground: '#ffffff',
+          textColor: '#1c1c1c',
+          borderWidth: '1px',
+          borderColor: '#dbdbdb',
+          dark: {
+            pageBackground: '#1c1c1c',
+            textColor: '#ffffff',
+            borderColor: '#424242',
+          },
+        },
+      },
+      content: [
+        {
+          type: 'paragraph',
+          content: [{ type: 'text', text: 'Adaptive content' }],
+        },
+      ],
+    });
+
+    expect(html).toContain('background-color:#ffffff');
+    expect(html).toContain('@media (prefers-color-scheme:dark)');
+    expect(html).toContain('.email-page{background-color:#1c1c1c !important');
+    expect(html).toContain('border-color:#424242 !important');
+    expect(html).toContain('color-scheme:light dark');
+  });
+
+  it('should drop dark colors that could break out of the stylesheet', async () => {
+    const html = await compileDocument({
+      type: 'doc',
+      attrs: {
+        canvasTheme: {
+          dark: {
+            pageBackground: '#000}</style><script>alert(1)</script>',
+            textColor: '#ffffff',
+          },
+        },
+      },
+      content: [
+        {
+          type: 'paragraph',
+          content: [{ type: 'text', text: 'Adaptive content' }],
+        },
+      ],
+    });
+
+    expect(html).not.toContain('alert(1)');
+    expect(html).toContain('.email-page{color:#ffffff !important}');
+  });
+
+  it('should not declare a dark color scheme for documents without a theme', async () => {
+    const html = await compileDocument({
+      type: 'doc',
+      content: [
+        {
+          type: 'paragraph',
+          content: [{ type: 'text', text: 'Untethered content' }],
+        },
+      ],
+    });
+
+    expect(html).toContain('Untethered content');
+    expect(html).not.toContain('color-scheme');
+    expect(html).not.toContain('prefers-color-scheme');
+  });
+
   it('should keep the bare body for documents without a theme', async () => {
     const html = await compileDocument({
       type: 'doc',

@@ -153,17 +153,21 @@ const blockNodeSchema = z.discriminatedUnion('type', [
   htmlNodeSchema,
 ]);
 
-const canvasThemeAttributeSchema = z.looseObject({
+const canvasThemeColorsAttributeSchema = z.looseObject({
   pageBackground: z.string().optional(),
-  pagePadding: z.string().optional(),
-  textAlign: z.enum(['left', 'center', 'right']).optional(),
   bodyBackground: z.string().optional(),
   textColor: z.string().optional(),
+  borderColor: z.string().optional(),
+});
+
+const canvasThemeAttributeSchema = canvasThemeColorsAttributeSchema.extend({
+  pagePadding: z.string().optional(),
+  textAlign: z.enum(['left', 'center', 'right']).optional(),
   width: z.string().optional(),
   padding: z.string().optional(),
   cornerRadius: z.string().optional(),
   borderWidth: z.string().optional(),
-  borderColor: z.string().optional(),
+  dark: canvasThemeColorsAttributeSchema.nullable().optional(),
 });
 
 export const emailDocumentSchema = z.looseObject({

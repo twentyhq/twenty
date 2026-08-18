@@ -3,13 +3,17 @@ import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
 import { useEditorState } from '@tiptap/react';
 import {
+  getCanvasThemeForColorScheme,
   isDefined,
   resolveCanvasTheme,
   TIPTAP_NODE_TYPES,
 } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  themeCssVariables,
+  useThemeColorScheme,
+} from 'twenty-ui/theme-constants';
 
 import { activeEmailEditorState } from '@/activities/emails/states/activeEmailEditorState';
 import { ADVANCED_TEXT_EDITOR_BLOCK_CATALOG } from '@/advanced-text-editor/constants/AdvancedTextEditorBlockCatalog';
@@ -71,6 +75,7 @@ const BOX_FIELD_SIDE_PROPERTIES: Record<
 
 const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
   const { i18n, t } = useLingui();
+  const themeColorScheme = useThemeColorScheme();
   const target = useEditorState({
     editor,
     selector: ({ editor: currentEditor }) =>
@@ -84,7 +89,12 @@ const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
   const blockDefinition = ADVANCED_TEXT_EDITOR_BLOCK_CATALOG[target.nodeType];
   const fields = blockDefinition.settingsFields;
   const styles = getBlockStyle(target.attrs.style);
-  const canvasTheme = resolveCanvasTheme(editor.state.doc.attrs.canvasTheme);
+  const storedCanvasTheme = resolveCanvasTheme(
+    editor.state.doc.attrs.canvasTheme,
+  );
+  const canvasTheme = isDefined(storedCanvasTheme)
+    ? getCanvasThemeForColorScheme(storedCanvasTheme, themeColorScheme)
+    : null;
 
   const displayedStyleValue = (property: string) =>
     styles[property] ??

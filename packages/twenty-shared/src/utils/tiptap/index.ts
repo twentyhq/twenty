@@ -3,6 +3,7 @@ export * from './email-document-node';
 export * from './email-document-schema';
 export * from './email-document-schema-version';
 export * from './email-document-string-context';
+export * from './get-canvas-theme-for-color-scheme';
 export * from './is-canvas-theme';
 export * from './list-campaign-variables-for-fields';
 export * from './parse-email-document';

@@ -220,8 +220,17 @@ export { pascalToKebab } from './strings/pascalToKebab';
 export { stringifySafely } from './strings/stringifySafely';
 export { uncapitalize } from './strings/uncapitalize';
 export { getSubdomainSlugFromDisplayName } from './subdomain/getSubdomainSlugFromDisplayName';
-export type { CanvasTheme } from './tiptap/canvas-theme';
-export { CANVAS_THEME_DEFAULTS } from './tiptap/canvas-theme';
+export type {
+  CanvasThemeColors,
+  CanvasTheme,
+  CanvasThemeColorScheme,
+  CanvasThemeStringProperty,
+} from './tiptap/canvas-theme';
+export {
+  CANVAS_THEME_COLOR_PROPERTIES,
+  CANVAS_THEME_DARK_DEFAULTS,
+  CANVAS_THEME_DEFAULTS,
+} from './tiptap/canvas-theme';
 export type { EmailDocumentMarkType } from './tiptap/email-document-mark-catalog';
 export {
   EMAIL_DOCUMENT_MARK_CATALOG,
@@ -241,6 +250,7 @@ export { EMAIL_DOCUMENT_SCHEMA_VERSION } from './tiptap/email-document-schema-ve
 export type { EmailDocument } from './tiptap/email-document-schema';
 export { emailDocumentSchema } from './tiptap/email-document-schema';
 export type { EmailDocumentStringContext } from './tiptap/email-document-string-context';
+export { getCanvasThemeForColorScheme } from './tiptap/get-canvas-theme-for-color-scheme';
 export { isCanvasTheme } from './tiptap/is-canvas-theme';
 export { isEmailDocumentShape } from './tiptap/is-email-document-shape';
 export type { CampaignVariableDefinition } from './tiptap/list-campaign-variables-for-fields';

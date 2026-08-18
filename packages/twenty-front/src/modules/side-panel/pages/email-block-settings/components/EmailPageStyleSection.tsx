@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
 import { useEditorState } from '@tiptap/react';
 import {
-  type CanvasTheme,
+  type CanvasThemeStringProperty,
   isDefined,
   resolveCanvasTheme,
 } from 'twenty-shared/utils';
@@ -102,7 +102,10 @@ export const EmailPageStyleSection = ({
     );
   }
 
-  const setThemeValue = (themeKey: keyof CanvasTheme, value: string) => {
+  const setThemeValue = (
+    themeKey: CanvasThemeStringProperty,
+    value: string,
+  ) => {
     editor
       .chain()
       .command(({ tr }) => {

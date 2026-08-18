@@ -1,9 +1,17 @@
 import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTextEditor';
 import { type AdvancedTextEditorComponentProps } from '@/advanced-text-editor/types/AdvancedTextEditorComponentProps';
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useEditorState } from '@tiptap/react';
-import { CANVAS_THEME_DEFAULTS, resolveCanvasTheme } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  CANVAS_THEME_DEFAULTS,
+  getCanvasThemeForColorScheme,
+  resolveCanvasTheme,
+} from 'twenty-shared/utils';
+import {
+  themeCssVariables,
+  useThemeColorScheme,
+} from 'twenty-ui/theme-constants';
 
 const StyledCanvasBackdrop = styled.div`
   box-sizing: border-box;
@@ -42,7 +50,11 @@ export const EmailEditorCanvas = ({
     selector: ({ editor: currentEditor }) =>
       resolveCanvasTheme(currentEditor.state.doc.attrs.canvasTheme),
   });
-  const canvasTheme = storedCanvasTheme ?? CANVAS_THEME_DEFAULTS;
+  const themeColorScheme = useThemeColorScheme();
+  const canvasTheme = getCanvasThemeForColorScheme(
+    storedCanvasTheme ?? CANVAS_THEME_DEFAULTS,
+    themeColorScheme,
+  );
 
   return (
     <StyledCanvasBackdrop
@@ -55,7 +67,8 @@ export const EmailEditorCanvas = ({
         style={{
           backgroundColor: canvasTheme.bodyBackground || undefined,
           border:
-            canvasTheme.borderWidth !== '' && canvasTheme.borderWidth !== '0px'
+            isNonEmptyString(canvasTheme.borderWidth) &&
+            canvasTheme.borderWidth !== '0px'
               ? `${canvasTheme.borderWidth} solid ${canvasTheme.borderColor}`
               : undefined,
           borderRadius: canvasTheme.cornerRadius,
