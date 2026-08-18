@@ -1283,8 +1283,8 @@ msgid "Add Field"
 msgstr "Aggiungi campo"
 
 #. js-lingui-id: T7RGT6
-#: src/modules/activities/files/components/FilesCard.tsx
-#: src/modules/activities/files/components/FilesCard.tsx
+#: src/modules/activities/files/components/FilesCardContent.tsx
+#: src/modules/page-layout/widgets/files/components/WidgetActionFileAttach.tsx
 msgid "Add file"
 msgstr "Aggiungi file"
 
@@ -2034,7 +2034,7 @@ msgid "All system objects are already in the sidebar"
 msgstr "Tutti gli oggetti di sistema sono già nella barra laterale"
 
 #. js-lingui-id: p+lpde
-#: src/modules/activities/tasks/components/TaskGroups.tsx
+#: src/modules/activities/tasks/components/TaskGroupsContent.tsx
 msgid "All tasks addressed. Maintain the momentum."
 msgstr "Tutte le attività completate. Mantieni lo slancio."
 
@@ -4356,7 +4356,7 @@ msgid "Component name"
 msgstr "Nome del componente"
 
 #. js-lingui-id: QOhkyl
-#: src/modules/activities/emails/components/EmailsCard.tsx
+#: src/modules/page-layout/widgets/emails/components/WidgetActionEmailCompose.tsx
 msgid "Compose"
 msgstr ""
 
@@ -12062,7 +12062,7 @@ msgid "Missing email draft permission."
 msgstr "Manca l'autorizzazione a creare bozze di email."
 
 #. js-lingui-id: mibKsa
-#: src/modules/activities/tasks/components/TaskGroups.tsx
+#: src/modules/activities/tasks/components/TaskGroupsContent.tsx
 msgid "Mission accomplished!"
 msgstr "Missione compiuta!"
 
@@ -12622,8 +12622,8 @@ msgid "New Model"
 msgstr "Nuovo modello"
 
 #. js-lingui-id: zPPcuu
-#: src/modules/activities/notes/components/NotesCard.tsx
-#: src/modules/activities/notes/components/NotesCard.tsx
+#: src/modules/activities/notes/components/NotesCardContent.tsx
+#: src/modules/page-layout/widgets/notes/components/WidgetActionNoteCreate.tsx
 msgid "New note"
 msgstr "Nuova nota"
 
@@ -12672,8 +12672,8 @@ msgid "New Tab"
 msgstr "Nuova scheda"
 
 #. js-lingui-id: wl18ST
-#: src/modules/activities/tasks/components/TaskGroups.tsx
-#: src/modules/activities/tasks/components/TaskGroups.tsx
+#: src/modules/activities/tasks/components/TaskGroupsContent.tsx
+#: src/modules/page-layout/widgets/tasks/components/WidgetActionTaskCreate.tsx
 msgid "New task"
 msgstr ""
 
@@ -13053,12 +13053,12 @@ msgid "No event logs found"
 msgstr "Nessun log degli eventi trovato"
 
 #. js-lingui-id: l7y8S8
-#: src/modules/activities/calendar/components/CalendarEventsCard.tsx
+#: src/modules/activities/calendar/components/CalendarEventsCardContent.tsx
 msgid "No Events"
 msgstr "Nessun evento"
 
 #. js-lingui-id: wY82y3
-#: src/modules/activities/calendar/components/CalendarEventsCard.tsx
+#: src/modules/activities/calendar/components/CalendarEventsCardContent.tsx
 msgid "No events have been scheduled with this {objectName} yet."
 msgstr "Non sono ancora stati pianificati eventi con questo {objectName}."
 
@@ -13083,7 +13083,7 @@ msgid "No fields to display"
 msgstr "Nessun campo da visualizzare"
 
 #. js-lingui-id: 23Rceg
-#: src/modules/activities/files/components/FilesCard.tsx
+#: src/modules/activities/files/components/FilesCardContent.tsx
 msgid "No Files"
 msgstr "Nessun file"
 
@@ -13197,7 +13197,7 @@ msgid "No models available. Please configure AI models in your workspace setting
 msgstr "Nessun modello disponibile. Configurare i modelli AI nelle impostazioni del tuo workspace."
 
 #. js-lingui-id: 9VrTfZ
-#: src/modules/activities/notes/components/NotesCard.tsx
+#: src/modules/activities/notes/components/NotesCardContent.tsx
 msgid "No notes"
 msgstr "Nessuna nota"
 
@@ -18731,12 +18731,12 @@ msgid "then"
 msgstr "poi"
 
 #. js-lingui-id: l2fWLK
-#: src/modules/activities/files/components/FilesCard.tsx
+#: src/modules/activities/files/components/FilesCardContent.tsx
 msgid "There are no associated files with this record."
 msgstr "Non ci sono file associati a questo record."
 
 #. js-lingui-id: 6g0c8y
-#: src/modules/activities/notes/components/NotesCard.tsx
+#: src/modules/activities/notes/components/NotesCardContent.tsx
 msgid "There are no associated notes with this record."
 msgstr "Non ci sono note associate a questo record."
 

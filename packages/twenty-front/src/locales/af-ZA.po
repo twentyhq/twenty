@@ -1283,8 +1283,8 @@ msgid "Add Field"
 msgstr "Voeg veld by"
 
 #. js-lingui-id: T7RGT6
-#: src/modules/activities/files/components/FilesCard.tsx
-#: src/modules/activities/files/components/FilesCard.tsx
+#: src/modules/activities/files/components/FilesCardContent.tsx
+#: src/modules/page-layout/widgets/files/components/WidgetActionFileAttach.tsx
 msgid "Add file"
 msgstr "Voeg lêer by"
 
@@ -2034,7 +2034,7 @@ msgid "All system objects are already in the sidebar"
 msgstr "Alle stelselobjekte is reeds in die sybalk"
 
 #. js-lingui-id: p+lpde
-#: src/modules/activities/tasks/components/TaskGroups.tsx
+#: src/modules/activities/tasks/components/TaskGroupsContent.tsx
 msgid "All tasks addressed. Maintain the momentum."
 msgstr "Alle take aangespreek. Behou die momentum."
 
@@ -4356,7 +4356,7 @@ msgid "Component name"
 msgstr "Komponentnaam"
 
 #. js-lingui-id: QOhkyl
-#: src/modules/activities/emails/components/EmailsCard.tsx
+#: src/modules/page-layout/widgets/emails/components/WidgetActionEmailCompose.tsx
 msgid "Compose"
 msgstr ""
 
@@ -12062,7 +12062,7 @@ msgid "Missing email draft permission."
 msgstr "Toestemming om e-poskonsepte op te stel ontbreek."
 
 #. js-lingui-id: mibKsa
-#: src/modules/activities/tasks/components/TaskGroups.tsx
+#: src/modules/activities/tasks/components/TaskGroupsContent.tsx
 msgid "Mission accomplished!"
 msgstr "Missie voltooi!"
 
@@ -12622,8 +12622,8 @@ msgid "New Model"
 msgstr "Nuwe model"
 
 #. js-lingui-id: zPPcuu
-#: src/modules/activities/notes/components/NotesCard.tsx
-#: src/modules/activities/notes/components/NotesCard.tsx
+#: src/modules/activities/notes/components/NotesCardContent.tsx
+#: src/modules/page-layout/widgets/notes/components/WidgetActionNoteCreate.tsx
 msgid "New note"
 msgstr "Nuwe nota"
 
@@ -12672,8 +12672,8 @@ msgid "New Tab"
 msgstr "Nuwe oortjie"
 
 #. js-lingui-id: wl18ST
-#: src/modules/activities/tasks/components/TaskGroups.tsx
-#: src/modules/activities/tasks/components/TaskGroups.tsx
+#: src/modules/activities/tasks/components/TaskGroupsContent.tsx
+#: src/modules/page-layout/widgets/tasks/components/WidgetActionTaskCreate.tsx
 msgid "New task"
 msgstr "Nuwe taak"
 
@@ -13053,12 +13053,12 @@ msgid "No event logs found"
 msgstr "Geen gebeurtenislogboeke gevind nie"
 
 #. js-lingui-id: l7y8S8
-#: src/modules/activities/calendar/components/CalendarEventsCard.tsx
+#: src/modules/activities/calendar/components/CalendarEventsCardContent.tsx
 msgid "No Events"
 msgstr "Geen geleenthede"
 
 #. js-lingui-id: wY82y3
-#: src/modules/activities/calendar/components/CalendarEventsCard.tsx
+#: src/modules/activities/calendar/components/CalendarEventsCardContent.tsx
 msgid "No events have been scheduled with this {objectName} yet."
 msgstr "Geen geleenthede is nog met hierdie {objectName} geskeduleer nie."
 
@@ -13083,7 +13083,7 @@ msgid "No fields to display"
 msgstr "Geen velde om te vertoon nie"
 
 #. js-lingui-id: 23Rceg
-#: src/modules/activities/files/components/FilesCard.tsx
+#: src/modules/activities/files/components/FilesCardContent.tsx
 msgid "No Files"
 msgstr "Geen Lêers Nie"
 
@@ -13197,7 +13197,7 @@ msgid "No models available. Please configure AI models in your workspace setting
 msgstr "Geen modelle beskikbaar nie. Stel asseblief KI-modelle in jou werkruimte-instellings op."
 
 #. js-lingui-id: 9VrTfZ
-#: src/modules/activities/notes/components/NotesCard.tsx
+#: src/modules/activities/notes/components/NotesCardContent.tsx
 msgid "No notes"
 msgstr "Geen notas"
 
@@ -18731,12 +18731,12 @@ msgid "then"
 msgstr "dan"
 
 #. js-lingui-id: l2fWLK
-#: src/modules/activities/files/components/FilesCard.tsx
+#: src/modules/activities/files/components/FilesCardContent.tsx
 msgid "There are no associated files with this record."
 msgstr "Daar is geen gekoppelde lêers met hierdie rekord nie."
 
 #. js-lingui-id: 6g0c8y
-#: src/modules/activities/notes/components/NotesCard.tsx
+#: src/modules/activities/notes/components/NotesCardContent.tsx
 msgid "There are no associated notes with this record."
 msgstr "Daar is geen gekoppelde notas by hierdie rekord nie."
 

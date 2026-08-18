@@ -1283,8 +1283,8 @@ msgid "Add Field"
 msgstr "Adaugă câmpul"
 
 #. js-lingui-id: T7RGT6
-#: src/modules/activities/files/components/FilesCard.tsx
-#: src/modules/activities/files/components/FilesCard.tsx
+#: src/modules/activities/files/components/FilesCardContent.tsx
+#: src/modules/page-layout/widgets/files/components/WidgetActionFileAttach.tsx
 msgid "Add file"
 msgstr "Adaugă fișier"
 
@@ -2034,7 +2034,7 @@ msgid "All system objects are already in the sidebar"
 msgstr "Toate obiectele de sistem sunt deja în bara laterală"
 
 #. js-lingui-id: p+lpde
-#: src/modules/activities/tasks/components/TaskGroups.tsx
+#: src/modules/activities/tasks/components/TaskGroupsContent.tsx
 msgid "All tasks addressed. Maintain the momentum."
 msgstr "Toate sarcinile au fost rezolvate. Mențineți ritmul."
 
@@ -4356,7 +4356,7 @@ msgid "Component name"
 msgstr "Numele componentei"
 
 #. js-lingui-id: QOhkyl
-#: src/modules/activities/emails/components/EmailsCard.tsx
+#: src/modules/page-layout/widgets/emails/components/WidgetActionEmailCompose.tsx
 msgid "Compose"
 msgstr ""
 
@@ -12062,7 +12062,7 @@ msgid "Missing email draft permission."
 msgstr "Lipsește permisiunea de a redacta e-mailuri."
 
 #. js-lingui-id: mibKsa
-#: src/modules/activities/tasks/components/TaskGroups.tsx
+#: src/modules/activities/tasks/components/TaskGroupsContent.tsx
 msgid "Mission accomplished!"
 msgstr "Misiune îndeplinită!"
 
@@ -12622,8 +12622,8 @@ msgid "New Model"
 msgstr "Model nou"
 
 #. js-lingui-id: zPPcuu
-#: src/modules/activities/notes/components/NotesCard.tsx
-#: src/modules/activities/notes/components/NotesCard.tsx
+#: src/modules/activities/notes/components/NotesCardContent.tsx
+#: src/modules/page-layout/widgets/notes/components/WidgetActionNoteCreate.tsx
 msgid "New note"
 msgstr "Notă nouă"
 
@@ -12672,8 +12672,8 @@ msgid "New Tab"
 msgstr "Filă nouă"
 
 #. js-lingui-id: wl18ST
-#: src/modules/activities/tasks/components/TaskGroups.tsx
-#: src/modules/activities/tasks/components/TaskGroups.tsx
+#: src/modules/activities/tasks/components/TaskGroupsContent.tsx
+#: src/modules/page-layout/widgets/tasks/components/WidgetActionTaskCreate.tsx
 msgid "New task"
 msgstr "Sarcină nouă"
 
@@ -13053,12 +13053,12 @@ msgid "No event logs found"
 msgstr "Nu s-au găsit jurnale de evenimente"
 
 #. js-lingui-id: l7y8S8
-#: src/modules/activities/calendar/components/CalendarEventsCard.tsx
+#: src/modules/activities/calendar/components/CalendarEventsCardContent.tsx
 msgid "No Events"
 msgstr "Niciun eveniment"
 
 #. js-lingui-id: wY82y3
-#: src/modules/activities/calendar/components/CalendarEventsCard.tsx
+#: src/modules/activities/calendar/components/CalendarEventsCardContent.tsx
 msgid "No events have been scheduled with this {objectName} yet."
 msgstr "Nu au fost programate încă evenimente cu acest {objectName}."
 
@@ -13083,7 +13083,7 @@ msgid "No fields to display"
 msgstr "Nu există câmpuri de afișat"
 
 #. js-lingui-id: 23Rceg
-#: src/modules/activities/files/components/FilesCard.tsx
+#: src/modules/activities/files/components/FilesCardContent.tsx
 msgid "No Files"
 msgstr "Niciun Fișier"
 
@@ -13197,7 +13197,7 @@ msgid "No models available. Please configure AI models in your workspace setting
 msgstr "Nu există modele disponibile. Vă rugăm să configurați modelele AI în setările spațiului de lucru."
 
 #. js-lingui-id: 9VrTfZ
-#: src/modules/activities/notes/components/NotesCard.tsx
+#: src/modules/activities/notes/components/NotesCardContent.tsx
 msgid "No notes"
 msgstr "Nicio notă"
 
@@ -18731,12 +18731,12 @@ msgid "then"
 msgstr "apoi"
 
 #. js-lingui-id: l2fWLK
-#: src/modules/activities/files/components/FilesCard.tsx
+#: src/modules/activities/files/components/FilesCardContent.tsx
 msgid "There are no associated files with this record."
 msgstr "Nu există fișiere asociate cu acest registru."
 
 #. js-lingui-id: 6g0c8y
-#: src/modules/activities/notes/components/NotesCard.tsx
+#: src/modules/activities/notes/components/NotesCardContent.tsx
 msgid "There are no associated notes with this record."
 msgstr "Nu există note asociate acestei înregistrări."
 
