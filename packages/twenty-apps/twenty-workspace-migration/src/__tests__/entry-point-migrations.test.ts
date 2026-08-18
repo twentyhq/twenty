@@ -1,16 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import {
-  migrateRecordsForObject,
-  migrateSkills,
-  migrateViews,
-  migrateWebhooks,
-} from 'src/logic-functions/entry-point';
+import { migrateWebhooks } from 'src/logic-functions/migration/migrate-webhooks.util';
 import { FieldMetadataType } from 'src/logic-functions/types/field-metadata-type.enum';
 import { FieldsListType, ObjectOpenRecordIn, ObjectType } from 'src/logic-functions/types/find-objects-fields.type';
 import { View } from 'src/logic-functions/types/view-entities.type';
 import { Skill } from 'src/logic-functions/types/skill.type';
 import { Webhook } from 'src/logic-functions/types/webhook.type';
 import { createMockGraphqlClient } from 'src/__tests__/utils/mock-graphql-client';
+import { migrateSkills } from "src/logic-functions/migration/migrate-skills.util";
+import { migrateViews } from "src/logic-functions/migration/migrate-views.util";
+import { migrateRecordsForObject } from "src/logic-functions/migration/migrate-records-for-object.util";
 
 describe('migrateSkills', () => {
   const buildSkill = (overrides: Partial<Skill> = {}): Skill => ({
@@ -57,7 +55,7 @@ describe('migrateWebhooks', () => {
       createWebhook: { createWebhook: { id: 'target-webhook-1' } },
     });
 
-    await migrateWebhooks(client, [webhook], []);
+    await migrateWebhooks(client, [webhook]);
 
     const createCalls = calls.filter((call) => call.operationName === 'createWebhook');
     expect(createCalls).toHaveLength(1);
@@ -65,14 +63,6 @@ describe('migrateWebhooks', () => {
     expect(input).toMatchObject({ id: 'webhook-1', targetUrl: webhook.targetUrl, operations: webhook.operations });
     // Regression: forwarding the source secret would make both workspaces share one HMAC key.
     expect('secret' in input).toBe(false);
-  });
-
-  it('skips a webhook that already exists in the target (matched by reused id)', async () => {
-    const { client, calls } = createMockGraphqlClient({});
-
-    await migrateWebhooks(client, [webhook], [webhook]);
-
-    expect(calls).toHaveLength(0);
   });
 });
 

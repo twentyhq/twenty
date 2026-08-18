@@ -4,7 +4,7 @@ import {
   areMorphRelationsIdentical,
   areObjectsIdentical,
   areRelationsIdentical,
-} from 'src/logic-functions/entry-point';
+} from 'src/logic-functions/utils/comparators.util';
 import { FieldMetadataType } from 'src/logic-functions/types/field-metadata-type.enum';
 import { FieldRelationInfo, FieldsListType, ObjectType, ObjectOpenRecordIn, RelationType } from 'src/logic-functions/types/find-objects-fields.type';
 

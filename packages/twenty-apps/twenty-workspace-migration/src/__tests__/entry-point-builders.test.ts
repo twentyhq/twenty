@@ -1,13 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import {
-  buildFieldToCreate,
-  buildPageLayoutTabsInput,
-  buildRecordDataToCreate,
-  remapWidgetConfiguration,
-} from 'src/logic-functions/entry-point';
+import { buildFieldToCreate } from 'src/logic-functions/utils/build-field-to-create.util';
 import { FieldMetadataType } from 'src/logic-functions/types/field-metadata-type.enum';
 import { FieldsListType, RelationType } from 'src/logic-functions/types/find-objects-fields.type';
 import { PageLayoutTab } from 'src/logic-functions/types/dashboard.type';
+import { buildRecordDataToCreate } from "src/logic-functions/utils/build-record-data-to-create.util";
+import { remapWidgetConfiguration } from "src/logic-functions/utils/remap-widget-configuration.util";
+import { buildPageLayoutTabsInput } from "src/logic-functions/utils/build-page-layout-tabs-input.util";
 
 const baseField = {
   applicationId: 'app-1',
