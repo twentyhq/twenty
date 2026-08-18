@@ -10163,6 +10163,7 @@ msgstr "A tiltólista kezeléséhez hitelesítés szükséges."
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
+#: src/engine/guards/workspace-auth.guard.ts
 msgid "You must be authenticated to perform this action."
 msgstr "Az akció végrehajtásához autentikáltnak kell lenni."
 
