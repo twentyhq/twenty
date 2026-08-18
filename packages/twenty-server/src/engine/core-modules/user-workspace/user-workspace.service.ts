@@ -351,9 +351,9 @@ export class UserWorkspaceService {
     softDelete?: boolean;
   }): Promise<void> {
     if (softDelete) {
-      await this.roleTargetRepository.softDelete(workspaceId, {
-        userWorkspaceId,
-      });
+      // roleTarget has no deletedAt column, so its rows cannot be soft deleted.
+      // Leaving them in place is what lets a restored userWorkspace keep its
+      // role assignments; access stays gated by the soft-deleted userWorkspace.
       await this.userWorkspaceRepository.softDelete({ id: userWorkspaceId });
     } else {
       await this.roleTargetRepository.delete(workspaceId, { userWorkspaceId }); // TODO remove once userWorkspace foreign key is added on roleTarget
