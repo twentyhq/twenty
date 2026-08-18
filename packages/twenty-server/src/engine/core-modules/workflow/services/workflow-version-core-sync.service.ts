@@ -44,16 +44,23 @@ export class WorkflowVersionCoreSyncService {
 
     const applicationId = await this.getCustomApplicationIdOrThrow(workspaceId);
 
+    const linkedCoreVersionIds = await this.resolveOwnedCoreVersionIds(
+      workspaceId,
+      workflowVersions,
+    );
+
     const coreVersionIdByWorkspaceRecordId = new Map<string, string>();
 
     const coreRows = workflowVersions.map((workflowVersion) => {
-      const coreWorkflowVersionId = isNonEmptyString(
-        workflowVersion.coreWorkflowVersionId,
-      )
-        ? workflowVersion.coreWorkflowVersionId
+      const isLinked =
+        isNonEmptyString(workflowVersion.coreWorkflowVersionId) &&
+        linkedCoreVersionIds.has(workflowVersion.coreWorkflowVersionId);
+
+      const coreWorkflowVersionId = isLinked
+        ? (workflowVersion.coreWorkflowVersionId as string)
         : uuidv4();
 
-      if (!isNonEmptyString(workflowVersion.coreWorkflowVersionId)) {
+      if (!isLinked) {
         coreVersionIdByWorkspaceRecordId.set(
           workflowVersion.id,
           coreWorkflowVersionId,
@@ -83,6 +90,33 @@ export class WorkflowVersionCoreSyncService {
     );
 
     await this.invalidateAutomatedTriggerMaps(workspaceId);
+  }
+
+  // coreWorkflowVersionId is a writable column on the workspace record, so a
+  // caller can point it at a core row owned by another workspace. Only ids
+  // that already resolve inside this workspace are honoured; anything else is
+  // treated as unlinked and gets a fresh row.
+  private async resolveOwnedCoreVersionIds(
+    workspaceId: string,
+    workflowVersions: WorkflowVersionWorkspaceEntity[],
+  ): Promise<Set<string>> {
+    const candidateIds = workflowVersions
+      .map((workflowVersion) => workflowVersion.coreWorkflowVersionId)
+      .filter(isNonEmptyString);
+
+    if (candidateIds.length === 0) {
+      return new Set();
+    }
+
+    const ownedRows = await this.coreWorkflowVersionRepository.find(
+      workspaceId,
+      {
+        where: { id: In(candidateIds) },
+        select: { id: true },
+      },
+    );
+
+    return new Set(ownedRows.map((row) => row.id));
   }
 
   async deleteFromCore(

@@ -135,13 +135,25 @@ export class TwoFactorAuthenticationService {
       { workspaceId },
     );
 
-    await this.twoFactorAuthenticationMethodRepository.save(workspaceId, {
-      id: existing2FAMethod?.id,
-      userWorkspace: userWorkspace,
+    const methodValues = {
+      userWorkspaceId: userWorkspace.id,
       secret: encryptedSecret,
       status: context.status,
       strategy: TwoFactorAuthenticationStrategy.TOTP,
-    });
+    };
+
+    if (isDefined(existing2FAMethod)) {
+      await this.twoFactorAuthenticationMethodRepository.update(
+        workspaceId,
+        { id: existing2FAMethod.id },
+        methodValues,
+      );
+    } else {
+      await this.twoFactorAuthenticationMethodRepository.insert(
+        workspaceId,
+        methodValues,
+      );
+    }
 
     return uri;
   }
@@ -198,10 +210,11 @@ export class TwoFactorAuthenticationService {
       );
     }
 
-    await this.twoFactorAuthenticationMethodRepository.save(workspaceId, {
-      ...userTwoFactorAuthenticationMethod,
-      status: OTPStatus.VERIFIED,
-    });
+    await this.twoFactorAuthenticationMethodRepository.update(
+      workspaceId,
+      { id: userTwoFactorAuthenticationMethod.id },
+      { status: OTPStatus.VERIFIED },
+    );
   }
 
   async verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
