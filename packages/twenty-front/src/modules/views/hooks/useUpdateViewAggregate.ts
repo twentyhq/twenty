@@ -1,12 +1,13 @@
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
+import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { convertExtendedAggregateOperationToAggregateOperation } from '@/object-record/utils/convertExtendedAggregateOperationToAggregateOperation';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
-import { useCallback } from 'react';
+import { useCallback, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type View as GqlView } from '~/generated-metadata/graphql';
 
@@ -17,6 +18,10 @@ export const useUpdateViewAggregate = () => {
   );
   const { performViewAPIUpdate } = usePerformViewAPIUpdate();
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
+
+  const isInsideRecordTableWidget = isDefined(
+    useContext(RecordTableWidgetContext),
+  );
 
   const updateViewAggregate = useCallback(
     async ({
@@ -60,6 +65,10 @@ export const useUpdateViewAggregate = () => {
           return;
         }
 
+        if (isInsideRecordTableWidget) {
+          return;
+        }
+
         loadRecordIndexStates(updatedView, objectMetadataItem);
       }
     },
@@ -68,6 +77,7 @@ export const useUpdateViewAggregate = () => {
       contextStoreCurrentViewId,
       performViewAPIUpdate,
       loadRecordIndexStates,
+      isInsideRecordTableWidget,
     ],
   );
 

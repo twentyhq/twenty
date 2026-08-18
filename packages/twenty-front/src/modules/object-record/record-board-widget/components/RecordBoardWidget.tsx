@@ -26,6 +26,7 @@ export const RecordBoardWidget = ({
       <RecordBoardWidgetViewSettingsReadOnlyEffect
         recordBoardId={recordIndexId}
         isViewSettingsReadOnly={isReadOnly}
+        isRecordCellsNonEditable={isReadOnly}
       />
       <StyledBoardContainer>
         <RecordBoardContainer
