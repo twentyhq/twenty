@@ -2,7 +2,7 @@ import { type I18n } from '@lingui/core';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
+import { generateMessageId } from 'twenty-shared/i18n';
 
 export const translateStandardLabel = ({
   sourceValue,

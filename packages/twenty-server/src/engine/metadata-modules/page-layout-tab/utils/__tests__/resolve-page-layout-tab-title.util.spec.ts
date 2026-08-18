@@ -1,9 +1,9 @@
 import { type I18n } from '@lingui/core';
 
-import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
+import { generateMessageId } from 'twenty-shared/i18n';
 import { resolvePageLayoutTabTitle } from 'src/engine/metadata-modules/page-layout-tab/utils/resolve-page-layout-tab-title.util';
 
-jest.mock('src/engine/core-modules/i18n/utils/generateMessageId');
+jest.mock('twenty-shared/i18n');
 
 const mockGenerateMessageId = generateMessageId as jest.MockedFunction<
   typeof generateMessageId
