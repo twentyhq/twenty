@@ -1,4 +1,4 @@
-import { EllipsisDisplay } from './EllipsisDisplay';
+import { EllipsisDisplay } from '@ui/data-display/EllipsisDisplay/EllipsisDisplay';
 
 type JsonDisplayProps = {
   text: string;
