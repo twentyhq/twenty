@@ -10182,6 +10182,7 @@ msgid "WorkflowRun"
 msgstr ""
 
 #. js-lingui-id: woYYQq
+#: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Workflows"
 msgstr "워크플로우"
