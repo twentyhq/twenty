@@ -143,10 +143,7 @@ describe('buildWorkspaceSetupPromptText', () => {
   ])(
     'should make the migration-or-scratch question a tool call rather than text when %s is provided',
     (_label, enrichment) => {
-      const result = buildWorkspaceSetupPromptText({
-        companyEnrichment: enrichment,
-        locale: 'en',
-      });
+      const result = buildPrompt({ companyEnrichment: enrichment });
 
       expect(result).toContain(
         'Then stop writing and make the ask_questions call',
@@ -163,10 +160,7 @@ describe('buildWorkspaceSetupPromptText', () => {
   ])(
     'should leave an unlisted CRM to the free-text answer when %s is provided',
     (_label, enrichment) => {
-      const result = buildWorkspaceSetupPromptText({
-        companyEnrichment: enrichment,
-        locale: 'en',
-      });
+      const result = buildPrompt({ companyEnrichment: enrichment });
 
       expect(result).toContain('leaving any other CRM to the free-text answer');
       expect(result).not.toContain('another CRM, and starting fresh');
@@ -284,10 +278,7 @@ describe('buildWorkspaceSetupPromptText', () => {
   });
 
   it('should name the plain-text question as the failure mode to avoid', () => {
-    const result = buildWorkspaceSetupPromptText({
-      companyEnrichment,
-      locale: 'en',
-    });
+    const result = buildPrompt();
 
     expect(result).toContain(
       'a question mark in your text means the call is missing',
