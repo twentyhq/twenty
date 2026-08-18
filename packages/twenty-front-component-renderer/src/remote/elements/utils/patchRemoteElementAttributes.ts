@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { ALLOWED_HTML_ELEMENTS } from '@/constants/AllowedHtmlElements';
 import { isAriaOrDataAttribute } from '@/remote/elements/utils/isAriaOrDataAttribute';
 
@@ -41,6 +43,28 @@ export const patchRemoteElementAttributes = (): void => {
     ): boolean =>
       isAriaOrDataAttribute(attributeName) &&
       !attributeNamesAlreadySyncedByRemoteDom.has(attributeName);
+
+    const originalGetAttribute = elementConstructor.prototype.getAttribute as (
+      attributeName: string,
+    ) => string | null;
+
+    elementConstructor.prototype.getAttribute = function (
+      this: RemoteElementWithAttributeUpdater,
+      attributeName: string,
+    ) {
+      const mappedElementPropertyName =
+        ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME[attributeName];
+
+      if (mappedElementPropertyName) {
+        const elementPropertyValue = this[mappedElementPropertyName];
+
+        return isDefined(elementPropertyValue)
+          ? String(elementPropertyValue)
+          : null;
+      }
+
+      return originalGetAttribute.call(this, attributeName);
+    };
 
     const originalSetAttribute = elementConstructor.prototype.setAttribute as (
       attributeName: string,
