@@ -55,7 +55,7 @@ export const patchRemoteElementAttributes = (): void => {
       const mappedElementPropertyName =
         ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME[attributeName];
 
-      if (mappedElementPropertyName) {
+      if (isDefined(mappedElementPropertyName)) {
         const elementPropertyValue = this[mappedElementPropertyName];
 
         return isDefined(elementPropertyValue)
