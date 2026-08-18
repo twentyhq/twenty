@@ -1,8 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
-import { type AskQuestionsToolStatus } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
 import { Tag, type TagColor } from 'twenty-ui/data-display';
 import { IconHelpCircle } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -15,12 +13,6 @@ import { type AdminChatThreadMessagePart } from '@/settings/admin-panel/types/Ad
 type SettingsAdminChatAskQuestionsPartProps = {
   part: AdminChatThreadMessagePart;
   result: AdminAskQuestionsResult;
-};
-
-const STATUS_TAG_COLORS: Record<AskQuestionsToolStatus, TagColor> = {
-  answered: 'green',
-  pending: 'orange',
-  skipped: 'gray',
 };
 
 const StyledContainer = styled.div`
@@ -72,9 +64,16 @@ const getStatusLabel = (status: string) => {
 };
 
 const getStatusTagColor = (status: string): TagColor => {
-  const knownStatusColor = STATUS_TAG_COLORS[status as AskQuestionsToolStatus];
-
-  return isDefined(knownStatusColor) ? knownStatusColor : 'gray';
+  switch (status) {
+    case 'answered':
+      return 'green';
+    case 'skipped':
+      return 'gray';
+    case 'pending':
+      return 'orange';
+    default:
+      return 'gray';
+  }
 };
 
 export const SettingsAdminChatAskQuestionsPart = ({
