@@ -2,7 +2,6 @@ import { isValidUrl } from '@/utils/url/isValidUrl';
 
 describe('isValidUrl', () => {
   it('test cases', () => {
-    // Truthy
     expect(isValidUrl('https://www.example.com')).toBe(true);
     expect(isValidUrl('http://192.168.2.0:3000')).toBe(true);
     expect(isValidUrl('http://localhost')).toBe(true);
@@ -18,7 +17,6 @@ describe('isValidUrl', () => {
     expect(isValidUrl('192.168.2.0')).toBe(true);
     expect(isValidUrl('3.com')).toBe(true);
 
-    // Falsy
     expect(isValidUrl('?o')).toBe(false);
     expect(isValidUrl('')).toBe(false);
     expect(isValidUrl('\\')).toBe(false);

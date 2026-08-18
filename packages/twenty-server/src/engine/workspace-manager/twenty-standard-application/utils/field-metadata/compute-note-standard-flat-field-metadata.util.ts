@@ -25,7 +25,6 @@ export const buildNoteStandardFlatFieldMetadatas = ({
   AllStandardObjectFieldName<'note'>,
   FlatFieldMetadata
 > => ({
-  // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -111,7 +110,6 @@ export const buildNoteStandardFlatFieldMetadatas = ({
     now,
   }),
 
-  // Note-specific fields
   position: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -228,7 +226,6 @@ export const buildNoteStandardFlatFieldMetadatas = ({
     now,
   }),
 
-  // Relation fields
   noteTargets: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

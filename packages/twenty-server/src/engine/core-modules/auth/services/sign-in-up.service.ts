@@ -24,6 +24,7 @@ import {
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import {
@@ -245,11 +246,14 @@ export class SignInUpService {
       params.userData.type === 'newUserWithPicture'
     ) {
       try {
-        await this.billingCreditService.creditWorkspaceBalance({
+        await this.billingCreditService.grantCredits({
           workspaceId: invitationValidation.workspace.id,
           amountMicro: this.twentyConfigService.get(
             'ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER',
           ),
+          type: BillingCreditGrantType.ONBOARDING_REWARD,
+          reason: 'Onboarding reward: invited teammate signed up',
+          idempotencyKey: `onboarding-invite-team:${invitationValidation.workspace.id}:${updatedUser.id}`,
         });
       } catch (error) {
         this.logger.error(

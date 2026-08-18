@@ -1,3 +1,4 @@
+import { ObjectOpenRecordIn } from 'twenty-shared/types';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { buildRecordGqlFieldsAggregateForView } from '@/object-record/record-board/record-board-column/utils/buildRecordGqlFieldsAggregateForView';
@@ -40,6 +41,7 @@ describe('buildRecordGqlFieldsAggregateForView', () => {
     isSystem: false,
     isUIEditable: true,
     isUICreatable: true,
+    openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
     isRemote: false,
     isSearchable: false,
     labelIdentifierFieldMetadataId: '06b33746-5293-4d07-9f7f-ebf5ad396064',

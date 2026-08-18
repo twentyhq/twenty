@@ -1,4 +1,4 @@
-import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
+import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { NAVIGATION_DRAWER_COLLAPSED_WIDTH } from '@/ui/layout/resizable-panel/constants/NavigationDrawerCollapsedWidth';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItemBreadcrumb } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemBreadcrumb';
@@ -270,7 +270,7 @@ export const NavigationDrawerItem = ({
 }: NavigationDrawerItemProps) => {
   const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
-  const isExpanded = useNavigationDrawerExpanded();
+  const isExpanded = useIsNavigationDrawerContentExpanded();
   const setIsNavigationDrawerExpanded = useSetAtomState(
     isNavigationDrawerExpandedState,
   );

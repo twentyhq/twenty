@@ -41,6 +41,7 @@ export const RecordCalendarCardDraggableContainer = ({
         type={RECORD_CALENDAR_CARD_DND_TYPE}
         accept={RECORD_CALENDAR_CARD_DND_TYPE}
         disabled={dragIsDisabled}
+        fadeSourceWhileDragging
       >
         <StyledDraggableContainer
           id={`record-calendar-card-${recordId}-${calendarDay}`}

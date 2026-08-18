@@ -14,7 +14,6 @@ import { type ReactNode } from 'react';
 import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
-  ViewOpenRecordIn,
   ViewType,
   ViewVisibility,
   WidgetConfigurationType,
@@ -113,7 +112,6 @@ const sourceRecordTableViewSnapshot: RecordTableWidgetViewSnapshot = {
     type: ViewType.TABLE_WIDGET,
     isCompact: false,
     position: 0,
-    openRecordIn: ViewOpenRecordIn.RECORD_PAGE,
     visibility: ViewVisibility.WORKSPACE,
     shouldHideEmptyGroups: false,
     isActive: true,

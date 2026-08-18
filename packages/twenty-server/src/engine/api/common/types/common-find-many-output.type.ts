@@ -5,8 +5,8 @@ import { type CommonSelectedFieldsResult } from 'src/engine/api/common/types/com
 
 export type CommonFindManyOutput = {
   records: ObjectRecord[];
-  aggregatedValues: Record<string, number>;
-  totalCount: number;
+  aggregatedValues: Record<string, number> | undefined;
+  totalCount: number | undefined;
   pageInfo: CommonPageInfo;
   selectedFieldsResult: CommonSelectedFieldsResult;
 };

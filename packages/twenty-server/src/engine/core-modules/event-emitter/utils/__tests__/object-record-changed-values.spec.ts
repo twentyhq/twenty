@@ -1,4 +1,9 @@
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  MetadataWritability,
+  ObjectOpenRecordIn,
+  RelationType,
+} from 'twenty-shared/types';
 
 import {
   computeUpdatedFieldsFromDiff,
@@ -39,6 +44,8 @@ const mockObjectMetadata: FlatObjectMetadata = {
   overrides: null,
   isUIEditable: true,
   isUICreatable: true,
+  writability: MetadataWritability.OPEN,
+  openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
   labelIdentifierFieldMetadataId: null,
   imageIdentifierFieldMetadataId: null,
   duplicateCriteria: null,

@@ -26,7 +26,6 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
   CreateStandardFieldArgs<'taskTarget', FieldMetadataType>,
   'context'
 >): Record<AllStandardObjectFieldName<'taskTarget'>, FlatFieldMetadata> => ({
-  // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -195,7 +194,6 @@ export const buildTaskTargetStandardFlatFieldMetadatas = ({
     now,
   }),
 
-  // Relation fields
   task: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

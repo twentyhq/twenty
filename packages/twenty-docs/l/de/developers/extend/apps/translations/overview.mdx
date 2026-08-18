@@ -55,8 +55,8 @@ const Card = ({ count, name }: { count: number; name: string }) => {
 
 ### Wann Sie welches verwenden sollten
 
-* **`<Trans>…</Trans>`** – statischer Text in JSX. Verwenden Sie die Props `message` und `values`
-  zur Interpolation (`<Trans message="Hi {name}" values={{ name }} />`);
+* **`Trans`** – statischer Text in JSX. Verwenden Sie die Props `message` und `values`
+  zur Interpolation, wie in `Trans message="Hi {name}" values={{ name }}`;
   eine direkte Interpolation in den Children ist nicht statisch extrahierbar.
 * **`useTranslate().t`** – dynamische Zeichenketten innerhalb einer Komponente. Wird neu gerendert, wenn der
   Benutzer die Sprache wechselt. Bevorzugen Sie dies innerhalb von Render-Funktionen.
@@ -85,7 +85,8 @@ twenty dev:translations-extract                  # collect strings into locales/
 twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 ```
 
-Die Extraktion sammelt sowohl Ihre Manifest-Labels als auch die `t()`-/`msg()`-/`\<Trans>`-Zeichenketten aus Ihrem Front-Komponenten-Quellcode in `locales/\<locale>.json`, indiziert nach der Quellzeichenkette. Füllen Sie die Übersetzungen aus:
+Die Extraktion sammelt sowohl Ihre Manifest-Labels als auch die `t()`-/`msg()`-/`Trans`-
+Zeichenketten aus Ihrem Front-Komponenten-Quellcode in `locales/\<locale>.json`, indiziert nach der Quellzeichenkette. Füllen Sie die Übersetzungen aus:
 
 ```json
 // locales/fr-FR.json
@@ -104,7 +105,7 @@ Platzhalter wie `{name}` werden zur Laufzeit ersetzt – behalten Sie sie in der
 `twenty dev:build` kompiliert die Kataloge und stellt die richtige Sprache für den aktuellen Benutzer bereit: Manifest-Labels werden serverseitig aufgelöst und Front-Komponenten-Kataloge werden in jedes Komponenten-Bundle eingebunden. Zur Laufzeit liest eine Komponente die
 Locale aus ihrem Ausführungskontext (der aktuellen Sprache des Hosts) und löst
 jede Zeichenkette gegen ihren Katalog auf, wobei auf die Quelle zurückgegriffen
-wird, wenn eine Übersetzung fehlt. Das Umschalten der Sprache im Host rendert `\<Trans>`- und
+wird, wenn eine Übersetzung fehlt. Das Umschalten der Sprache im Host rendert `Trans`- und
 `useTranslate().t`-Zeichenketten live neu.
 
 Da Kataloge zur Build-Zeit kompiliert werden, bedeutet das Aktualisieren einer Übersetzung,
@@ -116,4 +117,12 @@ kontinuierliche `twenty dev`-Watch zeigt Quellzeichenketten an, daher sollten Si
 mit einem einmaligen Build testen.
 </Note>
 
-`<Trans>`-Text-Children können sich über mehrere Zeilen erstrecken – Leerraum wird auf dieselbe Weise zusammengefasst, wie JSX ihn zusammenfasst, sodass sowohl `<Trans>Welcome\n  back</Trans>` als auch der extrahierte Schlüssel zu `Welcome back` werden.
+`Trans`-Text-Children können sich über mehrere Zeilen erstrecken – Leerraum wird auf dieselbe Weise zusammengefasst, wie JSX ihn zusammenfasst, sodass beide zum Schlüssel `Welcome back` extrahiert werden:
+
+```tsx
+<Trans>Welcome back</Trans>
+<Trans>
+  Welcome
+  back
+</Trans>
+```

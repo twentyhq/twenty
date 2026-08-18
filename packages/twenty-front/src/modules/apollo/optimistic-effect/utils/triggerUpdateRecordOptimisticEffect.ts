@@ -79,12 +79,14 @@ export const triggerUpdateRecordOptimisticEffect = ({
           record: updatedRecord,
           filter: rootQueryFilter ?? {},
           objectMetadataItem,
+          objectMetadataItems,
         });
 
         const currentRecordIndexInRootQueryEdges = isRecordMatchingFilter({
           record: currentRecord,
           filter: rootQueryFilter ?? {},
           objectMetadataItem,
+          objectMetadataItems,
         });
 
         const totalCount = readField<number | undefined>(
@@ -160,6 +162,7 @@ export const triggerUpdateRecordOptimisticEffect = ({
   triggerUpdateGroupByQueriesOptimisticEffect({
     cache,
     objectMetadataItem,
+    objectMetadataItems,
     operation: 'update',
     records: [updatedRecord],
     shouldMatchRootQueryFilter: true,

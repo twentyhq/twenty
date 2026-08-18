@@ -127,6 +127,8 @@ export class RoleResolver {
 
     return {
       ...workspaceMember,
+      // pre-2-32 workspaces lack the column until the upgrade command runs
+      uiScale: workspaceMember.uiScale ?? 'Default',
       userWorkspaceId,
       roles,
     } as WorkspaceMemberDTO;
@@ -323,7 +325,11 @@ export class RoleResolver {
         workspace.id,
       );
 
-    return workspaceMembers;
+    // pre-2-32 workspaces lack the column until the upgrade command runs
+    return workspaceMembers.map((workspaceMember) => ({
+      ...workspaceMember,
+      uiScale: workspaceMember.uiScale ?? 'Default',
+    }));
   }
 
   @ResolveField('agents', () => [AgentDTO])

@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
+import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
+import { AI_INSTRUCTIONS_EDITOR_PROFILE } from '@/ai/constants/AiInstructionsEditorProfile';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -135,7 +136,7 @@ export const SettingsAiPrompts = () => {
                   label={section.title}
                   readonly={true}
                   defaultValue={section.content}
-                  preset="aiInstructions"
+                  profile={AI_INSTRUCTIONS_EDITOR_PROFILE}
                   onChange={() => {}}
                   enableFullScreen={true}
                   fullScreenBreadcrumbs={[
@@ -164,7 +165,7 @@ export const SettingsAiPrompts = () => {
               label={t`User Information`}
               readonly={true}
               defaultValue={userContextPreview}
-              preset="aiInstructions"
+              profile={AI_INSTRUCTIONS_EDITOR_PROFILE}
               onChange={() => {}}
               enableFullScreen={false}
               minHeight={80}

@@ -7,13 +7,17 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
+import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { paginateMetadataRestItems } from 'src/engine/api/rest/metadata/utils/paginate-metadata-rest-items.util';
+import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -36,7 +40,7 @@ import { DeleteViewFilterGroupPermissionGuard } from 'src/engine/metadata-module
 import { UpdateViewFilterGroupPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-filter-group-permission.guard';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
 
-@Controller('rest/metadata/viewFilterGroups')
+@Controller(`${ApiPath.Rest}/metadata/viewFilterGroups`)
 @UseGuards(WorkspaceAuthGuard)
 @UseFilters(
   PermissionsRestApiExceptionFilter,
@@ -52,14 +56,15 @@ export class ViewFilterGroupController {
   @Get()
   @UseGuards(NoPermissionGuard)
   async findMany(
+    @Req() request: AuthenticatedRequest,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Query('viewId') viewId?: string,
-  ): Promise<ViewFilterGroupDTO[]> {
-    if (viewId) {
-      return this.viewFilterGroupService.findByViewId(workspace.id, viewId);
-    }
+  ) {
+    const items = viewId
+      ? await this.viewFilterGroupService.findByViewId(workspace.id, viewId)
+      : await this.viewFilterGroupService.findByWorkspaceId(workspace.id);
 
-    return this.viewFilterGroupService.findByWorkspaceId(workspace.id);
+    return paginateMetadataRestItems({ items, request });
   }
 
   @Get(':id')

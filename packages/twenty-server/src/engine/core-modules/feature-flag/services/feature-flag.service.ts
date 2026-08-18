@@ -107,18 +107,10 @@ export class FeatureFlagService {
       );
     }
 
-    const existingFeatureFlag = await this.featureFlagRepository.findOne(
+    const result = await this.featureFlagRepository.upsertAndReturnOne(
       workspaceId,
-      { where: { key: featureFlag } },
-    );
-
-    const featureFlagToSave = existingFeatureFlag
-      ? { ...existingFeatureFlag, value }
-      : { key: featureFlag, value };
-
-    const result = await this.featureFlagRepository.save(
-      workspaceId,
-      featureFlagToSave,
+      { key: featureFlag, value },
+      ['workspaceId', 'key'],
     );
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [

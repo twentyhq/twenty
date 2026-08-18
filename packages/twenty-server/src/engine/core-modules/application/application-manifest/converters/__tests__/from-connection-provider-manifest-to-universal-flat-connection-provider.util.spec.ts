@@ -51,6 +51,7 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
         usePkce: true,
       },
       onConnectLogicFunctionUniversalIdentifier: null,
+      onDisconnectLogicFunctionUniversalIdentifier: null,
       createdAt: NOW,
       updatedAt: NOW,
     });
@@ -73,6 +74,26 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
 
     expect(result.onConnectLogicFunctionUniversalIdentifier).toBe(
       onConnectLogicFunctionUniversalIdentifier,
+    );
+  });
+
+  it('resolves the onDisconnectLogicFunction universalIdentifier into the flat field when provided', () => {
+    const onDisconnectLogicFunctionUniversalIdentifier =
+      'd2d2d2d2-d2d2-4d2d-d2d2-d2d2d2d2d2d2';
+
+    const result =
+      fromConnectionProviderManifestToUniversalFlatConnectionProvider({
+        connectionProviderManifest: buildManifest({
+          onDisconnectLogicFunction: {
+            universalIdentifier: onDisconnectLogicFunctionUniversalIdentifier,
+          },
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+    expect(result.onDisconnectLogicFunctionUniversalIdentifier).toBe(
+      onDisconnectLogicFunctionUniversalIdentifier,
     );
   });
 

@@ -42,5 +42,5 @@ export default defineNavigationMenuItem({
 * `folderUniversalIdentifier` est également disponible sur n’importe quel élément pour l’imbriquer dans un parent de type `FOLDER`.
 
 <Note>
-**Piège courant :** créer un objet sans vue associée + élément de menu de navigation rend cet objet invisible pour les utilisateurs. À moins qu’il ne s’agisse d’un objet technique/interne, chaque objet personnalisé doit avoir une vue par défaut *et* une entrée dans la barre latérale qui pointe vers celle-ci.
+**Piège courant :** créer un objet sans élément de menu de navigation associé rend cet objet inatteignable depuis la barre latérale. À moins qu’il ne s’agisse d’un objet technique/interne, chaque objet personnalisé devrait avoir une entrée dans la barre latérale qui renvoie vers cet objet.
 </Note>

@@ -76,4 +76,4 @@ The scaffolder pins `twenty-sdk` and `twenty-client-sdk` to its own version — 
 
 Keeping either package under `dependencies` pulls it into the installed app's runtime bundle, where it is dead weight. `twenty dev:build` emits a warning when either is still listed under `dependencies`.
 
-Add your app's own runtime dependencies (libraries your logic functions actually import at runtime) under `dependencies` as usual.
+Add your app's own runtime dependencies (libraries your logic functions actually import at runtime) under `dependencies` as usual. Keep the tree lean: `dependencies` are installed into a runtime layer capped at 250MB unpacked, and a sync or install fails with a dependencies size error beyond that — UI libraries and dev tooling belong in `devDependencies`.

@@ -65,7 +65,7 @@ export const generateHostRegistry = (
   });
 
   sourceFile.addImportDeclaration({
-    moduleSpecifier: '../utils/createHtmlHostWrapper',
+    moduleSpecifier: '@/host/elements/utils/createHtmlHostWrapper',
     namedImports: ['createHtmlHostWrapper'],
   });
 

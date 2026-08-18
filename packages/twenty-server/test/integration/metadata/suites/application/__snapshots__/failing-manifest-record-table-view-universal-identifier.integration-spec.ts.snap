@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Failing manifest sync - RECORD_TABLE widget with unknown view universal identifier rejects a dashboard RECORD_TABLE widget whose target view does not exist 1`] = `
+{
+  "eventId": Any<String>,
+  "extensions": {
+    "action": {
+      "flatEntity": {
+        "applicationUniversalIdentifier": Any<String>,
+        "conditionalAvailabilityExpression": null,
+        "conditionalDisplay": null,
+        "createdAt": Any<String>,
+        "deletedAt": null,
+        "gridPosition": {
+          "column": 0,
+          "columnSpan": 6,
+          "row": 0,
+          "rowSpan": 4,
+        },
+        "isActive": true,
+        "isSystemSideEffect": false,
+        "objectMetadataUniversalIdentifier": Any<String>,
+        "pageLayoutTabUniversalIdentifier": Any<String>,
+        "position": null,
+        "title": "RT test table",
+        "type": "RECORD_TABLE",
+        "universalConfiguration": {
+          "configurationType": "RECORD_TABLE",
+          "viewUniversalIdentifier": Any<String>,
+        },
+        "universalIdentifier": Any<String>,
+        "universalOverrides": null,
+        "updatedAt": Any<String>,
+      },
+      "metadataName": "pageLayoutWidget",
+      "type": "create",
+    },
+    "code": "APPLICATION_INSTALLATION_FAILED",
+    "errors": {
+      "actionTranspilation": {
+        "code": "ENTITY_NOT_FOUND",
+        "message": "View not found for universal identifier: b0000000-0000-4000-8000-00000000000b",
+      },
+    },
+    "exceptionEventId": Any<String>,
+    "userFriendlyMessage": "Migration execution failed.",
+  },
+  "message": "Migration action 'create' for 'pageLayoutWidget' (universalIdentifier: a0000000-0000-4000-8000-00000000000a) failed: [actionTranspilation] View not found for universal identifier: b0000000-0000-4000-8000-00000000000b",
+  "name": "GraphQLError",
+}
+`;

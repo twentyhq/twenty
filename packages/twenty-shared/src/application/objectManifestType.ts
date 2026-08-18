@@ -1,5 +1,7 @@
 import { type ObjectFieldManifest } from '@/application/objectFieldManifest.type';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
+import { type MetadataWritability } from '@/types/MetadataWritability';
+import { type ObjectOpenRecordIn } from '@/types/ObjectOpenRecordIn';
 
 export type ObjectManifest = SyncableEntityOptions & {
   nameSingular: string;
@@ -13,6 +15,8 @@ export type ObjectManifest = SyncableEntityOptions & {
   isUICreatable?: boolean;
   // When false, records of this object are not editable through the generic UI
   isUIEditable?: boolean;
+  writability?: MetadataWritability;
+  openRecordIn?: ObjectOpenRecordIn;
   fields: ObjectFieldManifest[];
   labelIdentifierFieldMetadataUniversalIdentifier: string;
 };

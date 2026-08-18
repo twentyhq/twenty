@@ -4,6 +4,7 @@ import { CalDavClientProvider } from 'src/modules/calendar/calendar-event-import
 import { CalDavFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-fetch-events.service';
 import { type CalDavSyncCursor } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/types/caldav-sync-cursor';
 import { parseCalDAVError } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/parse-caldav-error.util';
+import { CalendarEventImportDriverException } from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
 import { type GetCalendarEventsResponse } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
 
 @Injectable()
@@ -44,6 +45,10 @@ export class CalDavGetEventsService {
         `Error in ${CalDavGetEventsService.name} - getCalendarEvents`,
         error,
       );
+
+      if (error instanceof CalendarEventImportDriverException) {
+        throw error;
+      }
 
       throw parseCalDAVError(error as Error);
     }

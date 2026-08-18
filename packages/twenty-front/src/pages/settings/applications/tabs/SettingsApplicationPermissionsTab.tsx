@@ -1,3 +1,4 @@
+import { ObjectOpenRecordIn } from 'twenty-shared/types';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -244,6 +245,7 @@ const buildObjectMetadataItemsFromMarketplaceApp = (
         isSearchable: false,
         isUIEditable: true,
         isUICreatable: true,
+        openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
         isLabelSyncedWithName: false,
         labelIdentifierFieldMetadataId: '',
         fields,

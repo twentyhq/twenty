@@ -14,8 +14,8 @@
   --t-modal-size-lg-width: 53%;
   --t-modal-size-xl-width: 1200px;
   --t-modal-size-xl-height: 800px;
-  --t-modal-size-fullscreen-width: 100dvw;
-  --t-modal-size-fullscreen-height: 100dvh;
+  --t-modal-size-fullscreen-width: calc(100dvw / var(--t-zoom, 1));
+  --t-modal-size-fullscreen-height: calc(100dvh / var(--t-zoom, 1));
   --t-text-line-height-lg: 1.5;
   --t-text-line-height-md: 1.1;
   --t-text-icon-size-medium: 16;

@@ -3,6 +3,7 @@ import { PageLayoutInitializationQueryEffect } from '@/page-layout/components/Pa
 import { PageLayoutRecordPageCustomizationSessionRegistrationEffect } from '@/page-layout/components/PageLayoutRecordPageCustomizationSessionRegistrationEffect';
 import { PageLayoutRendererContent } from '@/page-layout/components/PageLayoutRendererContent';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
+import { RecordTableWidgetViewDraftsInitializationEffect } from '@/page-layout/widgets/record-table/components/RecordTableWidgetViewDraftsInitializationEffect';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
@@ -41,6 +42,7 @@ export const PageLayoutRenderer = ({
         >
           <PageLayoutInitializationQueryEffect pageLayoutId={pageLayoutId} />
           <PageLayoutRecordPageCustomizationSessionRegistrationEffect />
+          <RecordTableWidgetViewDraftsInitializationEffect />
           <PageLayoutRendererContent />
         </PageLayoutEditModeProvider>
       </TabListComponentInstanceContext.Provider>

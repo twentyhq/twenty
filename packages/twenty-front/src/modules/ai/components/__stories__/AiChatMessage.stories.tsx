@@ -31,7 +31,6 @@ const StyledConversationContainer = styled.div`
 
 const INSTANCE_ID = 'agentChatStoryInstance';
 
-// Mock messages for the conversation showcase
 const mockUserMessage: ExtendedUIMessage = {
   id: 'msg-user-1',
   role: 'user',
@@ -310,7 +309,6 @@ const meta: Meta<typeof AiChatMessage> = {
 export default meta;
 type Story = StoryObj<typeof AiChatMessage>;
 
-// Conversation showcase - demonstrates a full AI chat flow
 export const ConversationWithCodeExecution: Story = {
   render: () => (
     <StyledConversationContainer>

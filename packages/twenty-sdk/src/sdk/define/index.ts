@@ -168,6 +168,8 @@ export { defineViewField } from '@/sdk/define/view-fields/define-view-field';
 export {
   getSystemViewFieldUniversalIdentifier,
   getSystemViewUniversalIdentifier,
+  SYSTEM_VIEW_KEYS,
+  type SystemViewKey,
 } from 'twenty-shared/application';
 export type { ViewConfig } from '@/sdk/define/views/view-config';
 export { ViewKey } from '@/sdk/define/views/view-key';
@@ -187,8 +189,10 @@ export {
   DateDisplayFormat,
   FieldMetadataSettingsOnClickAction,
   HTTPMethod,
+  MetadataWritability,
   NavigationMenuItemType,
   NumberDataType,
+  ObjectOpenRecordIn,
   ObjectRecordGroupByDateGranularity,
   PageLayoutTabLayoutMode,
   PageLayoutType,

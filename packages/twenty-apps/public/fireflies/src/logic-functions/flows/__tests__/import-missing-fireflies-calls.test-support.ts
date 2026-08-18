@@ -2,12 +2,7 @@ import { type Mock, vi } from 'vitest';
 
 export const FIREFLIES_API_KEY = 'fireflies-api-key';
 export const FIREFLIES_BACKFILL_FROM_DATE = '2026-05-01T00:00:00.000Z';
-export const FAR_DEADLINE_MILLISECONDS = Number.MAX_SAFE_INTEGER;
-export const INITIAL_FIREFLIES_BACKFILL_CURSOR = {
-  fromDate: FIREFLIES_BACKFILL_FROM_DATE,
-  toDate: '2026-07-30T00:00:00.000Z',
-  skip: 0,
-};
+export const FIREFLIES_BACKFILL_TO_DATE = '2026-07-30T00:00:00.000Z';
 
 export const skipSleep = async (): Promise<void> => {};
 
@@ -46,7 +41,10 @@ export const serveFirefliesApi = (
   let listRequestIndex = 0;
 
   fetchMock.mockImplementation(async (_url: string, init: RequestInit) => {
-    const body = JSON.parse(String(init.body)) as { query: string };
+    const body = JSON.parse(String(init.body)) as {
+      query: string;
+      variables?: { transcriptId?: string };
+    };
 
     if (body.query.includes('query Transcripts(')) {
       const page = pages[listRequestIndex] ?? [];
@@ -58,7 +56,7 @@ export const serveFirefliesApi = (
 
     return buildGraphqlResponse({
       transcript: {
-        id: 'detail',
+        id: body.variables?.transcriptId ?? 'detail',
         title: 'Call detail',
         date: Date.parse(FIREFLIES_BACKFILL_FROM_DATE),
         duration: 30,

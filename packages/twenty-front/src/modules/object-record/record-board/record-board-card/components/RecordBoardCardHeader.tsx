@@ -16,7 +16,7 @@ import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/us
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
+import { OpenRecordIn } from 'twenty-shared/types';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -24,7 +24,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ChipVariant } from 'twenty-ui/data-display';
 import { IconEye, IconEyeOff } from 'twenty-ui/icon';
 import { Checkbox, CheckboxVariant, LightIconButton } from 'twenty-ui/input';
-import { useIsTouchDevice } from 'twenty-ui/utilities';
+import { useIsMobile, useIsTouchDevice } from 'twenty-ui/utilities';
 
 const StyledCompactIconContainer = styled.div`
   align-items: center;
@@ -72,11 +72,12 @@ export const RecordBoardCardHeader = () => {
   const openRecordIn = useResolveOpenRecordIn(objectMetadataItem.nameSingular);
 
   const isTouchDevice = useIsTouchDevice();
+  const isMobile = useIsMobile();
 
   const recordStore = useAtomFamilyStateValue(recordStoreFamilyState, recordId);
 
   const triggerEvent =
-    openRecordIn === ViewOpenRecordIn.SIDE_PANEL || isTouchDevice
+    openRecordIn === OpenRecordIn.SIDE_PANEL || isTouchDevice
       ? 'CLICK'
       : 'MOUSE_DOWN';
 
@@ -113,19 +114,21 @@ export const RecordBoardCardHeader = () => {
           </StopPropagationContainer>
         </StyledCompactIconContainer>
       )}
-      <StyledCheckboxContainer className="checkbox-container">
-        <StopPropagationContainer>
-          <Checkbox
-            hoverable
-            checked={isRecordBoardCardSelected}
-            onChange={(value) => {
-              setIsRecordBoardCardSelected(value.target.checked);
-              checkIfLastUnselectAndCloseDropdown();
-            }}
-            variant={CheckboxVariant.Secondary}
-          />
-        </StopPropagationContainer>
-      </StyledCheckboxContainer>
+      {!isMobile && (
+        <StyledCheckboxContainer className="checkbox-container">
+          <StopPropagationContainer>
+            <Checkbox
+              hoverable
+              checked={isRecordBoardCardSelected}
+              onChange={(value) => {
+                setIsRecordBoardCardSelected(value.target.checked);
+                checkIfLastUnselectAndCloseDropdown();
+              }}
+              variant={CheckboxVariant.Secondary}
+            />
+          </StopPropagationContainer>
+        </StyledCheckboxContainer>
+      )}
     </RecordCardHeaderContainer>
   );
 };

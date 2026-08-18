@@ -9,7 +9,10 @@ import { type SelectableItem } from '@/object-record/select/types/SelectableItem
 import { getObjectFilterFields } from '@/object-record/select/utils/getObjectFilterFields';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
-import { type OrderBy } from 'twenty-shared/types';
+import {
+  type OrderBy,
+  type RecordGqlOperationFilter,
+} from 'twenty-shared/types';
 
 export const useRecordsForSelect = ({
   searchFilterText,
@@ -19,6 +22,7 @@ export const useRecordsForSelect = ({
   excludedRecordIds = [],
   objectNameSingular,
   allowRequestsToTwentyIcons,
+  filter,
 }: {
   searchFilterText: string;
   sortOrder?: OrderBy;
@@ -27,6 +31,7 @@ export const useRecordsForSelect = ({
   excludedRecordIds?: string[];
   objectNameSingular: string;
   allowRequestsToTwentyIcons: boolean;
+  filter?: RecordGqlOperationFilter;
 }) => {
   const { mapToObjectRecordIdentifier } = useMapToObjectRecordIdentifier({
     objectNameSingular,
@@ -49,7 +54,7 @@ export const useRecordsForSelect = ({
 
   const { loading: selectedRecordsLoading, records: selectedRecordsData } =
     useFindManyRecords({
-      filter: selectedIdsFilter,
+      filter: makeAndFilterVariables([selectedIdsFilter, filter]),
       orderBy: orderByField,
       objectNameSingular,
       skip: !selectedIds.length,
@@ -65,7 +70,6 @@ export const useRecordsForSelect = ({
         const [parentFieldName, subFieldName] = fieldName.split('.');
 
         if (isNonEmptyString(subFieldName)) {
-          // Composite field
           return {
             [parentFieldName]: {
               [subFieldName]: {
@@ -88,7 +92,11 @@ export const useRecordsForSelect = ({
     loading: filteredSelectedRecordsLoading,
     records: filteredSelectedRecordsData,
   } = useFindManyRecords({
-    filter: makeAndFilterVariables([...searchFilters, selectedIdsFilter]),
+    filter: makeAndFilterVariables([
+      ...searchFilters,
+      selectedIdsFilter,
+      filter,
+    ]),
     orderBy: orderByField,
     objectNameSingular,
     skip: !selectedIds.length,
@@ -100,7 +108,7 @@ export const useRecordsForSelect = ({
     : undefined;
   const { loading: recordsToSelectLoading, records: recordsToSelectData } =
     useFindManyRecords({
-      filter: makeAndFilterVariables([...searchFilters, notFilter]),
+      filter: makeAndFilterVariables([...searchFilters, notFilter, filter]),
       limit: limit ?? DEFAULT_SEARCH_REQUEST_LIMIT,
       orderBy: orderByField,
       objectNameSingular,

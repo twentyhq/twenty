@@ -1,7 +1,7 @@
 import { Controller, Get, Query, Res, UseGuards } from '@nestjs/common';
 
 import { Response } from 'express';
-import { SettingsPath } from 'twenty-shared/types';
+import { ApiPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
 import { ApplicationRegistrationClaimService } from 'src/engine/core-modules/application/application-registration/application-registration-claim.service';
@@ -20,7 +20,7 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 // GitHub OAuth callback of the trusted-publishers claim flow. Auth context
 // travels in the signed state token, not in a session, hence the public
 // endpoint.
-@Controller('application-registration-claim')
+@Controller(ApiPath.ApplicationRegistrationClaim)
 export class ApplicationRegistrationClaimController {
   constructor(
     private readonly applicationRegistrationClaimService: ApplicationRegistrationClaimService,

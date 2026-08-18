@@ -1,11 +1,11 @@
 import { t } from '@lingui/core/macro';
-import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormNestedFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormNestedFieldInputContainer';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { type FieldLinksDraftValue } from '@/object-record/record-field/ui/types/FieldInputDraftValue';
 import { type FieldLinksValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { InputLabel } from '@/ui/input/components/InputLabel';
+import { InputLabel } from 'twenty-ui/input';
 
 type FormLinksFieldInputProps = {
   label?: string;
@@ -31,7 +31,6 @@ export const FormLinksFieldInput = ({
         primaryLinkUrl: defaultValue?.primaryLinkUrl ?? '',
         [field]: updatedLinksPart,
       };
-      // We need to validate the links and display an error message if the links are not valid
       onChange(updatedLinks);
     };
 

@@ -31,7 +31,7 @@ export default definePageLayout({
       title: 'Hello World',
       position: 50,
       icon: 'IconWorld',
-      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       widgets: [
         {
           universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
@@ -51,11 +51,34 @@ export default definePageLayout({
 
 ### Основные моменты
 
-* `type` обычно равен `'RECORD_PAGE'` для настройки детального представления конкретного объекта.
+* `type` — одно из значений `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'` или `'STANDALONE_PAGE'`. Используйте `'RECORD_PAGE'` для настройки детального представления конкретного объекта.
 * `objectUniversalIdentifier` указывает, к какому объекту применяется этот макет.
-* Каждая `tab` определяет раздел страницы с `title`, `position` и `layoutMode` (`CANVAS` для свободного макета).
+* Каждая `tab` определяет раздел страницы с `title`, `position` и `layoutMode`: `VERTICAL_LIST` для страниц записей и автономных страниц, `GRID` для панелей мониторинга. Во вкладке `VERTICAL_LIST` один виджет отображается на всю ширину и занимает всю вкладку; при нескольких виджетах они располагаются в виде карточек. Вкладка `GRID` всегда раскладывает свои виджеты в виде карточек на 12‑колоночной сетке, независимо от их количества, так что выбирайте `VERTICAL_LIST`, когда нужно, чтобы один виджет заполнял страницу.
+* Явно задайте `layoutMode`. Если его не указывать, вы получите `VERTICAL_LIST` на `STANDALONE_PAGE` и `GRID` в остальных случаях, что редко бывает нужно на странице записи.
 * Каждый `widget` внутри вкладки может отображать [front component](/l/ru/developers/extend/apps/layout/front-components), список связей или другие встроенные типы виджетов.
 * `position` у вкладок управляет их порядком. Используйте большие значения (например, 50), чтобы разместить пользовательские вкладки после встроенных.
+
+### Виджеты полей
+
+Виджет `FIELD` отображает одно поле записи. Для полей связи он также может встраивать список связанных записей:
+
+```ts
+{
+  universalIdentifier: 'c1c2c3c4-c5c6-4000-8000-000000000003',
+  title: 'People → Opportunities',
+  type: 'FIELD',
+  configuration: {
+    configurationType: 'FIELD',
+    fieldMetadataId: PEOPLE_FIELD_UNIVERSAL_IDENTIFIER,
+    fieldDisplayMode: 'TABLE',
+    nestedRelationFieldMetadataId: OPPORTUNITIES_FIELD_UNIVERSAL_IDENTIFIER,
+  },
+}
+```
+
+* `fieldMetadataId` принимает универсальный идентификатор поля в объекте макета.
+* `fieldDisplayMode` может иметь одно из следующих значений: `'FIELD'`, `'CARD'`, `'EDITOR'`, `'VIEW'` или `'TABLE'`. `TABLE` встраивает представление, отображающее записи поля связи «один‑ко‑многим».
+* `nestedRelationFieldMetadataId` является необязательным и принимает универсальный идентификатор поля связи «один‑ко‑многим» на целевом объекте связи, чтобы перечислять записи на два перехода связи дальше (например, страница Company, перечисляющая сделки людей этой компании, или страница Person, перечисляющая сделки компании этого человека). Первый переход может быть полем связи «один‑ко‑многим» или «многие‑к‑одному», второй обязан быть «один‑ко‑многим» (соединительные связи не поддерживаются), и это требует `fieldDisplayMode: 'TABLE'` — комбинирование его с любым другим режимом отображения является ошибкой валидации, поскольку вложенный виджет всегда отображается как встраиваемое представление.
 
 ## definePageLayoutTab
 
@@ -77,7 +100,7 @@ export default definePageLayoutTab({
   title: 'Hello World',
   position: 1000,
   icon: 'IconWorld',
-  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
   widgets: [
     {
       universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',

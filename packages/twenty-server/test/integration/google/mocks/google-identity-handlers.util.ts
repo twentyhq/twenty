@@ -20,6 +20,9 @@ export const googleIdentityHandlers = (handle: string): MswHandler[] => [
   http.get('https://gmail.googleapis.com/gmail/v1/users/me/profile', () =>
     HttpResponse.json({ emailAddress: handle, messagesTotal: 0 }),
   ),
+  http.get('https://people.googleapis.com/v1/people/me', () =>
+    HttpResponse.json({ names: [{ displayName: 'Jane Austen' }] }),
+  ),
   http.get('*/gmail/v1/users/me/settings/sendAs', () =>
     HttpResponse.json({ sendAs: [{ sendAsEmail: handle, isPrimary: true }] }),
   ),

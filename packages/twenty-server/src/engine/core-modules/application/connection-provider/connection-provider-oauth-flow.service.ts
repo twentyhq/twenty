@@ -7,6 +7,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
+import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
 import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
@@ -21,20 +22,11 @@ import { exchangeCodeForToken } from 'src/engine/core-modules/application/connec
 import { generatePkceVerifier } from 'src/engine/core-modules/application/connection-provider/utils/generate-pkce-verifier.util';
 import { type AppOAuthStateJwtPayload } from 'src/engine/core-modules/auth/types/app-oauth-state-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import {
-  LogicFunctionTriggerJob,
-  type LogicFunctionTriggerJobData,
-} from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const STATE_JWT_EXPIRES_IN = '10m';
 
@@ -70,12 +62,9 @@ export class ConnectionProviderOAuthFlowService {
     private readonly secureHttpClientService: SecureHttpClientService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
+    private readonly connectionProviderLifecycleHookService: ConnectionProviderLifecycleHookService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
-    @InjectMessageQueue(MessageQueue.logicFunctionQueue)
-    private readonly messageQueueService: MessageQueueService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   async startAuthorizationFlow(
@@ -199,7 +188,7 @@ export class ConnectionProviderOAuthFlowService {
         statePayload.reconnectingConnectedAccountId,
     });
 
-    await this.dispatchOnConnectHook({
+    await this.connectionProviderLifecycleHookService.dispatchOnConnect({
       provider,
       workspaceId: statePayload.workspaceId,
       connectedAccountId: connectedAccount.id,
@@ -211,65 +200,6 @@ export class ConnectionProviderOAuthFlowService {
       applicationId: provider.applicationId,
       redirectLocation: statePayload.redirectLocation,
     };
-  }
-
-  private async dispatchOnConnectHook({
-    provider,
-    workspaceId,
-    connectedAccountId,
-  }: {
-    provider: OAuthConnectionProvider;
-    workspaceId: string;
-    connectedAccountId: string;
-  }): Promise<void> {
-    const { onConnectLogicFunctionUniversalIdentifier } = provider;
-
-    if (!isDefined(onConnectLogicFunctionUniversalIdentifier)) {
-      return;
-    }
-
-    // The on-connect hook is best-effort: the ConnectedAccount is already
-    // persisted, so a misconfigured or failing hook must not break the OAuth
-    // callback. We still report failures to Sentry so they don't go unnoticed.
-    try {
-      const { flatLogicFunctionMaps } =
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'flatLogicFunctionMaps',
-        ]);
-
-      const flatLogicFunction =
-        flatLogicFunctionMaps.byUniversalIdentifier[
-          onConnectLogicFunctionUniversalIdentifier
-        ];
-
-      if (
-        !isDefined(flatLogicFunction) ||
-        isDefined(flatLogicFunction.deletedAt)
-      ) {
-        throw new ConnectionProviderException(
-          `Connection provider ${provider.id} references on-connect logic function ${onConnectLogicFunctionUniversalIdentifier}, which was not found in workspace ${workspaceId}.`,
-          ConnectionProviderExceptionCode.ON_CONNECT_LOGIC_FUNCTION_NOT_FOUND,
-        );
-      }
-
-      await this.messageQueueService.add<LogicFunctionTriggerJobData>(
-        LogicFunctionTriggerJob.name,
-        {
-          logicFunctionId: flatLogicFunction.id,
-          workspaceId,
-          payload: {
-            connectionProviderId: provider.id,
-            connectionProviderName: provider.name,
-            connectedAccountId,
-          },
-        },
-        { retryLimit: 3 },
-      );
-    } catch (error) {
-      this.exceptionHandlerService.captureExceptions([error], {
-        workspace: { id: workspaceId },
-      });
-    }
   }
 
   private async signState(payload: AppOAuthStateJwtPayload): Promise<string> {

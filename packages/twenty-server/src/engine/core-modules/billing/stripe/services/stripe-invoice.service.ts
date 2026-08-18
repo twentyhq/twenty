@@ -4,6 +4,10 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import type Stripe from 'stripe';
 
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -54,25 +58,35 @@ export class StripeInvoiceService {
     currency: string;
     description: string;
   }): Promise<void> {
-    await this.stripe.invoiceItems.create({
-      customer: stripeCustomerId,
-      subscription: stripeSubscriptionId,
-      amount: diffAmountInCents,
-      currency,
-      description,
-    });
-
     const invoice = await this.stripe.invoices.create({
       customer: stripeCustomerId,
       subscription: stripeSubscriptionId,
+      pending_invoice_items_behavior: 'exclude',
     });
 
-    const finalizedInvoice = await this.stripe.invoices.finalizeInvoice(
-      invoice.id,
-      {
-        auto_advance: true,
-      },
-    );
+    let finalizedInvoice: Stripe.Invoice;
+
+    try {
+      await this.stripe.invoiceItems.create({
+        customer: stripeCustomerId,
+        subscription: stripeSubscriptionId,
+        invoice: invoice.id,
+        amount: diffAmountInCents,
+        currency,
+        description,
+      });
+
+      finalizedInvoice = await this.stripe.invoices.finalizeInvoice(
+        invoice.id,
+        {
+          auto_advance: false,
+        },
+      );
+    } catch (error) {
+      await this.deleteDraftUpgradeInvoice(invoice.id);
+
+      throw error;
+    }
 
     if (finalizedInvoice.status === 'paid') {
       return;
@@ -80,12 +94,68 @@ export class StripeInvoiceService {
 
     try {
       await this.stripe.invoices.pay(invoice.id);
-    } catch (error) {
-      const refreshedInvoice = await this.stripe.invoices.retrieve(invoice.id);
+    } catch (payError) {
+      await this.settleFailedUpgradeInvoiceOrThrow({
+        invoiceId: invoice.id,
+        payError,
+      });
+    }
+  }
 
-      if (refreshedInvoice.status !== 'paid') {
-        throw error;
+  private async settleFailedUpgradeInvoiceOrThrow({
+    invoiceId,
+    payError,
+  }: {
+    invoiceId: string;
+    payError: unknown;
+  }): Promise<void> {
+    const invoice = await this.stripe.invoices.retrieve(invoiceId);
+
+    if (invoice.status === 'paid') {
+      return;
+    }
+
+    const payErrorMessage = this.getErrorMessage(payError);
+
+    try {
+      await this.stripe.invoices.voidInvoice(invoiceId);
+    } catch (voidError) {
+      const refreshedInvoice = await this.stripe.invoices.retrieve(invoiceId);
+
+      if (refreshedInvoice.status === 'paid') {
+        return;
+      }
+
+      if (refreshedInvoice.status !== 'void') {
+        throw new BillingException(
+          `Failed to void upgrade invoice ${invoiceId} after payment failure (${payErrorMessage}): ${this.getErrorMessage(voidError)}`,
+          BillingExceptionCode.BILLING_UPGRADE_INVOICE_VOID_FAILED,
+        );
       }
     }
+
+    const isCardDecline =
+      payError instanceof this.stripe.errors.StripeCardError;
+
+    throw new BillingException(
+      `Failed to pay upgrade invoice ${invoiceId}: ${payErrorMessage}`,
+      isCardDecline
+        ? BillingExceptionCode.BILLING_UPGRADE_INVOICE_PAYMENT_FAILED
+        : BillingExceptionCode.BILLING_STRIPE_ERROR,
+    );
+  }
+
+  private async deleteDraftUpgradeInvoice(invoiceId: string): Promise<void> {
+    try {
+      await this.stripe.invoices.del(invoiceId);
+    } catch (deleteError) {
+      this.logger.error(
+        `Failed to delete draft upgrade invoice ${invoiceId}: ${this.getErrorMessage(deleteError)}`,
+      );
+    }
+  }
+
+  private getErrorMessage(error: unknown): string {
+    return error instanceof Error ? error.message : 'unknown error';
   }
 }

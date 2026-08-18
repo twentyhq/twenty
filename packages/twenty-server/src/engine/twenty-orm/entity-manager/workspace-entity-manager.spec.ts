@@ -1,4 +1,6 @@
 import {
+  MetadataWritability,
+  ObjectOpenRecordIn,
   type FieldMetadataType,
   type ObjectsPermissions,
 } from 'twenty-shared/types';
@@ -124,6 +126,8 @@ describe('WorkspaceEntityManager', () => {
       isLabelSyncedWithName: false,
       isUIEditable: true,
       isUICreatable: true,
+      writability: MetadataWritability.OPEN,
+      openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
       duplicateCriteria: null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -160,6 +164,7 @@ describe('WorkspaceEntityManager', () => {
       isActive: true,
       isSystem: false,
       isUIEditable: true,
+      writability: MetadataWritability.OPEN,
       isUnique: false,
       options: null,
       settings: null,
@@ -243,10 +248,14 @@ describe('WorkspaceEntityManager', () => {
         IS_CALENDAR_WEEK_VIEW_ENABLED: false,
         IS_EMAIL_GROUP_ENABLED: false,
         IS_JUNCTION_RELATIONS_ENABLED: false,
+        IS_LIST_VIEW_ENABLED: false,
         IS_REST_METADATA_API_NEW_FORMAT_DIRECT: false,
         IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED: false,
         IS_SETTINGS_DISCOVERY_HERO_ENABLED: false,
         IS_WORKFLOW_VERSION_IN_CORE_ENABLED: false,
+        IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED: false,
+        IS_NATIVE_CALL_RECORDING_TABS_ENABLED: false,
+        IS_ORM_V2_READ_PATH_ENABLED: false,
       },
       userWorkspaceRoleMap: {},
       apiKeyRoleMap: {},
@@ -317,7 +326,6 @@ describe('WorkspaceEntityManager', () => {
 
     setWorkspaceContext(mockWorkspaceContext);
 
-    // Mock TypeORM connection methods
     const mockWorkspaceDataSource = {
       getMetadata: jest.fn().mockReturnValue({
         name: 'test-entity',
@@ -380,7 +388,6 @@ describe('WorkspaceEntityManager', () => {
         return entityName;
       });
 
-    // Mock typeORM's EntityManager methods
     jest
       .spyOn(EntityManager.prototype, 'save')
       .mockImplementation(() => Promise.resolve({}));
@@ -409,7 +416,6 @@ describe('WorkspaceEntityManager', () => {
       .spyOn(PlainObjectToDatabaseEntityTransformer.prototype, 'transform')
       .mockImplementation(() => Promise.resolve({}));
 
-    // Mock metadata methods
     const mockMetadata = {
       hasAllPrimaryKeys: jest.fn().mockReturnValue(true),
       columns: [],
@@ -418,12 +424,10 @@ describe('WorkspaceEntityManager', () => {
       findColumnWithPropertyPath: jest.fn(),
     };
 
-    // Update mockWorkspaceDataSource to include metadata
     mockWorkspaceDataSource.getMetadata = jest
       .fn()
       .mockReturnValue(mockMetadata);
 
-    // Reset the mock before each test
     jest.clearAllMocks();
   });
 
@@ -474,6 +478,7 @@ describe('WorkspaceEntityManager', () => {
         selectedColumns: [],
         allFieldsSelected: false,
         updatedColumns: [],
+        authContext: mockWorkspaceContext.authContext,
       });
     });
 
@@ -583,6 +588,7 @@ describe('WorkspaceEntityManager', () => {
         selectedColumns: [],
         allFieldsSelected: false,
         updatedColumns: [],
+        authContext: mockWorkspaceContext.authContext,
       });
     });
   });

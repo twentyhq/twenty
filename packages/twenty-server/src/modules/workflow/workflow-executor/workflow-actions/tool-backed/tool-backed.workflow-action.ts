@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 
-import { resolveInput } from 'twenty-shared/utils';
+import { resolveInput as resolveWorkflowInput } from 'twenty-shared/utils';
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
@@ -49,6 +49,13 @@ export abstract class ToolBackedWorkflowAction<
     return resolvedInput;
   }
 
+  protected resolveInput(
+    input: TInput,
+    context: Record<string, unknown>,
+  ): TInput {
+    return resolveWorkflowInput(input, context) as TInput;
+  }
+
   protected abstract buildStepLog(
     args: BuildStepLogArgs<TInput>,
   ): WorkflowRunStepLog;
@@ -66,7 +73,7 @@ export abstract class ToolBackedWorkflowAction<
     const rawInput = step.settings.input as TInput;
     const preprocessed = await this.preprocessInput(rawInput, context);
     const resolvedInput = await this.postprocessInput(
-      resolveInput(preprocessed, context) as TInput,
+      this.resolveInput(preprocessed, context),
       runInfo.workspaceId,
     );
 

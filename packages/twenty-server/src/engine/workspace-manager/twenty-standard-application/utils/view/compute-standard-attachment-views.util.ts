@@ -5,6 +5,7 @@ import {
   createStandardViewFlatMetadata,
   type CreateStandardViewArgs,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/create-standard-view-flat-metadata.util';
+import { OBJECT_LABEL_PLURAL_PLACEHOLDER } from 'src/engine/metadata-modules/view/constants/object-label-plural-placeholder.constant';
 
 export const computeStandardAttachmentViews = (
   args: Omit<CreateStandardViewArgs<'attachment'>, 'context'>,
@@ -15,7 +16,7 @@ export const computeStandardAttachmentViews = (
       objectName: 'attachment',
       context: {
         viewName: 'allAttachments',
-        name: 'All {objectLabelPlural}',
+        name: `All ${OBJECT_LABEL_PLURAL_PLACEHOLDER}`,
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,

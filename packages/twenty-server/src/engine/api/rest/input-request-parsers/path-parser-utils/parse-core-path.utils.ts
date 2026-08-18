@@ -1,14 +1,15 @@
 import { BadRequestException } from '@nestjs/common';
 
 import { type Request } from 'express';
+import { ApiPath } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 export const parseCorePath = (
   request: Request,
 ): { object: string; id?: string } => {
   const queryAction = request.path
-    .replace('/rest/', '')
-    .replace('/rest', '')
+    .replace(`/${ApiPath.Rest}/`, '')
+    .replace(`/${ApiPath.Rest}`, '')
     .split('/')
     .filter(Boolean);
 
@@ -17,13 +18,13 @@ export const parseCorePath = (
     (queryAction.length > 3 && queryAction[0] === 'restore')
   ) {
     throw new BadRequestException(
-      `Query path '${request.path}' invalid. Valid examples: /rest/companies/id or /rest/companies or /rest/batch/companies`,
+      `Query path '${request.path}' invalid. Valid examples: /${ApiPath.Rest}/companies/id or /${ApiPath.Rest}/companies or /${ApiPath.Rest}/batch/companies`,
     );
   }
 
   if (queryAction.length === 0) {
     throw new BadRequestException(
-      `Query path '${request.path}' invalid. Valid examples: /rest/companies/id or /rest/companies or /rest/batch/companies`,
+      `Query path '${request.path}' invalid. Valid examples: /${ApiPath.Rest}/companies/id or /${ApiPath.Rest}/companies or /${ApiPath.Rest}/batch/companies`,
     );
   }
 

@@ -18,10 +18,9 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { AppPath } from 'twenty-shared/types';
+import { AppPath, OpenRecordIn } from 'twenty-shared/types';
 import { findByProperty, isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { ViewOpenRecordIn } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 type UseCreateNewIndexRecordProps = {
@@ -92,7 +91,7 @@ export const useCreateNewIndexRecord = ({
         ...mergedRecordInput,
       });
 
-      if (openRecordIn === ViewOpenRecordIn.SIDE_PANEL) {
+      if (openRecordIn === OpenRecordIn.SIDE_PANEL) {
         openRecordInSidePanel({
           recordId,
           objectNameSingular: objectMetadataItem.nameSingular,

@@ -71,6 +71,8 @@ export const createDefaultGraphWidget = ({
     __typename: 'PageLayoutWidget',
     id,
     applicationId: '',
+    universalIdentifier: id,
+    isSystemSideEffect: false,
     pageLayoutTabId,
     title,
     isActive: true,

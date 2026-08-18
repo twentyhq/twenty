@@ -3,13 +3,13 @@ run-name: "PR Review Dispatch #${{ github.event.pull_request.number }}"
 
 on:
   pull_request_target:
-    types: [ready_for_review, synchronize, labeled]
+    types: [opened, ready_for_review, synchronize, labeled]
 
 permissions: {}
 
 concurrency:
-  group: pr-review-dispatch-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
+  group: pr-review-dispatch-${{ github.event.pull_request.number }}-${{ github.event.action }}
+  cancel-in-progress: ${{ github.event.action == 'synchronize' }}
 
 jobs:
   dispatch:
@@ -19,20 +19,22 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Mint ci-privileged dispatch token
+      - name: Mint twenty-factory dispatch token
         id: app-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
           client-id: ${{ vars.TWENTY_WORKFLOW_DISPATCHER_CLIENT_ID }}
           private-key: ${{ secrets.TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY }}
           owner: twentyhq
-          repositories: ci-privileged
+          repositories: twenty-factory
           permission-actions: write
 
       - name: Forward to PR review
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
+          EVENT: ${{ github.event.action }}
         run: |
-          gh workflow run pr-review.yaml --repo twentyhq/ci-privileged --ref main \
-            -f pr_number="$PR_NUMBER"
+          gh workflow run pr-review.yaml --repo twentyhq/twenty-factory --ref main \
+            -f pr_number="$PR_NUMBER" \
+            -f event="$EVENT"

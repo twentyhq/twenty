@@ -37,6 +37,7 @@ exports[`deleteFlatEntityForeignKeyAggregators should strip raw workspace-scoped
   ],
   "viewFilterUniversalIdentifiers": [],
   "viewSortUniversalIdentifiers": [],
+  "writability": "OPEN",
 }
 `;
 
@@ -68,6 +69,7 @@ exports[`deleteFlatEntityForeignKeyAggregators should strip raw workspace-scoped
   "namePlural": "defaultflatObjectMetadataNamePlural",
   "nameSingular": "defaultflatObjectMetadataNameSingular",
   "objectPermissionUniversalIdentifiers": [],
+  "openRecordIn": "USER_CHOICE",
   "overrides": null,
   "searchFieldMetadataUniversalIdentifiers": [],
   "shortcut": "shortcut",
@@ -77,5 +79,6 @@ exports[`deleteFlatEntityForeignKeyAggregators should strip raw workspace-scoped
   "viewUniversalIdentifiers": [
     "view-universal-identifier",
   ],
+  "writability": "OPEN",
 }
 `;

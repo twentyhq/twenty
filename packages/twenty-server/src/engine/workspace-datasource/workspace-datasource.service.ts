@@ -46,13 +46,6 @@ export class WorkspaceDataSourceService {
     return isNonEmptyString(workspace?.databaseSchema);
   }
 
-  /**
-   *
-   * Create a new DB schema for a workspace
-   *
-   * @param workspaceId
-   * @returns
-   */
   public async createWorkspaceDBSchema(workspaceId: string): Promise<string> {
     this.assertDDLNotLocked();
 
@@ -68,13 +61,6 @@ export class WorkspaceDataSourceService {
     }
   }
 
-  /**
-   *
-   * Delete a DB schema for a workspace
-   *
-   * @param workspaceId
-   * @returns
-   */
   public async deleteWorkspaceDBSchema(workspaceId: string): Promise<void> {
     this.assertDDLNotLocked();
 

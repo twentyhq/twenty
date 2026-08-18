@@ -4,12 +4,15 @@ import { AiChatNonLastMessageIdsList } from '@/ai/components/AiChatNonLastMessag
 import { AiChatPendingResponseIndicator } from '@/ai/components/AiChatPendingResponseIndicator';
 import { AiChatScrollToBottomButton } from '@/ai/components/AiChatScrollToBottomButton';
 import { AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect } from '@/ai/components/AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect';
-import { AgentChatScrollToBottomOnMountLayoutEffect } from '@/ai/components/AgentChatScrollToBottomOnMountLayoutEffect';
-import { AI_CHAT_SCROLL_WRAPPER_ID } from '@/ai/constants/AiChatScrollWrapperId';
+import { AgentChatPinScrollToBottomOnMountLayoutEffect } from '@/ai/components/AgentChatPinScrollToBottomOnMountLayoutEffect';
+import { AgentChatStreamingAutoScrollEffect } from '@/ai/components/AgentChatStreamingAutoScrollEffect';
 import { agentChatHasMessageComponentSelector } from '@/ai/states/selectors/agentChatHasMessageComponentSelector';
 import { agentChatIsInitialScrollPendingOnThreadChangeState } from '@/ai/states/agentChatIsInitialScrollPendingOnThreadChangeState';
 import { AiChatMessageListPreambleContext } from '@/ai/contexts/AiChatMessageListPreambleContext';
+import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
+import { getAiChatScrollWrapperInstanceId } from '@/ai/utils/getAiChatScrollWrapperInstanceId';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { ScrollWrapperComponentInstanceContext } from '@/ui/utilities/scroll/states/contexts/ScrollWrapperComponentInstanceContext';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
@@ -43,9 +46,13 @@ const StyledMessageListContent = styled.div`
 
 export const AiChatTabMessageList = () => {
   const messageListPreamble = useContext(AiChatMessageListPreambleContext);
+  const aiChatSurface = useContext(AiChatSurfaceContext);
   const agentChatHasMessage = useAtomComponentSelectorValue(
     agentChatHasMessageComponentSelector,
   );
+
+  const scrollWrapperInstanceId =
+    getAiChatScrollWrapperInstanceId(aiChatSurface);
 
   const agentChatIsInitialScrollPendingOnThreadChange = useAtomStateValue(
     agentChatIsInitialScrollPendingOnThreadChangeState,
@@ -64,25 +71,30 @@ export const AiChatTabMessageList = () => {
   }
 
   return (
-    <StyledScrollWrapperContainer
-      style={{
-        visibility: agentChatIsInitialScrollPendingOnThreadChange
-          ? 'hidden'
-          : 'visible',
-      }}
+    <ScrollWrapperComponentInstanceContext.Provider
+      value={{ instanceId: scrollWrapperInstanceId }}
     >
-      <ScrollWrapper componentInstanceId={AI_CHAT_SCROLL_WRAPPER_ID}>
-        <StyledMessageListContent>
-          {messageListPreamble}
-          <AiChatNonLastMessageIdsList />
-          <AiChatLastMessageWithStreamingState />
-          <AiChatPendingResponseIndicator />
-          <AiChatErrorUnderMessageList />
-        </StyledMessageListContent>
-        <AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect />
-        <AgentChatScrollToBottomOnMountLayoutEffect />
-      </ScrollWrapper>
-      <AiChatScrollToBottomButton />
-    </StyledScrollWrapperContainer>
+      <StyledScrollWrapperContainer
+        style={{
+          visibility: agentChatIsInitialScrollPendingOnThreadChange
+            ? 'hidden'
+            : 'visible',
+        }}
+      >
+        <ScrollWrapper componentInstanceId={scrollWrapperInstanceId}>
+          <StyledMessageListContent>
+            {messageListPreamble}
+            <AiChatNonLastMessageIdsList />
+            <AiChatLastMessageWithStreamingState />
+            <AiChatPendingResponseIndicator />
+            <AiChatErrorUnderMessageList />
+          </StyledMessageListContent>
+          <AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect />
+          <AgentChatPinScrollToBottomOnMountLayoutEffect />
+          <AgentChatStreamingAutoScrollEffect />
+        </ScrollWrapper>
+        <AiChatScrollToBottomButton />
+      </StyledScrollWrapperContainer>
+    </ScrollWrapperComponentInstanceContext.Provider>
   );
 };
