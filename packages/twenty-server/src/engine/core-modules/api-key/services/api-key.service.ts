@@ -34,7 +34,7 @@ export class ApiKeyService {
     },
   ): Promise<ApiKeyEntity> {
     const { roleId, workspaceId, ...apiKeyFields } = apiKeyData;
-    const savedApiKey = await this.apiKeyRepository.insert(
+    const savedApiKey = await this.apiKeyRepository.insertAndReturnOne(
       workspaceId,
       apiKeyFields,
     );

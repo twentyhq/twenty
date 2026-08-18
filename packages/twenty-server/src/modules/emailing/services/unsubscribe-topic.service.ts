@@ -48,7 +48,7 @@ export class UnsubscribeTopicService {
     workspaceId: string,
     { name, description = null, visibility }: CreateUnsubscribeTopicArgs,
   ): Promise<UnsubscribeTopicEntity> {
-    return this.unsubscribeTopicRepository.insert(workspaceId, {
+    return this.unsubscribeTopicRepository.insertAndReturnOne(workspaceId, {
       name,
       description,
       visibility: visibility ?? UnsubscribeTopicVisibility.PRIVATE,

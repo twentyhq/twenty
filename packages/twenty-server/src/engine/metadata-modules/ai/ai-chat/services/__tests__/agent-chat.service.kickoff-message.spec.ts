@@ -14,11 +14,15 @@ const buildService = ({ existingHiddenMessage = null as unknown } = {}) => {
   };
   const messageRepository = {
     findOne: jest.fn().mockResolvedValue(existingHiddenMessage),
-    insert: jest.fn().mockResolvedValue({ id: 'kickoff-message-id' }),
+    insert: jest
+      .fn()
+      .mockResolvedValue({ identifiers: [{ id: 'kickoff-message-id' }] }),
     delete: jest.fn().mockResolvedValue({ affected: 1 }),
   };
   const turnRepository = {
-    insert: jest.fn().mockResolvedValue({ id: 'kickoff-turn-id' }),
+    insert: jest
+      .fn()
+      .mockResolvedValue({ identifiers: [{ id: 'kickoff-turn-id' }] }),
     delete: jest.fn().mockResolvedValue({ affected: 1 }),
   };
   const messagePartRepository = { insert: jest.fn().mockResolvedValue({}) };

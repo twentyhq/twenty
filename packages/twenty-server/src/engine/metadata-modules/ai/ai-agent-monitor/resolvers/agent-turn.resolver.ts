@@ -77,15 +77,21 @@ export class AgentTurnResolver {
       workspaceId: workspace.id,
     });
 
-    const savedThread = await this.threadRepository.insert(workspace.id, {
-      userWorkspaceId,
-      title: `Eval: ${input.substring(0, 50)}...`,
-    });
+    const savedThread = await this.threadRepository.insertAndReturnOne(
+      workspace.id,
+      {
+        userWorkspaceId,
+        title: `Eval: ${input.substring(0, 50)}...`,
+      },
+    );
 
-    const savedTurn = await this.turnRepository.insert(workspace.id, {
-      threadId: savedThread.id,
-      agentId,
-    });
+    const savedTurn = await this.turnRepository.insertAndReturnOne(
+      workspace.id,
+      {
+        threadId: savedThread.id,
+        agentId,
+      },
+    );
 
     await this.messageQueueService.add<{
       turnId: string;

@@ -59,7 +59,7 @@ describe('ApprovedAccessDomainService', () => {
             findOne: jest.fn(),
             find: jest.fn(),
             update: jest.fn(),
-            insert: jest.fn(),
+            insertAndReturnOne: jest.fn(),
           },
         },
         {
@@ -142,11 +142,11 @@ describe('ApprovedAccessDomainService', () => {
         isValidated: true,
       };
 
-      // jest.spyOn resolves insert to its last overload, the array one, so the
-      // single-entity resolution has to be widened past it.
       jest
-        .spyOn(approvedAccessDomainRepository, 'insert')
-        .mockResolvedValue(expectedApprovedAccessDomain as never);
+        .spyOn(approvedAccessDomainRepository, 'insertAndReturnOne')
+        .mockResolvedValue(
+          expectedApprovedAccessDomain as unknown as ApprovedAccessDomainEntity,
+        );
 
       jest
         .spyOn(service, 'sendApprovedAccessDomainValidationEmail')
@@ -159,7 +159,9 @@ describe('ApprovedAccessDomainService', () => {
         'validator@custom-domain.com',
       );
 
-      expect(approvedAccessDomainRepository.insert).toHaveBeenCalledWith(
+      expect(
+        approvedAccessDomainRepository.insertAndReturnOne,
+      ).toHaveBeenCalledWith(
         'workspace-id',
         expect.objectContaining({ domain }),
       );
@@ -181,7 +183,9 @@ describe('ApprovedAccessDomainService', () => {
           ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_MUST_BE_A_COMPANY_DOMAIN,
         ),
       );
-      expect(approvedAccessDomainRepository.insert).not.toHaveBeenCalled();
+      expect(
+        approvedAccessDomainRepository.insertAndReturnOne,
+      ).not.toHaveBeenCalled();
     });
   });
 

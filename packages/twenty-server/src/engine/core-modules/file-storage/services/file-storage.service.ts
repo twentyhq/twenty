@@ -244,7 +244,7 @@ export class FileStorageService {
       sourceFile: persistedSourceFile,
     });
 
-    return fileRepository.upsert(
+    return fileRepository.upsertAndReturnOne(
       workspaceId,
       {
         path: filePath,
@@ -291,7 +291,7 @@ export class FileStorageService {
       resourcePath,
     });
 
-    return this.fileRepository.upsert(
+    return this.fileRepository.upsertAndReturnOne(
       workspaceId,
       {
         path: filePath,

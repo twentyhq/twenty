@@ -105,9 +105,8 @@ export class BillingCreditGrantService {
     }
 
     try {
-      const insertedGrant = await this.billingCreditGrantRepository.insert(
-        workspaceId,
-        {
+      const { identifiers, generatedMaps } =
+        await this.billingCreditGrantRepository.insert(workspaceId, {
           amountMicro,
           type,
           effectiveAt,
@@ -116,10 +115,18 @@ export class BillingCreditGrantService {
           grantedByUserId,
           idempotencyKey,
           sourceGrantId,
-        },
-      );
+        });
 
-      return insertedGrant;
+      const insertedId = identifiers[0]?.id ?? generatedMaps[0]?.id;
+      const grantId = typeof insertedId === 'string' ? insertedId : undefined;
+
+      if (!isDefined(grantId)) {
+        return null;
+      }
+
+      return this.billingCreditGrantRepository.findOne(workspaceId, {
+        where: { id: grantId },
+      });
     } catch (error) {
       if (isDefined(idempotencyKey) && isUniqueViolation(error)) {
         return null;
