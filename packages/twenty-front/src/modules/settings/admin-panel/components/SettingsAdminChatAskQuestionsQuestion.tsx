@@ -122,7 +122,7 @@ export const SettingsAdminChatAskQuestionsQuestion = ({
               </StyledOptionLabelRow>
               {isDefined(option.description) && (
                 <StyledOptionDescription>
-                  {option.description}
+                  <TextWithChatReferences text={option.description} />
                 </StyledOptionDescription>
               )}
             </StyledOptionRow>
@@ -134,7 +134,9 @@ export const SettingsAdminChatAskQuestionsQuestion = ({
               <IconCheck size={14} />
               {t`Other`}
             </StyledOptionLabelRow>
-            <StyledOptionDescription>{freeText}</StyledOptionDescription>
+            <StyledOptionDescription>
+              <TextWithChatReferences text={freeText} />
+            </StyledOptionDescription>
           </StyledOptionRow>
         )}
       </StyledOptionsList>
