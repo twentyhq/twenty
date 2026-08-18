@@ -115,33 +115,32 @@ const parseAnswers = (
   return answers.length === value.length ? answers : null;
 };
 
-const parseResultFromToolOutput = (
-  toolOutput: unknown,
-): AdminAskQuestionsResult | null => {
-  if (!isPlainObject(toolOutput) || !isPlainObject(toolOutput.result)) {
-    return null;
-  }
+const getStoredResult = (toolOutput: unknown): Record<string, unknown> | null =>
+  isPlainObject(toolOutput) && isPlainObject(toolOutput.result)
+    ? toolOutput.result
+    : null;
 
-  const questions = parseQuestions(toolOutput.result.questions);
+const parseStoredResult = (
+  result: Record<string, unknown>,
+): AdminAskQuestionsResult | null => {
+  const questions = parseQuestions(result.questions);
 
   if (!isDefined(questions)) {
     return null;
   }
 
-  const status = isString(toolOutput.result.status)
-    ? toolOutput.result.status
-    : 'pending';
+  const status = isString(result.status) ? result.status : 'pending';
 
-  if (!isDefined(toolOutput.result.answers)) {
+  if (!isDefined(result.answers)) {
     return { questions, status };
   }
 
-  const answers = parseAnswers(toolOutput.result.answers, questions);
+  const answers = parseAnswers(result.answers, questions);
 
   return isDefined(answers) ? { questions, status, answers } : null;
 };
 
-const parseResultFromToolInput = (
+const parsePendingResultFromToolInput = (
   toolInput: unknown,
 ): AdminAskQuestionsResult | null => {
   if (!isPlainObject(toolInput)) {
@@ -160,8 +159,11 @@ export const parseAdminAskQuestionsResult = (
     return null;
   }
 
-  return (
-    parseResultFromToolOutput(parseAdminToolJson(part.toolOutput)) ??
-    parseResultFromToolInput(parseAdminToolJson(part.toolInput))
-  );
+  const storedResult = getStoredResult(parseAdminToolJson(part.toolOutput));
+
+  if (isDefined(storedResult)) {
+    return parseStoredResult(storedResult);
+  }
+
+  return parsePendingResultFromToolInput(parseAdminToolJson(part.toolInput));
 };

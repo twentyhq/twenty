@@ -136,6 +136,34 @@ describe('parseAdminAskQuestionsResult', () => {
     expect(result).toBeNull();
   });
 
+  it('should not fall back to the tool input when the output answers are malformed', () => {
+    const result = parseAdminAskQuestionsResult(
+      buildPart({
+        toolInput: { questions: QUESTIONS },
+        toolOutput: {
+          result: {
+            questions: QUESTIONS,
+            status: 'answered',
+            answers: [{ questionIndex: 0, selectedOptionIndices: [5] }],
+          },
+        },
+      }),
+    );
+
+    expect(result).toBeNull();
+  });
+
+  it('should still fall back to the tool input when the output has no result', () => {
+    const result = parseAdminAskQuestionsResult(
+      buildPart({
+        toolInput: { questions: QUESTIONS },
+        toolOutput: { success: true, message: 'Questions presented.' },
+      }),
+    );
+
+    expect(result).toEqual({ questions: QUESTIONS, status: 'pending' });
+  });
+
   it('should return null when an answer references an unknown question', () => {
     const result = parseAdminAskQuestionsResult(
       buildPart({
