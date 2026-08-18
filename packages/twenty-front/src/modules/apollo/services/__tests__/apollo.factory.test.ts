@@ -51,8 +51,6 @@ const UNAUTHENTICATED_RESPONSE = JSON.stringify({
   errors: [{ extensions: { code: 'UNAUTHENTICATED' } }],
 });
 
-// What a guard rejecting an unhydrated request produces: Nest's own default
-// message, as opposed to the message a permission exception carries.
 const FORBIDDEN_RESOURCE_RESPONSE = JSON.stringify({
   data: { trackAnalytics: null },
   errors: [
@@ -459,11 +457,6 @@ describe('ApolloFactory', () => {
     // A server that never read the session cookie -- an old pod mid-rollout, or
     // a cookie the browser no longer holds -- leaves the request with no
     // credential at all, which the guards refuse as FORBIDDEN.
-    // The replay has to carry a freshly renewed token: cookie mode is exactly
-    // the state in which nothing refreshes the retained one, so it has most
-    // likely expired. ErrorLink subscribes a replay straight to the original
-    // observer, so an UNAUTHENTICATED on the replay would never come back
-    // through the handler to trigger renewal -- renewing has to happen first.
     it('should renew the retained token pair and replay when a credential-less request is refused', async () => {
       setCookieAuthActive();
       fetchMock
@@ -498,7 +491,6 @@ describe('ApolloFactory', () => {
       expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
     });
 
-    // The one case that does end the session: nothing the client holds works.
     it('should sign out when the refresh token is rejected during the fallback', async () => {
       setCookieAuthActive();
       jest.mocked(renewToken).mockRejectedValue(
@@ -517,7 +509,6 @@ describe('ApolloFactory', () => {
       expect(mockOnUnauthenticatedError).toHaveBeenCalled();
     });
 
-    // Permission denials are FORBIDDEN too, and must not cost a credential swap.
     it('should leave a permission denial alone', async () => {
       setCookieAuthActive();
       fetchMock.mockResponse(PERMISSION_DENIED_RESPONSE);
@@ -538,8 +529,6 @@ describe('ApolloFactory', () => {
       expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
     });
 
-    // The probe sends no credential on purpose, so its refusal is the expected
-    // answer rather than a sign the cookie stopped working.
     it('should not fall back on a credential-less refusal for the cookie session probe', async () => {
       setCookieAuthActive();
       fetchMock.mockResponse(FORBIDDEN_RESOURCE_RESPONSE);

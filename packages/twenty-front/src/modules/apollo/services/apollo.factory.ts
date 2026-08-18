@@ -285,19 +285,9 @@ export class ApolloFactory implements ApolloManager {
         );
       };
 
-      // A dead session cookie makes every request credential-less, which the
-      // server refuses as FORBIDDEN rather than UNAUTHENTICATED, so the renewal
-      // path above never sees it. The cookie is httpOnly, so the client cannot
-      // tell that state from a working session either: without this the client
-      // stays "logged in" while every query returns null, forever.
-      //
-      // Routed through handleTokenRenewal rather than replaying directly: the
-      // retained access token has most likely expired, since cookie mode is
-      // exactly the state in which nothing refreshes it, and ErrorLink
-      // subscribes a replay straight to the original observer -- an
-      // UNAUTHENTICATED on that replay never re-enters this handler, so it
-      // would never reach renewal. Renewing first makes the replay succeed on
-      // its first attempt.
+      // Goes through handleTokenRenewal rather than replaying directly:
+      // ErrorLink subscribes a replay straight to the original observer, so an
+      // UNAUTHENTICATED on it never re-enters this handler to trigger renewal.
       const canFallBackFromCookieAuth = (
         operation: ApolloLink.Operation,
       ): boolean =>
