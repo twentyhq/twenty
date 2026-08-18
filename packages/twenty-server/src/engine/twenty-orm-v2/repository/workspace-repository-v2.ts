@@ -33,6 +33,8 @@ import { type MutationKind } from 'src/engine/twenty-orm-v2/sql/utils/build-muta
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import {
   applyFindOptionsToQueryBuilder,
+  normalizeFindOptionsRelations,
+  splitFindOptionsOrder,
   type FindOptionsRelationsV2,
   type FindOptionsV2,
 } from 'src/engine/twenty-orm-v2/query-builder/utils/apply-find-options.util';
@@ -40,7 +42,10 @@ import {
   applyMutationCriteriaToQueryBuilder,
   type MutationCriteria,
 } from 'src/engine/twenty-orm-v2/query-builder/utils/apply-mutation-criteria.util';
-import { type ObjectWhereLike } from 'src/engine/twenty-orm-v2/query-builder/types/query-builder-v2.type';
+import {
+  type ObjectWhereLike,
+  type OrderByConditionLike,
+} from 'src/engine/twenty-orm-v2/query-builder/types/query-builder-v2.type';
 import {
   attachToManyRelationToRecords,
   attachToOneRelationToRecords,
@@ -172,8 +177,10 @@ export class WorkspaceRepositoryV2 {
     if (isDefined(options?.relations)) {
       await this.loadRelations(
         records,
-        options.relations,
+        normalizeFindOptionsRelations(options.relations),
         options.withDeleted ?? false,
+        splitFindOptionsOrder(this.options.tableShape, options.order)
+          .orderByRelationFieldName,
       );
     }
 
@@ -184,6 +191,21 @@ export class WorkspaceRepositoryV2 {
     where: ObjectWhereLike | ObjectWhereLike[],
   ): Promise<ObjectRecord[]> {
     return this.find({ where });
+  }
+
+  async findAndCount(
+    options?: FindOptionsV2,
+  ): Promise<[ObjectRecord[], number]> {
+    const records = await this.find(options);
+    const totalCount = await this.count(options);
+
+    return [records, totalCount];
+  }
+
+  async findAndCountBy(
+    where: ObjectWhereLike | ObjectWhereLike[],
+  ): Promise<[ObjectRecord[], number]> {
+    return this.findAndCount({ where });
   }
 
   async findOne(options?: FindOptionsV2): Promise<ObjectRecord | null> {
@@ -202,8 +224,10 @@ export class WorkspaceRepositoryV2 {
     if (isDefined(record) && isDefined(options?.relations)) {
       await this.loadRelations(
         [record],
-        options.relations,
+        normalizeFindOptionsRelations(options.relations),
         options.withDeleted ?? false,
+        splitFindOptionsOrder(this.options.tableShape, options.order)
+          .orderByRelationFieldName,
       );
     }
 
@@ -330,6 +354,7 @@ export class WorkspaceRepositoryV2 {
     records: ObjectRecord[],
     relations: FindOptionsRelationsV2,
     withDeleted: boolean,
+    orderByRelationFieldName: Record<string, OrderByConditionLike> = {},
   ): Promise<void> {
     if (records.length === 0) {
       return;
@@ -371,6 +396,7 @@ export class WorkspaceRepositoryV2 {
           targetRepository,
           nestedRelations,
           withDeleted,
+          order: orderByRelationFieldName[fieldName],
         });
       } else {
         throw new TwentyOrmV2Exception(
@@ -427,6 +453,7 @@ export class WorkspaceRepositoryV2 {
     targetRepository,
     nestedRelations,
     withDeleted,
+    order,
   }: {
     records: ObjectRecord[];
     fieldName: string;
@@ -434,6 +461,7 @@ export class WorkspaceRepositoryV2 {
     targetRepository: WorkspaceRepositoryV2;
     nestedRelations?: FindOptionsRelationsV2;
     withDeleted: boolean;
+    order?: OrderByConditionLike;
   }): Promise<void> {
     const inverseForeignKeyColumnName =
       this.resolveInverseForeignKeyColumnName(relationShape);
@@ -446,6 +474,7 @@ export class WorkspaceRepositoryV2 {
             where: { [inverseForeignKeyColumnName]: In(parentIds) },
             relations: nestedRelations,
             withDeleted,
+            order,
           })
         : [];
 
@@ -1296,6 +1325,7 @@ export class WorkspaceRepositoryV2 {
       selectedColumns: columnsToReturn,
       allFieldsSelected: false,
       updatedColumns,
+      authContext: this.options.authContext,
     });
   }
 

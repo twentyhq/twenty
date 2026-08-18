@@ -1599,11 +1599,6 @@ msgstr "Адреса 2"
 msgid "Addresses your workspace uses to send and receive email from shared inboxes"
 msgstr "Адреси, які ваш робочий простір використовує для надсилання та отримання електронної пошти зі спільних скриньок"
 
-#. js-lingui-id: 11TrtH
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Adjust the size of text and interface elements"
-msgstr ""
-
 #. js-lingui-id: U3pytU
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 msgid "Admin"
@@ -3765,7 +3760,6 @@ msgstr "Діаграма"
 
 #. js-lingui-id: AHZflp
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
-#: src/modules/navigation/components/MobileHomeTabsRow.tsx
 msgid "Chat"
 msgstr "Чат"
 
@@ -4799,6 +4793,7 @@ msgid "Conversation"
 msgstr "Розмова"
 
 #. js-lingui-id: EnJuK0
+#: src/modules/ai/components/MobileHomeAiChatSection.tsx
 #: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
 msgid "Conversations"
 msgstr "Розмови"
@@ -6031,7 +6026,6 @@ msgstr "за замовчуванням"
 #: src/modules/settings/experience/components/UiScalePicker.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
-#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Default"
 msgstr "За замовчуванням"
 
@@ -6985,6 +6979,7 @@ msgstr "eddy@gmail.com, @apple.com"
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
+#: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
@@ -9690,8 +9685,7 @@ msgstr "Найміть партнера, щоб він допоміг вам у�
 
 #. js-lingui-id: i0qMbr
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
-#: src/modules/navigation/components/MobileHomeTabsRow.tsx
-#: src/modules/navigation/components/MobileNavigationBar.tsx
+#: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 msgid "Home"
 msgstr "Головна"
 
@@ -10383,9 +10377,9 @@ msgstr "Редактор інструкцій"
 msgid "Integrations - Settings"
 msgstr "Інтеграції - Налаштування"
 
-#. js-lingui-id: gVouHS
+#. js-lingui-id: GfnKOF
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Interface scale"
+msgid "Interface"
 msgstr ""
 
 #. js-lingui-id: a+PGuG
@@ -10872,7 +10866,7 @@ msgid "Label must contain at least one alphanumeric character"
 msgstr "Мітка має містити щонайменше один буквено-цифровий символ"
 
 #. js-lingui-id: vXIe7J
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Language"
 msgstr "Мова"
 
@@ -12443,7 +12437,6 @@ msgstr "Пункти навігаційного меню"
 
 #. js-lingui-id: s2HXiD
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
-#: src/modules/navigation/components/MobileHomeTabsRow.tsx
 msgid "Navigation tabs"
 msgstr "Навігаційні вкладки"
 
@@ -12511,7 +12504,7 @@ msgid "New Agent"
 msgstr "Новий агент"
 
 #. js-lingui-id: JLx7YM
-#: src/modules/navigation/components/MobileNavigationBar.tsx
+#: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 msgid "New AI chat"
 msgstr "Новий AI-чат"
 
@@ -14118,11 +14111,6 @@ msgstr ""
 #: src/modules/settings/experience/components/OpenRecordInPreferencePicker.tsx
 msgid "Open records alongside the current page"
 msgstr ""
-
-#. js-lingui-id: p9J4lB
-#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
-msgid "Open records in"
-msgstr "Відкривати записи у"
 
 #. js-lingui-id: F7UdSk
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
@@ -16307,6 +16295,11 @@ msgstr "Зберегти як новий перегляд"
 msgid "Save or cancel dashboard changes before editing the layout."
 msgstr "Збережіть або скасуйте зміни на інформаційній панелі перед редагуванням компонування."
 
+#. js-lingui-id: bifv6N
+#: src/modules/settings/experience/components/UiScalePicker.tsx
+msgid "Scale"
+msgstr ""
+
 #. js-lingui-id: gmB6oO
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
 msgid "Schedule"
@@ -16373,7 +16366,7 @@ msgstr "SDK"
 #. js-lingui-id: A1taO8
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
-#: src/modules/navigation/components/MobileNavigationBar.tsx
+#: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 #: src/modules/object-record/record-table-widget/components/RecordTableWidgetNestedRelationPickerDropdownContent.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
@@ -17059,10 +17052,10 @@ msgstr "Вибрати значення"
 msgid "Select which models appear as recommended in the workspace model picker"
 msgstr "Виберіть, які моделі відображатимуться як рекомендовані у вибірнику моделей робочого простору"
 
-#. js-lingui-id: AXTJAW
+#. js-lingui-id: 7c7atJ
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Select your preferred language"
-msgstr "Оберіть бажану мову"
+msgid "Select your language and adjust the size of the interface"
+msgstr ""
 
 #. js-lingui-id: JlFcis
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -17272,7 +17265,6 @@ msgid "Setting up your <0>database</0>..."
 msgstr "Налаштовуємо вашу <0>базу даних</0>..."
 
 #. js-lingui-id: Tz0i8g
-#: src/modules/navigation/components/MobileHomeTabsRow.tsx
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
 #: src/modules/navigation/components/SettingsNavigationDrawer.tsx
 #: src/modules/navigation/components/SettingsNavigationDrawer.tsx
@@ -20720,6 +20712,7 @@ msgstr "перегляд"
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
+#: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 #: src/modules/side-panel/components/SidePanelObjectViewRecordInfo.tsx

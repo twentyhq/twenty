@@ -30,6 +30,7 @@
         "channels:history",
         "groups:history",
         "im:history",
+        "im:read",
         "users:read",
         "users:read.email",
         "assistant:write"
@@ -37,15 +38,21 @@
     }
   },
   "settings": {
+    "interactivity": {
+      "is_enabled": true,
+      "request_url": "<YOUR_TWENTY_SERVER_URL>/webhooks/server/fd756b00-50a2-4816-a919-a1a959a2ed9a"
+    },
     "event_subscriptions": {
       "request_url": "<YOUR_TWENTY_SERVER_URL>/webhooks/server/9ad6fa20-dff5-4d3f-ad5f-084f3c8b0b09",
       "bot_events": [
         "app_home_opened",
         "app_mention",
+        "app_uninstalled",
         "member_joined_channel",
         "message.channels",
         "message.groups",
-        "message.im"
+        "message.im",
+        "tokens_revoked"
       ]
     },
     "org_deploy_enabled": false,

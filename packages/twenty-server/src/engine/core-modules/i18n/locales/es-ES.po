@@ -649,6 +649,11 @@ msgstr "Una oportunidad"
 msgid "An unexpected billing error occurred."
 msgstr "Se produjo un error inesperado de facturación."
 
+#. js-lingui-id: U8C7oj
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "An unexpected billing error occurred. Please contact support."
+msgstr ""
+
 #. js-lingui-id: acTNEg
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
 msgid "An unexpected configuration error occurred."
@@ -10186,6 +10191,11 @@ msgstr ""
 #: src/engine/core-modules/auth/services/auth.service.ts
 msgid "Your Password Has Been Successfully Changed"
 msgstr "Tu contraseña ha sido cambiada con éxito"
+
+#. js-lingui-id: AKLZnk
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Your payment method was declined. Please update it and try again."
+msgstr ""
 
 #. js-lingui-id: XxkUFT
 #: src/engine/metadata-modules/permissions/permissions.service.ts

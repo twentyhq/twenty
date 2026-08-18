@@ -1599,11 +1599,6 @@ msgstr "Indirizzo 2"
 msgid "Addresses your workspace uses to send and receive email from shared inboxes"
 msgstr "Indirizzi che il tuo spazio di lavoro utilizza per inviare e ricevere email dalle caselle di posta condivise"
 
-#. js-lingui-id: 11TrtH
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Adjust the size of text and interface elements"
-msgstr ""
-
 #. js-lingui-id: U3pytU
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 msgid "Admin"
@@ -3765,7 +3760,6 @@ msgstr "Grafico"
 
 #. js-lingui-id: AHZflp
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
-#: src/modules/navigation/components/MobileHomeTabsRow.tsx
 msgid "Chat"
 msgstr "Chat"
 
@@ -4799,6 +4793,7 @@ msgid "Conversation"
 msgstr "Conversazione"
 
 #. js-lingui-id: EnJuK0
+#: src/modules/ai/components/MobileHomeAiChatSection.tsx
 #: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
 msgid "Conversations"
 msgstr "Conversazioni"
@@ -6031,7 +6026,6 @@ msgstr "predefinito"
 #: src/modules/settings/experience/components/UiScalePicker.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
-#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Default"
 msgstr "Predefinito"
 
@@ -6985,6 +6979,7 @@ msgstr "eddy@gmail.com, @apple.com"
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
+#: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
@@ -9690,8 +9685,7 @@ msgstr "Assumi un partner che ti aiuti a implementare e personalizzare Twenty."
 
 #. js-lingui-id: i0qMbr
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
-#: src/modules/navigation/components/MobileHomeTabsRow.tsx
-#: src/modules/navigation/components/MobileNavigationBar.tsx
+#: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 msgid "Home"
 msgstr "Home"
 
@@ -10383,9 +10377,9 @@ msgstr "Editor delle istruzioni"
 msgid "Integrations - Settings"
 msgstr "Integrazioni - Impostazioni"
 
-#. js-lingui-id: gVouHS
+#. js-lingui-id: GfnKOF
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Interface scale"
+msgid "Interface"
 msgstr ""
 
 #. js-lingui-id: a+PGuG
@@ -10872,7 +10866,7 @@ msgid "Label must contain at least one alphanumeric character"
 msgstr "L'etichetta deve contenere almeno un carattere alfanumerico"
 
 #. js-lingui-id: vXIe7J
-#: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Language"
 msgstr "Lingua"
 
@@ -12443,7 +12437,6 @@ msgstr "Voci del menu di navigazione"
 
 #. js-lingui-id: s2HXiD
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
-#: src/modules/navigation/components/MobileHomeTabsRow.tsx
 msgid "Navigation tabs"
 msgstr "Schede di navigazione"
 
@@ -12511,7 +12504,7 @@ msgid "New Agent"
 msgstr "Nuovo Agente"
 
 #. js-lingui-id: JLx7YM
-#: src/modules/navigation/components/MobileNavigationBar.tsx
+#: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 msgid "New AI chat"
 msgstr "Nuova chat AI"
 
@@ -14118,11 +14111,6 @@ msgstr ""
 #: src/modules/settings/experience/components/OpenRecordInPreferencePicker.tsx
 msgid "Open records alongside the current page"
 msgstr ""
-
-#. js-lingui-id: p9J4lB
-#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
-msgid "Open records in"
-msgstr "Apri i record in"
 
 #. js-lingui-id: F7UdSk
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectOpenRecordInPicker.tsx
@@ -16307,6 +16295,11 @@ msgstr "Salva come nuova vista"
 msgid "Save or cancel dashboard changes before editing the layout."
 msgstr ""
 
+#. js-lingui-id: bifv6N
+#: src/modules/settings/experience/components/UiScalePicker.tsx
+msgid "Scale"
+msgstr ""
+
 #. js-lingui-id: gmB6oO
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
 msgid "Schedule"
@@ -16373,7 +16366,7 @@ msgstr "SDK"
 #. js-lingui-id: A1taO8
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
-#: src/modules/navigation/components/MobileNavigationBar.tsx
+#: src/modules/navigation/hooks/useMobileNavigationBarItems.ts
 #: src/modules/object-record/record-table-widget/components/RecordTableWidgetNestedRelationPickerDropdownContent.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentWorkspaceMemberPickerDropdown.tsx
@@ -17059,10 +17052,10 @@ msgstr "Seleziona un valore"
 msgid "Select which models appear as recommended in the workspace model picker"
 msgstr "Seleziona quali modelli compaiono come consigliati nel selettore di modelli dello spazio di lavoro"
 
-#. js-lingui-id: AXTJAW
+#. js-lingui-id: 7c7atJ
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
-msgid "Select your preferred language"
-msgstr "Seleziona la lingua preferita"
+msgid "Select your language and adjust the size of the interface"
+msgstr ""
 
 #. js-lingui-id: JlFcis
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -17272,7 +17265,6 @@ msgid "Setting up your <0>database</0>..."
 msgstr "Configurazione del tuo <0>database</0>..."
 
 #. js-lingui-id: Tz0i8g
-#: src/modules/navigation/components/MobileHomeTabsRow.tsx
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
 #: src/modules/navigation/components/SettingsNavigationDrawer.tsx
 #: src/modules/navigation/components/SettingsNavigationDrawer.tsx
@@ -20720,6 +20712,7 @@ msgstr "vista"
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
+#: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 #: src/modules/side-panel/components/SidePanelObjectViewRecordInfo.tsx

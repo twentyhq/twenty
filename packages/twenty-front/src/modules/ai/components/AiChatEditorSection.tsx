@@ -50,7 +50,7 @@ const StyledInputBox = styled.div<{ isMobile: boolean }>`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  min-height: ${({ isMobile }) => (isMobile ? '88px' : '140px')};
+  min-height: ${({ isMobile }) => (isMobile ? 'auto' : '140px')};
   padding: ${themeCssVariables.spacing[2]};
   width: 100%;
 
@@ -76,7 +76,7 @@ const StyledEditorWrapper = styled.div<{ isMobile: boolean }>`
     font-weight: ${themeCssVariables.font.weight.regular};
     line-height: 16px;
     max-height: ${({ isMobile }) => (isMobile ? '160px' : '320px')};
-    min-height: ${({ isMobile }) => (isMobile ? '36px' : '48px')};
+    min-height: ${({ isMobile }) => (isMobile ? 'auto' : '48px')};
     outline: none;
     overflow-y: auto;
     padding: 0;
