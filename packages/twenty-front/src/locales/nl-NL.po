@@ -2267,6 +2267,11 @@ msgstr "En"
 msgid "Annual"
 msgstr "Jaarlijks"
 
+#. js-lingui-id: GqCA/t
+#: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
+msgid "Answered"
+msgstr ""
+
 #. js-lingui-id: +qygei
 #: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
 msgid "Answers"
@@ -12286,6 +12291,11 @@ msgstr "Breng het werk vooruit over teams en agenten heen"
 msgid "Msgs"
 msgstr ""
 
+#. js-lingui-id: cT1jbf
+#: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
+msgid "Multiple answers"
+msgstr ""
+
 #. js-lingui-id: asWVA5
 #: src/modules/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions.ts
 msgid "must be a number"
@@ -14235,6 +14245,7 @@ msgstr "Ordenen"
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
@@ -15175,6 +15186,11 @@ msgstr ""
 msgid "Queries that relied on it will fall back to a sequential scan. You can recreate it later."
 msgstr "Query’s die erop vertrouwden, vallen terug op een sequentiële scan. Je kunt hem later opnieuw maken."
 
+#. js-lingui-id: enzGAL
+#: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
+msgid "Questions"
+msgstr ""
+
 #. js-lingui-id: /IUt/5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerHealthStatus.tsx
 msgid "Queue information is not available because the worker is down"
@@ -15354,6 +15370,7 @@ msgstr ""
 
 #. js-lingui-id: WEYdDv
 #: src/modules/ai/components/AiChatQuestionCard.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
 msgid "Recommended"
 msgstr "Aanbevolen"
 
@@ -17597,6 +17614,11 @@ msgstr "Sla het aanmaken van een Naam-veld over "
 msgid "Skip the junction object (similar to many-to-many relations)"
 msgstr "Sla het koppelingsobject over (vergelijkbaar met veel-op-veel-relaties)"
 
+#. js-lingui-id: 9NyAH9
+#: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
+msgid "Skipped"
+msgstr ""
+
 #. js-lingui-id: BIZl8w
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Sky"
@@ -19704,6 +19726,11 @@ msgstr "Kan de applicatiedetails niet laden. Probeer het later opnieuw."
 #: src/modules/client-config/components/ClientConfigProvider.tsx
 msgid "Unable to Reach Back-end"
 msgstr "Kan de back-end niet bereiken"
+
+#. js-lingui-id: 2lF8Zj
+#: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
+msgid "Unanswered"
+msgstr ""
 
 #. js-lingui-id: 5JOLV9
 #: src/modules/ai/components/AiChatThreadItemMenu.tsx
