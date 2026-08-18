@@ -46,6 +46,10 @@ const RENEWED_TOKEN_PAIR: AuthTokenPair = {
   refreshToken: { token: 'newRefreshToken', expiresAt: '' },
 };
 
+// Mirrors persistence: a replay re-reads the pair renewal just stored, so the
+// mock must move with it or an assertion on the replay header proves nothing.
+let storedTokenPair: AuthTokenPair | undefined = CURRENT_TOKEN_PAIR;
+
 const UNAUTHENTICATED_RESPONSE = JSON.stringify({
   data: {},
   errors: [{ extensions: { code: 'UNAUTHENTICATED' } }],
@@ -71,7 +75,9 @@ const PERMISSION_DENIED_RESPONSE = JSON.stringify({
 const mockOnError = jest.fn();
 const mockOnNetworkError = jest.fn();
 const mockOnPayloadTooLarge = jest.fn();
-const mockOnTokenPairChange = jest.fn();
+const mockOnTokenPairChange = jest.fn((tokenPair: AuthTokenPair) => {
+  storedTokenPair = tokenPair;
+});
 const mockOnUnauthenticatedError = jest.fn();
 
 const mockWorkspaceMember = {
@@ -175,7 +181,11 @@ describe('ApolloFactory', () => {
     jest.clearAllMocks();
     fetchMock.resetMocks();
     jest.mocked(renewToken).mockReset().mockResolvedValue(RENEWED_TOKEN_PAIR);
-    jest.mocked(getTokenPair).mockReset().mockReturnValue(CURRENT_TOKEN_PAIR);
+    storedTokenPair = CURRENT_TOKEN_PAIR;
+    jest
+      .mocked(getTokenPair)
+      .mockReset()
+      .mockImplementation(() => storedTokenPair);
     jotaiStore.set(isCookieAuthActiveState.atom, false);
   });
 
@@ -438,7 +448,7 @@ describe('ApolloFactory', () => {
       >;
 
       expect(readHeader(retryHeaders, 'authorization')).toBe(
-        `Bearer ${CURRENT_TOKEN_PAIR.accessOrWorkspaceAgnosticToken.token}`,
+        `Bearer ${RENEWED_TOKEN_PAIR.accessOrWorkspaceAgnosticToken.token}`,
       );
     });
 
@@ -476,7 +486,7 @@ describe('ApolloFactory', () => {
       >;
 
       expect(readHeader(retryHeaders, 'authorization')).toBe(
-        `Bearer ${CURRENT_TOKEN_PAIR.accessOrWorkspaceAgnosticToken.token}`,
+        `Bearer ${RENEWED_TOKEN_PAIR.accessOrWorkspaceAgnosticToken.token}`,
       );
     });
 
