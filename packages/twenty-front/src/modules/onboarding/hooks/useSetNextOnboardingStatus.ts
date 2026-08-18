@@ -64,6 +64,15 @@ const getNextOnboardingStatus = ({
   }
 
   if (currentUser?.onboardingStatus === OnboardingStatus.APPS_INSTALLATION) {
+    // Same rule as the install-apps step: the Slack connection is workspace
+    // wide, so only the first member is ever asked to set it up.
+    if (currentWorkspace?.workspaceMembersCount === 1) {
+      return OnboardingStatus.CONNECT_SLACK;
+    }
+    return OnboardingStatus.PROFILE_CREATION;
+  }
+
+  if (currentUser?.onboardingStatus === OnboardingStatus.CONNECT_SLACK) {
     return OnboardingStatus.PROFILE_CREATION;
   }
 

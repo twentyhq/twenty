@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -11,6 +12,10 @@ import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/
 import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
+import {
+  APP_CONNECTION_CREATED_EVENT,
+  type AppConnectionCreatedEvent,
+} from 'src/engine/core-modules/application/connection-provider/types/app-connection-created.event';
 import { type TokenExchangeResponse } from 'src/engine/core-modules/application/connection-provider/types/token-exchange-response.type';
 import {
   assertOAuthProvider,
@@ -63,6 +68,7 @@ export class ConnectionProviderOAuthFlowService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
     private readonly connectionProviderLifecycleHookService: ConnectionProviderLifecycleHookService,
+    private readonly eventEmitter: EventEmitter2,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
   ) {}
@@ -194,12 +200,30 @@ export class ConnectionProviderOAuthFlowService {
       connectedAccountId: connectedAccount.id,
     });
 
+    this.eventEmitter.emit(APP_CONNECTION_CREATED_EVENT, {
+      connectedAccountId: connectedAccount.id,
+      connectionProviderId: provider.id,
+      applicationId: provider.applicationId,
+      workspaceId: statePayload.workspaceId,
+      userId: statePayload.userId,
+    } satisfies AppConnectionCreatedEvent);
+
     return {
       connectedAccountId: connectedAccount.id,
       workspaceId: statePayload.workspaceId,
       applicationId: provider.applicationId,
       redirectLocation: statePayload.redirectLocation,
     };
+  }
+
+  // Best-effort state read for the error paths: lets the callback send the user
+  // back where the flow started instead of the generic settings fallback.
+  async peekState(state: string): Promise<AppOAuthStateJwtPayload | null> {
+    try {
+      return await this.verifyState(state);
+    } catch {
+      return null;
+    }
   }
 
   private async signState(payload: AppOAuthStateJwtPayload): Promise<string> {

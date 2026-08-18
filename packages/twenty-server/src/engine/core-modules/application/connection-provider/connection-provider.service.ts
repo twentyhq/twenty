@@ -171,6 +171,40 @@ export class ConnectionProviderService {
     return result;
   }
 
+  // Registration-scoped variant of areClientCredentialsConfigured: usable
+  // before the app is installed in a workspace, when no provider row exists yet.
+  async areRegistrationClientCredentialsConfigured({
+    applicationRegistrationId,
+    clientIdVariable,
+    clientSecretVariable,
+  }: {
+    applicationRegistrationId: string;
+    clientIdVariable: string;
+    clientSecretVariable: string;
+  }): Promise<boolean> {
+    const variables = await this.registrationVariableRepository.find({
+      where: {
+        applicationRegistrationId,
+        key: In([clientIdVariable, clientSecretVariable]),
+      },
+    });
+
+    const filledKeys = new Set(
+      variables
+        .filter(
+          (variable) =>
+            this.secretEncryptionService.decryptVersionedOrThrow(
+              variable.encryptedValue,
+            ) !== '',
+        )
+        .map((variable) => variable.key),
+    );
+
+    return (
+      filledKeys.has(clientIdVariable) && filledKeys.has(clientSecretVariable)
+    );
+  }
+
   async findOneByApplicationAndName({
     applicationId,
     name,

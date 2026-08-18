@@ -11,6 +11,7 @@ export enum AppPath {
   CreateProfile = '/create/profile',
   SyncEmails = '/sync/emails',
   InstallApps = '/install-apps',
+  ConnectSlack = '/connect-slack',
   InviteTeam = '/invite-team',
   PlanRequired = '/plan-required',
   PlanRequiredSuccess = '/plan-required/payment-success',

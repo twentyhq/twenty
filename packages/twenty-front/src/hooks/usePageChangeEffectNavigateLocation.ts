@@ -158,6 +158,13 @@ export const usePageChangeEffectNavigateLocation = () => {
   }
 
   if (
+    onboardingStatus === OnboardingStatus.CONNECT_SLACK &&
+    !isMatchingLocation(location, AppPath.ConnectSlack)
+  ) {
+    return AppPath.ConnectSlack;
+  }
+
+  if (
     onboardingStatus === OnboardingStatus.INVITE_TEAM &&
     !isMatchingLocation(location, AppPath.InviteTeam)
   ) {

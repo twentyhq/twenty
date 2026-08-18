@@ -5,6 +5,7 @@ export const ONBOARDING_PATHS = [
   AppPath.CreateProfile,
   AppPath.SyncEmails,
   AppPath.InstallApps,
+  AppPath.ConnectSlack,
   AppPath.InviteTeam,
   AppPath.PlanRequired,
   AppPath.PlanRequiredSuccess,

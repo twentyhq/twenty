@@ -75,6 +75,12 @@ const SyncEmails = lazyWithPreload(() =>
   })),
 );
 
+const ConnectSlack = lazyWithPreload(() =>
+  import('~/pages/onboarding/ConnectSlack').then((module) => ({
+    default: module.ConnectSlack,
+  })),
+);
+
 const InstallApps = lazyWithPreload(() =>
   import('~/pages/onboarding/InstallApps').then((module) => ({
     default: module.InstallApps,
@@ -134,6 +140,7 @@ const preloadOnboardingPages = () => {
   CreateProfile.preload();
   SyncEmails.preload();
   InstallApps.preload();
+  ConnectSlack.preload();
   InviteTeam.preload();
   BookCall.preload();
   ChooseYourPlan.preload();
@@ -307,6 +314,14 @@ const createWorkspaceAppRouter = (
               element={
                 <LazyRoute fallback={<OnboardingStepPageLoader />}>
                   <InstallApps />
+                </LazyRoute>
+              }
+            />
+            <Route
+              path={AppPath.ConnectSlack}
+              element={
+                <LazyRoute fallback={<OnboardingStepPageLoader />}>
+                  <ConnectSlack />
                 </LazyRoute>
               }
             />

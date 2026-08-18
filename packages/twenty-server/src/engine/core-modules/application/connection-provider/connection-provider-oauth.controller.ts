@@ -165,6 +165,16 @@ export class ConnectionProviderOAuthController {
   ) {
     let workspace: WorkspaceEntity | null = null;
 
+    const statePayload = isDefined(state)
+      ? await this.oauthProviderFlowService.peekState(state)
+      : null;
+
+    if (isDefined(statePayload)) {
+      workspace = await this.workspaceRepository.findOneBy({
+        id: statePayload.workspaceId,
+      });
+    }
+
     if (errorParam) {
       return this.redirectToError(
         res,
@@ -172,6 +182,7 @@ export class ConnectionProviderOAuthController {
           `OAuth provider returned error: ${errorParam}${errorDescription ? `: ${errorDescription}` : ''}`,
         ),
         workspace,
+        statePayload?.redirectLocation ?? null,
       );
     }
 
@@ -182,6 +193,7 @@ export class ConnectionProviderOAuthController {
           'OAuth callback is missing the `code` or `state` query parameter',
         ),
         workspace,
+        statePayload?.redirectLocation ?? null,
       );
     }
 
@@ -219,14 +231,22 @@ export class ConnectionProviderOAuthController {
 
       return res.redirect(url.toString());
     } catch (error) {
-      return this.redirectToError(res, error, workspace);
+      return this.redirectToError(
+        res,
+        error,
+        workspace,
+        statePayload?.redirectLocation ?? null,
+      );
     }
   }
 
+  // `redirectLocation` is where the flow started (an onboarding step, say);
+  // without it the user would be dropped in the accounts settings page.
   private redirectToError(
     res: Response,
     error: unknown,
     workspace: WorkspaceEntity | null,
+    redirectLocation: string | null = null,
   ) {
     return res.redirect(
       this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({
@@ -238,7 +258,7 @@ export class ConnectionProviderOAuthController {
             this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
           customDomain: workspace?.customDomain ?? null,
         },
-        pathname: getSettingsPath(SettingsPath.Accounts),
+        pathname: redirectLocation ?? getSettingsPath(SettingsPath.Accounts),
       }),
     );
   }

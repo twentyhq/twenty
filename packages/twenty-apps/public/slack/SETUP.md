@@ -42,6 +42,12 @@ Two parts: a **Slack app** you create, and the **Twenty side** where you paste i
 2. **Settings → Applications → Twenty Slack → Application registration** (admin only), set `SLACK_CLIENT_ID` and `SLACK_CLIENT_SECRET`.
 3. **Connections → Add connection**, choose **Just for me** or **Workspace shared**, complete the Slack sign-in.
 
+### Onboarding step
+
+New workspaces get a **Connect Slack** onboarding step that installs this app and runs the OAuth flow in one click, so the person signing up never touches credentials. The step is only offered when `SLACK_CLIENT_ID` and `SLACK_CLIENT_SECRET` are already set on the application registration when the workspace is created; instances without them skip the step entirely.
+
+Since the credentials live on the registration (instance-wide, not per workspace), one Slack app serves every workspace on the server. That app must have **Public Distribution** activated in Slack, otherwise Slack refuses installs from any workspace other than the one that created the app (`invalid_team_for_non_distributed_app`).
+
 Workflow steps then use that connection's access token: a workspace connection is preferred when present, otherwise the first connection returned for the Slack provider.
 
 For posting, either invite the bot to the channel or rely on `chat:write.public` for public channels. Private channels always require membership.

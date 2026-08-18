@@ -36,6 +36,7 @@ export enum OnboardingStepKeys {
   ONBOARDING_INVITE_TEAM_PENDING = 'ONBOARDING_INVITE_TEAM_PENDING',
   ONBOARDING_CREATE_PROFILE_PENDING = 'ONBOARDING_CREATE_PROFILE_PENDING',
   ONBOARDING_INSTALL_APPS_PENDING = 'ONBOARDING_INSTALL_APPS_PENDING',
+  ONBOARDING_CONNECT_SLACK_PENDING = 'ONBOARDING_CONNECT_SLACK_PENDING',
   ONBOARDING_BOOK_CALL_PENDING = 'ONBOARDING_BOOK_CALL_PENDING',
   ONBOARDING_BOOK_CALL_OFFERED = 'ONBOARDING_BOOK_CALL_OFFERED',
   ONBOARDING_REVERSIBLE_STEP_HISTORY = 'ONBOARDING_REVERSIBLE_STEP_HISTORY',
@@ -46,6 +47,7 @@ export type OnboardingKeyValueTypeMap = {
   [OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING]: boolean;
+  [OnboardingStepKeys.ONBOARDING_CONNECT_SLACK_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_BOOK_CALL_PENDING]: boolean;
   [OnboardingStepKeys.ONBOARDING_BOOK_CALL_OFFERED]: boolean;
   [OnboardingStepKeys.ONBOARDING_REVERSIBLE_STEP_HISTORY]: ReversibleOnboardingStep[];
@@ -146,6 +148,10 @@ export class OnboardingService {
     const isInstallAppsPending =
       userVars.get(OnboardingStepKeys.ONBOARDING_INSTALL_APPS_PENDING) === true;
 
+    const isConnectSlackPending =
+      userVars.get(OnboardingStepKeys.ONBOARDING_CONNECT_SLACK_PENDING) ===
+      true;
+
     const isInviteTeamPending =
       userVars.get(OnboardingStepKeys.ONBOARDING_INVITE_TEAM_PENDING) === true;
 
@@ -158,6 +164,10 @@ export class OnboardingService {
 
     if (isInstallAppsPending) {
       return OnboardingStatus.APPS_INSTALLATION;
+    }
+
+    if (isConnectSlackPending) {
+      return OnboardingStatus.CONNECT_SLACK;
     }
 
     if (isProfileCreationPending) {
@@ -394,6 +404,15 @@ export class OnboardingService {
         );
       case OnboardingStatus.APPS_INSTALLATION:
         return this.setOnboardingInstallAppsPending(
+          {
+            userId,
+            workspaceId,
+            value: true,
+          },
+          queryRunner,
+        );
+      case OnboardingStatus.CONNECT_SLACK:
+        return this.setOnboardingConnectSlackPending(
           {
             userId,
             workspaceId,
@@ -817,6 +836,128 @@ export class OnboardingService {
         error,
       );
     }
+  }
+
+  async setOnboardingConnectSlackPending(
+    {
+      userId,
+      workspaceId,
+      value,
+    }: {
+      userId: string;
+      workspaceId: string;
+      value: boolean;
+    },
+    queryRunner?: QueryRunner,
+  ) {
+    if (!value) {
+      await this.userVarsService.delete(
+        {
+          userId,
+          workspaceId,
+          key: OnboardingStepKeys.ONBOARDING_CONNECT_SLACK_PENDING,
+        },
+        queryRunner,
+      );
+
+      return;
+    }
+
+    await this.userVarsService.set(
+      {
+        userId,
+        workspaceId,
+        key: OnboardingStepKeys.ONBOARDING_CONNECT_SLACK_PENDING,
+        value: true,
+      },
+      queryRunner,
+    );
+  }
+
+  // Called from the app OAuth callback once a Slack connection exists, so a
+  // user who abandons Slack's consent screen still lands back on the step.
+  async completeOnboardingConnectSlackStep({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }) {
+    await this.runStepTransitionInLockedTransaction(
+      { userId, workspaceId },
+      async (queryRunner) => {
+        const hasClaimedConnectSlackStep =
+          await this.claimConnectSlackOnboardingStep(
+            { userId, workspaceId },
+            queryRunner,
+          );
+
+        if (!hasClaimedConnectSlackStep) {
+          return;
+        }
+
+        await this.clearReversibleOnboardingStepHistoryAfterIrreversibleStep(
+          { userId, workspaceId },
+          queryRunner,
+        );
+      },
+    );
+  }
+
+  async skipConnectSlackOnboardingStep({
+    userId,
+    workspaceId,
+    isAutoSkipped,
+  }: {
+    userId: string;
+    workspaceId: string;
+    isAutoSkipped: boolean;
+  }) {
+    await this.runStepTransitionInLockedTransaction(
+      { userId, workspaceId },
+      async (queryRunner) => {
+        const hasClaimedConnectSlackStep =
+          await this.claimConnectSlackOnboardingStep(
+            { userId, workspaceId },
+            queryRunner,
+          );
+
+        if (!hasClaimedConnectSlackStep || isAutoSkipped) {
+          return;
+        }
+
+        await this.pushReversibleOnboardingStep(
+          {
+            userId,
+            workspaceId,
+            step: OnboardingStatus.CONNECT_SLACK,
+          },
+          queryRunner,
+        );
+      },
+    );
+  }
+
+  private async claimConnectSlackOnboardingStep(
+    {
+      userId,
+      workspaceId,
+    }: {
+      userId: string;
+      workspaceId: string;
+    },
+    queryRunner?: QueryRunner,
+  ): Promise<boolean> {
+    const affectedRows = await this.userVarsService.delete(
+      {
+        userId,
+        workspaceId,
+        key: OnboardingStepKeys.ONBOARDING_CONNECT_SLACK_PENDING,
+      },
+      queryRunner,
+    );
+
+    return isDefined(affectedRows) && affectedRows > 0;
   }
 
   async setOnboardingInviteTeamPending(

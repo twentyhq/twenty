@@ -176,12 +176,36 @@ describe('useSetNextOnboardingStatus', () => {
     expect(shouldOpenAiChatAfterOnboarding).toBe(false);
   });
 
-  it('should create profile after installing apps', () => {
+  it('should connect Slack after installing apps', () => {
     const {
       nextOnboardingStatus,
       isWelcomeAnimationVisible,
       shouldOpenAiChatAfterOnboarding,
     } = renderHooks(OnboardingStatus.APPS_INSTALLATION);
+    expect(nextOnboardingStatus).toEqual(OnboardingStatus.CONNECT_SLACK);
+    expect(isWelcomeAnimationVisible).toBe(false);
+    expect(shouldOpenAiChatAfterOnboarding).toBe(false);
+  });
+
+  it('should create profile after installing apps when more than 1 workspaceMember exist', () => {
+    const {
+      nextOnboardingStatus,
+      isWelcomeAnimationVisible,
+      shouldOpenAiChatAfterOnboarding,
+    } = renderHooks(OnboardingStatus.APPS_INSTALLATION, {
+      withOneWorkspaceMember: false,
+    });
+    expect(nextOnboardingStatus).toEqual(OnboardingStatus.PROFILE_CREATION);
+    expect(isWelcomeAnimationVisible).toBe(false);
+    expect(shouldOpenAiChatAfterOnboarding).toBe(false);
+  });
+
+  it('should create profile after connecting Slack', () => {
+    const {
+      nextOnboardingStatus,
+      isWelcomeAnimationVisible,
+      shouldOpenAiChatAfterOnboarding,
+    } = renderHooks(OnboardingStatus.CONNECT_SLACK);
     expect(nextOnboardingStatus).toEqual(OnboardingStatus.PROFILE_CREATION);
     expect(isWelcomeAnimationVisible).toBe(false);
     expect(shouldOpenAiChatAfterOnboarding).toBe(false);

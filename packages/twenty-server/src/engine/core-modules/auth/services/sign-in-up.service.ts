@@ -54,6 +54,7 @@ import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-p
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { OnboardingSlackAvailabilityService } from 'src/engine/core-modules/onboarding/services/onboarding-slack-availability.service';
 import { TelemetryEventType } from 'src/engine/core-modules/telemetry/telemetry-event.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -84,6 +85,7 @@ export class SignInUpService {
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly onboardingService: OnboardingService,
+    private readonly onboardingSlackAvailabilityService: OnboardingSlackAvailabilityService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly subdomainManagerService: SubdomainManagerService,
@@ -337,6 +339,7 @@ export class SignInUpService {
         workspace: params.workspace,
         shouldShowConnectAccountStep: true,
         shouldShowInstallAppsStep: false,
+        shouldShowConnectSlackStep: false,
       });
 
       await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
@@ -370,11 +373,13 @@ export class SignInUpService {
       workspace,
       shouldShowConnectAccountStep,
       shouldShowInstallAppsStep,
+      shouldShowConnectSlackStep,
     }: {
       user: Pick<UserEntity, 'id' | 'firstName' | 'lastName'>;
       workspace: WorkspaceEntity;
       shouldShowConnectAccountStep: boolean;
       shouldShowInstallAppsStep: boolean;
+      shouldShowConnectSlackStep: boolean;
     },
     queryRunner?: QueryRunner,
   ) {
@@ -400,6 +405,17 @@ export class SignInUpService {
 
     if (shouldShowInstallAppsStep) {
       await this.onboardingService.setOnboardingInstallAppsPending(
+        {
+          userId: user.id,
+          workspaceId: workspace.id,
+          value: true,
+        },
+        queryRunner,
+      );
+    }
+
+    if (shouldShowConnectSlackStep) {
+      await this.onboardingService.setOnboardingConnectSlackPending(
         {
           userId: user.id,
           workspaceId: workspace.id,
@@ -596,6 +612,9 @@ export class SignInUpService {
     const workspaceId = v4();
     const workspaceCustomApplicationId = v4();
 
+    const isSlackConnectAvailable =
+      await this.onboardingSlackAvailabilityService.isSlackConnectAvailable();
+
     try {
       const { user, workspace } = await this.dataSource.transaction(
         async (entityManager) => {
@@ -680,6 +699,10 @@ export class SignInUpService {
               workspace,
               shouldShowConnectAccountStep: true,
               shouldShowInstallAppsStep: true,
+              // Seeded at signup rather than resolved on every status read, so
+              // an instance that configures Slack later never pulls already
+              // onboarded users back into onboarding.
+              shouldShowConnectSlackStep: isSlackConnectAvailable,
             },
             queryRunner,
           );
