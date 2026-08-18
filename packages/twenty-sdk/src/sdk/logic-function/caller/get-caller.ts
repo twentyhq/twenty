@@ -14,17 +14,17 @@ const isLogicFunctionCaller = (
   if (value.type === 'user') {
     return (
       'userId' in value &&
-      typeof value.userId === 'string' &&
+      isNonEmptyString(value.userId) &&
       'userWorkspaceId' in value &&
-      typeof value.userWorkspaceId === 'string' &&
+      isNonEmptyString(value.userWorkspaceId) &&
       (!('workspaceMemberId' in value) ||
         value.workspaceMemberId === undefined ||
-        typeof value.workspaceMemberId === 'string')
+        isNonEmptyString(value.workspaceMemberId))
     );
   }
 
   if (value.type === 'apiKey') {
-    return 'apiKeyId' in value && typeof value.apiKeyId === 'string';
+    return 'apiKeyId' in value && isNonEmptyString(value.apiKeyId);
   }
 
   return false;

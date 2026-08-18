@@ -57,6 +57,15 @@ describe('getCaller', () => {
     expect(getCaller()).toBeNull();
   });
 
+  it('should return null for a caller with an empty string id', () => {
+    process.env[DEFAULT_CALLER_NAME] = JSON.stringify({
+      type: 'apiKey',
+      apiKeyId: '',
+    });
+
+    expect(getCaller()).toBeNull();
+  });
+
   it('should return null for a user caller with a non-string workspaceMemberId', () => {
     process.env[DEFAULT_CALLER_NAME] = JSON.stringify({
       kind: 'user',
