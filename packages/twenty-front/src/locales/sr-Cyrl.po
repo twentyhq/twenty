@@ -8330,7 +8330,7 @@ msgid "Failed to delete unsubscribe topic."
 msgstr "Није успело брисање теме за одјаву са слања имејлова."
 
 #. js-lingui-id: NUmmdc
-#: src/modules/command-menu-item/engine-command/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
+#: src/modules/dashboards/hooks/useDuplicateDashboard.ts
 msgid "Failed to duplicate dashboard"
 msgstr "Није успело дуплирање контролне табле"
 
