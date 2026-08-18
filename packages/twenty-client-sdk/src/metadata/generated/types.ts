@@ -7009,12 +7009,6 @@ export default {
                     "permissionFlag": [
                         50,
                         "PermissionFlagType!"
-                    ],
-                    "userWorkspaceId": [
-                        1
-                    ],
-                    "apiKeyId": [
-                        1
                     ]
                 }
             ],

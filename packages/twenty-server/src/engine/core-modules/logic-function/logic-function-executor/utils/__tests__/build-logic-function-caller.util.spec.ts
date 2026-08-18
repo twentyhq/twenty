@@ -9,7 +9,7 @@ describe('buildLogicFunctionCaller', () => {
         workspaceMemberId: 'workspace-member-1',
       }),
     ).toEqual({
-      kind: 'user',
+      type: 'user',
       userId: 'user-1',
       userWorkspaceId: 'user-workspace-1',
       workspaceMemberId: 'workspace-member-1',
@@ -23,7 +23,7 @@ describe('buildLogicFunctionCaller', () => {
         userWorkspaceId: 'user-workspace-1',
       }),
     ).toEqual({
-      kind: 'user',
+      type: 'user',
       userId: 'user-1',
       userWorkspaceId: 'user-workspace-1',
     });
@@ -31,7 +31,7 @@ describe('buildLogicFunctionCaller', () => {
 
   it('should build an api key caller when only an api key is present', () => {
     expect(buildLogicFunctionCaller({ apiKeyId: 'api-key-1' })).toEqual({
-      kind: 'apiKey',
+      type: 'apiKey',
       apiKeyId: 'api-key-1',
     });
   });
@@ -44,7 +44,7 @@ describe('buildLogicFunctionCaller', () => {
         apiKeyId: 'api-key-1',
       }),
     ).toEqual({
-      kind: 'user',
+      type: 'user',
       userId: 'user-1',
       userWorkspaceId: 'user-workspace-1',
     });

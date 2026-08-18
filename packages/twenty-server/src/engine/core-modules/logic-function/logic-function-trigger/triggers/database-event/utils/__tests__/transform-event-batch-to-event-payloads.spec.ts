@@ -470,7 +470,7 @@ describe('transformEventBatchToEventPayloads', () => {
       });
 
       expect(result[0].caller).toEqual({
-        kind: 'user',
+        type: 'user',
         userId: 'user-1',
         userWorkspaceId: 'user-workspace-1',
         workspaceMemberId: 'workspace-member-1',

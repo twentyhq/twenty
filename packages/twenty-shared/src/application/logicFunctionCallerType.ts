@@ -1,12 +1,12 @@
 export type LogicFunctionUserCaller = {
-  kind: 'user';
+  type: 'user';
   userId: string;
   userWorkspaceId: string;
   workspaceMemberId?: string;
 };
 
 export type LogicFunctionApiKeyCaller = {
-  kind: 'apiKey';
+  type: 'apiKey';
   apiKeyId: string;
 };
 

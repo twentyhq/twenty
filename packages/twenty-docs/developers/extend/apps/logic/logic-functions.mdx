@@ -629,8 +629,8 @@ import { getCaller, callerHasPermissionFlag, PermissionFlagType } from 'twenty-s
 const handler = async () => {
   const caller = getCaller();
   // caller is null, or:
-  // { kind: 'user', userId, userWorkspaceId, workspaceMemberId? }
-  // { kind: 'apiKey', apiKeyId }
+  // { type: 'user', userId, userWorkspaceId, workspaceMemberId? }
+  // { type: 'apiKey', apiKeyId }
 
   if (!(await callerHasPermissionFlag(PermissionFlagType.WORKSPACE_MEMBERS))) {
     throw new Error('Only admins can approve links');
@@ -639,7 +639,7 @@ const handler = async () => {
 };
 ```
 
-`callerHasPermissionFlag` checks the caller's role server-side and returns `false` when there is no caller. Use it to gate privileged operations inside your own logic: your function's data operations always run with the app's own access, so this is how you decide whether the person who triggered the function is allowed to make the function act.
+`callerHasPermissionFlag` checks the caller's role server-side and returns `false` when there is no caller. The identity it checks is the one the server recorded when it started the run, carried by the app access token. Your function never passes it in, so the answer cannot be steered from inside the runtime. Use it to gate privileged operations inside your own logic: your function's data operations always run with the app's own access, so this is how you decide whether the person who triggered the function is allowed to make the function act.
 
 ## Typed API clients (twenty-client-sdk)
 

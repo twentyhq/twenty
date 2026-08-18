@@ -3,7 +3,8 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { type Repository } from 'typeorm';
 import { addMilliseconds } from 'date-fns';
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+import { type LogicFunctionCaller } from 'twenty-shared/application';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import ms from 'ms';
 
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
@@ -44,11 +45,13 @@ export class ApplicationTokenService {
     applicationId,
     userWorkspaceId,
     userId,
+    caller,
   }: {
     workspaceId: string;
     applicationId: string;
     userWorkspaceId?: string;
     userId?: string;
+    caller?: LogicFunctionCaller;
   }): Promise<AuthToken> {
     await this.validateWorkspaceAndApplication(workspaceId, applicationId);
 
@@ -61,6 +64,7 @@ export class ApplicationTokenService {
       applicationId,
       userWorkspaceId,
       userId,
+      caller,
       tokenType: JwtTokenTypeEnum.APPLICATION_ACCESS,
       expiresIn,
     });
@@ -235,6 +239,7 @@ export class ApplicationTokenService {
     applicationId,
     userWorkspaceId,
     userId,
+    caller,
     tokenType,
     expiresIn,
   }: {
@@ -242,6 +247,7 @@ export class ApplicationTokenService {
     applicationId: string;
     userWorkspaceId?: string;
     userId?: string;
+    caller?: LogicFunctionCaller;
     tokenType:
       | JwtTokenTypeEnum.APPLICATION_ACCESS
       | JwtTokenTypeEnum.APPLICATION_REFRESH;
@@ -256,8 +262,9 @@ export class ApplicationTokenService {
       applicationId,
       workspaceId,
       type: tokenType,
-      ...(userWorkspaceId ? { userWorkspaceId } : {}),
-      ...(userId ? { userId } : {}),
+      ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
+      ...(isDefined(userId) ? { userId } : {}),
+      ...(isDefined(caller) ? { caller } : {}),
     };
 
     return {

@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import {
   DEFAULT_CALLER_NAME,
   type LogicFunctionCaller,
@@ -6,23 +7,24 @@ import {
 const isLogicFunctionCaller = (
   value: unknown,
 ): value is LogicFunctionCaller => {
-  if (typeof value !== 'object' || value === null) {
+  if (typeof value !== 'object' || value === null || !('type' in value)) {
     return false;
   }
 
-  const candidate = value as Record<string, unknown>;
-
-  if (candidate.kind === 'user') {
+  if (value.type === 'user') {
     return (
-      typeof candidate.userId === 'string' &&
-      typeof candidate.userWorkspaceId === 'string' &&
-      (candidate.workspaceMemberId === undefined ||
-        typeof candidate.workspaceMemberId === 'string')
+      'userId' in value &&
+      typeof value.userId === 'string' &&
+      'userWorkspaceId' in value &&
+      typeof value.userWorkspaceId === 'string' &&
+      (!('workspaceMemberId' in value) ||
+        value.workspaceMemberId === undefined ||
+        typeof value.workspaceMemberId === 'string')
     );
   }
 
-  if (candidate.kind === 'apiKey') {
-    return typeof candidate.apiKeyId === 'string';
+  if (value.type === 'apiKey') {
+    return 'apiKeyId' in value && typeof value.apiKeyId === 'string';
   }
 
   return false;
@@ -31,7 +33,7 @@ const isLogicFunctionCaller = (
 export const getCaller = (): LogicFunctionCaller | null => {
   const serializedCaller = process.env[DEFAULT_CALLER_NAME];
 
-  if (!serializedCaller) {
+  if (!isNonEmptyString(serializedCaller)) {
     return null;
   }
 

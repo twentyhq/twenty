@@ -13,14 +13,14 @@ describe('getCaller', () => {
 
   it('should parse a user caller', () => {
     process.env[DEFAULT_CALLER_NAME] = JSON.stringify({
-      kind: 'user',
+      type: 'user',
       userId: 'user-1',
       userWorkspaceId: 'user-workspace-1',
       workspaceMemberId: 'workspace-member-1',
     });
 
     expect(getCaller()).toEqual({
-      kind: 'user',
+      type: 'user',
       userId: 'user-1',
       userWorkspaceId: 'user-workspace-1',
       workspaceMemberId: 'workspace-member-1',
@@ -29,11 +29,11 @@ describe('getCaller', () => {
 
   it('should parse an api key caller', () => {
     process.env[DEFAULT_CALLER_NAME] = JSON.stringify({
-      kind: 'apiKey',
+      type: 'apiKey',
       apiKeyId: 'api-key-1',
     });
 
-    expect(getCaller()).toEqual({ kind: 'apiKey', apiKeyId: 'api-key-1' });
+    expect(getCaller()).toEqual({ type: 'apiKey', apiKeyId: 'api-key-1' });
   });
 
   it('should return null for malformed content', () => {
@@ -50,7 +50,7 @@ describe('getCaller', () => {
 
   it('should return null for a user caller missing required fields', () => {
     process.env[DEFAULT_CALLER_NAME] = JSON.stringify({
-      kind: 'user',
+      type: 'user',
       userId: 'user-1',
     });
 

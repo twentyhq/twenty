@@ -1,3 +1,5 @@
+import { type LogicFunctionCaller } from 'twenty-shared/application';
+
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatAuthContextUser } from 'src/engine/core-modules/auth/types/flat-auth-context-user.type';
@@ -14,6 +16,9 @@ export type RawAuthContext = {
   workspaceMember?: WorkspaceMemberWorkspaceEntity;
   workspace?: FlatWorkspace;
   application?: FlatApplication | null | undefined;
+  // Who triggered the application code holding this token. Purely informational:
+  // it never widens what the token itself is allowed to do.
+  applicationCaller?: LogicFunctionCaller;
   userWorkspaceId?: string;
   userWorkspace?: FlatUserWorkspace;
   authProvider?: AuthProviderEnum;

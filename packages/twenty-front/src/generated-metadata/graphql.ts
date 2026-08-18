@@ -4681,9 +4681,7 @@ export type QueryApiKeyArgs = {
 
 
 export type QueryAppCallerHasPermissionFlagArgs = {
-  apiKeyId?: InputMaybe<Scalars['String']['input']>;
   permissionFlag: PermissionFlagType;
-  userWorkspaceId?: InputMaybe<Scalars['String']['input']>;
 };
 
 

@@ -6310,7 +6310,7 @@ export interface QueryGenqlSelection{
     myCalendarChannels?: (CalendarChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
     minimalMetadata?: MinimalMetadataGenqlSelection
     appKeyValue?: (AppKeyValueGenqlSelection & { __args: {key: Scalars['String'], scope?: (AppKeyValueScope | null)} })
-    appCallerHasPermissionFlag?: { __args: {permissionFlag: PermissionFlagType, userWorkspaceId?: (Scalars['String'] | null), apiKeyId?: (Scalars['String'] | null)} }
+    appCallerHasPermissionFlag?: { __args: {permissionFlag: PermissionFlagType} }
     appConnections?: (AppConnectionGenqlSelection & { __args?: {filter?: (ListAppConnectionsInput | null)} })
     appConnection?: (AppConnectionGenqlSelection & { __args: {id: Scalars['ID']} })
     findWorkspaceAiStats?: WorkspaceAiStatsGenqlSelection

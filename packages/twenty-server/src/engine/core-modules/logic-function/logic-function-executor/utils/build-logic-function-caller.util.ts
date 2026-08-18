@@ -14,7 +14,7 @@ export const buildLogicFunctionCaller = ({
 }): LogicFunctionCaller | undefined => {
   if (isDefined(userId) && isDefined(userWorkspaceId)) {
     return {
-      kind: 'user',
+      type: 'user',
       userId,
       userWorkspaceId,
       ...(isDefined(workspaceMemberId) ? { workspaceMemberId } : {}),
@@ -23,7 +23,7 @@ export const buildLogicFunctionCaller = ({
 
   if (isDefined(apiKeyId)) {
     return {
-      kind: 'apiKey',
+      type: 'apiKey',
       apiKeyId,
     };
   }

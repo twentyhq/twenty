@@ -344,6 +344,7 @@ export class LogicFunctionExecutorService {
         applicationId: flatApplication.id,
         userId,
         userWorkspaceId,
+        caller,
       });
 
     const baseUrl = cleanServerUrl(this.twentyConfigService.get('SERVER_URL'));

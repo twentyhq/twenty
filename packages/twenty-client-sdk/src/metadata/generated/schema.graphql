@@ -3328,7 +3328,7 @@ type Query {
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
   minimalMetadata: MinimalMetadata!
   appKeyValue(key: String!, scope: AppKeyValueScope = WORKSPACE): AppKeyValue
-  appCallerHasPermissionFlag(permissionFlag: PermissionFlagType!, userWorkspaceId: String, apiKeyId: String): Boolean!
+  appCallerHasPermissionFlag(permissionFlag: PermissionFlagType!): Boolean!
   appConnections(filter: ListAppConnectionsInput): [AppConnection!]!
   appConnection(id: ID!): AppConnection!
   findWorkspaceAiStats: WorkspaceAiStats!
