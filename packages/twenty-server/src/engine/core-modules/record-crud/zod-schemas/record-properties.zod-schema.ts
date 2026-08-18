@@ -33,7 +33,6 @@ import {
 } from 'src/engine/core-modules/record-crud/zod-schemas/shared-value-defs.zod-schema';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/utils/effective-entity-i18n-context.type';
-import { resolveEffectiveEntity } from 'src/engine/metadata-modules/utils/resolve-effective-entity.util';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
@@ -105,22 +104,16 @@ export const generateRecordPropertiesZodSchema = (
 ): z.ZodObject<Record<string, z.ZodTypeAny>> => {
   const shape: Record<string, z.ZodTypeAny> = {};
 
-  objectMetadata.fields.forEach((rawField) => {
-    const effectiveDescription = isDefined(i18nContext)
+  objectMetadata.fields.forEach((field) => {
+    const description = isDefined(i18nContext)
       ? resolveEffectiveEntityProperty({
           metadataName: 'fieldMetadata',
-          baseValue: rawField.description,
-          overrides: rawField.overrides,
+          baseValue: field.description,
+          overrides: field.overrides,
           property: 'description',
           i18nContext,
         })
-      : ((rawField.overrides?.description as string | undefined) ??
-        rawField.description);
-
-    const field = {
-      ...resolveEffectiveEntity(rawField),
-      description: effectiveDescription,
-    };
+      : field.description;
 
     if (
       !isFieldAvailable(field, forResponse) ||
@@ -203,8 +196,8 @@ export const generateRecordPropertiesZodSchema = (
           ? LinksValueOptionalSchema
           : LinksValueSchema;
 
-        shape[field.name] = field.description
-          ? baseSchema.describe(field.description)
+        shape[field.name] = description
+          ? baseSchema.describe(description)
           : baseSchema;
         return;
       }
@@ -218,8 +211,8 @@ export const generateRecordPropertiesZodSchema = (
             ? CurrencyValueOptionalSchema
             : CurrencyValueSchema;
 
-        shape[field.name] = field.description
-          ? baseSchema.describe(field.description)
+        shape[field.name] = description
+          ? baseSchema.describe(description)
           : baseSchema;
         return;
       }
@@ -229,8 +222,8 @@ export const generateRecordPropertiesZodSchema = (
           ? FullNameValueOptionalSchema
           : FullNameValueSchema;
 
-        shape[field.name] = field.description
-          ? baseSchema.describe(field.description)
+        shape[field.name] = description
+          ? baseSchema.describe(description)
           : baseSchema;
         return;
       }
@@ -240,8 +233,8 @@ export const generateRecordPropertiesZodSchema = (
           ? AddressValueOptionalSchema
           : AddressValueSchema;
 
-        shape[field.name] = field.description
-          ? baseSchema.describe(field.description)
+        shape[field.name] = description
+          ? baseSchema.describe(description)
           : baseSchema;
         return;
       }
@@ -275,8 +268,8 @@ export const generateRecordPropertiesZodSchema = (
           ? EmailsValueOptionalSchema
           : EmailsValueSchema;
 
-        shape[field.name] = field.description
-          ? baseSchema.describe(field.description)
+        shape[field.name] = description
+          ? baseSchema.describe(description)
           : baseSchema;
         return;
       }
@@ -286,8 +279,8 @@ export const generateRecordPropertiesZodSchema = (
           ? PhonesValueOptionalSchema
           : PhonesValueSchema;
 
-        shape[field.name] = field.description
-          ? baseSchema.describe(field.description)
+        shape[field.name] = description
+          ? baseSchema.describe(description)
           : baseSchema;
         return;
       }
@@ -297,8 +290,8 @@ export const generateRecordPropertiesZodSchema = (
           ? RichTextValueOptionalSchema
           : RichTextValueSchema;
 
-        shape[field.name] = field.description
-          ? baseSchema.describe(field.description)
+        shape[field.name] = description
+          ? baseSchema.describe(description)
           : baseSchema;
         return;
       }
@@ -312,10 +305,6 @@ export const generateRecordPropertiesZodSchema = (
         break;
     }
 
-    if (field.isNullable) {
-      fieldSchema = fieldSchema.optional();
-    }
-
     if (field.name === 'position') {
       fieldSchema = z.union([
         z.number(),
@@ -326,8 +315,12 @@ export const generateRecordPropertiesZodSchema = (
       fieldSchema = fieldSchema.describe(
         'Use "first" to insert at the top, "last" for the bottom, or a number for explicit ordering. Leave empty to place at the top (recommended).',
       );
-    } else if (field.description) {
-      fieldSchema = fieldSchema.describe(field.description);
+    } else if (description) {
+      fieldSchema = fieldSchema.describe(description);
+    }
+
+    if (field.isNullable) {
+      fieldSchema = fieldSchema.optional();
     }
 
     shape[field.name] = fieldSchema;
