@@ -1,13 +1,18 @@
 import {
   AggregateOperations,
+  FieldMetadataType,
   type UniversalChartFilter,
   ViewFilterOperand,
 } from 'twenty-shared/types';
 
-import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/page-layout-widget/services/utils/from-universal-configuration-to-flat-page-layout-widget-configuration.util';
 
+const OBJECT_METADATA_ID = '00000000-0000-4000-8000-000000000000';
 const RELATION_FIELD_ID = '11111111-1111-4111-8111-000000000001';
 const RELATION_FIELD_UNIVERSAL_IDENTIFIER =
   '20202020-1111-4111-8111-000000000001';
@@ -18,24 +23,44 @@ const AGGREGATE_FIELD_ID = '11111111-3333-4333-8333-000000000003';
 const AGGREGATE_FIELD_UNIVERSAL_IDENTIFIER =
   '20202020-3333-4333-8333-000000000003';
 
-const flatFieldMetadataMaps = {
-  byUniversalIdentifier: {
-    [RELATION_FIELD_UNIVERSAL_IDENTIFIER]: {
-      id: RELATION_FIELD_ID,
-      universalIdentifier: RELATION_FIELD_UNIVERSAL_IDENTIFIER,
-    },
-    [TARGET_TEXT_FIELD_UNIVERSAL_IDENTIFIER]: {
-      id: TARGET_TEXT_FIELD_ID,
-      universalIdentifier: TARGET_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
-    },
-    [AGGREGATE_FIELD_UNIVERSAL_IDENTIFIER]: {
-      id: AGGREGATE_FIELD_ID,
-      universalIdentifier: AGGREGATE_FIELD_UNIVERSAL_IDENTIFIER,
-    },
-  },
-} as unknown as MetadataFlatEntityMaps<'fieldMetadata'>;
+const buildFlatFieldMetadataMaps = (
+  flatFieldMetadatas: FlatFieldMetadata[],
+): FlatEntityMaps<FlatFieldMetadata> => ({
+  byUniversalIdentifier: Object.fromEntries(
+    flatFieldMetadatas.map((flatFieldMetadata) => [
+      flatFieldMetadata.universalIdentifier,
+      flatFieldMetadata,
+    ]),
+  ),
+  universalIdentifierById: Object.fromEntries(
+    flatFieldMetadatas.map((flatFieldMetadata) => [
+      flatFieldMetadata.id,
+      flatFieldMetadata.universalIdentifier,
+    ]),
+  ),
+  universalIdentifiersByApplicationId: {},
+});
 
-const emptyMaps = { byUniversalIdentifier: {} };
+const flatFieldMetadataMaps = buildFlatFieldMetadataMaps([
+  getFlatFieldMetadataMock({
+    id: RELATION_FIELD_ID,
+    universalIdentifier: RELATION_FIELD_UNIVERSAL_IDENTIFIER,
+    objectMetadataId: OBJECT_METADATA_ID,
+    type: FieldMetadataType.RELATION,
+  }),
+  getFlatFieldMetadataMock({
+    id: TARGET_TEXT_FIELD_ID,
+    universalIdentifier: TARGET_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
+    objectMetadataId: OBJECT_METADATA_ID,
+    type: FieldMetadataType.TEXT,
+  }),
+  getFlatFieldMetadataMock({
+    id: AGGREGATE_FIELD_ID,
+    universalIdentifier: AGGREGATE_FIELD_UNIVERSAL_IDENTIFIER,
+    objectMetadataId: OBJECT_METADATA_ID,
+    type: FieldMetadataType.NUMBER,
+  }),
+]);
 
 const getChartRecordFilters = (
   recordFilters: NonNullable<UniversalChartFilter['recordFilters']>,
@@ -50,11 +75,9 @@ const getChartRecordFilters = (
         filter: { recordFilters },
       },
       flatFieldMetadataMaps,
-      flatFrontComponentMaps:
-        emptyMaps as MetadataFlatEntityMaps<'frontComponent'>,
-      flatViewMaps: emptyMaps as MetadataFlatEntityMaps<'view'>,
-      flatViewFieldGroupMaps:
-        emptyMaps as MetadataFlatEntityMaps<'viewFieldGroup'>,
+      flatFrontComponentMaps: createEmptyFlatEntityMaps(),
+      flatViewMaps: createEmptyFlatEntityMaps(),
+      flatViewFieldGroupMaps: createEmptyFlatEntityMaps(),
     });
 
   if (
