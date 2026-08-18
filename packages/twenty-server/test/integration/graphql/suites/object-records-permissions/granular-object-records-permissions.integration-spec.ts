@@ -62,7 +62,7 @@ describe('granularObjectRecordsPermissions', () => {
       await deleteRole(client, customRoleId);
     });
 
-    it('should throw permission error when querying person while person reading rights are overriden to false', async () => {
+    it('should throw permission error when querying person while person reading rights are overridden to false', async () => {
       const { roleId } = await createCustomRoleWithObjectPermissions({
         label: 'PersonReadRightsExcludedRole',
         canReadPerson: false,
@@ -112,7 +112,7 @@ describe('granularObjectRecordsPermissions', () => {
       expect(companyResponse.body.data.company).toBeDefined();
     });
 
-    it('should successfully query person when person reading rights are overriden to true', async () => {
+    it('should successfully query person when person reading rights are overridden to true', async () => {
       const { roleId } = await createCustomRoleWithObjectPermissions({
         label: 'PersonRole',
         canReadPerson: true,
