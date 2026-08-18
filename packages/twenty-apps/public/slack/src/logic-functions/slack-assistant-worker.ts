@@ -170,6 +170,7 @@ export const slackAssistantWorkerHandler = async (
           : buildSlackAssistantAnswerBlocks({
               responseText,
               durationMilliseconds,
+              requestId: record.id,
             }),
     });
 
