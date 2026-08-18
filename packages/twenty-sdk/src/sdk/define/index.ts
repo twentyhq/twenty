@@ -189,6 +189,7 @@ export {
   DateDisplayFormat,
   FieldMetadataSettingsOnClickAction,
   HTTPMethod,
+  MetadataWritability,
   NavigationMenuItemType,
   NumberDataType,
   ObjectOpenRecordIn,

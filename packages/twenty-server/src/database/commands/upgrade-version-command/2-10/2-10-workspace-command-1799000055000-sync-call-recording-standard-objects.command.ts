@@ -4,7 +4,7 @@ import {
   STANDARD_OBJECTS,
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-shared/metadata';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, MetadataWritability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -141,6 +141,7 @@ const buildLegacyCalendarEventRecordingPreferenceFieldMetadata = ({
   isNullable: false,
   isUnique: false,
   isUIEditable: true,
+  writability: MetadataWritability.OPEN,
   isLabelSyncedWithName: false,
   overrides: null,
   defaultValue: "'AUTO'",
