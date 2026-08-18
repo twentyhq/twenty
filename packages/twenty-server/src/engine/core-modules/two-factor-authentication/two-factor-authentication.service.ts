@@ -52,8 +52,6 @@ export class TwoFactorAuthenticationService {
     });
   }
 
-  // Throws TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED when 2FA is set up, and
-  // TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED when it is enforced but not set up
   async validateTwoFactorAuthenticationRequirement(
     targetWorkspace: WorkspaceEntity,
     userTwoFactorAuthenticationMethods?: TwoFactorAuthenticationMethodEntity[],
@@ -135,25 +133,16 @@ export class TwoFactorAuthenticationService {
       { workspaceId },
     );
 
-    const methodValues = {
-      userWorkspaceId: userWorkspace.id,
-      secret: encryptedSecret,
-      status: context.status,
-      strategy: TwoFactorAuthenticationStrategy.TOTP,
-    };
-
-    if (isDefined(existing2FAMethod)) {
-      await this.twoFactorAuthenticationMethodRepository.update(
-        workspaceId,
-        { id: existing2FAMethod.id },
-        methodValues,
-      );
-    } else {
-      await this.twoFactorAuthenticationMethodRepository.insert(
-        workspaceId,
-        methodValues,
-      );
-    }
+    await this.twoFactorAuthenticationMethodRepository.upsert(
+      workspaceId,
+      {
+        userWorkspaceId: userWorkspace.id,
+        secret: encryptedSecret,
+        status: context.status,
+        strategy: TwoFactorAuthenticationStrategy.TOTP,
+      },
+      ['userWorkspaceId', 'strategy'],
+    );
 
     return uri;
   }

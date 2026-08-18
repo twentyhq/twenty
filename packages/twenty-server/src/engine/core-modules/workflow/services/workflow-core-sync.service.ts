@@ -81,9 +81,7 @@ export class WorkflowCoreSyncService {
   }
 
   // coreWorkflowId is a writable column on the workspace record, so a caller
-  // can point it at a core row owned by another workspace. Only ids that
-  // already resolve inside this workspace are honoured; anything else is
-  // treated as unlinked and gets a fresh row.
+  // can point it at a core row owned by another workspace.
   private async resolveOwnedCoreWorkflowIds(
     workspaceId: string,
     workflows: WorkflowWorkspaceEntity[],

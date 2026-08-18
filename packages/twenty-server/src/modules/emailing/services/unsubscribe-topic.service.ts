@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { UnsubscribeTopicEntity } from 'src/engine/core-modules/emailing-domain/unsubscribe-topic.entity';
 import { UnsubscribeTopicVisibility } from 'src/engine/core-modules/emailing-domain/types/unsubscribe-topic-visibility.type';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -57,19 +59,13 @@ export class UnsubscribeTopicService {
     workspaceId: string,
     { id, name, description, visibility }: UpdateUnsubscribeTopicArgs,
   ): Promise<UnsubscribeTopicEntity> {
-    await this.unsubscribeTopicRepository.findOneOrFail(workspaceId, {
-      where: { id },
-    });
-
     await this.unsubscribeTopicRepository.update(
       workspaceId,
       { id },
       {
         ...(name !== undefined ? { name } : {}),
         ...(description !== undefined ? { description } : {}),
-        ...(visibility !== undefined && visibility !== null
-          ? { visibility }
-          : {}),
+        ...(isDefined(visibility) ? { visibility } : {}),
       },
     );
 
