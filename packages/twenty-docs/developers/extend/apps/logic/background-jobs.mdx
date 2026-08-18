@@ -38,7 +38,7 @@ The target function receives `payload` as its handler argument, exactly like any
 
 | Option | Default | Range | What it does |
 |--------|---------|-------|--------------|
-| `retryLimit` | `0` | `0`–`10` | Extra attempts if the run throws. Only raise this for handlers that are safe to run twice. |
+| `retryLimit` | `0` | `0`–`10` | Extra attempts when the handler explicitly reports a transient failure. Only raise this for handlers that are safe to run twice. |
 | `delayMs` | `0` | `0`–`604800000` (7 days) | Wait this long before the run becomes eligible. |
 
 ```ts
@@ -55,6 +55,28 @@ await enqueueJob({
 </Note>
 
 The queued run inherits the acting user of the function that enqueued it, so it acts with the same permissions.
+
+## Retry a transient failure
+
+Twenty does not retry every exception from application code. An ordinary thrown error is treated as a permanent failure. For a transient failure, throw `RetryableLogicFunctionError` and configure `retryLimit` on the queued job.
+
+```ts
+import { RetryableLogicFunctionError } from 'twenty-sdk/logic-function';
+
+const response = await fetch('https://api.example.com/contacts');
+
+if (response.status === 429 || response.status >= 500) {
+  throw new RetryableLogicFunctionError(
+    `The contacts API is temporarily unavailable (${response.status})`,
+  );
+}
+```
+
+The queue delays retry attempts with exponential backoff and jitter. The exact delay is intentionally not guaranteed, so application code should not depend on a retry happening at a precise time.
+
+<Warning>
+Retries re-run the whole handler and may happen after some side effects succeeded. Make the handler idempotent before setting `retryLimit` above `0`.
+</Warning>
 
 ## Use it: page through a long sync
 
@@ -159,7 +181,3 @@ What makes this hold up:
 - **Persist progress before enqueuing the next run,** so a failed link restarts from the last completed chunk instead of the beginning.
 - **Keep each chunk idempotent.** Reprocessing one chunk after a retry must not double-write — key writes on the record or external id you are processing.
 - **Prefer a chunked chain over one giant fan-out** when the work hits a rate-limited third party: a chain with `delayMs` paces itself, whereas thousands of jobs enqueued at once all become eligible immediately.
-
-<Warning>
-Retries re-run the whole handler. Keep enqueued handlers idempotent before setting `retryLimit` above `0`.
-</Warning>

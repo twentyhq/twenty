@@ -100,9 +100,14 @@ export class LocalChildProcessRunnerService {
                 } else {
                   process.exit(0);
                 }
-              } catch (err) {
+              } catch (error) {
                 if (process.send) {
-                  process.send({ ok: false, error: String(err), stack: err?.stack }, () => process.exit(1));
+                  process.send({
+                    ok: false,
+                    errorType: error instanceof Error ? error.name : 'Error',
+                    error: error instanceof Error ? error.message : String(error),
+                    stack: error?.stack,
+                  }, () => process.exit(1));
                 } else {
                   process.exit(1);
                 }
@@ -115,12 +120,17 @@ export class LocalChildProcessRunnerService {
             const out = await handlerFn(payload);
             process.stdout.write(JSON.stringify({ ok: true, result: out }), () => process.exit(0));
           }
-        } catch (err) {
-          const msg = String(err);
+        } catch (error) {
+          const errorMessage = String(error);
           if (process.send) {
-            process.send({ ok: false, error: msg, stack: err?.stack }, () => process.exit(1));
+            process.send({
+              ok: false,
+              errorType: error instanceof Error ? error.name : 'Error',
+              error: error instanceof Error ? error.message : errorMessage,
+              stack: error?.stack,
+            }, () => process.exit(1));
           } else {
-            process.stdout.write(msg, () => process.exit(1));
+            process.stdout.write(errorMessage, () => process.exit(1));
           }
         }
       })();
@@ -142,6 +152,7 @@ export class LocalChildProcessRunnerService {
     return new Promise<{
       ok: boolean;
       result?: unknown;
+      errorType?: string;
       error?: string;
       stack?: string;
       stdout: string;
@@ -175,6 +186,7 @@ export class LocalChildProcessRunnerService {
               }
             | {
                 ok: false;
+                errorType?: string;
                 error: string;
                 stack?: string;
                 stdout?: string;

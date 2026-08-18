@@ -1,5 +1,10 @@
 import { Logger, Scope } from '@nestjs/common';
 
+import {
+  RETRYABLE_LOGIC_FUNCTION_ERROR_NAME,
+  RetryableLogicFunctionError,
+} from 'twenty-shared/logic-function';
+
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -37,13 +42,23 @@ export class LogicFunctionTriggerJob {
 
     for (const logicFunctionPayload of logicFunctionPayloads) {
       try {
-        await this.logicFunctionExecutorService.execute({
-          logicFunctionId: logicFunctionPayload.logicFunctionId,
-          workspaceId: logicFunctionPayload.workspaceId,
-          payload: logicFunctionPayload.payload ?? {},
-          userId: logicFunctionPayload.userId,
-          userWorkspaceId: logicFunctionPayload.userWorkspaceId,
-        });
+        const logicFunctionExecutionResult =
+          await this.logicFunctionExecutorService.execute({
+            logicFunctionId: logicFunctionPayload.logicFunctionId,
+            workspaceId: logicFunctionPayload.workspaceId,
+            payload: logicFunctionPayload.payload ?? {},
+            userId: logicFunctionPayload.userId,
+            userWorkspaceId: logicFunctionPayload.userWorkspaceId,
+          });
+
+        if (
+          logicFunctionExecutionResult.error?.errorType ===
+          RETRYABLE_LOGIC_FUNCTION_ERROR_NAME
+        ) {
+          throw new RetryableLogicFunctionError(
+            logicFunctionExecutionResult.error.errorMessage,
+          );
+        }
       } catch (error) {
         // A stopped application must not fail the job: failing would make
         // the queue retry an execution that is intentionally blocked.

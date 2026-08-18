@@ -340,6 +340,13 @@ export class BullMQDriver
       priority:
         options?.priority ?? MESSAGE_QUEUE_WORKER_CONFIG[queueName].priority,
       attempts: 1 + (options?.retryLimit || 0),
+      backoff: options?.backoff
+        ? {
+            type: options.backoff.strategy,
+            delay: options.backoff.initialDelayMilliseconds,
+            jitter: options.backoff.jitter,
+          }
+        : undefined,
       removeOnComplete: {
         age: QUEUE_RETENTION.completedMaxAge,
         count: QUEUE_RETENTION.completedMaxCount,
