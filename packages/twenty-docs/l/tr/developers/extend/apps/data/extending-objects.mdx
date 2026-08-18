@@ -43,6 +43,8 @@ export default defineField({
 
 * Dosya konumu size bağlıdır. Genel kabul gören yapı `src/fields/\<name>.field.ts` şeklindedir, ancak SDK `src/` içinde herhangi bir yerdeki alanları algılar.
 
+* `writability` ayrıca alan bazında da ayarlanabilir: `MetadataWritability.APPLICATION`, yazma işlemlerini yalnızca uygulamanızın kendi mantık işlevleri tarafından gerçekleştirilecek şekilde sınırlar; `MetadataWritability.SYSTEM` ise platform tarafından yönetilen veriler için ayrılmıştır. Bir alanın yazılabilirliği yalnızca nesnesinin seviyesinden daha katı olabilir ve okumalar etkilenmez. Tam semantik için [Objects](/l/tr/developers/extend/apps/data/objects) bölümüne bakın.
+
 * Standart bir sayfa yerleşimine (örneğin, Görev veya Şirket detay sayfası) bir sekme eklemek için, `twenty-sdk/define` içindeki `STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS` ile birlikte [`definePageLayoutTab`](/l/tr/developers/extend/apps/layout/page-layouts#definepagelayouttab) kullanın.
 
 ## Mevcut bir nesneye ilişki ekleme
