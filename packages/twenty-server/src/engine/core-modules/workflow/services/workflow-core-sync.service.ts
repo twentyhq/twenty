@@ -47,15 +47,17 @@ export class WorkflowCoreSyncService {
     const coreWorkflowIdByWorkspaceRecordId = new Map<string, string>();
 
     const coreRows = workflows.map((workflow) => {
-      const isLinked =
-        isNonEmptyString(workflow.coreWorkflowId) &&
-        linkedCoreWorkflowIds.has(workflow.coreWorkflowId);
+      const candidateCoreWorkflowId = workflow.coreWorkflowId;
 
-      const coreWorkflowId = isLinked
-        ? (workflow.coreWorkflowId as string)
-        : uuidv4();
+      const linkedCoreWorkflowId =
+        isNonEmptyString(candidateCoreWorkflowId) &&
+        linkedCoreWorkflowIds.has(candidateCoreWorkflowId)
+          ? candidateCoreWorkflowId
+          : null;
 
-      if (!isLinked) {
+      const coreWorkflowId = linkedCoreWorkflowId ?? uuidv4();
+
+      if (!isDefined(linkedCoreWorkflowId)) {
         coreWorkflowIdByWorkspaceRecordId.set(workflow.id, coreWorkflowId);
       }
 

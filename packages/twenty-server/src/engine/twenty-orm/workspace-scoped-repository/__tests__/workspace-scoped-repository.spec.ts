@@ -1,4 +1,4 @@
-import { type Repository } from 'typeorm';
+import { Not, type Repository } from 'typeorm';
 
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 type FakeEntity = {
@@ -31,7 +31,6 @@ const createMockRepository = (): jest.Mocked<Repository<FakeEntity>> =>
     upsert: jest.fn(),
     create: jest.fn(),
     createQueryBuilder: jest.fn(),
-    metadata: { schema: 'core', tableName: 'fake' },
   }) as unknown as jest.Mocked<Repository<FakeEntity>>;
 
 describe('WorkspaceScopedRepository', () => {
@@ -365,136 +364,83 @@ describe('WorkspaceScopedRepository', () => {
   });
 
   describe('upsert', () => {
-    const mockUpsertBuilder = (
-      repo: jest.Mocked<Repository<FakeEntity>>,
-      result: unknown = { generatedMaps: [] },
-    ) => {
-      const builder = {
-        insert: jest.fn().mockReturnThis(),
-        values: jest.fn().mockReturnThis(),
-        orUpdate: jest.fn().mockReturnThis(),
-        returning: jest.fn().mockReturnThis(),
-        execute: jest.fn().mockResolvedValue(result),
-      };
-
-      (repo.createQueryBuilder as jest.Mock).mockReturnValue(builder);
-
-      return builder;
-    };
-
-    it('stamps workspaceId on the values', async () => {
-      const builder = mockUpsertBuilder(repository);
-
+    it('stamps workspaceId on a single entity and forwards conflict opts', async () => {
       await scoped.upsert(WORKSPACE_ID, { id: 'a', status: 'queued' }, ['id']);
 
-      expect(builder.values).toHaveBeenCalledWith({
-        id: 'a',
-        status: 'queued',
-        workspaceId: WORKSPACE_ID,
-      });
-    });
-
-    // Without this predicate the conflict target alone decides which row the
-    // DO UPDATE hits, so a row owned by another workspace could be rewritten.
-    it('guards the DO UPDATE with a workspaceId predicate', async () => {
-      const builder = mockUpsertBuilder(repository);
-
-      await scoped.upsert(WORKSPACE_ID, { id: 'a', status: 'queued' }, ['id']);
-
-      const [, , options] = builder.orUpdate.mock.calls[0];
-
-      expect(options.overwriteCondition.where).toBe(
-        '"core"."fake"."workspaceId" = EXCLUDED."workspaceId"',
-      );
-    });
-
-    it('never lets the conflict target or workspaceId be overwritten', async () => {
-      const builder = mockUpsertBuilder(repository);
-
-      await scoped.upsert(
-        WORKSPACE_ID,
-        { id: 'a', status: 'queued', workspaceId: OTHER_WORKSPACE_ID },
+      expect(repository.upsert).toHaveBeenCalledWith(
+        { id: 'a', status: 'queued', workspaceId: WORKSPACE_ID },
         ['id'],
       );
-
-      const [overwriteColumns] = builder.orUpdate.mock.calls[0];
-
-      expect(overwriteColumns).toEqual(['status']);
     });
 
-    it('collects overwrite columns across every entity of a batch', async () => {
-      const builder = mockUpsertBuilder(repository);
-
+    it('stamps workspaceId on each entity in an array', async () => {
       await scoped.upsert(
         WORKSPACE_ID,
         [
           { id: 'a', status: 'queued' },
-          { id: 'b', label: 'x' },
+          { id: 'b', status: 'sent' },
         ],
-        { conflictPaths: ['id'], skipUpdateIfNoValuesChanged: true },
+        { conflictPaths: ['id'] },
       );
 
-      const [overwriteColumns, conflictPaths, options] =
-        builder.orUpdate.mock.calls[0];
+      expect(repository.upsert).toHaveBeenCalledWith(
+        [
+          { id: 'a', status: 'queued', workspaceId: WORKSPACE_ID },
+          { id: 'b', status: 'sent', workspaceId: WORKSPACE_ID },
+        ],
+        { conflictPaths: ['id'] },
+      );
+    });
+  });
 
-      expect(overwriteColumns).toEqual(['status', 'label']);
-      expect(conflictPaths).toEqual(['id']);
-      expect(options.skipUpdateIfNoValuesChanged).toBe(true);
+  describe('upsertAndReturnOne', () => {
+    it('upserts with RETURNING and hydrates the row from generatedMaps', async () => {
+      const persistedRow = {
+        id: 'a',
+        status: 'queued',
+        workspaceId: WORKSPACE_ID,
+      };
+
+      (repository.upsert as jest.Mock).mockResolvedValue({
+        generatedMaps: [persistedRow],
+      });
+      (repository.create as jest.Mock).mockReturnValue(persistedRow);
+
+      const result = await scoped.upsertAndReturnOne(
+        WORKSPACE_ID,
+        { id: 'a', status: 'queued' },
+        ['id'],
+      );
+
+      expect(repository.upsert).toHaveBeenCalledWith(
+        { id: 'a', status: 'queued', workspaceId: WORKSPACE_ID },
+        { conflictPaths: ['id'], returning: '*' },
+      );
+      expect(repository.create).toHaveBeenCalledWith(persistedRow);
+      expect(result).toBe(persistedRow);
     });
 
-    it('accepts conflictPaths given as an object map', async () => {
-      const builder = mockUpsertBuilder(repository);
+    it('throws instead of returning a hollow entity when no row is returned', async () => {
+      (repository.upsert as jest.Mock).mockResolvedValue({ generatedMaps: [] });
 
-      await scoped.upsert(WORKSPACE_ID, { id: 'a', status: 'queued' }, {
-        conflictPaths: { id: true },
-      } as never);
+      await expect(
+        scoped.upsertAndReturnOne(WORKSPACE_ID, { id: 'a' }, ['id']),
+      ).rejects.toThrow(/upsert returned no row/);
 
-      const [, conflictPaths] = builder.orUpdate.mock.calls[0];
-
-      expect(conflictPaths).toEqual(['id']);
-    });
-
-    describe('upsertAndReturnOne', () => {
-      it('returns the persisted row', async () => {
-        const persistedRow = { id: 'a', status: 'queued' };
-        const builder = mockUpsertBuilder(repository, {
-          generatedMaps: [persistedRow],
-        });
-
-        (repository.create as jest.Mock).mockReturnValue(persistedRow);
-
-        const result = await scoped.upsertAndReturnOne(
-          WORKSPACE_ID,
-          { id: 'a', status: 'queued' },
-          ['id'],
-        );
-
-        expect(builder.returning).toHaveBeenCalledWith('*');
-        expect(result).toBe(persistedRow);
-      });
-
-      // The guard makes a foreign-workspace conflict update zero rows, so an
-      // empty RETURNING is how that attempt surfaces to the caller.
-      it('throws when the guard skipped the row', async () => {
-        mockUpsertBuilder(repository, { generatedMaps: [] });
-
-        await expect(
-          scoped.upsertAndReturnOne(WORKSPACE_ID, { id: 'a' }, ['id']),
-        ).rejects.toThrow(/matched a row owned by another workspace/);
-      });
+      expect(repository.create).not.toHaveBeenCalled();
     });
   });
 
   describe('insertAndReturnOne', () => {
     const mockInsertBuilder = (
       repo: jest.Mocked<Repository<FakeEntity>>,
-      generatedMaps: unknown[],
+      raw: unknown[],
     ) => {
       const builder = {
         insert: jest.fn().mockReturnThis(),
         values: jest.fn().mockReturnThis(),
         returning: jest.fn().mockReturnThis(),
-        execute: jest.fn().mockResolvedValue({ generatedMaps }),
+        execute: jest.fn().mockResolvedValue({ raw }),
       };
 
       (repo.createQueryBuilder as jest.Mock).mockReturnValue(builder);
@@ -502,8 +448,12 @@ describe('WorkspaceScopedRepository', () => {
       return builder;
     };
 
-    it('stamps workspaceId and returns the persisted row', async () => {
-      const persistedRow = { id: 'a', workspaceId: WORKSPACE_ID };
+    it('stamps workspaceId and hydrates the row from RETURNING', async () => {
+      const persistedRow = {
+        id: 'a',
+        status: 'queued',
+        workspaceId: WORKSPACE_ID,
+      };
       const builder = mockInsertBuilder(repository, [persistedRow]);
 
       (repository.create as jest.Mock).mockReturnValue(persistedRow);
@@ -518,6 +468,7 @@ describe('WorkspaceScopedRepository', () => {
         status: 'queued',
         workspaceId: WORKSPACE_ID,
       });
+      expect(builder.returning).toHaveBeenCalledWith('*');
       expect(result).toBe(persistedRow);
     });
 
@@ -533,6 +484,77 @@ describe('WorkspaceScopedRepository', () => {
         id: 'a',
         workspaceId: WORKSPACE_ID,
       });
+    });
+  });
+
+  describe('upsert conflict target guard', () => {
+    it('refuses an upsert whose conflict target matches another workspace', async () => {
+      (repository.findOne as jest.Mock).mockResolvedValue({
+        id: 'a',
+        workspaceId: OTHER_WORKSPACE_ID,
+      });
+
+      await expect(
+        scoped.upsert(WORKSPACE_ID, { id: 'a', status: 'queued' }, ['id']),
+      ).rejects.toThrow(/matches a row owned by another workspace/);
+      expect(repository.upsert).not.toHaveBeenCalled();
+    });
+
+    it('looks the conflict target up across workspaces, including soft-deleted rows', async () => {
+      await scoped.upsert(WORKSPACE_ID, { id: 'a', status: 'queued' }, ['id']);
+
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: [{ id: 'a', workspaceId: Not(WORKSPACE_ID) }],
+        withDeleted: true,
+      });
+    });
+
+    it('checks every entity of a batch', async () => {
+      await scoped.upsert(
+        WORKSPACE_ID,
+        [
+          { id: 'a', status: 'queued' },
+          { id: 'b', status: 'sent' },
+        ],
+        { conflictPaths: ['id'] },
+      );
+
+      expect(repository.findOne).toHaveBeenCalledWith({
+        where: [
+          { id: 'a', workspaceId: Not(WORKSPACE_ID) },
+          { id: 'b', workspaceId: Not(WORKSPACE_ID) },
+        ],
+        withDeleted: true,
+      });
+    });
+
+    it('skips the lookup when workspaceId is part of the conflict target', async () => {
+      await scoped.upsert(WORKSPACE_ID, { id: 'a', status: 'queued' }, [
+        'workspaceId',
+        'id',
+      ]);
+
+      expect(repository.findOne).not.toHaveBeenCalled();
+      expect(repository.upsert).toHaveBeenCalled();
+    });
+
+    it('skips the lookup when the conflict target is not fully populated', async () => {
+      await scoped.upsert(WORKSPACE_ID, { status: 'queued' }, ['id']);
+
+      expect(repository.findOne).not.toHaveBeenCalled();
+      expect(repository.upsert).toHaveBeenCalled();
+    });
+
+    it('guards upsertAndReturnOne as well', async () => {
+      (repository.findOne as jest.Mock).mockResolvedValue({
+        id: 'a',
+        workspaceId: OTHER_WORKSPACE_ID,
+      });
+
+      await expect(
+        scoped.upsertAndReturnOne(WORKSPACE_ID, { id: 'a' }, ['id']),
+      ).rejects.toThrow(/matches a row owned by another workspace/);
+      expect(repository.upsert).not.toHaveBeenCalled();
     });
   });
 

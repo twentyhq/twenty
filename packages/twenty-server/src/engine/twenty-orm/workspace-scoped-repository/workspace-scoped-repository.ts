@@ -5,9 +5,8 @@ import {
   type FindManyOptions,
   type FindOneOptions,
   type FindOptionsWhere,
-  type InsertQueryBuilder,
   type InsertResult,
-  type ObjectLiteral,
+  Not,
   type Repository,
   type SelectQueryBuilder,
   type UpdateResult,
@@ -204,7 +203,7 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
   ): Promise<T> {
     this.assertWorkspaceId(workspaceId);
 
-    const { generatedMaps } = await this.repository
+    const { raw } = await this.repository
       .createQueryBuilder()
       .insert()
       .values(
@@ -216,24 +215,34 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
       .returning('*')
       .execute();
 
-    return this.hydrateReturnedRow(
-      generatedMaps,
-      'insertAndReturnOne: insert returned no row.',
-    );
+    const [persistedRow] = raw as DeepPartial<T>[];
+
+    if (!isDefined(persistedRow)) {
+      throw new Error(
+        'WorkspaceScopedRepository.insertAndReturnOne: insert returned no row.',
+      );
+    }
+
+    return this.repository.create(persistedRow);
   }
 
-  upsert(
+  async upsert(
     workspaceId: string,
     entity: QueryDeepPartialEntity<T> | QueryDeepPartialEntity<T>[],
     conflictPathsOrOptions: string[] | UpsertOptions<T>,
   ): Promise<InsertResult> {
     this.assertWorkspaceId(workspaceId);
 
-    return this.buildWorkspaceGuardedUpsert(
+    await this.assertConflictTargetsBelongToWorkspace(
       workspaceId,
       entity,
       conflictPathsOrOptions,
-    ).execute();
+    );
+
+    return this.repository.upsert(
+      this.stampWorkspaceIdOnEntities(workspaceId, entity),
+      conflictPathsOrOptions,
+    );
   }
 
   async upsertAndReturnOne(
@@ -243,18 +252,26 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
   ): Promise<T> {
     this.assertWorkspaceId(workspaceId);
 
-    const { generatedMaps } = await this.buildWorkspaceGuardedUpsert(
+    await this.assertConflictTargetsBelongToWorkspace(
       workspaceId,
       entity,
       conflictPaths,
-    )
-      .returning('*')
-      .execute();
-
-    return this.hydrateReturnedRow(
-      generatedMaps,
-      'upsertAndReturnOne: upsert matched a row owned by another workspace.',
     );
+
+    const { generatedMaps } = await this.repository.upsert(
+      this.stampWorkspaceIdOnEntities(workspaceId, entity),
+      { conflictPaths, returning: '*' },
+    );
+
+    const [persistedRow] = generatedMaps;
+
+    if (!isDefined(persistedRow)) {
+      throw new Error(
+        'WorkspaceScopedRepository.upsertAndReturnOne: upsert returned no row.',
+      );
+    }
+
+    return this.repository.create(persistedRow as DeepPartial<T>);
   }
 
   // Escape hatch. Caller MUST add the workspaceId predicate themselves.
@@ -319,60 +336,62 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     return { workspaceId, ...clause } as FindOptionsWhere<T>;
   }
 
-  // ON CONFLICT matches on the conflict target alone, so a row owned by
-  // another workspace can satisfy it. The predicate has to live inside the
-  // statement: checking ownership with a prior SELECT would leave a window
-  // for a concurrent insert to claim the conflict target in between.
-  private buildWorkspaceGuardedUpsert(
+  // ON CONFLICT matches on the conflict target alone. When that target does
+  // not contain workspaceId, a row from another workspace can satisfy it and
+  // the DO UPDATE would overwrite that row and reassign its workspaceId.
+  private async assertConflictTargetsBelongToWorkspace(
     workspaceId: string,
     entity: QueryDeepPartialEntity<T> | QueryDeepPartialEntity<T>[],
     conflictPathsOrOptions: string[] | UpsertOptions<T>,
-  ): InsertQueryBuilder<T> {
-    const options: UpsertOptions<T> = Array.isArray(conflictPathsOrOptions)
-      ? { conflictPaths: conflictPathsOrOptions }
-      : conflictPathsOrOptions;
+  ): Promise<void> {
+    const conflictPaths = Array.isArray(conflictPathsOrOptions)
+      ? conflictPathsOrOptions
+      : (conflictPathsOrOptions.conflictPaths ?? []);
 
-    const conflictPaths = Array.isArray(options.conflictPaths)
-      ? options.conflictPaths
-      : Object.keys(options.conflictPaths);
+    const conflictPathNames = Array.isArray(conflictPaths)
+      ? conflictPaths
+      : Object.keys(conflictPaths);
+
+    if (
+      conflictPathNames.length === 0 ||
+      conflictPathNames.includes('workspaceId')
+    ) {
+      return;
+    }
 
     const entities = Array.isArray(entity) ? entity : [entity];
 
-    const overwriteColumns = [
-      ...new Set(entities.flatMap((item) => Object.keys(item))),
-    ].filter(
-      (column) => !conflictPaths.includes(column) && column !== 'workspaceId',
-    );
+    const conflictTargets = entities
+      .map((item) =>
+        conflictPathNames.reduce<FindOptionsWhere<T>>(
+          (target, path) => ({
+            ...target,
+            [path]: (item as Record<string, unknown>)[path],
+          }),
+          {} as FindOptionsWhere<T>,
+        ),
+      )
+      .filter((target) =>
+        Object.values(target).every((value) => isDefined(value)),
+      );
 
-    const { schema, tableName } = this.repository.metadata;
-    const target = isDefined(schema)
-      ? `"${schema}"."${tableName}"`
-      : `"${tableName}"`;
-
-    return this.repository
-      .createQueryBuilder()
-      .insert()
-      .values(this.stampWorkspaceIdOnEntities(workspaceId, entity))
-      .orUpdate(overwriteColumns, conflictPaths, {
-        skipUpdateIfNoValuesChanged: options.skipUpdateIfNoValuesChanged,
-        indexPredicate: options.indexPredicate,
-        overwriteCondition: {
-          where: `${target}."workspaceId" = EXCLUDED."workspaceId"`,
-        },
-      });
-  }
-
-  private hydrateReturnedRow(
-    generatedMaps: ObjectLiteral[],
-    failureMessage: string,
-  ): T {
-    const [persistedRow] = generatedMaps;
-
-    if (!isDefined(persistedRow)) {
-      throw new Error(`WorkspaceScopedRepository.${failureMessage}`);
+    if (conflictTargets.length === 0) {
+      return;
     }
 
-    return this.repository.create(persistedRow as DeepPartial<T>);
+    const foreignRow = await this.repository.findOne({
+      where: conflictTargets.map((target) => ({
+        ...target,
+        workspaceId: Not(workspaceId),
+      })),
+      withDeleted: true,
+    });
+
+    if (isDefined(foreignRow)) {
+      throw new Error(
+        `WorkspaceScopedRepository: upsert conflict target (${conflictPathNames.join(', ')}) matches a row owned by another workspace.`,
+      );
+    }
   }
 
   private stampWorkspaceIdOnEntities(

@@ -57,7 +57,6 @@ describe('ApprovedAccessDomainService', () => {
           useValue: {
             delete: jest.fn(),
             findOne: jest.fn(),
-            findOneOrFail: jest.fn(),
             find: jest.fn(),
             update: jest.fn(),
             insertAndReturnOne: jest.fn(),
@@ -397,13 +396,6 @@ describe('ApprovedAccessDomainService', () => {
         .spyOn(approvedAccessDomainRepositoryUnscoped, 'findOneBy')
         .mockResolvedValue(approvedAccessDomain);
       const updateSpy = jest.spyOn(approvedAccessDomainRepository, 'update');
-
-      jest
-        .spyOn(approvedAccessDomainRepository, 'findOneOrFail')
-        .mockResolvedValue({
-          ...approvedAccessDomain,
-          isValidated: true,
-        } as ApprovedAccessDomainEntity);
 
       await service.validateApprovedAccessDomain({
         validationToken,
