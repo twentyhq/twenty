@@ -74,6 +74,8 @@ describe('useImpersonationSession', () => {
         await result.current.stopImpersonating();
       });
 
+      expect(stopImpersonationMock).toHaveBeenCalledTimes(1);
+      expect(stopImpersonationMock).toHaveBeenCalledWith();
       expect(store.get(tokenPairState.atom)).toBeNull();
       expect(store.get(isCookieAuthActiveState.atom)).toBe(true);
       expect(sessionStorage.getItem(IMPERSONATION_SESSION_KEY)).toBeNull();
@@ -98,12 +100,18 @@ describe('useImpersonationSession', () => {
         await result.current.stopImpersonating();
       });
 
+      expect(stopImpersonationMock).toHaveBeenCalledTimes(1);
+      expect(stopImpersonationMock).toHaveBeenCalledWith();
       expect(store.get(tokenPairState.atom)).toEqual(ADMIN_TOKEN_PAIR);
       expect(store.get(isCookieAuthActiveState.atom)).toBe(false);
       expect(signOutMock).not.toHaveBeenCalled();
     });
 
-    it('should restore the parked token pair when the mutation itself fails', async () => {
+    // A rejection cannot tell "the server never ran it" from "the answer was
+    // lost", and in the first case the impersonation cookie is still live: the
+    // boot probe would authenticate on it and switch cookie auth back on,
+    // suppressing the restored Bearer and silently keeping the impersonation.
+    it('should sign out rather than restore when the mutation itself fails', async () => {
       stopImpersonationMock.mockRejectedValue(new Error('network'));
       sessionStorage.setItem(
         IMPERSONATION_SESSION_KEY,
@@ -119,9 +127,29 @@ describe('useImpersonationSession', () => {
         await result.current.stopImpersonating();
       });
 
-      expect(store.get(tokenPairState.atom)).toEqual(ADMIN_TOKEN_PAIR);
-      expect(store.get(isCookieAuthActiveState.atom)).toBe(false);
-      expect(signOutMock).not.toHaveBeenCalled();
+      expect(store.get(tokenPairState.atom)).toBeNull();
+      expect(store.get(isCookieAuthActiveState.atom)).toBe(true);
+      expect(signOutMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('should sign out when the server answers without a verdict', async () => {
+      stopImpersonationMock.mockResolvedValue({ data: undefined });
+      sessionStorage.setItem(
+        IMPERSONATION_SESSION_KEY,
+        JSON.stringify({
+          tokenPair: ADMIN_TOKEN_PAIR,
+          returnPath: '/admin-panel',
+        }),
+      );
+
+      const { store, result } = setup();
+
+      await act(async () => {
+        await result.current.stopImpersonating();
+      });
+
+      expect(store.get(tokenPairState.atom)).toBeNull();
+      expect(signOutMock).toHaveBeenCalledTimes(1);
     });
 
     it('should sign out when nothing was parked on this origin', async () => {

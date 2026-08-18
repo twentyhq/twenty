@@ -88,9 +88,31 @@ export const useImpersonationSession = () => {
 
       try {
         const { data } = await stopImpersonationMutation();
+        const canRestoreImpersonatorSession =
+          data?.stopImpersonation.canRestoreImpersonatorSession;
 
-        if (data?.stopImpersonation.canRestoreImpersonatorSession === true) {
+        if (canRestoreImpersonatorSession === true) {
           store.set(tokenPairState.atom, null);
+          clearSessionLocalStorageKeys();
+          reloadWithSession(returnPath);
+
+          return;
+        }
+
+        // An explicit false means the server ran and cleared the session
+        // cookie, so hand back the pair startImpersonating parked rather than
+        // signing out of a session the admin still holds. Cookie auth goes off
+        // with it, or the auth link keeps suppressing the Bearer and the tab
+        // holds no credential at all. Never on a rejection: the impersonation
+        // cookie may still be live, and the boot probe would authenticate on it
+        // and switch cookie auth back on, leaving the admin impersonating
+        // without knowing it.
+        if (
+          canRestoreImpersonatorSession === false &&
+          isDefined(parkedTokenPair)
+        ) {
+          store.set(isCookieAuthActiveState.atom, false);
+          store.set(tokenPairState.atom, parkedTokenPair);
           clearSessionLocalStorageKeys();
           reloadWithSession(returnPath);
 
@@ -98,21 +120,7 @@ export const useImpersonationSession = () => {
         }
       } catch {}
 
-      // The server cleared the session cookie, so hand back the pair
-      // startImpersonating parked rather than signing out of a session the admin
-      // still holds. Cookie auth goes off with it, or the auth link keeps
-      // suppressing the Bearer and the tab holds no credential at all.
-      if (isDefined(parkedTokenPair)) {
-        store.set(isCookieAuthActiveState.atom, false);
-        store.set(tokenPairState.atom, parkedTokenPair);
-        clearSessionLocalStorageKeys();
-        reloadWithSession(returnPath);
-
-        return;
-      }
-
-      // Cross-workspace: the admin session on its own origin was never replaced,
-      // and this origin never held one to park.
+      // Nothing parked to hand back, or the stop never got a confirmed answer.
       window.close();
       await signOut();
 
