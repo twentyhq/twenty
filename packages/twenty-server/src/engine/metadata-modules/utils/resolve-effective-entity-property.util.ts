@@ -4,7 +4,10 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { translateStandardLabel } from 'src/engine/core-modules/i18n/utils/translate-standard-label.util';
-import { type MetadataEntityOverridablePropertyName } from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
+import {
+  type MetadataEntityOverridablePropertyName,
+  type MetadataEntityTranslatablePropertyName,
+} from 'src/engine/metadata-modules/flat-entity/constant/all-entity-properties-configuration-by-metadata-name.constant';
 import { ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-translatable-properties-by-metadata-name.constant';
 import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/utils/effective-entity-i18n-context.type';
 import { type MetadataPresentationOverrides } from 'src/engine/metadata-modules/utils/metadata-presentation-overrides.type';
@@ -19,12 +22,20 @@ export const resolveEffectiveEntityProperty = <T extends AllMetadataName>({
   metadataName: T;
   baseValue: string | null | undefined;
   overrides: MetadataPresentationOverrides<T> | null | undefined;
-  property: MetadataEntityOverridablePropertyName<T> & string;
+  // A property is resolvable if it is overridable, translatable, or both:
+  // navigationMenuItem.name is translated but never renamed, so keying this on
+  // "overridable" alone would lock it out of the shared resolution path.
+  property: (
+    | MetadataEntityOverridablePropertyName<T>
+    | MetadataEntityTranslatablePropertyName<T>
+  ) &
+    string;
   i18nContext: EffectiveEntityI18nContext;
 }): string => {
-  const isTranslatable = (
-    ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME[metadataName] as string[]
-  ).includes(property);
+  const translatableProperties: readonly string[] =
+    ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME[metadataName] ?? [];
+
+  const isTranslatable = translatableProperties.includes(property);
 
   const overrideValue = (
     overrides as Record<string, unknown> | null | undefined

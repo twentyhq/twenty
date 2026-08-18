@@ -1,13 +1,21 @@
 import { type Manifest } from 'twenty-shared/application';
+import {
+  TRANSLATABLE_PROPERTIES_BY_METADATA_NAME,
+  type TranslatableMetadataName,
+} from 'twenty-shared/i18n';
 
-const TRANSLATABLE_KEYS_BY_MANIFEST_KEY: Record<string, readonly string[]> = {
-  objects: ['labelSingular', 'labelPlural', 'description'],
-  fields: ['label', 'description'],
-  views: ['name'],
-  pageLayoutTabs: ['title'],
-  commandMenuItems: ['label', 'shortLabel'],
-  navigationMenuItems: ['name'],
-};
+// Which manifest collection carries which metadata entity. The properties to
+// extract are not listed here on purpose: they come from the shared registry,
+// so the SDK cannot drift from what the server actually resolves at runtime.
+// Metadata names with no manifest collection (viewFieldGroup) are simply absent.
+const MANIFEST_KEY_BY_METADATA_NAME = {
+  objectMetadata: 'objects',
+  fieldMetadata: 'fields',
+  view: 'views',
+  pageLayoutTab: 'pageLayoutTabs',
+  commandMenuItem: 'commandMenuItems',
+  navigationMenuItem: 'navigationMenuItems',
+} as const satisfies Partial<Record<TranslatableMetadataName, keyof Manifest>>;
 
 export const collectTranslatableStrings = (manifest: Manifest): string[] => {
   const strings = new Set<string>();
@@ -18,25 +26,32 @@ export const collectTranslatableStrings = (manifest: Manifest): string[] => {
     }
   };
 
-  for (const [manifestKey, fieldKeys] of Object.entries(
-    TRANSLATABLE_KEYS_BY_MANIFEST_KEY,
-  )) {
-    const entities = (manifest as unknown as Record<string, unknown>)[
-      manifestKey
-    ];
+  const addEntityStrings = (
+    entity: unknown,
+    metadataName: TranslatableMetadataName,
+  ) => {
+    if (entity === null || typeof entity !== 'object') {
+      return;
+    }
+
+    for (const property of TRANSLATABLE_PROPERTIES_BY_METADATA_NAME[
+      metadataName
+    ]) {
+      addString((entity as Record<string, unknown>)[property]);
+    }
+  };
+
+  for (const [metadataName, manifestKey] of Object.entries(
+    MANIFEST_KEY_BY_METADATA_NAME,
+  ) as [TranslatableMetadataName, keyof Manifest][]) {
+    const entities = manifest[manifestKey];
 
     if (!Array.isArray(entities)) {
       continue;
     }
 
     for (const entity of entities) {
-      if (entity === null || typeof entity !== 'object') {
-        continue;
-      }
-
-      for (const fieldKey of fieldKeys) {
-        addString((entity as Record<string, unknown>)[fieldKey]);
-      }
+      addEntityStrings(entity, metadataName);
     }
   }
 
@@ -44,10 +59,10 @@ export const collectTranslatableStrings = (manifest: Manifest): string[] => {
   // flat pageLayoutTabs array, so walk the tree to reach them.
   for (const pageLayout of manifest.pageLayouts ?? []) {
     for (const tab of pageLayout.tabs ?? []) {
-      addString(tab.title);
+      addEntityStrings(tab, 'pageLayoutTab');
 
       for (const widget of tab.widgets ?? []) {
-        addString(widget.title);
+        addEntityStrings(widget, 'pageLayoutWidget');
       }
     }
   }
