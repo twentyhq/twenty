@@ -12,6 +12,7 @@ const MANIFEST_KEY_BY_METADATA_NAME = {
   objectMetadata: 'objects',
   fieldMetadata: 'fields',
   view: 'views',
+  pageLayout: 'pageLayouts',
   pageLayoutTab: 'pageLayoutTabs',
   commandMenuItem: 'commandMenuItems',
   navigationMenuItem: 'navigationMenuItems',

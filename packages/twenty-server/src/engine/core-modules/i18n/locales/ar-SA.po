@@ -2391,10 +2391,90 @@ msgstr "ديسمبر"
 msgid "Declined"
 msgstr "مرفوض"
 
+#. js-lingui-id: NVYmMn
+#: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
+msgid "Default Blocklist Layout"
+msgstr ""
+
+#. js-lingui-id: 3UOGaz
+#: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
+msgid "Default Calendar Channel Event Association Layout"
+msgstr ""
+
+#. js-lingui-id: htldgR
+#: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
+msgid "Default Calendar Event Layout"
+msgstr ""
+
+#. js-lingui-id: x6ypnI
+#: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
+msgid "Default Calendar Event Participant Layout"
+msgstr ""
+
+#. js-lingui-id: zuFrWw
+#: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
+msgid "Default Call Recording Layout"
+msgstr ""
+
+#. js-lingui-id: ceRrTa
+#: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
+msgid "Default Campaign Layout"
+msgstr ""
+
+#. js-lingui-id: eSjLLw
+#: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
+msgid "Default Company Layout"
+msgstr ""
+
+#. js-lingui-id: A9H2ex
+#: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
+msgid "Default List Layout"
+msgstr ""
+
+#. js-lingui-id: 4D26Ca
+#: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
+msgid "Default Message Channel Message Association Layout"
+msgstr ""
+
+#. js-lingui-id: z9fQKt
+#: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
+msgid "Default Message Channel Message Association Message Folder Layout"
+msgstr ""
+
+#. js-lingui-id: gI54pe
+#: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
+msgid "Default Message Participant Layout"
+msgstr ""
+
+#. js-lingui-id: D2Q3nt
+#: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
+msgid "Default Message Thread Layout"
+msgstr ""
+
+#. js-lingui-id: QxWxuZ
+#: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
+msgid "Default Note Layout"
+msgstr ""
+
+#. js-lingui-id: pKMdjD
+#: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
+msgid "Default Opportunity Layout"
+msgstr ""
+
+#. js-lingui-id: Yb/9AK
+#: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
+msgid "Default Person Layout"
+msgstr ""
+
 #. js-lingui-id: cgV4xo
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Default role not found."
 msgstr "الدور الافتراضي غير موجود."
+
+#. js-lingui-id: FRcNPu
+#: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
+msgid "Default Task Layout"
+msgstr ""
 
 #. js-lingui-id: GGNmm+
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -2423,6 +2503,26 @@ msgstr "القيمة الافتراضية يجب أن تكون كنص مقتبس
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Default values must be unique"
 msgstr "يجب أن تكون القيم الافتراضية فريدة"
+
+#. js-lingui-id: wVATcn
+#: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
+msgid "Default Workflow Automated Trigger Layout"
+msgstr ""
+
+#. js-lingui-id: IOsZUk
+#: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
+msgid "Default Workflow Layout"
+msgstr ""
+
+#. js-lingui-id: DxM53M
+#: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
+msgid "Default Workflow Run Layout"
+msgstr ""
+
+#. js-lingui-id: UpJeSJ
+#: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
+msgid "Default Workflow Version Layout"
+msgstr ""
 
 #. js-lingui-id: cnGeoo
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -5466,6 +5566,11 @@ msgstr "تم العثور على سجلات متعددة بنفس قيم الح�
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Multiple subscriptions found where one was expected."
 msgstr "تم العثور على عدة اشتراكات بينما كان متوقعاً واحد فقط."
+
+#. js-lingui-id: dIZuGx
+#: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
+msgid "My First Dashboard"
+msgstr ""
 
 #. js-lingui-id: 6YtxFj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
