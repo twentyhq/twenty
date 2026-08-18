@@ -107,6 +107,57 @@ describe('WorkflowVersionCoreSyncService', () => {
 
   // coreWorkflowVersionId is writable through the record API, so a caller can
   // point it at a core row owned by another workspace.
+  it('mirrors a transactional write onto the owned core row', async () => {
+    const executeRawQuery = jest
+      .fn()
+      .mockResolvedValueOnce([{ id: OWNED_CORE_VERSION_ID }])
+      .mockResolvedValue([]);
+
+    const result = await service.mirrorWorkflowVersionWrite({
+      workspaceId: WORKSPACE_ID,
+      transactionScope: {
+        executeRawQuery,
+        getRepository: jest.fn(),
+      } as never,
+      workflowVersion: buildWorkflowVersion({
+        coreWorkflowVersionId: OWNED_CORE_VERSION_ID,
+      }),
+    });
+
+    expect(result).toEqual({ coreWorkflowVersionId: OWNED_CORE_VERSION_ID });
+
+    const [insertSql] = executeRawQuery.mock.calls[1];
+
+    expect(insertSql).toContain(
+      'WHERE core."workflowVersion"."workspaceId" = EXCLUDED."workspaceId"',
+    );
+  });
+
+  // Raw SQL path: ON CONFLICT matches on the primary key alone, so an id from
+  // another workspace would otherwise overwrite that row's triggers and steps.
+  it('does not mirror a transactional write onto another workspace core row', async () => {
+    const executeRawQuery = jest.fn().mockResolvedValue([]);
+
+    const result = await service.mirrorWorkflowVersionWrite({
+      workspaceId: WORKSPACE_ID,
+      transactionScope: {
+        executeRawQuery,
+        getRepository: jest
+          .fn()
+          .mockReturnValue(workspaceWorkflowVersionRepository),
+      } as never,
+      workflowVersion: buildWorkflowVersion({
+        coreWorkflowVersionId: FOREIGN_CORE_VERSION_ID,
+      }),
+    });
+
+    expect(result?.coreWorkflowVersionId).not.toBe(FOREIGN_CORE_VERSION_ID);
+
+    const [, insertParams] = executeRawQuery.mock.calls[1];
+
+    expect(insertParams[0]).not.toBe(FOREIGN_CORE_VERSION_ID);
+  });
+
   it('ignores a coreWorkflowVersionId that belongs to another workspace', async () => {
     coreWorkflowVersionRepository.find.mockResolvedValue([]);
 
