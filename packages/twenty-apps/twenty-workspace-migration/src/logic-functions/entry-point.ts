@@ -11,6 +11,7 @@ import { stage4 } from "src/logic-functions/stages/stage4";
 import { stage5 } from "src/logic-functions/stages/stage5";
 import { stage6 } from "src/logic-functions/stages/stage6";
 import { stage7 } from "src/logic-functions/stages/stage7";
+import { TRIGGER_ROUTE_PATH } from "src/constants/trigger-route-path";
 
 // Logic:
 // Read all apps
@@ -108,19 +109,9 @@ export default defineLogicFunction({
   description: 'Add a description for your logic function',
   timeoutSeconds: TIMEOUT_SECONDS,
   handler,
-  // Add your trigger here
-  // Route trigger example:
-  // httpRouteTriggerSettings: {
-  //   path: '/entry-point',
-  //   httpMethod: 'POST',
-  //   isAuthRequired: true,
-  // },
-  // Cron trigger example:
-  // cronTriggerSettings: {
-  //   pattern: '0 0 * * *', // Daily at midnight
-  // },
-  // Database event trigger example:
-  // databaseEventTriggerSettings: {
-  //   eventName: 'objectName.created',
-  // },
+  httpRouteTriggerSettings: {
+     path: TRIGGER_ROUTE_PATH,
+     httpMethod: 'POST',
+     isAuthRequired: true,
+  },
 });

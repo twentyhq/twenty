@@ -13,11 +13,12 @@ import { mapEntities } from "src/logic-functions/utils/map-entities.util";
 import { fieldsToOmit, objectsToOmit, objectsToOmitFromRecordMigration, sourceAppsToOmit } from "src/constants/to-omit";
 import { buildFieldToCreate } from "src/logic-functions/utils/build-field-to-create.util";
 import { executeWithRetryAndCheckpoint } from "src/logic-functions/utils/execute-with-retry-and-checkpoint.util";
-import { setMigrationStage, setStateRef } from "src/logic-functions/utils/migration-state.util";
+import { setStateRef } from "src/logic-functions/utils/migration-state.util";
 import { sortObjectsByDependency } from "src/logic-functions/utils/sort-objects-by-dependency.util";
 import { executeWithRetry } from "src/logic-functions/utils/execute-with-retry.util";
 
 export const stage1 = async (sourceWorkspace: AxiosInstance, targetWorkspace: AxiosInstance) => {
+  // Before any migration, check if all apps are installed with the same version and all workspace members are in new instance
   const { data: sourceWorkspaceInstalledApps } = await findInstalledApplications(sourceWorkspace);
   const { data: targetWorkspaceInstalledApps } = await findInstalledApplications(targetWorkspace);
   const sourceApps: Record<string, { name: string, version: string }> = {};
@@ -68,10 +69,8 @@ export const stage1 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
   }
   setStateRef('mergedWorkspaceMembers', mergedWorkspaceMembers);
 
-  // Stage 2: compare objects and fields between 2 workspaces
-  // compare standard objects and check if they need an update
-  // compare standard fields and check if they need an update
-  // filter out id, createdBy, createdAt, updatedAt
+  // compare standard objects and fields and check if they need an update
+  // compare custom objects and fields and check if they need an update
 
   const { data: sourceWorkspaceObjectsFields } = await executeWithRetryAndCheckpoint(() => FindAllObjectsAndFields(sourceWorkspace));
   const { data: targetWorkspaceObjectsFields } = await executeWithRetryAndCheckpoint(() => FindAllObjectsAndFields(targetWorkspace));

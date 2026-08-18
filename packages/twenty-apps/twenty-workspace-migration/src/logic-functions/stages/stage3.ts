@@ -1,11 +1,12 @@
 import {
-  loadMigrationStateCheckpoint, migrationState,
-  setMigrationStage,
+  loadMigrationStateCheckpoint,
+  migrationState,
   setStateRef
 } from "src/logic-functions/utils/migration-state.util";
 import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.util";
 import { type AxiosInstance } from "axios";
 import { migrateRecordsForObject } from "src/logic-functions/migration/migrate-records-for-object.util";
+import { estimateMigrationDuration } from "src/logic-functions/utils/estimate-migration-duration.util";
 
 export const stage3 = async (sourceWorkspace: AxiosInstance, targetWorkspace: AxiosInstance) => {
   await loadMigrationStateCheckpoint();
@@ -14,11 +15,12 @@ export const stage3 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
   const targetWorkspaceObjects = migrationState.targetWorkspaceObjects;
   const recordMigrationOrder = migrationState.recordMigrationOrder;
 
-  // Seeded with the source-to-target workspace member id mapping so that relation fields on
-  // other objects (task.assignee, company.accountOwner, opportunity.owner, ...) resolve
-  // through the same generic FK-remapping path buildRecordDataToCreate already uses for
-  // record-to-record relations - it doesn't care what object a foreign key points at, only
-  // whether the source id is a known key.
+  const { estimatedMinutes, batchableRecordCount, otherRecordCount } = await estimateMigrationDuration(
+    sourceWorkspace,
+    recordMigrationOrder,
+  );
+  console.log(`Estimated migration time: ~${estimatedMinutes} minute(s) worst case (${batchableRecordCount} record(s) via createManyRecords, ${otherRecordCount} attachment(s))`);
+
   const recordIdMap = new Map<string, string>(
     mergedWorkspaceMembers.map((member) => [member.oldId, member.newId]),
   );

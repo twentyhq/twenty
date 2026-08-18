@@ -1,17 +1,13 @@
 import { type AxiosInstance } from "axios";
 import { postGraphql } from "src/logic-functions/requests/graphql-client.util";
 import { capitalize } from "src/logic-functions/utils/capitalize.util";
+import { PAGE_SIZE } from "src/constants/page-size";
 
 export type RecordsPage = {
   edges: { node: Record<string, unknown> }[];
   pageInfo: { hasNextPage: boolean; endCursor: string | null };
 };
 
-const PAGE_SIZE = 200;
-
-// Generic paginated record reader, used against both source and target workspaces.
-// `after` is inlined as a string literal rather than a $variable so callers don't need to
-// know the schema's cursor scalar name (ConnectionCursor).
 export const findManyRecords = async (
   client: AxiosInstance,
   namePlural: string,
