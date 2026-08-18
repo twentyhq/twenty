@@ -1,4 +1,4 @@
-import { isNonEmptyString, isNull, isUndefined } from '@sniptt/guards';
+import { isNonEmptyString, isNull } from '@sniptt/guards';
 import { clsx } from 'clsx';
 import { useState } from 'react';
 
@@ -10,6 +10,7 @@ import { type IconComponent } from '@ui/icon/types/IconComponent';
 import { useTheme } from '@ui/theme-constants';
 import { stringToThemeColorP3String } from '@ui/utilities';
 import { type Nullable } from '@ui/utilities/types/Nullable';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Avatar.module.scss';
 
@@ -110,29 +111,15 @@ export const Avatar = ({
       : {}),
   } as React.CSSProperties;
 
-  return (
-    <div
-      className={clsx(
-        styles.root,
-        styles[size],
-        pulsing && styles.pulsing,
-        className,
-      )}
-      data-type={type ?? undefined}
-      data-clickable={!isUndefined(onClick) ? true : undefined}
-      role={!isUndefined(onClick) ? 'button' : undefined}
-      tabIndex={!isUndefined(onClick) ? 0 : undefined}
-      aria-label={
-        !isUndefined(onClick)
-          ? isNonEmptyString(placeholder)
-            ? placeholder
-            : 'Avatar'
-          : undefined
-      }
-      onClick={onClick}
-      onKeyDown={handleClickableElementKeyDown}
-      style={avatarStyle}
-    >
+  const avatarClassName = clsx(
+    styles.root,
+    styles[size],
+    pulsing && styles.pulsing,
+    className,
+  );
+
+  const avatarContent = (
+    <>
       {isNonEmptyString(avatarImageURI) && (
         <AvatarImageLoadErrorEffect
           avatarImageURI={avatarImageURI}
@@ -154,6 +141,34 @@ export const Avatar = ({
           }}
         />
       )}
+    </>
+  );
+
+  if (isDefined(onClick)) {
+    return (
+      <div
+        className={avatarClassName}
+        data-type={type ?? undefined}
+        data-clickable={true}
+        role="button"
+        tabIndex={0}
+        aria-label={isNonEmptyString(placeholder) ? placeholder : 'Avatar'}
+        onClick={onClick}
+        onKeyDown={handleClickableElementKeyDown}
+        style={avatarStyle}
+      >
+        {avatarContent}
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={avatarClassName}
+      data-type={type ?? undefined}
+      style={avatarStyle}
+    >
+      {avatarContent}
     </div>
   );
 };
