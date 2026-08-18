@@ -109,6 +109,15 @@ export class FeatureFlagService {
       );
     }
 
+    const existingFeatureFlag = await this.featureFlagRepository.findOne(
+      workspaceId,
+      { where: { key: featureFlag } },
+    );
+
+    if (existingFeatureFlag?.value === value) {
+      return existingFeatureFlag;
+    }
+
     const result = await this.featureFlagRepository.upsertAndReturnOne(
       workspaceId,
       { key: featureFlag, value },
