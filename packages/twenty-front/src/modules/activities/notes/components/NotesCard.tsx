@@ -1,10 +1,9 @@
-import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
+import { useCreateActivityForTargetRecord } from '@/activities/hooks/useCreateActivityForTargetRecord';
 import { NotesCardContent } from '@/activities/notes/components/NotesCardContent';
 import { useNotes } from '@/activities/notes/hooks/useNotes';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useCanUpdateObjectRecords } from '@/object-record/hooks/useCanUpdateObjectRecords';
 import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 export const NotesCard = () => {
   const targetRecord = useTargetRecord();
@@ -17,16 +16,11 @@ export const NotesCard = () => {
     }
   };
 
-  const openCreateActivity = useOpenCreateActivityDrawer({
-    activityObjectNameSingular: CoreObjectNameSingular.Note,
-  });
-
-  const { canUpdateObjectRecords } = useCanUpdateObjectRecords(
-    targetRecord.targetObjectNameSingular,
-  );
-
-  const handleCreateNote = () =>
-    openCreateActivity({ targetableObjects: [targetRecord] });
+  const { canCreateActivity, createActivity } =
+    useCreateActivityForTargetRecord({
+      targetRecord,
+      activityObjectNameSingular: CoreObjectNameSingular.Note,
+    });
 
   return (
     <>
@@ -34,7 +28,7 @@ export const NotesCard = () => {
       <NotesCardContent
         loading={loading}
         notes={notes}
-        onCreateNote={canUpdateObjectRecords ? handleCreateNote : undefined}
+        onCreateNote={canCreateActivity ? createActivity : undefined}
         onLastRowVisible={handleLastRowVisible}
       />
     </>

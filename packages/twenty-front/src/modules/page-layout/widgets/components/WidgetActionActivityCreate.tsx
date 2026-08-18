@@ -1,6 +1,4 @@
-import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
-import { useCanUpdateObjectRecords } from '@/object-record/hooks/useCanUpdateObjectRecords';
-import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
+import { useCreateActivityForTargetRecord } from '@/activities/hooks/useCreateActivityForTargetRecord';
 import { WidgetCardHeaderActionButton } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionButton';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { type CoreObjectNameSingular } from 'twenty-shared/types';
@@ -18,17 +16,14 @@ export const WidgetActionActivityCreate = ({
   label,
 }: WidgetActionActivityCreateProps) => {
   const targetRecord = useTargetRecord();
-  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
-  const { canUpdateObjectRecords } = useCanUpdateObjectRecords(
-    targetRecord.targetObjectNameSingular,
-  );
+  const { canCreateActivity, createActivity } =
+    useCreateActivityForTargetRecord({
+      targetRecord,
+      activityObjectNameSingular,
+    });
 
-  const openCreateActivity = useOpenCreateActivityDrawer({
-    activityObjectNameSingular,
-  });
-
-  if (isPageLayoutInEditMode || !canUpdateObjectRecords) {
+  if (!canCreateActivity) {
     return null;
   }
 
@@ -36,7 +31,7 @@ export const WidgetActionActivityCreate = ({
     <WidgetCardHeaderActionButton
       Icon={IconPlus}
       label={label}
-      onClick={() => openCreateActivity({ targetableObjects: [targetRecord] })}
+      onClick={createActivity}
     />
   );
 };
