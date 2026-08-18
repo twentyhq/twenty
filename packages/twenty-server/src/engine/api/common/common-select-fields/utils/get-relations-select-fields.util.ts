@@ -49,6 +49,13 @@ export const getRelationsSelectFields = ({
       continue;
     }
 
+    if (
+      objectsPermissions[flatObjectMetadata.id]?.restrictedFields[flatField.id]
+        ?.canRead === false
+    ) {
+      continue;
+    }
+
     if (currentDepthLevelIsAJunctionTable) {
       const fieldIsJunctionRelation = getIsFlatFieldAJunctionRelationField({
         flatField,

@@ -386,11 +386,17 @@ describe('buildEffectiveSelectedFields', () => {
       universalIdentifiersByApplicationId: {},
     } as unknown as FlatEntityMaps<FlatObjectMetadata>;
 
-    const buildObjectsPermissions = (canReadCompany: boolean) =>
+    const buildObjectsPermissions = ({
+      canReadCompany = true,
+      sourceRestrictedFields = {},
+    }: {
+      canReadCompany?: boolean;
+      sourceRestrictedFields?: Record<string, { canRead: boolean }>;
+    }) =>
       ({
         'investor-lead-object-id': {
           canReadObjectRecords: true,
-          restrictedFields: {},
+          restrictedFields: sourceRestrictedFields,
         },
         'company-object-id': {
           canReadObjectRecords: canReadCompany,
@@ -398,12 +404,14 @@ describe('buildEffectiveSelectedFields', () => {
         },
       }) as unknown as ObjectsPermissions;
 
-    const buildSelectableRelationFields = (canReadCompany: boolean) =>
+    const buildSelectableRelationFields = (
+      objectsPermissions: ObjectsPermissions,
+    ) =>
       getRelationsSelectFields({
         flatObjectMetadataMaps: relationObjectMaps,
         flatFieldMetadataMaps: relationFieldMaps,
         flatObjectMetadata: investorLeadObjectMetadata,
-        objectsPermissions: buildObjectsPermissions(canReadCompany),
+        objectsPermissions,
         depth: 1,
         onlyUseLabelIdentifierFieldsInRelations: true,
       });
@@ -419,7 +427,9 @@ describe('buildEffectiveSelectedFields', () => {
           flatObjectMetadata: investorLeadObjectMetadata,
           flatFieldMetadataMaps: relationFieldMaps,
           selectedFields: { id: true, name: true, fund: true },
-          selectableRelationFields: buildSelectableRelationFields(true),
+          selectableRelationFields: buildSelectableRelationFields(
+            buildObjectsPermissions({}),
+          ),
         });
 
       expect(warnings).toEqual([]);
@@ -441,7 +451,9 @@ describe('buildEffectiveSelectedFields', () => {
           flatObjectMetadata: investorLeadObjectMetadata,
           flatFieldMetadataMaps: relationFieldMaps,
           selectedFields: { id: true, name: true, fund: true },
-          selectableRelationFields: buildSelectableRelationFields(true),
+          selectableRelationFields: buildSelectableRelationFields(
+            buildObjectsPermissions({}),
+          ),
         });
 
       expect(warnings).toEqual([]);
@@ -463,7 +475,33 @@ describe('buildEffectiveSelectedFields', () => {
           flatObjectMetadata: investorLeadObjectMetadata,
           flatFieldMetadataMaps: relationFieldMaps,
           selectedFields: { id: true, name: true, fund: true },
-          selectableRelationFields: buildSelectableRelationFields(false),
+          selectableRelationFields: buildSelectableRelationFields(
+            buildObjectsPermissions({ canReadCompany: false }),
+          ),
+        });
+
+      expect(effectiveSelectedFields).toEqual({ id: true, name: true });
+      expect(warnings).toEqual([
+        "Field 'fund' on investorLead cannot be selected because you do not have read access to company.",
+      ]);
+    });
+
+    it('should not hydrate a relation whose source field is restricted', () => {
+      const { effectiveSelectedFields, warnings } =
+        buildEffectiveSelectedFields({
+          select: ['name', 'fund'],
+          filter: undefined,
+          orderBy: undefined,
+          objectName: 'investorLead',
+          flatObjectMetadataMaps: relationObjectMaps,
+          flatObjectMetadata: investorLeadObjectMetadata,
+          flatFieldMetadataMaps: relationFieldMaps,
+          selectedFields: { id: true, name: true, fund: true },
+          selectableRelationFields: buildSelectableRelationFields(
+            buildObjectsPermissions({
+              sourceRestrictedFields: { 'fund-field': { canRead: false } },
+            }),
+          ),
         });
 
       expect(effectiveSelectedFields).toEqual({ id: true, name: true });
@@ -482,7 +520,9 @@ describe('buildEffectiveSelectedFields', () => {
         flatObjectMetadata: investorLeadObjectMetadata,
         flatFieldMetadataMaps: relationFieldMaps,
         selectedFields: { id: true, name: true, fund: true },
-        selectableRelationFields: buildSelectableRelationFields(true),
+        selectableRelationFields: buildSelectableRelationFields(
+          buildObjectsPermissions({}),
+        ),
       });
 
       expect(warnings).toHaveLength(1);
