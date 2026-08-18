@@ -80,10 +80,6 @@ describe('useImpersonationSession', () => {
       expect(signOutMock).not.toHaveBeenCalled();
     });
 
-    // The server cleared the session cookie on its way out, and startImpersonating
-    // had already dropped the token pair. Signing out here would end a session the
-    // admin still holds, and leaving cookie auth on would strand the tab with no
-    // credential at all.
     it('should restore the parked token pair when the server cannot hand the session back', async () => {
       stopImpersonationMock.mockResolvedValue({
         data: { stopImpersonation: { canRestoreImpersonatorSession: false } },
@@ -128,8 +124,6 @@ describe('useImpersonationSession', () => {
       expect(signOutMock).not.toHaveBeenCalled();
     });
 
-    // A tab opened on the impersonated workspace's own origin never parked
-    // anything, so there is nothing to go back to.
     it('should sign out when nothing was parked on this origin', async () => {
       stopImpersonationMock.mockResolvedValue({
         data: { stopImpersonation: { canRestoreImpersonatorSession: false } },
