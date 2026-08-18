@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-const ASCII_WHITESPACE_CHARACTER = /[\t\n\f\r ]/;
+import { ASCII_WHITESPACE_REGEX } from '@/polyfills/dom/constants/AsciiWhitespaceRegex';
 
 export const toValidClassTokenOrThrow = (token: string): string => {
   const tokenAsString = String(token);
@@ -12,7 +12,7 @@ export const toValidClassTokenOrThrow = (token: string): string => {
     );
   }
 
-  if (ASCII_WHITESPACE_CHARACTER.test(tokenAsString)) {
+  if (ASCII_WHITESPACE_REGEX.test(tokenAsString)) {
     throw new DOMException(
       `The token provided ('${tokenAsString}') contains HTML space characters, which are not valid in tokens.`,
       'InvalidCharacterError',

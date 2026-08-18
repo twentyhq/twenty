@@ -1,17 +1,17 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ElementWithClassAttribute } from '@/polyfills/dom/types/ElementWithClassAttribute';
+import { type ClassListTargetElement } from '@/polyfills/dom/types/ClassListTargetElement';
 import { type WorkerClassTokenList } from '@/polyfills/dom/types/WorkerClassTokenList';
 import { createClassTokenList } from '@/polyfills/dom/utils/createClassTokenList';
 
 export const installClassList = (elementPrototype: object): void => {
   const classTokenListByElement = new WeakMap<
-    ElementWithClassAttribute,
+    ClassListTargetElement,
     WorkerClassTokenList
   >();
 
   const resolveClassTokenList = (
-    element: ElementWithClassAttribute,
+    element: ClassListTargetElement,
   ): WorkerClassTokenList => {
     const existingClassTokenList = classTokenListByElement.get(element);
 
@@ -26,10 +26,10 @@ export const installClassList = (elementPrototype: object): void => {
   };
 
   Object.defineProperty(elementPrototype, 'classList', {
-    get(this: ElementWithClassAttribute) {
+    get(this: ClassListTargetElement) {
       return resolveClassTokenList(this);
     },
-    set(this: ElementWithClassAttribute, newValue: unknown) {
+    set(this: ClassListTargetElement, newValue: unknown) {
       resolveClassTokenList(this).value = String(newValue);
     },
     configurable: true,

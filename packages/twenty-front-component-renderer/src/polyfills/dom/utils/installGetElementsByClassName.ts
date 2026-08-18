@@ -2,6 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { type ElementLike } from '@/polyfills/dom/types/ElementLike';
 import { iterateElementSubtree } from '@/polyfills/dom/utils/iterateElementSubtree';
+import { parseClassTokenList } from '@/polyfills/dom/utils/parseClassTokenList';
 import { resolveClassAttributeValue } from '@/polyfills/dom/utils/resolveClassAttributeValue';
 
 const hasEveryClassNameToken = (
@@ -14,7 +15,7 @@ const hasEveryClassNameToken = (
     return false;
   }
 
-  const elementTokens = classNameValue.split(/\s+/);
+  const elementTokens = parseClassTokenList(classNameValue);
 
   return classNameTokens.every((classNameToken) =>
     elementTokens.includes(classNameToken),
@@ -24,9 +25,7 @@ const hasEveryClassNameToken = (
 export const installGetElementsByClassName = (installTarget: object): void => {
   Object.defineProperty(installTarget, 'getElementsByClassName', {
     value: function (this: ElementLike, classNames: string) {
-      const classNameTokens = String(classNames)
-        .split(/\s+/)
-        .filter(isNonEmptyString);
+      const classNameTokens = parseClassTokenList(String(classNames));
 
       const matches: ElementLike[] = [];
 

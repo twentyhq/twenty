@@ -1,11 +1,12 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 
 import {
   errorHandler,
   FRONT_COMPONENT_STORY_DEFAULT_ARGS,
   resetFrontComponentStoryMocks,
 } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
+import { expectJsonDataAttribute } from '@/__stories__/shared/test-utils/matchers/expectJsonDataAttribute';
 import { MOUNT_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
 import { getBuiltStoryComponentPathForRender } from '@/__stories__/utils/getBuiltStoryComponentPathForRender';
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
@@ -52,18 +53,12 @@ const mutationObserverTest: Story['play'] = async ({ canvasElement }) => {
   await userEvent.click(addItemButton);
   await userEvent.click(addItemButton);
 
-  await waitFor(
-    () => {
-      expect(
-        JSON.parse(
-          canvas
-            .getByTestId('mutation-observer-status')
-            .getAttribute('data-observed-records') ?? '[]',
-        ),
-      ).toEqual(EXPECTED_OBSERVED_MUTATIONS);
-    },
-    { timeout: MOUNT_TIMEOUT },
-  );
+  await expectJsonDataAttribute({
+    canvas,
+    testId: 'mutation-observer-status',
+    attributeName: 'data-observed-records',
+    expectedValue: EXPECTED_OBSERVED_MUTATIONS,
+  });
 
   expect(errorHandler).not.toHaveBeenCalled();
 };
@@ -72,7 +67,6 @@ const EXPECTED_CLASS_LIST_REPORT = {
   isMemoized: true,
   containsMapboxClass: true,
   containsRemovedClass: false,
-  length: 4,
   tokens: ['initial-class', 'mapboxgl-map', 'replaced', 'toggled-on'],
   value: 'initial-class mapboxgl-map replaced toggled-on',
 };
@@ -88,26 +82,15 @@ const classListTest: Story['play'] = async ({ canvasElement }) => {
 
   await userEvent.click(runButton);
 
-  await waitFor(
-    () => {
-      expect(
-        JSON.parse(
-          canvas
-            .getByTestId('class-list-status')
-            .getAttribute('data-class-list-report') ?? 'null',
-        ),
-      ).toEqual(EXPECTED_CLASS_LIST_REPORT);
-    },
-    { timeout: MOUNT_TIMEOUT },
-  );
+  await expectJsonDataAttribute({
+    canvas,
+    testId: 'class-list-status',
+    attributeName: 'data-class-list-report',
+    expectedValue: EXPECTED_CLASS_LIST_REPORT,
+  });
 
-  await waitFor(
-    () => {
-      expect(canvas.getByTestId('class-list-container').className).toBe(
-        EXPECTED_CLASS_LIST_REPORT.value,
-      );
-    },
-    { timeout: MOUNT_TIMEOUT },
+  expect(canvas.getByTestId('class-list-container').className).toBe(
+    EXPECTED_CLASS_LIST_REPORT.value,
   );
 
   expect(errorHandler).not.toHaveBeenCalled();

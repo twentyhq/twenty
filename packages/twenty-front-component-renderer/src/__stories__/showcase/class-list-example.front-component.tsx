@@ -5,7 +5,6 @@ type ClassListReport = {
   isMemoized: boolean;
   containsMapboxClass: boolean;
   containsRemovedClass: boolean;
-  length: number;
   tokens: string[];
   value: string;
 };
@@ -22,6 +21,8 @@ const ClassListComponent = () => {
       return;
     }
 
+    const classListBeforeOperations = container.classList;
+
     container.classList.add('mapboxgl-map');
     container.classList.add('added-then-removed', 'kept');
     container.classList.remove('added-then-removed');
@@ -29,10 +30,9 @@ const ClassListComponent = () => {
     container.classList.replace('kept', 'replaced');
 
     setClassListReport({
-      isMemoized: container.classList === container.classList,
+      isMemoized: classListBeforeOperations === container.classList,
       containsMapboxClass: container.classList.contains('mapboxgl-map'),
       containsRemovedClass: container.classList.contains('added-then-removed'),
-      length: container.classList.length,
       tokens: Array.from(container.classList),
       value: container.classList.value,
     });

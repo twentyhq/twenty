@@ -1,37 +1,45 @@
-import { isFunction } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
-
-import { type ElementWithClassAttribute } from '@/polyfills/dom/types/ElementWithClassAttribute';
+import { type ClassListTargetElement } from '@/polyfills/dom/types/ClassListTargetElement';
 import { type WorkerClassTokenList } from '@/polyfills/dom/types/WorkerClassTokenList';
 import { parseClassTokenList } from '@/polyfills/dom/utils/parseClassTokenList';
-import { replaceClassToken } from '@/polyfills/dom/utils/replaceClassToken';
 import { resolveClassAttributeValue } from '@/polyfills/dom/utils/resolveClassAttributeValue';
 import { toValidClassTokenOrThrow } from '@/polyfills/dom/utils/toValidClassTokenOrThrow';
 
 export const createClassTokenList = (
-  element: ElementWithClassAttribute,
+  element: ClassListTargetElement,
 ): WorkerClassTokenList => {
-  const readClassAttributeValue = (): string | null =>
-    resolveClassAttributeValue(element);
+  let memoizedClassAttributeValue: string | null = null;
+  let memoizedTokens: string[] = [];
 
-  const readCurrentTokens = (): string[] =>
-    parseClassTokenList(readClassAttributeValue() ?? '');
-
-  const writeClassAttributeValue = (classAttributeValue: string): void => {
-    if (isFunction(element.setAttribute)) {
-      element.setAttribute('class', classAttributeValue);
+  const parseTokensMemoized = (
+    classAttributeValue: string | null,
+  ): string[] => {
+    if (classAttributeValue !== memoizedClassAttributeValue) {
+      memoizedClassAttributeValue = classAttributeValue;
+      memoizedTokens = parseClassTokenList(classAttributeValue ?? '');
     }
+
+    return memoizedTokens;
   };
 
-  const writeTokens = (tokens: string[]): void => {
-    const shouldSkipCreatingEmptyClassAttribute =
-      !isDefined(readClassAttributeValue()) && tokens.length === 0;
+  const readCurrentTokens = (): string[] =>
+    parseTokensMemoized(resolveClassAttributeValue(element));
 
-    if (shouldSkipCreatingEmptyClassAttribute) {
+  // Unlike browsers, unchanged writes are skipped to avoid cross-thread host mutations
+  const writeTokens = (
+    classAttributeValue: string | null,
+    tokens: string[],
+  ): void => {
+    const updatedClassAttributeValue = tokens.join(' ');
+
+    const isAbsentAndEmpty =
+      classAttributeValue === null && tokens.length === 0;
+    const isUnchanged = updatedClassAttributeValue === classAttributeValue;
+
+    if (isAbsentAndEmpty || isUnchanged) {
       return;
     }
 
-    writeClassAttributeValue(tokens.join(' '));
+    element.setAttribute('class', updatedClassAttributeValue);
   };
 
   const classTokenList: WorkerClassTokenList = {
@@ -39,82 +47,70 @@ export const createClassTokenList = (
       return readCurrentTokens().length;
     },
     get value() {
-      return readClassAttributeValue() ?? '';
+      return resolveClassAttributeValue(element) ?? '';
     },
     set value(newValue: string) {
-      writeClassAttributeValue(String(newValue));
+      element.setAttribute('class', newValue);
     },
     add: (...tokens) => {
-      const tokensToAdd = tokens.map((token) =>
-        toValidClassTokenOrThrow(token),
-      );
+      const tokensToAdd = tokens.map(toValidClassTokenOrThrow);
 
-      const updatedTokens = [...readCurrentTokens()];
+      const classAttributeValue = resolveClassAttributeValue(element);
+      const currentTokens = parseTokensMemoized(classAttributeValue);
 
-      for (const tokenToAdd of tokensToAdd) {
-        if (!updatedTokens.includes(tokenToAdd)) {
-          updatedTokens.push(tokenToAdd);
-        }
-      }
-
-      writeTokens(updatedTokens);
+      writeTokens(classAttributeValue, [
+        ...new Set([...currentTokens, ...tokensToAdd]),
+      ]);
     },
     remove: (...tokens) => {
-      const tokensToRemove = tokens.map((token) =>
-        toValidClassTokenOrThrow(token),
-      );
+      const tokensToRemove = tokens.map(toValidClassTokenOrThrow);
 
-      const remainingTokens = readCurrentTokens().filter(
+      const classAttributeValue = resolveClassAttributeValue(element);
+
+      const remainingTokens = parseTokensMemoized(classAttributeValue).filter(
         (currentToken) => !tokensToRemove.includes(currentToken),
       );
 
-      writeTokens(remainingTokens);
+      writeTokens(classAttributeValue, remainingTokens);
     },
     toggle: (token, force) => {
       const tokenToToggle = toValidClassTokenOrThrow(token);
 
-      const currentTokens = readCurrentTokens();
-      const isTokenPresent = currentTokens.includes(tokenToToggle);
+      const shouldBePresent =
+        force ?? !readCurrentTokens().includes(tokenToToggle);
 
-      if (isTokenPresent && force === true) {
+      if (shouldBePresent) {
+        classTokenList.add(tokenToToggle);
+
         return true;
       }
 
-      if (!isTokenPresent && force === false) {
-        return false;
-      }
+      classTokenList.remove(tokenToToggle);
 
-      if (isTokenPresent) {
-        writeTokens(
-          currentTokens.filter(
-            (currentToken) => currentToken !== tokenToToggle,
-          ),
-        );
-
-        return false;
-      }
-
-      writeTokens([...currentTokens, tokenToToggle]);
-
-      return true;
+      return false;
     },
     replace: (oldToken, newToken) => {
       const oldTokenToReplace = toValidClassTokenOrThrow(oldToken);
       const newTokenToInsert = toValidClassTokenOrThrow(newToken);
 
-      const currentTokens = readCurrentTokens();
+      const classAttributeValue = resolveClassAttributeValue(element);
+      const currentTokens = parseTokensMemoized(classAttributeValue);
 
       if (!currentTokens.includes(oldTokenToReplace)) {
         return false;
       }
 
-      writeTokens(
-        replaceClassToken({
-          currentTokens,
-          oldToken: oldTokenToReplace,
-          newToken: newTokenToInsert,
-        }),
-      );
+      const updatedTokens = [
+        ...new Set(
+          currentTokens.map((currentToken) =>
+            currentToken === oldTokenToReplace
+              ? newTokenToInsert
+              : currentToken,
+          ),
+        ),
+      ];
+
+      writeTokens(classAttributeValue, updatedTokens);
 
       return true;
     },
@@ -130,19 +126,11 @@ export const createClassTokenList = (
         callback.call(thisArg, token, tokenIndex, classTokenList);
       }
     },
-    *entries() {
-      yield* readCurrentTokens().entries();
-    },
-    *keys() {
-      yield* readCurrentTokens().keys();
-    },
-    *values() {
-      yield* readCurrentTokens().values();
-    },
-    toString: () => readClassAttributeValue() ?? '',
-    *[Symbol.iterator]() {
-      yield* readCurrentTokens().values();
-    },
+    entries: () => readCurrentTokens().entries(),
+    keys: () => readCurrentTokens().keys(),
+    values: () => readCurrentTokens().values(),
+    toString: () => resolveClassAttributeValue(element) ?? '',
+    [Symbol.iterator]: () => readCurrentTokens().values(),
   };
 
   return classTokenList;

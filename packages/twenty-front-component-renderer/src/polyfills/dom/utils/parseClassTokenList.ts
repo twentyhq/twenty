@@ -1,17 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-const ASCII_WHITESPACE_SEPARATOR = /[\t\n\f\r ]+/;
+import { ASCII_WHITESPACE_REGEX } from '@/polyfills/dom/constants/AsciiWhitespaceRegex';
 
-export const parseClassTokenList = (classAttributeValue: string): string[] => {
-  const orderedUniqueTokens: string[] = [];
-
-  for (const token of classAttributeValue.split(ASCII_WHITESPACE_SEPARATOR)) {
-    const isDuplicateToken = orderedUniqueTokens.includes(token);
-
-    if (isNonEmptyString(token) && !isDuplicateToken) {
-      orderedUniqueTokens.push(token);
-    }
-  }
-
-  return orderedUniqueTokens;
-};
+export const parseClassTokenList = (classAttributeValue: string): string[] => [
+  ...new Set(
+    classAttributeValue.split(ASCII_WHITESPACE_REGEX).filter(isNonEmptyString),
+  ),
+];
