@@ -14,9 +14,6 @@ import { AuthExceptionCode } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthenticationError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { getRequest } from 'src/utils/extract-request';
 
-// A request that presented no credential at all is never hydrated: the token
-// middleware returns early so public endpoints keep working, which leaves the
-// guarded ones to reject an unauthenticated request.
 const hasAuthenticatedPrincipal = (request: {
   user?: unknown;
   apiKey?: unknown;
@@ -37,12 +34,9 @@ export class WorkspaceAuthGuard implements CanActivate {
       return false;
     }
 
-    // Rejecting by returning false reports Nest's default FORBIDDEN, which
-    // clients read as a permission problem: nothing renews the credential and
-    // nothing signs the user out, so a client whose credential silently lapsed
-    // keeps every query failing while believing itself signed in. Restricted to
-    // GraphQL because the catch-all filter turns a GraphQL error thrown on the
-    // REST path into a 500; those clients keep the 403 they get today.
+    // Returning false here would report FORBIDDEN, which clients read as a
+    // permission problem and never recover from. GraphQL only: the catch-all
+    // filter turns a GraphQL error thrown on the REST path into a 500.
     if (
       !hasAuthenticatedPrincipal(request) &&
       context.getType<GqlContextType>() === 'graphql'
@@ -53,8 +47,7 @@ export class WorkspaceAuthGuard implements CanActivate {
       });
     }
 
-    // Authenticated but carrying no workspace -- a workspace-agnostic token --
-    // is a genuine refusal: renewing it would return the same token.
+    // Workspace-agnostic token: a genuine refusal, renewing returns the same one.
     if (!request.workspace) {
       return false;
     }

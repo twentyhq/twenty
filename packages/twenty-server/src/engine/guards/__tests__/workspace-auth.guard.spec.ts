@@ -34,8 +34,8 @@ class TestResolver {
 @Module({ providers: [TestResolver] })
 class FeatureModule {}
 
-// Mirrors the root module: the catch-all filter is what an exception no typed
-// filter claims ends up in, so the assertions below hold in production too.
+// Mirrors the root module so an exception no typed filter claims lands in the
+// catch-all filter, as it does in production.
 @Module({
   imports: [
     GraphQLModule.forRoot<YogaDriverConfig>({
@@ -82,8 +82,6 @@ describe('WorkspaceAuthGuard', () => {
     expect(result.data?.guardedQuery).toBe('ok');
   });
 
-  // Otherwise a client whose credential lapsed reads the refusal as a
-  // permission problem and never renews or signs out.
   it('should report an unauthenticated request as UNAUTHENTICATED', async () => {
     const result = await runGuardedQuery({});
 
@@ -92,10 +90,8 @@ describe('WorkspaceAuthGuard', () => {
     );
   });
 
-  // A credential that authenticated but is not scoped to a workspace is a real
-  // refusal: renewing it would return the same token. Asserted on the exception
-  // rather than on the code, which the Yoga error handler derives from its HTTP
-  // status further down the request than this harness reaches.
+  // Asserted on the exception rather than the code, which the Yoga error handler
+  // derives from the HTTP status further down than this harness reaches.
   it('should keep refusing an authenticated request with no workspace', async () => {
     const result = await runGuardedQuery({ user: { id: 'user-id' } });
 
@@ -105,8 +101,6 @@ describe('WorkspaceAuthGuard', () => {
     expect(result.errors?.[0]?.message).toBe('Forbidden resource');
   });
 
-  // The catch-all filter turns a GraphQL error thrown on the REST path into a
-  // 500, so those clients keep the refusal they get today.
   it('should keep refusing an unauthenticated REST request without throwing', () => {
     const guard = new WorkspaceAuthGuard();
 
