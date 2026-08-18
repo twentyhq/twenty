@@ -459,7 +459,12 @@ describe('ApolloFactory', () => {
     // A server that never read the session cookie -- an old pod mid-rollout, or
     // a cookie the browser no longer holds -- leaves the request with no
     // credential at all, which the guards refuse as FORBIDDEN.
-    it('should fall back to the token pair when a credential-less request is refused', async () => {
+    // The replay has to carry a freshly renewed token: cookie mode is exactly
+    // the state in which nothing refreshes the retained one, so it has most
+    // likely expired. ErrorLink subscribes a replay straight to the original
+    // observer, so an UNAUTHENTICATED on the replay would never come back
+    // through the handler to trigger renewal -- renewing has to happen first.
+    it('should renew the retained token pair and replay when a credential-less request is refused', async () => {
       setCookieAuthActive();
       fetchMock
         .mockResponseOnce(FORBIDDEN_RESOURCE_RESPONSE)
@@ -468,6 +473,8 @@ describe('ApolloFactory', () => {
       await makeRequest();
 
       expect(jotaiStore.get(isCookieAuthActiveState.atom)).toBe(false);
+      expect(renewToken).toHaveBeenCalledTimes(1);
+      expect(mockOnTokenPairChange).toHaveBeenCalledWith(RENEWED_TOKEN_PAIR);
       expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
 
       const retryHeaders = fetchMock.mock.calls[1]?.[1]?.headers as Record<
@@ -480,15 +487,38 @@ describe('ApolloFactory', () => {
       );
     });
 
-    it('should replay a credential-less refusal only once and never sign out', async () => {
+    it('should attempt the credential-less fallback only once per operation', async () => {
       setCookieAuthActive();
       fetchMock.mockResponse(FORBIDDEN_RESOURCE_RESPONSE);
 
       await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
 
       expect(fetchMock).toHaveBeenCalledTimes(2);
+      expect(renewToken).toHaveBeenCalledTimes(1);
       expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
-      expect(renewToken).not.toHaveBeenCalled();
+    });
+
+    // The one case that does end the session: nothing the client holds works.
+    it('should sign out when the refresh token is rejected during the fallback', async () => {
+      setCookieAuthActive();
+      jest
+        .mocked(renewToken)
+        .mockRejectedValue(
+          new CombinedGraphQLErrors(
+            {
+              data: null,
+              errors: [
+                { message: 'x', extensions: { code: 'UNAUTHENTICATED' } },
+              ],
+            },
+            [{ message: 'x', extensions: { code: 'UNAUTHENTICATED' } }],
+          ),
+        );
+      fetchMock.mockResponse(FORBIDDEN_RESOURCE_RESPONSE);
+
+      await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
+
+      expect(mockOnUnauthenticatedError).toHaveBeenCalled();
     });
 
     // Permission denials are FORBIDDEN too, and must not cost a credential swap.

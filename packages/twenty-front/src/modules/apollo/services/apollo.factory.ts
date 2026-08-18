@@ -291,23 +291,13 @@ export class ApolloFactory implements ApolloManager {
       // tell that state from a working session either: without this the client
       // stays "logged in" while every query returns null, forever.
       //
-      // Deliberately narrower than handleTokenRenewal: it only swaps the
-      // credential back and replays, and never signs the user out. If the
-      // refusal was a real one the replay is refused again and surfaces
-      // unchanged, at the cost of one request and of cookie auth staying off
-      // until CookieSessionBootEffect re-probes on the next mount. If the
-      // retained access token has lapsed the replay comes back UNAUTHENTICATED,
-      // which the renewal path handles from there.
-      const handleMissingCredentialUnderCookieAuth = (
-        operation: ApolloLink.Operation,
-        forward: ApolloLink.ForwardFunction,
-      ) => {
-        setIsCookieAuthActive(false);
-        operation.setContext({ hasAttemptedCookieAuthFallback: true });
-
-        return forward(operation);
-      };
-
+      // Routed through handleTokenRenewal rather than replaying directly: the
+      // retained access token has most likely expired, since cookie mode is
+      // exactly the state in which nothing refreshes it, and ErrorLink
+      // subscribes a replay straight to the original observer -- an
+      // UNAUTHENTICATED on that replay never re-enters this handler, so it
+      // would never reach renewal. Renewing first makes the replay succeed on
+      // its first attempt.
       const canFallBackFromCookieAuth = (
         operation: ApolloLink.Operation,
       ): boolean =>
@@ -393,7 +383,7 @@ export class ApolloFactory implements ApolloManager {
                 'Session cookie was not accepted, falling back to the token pair',
               );
 
-              return handleMissingCredentialUnderCookieAuth(operation, forward);
+              return handleTokenRenewal(operation, forward, error);
             }
 
             switch (graphQLError?.extensions?.code) {
