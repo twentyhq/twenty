@@ -8330,7 +8330,7 @@ msgid "Failed to delete unsubscribe topic."
 msgstr "配信停止トピックの削除に失敗しました。"
 
 #. js-lingui-id: NUmmdc
-#: src/modules/command-menu-item/engine-command/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
+#: src/modules/dashboards/hooks/useDuplicateDashboard.ts
 msgid "Failed to duplicate dashboard"
 msgstr "ダッシュボードの複製に失敗しました"
 

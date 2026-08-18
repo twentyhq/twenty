@@ -8330,7 +8330,7 @@ msgid "Failed to delete unsubscribe topic."
 msgstr "删除退订主题失败。"
 
 #. js-lingui-id: NUmmdc
-#: src/modules/command-menu-item/engine-command/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
+#: src/modules/dashboards/hooks/useDuplicateDashboard.ts
 msgid "Failed to duplicate dashboard"
 msgstr "复制仪表板失败"
 

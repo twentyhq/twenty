@@ -8330,7 +8330,7 @@ msgid "Failed to delete unsubscribe topic."
 msgstr "구독 취소 주제를 삭제하지 못했습니다."
 
 #. js-lingui-id: NUmmdc
-#: src/modules/command-menu-item/engine-command/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
+#: src/modules/dashboards/hooks/useDuplicateDashboard.ts
 msgid "Failed to duplicate dashboard"
 msgstr "대시보드 복제에 실패했습니다"
 

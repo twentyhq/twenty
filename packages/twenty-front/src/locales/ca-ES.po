@@ -8330,7 +8330,7 @@ msgid "Failed to delete unsubscribe topic."
 msgstr "No s'ha pogut suprimir el tema de baixa de subscripció."
 
 #. js-lingui-id: NUmmdc
-#: src/modules/command-menu-item/engine-command/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
+#: src/modules/dashboards/hooks/useDuplicateDashboard.ts
 msgid "Failed to duplicate dashboard"
 msgstr "No s'ha pogut duplicar el quadre de comandament"
 
