@@ -567,9 +567,8 @@ export const WorkflowDiagramCanvasBase = ({
       return;
     }
 
-    const DEFAULT_NODE_WIDTH = 200;
     const adjustedPosition = {
-      x: flowPosition.x - DEFAULT_NODE_WIDTH / 2,
+      x: flowPosition.x, // Position is center-based now, no need to offset by half node width
       y: flowPosition.y + 50,
     };
 
@@ -592,6 +591,7 @@ export const WorkflowDiagramCanvasBase = ({
         minZoom={defaultFitViewOptions.minZoom}
         maxZoom={defaultFitViewOptions.maxZoom}
         defaultViewport={{ x: 0, y: 150, zoom: defaultFitViewOptions.maxZoom }}
+        nodeOrigin={[0.5, 0.5]} // Fix node position being its center so renaming keeps it centered instead of growing right
         nodeTypes={nodeTypes}
         // @ts-expect-error We override Reactflow types for sourceHandle and targetHandle to be required
         edgeTypes={edgeTypes}
