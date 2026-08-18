@@ -2,6 +2,8 @@ import { parse } from 'graphql';
 
 import { classifyTopLevelFields } from 'src/engine/api/graphql/direct-execution/utils/classify-top-level-fields.util';
 
+const CORE_ROOT_FIELDS = new Set(['currentWorkspace', 'currentUser']);
+
 const WORKSPACE_RESOLVERS = new Set([
   'findManyCompanies',
   'findOneCompany',
@@ -25,6 +27,7 @@ describe('classifyTopLevelFields', () => {
       hasIntrospectionFields: true,
       hasWorkspaceFields: false,
       hasCoreFields: false,
+      unknownFieldNames: [],
     });
   });
 
@@ -42,6 +45,7 @@ describe('classifyTopLevelFields', () => {
       hasIntrospectionFields: false,
       hasWorkspaceFields: true,
       hasCoreFields: false,
+      unknownFieldNames: [],
     });
   });
 
@@ -59,6 +63,7 @@ describe('classifyTopLevelFields', () => {
       hasIntrospectionFields: false,
       hasWorkspaceFields: false,
       hasCoreFields: true,
+      unknownFieldNames: [],
     });
   });
 
@@ -76,6 +81,7 @@ describe('classifyTopLevelFields', () => {
       hasIntrospectionFields: true,
       hasWorkspaceFields: true,
       hasCoreFields: false,
+      unknownFieldNames: [],
     });
   });
 
@@ -93,6 +99,7 @@ describe('classifyTopLevelFields', () => {
       hasIntrospectionFields: false,
       hasWorkspaceFields: true,
       hasCoreFields: true,
+      unknownFieldNames: [],
     });
   });
 
@@ -109,6 +116,7 @@ describe('classifyTopLevelFields', () => {
       hasIntrospectionFields: false,
       hasWorkspaceFields: false,
       hasCoreFields: true,
+      unknownFieldNames: [],
     });
   });
 
@@ -129,6 +137,7 @@ describe('classifyTopLevelFields', () => {
       hasIntrospectionFields: true,
       hasWorkspaceFields: true,
       hasCoreFields: false,
+      unknownFieldNames: [],
     });
   });
 
@@ -152,6 +161,7 @@ describe('classifyTopLevelFields', () => {
       hasIntrospectionFields: true,
       hasWorkspaceFields: false,
       hasCoreFields: false,
+      unknownFieldNames: [],
     });
 
     expect(
@@ -164,6 +174,74 @@ describe('classifyTopLevelFields', () => {
       hasIntrospectionFields: false,
       hasWorkspaceFields: true,
       hasCoreFields: false,
+      unknownFieldNames: [],
+    });
+  });
+
+  it('should report a field that is neither a workspace resolver nor a core field as unknown', () => {
+    const query = `
+      query {
+        findManyCompanies { id }
+        deletedObjects { id }
+      }
+    `;
+
+    expect(
+      classifyTopLevelFields(
+        parse(query),
+        undefined,
+        WORKSPACE_RESOLVERS,
+        CORE_ROOT_FIELDS,
+      ),
+    ).toEqual({
+      hasIntrospectionFields: false,
+      hasWorkspaceFields: true,
+      hasCoreFields: false,
+      unknownFieldNames: ['deletedObjects'],
+    });
+  });
+
+  it('should classify known core fields as core when the core schema is known', () => {
+    const query = `
+      query {
+        currentWorkspace { id }
+      }
+    `;
+
+    expect(
+      classifyTopLevelFields(
+        parse(query),
+        undefined,
+        WORKSPACE_RESOLVERS,
+        CORE_ROOT_FIELDS,
+      ),
+    ).toEqual({
+      hasIntrospectionFields: false,
+      hasWorkspaceFields: false,
+      hasCoreFields: true,
+      unknownFieldNames: [],
+    });
+  });
+
+  it('should fall back to classifying unknown fields as core when the core schema is not known yet', () => {
+    const query = `
+      query {
+        deletedObjects { id }
+      }
+    `;
+
+    expect(
+      classifyTopLevelFields(
+        parse(query),
+        undefined,
+        WORKSPACE_RESOLVERS,
+        new Set(),
+      ),
+    ).toEqual({
+      hasIntrospectionFields: false,
+      hasWorkspaceFields: false,
+      hasCoreFields: true,
+      unknownFieldNames: [],
     });
   });
 });

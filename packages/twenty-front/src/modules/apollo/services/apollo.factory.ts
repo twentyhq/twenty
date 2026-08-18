@@ -19,12 +19,14 @@ import { logDebug } from '~/utils/logDebug';
 import { retryWithBackoff } from '~/utils/retryWithBackoff';
 
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
+import { UNKNOWN_GRAPHQL_ERROR_CODE } from '@/apollo/constant/unknown-graphql-error-code';
 import { type ApolloManager } from '@/apollo/types/apolloManager.interface';
 import { getIsCookieAuthActive } from '@/apollo/utils/getIsCookieAuthActive';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import { setIsCookieAuthActive } from '@/apollo/utils/setIsCookieAuthActive';
 import { isUnauthenticatedGraphQLError } from '@/apollo/utils/isUnauthenticatedGraphQLError';
 import { loggerLink } from '@/apollo/utils/loggerLink';
+import { normalizeGraphQLErrorMessageForFingerprint } from '@/apollo/utils/normalizeGraphQLErrorMessageForFingerprint';
 import { StreamingRestLink } from '@/apollo/utils/streamingRestLink';
 import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
@@ -34,7 +36,6 @@ import {
   type GraphQLFormattedError,
   type SelectionNode,
 } from 'graphql';
-import isEmpty from 'lodash.isempty';
 import { getGenericOperationName, isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -307,16 +308,40 @@ export class ApolloFactory implements ApolloManager {
 
               error.name = graphQLError.message;
 
-              const fingerPrint: string[] = [];
+              const errorCode = graphQLError.extensions?.code as
+                | string
+                | undefined;
+              const errorSubCode = graphQLError.extensions?.subCode as
+                | string
+                | undefined;
+
+              const fingerPrint: string[] = [
+                errorCode ?? UNKNOWN_GRAPHQL_ERROR_CODE,
+              ];
+
+              scope.setTag(
+                'graphqlErrorCode',
+                errorCode ?? UNKNOWN_GRAPHQL_ERROR_CODE,
+              );
+
               if (isDefined(graphQLError.extensions)) {
                 scope.setExtra('extensions', graphQLError.extensions);
-                if (isDefined(graphQLError.extensions.subCode)) {
-                  fingerPrint.push(graphQLError.extensions.subCode as string);
-                }
+              }
+
+              if (isDefined(errorSubCode)) {
+                scope.setTag('graphqlErrorSubCode', errorSubCode);
+                fingerPrint.push(errorSubCode);
+              }
+
+              const workspaceId = this.currentWorkspace?.id;
+
+              if (isDefined(workspaceId)) {
+                scope.setTag('workspaceId', workspaceId);
               }
 
               if (isDefined(operation.operationName)) {
                 scope.setExtra('operation', operation.operationName);
+                scope.setTag('graphqlOperationName', operation.operationName);
                 const genericOperationName = getGenericOperationName(
                   operation.operationName,
                 );
@@ -326,9 +351,16 @@ export class ApolloFactory implements ApolloManager {
                 }
               }
 
-              if (!isEmpty(fingerPrint)) {
-                scope.setFingerprint(fingerPrint);
-              }
+              // The generic operation name alone collapses every Find* failure
+              // into a single Sentry issue, so the message shape is what
+              // actually separates unrelated errors.
+              fingerPrint.push(
+                normalizeGraphQLErrorMessageForFingerprint(
+                  graphQLError.message,
+                ),
+              );
+
+              scope.setFingerprint(fingerPrint);
 
               captureException(error); // Sentry expects a JS error
             });
