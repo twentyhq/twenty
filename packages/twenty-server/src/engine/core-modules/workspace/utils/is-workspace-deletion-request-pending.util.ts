@@ -1,10 +1,7 @@
-import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { isWorkspaceDeletionPending } from 'src/engine/core-modules/workspace/utils/is-workspace-deletion-pending.util';
-
-type WorkspaceDeletionState = Pick<
-  WorkspaceEntity,
-  'deletedAt' | 'applicationUninstallHooksCompletedAt'
->;
+import {
+  isWorkspaceDeletionPending,
+  type WorkspaceDeletionState,
+} from 'src/engine/core-modules/workspace/utils/is-workspace-deletion-pending.util';
 
 export const isWorkspaceDeletionRequestPending = ({
   workspace,

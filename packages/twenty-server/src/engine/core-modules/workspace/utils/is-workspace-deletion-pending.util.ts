@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
-type WorkspaceDeletionState = Pick<
+export type WorkspaceDeletionState = Pick<
   WorkspaceEntity,
   'deletedAt' | 'applicationUninstallHooksCompletedAt'
 >;
