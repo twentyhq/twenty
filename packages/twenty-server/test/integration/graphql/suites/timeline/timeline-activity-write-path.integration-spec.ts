@@ -14,6 +14,8 @@ const TIMELINE_ACTIVITY_GQL_FIELDS = `
   linkedRecordId
   linkedRecordCachedName
   linkedObjectMetadataId
+  action
+  sourceObjectMetadataId
   targetCompanyId
   targetPersonId
   targetNoteId
@@ -27,6 +29,8 @@ type TimelineActivityRow = {
   linkedRecordId: string | null;
   linkedRecordCachedName: string | null;
   linkedObjectMetadataId: string | null;
+  action: string | null;
+  sourceObjectMetadataId: string | null;
   targetCompanyId: string | null;
   targetPersonId: string | null;
   targetNoteId: string | null;
@@ -168,6 +172,8 @@ describe('timeline activity write path (integration)', () => {
 
       expect(timelineActivities).toHaveLength(1);
       expect(timelineActivities[0].name).toBe('company.created');
+      expect(timelineActivities[0].action).toBe('created');
+      expect(timelineActivities[0].sourceObjectMetadataId).not.toBeNull();
       expect(timelineActivities[0].targetCompanyId).toBe(COMPANY_ID);
       expect(timelineActivities[0].linkedRecordId).toBeNull();
     });
@@ -333,6 +339,11 @@ describe('timeline activity write path (integration)', () => {
       expect(timelineActivities[0].linkedRecordId).toBe(NOTE_ID);
       expect(timelineActivities[0].linkedRecordCachedName).toBe('Linked note');
       expect(timelineActivities[0].linkedObjectMetadataId).not.toBeNull();
+      // `name` keeps the legacy raw event action, the column carries the meaning
+      expect(timelineActivities[0].action).toBe('linked');
+      expect(timelineActivities[0].sourceObjectMetadataId).toBe(
+        timelineActivities[0].linkedObjectMetadataId,
+      );
     });
 
     it('should write the note own created entry on the note timeline', async () => {
@@ -358,6 +369,7 @@ describe('timeline activity write path (integration)', () => {
 
       expect(onCompany).toHaveLength(1);
       expect(onCompany[0].linkedRecordId).toBe(NOTE_ID);
+      expect(onCompany[0].action).toBe('updated');
       expect(onCompany[0].linkedRecordCachedName).toBe('Linked note renamed');
       expect(onCompany[0].properties).toEqual({
         diff: {
@@ -415,6 +427,7 @@ describe('timeline activity write path (integration)', () => {
 
       expect(timelineActivities).toHaveLength(1);
       expect(timelineActivities[0].linkedRecordId).toBe(NOTE_ID);
+      expect(timelineActivities[0].action).toBe('unlinked');
     });
   });
 

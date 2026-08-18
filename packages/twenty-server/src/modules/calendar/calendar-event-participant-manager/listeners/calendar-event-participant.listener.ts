@@ -62,6 +62,8 @@ export class CalendarEventParticipantListener {
 
           return {
             name: 'calendarEvent.linked',
+            action: 'linked' as const,
+            sourceObjectMetadataId: calendarEventObjectMetadata.id,
             properties: {},
             objectSingularName: 'person',
             recordId: participant.personId,

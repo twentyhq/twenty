@@ -21,6 +21,8 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   linkedRecordCachedName: string | null;
   linkedRecordId: string | null;
   linkedObjectMetadataId: string | null;
+  action: string | null;
+  sourceObjectMetadataId: string | null;
   workspaceMember: EntityRelation<WorkspaceMemberWorkspaceEntity> | null;
   workspaceMemberId: string | null;
   targetPerson: EntityRelation<PersonWorkspaceEntity> | null;

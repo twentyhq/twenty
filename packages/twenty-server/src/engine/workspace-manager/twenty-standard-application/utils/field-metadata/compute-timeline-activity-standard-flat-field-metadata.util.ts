@@ -280,6 +280,45 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     now,
   }),
 
+  action: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'action',
+      type: FieldMetadataType.TEXT,
+      label: i18nLabel(msg`Action`),
+      description: i18nLabel(
+        msg`What happened, independently of the event name format`,
+      ),
+      icon: 'IconBolt',
+      isSystem: true,
+      isNullable: true,
+      isUIEditable: false,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  sourceObjectMetadataId: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'sourceObjectMetadataId',
+      type: FieldMetadataType.UUID,
+      label: i18nLabel(msg`Source Object Metadata Id`),
+      description: i18nLabel(msg`Object whose event produced this entry`),
+      icon: 'IconAbc',
+      isSystem: true,
+      isNullable: true,
+      isUIEditable: false,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+
   workspaceMember: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

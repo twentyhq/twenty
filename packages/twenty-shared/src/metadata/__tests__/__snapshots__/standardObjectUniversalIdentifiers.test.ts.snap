@@ -2578,6 +2578,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
   },
   "timelineActivity": {
     "fields": {
+      "action": {
+        "universalIdentifier": "20202020-3b1a-4f2c-8e57-6d0c4a91b7e2",
+      },
       "createdAt": {
         "universalIdentifier": "7eb7eb28-96c1-56bc-9340-681b28d5066b",
       },
@@ -2613,6 +2616,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "searchVector": {
         "universalIdentifier": "23a0482b-f41b-5e13-9b3e-356c5aaa90a3",
+      },
+      "sourceObjectMetadataId": {
+        "universalIdentifier": "20202020-7c4d-4a19-9b83-51ef2d60ac38",
       },
       "targetCompany": {
         "universalIdentifier": "500e6797-19a2-5f11-b239-259b58765533",

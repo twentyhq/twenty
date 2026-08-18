@@ -153,6 +153,12 @@ export const STANDARD_OBJECT_FIELDS = {
     linkedObjectMetadataId: {
       universalIdentifier: '20202020-c595-449d-9f89-562758c9ee69',
     },
+    action: {
+      universalIdentifier: '20202020-3b1a-4f2c-8e57-6d0c4a91b7e2',
+    },
+    sourceObjectMetadataId: {
+      universalIdentifier: '20202020-7c4d-4a19-9b83-51ef2d60ac38',
+    },
   },
   attachment: {
     ...buildStandardObjectSystemFields(

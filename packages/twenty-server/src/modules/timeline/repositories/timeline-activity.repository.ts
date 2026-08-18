@@ -49,20 +49,21 @@ export class TimelineActivityRepository {
       });
 
       const payloadsToUpsert = payloads.flatMap(
-        ({ name, properties, ...rest }) => {
-          const [objectName, action] = name.split('.');
+        ({ properties, ...payload }) => {
           const { diff } = properties;
           const hasDiff = isDefined(diff) && Object.keys(diff).length > 0;
 
-          if (objectName.startsWith('linked-')) {
-            return [{ ...rest, name, properties: hasDiff ? { diff } : {} }];
+          if (payload.action !== 'updated') {
+            return [{ ...payload, properties: {} }];
           }
 
-          if (action === 'updated') {
-            return hasDiff ? [{ ...rest, name, properties: { diff } }] : [];
+          // An entry about a related record stays worth showing without a diff,
+          // an entry about the record itself does not.
+          if (isDefined(payload.linkedRecordId)) {
+            return [{ ...payload, properties: hasDiff ? { diff } : {} }];
           }
 
-          return [{ ...rest, name, properties: {} }];
+          return hasDiff ? [{ ...payload, properties: { diff } }] : [];
         },
       );
 
@@ -203,6 +204,8 @@ export class TimelineActivityRepository {
     return timelineActivityTypeORMRepository.insert(
       payloads.map((payload) => ({
         name: payload.name,
+        action: payload.action,
+        sourceObjectMetadataId: payload.sourceObjectMetadataId,
         properties: payload.properties,
         workspaceMemberId: payload.workspaceMemberId,
         [timelineActivityPropertyName]: payload.recordId,

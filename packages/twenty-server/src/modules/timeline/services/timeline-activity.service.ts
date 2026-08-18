@@ -54,6 +54,7 @@ const SOURCE_EVENT_ACTIONS: Partial<
 const buildLinkedPayload = ({
   rule,
   action,
+  ruleAction,
   target,
   workspaceMemberId,
   linkedRecordId,
@@ -62,6 +63,7 @@ const buildLinkedPayload = ({
 }: {
   rule: TimelineActivityRule;
   action: DatabaseEventAction;
+  ruleAction: TimelineActivityRuleAction;
   target: ResolvedTimelineActivityTarget;
   workspaceMemberId: string | undefined;
   linkedRecordId: string;
@@ -69,6 +71,8 @@ const buildLinkedPayload = ({
   properties: ObjectRecordBaseEvent['properties'];
 }): TimelineActivityPayload => ({
   name: `linked-${rule.sourceFlatObjectMetadata.nameSingular}.${action}`,
+  action: ruleAction,
+  sourceObjectMetadataId: rule.sourceFlatObjectMetadata.id,
   objectSingularName: target.targetObjectNameSingular,
   recordId: target.targetRecordId,
   workspaceMemberId,
@@ -216,11 +220,14 @@ export class TimelineActivityService {
       return [];
     }
 
-    const { nameSingular } = rule.sourceFlatObjectMetadata;
+    const { nameSingular, id: sourceObjectMetadataId } =
+      rule.sourceFlatObjectMetadata;
 
     if (rule.targetShape.kind === 'SELF') {
       return matchingEvents.map((event) => ({
         name: `${nameSingular}.${action}`,
+        action: ruleAction,
+        sourceObjectMetadataId,
         objectSingularName: nameSingular,
         recordId: event.recordId,
         workspaceMemberId: event.workspaceMemberId,
@@ -242,6 +249,7 @@ export class TimelineActivityService {
         buildLinkedPayload({
           rule,
           action,
+          ruleAction,
           target,
           workspaceMemberId: event.workspaceMemberId,
           linkedRecordId: event.recordId,
@@ -322,6 +330,7 @@ export class TimelineActivityService {
         buildLinkedPayload({
           rule,
           action,
+          ruleAction,
           target,
           workspaceMemberId: event.workspaceMemberId,
           linkedRecordId: sourceRecordId,
