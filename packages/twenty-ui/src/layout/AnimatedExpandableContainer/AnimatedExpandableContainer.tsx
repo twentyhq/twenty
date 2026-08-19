@@ -33,7 +33,7 @@ export const AnimatedExpandableContainer = ({
         } as React.CSSProperties);
 
   return (
-    <Collapsible.Root open={isExpanded}>
+    <Collapsible.Root className={styles.root} open={isExpanded}>
       <Collapsible.Panel
         className={clsx(styles.panel, containAnimation && styles.contained)}
         data-dimension={dimension}
