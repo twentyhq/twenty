@@ -88,7 +88,7 @@ export class SyncMessageFoldersService {
       | 'workspaceId'
     >,
     messageChannel: Pick<MessageChannelEntity, 'messageFolderImportPolicy'>,
-    existingFolders: MessageFolder[] = [],
+    existingFolders: MessageFolder[],
   ): Promise<DiscoveredMessageFolder[]> {
     switch (connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE:

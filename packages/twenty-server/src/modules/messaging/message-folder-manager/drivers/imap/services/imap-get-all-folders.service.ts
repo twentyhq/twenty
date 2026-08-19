@@ -34,7 +34,7 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
       'id' | 'provider' | 'connectionParameters' | 'handle' | 'workspaceId'
     >,
     messageChannel: Pick<MessageChannelEntity, 'messageFolderImportPolicy'>,
-    existingFolders: MessageFolder[] = [],
+    existingFolders: MessageFolder[],
   ): Promise<DiscoveredMessageFolder[]> {
     try {
       const client = await this.imapClientProvider.getClient(
