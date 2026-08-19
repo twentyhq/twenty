@@ -1,6 +1,7 @@
 export const buildMcpServerInstructions = (
   objectNames: string,
   skillNames?: string,
+  workspaceInstructions?: string,
 ): string =>
   [
     `You are an AI assistant for a Twenty CRM workspace.`,
@@ -75,4 +76,12 @@ export const buildMcpServerInstructions = (
     `On tool failure: read the error message, do not retry silently, report to user.`,
     `Present results as readable summaries, not raw JSON.`,
     `For large result sets, show count + first N records and offer to paginate.`,
+    ...(workspaceInstructions
+      ? [
+          ``,
+          `## Workspace Instructions`,
+          `The following are custom instructions provided by the workspace administrator:`,
+          workspaceInstructions,
+        ]
+      : []),
   ].join('\n');
