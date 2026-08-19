@@ -153,16 +153,15 @@ export class SystemPromptBuilderService {
     userContext?: UserContext;
     isWorkspaceSetupThread?: boolean;
   }): string {
-    const parts: string[] =
-      isWorkspaceSetupThread === true
-        ? [WORKSPACE_SETUP_SYSTEM_PROMPT, CHAT_SYSTEM_PROMPTS.RESPONSE_FORMAT]
-        : [
-            CHAT_SYSTEM_PROMPTS.BASE,
-            CHAT_SYSTEM_PROMPTS.BROWSING_CONTEXT_INSTRUCTION,
-            CHAT_SYSTEM_PROMPTS.RESPONSE_FORMAT,
-          ];
+    const parts: string[] = isWorkspaceSetupThread
+      ? [WORKSPACE_SETUP_SYSTEM_PROMPT, CHAT_SYSTEM_PROMPTS.RESPONSE_FORMAT]
+      : [
+          CHAT_SYSTEM_PROMPTS.BASE,
+          CHAT_SYSTEM_PROMPTS.BROWSING_CONTEXT_INSTRUCTION,
+          CHAT_SYSTEM_PROMPTS.RESPONSE_FORMAT,
+        ];
 
-    if (isWorkspaceSetupThread !== true) {
+    if (!isWorkspaceSetupThread) {
       const workspaceInstructionsSection =
         this.buildWorkspaceInstructionsSection(workspaceInstructions ?? '');
 
