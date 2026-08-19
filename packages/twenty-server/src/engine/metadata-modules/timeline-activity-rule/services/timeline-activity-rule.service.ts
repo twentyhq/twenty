@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { getTimelineActivityRuleUniversalIdentifier } from 'twenty-shared/application';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import {
-  isTimelineActivityAction,
-  type TimelineActivityAction,
-} from 'twenty-shared/timeline';
+import { type TimelineActivityAction } from 'twenty-shared/timeline';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -17,6 +13,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatTimelineActivityRule } from 'src/engine/metadata-modules/flat-timeline-activity-rule/types/flat-timeline-activity-rule.type';
 import { SELF_TIMELINE_ACTIVITY_RULE_ACTIONS } from 'src/engine/metadata-modules/timeline-activity-rule/constants/self-timeline-activity-rule-actions.constant';
+import { findSelfOverrideFlatTimelineActivityRule } from 'src/engine/metadata-modules/timeline-activity-rule/utils/find-self-override-flat-timeline-activity-rule.util';
 import { type ResetTimelineActivityRuleInput } from 'src/engine/metadata-modules/timeline-activity-rule/dtos/reset-timeline-activity-rule.input';
 import { type TimelineActivityRuleDTO } from 'src/engine/metadata-modules/timeline-activity-rule/dtos/timeline-activity-rule.dto';
 import { type UpsertTimelineActivityRuleInput } from 'src/engine/metadata-modules/timeline-activity-rule/dtos/upsert-timeline-activity-rule.input';
@@ -24,40 +21,19 @@ import {
   TimelineActivityRuleException,
   TimelineActivityRuleExceptionCode,
 } from 'src/engine/metadata-modules/timeline-activity-rule/timeline-activity-rule.exception';
-import { STANDARD_TIMELINE_ACTIVITY_RULES } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-timeline-activity-rules.constant';
+import {
+  STANDARD_TIMELINE_ACTIVITY_RULES,
+  type StandardTimelineActivityRuleDefinition,
+} from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-timeline-activity-rules.constant';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+import { deriveDefaultTimelineActivityRule } from 'src/modules/timeline/utils/derive-default-timeline-activity-rule.util';
 
 const DEFAULT_RELATION_RULE_ACTIONS: TimelineActivityAction[] = [
   'linked',
   'unlinked',
   'updated',
 ];
-
-type StandardRuleDefinition = {
-  objectUniversalIdentifier: string;
-  relationFieldUniversalIdentifier: string;
-  actions: TimelineActivityAction[];
-  triggerFieldUniversalIdentifiers: string[];
-};
-
-const STANDARD_RULE_DEFINITIONS: StandardRuleDefinition[] =
-  STANDARD_TIMELINE_ACTIVITY_RULES.map((standardRule) => {
-    const objectFields = STANDARD_OBJECTS[standardRule.objectName]
-      .fields as Record<string, { universalIdentifier: string }>;
-
-    return {
-      objectUniversalIdentifier:
-        STANDARD_OBJECTS[standardRule.objectName].universalIdentifier,
-      relationFieldUniversalIdentifier:
-        objectFields[standardRule.relationFieldName].universalIdentifier,
-      actions: [...standardRule.actions],
-      triggerFieldUniversalIdentifiers: standardRule.triggerFieldNames.map(
-        (triggerFieldName) =>
-          objectFields[triggerFieldName].universalIdentifier,
-      ),
-    };
-  });
 
 type RuleFlatMaps = {
   flatTimelineActivityRuleMaps: FlatEntityMaps<FlatTimelineActivityRule>;
@@ -107,8 +83,6 @@ export class TimelineActivityRuleService {
     input: UpsertTimelineActivityRuleInput,
     workspaceId: string,
   ): Promise<TimelineActivityRuleDTO> {
-    this.validateUpsertInput(input);
-
     const flatMaps = await this.getFlatMaps(workspaceId);
     const relationFieldMetadataId = input.relationFieldMetadataId ?? null;
 
@@ -247,14 +221,30 @@ export class TimelineActivityRuleService {
       relationFieldMetadataId,
     });
 
-    if (!isDefined(existingFlatRule)) {
-      return await this.findEffectiveRuleByNaturalKey({
+    if (isDefined(existingFlatRule)) {
+      await this.resetExistingFlatRule({
+        existingFlatRule,
+        flatMaps,
         workspaceId,
-        objectMetadataId: input.objectMetadataId,
-        relationFieldMetadataId,
       });
     }
 
+    return await this.findEffectiveRuleByNaturalKey({
+      workspaceId,
+      objectMetadataId: input.objectMetadataId,
+      relationFieldMetadataId,
+    });
+  }
+
+  private async resetExistingFlatRule({
+    existingFlatRule,
+    flatMaps,
+    workspaceId,
+  }: {
+    existingFlatRule: FlatTimelineActivityRule;
+    flatMaps: RuleFlatMaps;
+    workspaceId: string;
+  }): Promise<void> {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
@@ -296,12 +286,6 @@ export class TimelineActivityRuleService {
         flatEntityToDelete: [existingFlatRule],
       });
     }
-
-    return await this.findEffectiveRuleByNaturalKey({
-      workspaceId,
-      objectMetadataId: input.objectMetadataId,
-      relationFieldMetadataId,
-    });
   }
 
   private async getFlatMaps(workspaceId: string): Promise<RuleFlatMaps> {
@@ -315,19 +299,6 @@ export class TimelineActivityRuleService {
         ],
       },
     );
-  }
-
-  private validateUpsertInput(input: UpsertTimelineActivityRuleInput): void {
-    const invalidActions = (input.actions ?? []).filter(
-      (action) => !isTimelineActivityAction(action),
-    );
-
-    if (invalidActions.length > 0) {
-      throw new TimelineActivityRuleException(
-        `Unknown timeline rule actions: ${invalidActions.join(', ')}`,
-        TimelineActivityRuleExceptionCode.INVALID_TIMELINE_ACTIVITY_RULE_INPUT,
-      );
-    }
   }
 
   private assertTriggerFieldsBelongToObject({
@@ -371,8 +342,7 @@ export class TimelineActivityRuleService {
       .find(
         (flatRule) =>
           flatRule.objectMetadataId === objectMetadataId &&
-          (flatRule.relationFieldMetadataId ?? null) ===
-            relationFieldMetadataId &&
+          flatRule.relationFieldMetadataId === relationFieldMetadataId &&
           flatRule.resolution === 'MATERIALIZED',
       );
   }
@@ -386,21 +356,43 @@ export class TimelineActivityRuleService {
     objectMetadataId: string;
     relationFieldMetadataId: string | null;
   }): Promise<TimelineActivityRuleDTO | null> {
-    const effectiveRules = await this.findEffectiveRules(workspaceId);
+    const flatMaps = await this.getFlatMaps(workspaceId);
+
+    if (isDefined(relationFieldMetadataId)) {
+      const flatRule = this.findFlatRuleByNaturalKey({
+        flatMaps,
+        objectMetadataId,
+        relationFieldMetadataId,
+      });
+
+      return isDefined(flatRule)
+        ? this.buildEffectiveRelationRule({ flatRule, flatMaps })
+        : null;
+    }
+
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: objectMetadataId,
+      flatEntityMaps: flatMaps.flatObjectMetadataMaps,
+    });
+
+    if (!isDefined(flatObjectMetadata)) {
+      return null;
+    }
+
+    const persistedFlatRules = Object.values(
+      flatMaps.flatTimelineActivityRuleMaps.byUniversalIdentifier,
+    ).filter(isDefined);
 
     return (
-      effectiveRules.find(
-        (rule) =>
-          rule.objectMetadataId === objectMetadataId &&
-          rule.relationFieldMetadataId === relationFieldMetadataId,
-      ) ?? null
+      this.buildEffectiveSelfRule({ flatObjectMetadata, persistedFlatRules }) ??
+      null
     );
   }
 
   private findStandardRuleDefinition(
     flatRule: FlatTimelineActivityRule,
-  ): StandardRuleDefinition | undefined {
-    return STANDARD_RULE_DEFINITIONS.find(
+  ): StandardTimelineActivityRuleDefinition | undefined {
+    return STANDARD_TIMELINE_ACTIVITY_RULES.find(
       (definition) =>
         definition.objectUniversalIdentifier ===
           flatRule.objectMetadataUniversalIdentifier &&
@@ -416,47 +408,33 @@ export class TimelineActivityRuleService {
     flatObjectMetadata: FlatObjectMetadata;
     persistedFlatRules: FlatTimelineActivityRule[];
   }): TimelineActivityRuleDTO | undefined {
-    const hasDerivedSelfRule =
-      flatObjectMetadata.isAuditLogged && !flatObjectMetadata.isSystem;
+    const derivedSelfRule =
+      deriveDefaultTimelineActivityRule(flatObjectMetadata);
 
-    if (!hasDerivedSelfRule) {
+    if (!isDefined(derivedSelfRule)) {
       return undefined;
     }
 
-    const selfOverrideFlatRule = persistedFlatRules.find(
-      (flatRule) =>
-        flatRule.objectMetadataId === flatObjectMetadata.id &&
-        !isDefined(flatRule.relationFieldMetadataId) &&
-        flatRule.resolution === 'MATERIALIZED',
-    );
-
-    if (!isDefined(selfOverrideFlatRule)) {
-      return {
-        id: null,
-        objectMetadataId: flatObjectMetadata.id,
-        relationFieldMetadataId: null,
-        resolution: 'MATERIALIZED',
-        actions: [...SELF_TIMELINE_ACTIVITY_RULE_ACTIONS],
-        triggerFieldMetadataIds: null,
-        isActive: true,
-        isStandard: true,
-        isOverridden: false,
-      };
-    }
+    const selfOverrideFlatRule = findSelfOverrideFlatTimelineActivityRule({
+      persistedFlatRules,
+      objectMetadataId: flatObjectMetadata.id,
+    });
 
     return {
-      id: selfOverrideFlatRule.id,
+      id: selfOverrideFlatRule?.id ?? null,
       objectMetadataId: flatObjectMetadata.id,
       relationFieldMetadataId: null,
       resolution: 'MATERIALIZED',
       actions:
+        isDefined(selfOverrideFlatRule) &&
         selfOverrideFlatRule.actions.length > 0
           ? selfOverrideFlatRule.actions
-          : [...SELF_TIMELINE_ACTIVITY_RULE_ACTIONS],
-      triggerFieldMetadataIds: selfOverrideFlatRule.triggerFieldMetadataIds,
-      isActive: selfOverrideFlatRule.isActive,
+          : derivedSelfRule.actions,
+      triggerFieldMetadataIds:
+        selfOverrideFlatRule?.triggerFieldMetadataIds ?? null,
+      isActive: selfOverrideFlatRule?.isActive ?? true,
       isStandard: true,
-      isOverridden: true,
+      isOverridden: isDefined(selfOverrideFlatRule),
     };
   }
 
