@@ -8,6 +8,11 @@ import {
   type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import {
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { buildCursorCumulativeWhereCondition } from 'src/engine/api/utils/build-cursor-cumulative-where-conditions.utils';
 import { buildCursorWhereCondition } from 'src/engine/api/utils/build-cursor-where-condition.utils';
 import { validateCursorMatchesOrderByOrThrow } from 'src/engine/api/utils/validate-cursor-matches-order-by.utils';
@@ -71,8 +76,8 @@ export const computeCursorArgFilter = (
     ObjectRecordCursorLeafCompositeValue | ObjectRecordCursorLeafScalarValue
   >({
     cursorEntries,
-    buildEqualityCondition: ({ cursorKey, cursorValue }) =>
-      buildCursorWhereCondition({
+    buildEqualityCondition: ({ cursorKey, cursorValue }) => {
+      const equalityCondition = buildCursorWhereCondition({
         cursorKey,
         cursorValue,
         flatObjectMetadata,
@@ -80,7 +85,20 @@ export const computeCursorArgFilter = (
         orderBy,
         isForwardPagination: true,
         isEqualityCondition: true,
-      }) as ObjectRecordFilter,
+      });
+
+      // Equality conditions always exist: only strictly-after conditions can
+      // degenerate to null inside a trailing NULL block
+      if (!isDefined(equalityCondition)) {
+        throw new GraphqlQueryRunnerException(
+          `Invalid cursor: no equality condition for key "${cursorKey}"`,
+          GraphqlQueryRunnerExceptionCode.INVALID_CURSOR,
+          { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+        );
+      }
+
+      return equalityCondition;
+    },
     buildMainCondition: ({ cursorKey, cursorValue }) =>
       buildCursorWhereCondition({
         cursorKey,

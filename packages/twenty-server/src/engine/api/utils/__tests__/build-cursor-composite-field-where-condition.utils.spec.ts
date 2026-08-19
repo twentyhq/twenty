@@ -1,7 +1,10 @@
 import { type EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType, OrderByDirection } from 'twenty-shared/types';
 
-import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import {
+  type ObjectRecordFilter,
+  type ObjectRecordOrderBy,
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { buildCursorCompositeFieldWhereCondition } from 'src/engine/api/utils/build-cursor-composite-field-where-condition.utils';
 
@@ -284,8 +287,7 @@ describe('buildCompositeFieldWhereCondition', () => {
         });
 
         expect(result).toHaveProperty('or');
-        // oxlint-disable-next-line typescript/no-explicit-any
-        const orConditions = (result?.or ?? []) as any[];
+        const orConditions: ObjectRecordFilter[] = result?.or ?? [];
 
         expect(Array.isArray(orConditions)).toBe(true);
 

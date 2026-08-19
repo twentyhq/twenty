@@ -39,10 +39,7 @@ export const buildCursorCompositeFieldWhereCondition = ({
   cursorValue,
   isForwardPagination,
   isEqualityCondition = false,
-}: BuildCursorCompositeFieldWhereConditionParams): Record<
-  string,
-  ObjectRecordFilter
-> | null => {
+}: BuildCursorCompositeFieldWhereConditionParams): ObjectRecordFilter | null => {
   const compositeType = compositeTypeDefinitions.get(fieldType);
 
   if (!compositeType) {
