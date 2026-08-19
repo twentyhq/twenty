@@ -2,13 +2,12 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { MetadataTranslationValueCell } from '@/settings/translations/components/MetadataTranslationValueCell';
+import { MetadataTranslationProvenanceTag } from '@/settings/translations/components/MetadataTranslationProvenanceTag';
 import {
   type MetadataTranslationRow,
-  MetadataTranslationValueCell,
-} from '@/settings/translations/components/MetadataTranslationValueCell';
-import { MetadataTranslationProvenanceTag } from '@/settings/translations/components/MetadataTranslationProvenanceTag';
-import { useMetadataTranslations } from '@/settings/translations/hooks/useMetadataTranslations';
-import { useSaveMetadataTranslation } from '@/settings/translations/hooks/useSaveMetadataTranslation';
+  useMetadataTranslations,
+} from '@/settings/translations/hooks/useMetadataTranslations';
 import { useTranslatablePropertyLabel } from '@/settings/translations/hooks/useTranslatablePropertyLabel';
 import { Select } from '@/ui/input/components/Select';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -71,10 +70,9 @@ export const SettingsTranslations = () => {
   const localeOptions = useLocaleOptions();
   const { alphaSortedActiveNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
-  const { metadataTranslations, refetch } = useMetadataTranslations({
+  const { metadataTranslations, saveTranslationRow } = useMetadataTranslations({
     locale: selectedLocale,
   });
-  const { saveMetadataTranslation } = useSaveMetadataTranslation();
   const { getPropertyLabel } = useTranslatablePropertyLabel();
 
   const rowsByOwnerId = new Map<string, MetadataTranslationRow[]>();
@@ -88,18 +86,13 @@ export const SettingsTranslations = () => {
   const fieldLabelByRecordId = new Map(
     metadataTranslations
       .filter(
-        (row) => row.metadataName === 'fieldMetadata' && row.property === 'label',
+        (row) =>
+          row.metadataName === 'fieldMetadata' && row.property === 'label',
       )
       .map((row) => [row.recordId, row.canonicalValue]),
   );
 
-  const visibleOwnerIds = new Set(
-    alphaSortedActiveNonSystemObjectMetadataItems.map(({ id }) => id),
-  );
-  const visibleTranslations = metadataTranslations.filter((row) =>
-    visibleOwnerIds.has(row.objectMetadataId ?? row.recordId),
-  );
-  const translatedCount = visibleTranslations.filter(
+  const translatedCount = metadataTranslations.filter(
     ({ provenance }) => provenance !== MetadataTranslationProvenance.INHERITED,
   ).length;
 
@@ -113,21 +106,6 @@ export const SettingsTranslations = () => {
     return [entityLabel, row.canonicalValue, row.value].some((haystack) =>
       haystack.toLowerCase().includes(needle),
     );
-  };
-
-  const saveRow = async (row: MetadataTranslationRow, value: string | null) => {
-    await saveMetadataTranslation({
-      metadataName:
-        row.metadataName === 'objectMetadata'
-          ? 'objectMetadata'
-          : 'fieldMetadata',
-      recordId: row.recordId,
-      objectMetadataId: row.objectMetadataId,
-      locale: row.locale,
-      property: row.property,
-      value,
-    });
-    await refetch();
   };
 
   return (
@@ -156,7 +134,11 @@ export const SettingsTranslations = () => {
                 fullWidth
                 value={selectedLocale}
                 options={localeOptions}
-                onChange={(value) => setSelectedLocale(value as AppLocale)}
+                onChange={(value) => {
+                  if (isValidLocale(value)) {
+                    setSelectedLocale(value);
+                  }
+                }}
               />
             </StyledLocaleSelectContainer>
             <SearchInput
@@ -165,80 +147,80 @@ export const SettingsTranslations = () => {
               placeholder={t`Search a label`}
             />
             <StyledCompletion>
-              {t`${translatedCount} of ${visibleTranslations.length} translated`}
+              {t`${translatedCount} of ${metadataTranslations.length} translated`}
             </StyledCompletion>
           </StyledControlsRow>
           {alphaSortedActiveNonSystemObjectMetadataItems.map(
             (objectMetadataItem, index) => {
-            const objectRows = rowsByOwnerId.get(objectMetadataItem.id) ?? [];
-            const visibleRows = objectRows.filter((row) => {
-              const entityLabel =
-                row.metadataName === 'objectMetadata'
-                  ? objectMetadataItem.labelPlural
-                  : (fieldLabelByRecordId.get(row.recordId) ?? '');
+              const objectRows = rowsByOwnerId.get(objectMetadataItem.id) ?? [];
+              const visibleRows = objectRows.filter((row) => {
+                const entityLabel =
+                  row.metadataName === 'objectMetadata'
+                    ? objectMetadataItem.labelPlural
+                    : (fieldLabelByRecordId.get(row.recordId) ?? '');
 
-              return matchesSearch(row, entityLabel);
-            });
+                return matchesSearch(row, entityLabel);
+              });
 
-            if (visibleRows.length === 0) {
-              return null;
-            }
+              if (visibleRows.length === 0) {
+                return null;
+              }
 
-            return (
-              <Table key={objectMetadataItem.id}>
-                <TableSection
-                  title={objectMetadataItem.labelPlural}
-                  isInitiallyExpanded={
-                    searchTerm.trim() !== '' ? true : index === 0
-                  }
-                >
-                  <TableRow
-                    gridAutoColumns={TRANSLATIONS_PAGE_GRID_TEMPLATE_COLUMNS}
+              return (
+                <Table key={objectMetadataItem.id}>
+                  <TableSection
+                    title={objectMetadataItem.labelPlural}
+                    isInitiallyExpanded={
+                      searchTerm.trim() !== '' ? true : index === 0
+                    }
                   >
-                    <TableHeader>{t`Label`}</TableHeader>
-                    <TableHeader>{t`Canonical`}</TableHeader>
-                    <TableHeader>{t`Translation`}</TableHeader>
-                    <TableHeader></TableHeader>
-                  </TableRow>
-                  {visibleRows.map((row) => {
-                    const fieldLabel =
-                      row.metadataName === 'fieldMetadata'
-                        ? (fieldLabelByRecordId.get(row.recordId) ?? '')
-                        : null;
-                    const rowLabel = isDefined(fieldLabel)
-                      ? `${fieldLabel} · ${getPropertyLabel(row.metadataName, row.property)}`
-                      : getPropertyLabel(row.metadataName, row.property);
+                    <TableRow
+                      gridAutoColumns={TRANSLATIONS_PAGE_GRID_TEMPLATE_COLUMNS}
+                    >
+                      <TableHeader>{t`Label`}</TableHeader>
+                      <TableHeader>{t`Canonical`}</TableHeader>
+                      <TableHeader>{t`Translation`}</TableHeader>
+                      <TableHeader></TableHeader>
+                    </TableRow>
+                    {visibleRows.map((row) => {
+                      const fieldLabel =
+                        row.metadataName === 'fieldMetadata'
+                          ? (fieldLabelByRecordId.get(row.recordId) ?? '')
+                          : null;
+                      const rowLabel = isDefined(fieldLabel)
+                        ? `${fieldLabel} · ${getPropertyLabel(row.metadataName, row.property)}`
+                        : getPropertyLabel(row.metadataName, row.property);
 
-                    return (
-                      <TableRow
-                        key={`${row.recordId}:${row.property}`}
-                        gridAutoColumns={
-                          TRANSLATIONS_PAGE_GRID_TEMPLATE_COLUMNS
-                        }
-                      >
-                        <TableCell>{rowLabel}</TableCell>
-                        <TableCell>
-                          <StyledCanonical>
-                            {row.canonicalValue}
-                          </StyledCanonical>
-                        </TableCell>
-                        <TableCell>
-                          <MetadataTranslationValueCell
-                            row={row}
-                            onSave={(value) => saveRow(row, value)}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <MetadataTranslationProvenanceTag
-                            provenance={row.provenance}
-                          />
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableSection>
-              </Table>
-            );
+                      return (
+                        <TableRow
+                          key={`${row.recordId}:${row.property}`}
+                          gridAutoColumns={
+                            TRANSLATIONS_PAGE_GRID_TEMPLATE_COLUMNS
+                          }
+                        >
+                          <TableCell>{rowLabel}</TableCell>
+                          <TableCell>
+                            <StyledCanonical>
+                              {row.canonicalValue}
+                            </StyledCanonical>
+                          </TableCell>
+                          <TableCell>
+                            <MetadataTranslationValueCell
+                              row={row}
+                              onSave={(value) => saveTranslationRow(row, value)}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <MetadataTranslationProvenanceTag
+                              provenance={row.provenance}
+                            />
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableSection>
+                </Table>
+              );
             },
           )}
         </Section>

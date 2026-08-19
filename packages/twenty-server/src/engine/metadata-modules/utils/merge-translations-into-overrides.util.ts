@@ -33,6 +33,11 @@ type OverridesWithTranslations = Record<string, unknown> & {
 // Mirrors computeMetadataOverridesBlob for the nested translations key: an
 // empty value deletes the entry, empty locale groups and an empty blob
 // collapse to null so a fully-reverted entity stores no overrides at all.
+// Locale and property are allowlist-validated by the callers; this re-checks
+// object-safety so a hostile key can never reach the prototype chain.
+const isSafeObjectKey = (key: string): boolean =>
+  !['__proto__', 'constructor', 'prototype'].includes(key);
+
 export const mergeTranslationsIntoOverrides = <
   TOverrides = Record<string, unknown>,
 >({
@@ -42,7 +47,12 @@ export const mergeTranslationsIntoOverrides = <
   existingOverrides: TOverrides | null;
   translationEntries: TranslationOverrideEntry[];
 }): TOverrides | null => {
-  if (translationEntries.length === 0) {
+  const safeTranslationEntries = translationEntries.filter(
+    ({ locale, property }) =>
+      isSafeObjectKey(locale) && isSafeObjectKey(property),
+  );
+
+  if (safeTranslationEntries.length === 0) {
     return existingOverrides;
   }
 
@@ -56,7 +66,7 @@ export const mergeTranslationsIntoOverrides = <
     ]),
   );
 
-  for (const { locale, property, value } of translationEntries) {
+  for (const { locale, property, value } of safeTranslationEntries) {
     if (isNonEmptyString(value)) {
       translations[locale] = { ...translations[locale], [property]: value };
       continue;

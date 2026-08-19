@@ -225,10 +225,18 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
       property,
       value: pendingFormValues[property] ?? null,
     }));
+    // Unrelated dirty edits (icon, ...) ride along as canonical updates —
+    // only the label edits become locale-scoped.
+    const dirtyNonTranslatableValues = Object.fromEntries(
+      Object.entries(pickDirtyValues(pendingFormValues)).filter(
+        ([key]) =>
+          !(OBJECT_TRANSLATABLE_PROPERTIES as readonly string[]).includes(key),
+      ),
+    );
 
     const updateResult = await updateOneObjectMetadataItem({
       idToUpdate: objectMetadataItem.id,
-      updatePayload: { translations },
+      updatePayload: { ...dirtyNonTranslatableValues, translations },
     });
 
     closeModal(TRANSLATION_INTENT_MODAL_ID);
@@ -251,12 +259,12 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
     await saveAsRename(formValues);
   };
 
-  const updateObjectMetadata = async (
+  // Only dirty fields are ever sent: untouched values hold the viewer-locale
+  // resolved labels, and sending those back would silently turn a translation
+  // into a rename. Standard objects additionally cannot change their names.
+  const pickDirtyValues = (
     formValues: SettingsDataModelObjectAboutFormValues,
-  ) => {
-    // Only dirty fields are sent: untouched values hold the viewer-locale
-    // resolved labels, and sending those back would silently turn a
-    // translation into a rename.
+  ): Partial<SettingsDataModelObjectAboutFormValues> => {
     const dirtyValues = Object.fromEntries(
       Object.entries(formValues).filter(([key]) =>
         isDefined(
@@ -267,24 +275,27 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
       ),
     ) as Partial<SettingsDataModelObjectAboutFormValues>;
 
-    if (!isCustomObject) {
-      const {
-        nameSingular: _nameSingular,
-        namePlural: _namePlural,
-        isLabelSyncedWithName: _isLabelSyncedWithName,
-        color: _color,
-        ...payloadWithoutNames
-      } = dirtyValues;
-
-      return await updateOneObjectMetadataItem({
-        idToUpdate: objectMetadataItem.id,
-        updatePayload: payloadWithoutNames,
-      });
+    if (isCustomObject) {
+      return dirtyValues;
     }
 
+    const {
+      nameSingular: _nameSingular,
+      namePlural: _namePlural,
+      isLabelSyncedWithName: _isLabelSyncedWithName,
+      color: _color,
+      ...dirtyValuesWithoutNames
+    } = dirtyValues;
+
+    return dirtyValuesWithoutNames;
+  };
+
+  const updateObjectMetadata = async (
+    formValues: SettingsDataModelObjectAboutFormValues,
+  ) => {
     return await updateOneObjectMetadataItem({
       idToUpdate: objectMetadataItem.id,
-      updatePayload: dirtyValues,
+      updatePayload: pickDirtyValues(formValues),
     });
   };
 

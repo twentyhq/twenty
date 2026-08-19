@@ -1,11 +1,10 @@
 import { useLocaleOptions } from '~/localization/hooks/useLocaleOptions';
+import { MetadataTranslationValueCell } from '@/settings/translations/components/MetadataTranslationValueCell';
+import { MetadataTranslationProvenanceTag } from '@/settings/translations/components/MetadataTranslationProvenanceTag';
 import {
   type MetadataTranslationRow,
-  MetadataTranslationValueCell,
-} from '@/settings/translations/components/MetadataTranslationValueCell';
-import { MetadataTranslationProvenanceTag } from '@/settings/translations/components/MetadataTranslationProvenanceTag';
-import { useMetadataTranslations } from '@/settings/translations/hooks/useMetadataTranslations';
-import { useSaveMetadataTranslation } from '@/settings/translations/hooks/useSaveMetadataTranslation';
+  useMetadataTranslations,
+} from '@/settings/translations/hooks/useMetadataTranslations';
 import { useTranslatablePropertyLabel } from '@/settings/translations/hooks/useTranslatablePropertyLabel';
 import { settingsTranslationsSidePanelTargetState } from '@/settings/translations/states/settingsTranslationsSidePanelTargetState';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -40,14 +39,13 @@ export const SidePanelSettingsMetadataTranslationsPage = () => {
   const settingsTranslationsSidePanelTarget = useAtomStateValue(
     settingsTranslationsSidePanelTargetState,
   );
-  const { metadataTranslations, refetch } = useMetadataTranslations(
+  const { metadataTranslations, saveTranslationRow } = useMetadataTranslations(
     isDefined(settingsTranslationsSidePanelTarget)
       ? settingsTranslationsSidePanelTarget.metadataName === 'objectMetadata'
         ? { objectMetadataId: settingsTranslationsSidePanelTarget.recordId }
         : { fieldMetadataId: settingsTranslationsSidePanelTarget.recordId }
       : null,
   );
-  const { saveMetadataTranslation } = useSaveMetadataTranslation();
   const { getPropertyLabel } = useTranslatablePropertyLabel();
   const localeOptions = useLocaleOptions();
 
@@ -63,18 +61,6 @@ export const SidePanelSettingsMetadataTranslationsPage = () => {
     localeRows.set(row.locale, row);
     rowsByProperty.set(row.property, localeRows);
   }
-
-  const saveRow = async (row: MetadataTranslationRow, value: string | null) => {
-    await saveMetadataTranslation({
-      metadataName: settingsTranslationsSidePanelTarget.metadataName,
-      recordId: settingsTranslationsSidePanelTarget.recordId,
-      objectMetadataId: settingsTranslationsSidePanelTarget.objectMetadataId,
-      locale: row.locale,
-      property: row.property,
-      value,
-    });
-    await refetch();
-  };
 
   return (
     <StyledPageContainer>
@@ -105,7 +91,7 @@ export const SidePanelSettingsMetadataTranslationsPage = () => {
                   <TableCell>
                     <MetadataTranslationValueCell
                       row={row}
-                      onSave={(value) => saveRow(row, value)}
+                      onSave={(value) => saveTranslationRow(row, value)}
                     />
                   </TableCell>
                   <TableCell>
@@ -120,7 +106,7 @@ export const SidePanelSettingsMetadataTranslationsPage = () => {
                         Icon={IconRestore}
                         title={t`Reset to default`}
                         accent="tertiary"
-                        onClick={() => saveRow(row, null)}
+                        onClick={() => saveTranslationRow(row, null)}
                       />
                     )}
                   </TableCell>

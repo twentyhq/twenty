@@ -4,6 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
+import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-translatable-properties-by-metadata-name.constant';
@@ -18,16 +19,29 @@ import {
 import { type MetadataTranslationsInput } from 'src/engine/metadata-modules/metadata-translation/dtos/metadata-translations.input';
 import { resolveEffectiveEntityPropertyByName } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 
+type TranslatableFlatEntity = FlatObjectMetadata | FlatFieldMetadata;
+
 type TranslatableEntity = {
   metadataName: 'objectMetadata' | 'fieldMetadata';
   recordId: string;
   objectMetadataId: string | null;
   applicationId: string | undefined;
-  entity: Record<string, unknown>;
+  entity: TranslatableFlatEntity;
+};
+
+// The two dynamic reads below are the only places the registry-driven
+// property name meets the concrete entity type.
+const readStringProperty = (
+  entity: TranslatableFlatEntity,
+  property: string,
+): string => {
+  const value = (entity as Record<string, unknown>)[property];
+
+  return typeof value === 'string' ? value : '';
 };
 
 const readTranslation = (
-  overrides: unknown,
+  overrides: TranslatableFlatEntity['overrides'],
   locale: string,
   property: string,
 ): string | undefined => {
@@ -53,6 +67,16 @@ export class MetadataTranslationService {
     input: MetadataTranslationsInput;
     workspaceId: string;
   }): Promise<MetadataTranslationDTO[]> {
+    if (
+      !isDefined(input.objectMetadataId) &&
+      !isDefined(input.fieldMetadataId) &&
+      !isDefined(input.locale)
+    ) {
+      throw new UserInputError(
+        'metadataTranslations requires an entity id or a locale',
+      );
+    }
+
     const entities = await this.collectTranslatableEntities({
       input,
       workspaceId,
@@ -82,16 +106,15 @@ export class MetadataTranslationService {
         applicationId,
         entity,
       } of entities) {
-        const overrides = entity.overrides as Record<string, unknown> | null;
+        const overrides = entity.overrides;
 
         for (const property of ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME[
           metadataName
         ] ?? []) {
-          const sourceValue =
-            typeof entity[property] === 'string'
-              ? (entity[property] as string)
-              : '';
-          const overrideValue = overrides?.[property];
+          const sourceValue = readStringProperty(entity, property);
+          const overrideValue = (
+            overrides as Record<string, unknown> | null
+          )?.[property];
           const canonicalValue = isNonEmptyString(overrideValue)
             ? overrideValue
             : sourceValue;
@@ -164,7 +187,7 @@ export class MetadataTranslationService {
       recordId: flatObjectMetadata.id,
       objectMetadataId: null,
       applicationId: flatObjectMetadata.applicationId ?? undefined,
-      entity: flatObjectMetadata as unknown as Record<string, unknown>,
+      entity: flatObjectMetadata,
     });
     const toFieldEntity = (
       flatFieldMetadata: FlatFieldMetadata,
@@ -173,7 +196,7 @@ export class MetadataTranslationService {
       recordId: flatFieldMetadata.id,
       objectMetadataId: flatFieldMetadata.objectMetadataId,
       applicationId: flatFieldMetadata.applicationId ?? undefined,
-      entity: flatFieldMetadata as unknown as Record<string, unknown>,
+      entity: flatFieldMetadata,
     });
 
     if (isDefined(input.objectMetadataId)) {
@@ -202,7 +225,7 @@ export class MetadataTranslationService {
       flatObjectMetadataMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter(({ isActive }) => isActive);
+      .filter(({ isActive, isSystem }) => isActive && !isSystem);
     const activeObjectIds = new Set(activeObjects.map(({ id }) => id));
     const activeFields = Object.values(
       flatFieldMetadataMaps.byUniversalIdentifier,

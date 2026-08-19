@@ -1,14 +1,9 @@
+import { type MetadataTranslationRow } from '@/settings/translations/hooks/useMetadataTranslations';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import {
-  type MetadataTranslationsQuery,
-  MetadataTranslationProvenance,
-} from '~/generated-metadata/graphql';
-
-export type MetadataTranslationRow =
-  MetadataTranslationsQuery['metadataTranslations'][number];
+import { MetadataTranslationProvenance } from '~/generated-metadata/graphql';
 
 const StyledValue = styled.div<{ isInherited: boolean }>`
   color: ${({ isInherited }) =>
@@ -22,8 +17,6 @@ const StyledValue = styled.div<{ isInherited: boolean }>`
   width: 100%;
 `;
 
-// Click-to-edit resolved value: blur or Enter saves, Escape cancels, an
-// emptied input reverts the stored translation.
 export const MetadataTranslationValueCell = ({
   row,
   onSave,
