@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
+import { type Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -12,11 +14,16 @@ import {
   buildWorkspaceUninstallHookPayload,
   type WorkspaceUninstallHookRequestType,
 } from 'src/engine/core-modules/application/application-manifest/utils/build-workspace-uninstall-hook-payload.util';
+import { isApplicationUninstallHookPending } from 'src/engine/core-modules/application/utils/is-application-uninstall-hook-pending.util';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 
 type ApplicationForUninstallHook = Pick<
   ApplicationEntity,
-  'uninstallLogicFunctionId' | 'universalIdentifier' | 'version'
+  | 'id'
+  | 'uninstallLogicFunctionId'
+  | 'uninstallHookCompletedForRequestedAt'
+  | 'universalIdentifier'
+  | 'version'
 >;
 
 type WorkspaceUninstallHookRequest = {
@@ -29,6 +36,8 @@ export class ApplicationUninstallService {
   private readonly logger = new Logger(ApplicationUninstallService.name);
 
   constructor(
+    @InjectRepository(ApplicationEntity)
+    private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly applicationService: ApplicationService,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
   ) {}
@@ -65,6 +74,43 @@ export class ApplicationUninstallService {
     });
   }
 
+  // Last-resort execution before the workspace hard deletion destroys the
+  // applications and their hook functions, so a failing hook cannot block
+  // erasing the workspace data.
+  async runUninstallHooksForWorkspaceDeletionBestEffort({
+    workspaceId,
+    workspaceDeletedAt,
+  }: {
+    workspaceId: string;
+    workspaceDeletedAt: Date;
+  }): Promise<void> {
+    try {
+      await this.runUninstallHooksForWorkspaceDeletion({
+        workspaceId,
+        workspaceDeletedAt,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Uninstall hooks failed before hard deleting workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }
+
+  async hasPendingUninstallHooks({
+    workspaceId,
+    uninstallRequestedAt,
+  }: {
+    workspaceId: string;
+    uninstallRequestedAt: Date;
+  }): Promise<boolean> {
+    const applications =
+      await this.applicationService.findManyApplications(workspaceId);
+
+    return applications.some((application) =>
+      isApplicationUninstallHookPending(application, uninstallRequestedAt),
+    );
+  }
+
   // The hook must run before the application deletion migration removes its
   // function metadata and code. Explicit application uninstall remains
   // best-effort so external cleanup cannot block removing the application.
@@ -97,14 +143,24 @@ export class ApplicationUninstallService {
   }): Promise<void> {
     const applications =
       await this.applicationService.findManyApplications(workspaceId);
+    const pendingApplications = applications.filter((application) =>
+      isApplicationUninstallHookPending(
+        application,
+        workspaceUninstallHookRequest.requestedAt,
+      ),
+    );
     const applicationUninstallHookFailures: string[] = [];
 
-    for (const application of applications) {
+    for (const application of pendingApplications) {
       try {
         await this.runUninstallHookForWorkspaceRequest({
           application,
           workspaceId,
           workspaceUninstallHookRequest,
+        });
+        await this.applicationRepository.update(application.id, {
+          uninstallHookCompletedForRequestedAt:
+            workspaceUninstallHookRequest.requestedAt,
         });
       } catch (error) {
         const applicationUninstallHookFailure = `${application.universalIdentifier}: ${error instanceof Error ? error.message : String(error)}`;

@@ -5,6 +5,7 @@ import { type PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-
 import { type ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { WorkspaceSuspensionApplicationUninstallJob } from 'src/engine/core-modules/workspace/jobs/workspace-suspension-application-uninstall.job';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceException } from 'src/engine/core-modules/workspace/workspace.exception';
 
 describe('WorkspaceSuspensionApplicationUninstallJob', () => {
   const workspaceRepository = {
@@ -92,6 +93,6 @@ describe('WorkspaceSuspensionApplicationUninstallJob', () => {
         workspaceId: 'workspace-id',
         workspaceSuspensionUninstallRequestedAt: '2026-08-18T10:00:00.000Z',
       }),
-    ).rejects.toThrow('application uninstall is already running');
+    ).rejects.toThrow(WorkspaceException);
   });
 });

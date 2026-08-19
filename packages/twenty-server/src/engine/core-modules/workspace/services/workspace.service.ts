@@ -21,6 +21,7 @@ import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advis
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
@@ -169,6 +170,7 @@ export class WorkspaceService {
     private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
     private readonly sdkClientGenerationService: SdkClientGenerationService,
     private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
+    private readonly applicationUninstallService: ApplicationUninstallService,
   ) {}
 
   async updateWorkspaceById({
@@ -620,6 +622,8 @@ export class WorkspaceService {
       );
     }
 
+    await this.runPendingApplicationUninstallHooksBeforeHardDelete(workspace);
+
     await this.deleteWorkspaceSyncableMetadataEntities(workspace);
 
     await this.workspaceDataSourceService.deleteWorkspaceDBSchema(workspace.id);
@@ -693,6 +697,38 @@ export class WorkspaceService {
         retryLimit: WORKSPACE_APPLICATION_UNINSTALL_RETRY_LIMIT,
       },
     );
+  }
+
+  // Hard deletion destroys the applications and their hook functions, so this
+  // is the last chance to run uninstall hooks that never completed. Best
+  // effort: a failing hook must not block erasing the workspace data.
+  private async runPendingApplicationUninstallHooksBeforeHardDelete(
+    workspace: WorkspaceEntity,
+  ): Promise<void> {
+    if (!isDefined(workspace.deletedAt)) {
+      return;
+    }
+
+    const workspaceDeletedAt = workspace.deletedAt;
+
+    const advisoryLockResult =
+      await this.postgresAdvisoryLockService.tryWithLock(
+        getWorkspaceApplicationUninstallLockName(workspace.id),
+        async () => {
+          await this.applicationUninstallService.runUninstallHooksForWorkspaceDeletionBestEffort(
+            {
+              workspaceId: workspace.id,
+              workspaceDeletedAt,
+            },
+          );
+        },
+      );
+
+    if (!advisoryLockResult.acquired) {
+      this.logger.warn(
+        `Proceeding with workspace ${workspace.id} hard deletion while application uninstall is running elsewhere`,
+      );
+    }
   }
 
   private async deleteWorkspaceSyncableMetadataEntities(

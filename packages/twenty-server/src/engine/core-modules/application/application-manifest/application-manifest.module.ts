@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
 import { ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
@@ -22,7 +23,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([FrontComponentEntity]),
+    TypeOrmModule.forFeature([ApplicationEntity, FrontComponentEntity]),
     ApplicationModule,
     ApplicationRegistrationModule,
     ApplicationTranslationModule,

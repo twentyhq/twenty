@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
+import { ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -26,6 +27,7 @@ export class CleanSuspendedWorkspacesJob {
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceService: WorkspaceService,
+    private readonly applicationUninstallService: ApplicationUninstallService,
     private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
   ) {}
 
@@ -47,21 +49,33 @@ export class CleanSuspendedWorkspacesJob {
             withDeleted: true,
           });
           const softDeletedWorkspaces = await this.workspaceRepository.find({
-            select: ['id'],
+            select: ['id', 'deletedAt'],
             where: { deletedAt: Not(IsNull()) },
             withDeleted: true,
           });
 
           for (const workspace of softDeletedWorkspaces) {
-            await this.workspaceService.enqueueWorkspaceDeletionApplicationUninstall(
-              workspace.id,
-            );
+            if (
+              isDefined(workspace.deletedAt) &&
+              (await this.applicationUninstallService.hasPendingUninstallHooks({
+                workspaceId: workspace.id,
+                uninstallRequestedAt: workspace.deletedAt,
+              }))
+            ) {
+              await this.workspaceService.enqueueWorkspaceDeletionApplicationUninstall(
+                workspace.id,
+              );
+            }
           }
 
           for (const workspace of suspendedWorkspaces) {
             if (
               !isDefined(workspace.deletedAt) &&
-              isDefined(workspace.suspendedAt)
+              isDefined(workspace.suspendedAt) &&
+              (await this.applicationUninstallService.hasPendingUninstallHooks({
+                workspaceId: workspace.id,
+                uninstallRequestedAt: workspace.suspendedAt,
+              }))
             ) {
               await this.workspaceService.enqueueWorkspaceSuspensionApplicationUninstall(
                 {

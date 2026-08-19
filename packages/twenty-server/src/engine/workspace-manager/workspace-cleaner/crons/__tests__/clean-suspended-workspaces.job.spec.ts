@@ -1,6 +1,7 @@
 import { type Repository } from 'typeorm';
 
 import { type PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
+import { type ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { type WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CleanSuspendedWorkspacesJob } from 'src/engine/workspace-manager/workspace-cleaner/crons/clean-suspended-workspaces.job';
@@ -24,6 +25,9 @@ describe('CleanSuspendedWorkspacesJob', () => {
     enqueueWorkspaceDeletionApplicationUninstall: jest.fn(),
     enqueueWorkspaceSuspensionApplicationUninstall: jest.fn(),
   };
+  const applicationUninstallService = {
+    hasPendingUninstallHooks: jest.fn(),
+  };
   const postgresAdvisoryLockService = {
     tryWithLock: jest.fn(),
   };
@@ -33,11 +37,15 @@ describe('CleanSuspendedWorkspacesJob', () => {
       cleanerWorkspaceService as unknown as CleanerWorkspaceService,
       workspaceRepository as unknown as Repository<WorkspaceEntity>,
       workspaceService as unknown as WorkspaceService,
+      applicationUninstallService as unknown as ApplicationUninstallService,
       postgresAdvisoryLockService as unknown as PostgresAdvisoryLockService,
     );
 
   beforeEach(() => {
     jest.clearAllMocks();
+    applicationUninstallService.hasPendingUninstallHooks.mockResolvedValue(
+      true,
+    );
     workspaceRepository.find
       .mockResolvedValueOnce([{ id: 'workspace-id' }])
       .mockResolvedValueOnce([]);
@@ -80,8 +88,9 @@ describe('CleanSuspendedWorkspacesJob', () => {
     });
   });
 
-  it('should re-enqueue lifecycle hooks when workspaces remain eligible', async () => {
+  it('should re-enqueue lifecycle hooks when uninstall hooks are still pending', async () => {
     const workspaceSuspendedAt = new Date('2026-08-18T11:00:00.000Z');
+    const workspaceDeletedAt = new Date('2026-08-18T12:00:00.000Z');
 
     workspaceRepository.find.mockReset();
     workspaceRepository.find
@@ -92,7 +101,54 @@ describe('CleanSuspendedWorkspacesJob', () => {
           suspendedAt: workspaceSuspendedAt,
         },
       ])
-      .mockResolvedValueOnce([{ id: 'deleted-workspace-id' }]);
+      .mockResolvedValueOnce([
+        { id: 'deleted-workspace-id', deletedAt: workspaceDeletedAt },
+      ]);
+    postgresAdvisoryLockService.tryWithLock.mockImplementation(
+      async (_lockName, callback) => ({
+        acquired: true,
+        value: await callback(),
+      }),
+    );
+
+    await createJob().handle();
+
+    expect(
+      applicationUninstallService.hasPendingUninstallHooks,
+    ).toHaveBeenCalledWith({
+      workspaceId: 'deleted-workspace-id',
+      uninstallRequestedAt: workspaceDeletedAt,
+    });
+    expect(
+      workspaceService.enqueueWorkspaceDeletionApplicationUninstall,
+    ).toHaveBeenCalledWith('deleted-workspace-id');
+    expect(
+      workspaceService.enqueueWorkspaceSuspensionApplicationUninstall,
+    ).toHaveBeenCalledWith({
+      workspaceId: 'suspended-workspace-id',
+      workspaceSuspensionUninstallRequestedAt: workspaceSuspendedAt,
+    });
+  });
+
+  it('should not re-enqueue workspaces whose uninstall hooks already completed', async () => {
+    applicationUninstallService.hasPendingUninstallHooks.mockResolvedValue(
+      false,
+    );
+    workspaceRepository.find.mockReset();
+    workspaceRepository.find
+      .mockResolvedValueOnce([
+        {
+          id: 'suspended-workspace-id',
+          deletedAt: null,
+          suspendedAt: new Date('2026-08-18T11:00:00.000Z'),
+        },
+      ])
+      .mockResolvedValueOnce([
+        {
+          id: 'deleted-workspace-id',
+          deletedAt: new Date('2026-08-18T12:00:00.000Z'),
+        },
+      ]);
     postgresAdvisoryLockService.tryWithLock.mockImplementation(
       async (_lockName, callback) => ({
         acquired: true,
@@ -104,12 +160,9 @@ describe('CleanSuspendedWorkspacesJob', () => {
 
     expect(
       workspaceService.enqueueWorkspaceDeletionApplicationUninstall,
-    ).toHaveBeenCalledWith('deleted-workspace-id');
+    ).not.toHaveBeenCalled();
     expect(
       workspaceService.enqueueWorkspaceSuspensionApplicationUninstall,
-    ).toHaveBeenCalledWith({
-      workspaceId: 'suspended-workspace-id',
-      workspaceSuspensionUninstallRequestedAt: workspaceSuspendedAt,
-    });
+    ).not.toHaveBeenCalled();
   });
 });

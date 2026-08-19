@@ -123,6 +123,15 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   })
   uninstallLogicFunctionId: string | null;
 
+  // Timestamp of the workspace uninstall request (deletion or suspension) the
+  // uninstall hook last completed for, so retries and sweeps skip it.
+  @Column({ nullable: true, type: 'timestamptz' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.32.0_AddUninstallHookCompletedForRequestedAtToApplicationFastInstanceCommand_1787486400000',
+  })
+  uninstallHookCompletedForRequestedAt: Date | null;
+
   @Column({ nullable: false, type: 'boolean', default: true })
   canBeUninstalled: boolean;
 

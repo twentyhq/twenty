@@ -1,3 +1,5 @@
+import { type Repository } from 'typeorm';
+
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 
 import { ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
@@ -6,6 +8,9 @@ import { type ApplicationService } from 'src/engine/core-modules/application/app
 import { type LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 
 describe('ApplicationUninstallService', () => {
+  const applicationRepository = {
+    update: jest.fn(),
+  };
   const applicationService = {
     findManyApplications: jest.fn(),
   };
@@ -15,15 +20,23 @@ describe('ApplicationUninstallService', () => {
 
   const createService = () =>
     new ApplicationUninstallService(
+      applicationRepository as unknown as Repository<ApplicationEntity>,
       applicationService as unknown as ApplicationService,
       logicFunctionExecutorService as unknown as LogicFunctionExecutorService,
     );
 
-  const createApplication = ({ id }: { id: string }) =>
+  const createApplication = ({
+    id,
+    uninstallHookCompletedForRequestedAt = null,
+  }: {
+    id: string;
+    uninstallHookCompletedForRequestedAt?: Date | null;
+  }) =>
     Object.assign(new ApplicationEntity(), {
       id,
       universalIdentifier: `application-${id}`,
       uninstallLogicFunctionId: `logic-function-${id}`,
+      uninstallHookCompletedForRequestedAt,
       version: '1.0.0',
     });
 
@@ -112,6 +125,87 @@ describe('ApplicationUninstallService', () => {
         }),
       }),
     );
+  });
+
+  it('should record completion per application and skip already completed hooks', async () => {
+    const workspaceDeletedAt = new Date('2026-08-18T10:00:00.000Z');
+    const pendingApplication = createApplication({ id: 'pending' });
+    const completedApplication = createApplication({
+      id: 'completed',
+      uninstallHookCompletedForRequestedAt: workspaceDeletedAt,
+    });
+
+    applicationService.findManyApplications.mockResolvedValue([
+      pendingApplication,
+      completedApplication,
+    ]);
+
+    await createService().runUninstallHooksForWorkspaceDeletion({
+      workspaceId: 'workspace-id',
+      workspaceDeletedAt,
+    });
+
+    expect(logicFunctionExecutorService.execute).toHaveBeenCalledTimes(1);
+    expect(logicFunctionExecutorService.execute).toHaveBeenCalledWith(
+      expect.objectContaining({ logicFunctionId: 'logic-function-pending' }),
+    );
+    expect(applicationRepository.update).toHaveBeenCalledTimes(1);
+    expect(applicationRepository.update).toHaveBeenCalledWith('pending', {
+      uninstallHookCompletedForRequestedAt: workspaceDeletedAt,
+    });
+  });
+
+  it('should not record completion when the hook fails', async () => {
+    const workspaceDeletedAt = new Date('2026-08-18T10:00:00.000Z');
+
+    applicationService.findManyApplications.mockResolvedValue([
+      createApplication({ id: 'failing' }),
+    ]);
+    logicFunctionExecutorService.execute.mockResolvedValue({
+      data: null,
+      duration: 1,
+      logs: '',
+      status: LogicFunctionExecutionStatus.ERROR,
+      error: {
+        errorType: 'Error',
+        errorMessage: 'cleanup failed',
+        stackTrace: '',
+      },
+    });
+
+    await expect(
+      createService().runUninstallHooksForWorkspaceDeletion({
+        workspaceId: 'workspace-id',
+        workspaceDeletedAt,
+      }),
+    ).rejects.toThrow('cleanup failed');
+
+    expect(applicationRepository.update).not.toHaveBeenCalled();
+  });
+
+  it('should report pending hooks only for uncovered uninstall requests', async () => {
+    const uninstallRequestedAt = new Date('2026-08-18T10:00:00.000Z');
+
+    applicationService.findManyApplications.mockResolvedValue([
+      createApplication({
+        id: 'completed',
+        uninstallHookCompletedForRequestedAt: uninstallRequestedAt,
+      }),
+    ]);
+
+    await expect(
+      createService().hasPendingUninstallHooks({
+        workspaceId: 'workspace-id',
+        uninstallRequestedAt,
+      }),
+    ).resolves.toBe(false);
+
+    await expect(
+      createService().hasPendingUninstallHooks({
+        workspaceId: 'workspace-id',
+        uninstallRequestedAt: new Date('2026-08-19T10:00:00.000Z'),
+      }),
+    ).resolves.toBe(true);
   });
 
   it('should omit deletion credentials when handling workspace suspension', async () => {

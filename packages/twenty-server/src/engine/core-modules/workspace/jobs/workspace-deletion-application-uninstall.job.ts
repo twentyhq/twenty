@@ -10,6 +10,10 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { getWorkspaceApplicationUninstallLockName } from 'src/engine/core-modules/workspace/utils/get-workspace-application-uninstall-lock-name.util';
 import { isWorkspaceDeletionPending } from 'src/engine/core-modules/workspace/utils/is-workspace-deletion-pending.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import {
+  WorkspaceException,
+  WorkspaceExceptionCode,
+} from 'src/engine/core-modules/workspace/workspace.exception';
 
 export type WorkspaceDeletionApplicationUninstallJobData = {
   workspaceId: string;
@@ -51,8 +55,9 @@ export class WorkspaceDeletionApplicationUninstallJob {
       );
 
     if (!advisoryLockResult.acquired) {
-      throw new Error(
+      throw new WorkspaceException(
         `Workspace ${workspaceId} application uninstall is already running`,
+        WorkspaceExceptionCode.APPLICATION_UNINSTALL_IN_PROGRESS,
       );
     }
   }
