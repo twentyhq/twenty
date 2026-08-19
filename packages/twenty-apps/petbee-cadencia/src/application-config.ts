@@ -22,11 +22,12 @@ export default defineApplication({
       value: 'true',
       isSecret: false,
     },
+    // Segredo não carrega valor no código: preencher em Settings → Applications
+    // → Cadência Petbee depois de instalar. Vazio = sem aviso de falha.
     CADENCIA_ALERT_WEBHOOK_URL: {
       universalIdentifier: ALERT_WEBHOOK_VARIABLE_UNIVERSAL_IDENTIFIER,
       description:
         'Webhook (ex.: Slack) que recebe um aviso quando a reconciliação falha. Vazio = sem aviso.',
-      value: '',
       isSecret: true,
     },
   },
