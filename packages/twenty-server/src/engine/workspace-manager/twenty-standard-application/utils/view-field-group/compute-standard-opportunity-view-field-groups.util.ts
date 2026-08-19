@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import { type FlatViewFieldGroup } from 'src/engine/metadata-modules/flat-view-field-group/types/flat-view-field-group.type';
 import {
   createStandardViewFieldGroupFlatMetadata,
@@ -14,7 +16,9 @@ export const computeStandardOpportunityViewFieldGroups = (
       context: {
         viewName: 'opportunityRecordPageFields',
         viewFieldGroupName: 'deal',
-        name: 'Deal',
+        name: i18nLabel(
+          msg({ message: `Deal`, context: 'viewFieldGroup.name' }),
+        ),
         position: 0,
         isVisible: true,
       },
@@ -26,7 +30,9 @@ export const computeStandardOpportunityViewFieldGroups = (
         context: {
           viewName: 'opportunityRecordPageFields',
           viewFieldGroupName: 'relations',
-          name: 'Relations',
+          name: i18nLabel(
+            msg({ message: `Relations`, context: 'viewFieldGroup.name' }),
+          ),
           position: 1,
           isVisible: true,
         },
@@ -38,7 +44,9 @@ export const computeStandardOpportunityViewFieldGroups = (
         context: {
           viewName: 'opportunityRecordPageFields',
           viewFieldGroupName: 'system',
-          name: 'System',
+          name: i18nLabel(
+            msg({ message: `System`, context: 'viewFieldGroup.name' }),
+          ),
           position: 2,
           isVisible: true,
         },

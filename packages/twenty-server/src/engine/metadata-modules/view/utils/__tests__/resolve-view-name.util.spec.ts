@@ -86,7 +86,9 @@ describe('resolveViewName', () => {
   });
 
   it('resolves an installed application view name from that application catalog', () => {
-    const catalog = { 'O+uYD2': 'Toutes les fusees' };
+    // generateMessageId('All rockets', 'view.name') — catalogs are keyed with
+    // the metadataName.property context since S5.
+    const catalog = { '1FxLDo': 'Toutes les fusees' };
 
     expect(
       resolveViewName({

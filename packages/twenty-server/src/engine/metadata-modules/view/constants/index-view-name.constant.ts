@@ -4,4 +4,6 @@ import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-applicat
 
 // Source message every INDEX view is minted with; the object label is
 // substituted at read time.
-export const INDEX_VIEW_NAME = i18nLabel(msg`All {objectLabelPlural}`);
+export const INDEX_VIEW_NAME = i18nLabel(
+  msg({ message: `All {objectLabelPlural}`, context: 'view.name' }),
+);
