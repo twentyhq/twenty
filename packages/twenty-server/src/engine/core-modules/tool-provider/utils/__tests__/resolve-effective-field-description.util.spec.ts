@@ -1,23 +1,23 @@
-import { setupI18n } from '@lingui/core';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { generateMessageId } from 'twenty-shared/i18n';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { FieldMetadataType } from 'twenty-shared/types';
 
-import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { resolveEffectiveFieldDescription } from 'src/engine/core-modules/tool-provider/utils/resolve-effective-field-description.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { type MessageIdTranslator } from 'src/engine/metadata-modules/utils/message-id-translator.type';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 const BASE_DESCRIPTION = 'Task due date';
 const OVERRIDDEN_DESCRIPTION =
   'Stored in UTC; users dictate local time, convert before writing';
 
-const i18nInstance = setupI18n({
-  locale: SOURCE_LOCALE,
-  messages: {
-    [SOURCE_LOCALE]: {},
-    'fr-FR': { [generateMessageId(BASE_DESCRIPTION)]: "Date d'échéance" },
-  },
+const buildTranslator = (
+  catalog: Record<string, string> = {},
+): MessageIdTranslator => ({
+  _: (messageId) => catalog[messageId] ?? messageId,
 });
+
+const untranslated = buildTranslator();
 
 const getStandardFlatFieldMetadata = (
   overrides?: Parameters<typeof getFlatFieldMetadataMock>[0]['overrides'],
@@ -40,7 +40,7 @@ describe('resolveEffectiveFieldDescription', () => {
         description: OVERRIDDEN_DESCRIPTION,
       }),
       locale: SOURCE_LOCALE,
-      i18nInstance,
+      i18nInstance: untranslated,
     });
 
     expect(result).toBe(OVERRIDDEN_DESCRIPTION);
@@ -50,7 +50,7 @@ describe('resolveEffectiveFieldDescription', () => {
     const result = resolveEffectiveFieldDescription({
       flatFieldMetadata: getStandardFlatFieldMetadata({ description: null }),
       locale: SOURCE_LOCALE,
-      i18nInstance,
+      i18nInstance: untranslated,
     });
 
     expect(result).toBe(BASE_DESCRIPTION);
@@ -60,7 +60,7 @@ describe('resolveEffectiveFieldDescription', () => {
     const result = resolveEffectiveFieldDescription({
       flatFieldMetadata: getStandardFlatFieldMetadata(),
       locale: SOURCE_LOCALE,
-      i18nInstance,
+      i18nInstance: untranslated,
     });
 
     expect(result).toBe(BASE_DESCRIPTION);
@@ -70,11 +70,8 @@ describe('resolveEffectiveFieldDescription', () => {
     const result = resolveEffectiveFieldDescription({
       flatFieldMetadata: getStandardFlatFieldMetadata(),
       locale: 'fr-FR',
-      i18nInstance: setupI18n({
-        locale: 'fr-FR',
-        messages: {
-          'fr-FR': { [generateMessageId(BASE_DESCRIPTION)]: "Date d'échéance" },
-        },
+      i18nInstance: buildTranslator({
+        [generateMessageId(BASE_DESCRIPTION)]: "Date d'échéance",
       }),
     });
 
@@ -88,7 +85,7 @@ describe('resolveEffectiveFieldDescription', () => {
         translations: { 'fr-FR': { description: 'Stocké en UTC' } },
       }),
       locale: 'fr-FR',
-      i18nInstance,
+      i18nInstance: untranslated,
     });
 
     expect(result).toBe('Stocké en UTC');
@@ -104,7 +101,7 @@ describe('resolveEffectiveFieldDescription', () => {
         description: 'Our own custom text',
       }),
       locale: SOURCE_LOCALE,
-      i18nInstance,
+      i18nInstance: untranslated,
     });
 
     expect(result).toBe('Our own custom text');

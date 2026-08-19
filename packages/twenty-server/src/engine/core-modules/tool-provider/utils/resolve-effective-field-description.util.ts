@@ -1,8 +1,8 @@
-import { type I18n } from '@lingui/core';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
+import { type MessageIdTranslator } from 'src/engine/metadata-modules/utils/message-id-translator.type';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 
 export const resolveEffectiveFieldDescription = ({
@@ -12,7 +12,7 @@ export const resolveEffectiveFieldDescription = ({
 }: {
   flatFieldMetadata: FlatFieldMetadata;
   locale: keyof typeof APP_LOCALES | undefined;
-  i18nInstance: I18n;
+  i18nInstance: MessageIdTranslator;
 }): string =>
   resolveEffectiveEntityProperty({
     metadataName: 'fieldMetadata',
