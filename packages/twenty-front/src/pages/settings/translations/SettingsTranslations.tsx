@@ -33,6 +33,11 @@ import { MetadataTranslationProvenance } from '~/generated-metadata/graphql';
 const TRANSLATIONS_PAGE_GRID_TEMPLATE_COLUMNS =
   'minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1.2fr) 82px';
 
+const StyledLocaleSelectContainer = styled.div`
+  flex-shrink: 0;
+  width: 160px;
+`;
+
 const StyledControlsRow = styled.div`
   align-items: center;
   display: flex;
@@ -64,7 +69,8 @@ export const SettingsTranslations = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const localeOptions = useLocaleOptions();
-  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
+  const { alphaSortedActiveNonSystemObjectMetadataItems } =
+    useFilteredObjectMetadataItems();
   const { metadataTranslations, refetch } = useMetadataTranslations({
     locale: selectedLocale,
   });
@@ -79,7 +85,21 @@ export const SettingsTranslations = () => {
     rowsByOwnerId.set(ownerId, [...(rowsByOwnerId.get(ownerId) ?? []), row]);
   }
 
-  const translatedCount = metadataTranslations.filter(
+  const fieldLabelByRecordId = new Map(
+    metadataTranslations
+      .filter(
+        (row) => row.metadataName === 'fieldMetadata' && row.property === 'label',
+      )
+      .map((row) => [row.recordId, row.canonicalValue]),
+  );
+
+  const visibleOwnerIds = new Set(
+    alphaSortedActiveNonSystemObjectMetadataItems.map(({ id }) => id),
+  );
+  const visibleTranslations = metadataTranslations.filter((row) =>
+    visibleOwnerIds.has(row.objectMetadataId ?? row.recordId),
+  );
+  const translatedCount = visibleTranslations.filter(
     ({ provenance }) => provenance !== MetadataTranslationProvenance.INHERITED,
   ).length;
 
@@ -128,32 +148,34 @@ export const SettingsTranslations = () => {
             description={t`What each language displays for your objects and fields. Edits apply to the selected language only.`}
           />
           <StyledControlsRow>
-            <Select
-              dropdownId="settings-translations-locale"
-              dropdownWidthAuto
-              withSearchInput
-              value={selectedLocale}
-              options={localeOptions}
-              onChange={(value) => setSelectedLocale(value as AppLocale)}
-            />
+            <StyledLocaleSelectContainer>
+              <Select
+                dropdownId="settings-translations-locale"
+                dropdownWidthAuto
+                withSearchInput
+                fullWidth
+                value={selectedLocale}
+                options={localeOptions}
+                onChange={(value) => setSelectedLocale(value as AppLocale)}
+              />
+            </StyledLocaleSelectContainer>
             <SearchInput
               value={searchTerm}
               onChange={setSearchTerm}
               placeholder={t`Search a label`}
             />
             <StyledCompletion>
-              {t`${translatedCount} of ${metadataTranslations.length} translated`}
+              {t`${translatedCount} of ${visibleTranslations.length} translated`}
             </StyledCompletion>
           </StyledControlsRow>
-          {activeObjectMetadataItems.map((objectMetadataItem, index) => {
+          {alphaSortedActiveNonSystemObjectMetadataItems.map(
+            (objectMetadataItem, index) => {
             const objectRows = rowsByOwnerId.get(objectMetadataItem.id) ?? [];
             const visibleRows = objectRows.filter((row) => {
               const entityLabel =
                 row.metadataName === 'objectMetadata'
                   ? objectMetadataItem.labelPlural
-                  : (objectMetadataItem.fields.find(
-                      ({ id }) => id === row.recordId,
-                    )?.label ?? '');
+                  : (fieldLabelByRecordId.get(row.recordId) ?? '');
 
               return matchesSearch(row, entityLabel);
             });
@@ -181,9 +203,7 @@ export const SettingsTranslations = () => {
                   {visibleRows.map((row) => {
                     const fieldLabel =
                       row.metadataName === 'fieldMetadata'
-                        ? (objectMetadataItem.fields.find(
-                            ({ id }) => id === row.recordId,
-                          )?.label ?? '')
+                        ? (fieldLabelByRecordId.get(row.recordId) ?? '')
                         : null;
                     const rowLabel = isDefined(fieldLabel)
                       ? `${fieldLabel} · ${getPropertyLabel(row.metadataName, row.property)}`
@@ -219,7 +239,8 @@ export const SettingsTranslations = () => {
                 </TableSection>
               </Table>
             );
-          })}
+            },
+          )}
         </Section>
       </SettingsPageContainer>
     </SettingsPageLayout>
