@@ -1,4 +1,6 @@
 import { Command } from 'nest-commander';
+
+import groupBy from 'lodash.groupby';
 import { FieldMetadataType, MetadataWritability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -6,7 +8,6 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -36,58 +37,46 @@ export class MarkSearchVectorFieldsSystemCommand extends ProvisionedWorkspaceCom
         'flatFieldMetadataMaps',
       ]);
 
-    const searchVectorFieldsToFlip = Object.values(
+    const flatFieldMetadatasToUpdate = Object.values(
       flatFieldMetadataMaps.byUniversalIdentifier,
-    ).filter(
-      (flatFieldMetadata): flatFieldMetadata is FlatFieldMetadata =>
-        isDefined(flatFieldMetadata) &&
-        flatFieldMetadata.type === FieldMetadataType.TS_VECTOR &&
-        flatFieldMetadata.writability !== MetadataWritability.SYSTEM,
-    );
-
-    if (searchVectorFieldsToFlip.length === 0) {
-      return;
-    }
-
-    if (isDryRun) {
-      this.logger.log(
-        `[DRY RUN] Would mark ${searchVectorFieldsToFlip.length} search vector field(s) as SYSTEM for workspace ${workspaceId}`,
-      );
-
-      return;
-    }
-
-    const fieldsByApplicationUniversalIdentifier = new Map<
-      string,
-      FlatFieldMetadata[]
-    >();
-
-    for (const flatFieldMetadata of searchVectorFieldsToFlip) {
-      const applicationFields =
-        fieldsByApplicationUniversalIdentifier.get(
-          flatFieldMetadata.applicationUniversalIdentifier,
-        ) ?? [];
-
-      applicationFields.push({
+    )
+      .filter(isDefined)
+      .filter(
+        (flatFieldMetadata) =>
+          flatFieldMetadata.type === FieldMetadataType.TS_VECTOR &&
+          flatFieldMetadata.writability !== MetadataWritability.SYSTEM,
+      )
+      .map((flatFieldMetadata) => ({
         ...flatFieldMetadata,
         writability: MetadataWritability.SYSTEM,
-      });
-      fieldsByApplicationUniversalIdentifier.set(
-        flatFieldMetadata.applicationUniversalIdentifier,
-        applicationFields,
-      );
+      }));
+
+    if (flatFieldMetadatasToUpdate.length === 0) {
+      return;
     }
+
+    this.logger.log(
+      `${isDryRun ? '[DRY RUN] Would mark' : 'Marking'} ${flatFieldMetadatasToUpdate.length} search vector field(s) as SYSTEM for workspace ${workspaceId}`,
+    );
+
+    const flatFieldMetadatasToUpdateByApplicationUniversalIdentifier = groupBy(
+      flatFieldMetadatasToUpdate,
+      (flatFieldMetadata) => flatFieldMetadata.applicationUniversalIdentifier,
+    );
 
     for (const [
       applicationUniversalIdentifier,
       flatEntityToUpdate,
-    ] of fieldsByApplicationUniversalIdentifier) {
-      const result =
-        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
+    ] of Object.entries(
+      flatFieldMetadatasToUpdateByApplicationUniversalIdentifier,
+    )) {
+      const validateAndBuildResult =
+        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
           {
             isSystemBuild: true,
             workspaceId,
             applicationUniversalIdentifier,
+            dryRun: isDryRun,
             allFlatEntityOperationByMetadataName: {
               fieldMetadata: {
                 flatEntityToCreate: [],
@@ -98,9 +87,9 @@ export class MarkSearchVectorFieldsSystemCommand extends ProvisionedWorkspaceCom
           },
         );
 
-      if (result.status === 'fail') {
+      if (validateAndBuildResult.status === 'fail') {
         this.logger.error(
-          `Failed to mark search vector fields as SYSTEM:\n${JSON.stringify(result, null, 2)}`,
+          `Failed to mark search vector fields as SYSTEM:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
         );
 
         throw new Error(
@@ -108,9 +97,5 @@ export class MarkSearchVectorFieldsSystemCommand extends ProvisionedWorkspaceCom
         );
       }
     }
-
-    this.logger.log(
-      `Marked ${searchVectorFieldsToFlip.length} search vector field(s) as SYSTEM for workspace ${workspaceId}`,
-    );
   }
 }

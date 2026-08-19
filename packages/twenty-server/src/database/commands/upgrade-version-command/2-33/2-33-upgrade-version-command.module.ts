@@ -17,8 +17,8 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ApplicationModule,
     WorkspaceCacheModule,
     WorkspaceIteratorModule,
-    WorkspaceMigrationModule,
     WorkspaceMigrationRunnerModule,
+    WorkspaceMigrationModule,
   ],
   providers: [
     BackfillActivityTargetsJunctionTargetCommand,
