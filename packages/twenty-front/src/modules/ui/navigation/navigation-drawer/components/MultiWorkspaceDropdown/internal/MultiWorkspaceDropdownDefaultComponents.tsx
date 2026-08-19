@@ -3,7 +3,6 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 import { useAuth } from '@/auth/hooks/useAuth';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { countAvailableWorkspacesExcludingCurrent } from '@/auth/utils/countAvailableWorkspacesExcludingCurrent';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
@@ -61,11 +60,10 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   const { t } = useLingui();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const availableWorkspaces = useAtomStateValue(availableWorkspacesState);
-  const availableWorkspacesExcludingCurrentCount =
-    countAvailableWorkspacesExcludingCurrent(
-      availableWorkspaces,
-      currentWorkspace?.id,
-    );
+  const otherAvailableWorkspaces = [
+    ...availableWorkspaces.availableWorkspacesForSignIn,
+    ...availableWorkspaces.availableWorkspacesForSignUp,
+  ].filter(({ id }) => id !== currentWorkspace?.id);
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
   const { redirectToDefaultDomain } = useRedirectToDefaultDomain();
   const { closeDropdown } = useCloseDropdown();
@@ -148,41 +146,35 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
       >
         {currentWorkspace?.displayName}
       </DropdownMenuHeader>
-      {availableWorkspacesExcludingCurrentCount > 0 && (
+      {otherAvailableWorkspaces.length > 0 && (
         <>
           <DropdownMenuItemsContainer>
-            {[
-              ...availableWorkspaces.availableWorkspacesForSignIn,
-              ...availableWorkspaces.availableWorkspacesForSignUp,
-            ]
-              .filter(({ id }) => id !== currentWorkspace?.id)
-              .slice(0, 3)
-              .map((availableWorkspace) => (
-                <UndecoratedLink
-                  key={availableWorkspace.id}
-                  to={buildWorkspaceUrl(
-                    getWorkspaceUrl(availableWorkspace.workspaceUrls),
-                  )}
-                  onClick={(event) => {
-                    event?.preventDefault();
-                    handleChange(availableWorkspace);
-                  }}
-                >
-                  <MenuItemSelectAvatar
-                    text={availableWorkspace.displayName ?? t`(No name)`}
-                    avatar={
-                      <Avatar
-                        placeholder={availableWorkspace.displayName || ''}
-                        avatarUrl={getAbsoluteImageUrl(
-                          availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO,
-                        )}
-                      />
-                    }
-                    selected={false}
-                  />
-                </UndecoratedLink>
-              ))}
-            {availableWorkspacesExcludingCurrentCount > 3 && (
+            {otherAvailableWorkspaces.slice(0, 3).map((availableWorkspace) => (
+              <UndecoratedLink
+                key={availableWorkspace.id}
+                to={buildWorkspaceUrl(
+                  getWorkspaceUrl(availableWorkspace.workspaceUrls),
+                )}
+                onClick={(event) => {
+                  event?.preventDefault();
+                  handleChange(availableWorkspace);
+                }}
+              >
+                <MenuItemSelectAvatar
+                  text={availableWorkspace.displayName ?? t`(No name)`}
+                  avatar={
+                    <Avatar
+                      placeholder={availableWorkspace.displayName || ''}
+                      avatarUrl={getAbsoluteImageUrl(
+                        availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO,
+                      )}
+                    />
+                  }
+                  selected={false}
+                />
+              </UndecoratedLink>
+            ))}
+            {otherAvailableWorkspaces.length > 3 && (
               <MenuItem
                 LeftIcon={IconSwitchHorizontal}
                 text={t`Other workspaces`}

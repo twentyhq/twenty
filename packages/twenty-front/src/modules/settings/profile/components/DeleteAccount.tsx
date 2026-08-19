@@ -4,7 +4,6 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { countAvailableWorkspacesExcludingCurrent } from '@/auth/utils/countAvailableWorkspacesExcludingCurrent';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -43,11 +42,10 @@ export const DeleteAccount = () => {
   const { signOut } = useAuth();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const availableWorkspaces = useAtomStateValue(availableWorkspacesState);
-  const userHasMultipleWorkspaces =
-    countAvailableWorkspacesExcludingCurrent(
-      availableWorkspaces,
-      currentWorkspace?.id,
-    ) > 0;
+  const userHasMultipleWorkspaces = [
+    ...availableWorkspaces.availableWorkspacesForSignIn,
+    ...availableWorkspaces.availableWorkspacesForSignUp,
+  ].some(({ id }) => id !== currentWorkspace?.id);
 
   const deleteAccount = async () => {
     await deleteUserAccount();
