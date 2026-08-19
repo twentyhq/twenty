@@ -223,37 +223,46 @@ describe('morph relation cursor pagination', () => {
     );
   });
 
-  it('should return an actionable error when the ordered morph leg is not selected', async () => {
-    const firstPageResponse = await makeGraphqlAPIRequestWithApiKey(
-      findManyOperationFactory({
-        objectMetadataSingularName: 'morphCursorParent',
-        objectMetadataPluralName: 'morphCursorParents',
-        gqlFields: 'id',
-        orderBy: { ownerMorphCursorPerson: { name: 'AscNullsLast' } },
-        first: 2,
-      }),
-    ).expect(200);
+  // Cursors read the morph leg's orderBy values from the ordering join itself,
+  // so pagination must not depend on the selection set (issue #24333)
+  it('should paginate exhaustively when the ordered morph leg is not selected', async () => {
+    const collectedIds: string[] = [];
+    let after: string | undefined = undefined;
 
-    expect(firstPageResponse.body.errors).toBeUndefined();
-    expect(
-      firstPageResponse.body.data.morphCursorParents.pageInfo.hasNextPage,
-    ).toBe(true);
+    for (let iteration = 0; iteration < 10; iteration++) {
+      const response: {
+        body: {
+          errors?: unknown;
+          data: { morphCursorParents: MorphParentConnection };
+        };
+      } = await makeGraphqlAPIRequestWithApiKey(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'morphCursorParent',
+          objectMetadataPluralName: 'morphCursorParents',
+          gqlFields: 'id',
+          orderBy: { ownerMorphCursorPerson: { name: 'AscNullsLast' } },
+          first: 2,
+          after,
+        }),
+      ).expect(200);
 
-    const secondPageResponse = await makeGraphqlAPIRequestWithApiKey(
-      findManyOperationFactory({
-        objectMetadataSingularName: 'morphCursorParent',
-        objectMetadataPluralName: 'morphCursorParents',
-        gqlFields: 'id',
-        orderBy: { ownerMorphCursorPerson: { name: 'AscNullsLast' } },
-        first: 2,
-        after:
-          firstPageResponse.body.data.morphCursorParents.pageInfo.endCursor,
-      }),
-    ).expect(200);
+      expect(response.body.errors).toBeUndefined();
 
-    expect(secondPageResponse.body.errors).toBeDefined();
-    expect(secondPageResponse.body.errors[0].message).toContain(
-      'include the ordered relation field in the selection',
+      const connection = response.body.data.morphCursorParents;
+
+      collectedIds.push(...connection.edges.map((edge) => edge.node.id));
+
+      if (!connection.pageInfo.hasNextPage) {
+        break;
+      }
+
+      after = connection.pageInfo.endCursor;
+    }
+
+    expect(collectedIds).toHaveLength(parentTotalCount);
+    expect(new Set(collectedIds).size).toBe(parentTotalCount);
+    expect(collectedIds.slice(0, personAttachedParentIds.length)).toEqual(
+      personAttachedParentIds,
     );
   });
 });
