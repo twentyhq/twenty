@@ -84,11 +84,20 @@ export const ObjectSettings = ({
     [objectMetadataItem, objectMetadataItems],
   );
 
+  const objectHasTimelineActivities = useMemo(
+    () =>
+      getObjectHasTimelineActivities({
+        objectMetadataItem,
+        objectMetadataItems,
+      }),
+    [objectMetadataItem, objectMetadataItems],
+  );
+
   const shouldShowTimelineSection =
     isTimelineRulesEnabled &&
     !objectMetadataItem.isRemote &&
     timelineActivityRules.length > 0 &&
-    getObjectHasTimelineActivities({ objectMetadataItem, objectMetadataItems });
+    objectHasTimelineActivities;
 
   const isReadOnly =
     isObjectMetadataReadOnly({ objectMetadataItem }) || isDDLLocked;
