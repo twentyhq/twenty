@@ -66,6 +66,9 @@ t({ message: 'Open', context: 'window' });
 <Trans context="card-title">Untitled</Trans>
 ```
 
+تظهر السلاسل السياقية في كتالوجات اللغة المحلية كمجموعة مفهرسة حسب سياقها:
+`"\<context>": { "\<message>": "\<translation>" }`. تكون تسميات الـ Manifest سياقية بطبيعتها — إذ تحمل كل تسمية دورها في البيانات الوصفية (`objectMetadata.labelSingular`، `fieldMetadata.label`، `view.name`، …)، لذلك يمكن أن تُترجَم الكلمة نفسها بشكل مختلف عندما تكون اسم كائن وعندما تكون اسم عرض.
+
 ## الاستخراج والترجمة
 
 شغِّل أمر الاستخراج من دليل تطبيقك:
@@ -83,9 +86,17 @@ twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 {
   "Loading postcard…": "Chargement de la carte…",
   "Hi {name}": "Bonjour {name}",
-  "Saved {count} cards": "{count} cartes enregistrées"
+  "Saved {count} cards": "{count} cartes enregistrées",
+  "door": {
+    "Open": "Ouvrir"
+  },
+  "objectMetadata.labelSingular": {
+    "Postcard": "Carte postale"
+  }
 }
 ```
+
+السلاسل غير المرتبطة بسياق هي مدخلات مسطَّحة؛ أما السلاسل المرتبطة بسياق — بما في ذلك كل تسمية في ملف manifest — فهي متداخلة تحت مفتاح السياق الخاص بها.
 
 العناصر النائبة مثل `{name}` تُستبدَل وقت التشغيل — احتفظ بها في
 الترجمة. أي سلسلة تُترَك فارغة تعود إلى نص المصدر.
