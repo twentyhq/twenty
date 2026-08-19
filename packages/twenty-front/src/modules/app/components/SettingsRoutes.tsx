@@ -488,6 +488,22 @@ const SettingsObjectNewFieldConfigure = lazy(() =>
   ),
 );
 
+const SettingsObjectTimelineRuleEdit = lazy(() =>
+  import('~/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit').then(
+    (module) => ({
+      default: module.SettingsObjectTimelineRuleEdit,
+    }),
+  ),
+);
+
+const SettingsObjectNewTimelineRule = lazy(() =>
+  import('~/pages/settings/data-model/timeline-rules/SettingsObjectNewTimelineRule').then(
+    (module) => ({
+      default: module.SettingsObjectNewTimelineRule,
+    }),
+  ),
+);
+
 const SettingsObjectNewIndex = lazy(() =>
   import('~/pages/settings/data-model/new-index/SettingsObjectNewIndex').then(
     (module) => ({
@@ -865,6 +881,14 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.ObjectNewIndex}
           element={<SettingsObjectNewIndex />}
+        />
+        <Route
+          path={SettingsPath.ObjectTimelineRuleEdit}
+          element={<SettingsObjectTimelineRuleEdit />}
+        />
+        <Route
+          path={SettingsPath.ObjectNewTimelineRule}
+          element={<SettingsObjectNewTimelineRule />}
         />
         <Route
           path={SettingsPath.ObjectFieldEdit}

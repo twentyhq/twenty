@@ -274,6 +274,13 @@ msgstr "{0} of {1}"
 msgid "{0} opted out of this topic"
 msgstr "{0} opted out of this topic"
 
+#. js-lingui-id: 74QHQw
+#. placeholder {0}: sourceObjectMetadataItem.labelPlural
+#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
+#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
+msgid "{0} rule"
+msgstr "{0} rule"
+
 #. js-lingui-id: fvImQM
 #. placeholder {0}: formatNumber(contextStoreNumberOfSelectedRecords)
 #. placeholder {0}: formatNumber(totalCount ?? 0)
@@ -604,6 +611,21 @@ msgstr "{selectedCount} source types"
 msgid "{serviceLabel} service is unreachable"
 msgstr "{serviceLabel} service is unreachable"
 
+#. js-lingui-id: 4ouvxy
+#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
+msgid "{sourceLabelSingular} linked"
+msgstr "{sourceLabelSingular} linked"
+
+#. js-lingui-id: +zixrp
+#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
+msgid "{sourceLabelSingular} unlinked"
+msgstr "{sourceLabelSingular} unlinked"
+
+#. js-lingui-id: AdPXje
+#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
+msgid "{sourceLabelSingular} updated"
+msgstr "{sourceLabelSingular} updated"
+
 #. js-lingui-id: 8vJ+2V
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
 msgid "{stepCount, plural, one {# step} other {# steps}}"
@@ -879,6 +901,16 @@ msgstr "500 Error - {duration}ms"
 msgid "7d"
 msgstr "7d"
 
+#. js-lingui-id: eNjQJh
+#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
+msgid "A {sourceLabelSingular} is attached to a {objectLabelSingular}."
+msgstr "A {sourceLabelSingular} is attached to a {objectLabelSingular}."
+
+#. js-lingui-id: nINWkS
+#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
+msgid "A {sourceLabelSingular} is detached from a {objectLabelSingular}."
+msgstr "A {sourceLabelSingular} is detached from a {objectLabelSingular}."
+
 #. js-lingui-id: 43TqJC
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "A display name for this provider"
@@ -893,6 +925,11 @@ msgstr "A draft already exists"
 #: src/modules/command-menu-item/engine-command/record/single-record/workflow-versions/components/UseAsDraftWorkflowVersionSingleRecordCommand.tsx
 msgid "A draft already exists for this workflow. Are you sure you want to erase it?"
 msgstr "A draft already exists for this workflow. Are you sure you want to erase it?"
+
+#. js-lingui-id: 7bhFOf
+#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
+msgid "A linked {sourceLabelSingular} changes."
+msgstr "A linked {sourceLabelSingular} changes."
 
 #. js-lingui-id: C6xZqR
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -1085,6 +1122,7 @@ msgstr "Actions users can perform on this object"
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
+#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRuleActionDropdown.tsx
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
@@ -1437,6 +1475,11 @@ msgstr "Add route"
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterAddFilterRuleSelect.tsx
 msgid "Add rule"
 msgstr "Add rule"
+
+#. js-lingui-id: bmQLn5
+#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineSection.tsx
+msgid "Add Rule"
+msgstr "Add Rule"
 
 #. js-lingui-id: cLBcTT
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect.tsx
@@ -5210,6 +5253,11 @@ msgstr "Create record on {0} at {1}"
 msgid "Create Role"
 msgstr "Create Role"
 
+#. js-lingui-id: 8ixQpY
+#: src/pages/settings/data-model/timeline-rules/SettingsObjectNewTimelineRule.tsx
+msgid "Create rule"
+msgstr "Create rule"
+
 #. js-lingui-id: 6MP9lc
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent.tsx
 msgid "Create select field"
@@ -5267,6 +5315,7 @@ msgstr "Create, edit, and delete workspace views"
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
+#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRulesTable.tsx
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -5312,6 +5361,11 @@ msgstr "Creating your <0>data model</0>..."
 #: src/modules/auth/sign-in-up/constants/WorkspaceActivationMessages.tsx
 msgid "Creating your <0>workspace</0>..."
 msgstr "Creating your <0>workspace</0>..."
+
+#. js-lingui-id: BOWJsp
+#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineSection.tsx
+msgid "Creation, updates, deletion and restoration of a {objectLabelSingular} write entries on its own timeline."
+msgstr "Creation, updates, deletion and restoration of a {objectLabelSingular} write entries on its own timeline."
 
 #. js-lingui-id: HAzhV7
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -5962,6 +6016,7 @@ msgstr "days trial"
 
 #. js-lingui-id: 5y3O+A
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRuleActionDropdown.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -5999,6 +6054,7 @@ msgstr "Deactivate this field"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectItemTableRow.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationItemTableRow.tsx
+#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRulesTable.tsx
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
 #: src/pages/settings/data-model/SettingsObjectTable.tsx
 #: src/pages/settings/profile/SettingsProfile.tsx
@@ -6381,6 +6437,7 @@ msgstr "Delete your whole workspace"
 #: src/modules/object-record/record-index/hooks/useHandleToggleTrashColumnFilter.ts
 #: src/modules/object-record/record-show/utils/getRecordGroupByValueLabel.ts
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
+#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRulesTable.tsx
 msgid "Deleted"
 msgstr "Deleted"
 
@@ -6570,6 +6627,11 @@ msgstr "Disabled"
 #: src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
 msgid "Discard"
 msgstr "Discard"
+
+#. js-lingui-id: MzDKRw
+#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
+msgid "Discard your changes and follow the data model default again."
+msgstr "Discard your changes and follow the data model default again."
 
 #. js-lingui-id: +K0AvT
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -6981,6 +7043,7 @@ msgstr "eddy@gmail.com, @apple.com"
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
+#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRuleActionDropdown.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/field-permissions/components/SettingsRolePermissionsObjectLevelObjectFieldPermissionTable.tsx
@@ -7955,7 +8018,8 @@ msgid "Event visibility"
 msgstr "Event visibility"
 
 #. js-lingui-id: tst44n
-#: src/modules/settings/data-model/object-details/components/SettingsObjectTimelineRulesTable.tsx
+#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRulesTable.tsx
+#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
 msgid "Events"
 msgstr "Events"
 
@@ -7963,6 +8027,11 @@ msgstr "Events"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Events on related records that also appear on this timeline, derived from your data model"
 msgstr "Events on related records that also appear on this timeline, derived from your data model"
+
+#. js-lingui-id: SHvclC
+#: src/pages/settings/data-model/timeline-rules/SettingsObjectNewTimelineRule.tsx
+msgid "Events on the related record will write to the {objectLabelSingular} timeline. A rule on a junction relation is shared by every object the junction reaches."
+msgstr "Events on the related record will write to the {objectLabelSingular} timeline. A rule on a junction relation is shared by every object the junction reaches."
 
 #. js-lingui-id: jvNRZW
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
@@ -8788,6 +8857,11 @@ msgstr "Fields Permissions"
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Fields Settings"
 msgstr "Fields Settings"
+
+#. js-lingui-id: XAvPtQ
+#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
+msgid "Fields that trigger it"
+msgstr "Fields that trigger it"
 
 #. js-lingui-id: HrM5BL
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
@@ -11351,7 +11425,7 @@ msgid "Link URL"
 msgstr "Link URL"
 
 #. js-lingui-id: jyIicI
-#: src/modules/settings/data-model/object-details/components/SettingsObjectTimelineRulesTable.tsx
+#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRulesTable.tsx
 msgid "Linked"
 msgstr "Linked"
 
@@ -11551,6 +11625,11 @@ msgstr "Log out"
 #: src/modules/settings/profile/devices/components/SettingsProfileDevicesSection.tsx
 msgid "Log out all other devices"
 msgstr "Log out all other devices"
+
+#. js-lingui-id: U7+UTt
+#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineSection.tsx
+msgid "Log record changes"
+msgstr "Log record changes"
 
 #. js-lingui-id: qakNlV
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -12362,8 +12441,8 @@ msgstr "N/A"
 #: src/modules/settings/config-variables/components/ConfigVariableTable.tsx
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
-#: src/modules/settings/data-model/object-details/components/SettingsObjectTimelineRulesTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
+#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRulesTable.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
@@ -12662,6 +12741,12 @@ msgstr "New Password"
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
 msgid "New rollover limit"
 msgstr "New rollover limit"
+
+#. js-lingui-id: yBF5J5
+#: src/pages/settings/data-model/timeline-rules/SettingsObjectNewTimelineRule.tsx
+#: src/pages/settings/data-model/timeline-rules/SettingsObjectNewTimelineRule.tsx
+msgid "New rule"
+msgstr "New rule"
 
 #. js-lingui-id: gWnSyg
 #: src/pages/settings/ai/SettingsAI.tsx
@@ -13780,6 +13865,7 @@ msgstr "object"
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsRecordPicker.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
+#: src/pages/settings/data-model/timeline-rules/SettingsObjectNewTimelineRule.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
@@ -13861,6 +13947,8 @@ msgstr "objects"
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
+#: src/pages/settings/data-model/timeline-rules/SettingsObjectNewTimelineRule.tsx
+#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
 msgid "Objects"
 msgstr "Objects"
 
@@ -14016,6 +14104,11 @@ msgstr "Only application logs are available on your current plan. Other log type
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
 msgid "Only applications published to npm can be claimed this way."
 msgstr "Only applications published to npm can be claimed this way."
+
+#. js-lingui-id: cnUdxy
+#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
+msgid "Only changes to these fields write an entry on linked timelines. With no field selected, any change does."
+msgstr "Only changes to these fields write an entry on linked timelines. With no field selected, any change does."
 
 #. js-lingui-id: zii2Qj
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
@@ -14485,7 +14578,7 @@ msgid "Parameters"
 msgstr "Parameters"
 
 #. js-lingui-id: MZHPuB
-#: src/modules/settings/data-model/object-details/components/SettingsObjectTimelineRulesTable.tsx
+#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRulesTable.tsx
 msgid "Participants"
 msgstr "Participants"
 
@@ -15587,7 +15680,8 @@ msgstr "Registered as a development instance. This instance will not be billed."
 
 #. js-lingui-id: h9AYFD
 #: src/modules/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector.tsx
-#: src/modules/settings/data-model/object-details/components/SettingsObjectTimelineRulesTable.tsx
+#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRulesTable.tsx
+#: src/pages/settings/data-model/timeline-rules/SettingsObjectNewTimelineRule.tsx
 msgid "Relation"
 msgstr "Relation"
 
@@ -15908,6 +16002,7 @@ msgstr "Resend email"
 #: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/views/components/ViewBarDetails.tsx
+#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
 msgid "Reset"
 msgstr "Reset"
 
@@ -15933,12 +16028,14 @@ msgstr "Reset record page layout"
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
+#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRuleActionDropdown.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
+#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
 msgid "Reset to default"
 msgstr "Reset to default"
 
@@ -16010,6 +16107,11 @@ msgstr "Restore"
 #: src/modules/command-menu-item/engine-command/record/components/RestoreRecordsCommand.tsx
 msgid "Restore {objectLabel}"
 msgstr "Restore {objectLabel}"
+
+#. js-lingui-id: o8va6N
+#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRulesTable.tsx
+msgid "Restored"
+msgstr "Restored"
 
 #. js-lingui-id: hO3AfV
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
@@ -16451,7 +16553,7 @@ msgid "Search a role..."
 msgstr "Search a role..."
 
 #. js-lingui-id: nn/psy
-#: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectTimelineSection.tsx
+#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineSection.tsx
 msgid "Search a rule..."
 msgstr "Search a rule..."
 
@@ -16897,6 +16999,7 @@ msgstr "Select a date and time"
 #. js-lingui-id: 1YV5aa
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexFieldsForm.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterFieldSelect.tsx
+#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
 msgid "Select a field"
 msgstr "Select a field"
 
@@ -16924,6 +17027,11 @@ msgstr "Select a known provider or create a custom one"
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNavigationMenuItemEditPage.tsx
 msgid "Select a navigation item to edit"
 msgstr "Select a navigation item to edit"
+
+#. js-lingui-id: 6r5VmA
+#: src/pages/settings/data-model/timeline-rules/SettingsObjectNewTimelineRule.tsx
+msgid "Select a relation"
+msgstr "Select a relation"
 
 #. js-lingui-id: dE5jOH
 #: src/modules/side-panel/pages/email-block-settings/components/EmailPageStyleSection.tsx
@@ -18317,7 +18425,7 @@ msgid "Synchronize Objects Labels and API Names"
 msgstr "Synchronize Objects Labels and API Names"
 
 #. js-lingui-id: D+NlUC
-#: src/modules/settings/data-model/object-details/components/SettingsObjectTimelineRulesTable.tsx
+#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRulesTable.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownThemesComponents.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 msgid "System"
@@ -19214,6 +19322,26 @@ msgstr "Time zone"
 msgid "Timeline"
 msgstr "Timeline"
 
+#. js-lingui-id: f4myCm
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "timeline rule"
+msgstr "timeline rule"
+
+#. js-lingui-id: SVJQd/
+#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRuleActionDropdown.tsx
+msgid "Timeline Rule Options"
+msgstr "Timeline Rule Options"
+
+#. js-lingui-id: kQvEH+
+#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
+msgid "Timeline rule reset"
+msgstr "Timeline rule reset"
+
+#. js-lingui-id: phSYiI
+#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
+msgid "Timeline rule saved"
+msgstr "Timeline rule saved"
+
 #. js-lingui-id: xY9s5E
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 msgid "Timeout"
@@ -19941,7 +20069,7 @@ msgid "Unlimited"
 msgstr "Unlimited"
 
 #. js-lingui-id: sEi4uU
-#: src/modules/settings/data-model/object-details/components/SettingsObjectTimelineRulesTable.tsx
+#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRulesTable.tsx
 msgid "Unlinked"
 msgstr "Unlinked"
 
@@ -20183,7 +20311,7 @@ msgstr "updated"
 
 #. js-lingui-id: +b7T3G
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
-#: src/modules/settings/data-model/object-details/components/SettingsObjectTimelineRulesTable.tsx
+#: src/modules/settings/data-model/timeline-rules/components/SettingsObjectTimelineRulesTable.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
@@ -21291,6 +21419,11 @@ msgstr "Where records of this object open"
 msgid "Whether this model supports chain-of-thought reasoning"
 msgstr "Whether this model supports chain-of-thought reasoning"
 
+#. js-lingui-id: 3PCkgW
+#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
+msgid "Which {sourceLabelSingular} events write an entry to the timeline of linked records."
+msgstr "Which {sourceLabelSingular} events write an entry to the timeline of linked records."
+
 #. js-lingui-id: 9y+sLE
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
 msgid "Whole list"
@@ -21437,6 +21570,8 @@ msgstr "Workflows"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
+#: src/pages/settings/data-model/timeline-rules/SettingsObjectNewTimelineRule.tsx
+#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx

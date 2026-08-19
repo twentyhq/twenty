@@ -20,6 +20,8 @@ export enum SettingsPath {
   ObjectNewFieldSelect = 'objects/:objectNamePlural/new-field/select',
   ObjectNewFieldConfigure = 'objects/:objectNamePlural/new-field/configure',
   ObjectNewIndex = 'objects/:objectNamePlural/new-index',
+  ObjectTimelineRuleEdit = 'objects/:objectNamePlural/timeline-rule/:relationFieldMetadataId',
+  ObjectNewTimelineRule = 'objects/:objectNamePlural/new-timeline-rule',
   ObjectFieldEdit = 'objects/:objectNamePlural/:fieldName',
   NewObject = 'objects/new',
   Layout = 'layout',

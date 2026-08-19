@@ -1,0 +1,334 @@
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { useFindManyTimelineActivityRules } from '@/settings/data-model/timeline-rules/hooks/useFindManyTimelineActivityRules';
+import { useResetTimelineActivityRule } from '@/settings/data-model/timeline-rules/hooks/useResetTimelineActivityRule';
+import { useUpsertTimelineActivityRule } from '@/settings/data-model/timeline-rules/hooks/useUpsertTimelineActivityRule';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { Select } from '@/ui/input/components/Select';
+import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { useEffect, useMemo, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { AppPath, FieldMetadataType, SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import {
+  IconLink,
+  IconPencil,
+  IconRestore,
+  IconTrash,
+  IconUnlink,
+  useIcons,
+} from 'twenty-ui/icon';
+import { Button, IconButton, type SelectOption } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
+import { Card } from 'twenty-ui/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { H2Title } from 'twenty-ui/typography';
+import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+
+const StyledFieldRow = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  margin-bottom: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledSelectWrapper = styled.div`
+  flex: 1;
+  min-width: 0;
+`;
+
+const StyledPlaceholder = styled.div`
+  height: ${themeCssVariables.spacing[8]};
+  width: ${themeCssVariables.spacing[8]};
+`;
+
+const isTriggerableField = (field: FieldMetadataItem): boolean =>
+  field.isActive === true &&
+  field.isSystem !== true &&
+  field.type !== FieldMetadataType.RELATION &&
+  field.type !== FieldMetadataType.MORPH_RELATION &&
+  field.type !== FieldMetadataType.TS_VECTOR &&
+  field.type !== FieldMetadataType.POSITION;
+
+export const SettingsObjectTimelineRuleEdit = () => {
+  const { t } = useLingui();
+  const navigate = useNavigateSettings();
+  const navigateApp = useNavigateApp();
+  const { objectNamePlural = '', relationFieldMetadataId = '' } = useParams();
+  const { enqueueSuccessSnackBar } = useSnackBar();
+  const { getIcon } = useIcons();
+
+  const { findObjectMetadataItemByNamePlural } =
+    useFilteredObjectMetadataItems();
+  const { objectMetadataItems } = useObjectMetadataItems();
+  const objectMetadataItem =
+    findObjectMetadataItemByNamePlural(objectNamePlural);
+
+  const { timelineActivityRules, loading } = useFindManyTimelineActivityRules();
+  const { upsertTimelineActivityRule, loading: isSaving } =
+    useUpsertTimelineActivityRule();
+  const { resetTimelineActivityRule } = useResetTimelineActivityRule();
+
+  const timelineActivityRule = timelineActivityRules.find(
+    (rule) => rule.relationFieldMetadataId === relationFieldMetadataId,
+  );
+
+  const sourceObjectMetadataItem = objectMetadataItems.find(
+    (item) => item.id === timelineActivityRule?.objectMetadataId,
+  );
+
+  const [enabledActions, setEnabledActions] = useState<Set<string>>(new Set());
+  const [triggerFieldMetadataIds, setTriggerFieldMetadataIds] = useState<
+    string[]
+  >([]);
+  const [hasInitialized, setHasInitialized] = useState(false);
+
+  useEffect(() => {
+    if (hasInitialized || !isDefined(timelineActivityRule)) {
+      return;
+    }
+
+    setEnabledActions(new Set(timelineActivityRule.actions));
+    setTriggerFieldMetadataIds(
+      timelineActivityRule.triggerFieldMetadataIds ?? [],
+    );
+    setHasInitialized(true);
+  }, [hasInitialized, timelineActivityRule]);
+
+  useEffect(() => {
+    if (!loading && !isDefined(objectMetadataItem)) {
+      navigateApp(AppPath.NotFound);
+    }
+  }, [loading, objectMetadataItem, navigateApp]);
+
+  const triggerableFields = useMemo(
+    () =>
+      (sourceObjectMetadataItem?.fields ?? [])
+        .filter(isTriggerableField)
+        .sort((left, right) => left.label.localeCompare(right.label)),
+    [sourceObjectMetadataItem?.fields],
+  );
+
+  if (
+    !isDefined(objectMetadataItem) ||
+    !isDefined(timelineActivityRule) ||
+    !isDefined(sourceObjectMetadataItem)
+  ) {
+    return null;
+  }
+
+  const sourceLabelSingular = sourceObjectMetadataItem.labelSingular;
+  const objectLabelSingular = objectMetadataItem.labelSingular;
+
+  const toggleAction = (action: string, enabled: boolean) => {
+    setEnabledActions((previousActions) => {
+      const nextActions = new Set(previousActions);
+
+      if (enabled) {
+        nextActions.add(action);
+      } else {
+        nextActions.delete(action);
+      }
+
+      return nextActions;
+    });
+  };
+
+  const hasChanges =
+    hasInitialized &&
+    ([...enabledActions].sort().join(',') !==
+      [...timelineActivityRule.actions].sort().join(',') ||
+      [...triggerFieldMetadataIds].sort().join(',') !==
+        [...(timelineActivityRule.triggerFieldMetadataIds ?? [])]
+          .sort()
+          .join(','));
+
+  const canSave = hasChanges && enabledActions.size > 0 && !isSaving;
+
+  const handleSave = async () => {
+    const result = await upsertTimelineActivityRule({
+      objectMetadataId: timelineActivityRule.objectMetadataId,
+      relationFieldMetadataId: timelineActivityRule.relationFieldMetadataId,
+      actions: [...enabledActions],
+      triggerFieldMetadataIds:
+        triggerFieldMetadataIds.length > 0 ? triggerFieldMetadataIds : null,
+    });
+
+    if (!isDefined(result.error)) {
+      enqueueSuccessSnackBar({ message: t`Timeline rule saved` });
+      navigate(SettingsPath.ObjectDetail, { objectNamePlural });
+    }
+  };
+
+  const handleReset = async () => {
+    const result = await resetTimelineActivityRule({
+      objectMetadataId: timelineActivityRule.objectMetadataId,
+      relationFieldMetadataId: timelineActivityRule.relationFieldMetadataId,
+    });
+
+    if (!isDefined(result.error)) {
+      enqueueSuccessSnackBar({ message: t`Timeline rule reset` });
+      navigate(SettingsPath.ObjectDetail, { objectNamePlural });
+    }
+  };
+
+  const triggerFieldOptions: SelectOption<string>[] = triggerableFields.map(
+    (field) => ({
+      label: field.label,
+      value: field.id,
+      Icon: getIcon(field.icon),
+    }),
+  );
+
+  const triggerFieldRows: (string | null)[] = [
+    ...triggerFieldMetadataIds,
+    null,
+  ];
+
+  return (
+    <SettingsPageLayout
+      title={t`${sourceObjectMetadataItem.labelPlural} rule`}
+      links={[
+        {
+          children: t`Workspace`,
+          href: getSettingsPath(SettingsPath.General),
+        },
+        { children: t`Objects`, href: getSettingsPath(SettingsPath.Objects) },
+        {
+          children: objectMetadataItem.labelPlural,
+          href: getSettingsPath(SettingsPath.ObjectDetail, {
+            objectNamePlural,
+          }),
+        },
+        { children: t`${sourceObjectMetadataItem.labelPlural} rule` },
+      ]}
+      actionButton={
+        <SaveAndCancelButtons
+          isLoading={isSaving}
+          isSaveDisabled={!canSave}
+          onCancel={() =>
+            navigate(SettingsPath.ObjectDetail, { objectNamePlural })
+          }
+          onSave={handleSave}
+        />
+      }
+    >
+      <SettingsPageContainer>
+        <Section>
+          <H2Title
+            title={t`Events`}
+            description={t`Which ${sourceLabelSingular} events write an entry to the timeline of linked records.`}
+          />
+          <Card rounded>
+            <SettingsOptionCardContentToggle
+              Icon={IconLink}
+              title={t`${sourceLabelSingular} linked`}
+              description={t`A ${sourceLabelSingular} is attached to a ${objectLabelSingular}.`}
+              checked={enabledActions.has('linked')}
+              onChange={(checked) => toggleAction('linked', checked)}
+              divider
+            />
+            <SettingsOptionCardContentToggle
+              Icon={IconUnlink}
+              title={t`${sourceLabelSingular} unlinked`}
+              description={t`A ${sourceLabelSingular} is detached from a ${objectLabelSingular}.`}
+              checked={enabledActions.has('unlinked')}
+              onChange={(checked) => toggleAction('unlinked', checked)}
+              divider
+            />
+            <SettingsOptionCardContentToggle
+              Icon={IconPencil}
+              title={t`${sourceLabelSingular} updated`}
+              description={t`A linked ${sourceLabelSingular} changes.`}
+              checked={enabledActions.has('updated')}
+              onChange={(checked) => toggleAction('updated', checked)}
+            />
+          </Card>
+        </Section>
+        {enabledActions.has('updated') && (
+          <Section>
+            <H2Title
+              title={t`Fields that trigger it`}
+              description={t`Only changes to these fields write an entry on linked timelines. With no field selected, any change does.`}
+            />
+            {triggerFieldRows.map((triggerFieldMetadataId, rowIndex) => {
+              const availableOptions = triggerFieldOptions.filter(
+                (option) =>
+                  option.value === triggerFieldMetadataId ||
+                  !triggerFieldMetadataIds.includes(option.value),
+              );
+
+              return (
+                <StyledFieldRow
+                  key={triggerFieldMetadataId ?? `empty-${rowIndex}`}
+                >
+                  <StyledSelectWrapper>
+                    <Select
+                      dropdownId={`timeline-rule-trigger-field-${rowIndex}`}
+                      value={triggerFieldMetadataId ?? ''}
+                      options={availableOptions}
+                      emptyOption={{ label: t`Select a field`, value: '' }}
+                      onChange={(newValue) => {
+                        if (newValue === '') {
+                          return;
+                        }
+
+                        setTriggerFieldMetadataIds((previousIds) => {
+                          const nextIds = [...previousIds];
+
+                          if (rowIndex < previousIds.length) {
+                            nextIds[rowIndex] = newValue;
+                          } else {
+                            nextIds.push(newValue);
+                          }
+
+                          return nextIds;
+                        });
+                      }}
+                      fullWidth
+                      withSearchInput
+                    />
+                  </StyledSelectWrapper>
+                  {triggerFieldMetadataId === null ? (
+                    <StyledPlaceholder />
+                  ) : (
+                    <IconButton
+                      Icon={IconTrash}
+                      variant="tertiary"
+                      onClick={() =>
+                        setTriggerFieldMetadataIds((previousIds) =>
+                          previousIds.filter((_, index) => index !== rowIndex),
+                        )
+                      }
+                    />
+                  )}
+                </StyledFieldRow>
+              );
+            })}
+          </Section>
+        )}
+        {timelineActivityRule.isOverridden && (
+          <Section>
+            <H2Title
+              title={t`Reset`}
+              description={t`Discard your changes and follow the data model default again.`}
+            />
+            <Button
+              Icon={IconRestore}
+              title={t`Reset to default`}
+              size="small"
+              onClick={handleReset}
+            />
+          </Section>
+        )}
+      </SettingsPageContainer>
+    </SettingsPageLayout>
+  );
+};
