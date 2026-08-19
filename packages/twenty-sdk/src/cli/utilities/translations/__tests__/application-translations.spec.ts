@@ -80,7 +80,10 @@ describe('collectTranslatableStrings', () => {
       commandMenuItems: [{ label: 'Launch Rocket', shortLabel: 'Launch' }],
       navigationMenuItems: [{ name: 'Missions' }],
       pageLayouts: [
-        { tabs: [{ title: 'Overview', widgets: [{ title: 'Fuel level' }] }] },
+        {
+          name: 'Mission Control Layout',
+          tabs: [{ title: 'Overview', widgets: [{ title: 'Fuel level' }] }],
+        },
       ],
     });
 
@@ -90,6 +93,7 @@ describe('collectTranslatableStrings', () => {
       'Fuel level',
       'Launch',
       'Launch Rocket',
+      'Mission Control Layout',
       'Missions',
       'Newtons',
       'Overview',

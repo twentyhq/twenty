@@ -1,7 +1,7 @@
+import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/utils/effective-entity-i18n-context.type';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
-import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import {
   NAVIGATION_INTERPOLATED_ICON,
@@ -9,7 +9,7 @@ import {
   NAVIGATION_INTERPOLATED_SHORT_LABEL,
 } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-navigation-flat-command-menu-item.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { enrichCommandMenuItemEventWithResolvedNavigation } from 'src/engine/subscriptions/metadata-event/utils/enrich-command-menu-item-event-with-resolved-navigation.util';
+import { interpolateNavigationCommandMenuItemEvent } from 'src/engine/subscriptions/metadata-event/utils/interpolate-navigation-command-menu-item-event.util';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 const mockI18nInstance = {
@@ -48,21 +48,27 @@ const makeFlatObjectMetadataMaps = (
 });
 
 const makeNavigationRecord = (
-  overrides?: Partial<FlatCommandMenuItem>,
-): FlatCommandMenuItem =>
-  ({
-    id: 'cmd-id-1',
-    engineComponentKey: EngineComponentKey.NAVIGATION,
-    label: NAVIGATION_INTERPOLATED_LABEL,
-    shortLabel: NAVIGATION_INTERPOLATED_SHORT_LABEL,
-    icon: NAVIGATION_INTERPOLATED_ICON,
-    payload: { objectMetadataItemId: OBJECT_METADATA_ID },
-    position: 1,
-    isPinned: false,
-    ...overrides,
-  }) as unknown as FlatCommandMenuItem;
+  overrides?: Record<string, unknown>,
+): Record<string, unknown> => ({
+  id: 'cmd-id-1',
+  engineComponentKey: EngineComponentKey.NAVIGATION,
+  label: NAVIGATION_INTERPOLATED_LABEL,
+  shortLabel: NAVIGATION_INTERPOLATED_SHORT_LABEL,
+  icon: NAVIGATION_INTERPOLATED_ICON,
+  payload: { objectMetadataItemId: OBJECT_METADATA_ID },
+  position: 1,
+  isPinned: false,
+  ...overrides,
+});
 
-describe('enrichCommandMenuItemEventWithResolvedNavigation', () => {
+const buildStandardI18nContext = (): EffectiveEntityI18nContext => ({
+  locale: SOURCE_LOCALE,
+  i18nInstance: mockI18nInstance,
+  isStandardApp: true,
+  applicationCatalog: undefined,
+});
+
+describe('interpolateNavigationCommandMenuItemEvent', () => {
   it('should resolve label, shortLabel, and icon templates for NAVIGATION items', () => {
     const flatObjectMetadata = makeFlatObjectMetadata();
     const flatObjectMetadataMaps =
@@ -70,11 +76,10 @@ describe('enrichCommandMenuItemEventWithResolvedNavigation', () => {
 
     const record = makeNavigationRecord();
 
-    const result = enrichCommandMenuItemEventWithResolvedNavigation({
+    const result = interpolateNavigationCommandMenuItemEvent({
       record,
       flatObjectMetadataMaps,
-      locale: SOURCE_LOCALE,
-      i18nInstance: mockI18nInstance,
+      buildI18nContext: buildStandardI18nContext,
     });
 
     expect(result.label).toBe('Go to People');
@@ -95,11 +100,10 @@ describe('enrichCommandMenuItemEventWithResolvedNavigation', () => {
       payload: undefined,
     });
 
-    const result = enrichCommandMenuItemEventWithResolvedNavigation({
+    const result = interpolateNavigationCommandMenuItemEvent({
       record,
       flatObjectMetadataMaps,
-      locale: SOURCE_LOCALE,
-      i18nInstance: mockI18nInstance,
+      buildI18nContext: buildStandardI18nContext,
     });
 
     expect(result).toEqual(record);
@@ -114,11 +118,10 @@ describe('enrichCommandMenuItemEventWithResolvedNavigation', () => {
       payload: { path: '/settings' },
     });
 
-    const result = enrichCommandMenuItemEventWithResolvedNavigation({
+    const result = interpolateNavigationCommandMenuItemEvent({
       record,
       flatObjectMetadataMaps,
-      locale: SOURCE_LOCALE,
-      i18nInstance: mockI18nInstance,
+      buildI18nContext: buildStandardI18nContext,
     });
 
     expect(result).toEqual(record);
@@ -133,11 +136,10 @@ describe('enrichCommandMenuItemEventWithResolvedNavigation', () => {
 
     const record = makeNavigationRecord();
 
-    const result = enrichCommandMenuItemEventWithResolvedNavigation({
+    const result = interpolateNavigationCommandMenuItemEvent({
       record,
       flatObjectMetadataMaps: emptyMaps,
-      locale: SOURCE_LOCALE,
-      i18nInstance: mockI18nInstance,
+      buildI18nContext: buildStandardI18nContext,
     });
 
     expect(result).toEqual(record);
@@ -157,11 +159,10 @@ describe('enrichCommandMenuItemEventWithResolvedNavigation', () => {
 
     const record = makeNavigationRecord();
 
-    const result = enrichCommandMenuItemEventWithResolvedNavigation({
+    const result = interpolateNavigationCommandMenuItemEvent({
       record,
       flatObjectMetadataMaps,
-      locale: SOURCE_LOCALE,
-      i18nInstance: mockI18nInstance,
+      buildI18nContext: buildStandardI18nContext,
     });
 
     expect(result.label).toBe('Go to Contacts');
@@ -180,11 +181,10 @@ describe('enrichCommandMenuItemEventWithResolvedNavigation', () => {
 
     const record = makeNavigationRecord();
 
-    const result = enrichCommandMenuItemEventWithResolvedNavigation({
+    const result = interpolateNavigationCommandMenuItemEvent({
       record,
       flatObjectMetadataMaps,
-      locale: SOURCE_LOCALE,
-      i18nInstance: mockI18nInstance,
+      buildI18nContext: buildStandardI18nContext,
     });
 
     expect(result.label).toBe('Go to Companies');
@@ -199,11 +199,10 @@ describe('enrichCommandMenuItemEventWithResolvedNavigation', () => {
 
     const record = makeNavigationRecord({ payload: null });
 
-    const result = enrichCommandMenuItemEventWithResolvedNavigation({
+    const result = interpolateNavigationCommandMenuItemEvent({
       record,
       flatObjectMetadataMaps,
-      locale: SOURCE_LOCALE,
-      i18nInstance: mockI18nInstance,
+      buildI18nContext: buildStandardI18nContext,
     });
 
     expect(result).toEqual(record);
@@ -220,41 +219,35 @@ describe('enrichCommandMenuItemEventWithResolvedNavigation', () => {
       icon: 'IconUser',
     });
 
-    const result = enrichCommandMenuItemEventWithResolvedNavigation({
+    const result = interpolateNavigationCommandMenuItemEvent({
       record,
       flatObjectMetadataMaps,
-      locale: SOURCE_LOCALE,
-      i18nInstance: mockI18nInstance,
+      buildI18nContext: buildStandardI18nContext,
     });
 
     expect(result.label).toBe('Go to People');
     expect(result.shortLabel).toBe('People');
     expect(result.icon).toBe('IconUser');
   });
-  it('translates a non-NAVIGATION item so the event does not carry a source-locale label', () => {
+  it('should return a non-NAVIGATION item untouched', () => {
     const flatObjectMetadata = makeFlatObjectMetadata();
     const flatObjectMetadataMaps =
       makeFlatObjectMetadataMaps(flatObjectMetadata);
 
     const record = makeNavigationRecord({
       engineComponentKey: EngineComponentKey.CREATE_NEW_RECORD,
-      applicationUniversalIdentifier:
-        TWENTY_STANDARD_APPLICATION.universalIdentifier,
       label: 'Export View',
       shortLabel: undefined,
       icon: 'IconPlus',
       payload: undefined,
     });
 
-    const result = enrichCommandMenuItemEventWithResolvedNavigation({
+    const result = interpolateNavigationCommandMenuItemEvent({
       record,
       flatObjectMetadataMaps,
-      locale: SOURCE_LOCALE,
-      i18nInstance: {
-        _: (messageId: string) => `translated:${messageId}`,
-      },
+      buildI18nContext: buildStandardI18nContext,
     });
 
-    expect(result.label).toMatch(/^translated:/);
+    expect(result).toEqual(record);
   });
 });
