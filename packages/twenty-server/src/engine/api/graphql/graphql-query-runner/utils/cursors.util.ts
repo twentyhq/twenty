@@ -72,9 +72,7 @@ export const encodeCursor = <T extends ObjectRecord = ObjectRecord>({
       isPlainObject(orderByValue) &&
       isDefined(orderByValue)
     ) {
-      const compositeOrderByKeys = Object.keys(
-        orderByValue as Record<string, unknown>,
-      );
+      const compositeOrderByKeys = Object.keys(orderByValue);
       const existingCompositeValue: Record<string, unknown> =
         orderByValues[fieldName] ?? {};
       const recordCompositeValue = objectRecord[fieldName] as

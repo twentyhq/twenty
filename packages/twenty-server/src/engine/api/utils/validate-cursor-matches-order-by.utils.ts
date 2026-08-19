@@ -73,9 +73,7 @@ export const validateCursorMatchesOrderByOrThrow = ({
       );
       const compositeCursorValue = cursor[fieldName];
 
-      for (const subFieldKey of Object.keys(
-        orderByValue as Record<string, unknown>,
-      )) {
+      for (const subFieldKey of Object.keys(orderByValue)) {
         const property = compositeType?.properties.find(
           (compositeProperty) => compositeProperty.name === subFieldKey,
         );
@@ -86,8 +84,7 @@ export const validateCursorMatchesOrderByOrThrow = ({
 
         const hasNestedValue =
           isPlainObject(compositeCursorValue) &&
-          (compositeCursorValue as Record<string, unknown>)[subFieldKey] !==
-            undefined;
+          compositeCursorValue[subFieldKey] !== undefined;
         // Legacy cursors carried composite values under dotted keys
         const hasDottedValue =
           cursor[`${fieldName}.${subFieldKey}`] !== undefined;
