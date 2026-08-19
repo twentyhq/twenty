@@ -11,6 +11,7 @@ import { settingsTranslationsSidePanelTargetState } from '@/settings/translation
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 const TargetDecorator: Decorator = (Story) => {
   jotaiStore.set(settingsTranslationsSidePanelTargetState.atom, {
@@ -45,7 +46,12 @@ const meta: Meta<typeof SidePanelSettingsMetadataTranslationsPage> = {
   title:
     'Modules/Settings/Translations/SidePanelSettingsMetadataTranslationsPage',
   component: SidePanelSettingsMetadataTranslationsPage,
-  decorators: [TargetDecorator, RootDecorator, ComponentDecorator],
+  decorators: [
+    TargetDecorator,
+    RootDecorator,
+    ComponentDecorator,
+    SnackBarDecorator,
+  ],
   parameters: {
     msw: {
       handlers: [
