@@ -332,6 +332,7 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
         configurationType,
         viewId,
         nestedRelationFieldMetadataId,
+        isRecordMutationEnabled,
       } = configuration;
 
       const fieldMetadataUniversalIdentifier =
@@ -378,6 +379,9 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
               nestedRelationFieldMetadataId:
                 nestedRelationFieldMetadataUniversalIdentifier,
             }
+          : {}),
+        ...(isDefined(isRecordMutationEnabled)
+          ? { isRecordMutationEnabled }
           : {}),
       };
     }
