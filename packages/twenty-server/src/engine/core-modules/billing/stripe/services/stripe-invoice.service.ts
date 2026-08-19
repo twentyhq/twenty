@@ -2,6 +2,8 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import type Stripe from 'stripe';
 
 import {
@@ -62,18 +64,22 @@ export class StripeInvoiceService {
       customer: stripeCustomerId,
       subscription: stripeSubscriptionId,
     });
-    const invoiceItem = await this.stripe.invoiceItems.create({
-      customer: stripeCustomerId,
-      subscription: stripeSubscriptionId,
-      invoice: invoice.id,
-      amount: diffAmountInCents,
-      currency,
-      description,
-    });
 
     let finalizedInvoice: Stripe.Invoice;
+    let invoiceItemId: string | undefined;
 
     try {
+      const invoiceItem = await this.stripe.invoiceItems.create({
+        customer: stripeCustomerId,
+        subscription: stripeSubscriptionId,
+        invoice: invoice.id,
+        amount: diffAmountInCents,
+        currency,
+        description,
+      });
+
+      invoiceItemId = invoiceItem.id;
+
       finalizedInvoice = await this.stripe.invoices.finalizeInvoice(
         invoice.id,
         {
@@ -83,7 +89,7 @@ export class StripeInvoiceService {
     } catch (error) {
       await this.deleteDraftUpgradeInvoice({
         invoiceId: invoice.id,
-        invoiceItemId: invoiceItem.id,
+        invoiceItemId,
       });
 
       throw error;
@@ -151,7 +157,7 @@ export class StripeInvoiceService {
     invoiceItemId,
   }: {
     invoiceId: string;
-    invoiceItemId: string;
+    invoiceItemId?: string;
   }): Promise<void> {
     try {
       await this.stripe.invoices.del(invoiceId);
@@ -159,6 +165,10 @@ export class StripeInvoiceService {
       this.logger.error(
         `Failed to delete draft upgrade invoice ${invoiceId}: ${this.getErrorMessage(deleteError)}`,
       );
+    }
+
+    if (!isDefined(invoiceItemId)) {
+      return;
     }
 
     try {
