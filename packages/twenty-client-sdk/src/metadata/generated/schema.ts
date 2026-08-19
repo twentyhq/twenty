@@ -2934,7 +2934,7 @@ export interface Query {
     myCalendarChannels: CalendarChannel[]
     minimalMetadata: MinimalMetadata
     appKeyValue?: AppKeyValue
-    appCallerHasPermissionFlag: Scalars['Boolean']
+    invokingUserHasPermissionFlag: Scalars['Boolean']
     appConnections: AppConnection[]
     appConnection: AppConnection
     findWorkspaceAiStats: WorkspaceAiStats
@@ -6310,7 +6310,7 @@ export interface QueryGenqlSelection{
     myCalendarChannels?: (CalendarChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
     minimalMetadata?: MinimalMetadataGenqlSelection
     appKeyValue?: (AppKeyValueGenqlSelection & { __args: {key: Scalars['String'], scope?: (AppKeyValueScope | null)} })
-    appCallerHasPermissionFlag?: { __args: {permissionFlag: PermissionFlagType} }
+    invokingUserHasPermissionFlag?: { __args: {permissionFlag: PermissionFlagType} }
     appConnections?: (AppConnectionGenqlSelection & { __args?: {filter?: (ListAppConnectionsInput | null)} })
     appConnection?: (AppConnectionGenqlSelection & { __args: {id: Scalars['ID']} })
     findWorkspaceAiStats?: WorkspaceAiStatsGenqlSelection

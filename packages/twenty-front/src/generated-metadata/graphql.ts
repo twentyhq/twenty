@@ -4553,7 +4553,6 @@ export type Query = {
   agentTurns: Array<AgentTurn>;
   apiKey?: Maybe<ApiKey>;
   apiKeys: Array<ApiKey>;
-  appCallerHasPermissionFlag: Scalars['Boolean']['output'];
   appConnection: AppConnection;
   appConnections: Array<AppConnection>;
   appKeyValue?: Maybe<AppKeyValue>;
@@ -4642,6 +4641,7 @@ export type Query = {
   getViews: Array<View>;
   getWorkspaceCreationDefaults: WorkspaceCreationDefaultsDto;
   githubClaimAuthorizationUrl: Scalars['String']['output'];
+  invokingUserHasPermissionFlag: Scalars['Boolean']['output'];
   isApplicationStopped: Scalars['Boolean']['output'];
   lineChartData: LineChartData;
   listPlans: Array<BillingPlan>;
@@ -4677,11 +4677,6 @@ export type QueryAgentTurnsArgs = {
 
 export type QueryApiKeyArgs = {
   input: GetApiKeyInput;
-};
-
-
-export type QueryAppCallerHasPermissionFlagArgs = {
-  permissionFlag: PermissionFlagType;
 };
 
 
@@ -5011,6 +5006,10 @@ export type QueryGithubClaimAuthorizationUrlArgs = {
   applicationRegistrationId: Scalars['String']['input'];
 };
 
+
+export type QueryInvokingUserHasPermissionFlagArgs = {
+  permissionFlag: PermissionFlagType;
+};
 
 export type QueryIsApplicationStoppedArgs = {
   applicationUniversalIdentifier: Scalars['String']['input'];

@@ -5,7 +5,7 @@ import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Request } from 'express';
 import { match } from 'path-to-regexp';
-import { type LogicFunctionCaller } from 'twenty-shared/application';
+import { type LogicFunctionInvokingUser } from 'twenty-shared/application';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, Repository } from 'typeorm';
 import { HTTPMethod } from 'twenty-shared/types';
@@ -21,7 +21,7 @@ import {
   RouteTriggerException,
   RouteTriggerExceptionCode,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception';
-import { buildLogicFunctionCaller } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-caller.util';
+import { buildLogicFunctionInvokingUser } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-invoking-user.util';
 import { LogicFunctionTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/logic-function-trigger.service';
 import { type RouteTriggerResponse } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
 import { sanitizeRouteTriggerPath } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/sanitize-route-trigger-path.util';
@@ -289,7 +289,7 @@ export class RouteTriggerService {
 
     let userWorkspaceId: string | null = null;
     let userId: string | null = null;
-    let caller: LogicFunctionCaller | undefined = undefined;
+    let invokingUser: LogicFunctionInvokingUser | undefined = undefined;
 
     if (httpRouteSettings?.isAuthRequired) {
       const routeAuthenticationContext =
@@ -312,11 +312,9 @@ export class RouteTriggerService {
 
       userWorkspaceId = routeAuthenticationContext.userWorkspaceId ?? null;
       userId = routeAuthenticationContext.user?.id ?? null;
-      caller = buildLogicFunctionCaller({
+      invokingUser = buildLogicFunctionInvokingUser({
         userId,
         userWorkspaceId,
-        workspaceMemberId: routeAuthenticationContext.workspaceMemberId,
-        apiKeyId: routeAuthenticationContext.apiKey?.id,
       });
     }
 
@@ -332,7 +330,7 @@ export class RouteTriggerService {
         forwardAllHeaders: isIsolatedOrigin,
         userId,
         userWorkspaceId,
-        caller,
+        invokingUser,
       });
     } catch (error) {
       if (error instanceof RouteTriggerException) {

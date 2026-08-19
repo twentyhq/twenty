@@ -187,10 +187,9 @@ agent's own role. The acting application stays attached to the run's context
 for provenance, without narrowing the member's permissions.
 
 Your app is responsible for mapping the person who triggered the run to a
-workspace member. When the run was triggered by someone, `getCaller()` already
-gives you that person: a user caller carries `workspaceMemberId`, which is
-exactly what `runAsWorkspaceMemberId` expects. See [Caller identity and
-permission checks](/developers/extend/apps/logic/logic-functions#caller-identity-and-permission-checks).
+workspace member, for example through a link record your app maintains. To gate
+who may trigger privileged runs, see [Permission checks on the invoking
+user](/developers/extend/apps/logic/logic-functions#permission-checks-on-the-invoking-user).
 
 Naming a member requires an app access token, and what a token may name depends
 on whether it carries a user:

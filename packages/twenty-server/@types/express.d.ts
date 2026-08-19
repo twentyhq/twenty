@@ -1,4 +1,4 @@
-import { type LogicFunctionCaller } from 'twenty-shared/application';
+import { type LogicFunctionInvokingUser } from 'twenty-shared/application';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
@@ -16,7 +16,7 @@ declare module 'express-serve-static-core' {
     user?: FlatAuthContextUser | null;
     apiKey?: FlatApiKey | null;
     application?: FlatApplication | null;
-    applicationCaller?: LogicFunctionCaller;
+    applicationInvokingUser?: LogicFunctionInvokingUser;
     userWorkspace?: FlatUserWorkspace;
     locale: keyof typeof APP_LOCALES;
     workspace?: FlatWorkspace;

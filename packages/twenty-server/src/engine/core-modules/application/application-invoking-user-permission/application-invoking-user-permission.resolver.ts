@@ -1,16 +1,16 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Query } from '@nestjs/graphql';
 
-import { type LogicFunctionCaller } from 'twenty-shared/application';
+import { type LogicFunctionInvokingUser } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
-import { resolveApplicationCallerIdentity } from 'src/engine/core-modules/application/application-caller-permission/utils/resolve-application-caller-identity.util';
+import { resolveInvokingUserWorkspaceId } from 'src/engine/core-modules/application/application-invoking-user-permission/utils/resolve-invoking-user-workspace-id.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
-import { AuthApplicationCaller } from 'src/engine/decorators/auth/auth-application-caller.decorator';
+import { AuthApplicationInvokingUser } from 'src/engine/decorators/auth/auth-application-invoking-user.decorator';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -21,30 +21,31 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 @UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
 @UseFilters(ApplicationExceptionFilter)
 @MetadataResolver()
-export class ApplicationCallerPermissionResolver {
+export class ApplicationInvokingUserPermissionResolver {
   constructor(private readonly permissionsService: PermissionsService) {}
 
   @Query(() => Boolean)
-  async appCallerHasPermissionFlag(
+  async invokingUserHasPermissionFlag(
     @AuthApplication() _application: FlatApplication,
     @AuthWorkspace() workspace: FlatWorkspace,
-    @AuthApplicationCaller() caller: LogicFunctionCaller | undefined,
+    @AuthApplicationInvokingUser()
+    invokingUser: LogicFunctionInvokingUser | undefined,
     @AuthUserWorkspaceId({ allowUndefined: true })
     tokenUserWorkspaceId: string | undefined,
     @Args('permissionFlag', { type: () => PermissionFlagType })
     permissionFlag: PermissionFlagType,
   ): Promise<boolean> {
-    const callerIdentity = resolveApplicationCallerIdentity({
-      caller,
+    const userWorkspaceId = resolveInvokingUserWorkspaceId({
+      invokingUser,
       tokenUserWorkspaceId,
     });
 
-    if (!isDefined(callerIdentity)) {
+    if (!isDefined(userWorkspaceId)) {
       return false;
     }
 
     return this.permissionsService.userHasWorkspaceSettingPermission({
-      ...callerIdentity,
+      userWorkspaceId,
       workspaceId: workspace.id,
       setting: permissionFlag,
     });

@@ -1,6 +1,6 @@
 import { Logger, Scope } from '@nestjs/common';
 
-import { type LogicFunctionCaller } from 'twenty-shared/application';
+import { type LogicFunctionInvokingUser } from 'twenty-shared/application';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -17,7 +17,7 @@ export type LogicFunctionTriggerJobData = {
   payload?: object;
   userId?: string;
   userWorkspaceId?: string;
-  caller?: LogicFunctionCaller;
+  invokingUser?: LogicFunctionInvokingUser;
 };
 
 @Processor({
@@ -46,7 +46,7 @@ export class LogicFunctionTriggerJob {
           payload: logicFunctionPayload.payload ?? {},
           userId: logicFunctionPayload.userId,
           userWorkspaceId: logicFunctionPayload.userWorkspaceId,
-          caller: logicFunctionPayload.caller,
+          invokingUser: logicFunctionPayload.invokingUser,
         });
       } catch (error) {
         // A stopped application must not fail the job: failing would make

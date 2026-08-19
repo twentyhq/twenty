@@ -5,9 +5,8 @@ import {
   DEFAULT_API_KEY_NAME,
   DEFAULT_API_URL_NAME,
   DEFAULT_APP_ACCESS_TOKEN_NAME,
-  DEFAULT_CALLER_NAME,
   DEFAULT_FUNCTIONS_URL_NAME,
-  type LogicFunctionCaller,
+  type LogicFunctionInvokingUser,
 } from 'twenty-shared/application';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -110,7 +109,7 @@ export class LogicFunctionExecutorService {
     payload,
     userId,
     userWorkspaceId,
-    caller,
+    invokingUser,
     executionMode,
   }: {
     logicFunctionId: string;
@@ -118,7 +117,7 @@ export class LogicFunctionExecutorService {
     payload: object;
     userId?: string;
     userWorkspaceId?: string;
-    caller?: LogicFunctionCaller;
+    invokingUser?: LogicFunctionInvokingUser;
     executionMode?: LogicFunctionExecutionMode;
   }): Promise<LogicFunctionExecuteResult> {
     const { flatApplication, flatLogicFunction, applicationVariableMaps } =
@@ -139,7 +138,7 @@ export class LogicFunctionExecutorService {
       applicationVariableMaps,
       userId,
       userWorkspaceId,
-      caller,
+      invokingUser,
     });
 
     const driver = this.logicFunctionDriverFactory.getCurrentDriver();
@@ -329,14 +328,14 @@ export class LogicFunctionExecutorService {
     applicationVariableMaps,
     userId,
     userWorkspaceId,
-    caller,
+    invokingUser,
   }: {
     workspaceId: string;
     flatApplication: FlatApplication;
     applicationVariableMaps: ApplicationVariableCacheMaps;
     userId?: string;
     userWorkspaceId?: string;
-    caller?: LogicFunctionCaller;
+    invokingUser?: LogicFunctionInvokingUser;
   }) {
     const applicationAccessToken =
       await this.applicationTokenService.generateApplicationAccessToken({
@@ -344,7 +343,7 @@ export class LogicFunctionExecutorService {
         applicationId: flatApplication.id,
         userId,
         userWorkspaceId,
-        caller,
+        invokingUser,
       });
 
     const baseUrl = cleanServerUrl(this.twentyConfigService.get('SERVER_URL'));
@@ -363,22 +362,14 @@ export class LogicFunctionExecutorService {
         applicationVariableMaps,
       });
 
-    const { [DEFAULT_CALLER_NAME]: _injectedCaller, ...applicationVariables } =
-      {
-        ...serverVariables,
-        ...workspaceVariables,
-      };
-
     return {
       [DEFAULT_API_URL_NAME]: baseUrl ?? '',
       [DEFAULT_APP_ACCESS_TOKEN_NAME]: applicationAccessToken.token,
       [DEFAULT_API_KEY_NAME]: applicationAccessToken.token,
       [DEFAULT_FUNCTIONS_URL_NAME]: functionsBaseUrl ?? '',
       APPLICATION_ID: flatApplication.id,
-      ...applicationVariables,
-      ...(isDefined(caller)
-        ? { [DEFAULT_CALLER_NAME]: JSON.stringify(caller) }
-        : {}),
+      ...serverVariables,
+      ...workspaceVariables,
     };
   }
 

@@ -10,7 +10,7 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { type FlatAuthContextUser } from 'src/engine/core-modules/auth/types/flat-auth-context-user.type';
-import { buildLogicFunctionCaller } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-caller.util';
+import { buildLogicFunctionInvokingUser } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-invoking-user.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -184,19 +184,15 @@ export class LogicFunctionResolver {
     @AuthUser({ allowUndefined: true }) user: FlatAuthContextUser | undefined,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
-    @AuthWorkspaceMemberId() workspaceMemberId: string | undefined,
-    @AuthApiKey() apiKey: FlatApiKey | undefined,
   ): Promise<LogicFunctionExecutionResultDTO> {
     try {
       return await this.logicFunctionFromSourceService.executeOneFromSource({
         id,
         payload,
         workspaceId,
-        caller: buildLogicFunctionCaller({
+        invokingUser: buildLogicFunctionInvokingUser({
           userId: user?.id,
           userWorkspaceId,
-          workspaceMemberId,
-          apiKeyId: apiKey?.id,
         }),
       });
     } catch (error) {

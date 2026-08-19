@@ -1,4 +1,4 @@
-import { type LogicFunctionCaller } from 'twenty-shared/application';
+import { type LogicFunctionInvokingUser } from 'twenty-shared/application';
 
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -16,7 +16,7 @@ export type RawAuthContext = {
   workspaceMember?: WorkspaceMemberWorkspaceEntity;
   workspace?: FlatWorkspace;
   application?: FlatApplication | null | undefined;
-  applicationCaller?: LogicFunctionCaller;
+  applicationInvokingUser?: LogicFunctionInvokingUser;
   userWorkspaceId?: string;
   userWorkspace?: FlatUserWorkspace;
   authProvider?: AuthProviderEnum;

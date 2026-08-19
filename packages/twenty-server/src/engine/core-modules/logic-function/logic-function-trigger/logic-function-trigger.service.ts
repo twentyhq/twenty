@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
-import { type LogicFunctionCaller } from 'twenty-shared/application';
+import { type LogicFunctionInvokingUser } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
@@ -30,7 +30,7 @@ export class LogicFunctionTriggerService {
     forwardAllHeaders = false,
     userId,
     userWorkspaceId,
-    caller,
+    invokingUser,
   }: {
     logicFunction: LogicFunctionEntity;
     request: Request;
@@ -39,7 +39,7 @@ export class LogicFunctionTriggerService {
     forwardAllHeaders?: boolean;
     userId?: string | null;
     userWorkspaceId?: string | null;
-    caller?: LogicFunctionCaller;
+    invokingUser?: LogicFunctionInvokingUser;
   }): Promise<LogicFunctionTriggerOutcome> {
     const event = buildLogicFunctionEvent({
       request,
@@ -55,7 +55,7 @@ export class LogicFunctionTriggerService {
       payload: event,
       ...(isDefined(userId) ? { userId } : {}),
       ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
-      ...(isDefined(caller) ? { caller } : {}),
+      ...(isDefined(invokingUser) ? { invokingUser } : {}),
     });
 
     if (!isDefined(result)) {

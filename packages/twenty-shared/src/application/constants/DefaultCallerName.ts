@@ -1,1 +1,0 @@
-export const DEFAULT_CALLER_NAME = 'TWENTY_CALLER';

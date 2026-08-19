@@ -451,14 +451,13 @@ describe('transformEventBatchToEventPayloads', () => {
     });
   });
 
-  describe('caller identity', () => {
-    it('should build the caller from the identity of the event mutator', () => {
+  describe('invoking user identity', () => {
+    it('should build the invoking user from the identity of the event mutator', () => {
       const workspaceEventBatch = createMockWorkspaceEventBatch({
         events: [
           createMockEvent({
             userId: 'user-1',
             userWorkspaceId: 'user-workspace-1',
-            workspaceMemberId: 'workspace-member-1',
           }),
         ],
       });
@@ -469,15 +468,13 @@ describe('transformEventBatchToEventPayloads', () => {
         logicFunctions,
       });
 
-      expect(result[0].caller).toEqual({
-        type: 'user',
+      expect(result[0].invokingUser).toEqual({
         userId: 'user-1',
         userWorkspaceId: 'user-workspace-1',
-        workspaceMemberId: 'workspace-member-1',
       });
     });
 
-    it('should leave the caller unset for events without a mutator identity', () => {
+    it('should leave the invoking user unset for events without a mutator identity', () => {
       const workspaceEventBatch = createMockWorkspaceEventBatch();
       const logicFunctions = [createMockLogicFunction()];
 
@@ -486,7 +483,7 @@ describe('transformEventBatchToEventPayloads', () => {
         logicFunctions,
       });
 
-      expect(result[0].caller).toBeUndefined();
+      expect(result[0].invokingUser).toBeUndefined();
     });
   });
 });

@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { type Repository } from 'typeorm';
 import { addMilliseconds } from 'date-fns';
-import { type LogicFunctionCaller } from 'twenty-shared/application';
+import { type LogicFunctionInvokingUser } from 'twenty-shared/application';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import ms from 'ms';
 
@@ -45,13 +45,13 @@ export class ApplicationTokenService {
     applicationId,
     userWorkspaceId,
     userId,
-    caller,
+    invokingUser,
   }: {
     workspaceId: string;
     applicationId: string;
     userWorkspaceId?: string;
     userId?: string;
-    caller?: LogicFunctionCaller;
+    invokingUser?: LogicFunctionInvokingUser;
   }): Promise<AuthToken> {
     await this.validateWorkspaceAndApplication(workspaceId, applicationId);
 
@@ -64,7 +64,7 @@ export class ApplicationTokenService {
       applicationId,
       userWorkspaceId,
       userId,
-      caller,
+      invokingUser,
       tokenType: JwtTokenTypeEnum.APPLICATION_ACCESS,
       expiresIn,
     });
@@ -239,7 +239,7 @@ export class ApplicationTokenService {
     applicationId,
     userWorkspaceId,
     userId,
-    caller,
+    invokingUser,
     tokenType,
     expiresIn,
   }: {
@@ -247,7 +247,7 @@ export class ApplicationTokenService {
     applicationId: string;
     userWorkspaceId?: string;
     userId?: string;
-    caller?: LogicFunctionCaller;
+    invokingUser?: LogicFunctionInvokingUser;
     tokenType:
       | JwtTokenTypeEnum.APPLICATION_ACCESS
       | JwtTokenTypeEnum.APPLICATION_REFRESH;
@@ -264,7 +264,7 @@ export class ApplicationTokenService {
       type: tokenType,
       ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
       ...(isDefined(userId) ? { userId } : {}),
-      ...(isDefined(caller) ? { caller } : {}),
+      ...(isDefined(invokingUser) ? { invokingUser } : {}),
     };
 
     return {

@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import crypto from 'crypto';
 
 import { v4 } from 'uuid';
-import { type LogicFunctionCaller } from 'twenty-shared/application';
+import { type LogicFunctionInvokingUser } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -349,12 +349,12 @@ export class LogicFunctionFromSourceService {
     id,
     payload,
     workspaceId,
-    caller,
+    invokingUser,
   }: {
     id: string;
     payload: object;
     workspaceId: string;
-    caller?: LogicFunctionCaller;
+    invokingUser?: LogicFunctionInvokingUser;
   }): Promise<LogicFunctionExecutionResultDTO> {
     const { flatLogicFunction } =
       await this.helperService.findLogicFunctionAndApplicationOrThrow({
@@ -370,7 +370,7 @@ export class LogicFunctionFromSourceService {
       logicFunctionId: id,
       workspaceId,
       payload,
-      caller,
+      invokingUser,
       executionMode: LogicFunctionExecutionMode.LIVE,
     });
 

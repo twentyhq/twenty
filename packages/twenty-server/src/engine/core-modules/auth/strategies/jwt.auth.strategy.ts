@@ -357,7 +357,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     const context: AuthContext = {
       application,
       workspace,
-      applicationCaller: payload.caller,
+      applicationInvokingUser: payload.invokingUser,
     };
 
     if (payload.userId && payload.userWorkspaceId) {

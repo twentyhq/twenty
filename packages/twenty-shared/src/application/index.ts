@@ -35,7 +35,6 @@ export { ASSETS_DIR } from './constants/AssetDirectory';
 export { DEFAULT_API_KEY_NAME } from './constants/DefaultApiKeyName';
 export { DEFAULT_API_URL_NAME } from './constants/DefaultApiUrlName';
 export { DEFAULT_APP_ACCESS_TOKEN_NAME } from './constants/DefaultAppAccessTokenName';
-export { DEFAULT_CALLER_NAME } from './constants/DefaultCallerName';
 export { DEFAULT_FUNCTIONS_URL_NAME } from './constants/DefaultFunctionsUrlName';
 export { FRONT_COMPONENT_SHARED_DEPENDENCIES_BUILT_PATH } from './constants/FrontComponentSharedDependenciesBuiltPath';
 export { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from './constants/FrontComponentSharedDependenciesImportSpecifier';
@@ -110,15 +109,13 @@ export type {
 export type { FrontComponentSharedDependenciesManifest } from './frontComponentSharedDependenciesManifestType';
 export type { IndexFieldManifest } from './indexFieldManifestType';
 export type { IndexManifest } from './indexManifestType';
-export type { LogicFunctionApiKeyCaller } from './logicFunctionApiKeyCallerType';
-export type { LogicFunctionCaller } from './logicFunctionCallerType';
+export type { LogicFunctionInvokingUser } from './logicFunctionInvokingUserType';
 export type {
   LogicFunctionManifest,
   CronTriggerSettings,
   DatabaseEventTriggerSettings,
   HttpRouteTriggerSettings,
 } from './logicFunctionManifestType';
-export type { LogicFunctionUserCaller } from './logicFunctionUserCallerType';
 export type { TranslationsManifest, Manifest } from './manifestType';
 export type { NavigationMenuItemManifest } from './navigationMenuItemManifestType';
 export type { OAuthConnectionProviderConfig } from './oauthConnectionProviderConfigType';

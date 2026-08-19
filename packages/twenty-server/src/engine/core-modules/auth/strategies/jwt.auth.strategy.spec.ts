@@ -434,20 +434,19 @@ describe('JwtAuthStrategy', () => {
       }
     });
 
-    it('should expose the caller an application token was minted for', async () => {
+    it('should expose the invoking user an application token was minted for', async () => {
       const validApplicationId = randomUUID();
       const validWorkspaceId = randomUUID();
-      const callerUserWorkspaceId = randomUUID();
+      const invokingUserWorkspaceId = randomUUID();
 
       const payload = {
         sub: validApplicationId,
         type: JwtTokenTypeEnum.APPLICATION_ACCESS,
         applicationId: validApplicationId,
         workspaceId: validWorkspaceId,
-        caller: {
-          type: 'user',
+        invokingUser: {
           userId: randomUUID(),
-          userWorkspaceId: callerUserWorkspaceId,
+          userWorkspaceId: invokingUserWorkspaceId,
         },
       };
 
@@ -464,7 +463,7 @@ describe('JwtAuthStrategy', () => {
 
       const context = await strategy.validate(payload as JwtPayload);
 
-      expect(context.applicationCaller).toEqual(payload.caller);
+      expect(context.applicationInvokingUser).toEqual(payload.invokingUser);
     });
 
     it('should reject an application token bound to a user that cannot be resolved', async () => {

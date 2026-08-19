@@ -8,9 +8,9 @@ import {
   type MockInstance,
 } from 'vitest';
 
-import { callerHasPermissionFlag } from '@/sdk/logic-function/caller/caller-has-permission-flag';
+import { invokingUserHasPermissionFlag } from '@/sdk/logic-function/invoking-user/invoking-user-has-permission-flag';
 
-describe('callerHasPermissionFlag', () => {
+describe('invokingUserHasPermissionFlag', () => {
   let fetchSpy: MockInstance<typeof fetch>;
 
   beforeEach(() => {
@@ -28,12 +28,12 @@ describe('callerHasPermissionFlag', () => {
   it('asks the server about the permission flag and returns its answer', async () => {
     fetchSpy.mockResolvedValue(
       new Response(
-        JSON.stringify({ data: { appCallerHasPermissionFlag: true } }),
+        JSON.stringify({ data: { invokingUserHasPermissionFlag: true } }),
         { status: 200 },
       ),
     );
 
-    expect(await callerHasPermissionFlag('WORKSPACE_MEMBERS')).toBe(true);
+    expect(await invokingUserHasPermissionFlag('WORKSPACE_MEMBERS')).toBe(true);
 
     const [url, requestInit] = fetchSpy.mock.calls[0];
 
@@ -42,34 +42,26 @@ describe('callerHasPermissionFlag', () => {
     const sentBody = JSON.parse(requestInit?.body as string);
 
     expect(sentBody.query).toContain(
-      'appCallerHasPermissionFlag(permissionFlag: $permissionFlag)',
+      'invokingUserHasPermissionFlag(permissionFlag: $permissionFlag)',
     );
     expect(sentBody.variables).toEqual({
       permissionFlag: 'WORKSPACE_MEMBERS',
     });
   });
 
-  it('does not send any caller identity: the server reads it from the token', async () => {
-    process.env.TWENTY_CALLER = JSON.stringify({
-      type: 'user',
-      userId: 'user-1',
-      userWorkspaceId: 'user-workspace-1',
-    });
-
+  it('does not send any identity: the server reads it from the token', async () => {
     fetchSpy.mockResolvedValue(
       new Response(
-        JSON.stringify({ data: { appCallerHasPermissionFlag: false } }),
+        JSON.stringify({ data: { invokingUserHasPermissionFlag: false } }),
         { status: 200 },
       ),
     );
 
-    expect(await callerHasPermissionFlag('ROLES')).toBe(false);
+    expect(await invokingUserHasPermissionFlag('ROLES')).toBe(false);
 
     const sentBody = JSON.parse(fetchSpy.mock.calls[0][1]?.body as string);
 
     expect(sentBody.variables).toEqual({ permissionFlag: 'ROLES' });
-
-    delete process.env.TWENTY_CALLER;
   });
 
   it('throws when the server rejects the query', async () => {
@@ -79,6 +71,8 @@ describe('callerHasPermissionFlag', () => {
       }),
     );
 
-    await expect(callerHasPermissionFlag('ROLES')).rejects.toThrow('Forbidden');
+    await expect(invokingUserHasPermissionFlag('ROLES')).rejects.toThrow(
+      'Forbidden',
+    );
   });
 });

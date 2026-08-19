@@ -5,25 +5,25 @@ import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/m
 
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
-const APP_CALLER_HAS_PERMISSION_FLAG = gql`
-  query AppCallerHasPermissionFlag($permissionFlag: PermissionFlagType!) {
-    appCallerHasPermissionFlag(permissionFlag: $permissionFlag)
+const INVOKING_USER_HAS_PERMISSION_FLAG = gql`
+  query InvokingUserHasPermissionFlag($permissionFlag: PermissionFlagType!) {
+    invokingUserHasPermissionFlag(permissionFlag: $permissionFlag)
   }
 `;
 
-const APP_CALLER_HAS_PERMISSION_FLAG_WITH_SUPPLIED_IDENTITY = gql`
-  query AppCallerHasPermissionFlagWithSuppliedIdentity(
+const INVOKING_USER_HAS_PERMISSION_FLAG_WITH_SUPPLIED_IDENTITY = gql`
+  query InvokingUserHasPermissionFlagWithSuppliedIdentity(
     $permissionFlag: PermissionFlagType!
     $userWorkspaceId: String
   ) {
-    appCallerHasPermissionFlag(
+    invokingUserHasPermissionFlag(
       permissionFlag: $permissionFlag
       userWorkspaceId: $userWorkspaceId
     )
   }
 `;
 
-describe('application caller permission (e2e)', () => {
+describe('application invoking user permission (e2e)', () => {
   let appToken: string;
 
   beforeAll(async () => {
@@ -47,7 +47,7 @@ describe('application caller permission (e2e)', () => {
 
   it('rejects requests that do not carry an APPLICATION_ACCESS token', async () => {
     const response = await makeMetadataAPIRequest({
-      query: APP_CALLER_HAS_PERMISSION_FLAG,
+      query: INVOKING_USER_HAS_PERMISSION_FLAG,
       variables: { permissionFlag: 'WORKSPACE_MEMBERS' },
     });
 
@@ -55,23 +55,23 @@ describe('application caller permission (e2e)', () => {
     expect(response.body.errors[0].message).toContain('APPLICATION_ACCESS');
   });
 
-  it('answers for the caller the token was minted for', async () => {
+  it('answers for the invoking user the token was minted for', async () => {
     const response = await makeMetadataAPIRequest(
       {
-        query: APP_CALLER_HAS_PERMISSION_FLAG,
+        query: INVOKING_USER_HAS_PERMISSION_FLAG,
         variables: { permissionFlag: 'WORKSPACE_MEMBERS' },
       },
       appToken,
     );
 
     expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.appCallerHasPermissionFlag).toBe(true);
+    expect(response.body.data.invokingUserHasPermissionFlag).toBe(true);
   });
 
   it('does not let the application name the identity it asks about', async () => {
     const response = await makeMetadataAPIRequest(
       {
-        query: APP_CALLER_HAS_PERMISSION_FLAG_WITH_SUPPLIED_IDENTITY,
+        query: INVOKING_USER_HAS_PERMISSION_FLAG_WITH_SUPPLIED_IDENTITY,
         variables: {
           permissionFlag: 'WORKSPACE_MEMBERS',
           userWorkspaceId: '00000000-0000-0000-0000-000000000000',
