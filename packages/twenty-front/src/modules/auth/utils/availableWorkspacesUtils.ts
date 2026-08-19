@@ -15,16 +15,6 @@ export const countAvailableWorkspaces = ({
   );
 };
 
-// Callers that offer a workspace switch care about the workspaces other than
-// the one they are already in, which the lists include.
-export const countOtherAvailableWorkspaces = (
-  { availableWorkspacesForSignIn, availableWorkspacesForSignUp }: AvailableWorkspaces,
-  currentWorkspaceId: string | undefined,
-): number =>
-  [...availableWorkspacesForSignIn, ...availableWorkspacesForSignUp].filter(
-    ({ id }) => id !== currentWorkspaceId,
-  ).length;
-
 export const getFirstAvailableWorkspaces = ({
   availableWorkspacesForSignIn,
   availableWorkspacesForSignUp,

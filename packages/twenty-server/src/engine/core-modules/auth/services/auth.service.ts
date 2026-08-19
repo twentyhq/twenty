@@ -477,8 +477,6 @@ export class AuthService {
     };
   }
 
-  // Reached by checkUserExists, a public endpoint accepting any email: a hidden
-  // workspace must not be revealed by the count either.
   async countAvailableWorkspacesByEmail(email: string): Promise<number> {
     return Object.values(
       filterOutHiddenAvailableWorkspaces(
