@@ -56,6 +56,15 @@ describe('on-opportunity-partner-won cascade', () => {
     expect(updates.find((u) => u.id === 'app-declined')).toBeUndefined();
   });
 
+  it('on assign: a winner sitting at DECLINED still moves to WON (no longer frozen)', async () => {
+    queryMock.mockResolvedValue(
+      apps({ id: 'app-win-was-declined', partnerId: P_WIN, state: 'DECLINED' }),
+    );
+    await handler(event({ id: OPP, partnerId: P_WIN }, ['partnerId']));
+    const updates = stateUpdates();
+    expect(updates).toContainEqual({ id: 'app-win-was-declined', state: 'WON' });
+  });
+
   it('on unassign: WON and DECLINED -> APPLIED, BACKUP untouched', async () => {
     queryMock.mockResolvedValue(
       apps(
