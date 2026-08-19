@@ -17,7 +17,7 @@ import { type Editor } from '@tiptap/core';
 import { type ComponentType, useEffect, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconMaximize } from 'twenty-ui/icon';
-import { InputHint, InputLabel, LightIconButton } from 'twenty-ui/input';
+import { Field, LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 
@@ -233,7 +233,7 @@ export const FormAdvancedTextFieldInput = ({
         hasFieldChrome={chrome === 'field'}
       >
         <FormFieldInputContainer>
-          {label ? <InputLabel>{label}</InputLabel> : null}
+          {label ? <Field.Label>{label}</Field.Label> : null}
 
           <StyledAdvancedTextFieldFieldContainer>
             <StyledAdvancedTextFieldInnerContainer
@@ -271,8 +271,8 @@ export const FormAdvancedTextFieldInput = ({
               ) : null}
             </StyledAdvancedTextFieldInnerContainer>
           </StyledAdvancedTextFieldFieldContainer>
-          {hint && <InputHint>{hint}</InputHint>}
-          {error && <InputHint danger>{error}</InputHint>}
+          {hint && <Field.Description>{hint}</Field.Description>}
+          {error && <Field.Error match>{error}</Field.Error>}
         </FormFieldInputContainer>
       </StyledAdvancedTextFieldContainerWrapper>
 
