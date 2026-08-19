@@ -3232,6 +3232,18 @@ type MinimalMetadata {
   collectionHashes: [CollectionHash!]!
 }
 
+type TimelineActivityRule {
+  id: UUID
+  objectMetadataId: UUID!
+  relationFieldMetadataId: UUID
+  resolution: String!
+  actions: [String!]!
+  triggerFieldMetadataIds: [UUID!]
+  isActive: Boolean!
+  isStandard: Boolean!
+  isOverridden: Boolean!
+}
+
 type Query {
   navigationMenuItems: [NavigationMenuItem!]!
   navigationMenuItem(id: UUID!): NavigationMenuItem
@@ -3349,6 +3361,7 @@ type Query {
   skills: [Skill!]!
   skill(id: UUID!): Skill
   agentTurns(agentId: UUID!): [AgentTurn!]!
+  timelineActivityRules: [TimelineActivityRule!]!
   checkUserExists(email: String!, captchaToken: String): CheckUserExist!
   checkWorkspaceInviteHashIsValid(inviteHash: String!): WorkspaceInviteHashValid!
   findWorkspaceFromInviteHash(inviteHash: String!): Workspace!
@@ -3665,6 +3678,8 @@ type Mutation {
   deactivateSkill(id: UUID!): Skill!
   evaluateAgentTurn(turnId: UUID!): AgentTurnEvaluation!
   runEvaluationInput(agentId: UUID!, input: String!): AgentTurn!
+  upsertTimelineActivityRule(input: UpsertTimelineActivityRuleInput!): TimelineActivityRule!
+  resetTimelineActivityRule(input: ResetTimelineActivityRuleInput!): TimelineActivityRule
   getAuthorizationUrlForSSO(input: GetAuthorizationUrlForSSOInput!): GetAuthorizationUrlForSSO!
   getLoginTokenFromCredentials(email: String!, password: String!, captchaToken: String, locale: String, verifyEmailRedirectPath: String, origin: String!): LoginToken!
   signIn(email: String!, password: String!, captchaToken: String, locale: String, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
@@ -4859,6 +4874,19 @@ input UpdateSkillInput {
   description: String
   content: String
   isActive: Boolean
+}
+
+input UpsertTimelineActivityRuleInput {
+  objectMetadataId: UUID!
+  relationFieldMetadataId: UUID
+  actions: [String!]
+  triggerFieldMetadataIds: [UUID!]
+  isActive: Boolean
+}
+
+input ResetTimelineActivityRuleInput {
+  objectMetadataId: UUID!
+  relationFieldMetadataId: UUID
 }
 
 input GetAuthorizationUrlForSSOInput {

@@ -1,12 +1,6 @@
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { SELF_TIMELINE_ACTIVITY_RULE_ACTIONS } from 'src/engine/metadata-modules/timeline-activity-rule/constants/self-timeline-activity-rule-actions.constant';
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
-
-const SELF_RULE_ACTIONS = [
-  'created',
-  'updated',
-  'deleted',
-  'restored',
-] as const;
 
 // Every audit logged non system object records its own changes. Materialising
 // this as a row per object would mean backfilling every object of every
@@ -20,7 +14,7 @@ export const deriveDefaultTimelineActivityRule = (
 
   return {
     sourceFlatObjectMetadata: flatObjectMetadata,
-    actions: [...SELF_RULE_ACTIONS],
+    actions: [...SELF_TIMELINE_ACTIVITY_RULE_ACTIONS],
     triggerFieldNames: null,
     targetShape: { kind: 'SELF' },
   };

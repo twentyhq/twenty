@@ -2745,6 +2745,7 @@ export type Mutation = {
   resetPageLayoutTabToDefault: PageLayoutTab;
   resetPageLayoutToDefault: PageLayout;
   resetPageLayoutWidgetToDefault: PageLayoutWidget;
+  resetTimelineActivityRule?: Maybe<TimelineActivityRule>;
   retryChatMessage: SendChatMessageResult;
   revokeAllOtherUserSessions: Scalars['Int']['output'];
   revokeApiKey?: Maybe<ApiKey>;
@@ -2838,6 +2839,7 @@ export type Mutation = {
   upsertObjectPermissions: Array<ObjectPermission>;
   upsertPermissionFlags: Array<RolePermissionFlag>;
   upsertRowLevelPermissionPredicates: UpsertRowLevelPermissionPredicatesResult;
+  upsertTimelineActivityRule: TimelineActivityRule;
   upsertViewWidget: View;
   validateApprovedAccessDomain: ApprovedAccessDomain;
   verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginToken;
@@ -3523,6 +3525,11 @@ export type MutationResetPageLayoutWidgetToDefaultArgs = {
 };
 
 
+export type MutationResetTimelineActivityRuleArgs = {
+  input: ResetTimelineActivityRuleInput;
+};
+
+
 export type MutationRetryChatMessageArgs = {
   modelId?: InputMaybe<Scalars['String']['input']>;
   threadId: Scalars['UUID']['input'];
@@ -4012,6 +4019,11 @@ export type MutationUpsertPermissionFlagsArgs = {
 
 export type MutationUpsertRowLevelPermissionPredicatesArgs = {
   input: UpsertRowLevelPermissionPredicatesInput;
+};
+
+
+export type MutationUpsertTimelineActivityRuleArgs = {
+  input: UpsertTimelineActivityRuleInput;
 };
 
 
@@ -4665,6 +4677,7 @@ export type Query = {
   publicMarketplaceApps: Array<MarketplaceApp>;
   skill?: Maybe<Skill>;
   skills: Array<Skill>;
+  timelineActivityRules: Array<TimelineActivityRule>;
   unsubscribeTopics: Array<UnsubscribeTopic>;
   validatePasswordResetToken: ValidatePasswordResetToken;
   webhook?: Maybe<Webhook>;
@@ -5139,6 +5152,11 @@ export type ResendEmailVerificationToken = {
   success: Scalars['Boolean']['output'];
 };
 
+export type ResetTimelineActivityRuleInput = {
+  objectMetadataId: Scalars['UUID']['input'];
+  relationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+};
+
 export type RevokeApiKeyInput = {
   id: Scalars['UUID']['input'];
 };
@@ -5543,6 +5561,19 @@ export enum SupportDriver {
 export type TasksConfiguration = {
   __typename?: 'TasksConfiguration';
   configurationType: WidgetConfigurationType;
+};
+
+export type TimelineActivityRule = {
+  __typename?: 'TimelineActivityRule';
+  actions: Array<Scalars['String']['output']>;
+  id?: Maybe<Scalars['UUID']['output']>;
+  isActive: Scalars['Boolean']['output'];
+  isOverridden: Scalars['Boolean']['output'];
+  isStandard: Scalars['Boolean']['output'];
+  objectMetadataId: Scalars['UUID']['output'];
+  relationFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
+  resolution: Scalars['String']['output'];
+  triggerFieldMetadataIds?: Maybe<Array<Scalars['UUID']['output']>>;
 };
 
 export type TimelineConfiguration = {
@@ -6112,6 +6143,14 @@ export type UpsertRowLevelPermissionPredicatesResult = {
   __typename?: 'UpsertRowLevelPermissionPredicatesResult';
   predicateGroups: Array<RowLevelPermissionPredicateGroup>;
   predicates: Array<RowLevelPermissionPredicate>;
+};
+
+export type UpsertTimelineActivityRuleInput = {
+  actions?: InputMaybe<Array<Scalars['String']['input']>>;
+  isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  objectMetadataId: Scalars['UUID']['input'];
+  relationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  triggerFieldMetadataIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
 };
 
 export type UpsertViewWidgetInput = {

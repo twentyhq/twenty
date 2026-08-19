@@ -2850,6 +2850,19 @@ export interface MinimalMetadata {
     __typename: 'MinimalMetadata'
 }
 
+export interface TimelineActivityRule {
+    id?: Scalars['UUID']
+    objectMetadataId: Scalars['UUID']
+    relationFieldMetadataId?: Scalars['UUID']
+    resolution: Scalars['String']
+    actions: Scalars['String'][]
+    triggerFieldMetadataIds?: Scalars['UUID'][]
+    isActive: Scalars['Boolean']
+    isStandard: Scalars['Boolean']
+    isOverridden: Scalars['Boolean']
+    __typename: 'TimelineActivityRule'
+}
+
 export interface Query {
     navigationMenuItems: NavigationMenuItem[]
     navigationMenuItem?: NavigationMenuItem
@@ -2949,6 +2962,7 @@ export interface Query {
     skills: Skill[]
     skill?: Skill
     agentTurns: AgentTurn[]
+    timelineActivityRules: TimelineActivityRule[]
     checkUserExists: CheckUserExist
     checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid
     findWorkspaceFromInviteHash: Workspace
@@ -3165,6 +3179,8 @@ export interface Mutation {
     deactivateSkill: Skill
     evaluateAgentTurn: AgentTurnEvaluation
     runEvaluationInput: AgentTurn
+    upsertTimelineActivityRule: TimelineActivityRule
+    resetTimelineActivityRule?: TimelineActivityRule
     getAuthorizationUrlForSSO: GetAuthorizationUrlForSSO
     getLoginTokenFromCredentials: LoginToken
     signIn: AvailableWorkspacesAndAccessTokens
@@ -6215,6 +6231,20 @@ export interface MinimalMetadataGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface TimelineActivityRuleGenqlSelection{
+    id?: boolean | number
+    objectMetadataId?: boolean | number
+    relationFieldMetadataId?: boolean | number
+    resolution?: boolean | number
+    actions?: boolean | number
+    triggerFieldMetadataIds?: boolean | number
+    isActive?: boolean | number
+    isStandard?: boolean | number
+    isOverridden?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface QueryGenqlSelection{
     navigationMenuItems?: NavigationMenuItemGenqlSelection
     navigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -6326,6 +6356,7 @@ export interface QueryGenqlSelection{
     skills?: SkillGenqlSelection
     skill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     agentTurns?: (AgentTurnGenqlSelection & { __args: {agentId: Scalars['UUID']} })
+    timelineActivityRules?: TimelineActivityRuleGenqlSelection
     checkUserExists?: (CheckUserExistGenqlSelection & { __args: {email: Scalars['String'], captchaToken?: (Scalars['String'] | null)} })
     checkWorkspaceInviteHashIsValid?: (WorkspaceInviteHashValidGenqlSelection & { __args: {inviteHash: Scalars['String']} })
     findWorkspaceFromInviteHash?: (WorkspaceGenqlSelection & { __args: {inviteHash: Scalars['String']} })
@@ -6571,6 +6602,8 @@ export interface MutationGenqlSelection{
     deactivateSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     evaluateAgentTurn?: (AgentTurnEvaluationGenqlSelection & { __args: {turnId: Scalars['UUID']} })
     runEvaluationInput?: (AgentTurnGenqlSelection & { __args: {agentId: Scalars['UUID'], input: Scalars['String']} })
+    upsertTimelineActivityRule?: (TimelineActivityRuleGenqlSelection & { __args: {input: UpsertTimelineActivityRuleInput} })
+    resetTimelineActivityRule?: (TimelineActivityRuleGenqlSelection & { __args: {input: ResetTimelineActivityRuleInput} })
     getAuthorizationUrlForSSO?: (GetAuthorizationUrlForSSOGenqlSelection & { __args: {input: GetAuthorizationUrlForSSOInput} })
     getLoginTokenFromCredentials?: (LoginTokenGenqlSelection & { __args: {email: Scalars['String'], password: Scalars['String'], captchaToken?: (Scalars['String'] | null), locale?: (Scalars['String'] | null), verifyEmailRedirectPath?: (Scalars['String'] | null), origin: Scalars['String']} })
     signIn?: (AvailableWorkspacesAndAccessTokensGenqlSelection & { __args: {email: Scalars['String'], password: Scalars['String'], captchaToken?: (Scalars['String'] | null), locale?: (Scalars['String'] | null), verifyEmailRedirectPath?: (Scalars['String'] | null)} })
@@ -7002,6 +7035,10 @@ export interface AgentChatQuestionAnswerInput {questionIndex: Scalars['Int'],sel
 export interface CreateSkillInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],label: Scalars['String'],icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),content: Scalars['String']}
 
 export interface UpdateSkillInput {id: Scalars['UUID'],name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),content?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null)}
+
+export interface UpsertTimelineActivityRuleInput {objectMetadataId: Scalars['UUID'],relationFieldMetadataId?: (Scalars['UUID'] | null),actions?: (Scalars['String'][] | null),triggerFieldMetadataIds?: (Scalars['UUID'][] | null),isActive?: (Scalars['Boolean'] | null)}
+
+export interface ResetTimelineActivityRuleInput {objectMetadataId: Scalars['UUID'],relationFieldMetadataId?: (Scalars['UUID'] | null)}
 
 export interface GetAuthorizationUrlForSSOInput {identityProviderId: Scalars['UUID'],workspaceInviteHash?: (Scalars['String'] | null)}
 
@@ -9181,6 +9218,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isMinimalMetadata = (obj?: { __typename?: any } | null): obj is MinimalMetadata => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isMinimalMetadata"')
       return MinimalMetadata_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const TimelineActivityRule_possibleTypes: string[] = ['TimelineActivityRule']
+    export const isTimelineActivityRule = (obj?: { __typename?: any } | null): obj is TimelineActivityRule => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTimelineActivityRule"')
+      return TimelineActivityRule_possibleTypes.includes(obj.__typename)
     }
     
 
