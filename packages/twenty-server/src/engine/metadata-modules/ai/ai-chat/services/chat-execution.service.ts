@@ -70,6 +70,7 @@ import {
 import { type ExtractedFile } from 'src/engine/metadata-modules/ai/ai-chat/types/extracted-file.type';
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
 import { buildFullSystemPrompt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-full-system-prompt.util';
+import { hasNoAssistantMessage } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-no-assistant-message.util';
 import { hasSucceededWorkspaceSetupCompletion } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-succeeded-workspace-setup-completion.util';
 import { extractCodeInterpreterFiles } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
 import { injectMessageTimestamps } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-timestamps.util';
@@ -223,6 +224,9 @@ export class ChatExecutionService {
           userWorkspaceId,
         }) &&
       !hasSucceededWorkspaceSetupCompletion(messages);
+
+    const isWorkspaceSetupKickoffTurn =
+      isWorkspaceSetupThread && hasNoAssistantMessage(messages);
 
     const preloadedToolNames = [
       ...Object.keys(preloadedTools),
@@ -466,6 +470,7 @@ export class ChatExecutionService {
       model: registeredModel.model,
       messages: [systemMessage, ...modelMessages],
       tools: activeTools,
+      toolChoice: isWorkspaceSetupKickoffTurn ? 'required' : 'auto',
       abortSignal,
       stopWhen: (step) =>
         stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) ||
