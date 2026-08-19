@@ -44,6 +44,7 @@
   },
   "dependencies": {
     "@dagrejs/dagre": "^1.1.8",
+    "@noble/hashes": "^1.8.0",
     "@sniptt/guards": "^0.2.0",
     "addressparser": "1.0.1",
     "ai": "6.0.97",

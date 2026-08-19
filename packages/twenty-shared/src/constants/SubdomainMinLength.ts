@@ -1,1 +1,0 @@
-export const DEFAULT_SUBDOMAIN_MIN_LENGTH = 3;

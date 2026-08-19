@@ -16,7 +16,6 @@ import { FlatObjectPermissionValidatorService } from 'src/engine/workspace-manag
 import { FlatPageLayoutTabValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-tab-validator.service';
 import { FlatPageLayoutValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-validator.service';
 import { FlatPageLayoutWidgetValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service';
-import { FlatPermissionFlagValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service';
 import { FlatRolePermissionFlagValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service';
 import { FlatRoleTargetValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service';
 import { FlatRoleValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service';
@@ -26,10 +25,8 @@ import { FlatSkillValidatorService } from 'src/engine/workspace-manager/workspac
 import { FlatViewFieldGroupValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service';
 import { FlatViewFieldValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service';
 import { FlatViewFilterGroupValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-group-validator.service';
-import { FlatViewFilterValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-filter-validator.service';
 import { FlatViewGroupValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-group-validator.service';
 import { FlatViewSortValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service';
-import { FlatViewValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-validator.service';
 import { FlatApplicationVariableValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service';
 import { FlatWebhookValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service';
 import { FlatConnectionProviderValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service';
@@ -38,9 +35,7 @@ import { FlatSearchFieldMetadataValidatorService } from 'src/engine/workspace-ma
 @Module({
   imports: [FeatureFlagModule],
   providers: [
-    FlatViewValidatorService,
     FlatViewFieldValidatorService,
-    FlatViewFilterValidatorService,
     FlatViewFilterGroupValidatorService,
     FlatViewGroupValidatorService,
     FlatViewFieldGroupValidatorService,
@@ -48,7 +43,6 @@ import { FlatSearchFieldMetadataValidatorService } from 'src/engine/workspace-ma
     FlatFieldPermissionValidatorService,
     FlatObjectPermissionValidatorService,
     FlatRolePermissionFlagValidatorService,
-    FlatPermissionFlagValidatorService,
     FlatIndexValidatorService,
     FlatFieldMetadataValidatorService,
     FlatObjectMetadataValidatorService,
@@ -73,9 +67,7 @@ import { FlatSearchFieldMetadataValidatorService } from 'src/engine/workspace-ma
     FlatSearchFieldMetadataValidatorService,
   ],
   exports: [
-    FlatViewValidatorService,
     FlatViewFieldValidatorService,
-    FlatViewFilterValidatorService,
     FlatViewFilterGroupValidatorService,
     FlatViewGroupValidatorService,
     FlatViewFieldGroupValidatorService,
@@ -83,7 +75,6 @@ import { FlatSearchFieldMetadataValidatorService } from 'src/engine/workspace-ma
     FlatFieldPermissionValidatorService,
     FlatObjectPermissionValidatorService,
     FlatRolePermissionFlagValidatorService,
-    FlatPermissionFlagValidatorService,
     FlatIndexValidatorService,
     FlatFieldMetadataValidatorService,
     FlatObjectMetadataValidatorService,

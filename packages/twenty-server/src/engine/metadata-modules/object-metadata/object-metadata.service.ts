@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { v4, v5 } from 'uuid';
@@ -24,9 +23,6 @@ import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-meta
 import { fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata-and-flat-field-metadatas-to-create.util';
 import { fromDeleteObjectInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-delete-object-input-to-flat-field-metadatas-to-delete.util';
 import { fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-update-object-input-to-flat-object-metadata-and-related-flat-entities.util';
-import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
-import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
-import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
@@ -36,19 +32,14 @@ import {
   ObjectMetadataException,
   ObjectMetadataExceptionCode,
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
-import { buildReservedSystemFlatFieldMetadatasForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-reserved-system-flat-field-metadatas-for-custom-object.util';
-import { computeFlatDefaultRecordPageLayoutToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-default-record-page-layout-to-create.util';
-import { computeFlatRecordPageFieldsViewToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-record-page-fields-view-to-create.util';
-import { computeFlatViewFieldsToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-view-fields-to-create.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
-import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 
 @Injectable()
-export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEntity> {
+export class ObjectMetadataService {
   constructor(
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
@@ -56,9 +47,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationService: ApplicationService,
-  ) {
-    super(objectMetadataRepository);
-  }
+  ) {}
 
   async updateOneObject({
     updateObjectInput,
@@ -483,27 +472,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         flatApplication: resolvedOwnerFlatApplication,
       });
 
-    // The INDEX table view and its view fields are provisioned by the metadata
-    // side-effect engine (objectSystemFieldsAndIndexViewOnCreate). The FIELDS_WIDGET
-    // record-page view below still references the caller-provided fields plus
-    // the engine-owned reserved system fields, whose deterministic identifiers
-    // we re-derive here (searchVector is never shown).
-    // TODO: remove once the record-page view fields move to the side-effect engine.
-    const defaultFlatFieldMetadatasForViewFields: UniversalFlatFieldMetadata[] =
-      [
-        ...flatFieldMetadataToCreateOnObject,
-        ...Object.values(
-          buildReservedSystemFlatFieldMetadatasForCustomObject({
-            flatObjectMetadata: {
-              applicationUniversalIdentifier:
-                resolvedOwnerFlatApplication.universalIdentifier,
-              universalIdentifier:
-                flatObjectMetadataToCreate.universalIdentifier,
-            },
-          }),
-        ),
-      ];
-
     const flatNavigationMenuItemToCreate =
       await this.computeFlatNavigationMenuItemToCreate({
         objectMetadata: flatObjectMetadataToCreate,
@@ -532,32 +500,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       },
     );
 
-    const flatRecordPageFieldsViewToCreate =
-      this.computeFlatRecordPageFieldsViewToCreate({
-        objectMetadata: flatObjectMetadataToCreate,
-        flatApplication: resolvedOwnerFlatApplication,
-      });
-
-    const flatRecordPageFieldsViewFieldsToCreate =
-      computeFlatViewFieldsToCreate({
-        applicationUniversalIdentifier:
-          resolvedOwnerFlatApplication.universalIdentifier,
-        objectFlatFieldMetadatas: defaultFlatFieldMetadatasForViewFields,
-        labelIdentifierFieldMetadataUniversalIdentifier:
-          flatObjectMetadataToCreate.labelIdentifierFieldMetadataUniversalIdentifier,
-        viewUniversalIdentifier:
-          flatRecordPageFieldsViewToCreate.universalIdentifier,
-        excludeLabelIdentifier: true,
-      });
-
-    const flatDefaultRecordPageLayoutsToCreate =
-      this.computeFlatDefaultRecordPageLayoutToCreate({
-        objectMetadata: flatObjectMetadataToCreate,
-        flatApplication: resolvedOwnerFlatApplication,
-        recordPageFieldsView: flatRecordPageFieldsViewToCreate,
-        workspaceId,
-      });
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -577,36 +519,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
-            view: {
-              flatEntityToCreate: [flatRecordPageFieldsViewToCreate],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-            viewField: {
-              flatEntityToCreate: [...flatRecordPageFieldsViewFieldsToCreate],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
             commandMenuItem: {
               flatEntityToCreate: [flatCommandMenuItemToCreate],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-            pageLayout: {
-              flatEntityToCreate:
-                flatDefaultRecordPageLayoutsToCreate.pageLayouts,
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-            pageLayoutTab: {
-              flatEntityToCreate:
-                flatDefaultRecordPageLayoutsToCreate.pageLayoutTabs,
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-            pageLayoutWidget: {
-              flatEntityToCreate:
-                flatDefaultRecordPageLayoutsToCreate.pageLayoutWidgets,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
@@ -655,42 +569,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     }
 
     return createdFlatObjectMetadata;
-  }
-
-  private computeFlatRecordPageFieldsViewToCreate({
-    objectMetadata,
-    flatApplication,
-  }: {
-    flatApplication: FlatApplication;
-    objectMetadata: UniversalFlatObjectMetadata & { id: string };
-  }): UniversalFlatView & { id: string } {
-    return computeFlatRecordPageFieldsViewToCreate({
-      objectMetadata,
-      flatApplication,
-    });
-  }
-
-  private computeFlatDefaultRecordPageLayoutToCreate({
-    objectMetadata,
-    flatApplication,
-    recordPageFieldsView,
-    workspaceId,
-  }: {
-    flatApplication: FlatApplication;
-    objectMetadata: UniversalFlatObjectMetadata & { id: string };
-    recordPageFieldsView: UniversalFlatView & { id: string };
-    workspaceId: string;
-  }): {
-    pageLayouts: FlatPageLayout[];
-    pageLayoutTabs: FlatPageLayoutTab[];
-    pageLayoutWidgets: FlatPageLayoutWidget[];
-  } {
-    return computeFlatDefaultRecordPageLayoutToCreate({
-      objectMetadata,
-      flatApplication,
-      recordPageFieldsView,
-      workspaceId,
-    });
   }
 
   private async computeFlatNavigationMenuItemToCreate({

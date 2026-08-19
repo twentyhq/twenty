@@ -1,11 +1,14 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
   PageDecorator,
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 import { SettingsSubdomainPage } from '~/pages/settings/domains/SettingsSubdomainPage';
 
@@ -14,6 +17,13 @@ const meta: Meta<PageDecoratorArgs> = {
   component: SettingsSubdomainPage,
   decorators: [PageDecorator],
   args: { routePath: '/settings/domains/subdomain' },
+  beforeEach: () => {
+    jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
+
+    return () => {
+      jotaiStore.set(currentWorkspaceState.atom, null);
+    };
+  },
   parameters: {
     msw: graphqlMocks,
   },
@@ -25,20 +35,17 @@ export type Story = StoryObj<typeof SettingsSubdomainPage>;
 
 export const Default: Story = {};
 
-export const TooShortSubdomain: Story = {
+export const EmptySubdomain: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     const input = await canvas.findByRole('textbox', {}, { timeout: 5000 });
 
+    await expect(input).toHaveValue(mockCurrentWorkspace.subdomain);
+
     await userEvent.clear(input);
-    await userEvent.type(input, 'ab');
 
-    const errorMessage = await canvas.findByText(
-      'Subdomain cannot be shorter than 3 characters',
-    );
-
-    await expect(errorMessage).toBeVisible();
+    await canvas.findByText('Subdomain cannot be empty');
 
     const saveButton = canvas.getByText('Save');
 

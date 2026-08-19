@@ -40,7 +40,6 @@ describe('createOne FieldMetadataService name/label sync', () => {
     });
   });
   it('should create a field when name and label are synced correctly', async () => {
-    // Arrange
     const FIELD_NAME = 'testField';
     const createFieldInput = {
       name: FIELD_NAME,
@@ -50,7 +49,6 @@ describe('createOne FieldMetadataService name/label sync', () => {
       isLabelSyncedWithName: true,
     };
 
-    // Act
     const { data } = await createOneFieldMetadata({
       input: createFieldInput,
       gqlFields: `
@@ -61,12 +59,10 @@ describe('createOne FieldMetadataService name/label sync', () => {
         `,
     });
 
-    // Assert
     expect(data.createOneField.name).toBe(FIELD_NAME);
   });
 
   it('should set isLabelSyncWithName to false if not in input', async () => {
-    // Arrange
     const createFieldInput = {
       name: 'testField',
       label: 'Test Field',
@@ -74,7 +70,6 @@ describe('createOne FieldMetadataService name/label sync', () => {
       objectMetadataId: createdObjectMetadataId,
     };
 
-    // Act
     const { data } = await createOneFieldMetadata({
       input: createFieldInput,
       gqlFields: `
@@ -85,12 +80,10 @@ describe('createOne FieldMetadataService name/label sync', () => {
           `,
     });
 
-    // Assert
     expect(data.createOneField.isLabelSyncedWithName).toBe(false);
   });
 
   it('should return an error when name and label are not synced but isLabelSyncedWithName is true', async () => {
-    // Arrange
     const createFieldInput = {
       name: 'testField',
       label: 'Different Label',
@@ -99,7 +92,6 @@ describe('createOne FieldMetadataService name/label sync', () => {
       isLabelSyncedWithName: true,
     };
 
-    // Act
     const response = await createOneFieldMetadata({
       input: createFieldInput,
       gqlFields: `
@@ -111,7 +103,6 @@ describe('createOne FieldMetadataService name/label sync', () => {
       expectToFail: true,
     });
 
-    // Assert
     expect(response.errors.length).toBe(1);
     const [firstError] = response.errors;
 

@@ -9,6 +9,8 @@ import {
 
 describe('addWidgetToTab', () => {
   const mockWidget: PageLayoutWidget = {
+    isSystemSideEffect: false,
+    universalIdentifier: 'universal-identifier-mock',
     __typename: 'PageLayoutWidget',
     id: 'widget-1',
     applicationId: '',
@@ -31,6 +33,8 @@ describe('addWidgetToTab', () => {
 
   const mockTabs: PageLayoutTab[] = [
     {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       id: 'tab-1',
       applicationId: '',
       isActive: true,
@@ -43,6 +47,8 @@ describe('addWidgetToTab', () => {
       deletedAt: null,
     },
     {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       id: 'tab-2',
       applicationId: '',
       isActive: true,
@@ -74,7 +80,6 @@ describe('addWidgetToTab', () => {
   it('should handle non-existent tab ID gracefully', () => {
     const result = addWidgetToTab(mockTabs, 'non-existent-tab', mockWidget);
 
-    // All tabs should remain unchanged
     expect(result[0].widgets).toHaveLength(0);
     expect(result[1].widgets).toHaveLength(0);
   });

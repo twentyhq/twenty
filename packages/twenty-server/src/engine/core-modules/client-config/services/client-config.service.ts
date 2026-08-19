@@ -206,7 +206,6 @@ export class ClientConfigService {
         'IS_EMAIL_VERIFICATION_REQUIRED',
       ),
       defaultSubdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
-      subdomainMinLength: this.twentyConfigService.get('SUBDOMAIN_MIN_LENGTH'),
       frontDomain: this.domainServerConfigService.getFrontUrl().hostname,
       publicFunctionDomain:
         this.domainServerConfigService.getPublicBaseHostnameOrUndefined() ??
@@ -265,9 +264,7 @@ export class ClientConfigService {
         isBillingEnabled ||
         this.twentyConfigService.get('IS_FEATURE_FLAG_MANAGEMENT_ENABLED'),
       publicFeatureFlags: PUBLIC_FEATURE_FLAGS,
-      isCookieSessionEnabled: this.twentyConfigService.get(
-        'AUTH_COOKIE_SESSIONS_ENABLED',
-      ),
+      isCookieSessionEnabled: true,
       isMicrosoftMessagingEnabled: this.twentyConfigService.get(
         'MESSAGING_PROVIDER_MICROSOFT_ENABLED',
       ),

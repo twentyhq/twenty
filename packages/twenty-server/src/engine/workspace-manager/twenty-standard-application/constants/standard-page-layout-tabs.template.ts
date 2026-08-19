@@ -226,12 +226,6 @@ export const WIDGET_PROPS = {
     gridPosition: GRID_POSITIONS.RICH_TEXT,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
-  messageCampaignDetails: {
-    title: 'Details',
-    type: WidgetType.MESSAGE_CAMPAIGN_DETAILS,
-    gridPosition: GRID_POSITIONS.FULL_WIDTH,
-    position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
-  },
   workflowVersion: {
     title: 'Flow',
     type: WidgetType.WORKFLOW_VERSION,

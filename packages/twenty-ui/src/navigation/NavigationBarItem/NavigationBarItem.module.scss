@@ -3,10 +3,12 @@
   appearance: none;
   background: none;
   border: none;
-  border-radius: var(--t-spacing-1);
+  border-radius: var(--t-border-radius-pill);
   color: inherit;
+  corner-shape: round;
   cursor: pointer;
   display: flex;
+  flex-shrink: 0;
   font: inherit;
   height: var(--t-spacing-10);
   justify-content: center;
@@ -15,11 +17,13 @@
   width: var(--t-spacing-10);
 
   &[data-active] {
-    background-color: var(--t-background-transparent-light);
+    background-color: var(--t-background-transparent-medium);
   }
 
-  &:hover {
-    background-color: var(--t-background-transparent-light);
+  @include hover-capable {
+    &:hover {
+      background-color: var(--t-background-transparent-light);
+    }
   }
 
   @include focus-ring;

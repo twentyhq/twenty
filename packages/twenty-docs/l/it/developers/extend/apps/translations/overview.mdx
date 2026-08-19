@@ -55,9 +55,9 @@ const Card = ({ count, name }: { count: number; name: string }) => {
 
 ### Quando usare cosa
 
-* **`<Trans>…</Trans>`** — testo statico in JSX. Usa le prop `message` e `values`
-  per l’interpolazione (`<Trans message="Hi {name}" values={{ name }} />`);
-  l’interpolazione direttamente nei children non è estraibile staticamente.
+* **`Trans`** — testo statico in JSX. Usa le prop `message` e `values` per
+  l'interpolazione, come in `Trans message="Hi {name}" values={{ name }}`;
+  l'interpolazione direttamente nei figli non è estraibile staticamente.
 * **`useTranslate().t`** — stringhe dinamiche all’interno di un componente. Esegue il re-render quando
   l’utente cambia lingua. Preferiscilo all’interno del render.
 * **`t(...)`** (importato direttamente) — traduzione eager utilizzabile **ovunque**,
@@ -85,9 +85,9 @@ twenty dev:translations-extract                  # collect strings into locales/
 twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 ```
 
-L’estrazione raccoglie sia le etichette del manifest sia le stringhe `t()`/`msg()`/`\<Trans>`
-dal sorgente dei tuoi front-component in `locales/\<locale>.json`, con chiave
-la stringa sorgente. Compila le traduzioni:
+L'estrazione raccoglie sia le etichette del manifest sia le stringhe `t()`/`msg()`/`Trans`
+dal tuo sorgente front-component in `locales/\<locale>.json`, indicizzate per
+stringa sorgente. Compila le traduzioni:
 
 ```json
 // locales/fr-FR.json
@@ -108,7 +108,7 @@ corrente: le etichette del manifest vengono risolte lato server e i cataloghi de
 front-component vengono inclusi in ogni bundle di componente. A runtime un componente legge la
 locale dal proprio contesto di esecuzione (la lingua corrente dell’host) e risolve
 ogni stringa rispetto al proprio catalogo, facendo fallback alla sorgente quando
-una traduzione manca. Il cambio di lingua nell’host esegue il re-render delle stringhe `\<Trans>` e
+una traduzione manca. Cambiare lingua nell'host esegue nuovamente il render delle stringhe `Trans` e
 `useTranslate().t` in tempo reale.
 
 Poiché i cataloghi vengono compilati in fase di build, aggiornare una traduzione significa
@@ -119,6 +119,13 @@ Le traduzioni vengono compilate da `twenty dev:build` (e `twenty apply`). La mod
 con una build una tantum.
 </Note>
 
-I figli di testo di `<Trans>` possono estendersi su più righe — gli spazi bianchi vengono compressi
-nello stesso modo in cui JSX li comprime, quindi `<Trans>Welcome\n  back</Trans>` e la chiave estratta
-diventano entrambi `Welcome back`.
+I figli di testo di `Trans` possono estendersi su più righe — gli spazi bianchi vengono compressi
+nello stesso modo in cui JSX li comprime, quindi entrambe queste varianti vengono estratte con la chiave `Welcome back`:
+
+```tsx
+<Trans>Welcome back</Trans>
+<Trans>
+  Welcome
+  back
+</Trans>
+```

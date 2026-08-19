@@ -68,7 +68,6 @@ describe('ClientConfigController', () => {
         isMultiWorkspaceEnabled: true,
         isEmailVerificationRequired: false,
         defaultSubdomain: 'app',
-        subdomainMinLength: 3,
         frontDomain: 'localhost',
         publicFunctionDomain: null,
         support: {
@@ -97,7 +96,7 @@ describe('ClientConfigController', () => {
         analyticsEnabled: false,
         canManageFeatureFlags: true,
         publicFeatureFlags: [],
-        isCookieSessionEnabled: false,
+        isCookieSessionEnabled: true,
         isMicrosoftMessagingEnabled: false,
         isMicrosoftCalendarEnabled: false,
         isGoogleMessagingEnabled: false,

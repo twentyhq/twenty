@@ -58,6 +58,8 @@ export const InviteTeam = () => {
   const creditsRewardPerUser = onboardingConfig?.inviteTeamCreditsRewardPerUser;
   const transition = useOnboardingMotionTransition();
 
+  const canRemoveEmailField = fields.length > 1;
+
   return (
     <StyledOnboardingStepPage>
       <StyledOnboardingStepHeading>
@@ -108,8 +110,10 @@ export const InviteTeam = () => {
                       onBlur={onBlur}
                       error={error?.message}
                       onChange={onChange}
-                      RightIcon={IconX}
-                      onRightIconClick={() => remove(index)}
+                      RightIcon={canRemoveEmailField ? IconX : undefined}
+                      onRightIconClick={
+                        canRemoveEmailField ? () => remove(index) : undefined
+                      }
                       noErrorHelper
                       fullWidth
                     />

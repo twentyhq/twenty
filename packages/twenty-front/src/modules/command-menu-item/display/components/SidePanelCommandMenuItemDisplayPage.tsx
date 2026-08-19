@@ -1,16 +1,17 @@
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
 import { PINNED_COMMAND_MENU_ITEMS_GAP } from '@/command-menu-item/display/constants/PinnedCommandMenuItemsGap';
-import { commandMenuPinnedInlineLayoutState } from '@/command-menu-item/display/states/commandMenuPinnedInlineLayoutState';
+import { commandMenuPinnedInlineLayoutFamilyState } from '@/command-menu-item/display/states/commandMenuPinnedInlineLayoutFamilyState';
 import { getVisibleCommandMenuItemCountForContainerWidth } from '@/command-menu-item/display/utils/getVisibleCommandMenuItemCountForContainerWidth';
 import { groupCommandMenuItems } from '@/command-menu-item/utils/groupCommandMenuItems';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useFilterCommandMenuItemsWithSidePanelSearch } from '@/side-panel/pages/root/hooks/useFilterCommandMenuItemsWithSidePanelSearch';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
-import { isNumber } from '@sniptt/guards';
+import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { useContext, useMemo } from 'react';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
@@ -21,8 +22,10 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
   const { commandMenuItems, commandMenuContextApi } =
     useContext(CommandMenuContext);
 
-  const commandMenuPinnedInlineLayout = useAtomStateValue(
-    commandMenuPinnedInlineLayoutState,
+  // The command menu list surfaces whatever overflowed out of the page header.
+  const commandMenuPinnedInlineLayout = useAtomFamilyStateValue(
+    commandMenuPinnedInlineLayoutFamilyState,
+    'page-header',
   );
 
   const { filterCommandMenuItemsWithSidePanelSearch } =
@@ -79,10 +82,11 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     ? pinnedCommandMenuItems.slice(visiblePinnedCommandMenuItemCount)
     : pinnedCommandMenuItems;
 
-  const pinnedItemsToFilter =
-    sidePanelSearch.length > 0
-      ? pinnedCommandMenuItems
-      : pinnedOverflowCommandMenuItems;
+  const isSearchActive = isNonEmptyString(sidePanelSearch.trim());
+
+  const pinnedItemsToFilter = isSearchActive
+    ? pinnedCommandMenuItems
+    : pinnedOverflowCommandMenuItems;
 
   const matchingPinnedItems =
     filterCommandMenuItemsWithSidePanelSearch(pinnedItemsToFilter);
@@ -90,16 +94,26 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     unpinnedCommandMenuItems,
   );
 
-  const noResults = !matchingPinnedItems.length && !matchingOtherItems.length;
+  const hasNoMatchingItems =
+    !matchingPinnedItems.length && !matchingOtherItems.length;
+
+  const shouldDisplayFallbackItems =
+    hasNoMatchingItems && fallbackCommandMenuItems.length > 0;
+
+  const shouldDisplayNoResults =
+    isSearchActive && hasNoMatchingItems && !shouldDisplayFallbackItems;
 
   const selectableItemIds = [
     ...matchingPinnedItems,
     ...matchingOtherItems,
-    ...(noResults ? fallbackCommandMenuItems : []),
+    ...(shouldDisplayFallbackItems ? fallbackCommandMenuItems : []),
   ].map((item) => item.id);
 
   return (
-    <SidePanelList selectableItemIds={selectableItemIds} noResults={noResults}>
+    <SidePanelList
+      selectableItemIds={selectableItemIds}
+      noResults={shouldDisplayNoResults}
+    >
       {matchingPinnedItems.length > 0 && (
         <SidePanelGroup heading={t`Pinned`}>
           {matchingPinnedItems.map((item) => (
@@ -114,7 +128,7 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
           ))}
         </SidePanelGroup>
       )}
-      {noResults && fallbackCommandMenuItems.length > 0 && (
+      {shouldDisplayFallbackItems && (
         <SidePanelGroup heading={t`Fallback`}>
           {fallbackCommandMenuItems.map((item) => (
             <CommandMenuItemRenderer item={item} key={item.id} />

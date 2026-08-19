@@ -1,6 +1,15 @@
+import {
+  CalendarChannelVisibility,
+  MessageChannelVisibility,
+} from 'twenty-shared/types';
+
 import { deleteConnectedAccount } from 'test/integration/metadata/suites/connected-account/utils/delete-connected-account.util';
 import { getConnectedImapSmtpCaldavAccount } from 'test/integration/metadata/suites/connected-account/utils/get-connected-imap-smtp-caldav-account.util';
 import { saveImapSmtpCaldavAccount } from 'test/integration/metadata/suites/connected-account/utils/save-imap-smtp-caldav-account.util';
+import {
+  queryCalendarChannels,
+  queryMessageChannels,
+} from 'test/integration/utils/query-messaging.util';
 
 import { EmailConnectionSecurity } from 'src/engine/core-modules/imap-smtp-caldav-connection/enums/email-connection-security.enum';
 
@@ -235,5 +244,44 @@ describe('Successful save IMAP/SMTP/CALDAV account', () => {
       },
       CALDAV: null,
     });
+  });
+
+  it('should create message and calendar channels with METADATA visibility', async () => {
+    const { data } = await saveImapSmtpCaldavAccount({
+      expectToFail: false,
+      input: {
+        handle: 'test-visibility@example.com',
+        connectionParameters: {
+          IMAP: {
+            host: 'imap.fastmail.com',
+            port: 993,
+            username: 'user@example.com',
+            password: 'test-password',
+            connectionSecurity: EmailConnectionSecurity.SSL_TLS,
+          },
+          CALDAV: {
+            host: 'caldav.fastmail.com',
+            port: 443,
+            username: 'user@example.com',
+            password: 'test-password',
+            connectionSecurity: EmailConnectionSecurity.SSL_TLS,
+          },
+        },
+      },
+    });
+
+    accountIdsToCleanup.push(data.connectedAccountId);
+
+    const messageChannel = (await queryMessageChannels()).find(
+      (channel) => channel.connectedAccountId === data.connectedAccountId,
+    );
+
+    expect(messageChannel?.visibility).toBe(MessageChannelVisibility.METADATA);
+
+    const [calendarChannel] = await queryCalendarChannels(
+      data.connectedAccountId,
+    );
+
+    expect(calendarChannel.visibility).toBe(CalendarChannelVisibility.METADATA);
   });
 });

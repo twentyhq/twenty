@@ -1,17 +1,24 @@
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { isFieldMetadataItemAvailableAsCalendarField } from '@/object-record/record-calendar/utils/isFieldMetadataItemAvailableAsCalendarField';
 import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
+import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
 import { getFieldWidgetAvailableDisplayModes } from '@/page-layout/widgets/field/utils/getFieldWidgetDisplayModeConfig';
+import { getFieldWidgetEffectiveDisplayMode } from '@/page-layout/widgets/field/utils/getFieldWidgetEffectiveDisplayMode';
 import { getFieldWidgetRelationTraversal } from '@/page-layout/widgets/field/utils/getFieldWidgetRelationTraversal';
 import { resolveFieldWidgetNestedRelation } from '@/page-layout/widgets/field/utils/resolveFieldWidgetNestedRelation';
 import { useAddDraftViewForFieldRelationTableWidget } from '@/page-layout/widgets/record-table/hooks/useAddDraftViewForFieldRelationTableWidget';
-import {
-  type RecordTableWidgetLayoutViewType,
-  useRecordTableWidgetLayoutCallbacks,
-} from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
+import { useRecordTableWidgetLayoutCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
+import { useRecordTableWidgetLayoutPickerOptions } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutPickerOptions';
 import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
-import { isFieldMetadataItemAvailableAsWidgetGroupByField } from '@/page-layout/widgets/record-table/utils/isFieldMetadataItemAvailableAsWidgetGroupByField';
+import {
+  getRecordTableWidgetLayoutViewType,
+  type RecordTableWidgetLayoutViewType,
+} from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
+import {
+  getSelectableLayoutViewTypes,
+  isSelectableLayout,
+} from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetLayoutPickerOptions';
+import { RecordTableWidgetLayoutMenuItems } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableWidgetLayoutMenuItems';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
@@ -27,15 +34,13 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type IconComponent,
-  IconCalendar,
   IconFileText,
   IconId,
-  IconLayoutKanban,
   IconListDetails,
   IconTable,
 } from 'twenty-ui/icon';
 import { MenuItemSelect } from 'twenty-ui/navigation';
-import { FieldDisplayMode, ViewType } from '~/generated-metadata/graphql';
+import { FieldDisplayMode } from '~/generated-metadata/graphql';
 
 const DISPLAY_MODE_ICONS: Record<FieldDisplayMode, IconComponent> = {
   [FieldDisplayMode.FIELD]: IconListDetails,
@@ -45,10 +50,9 @@ const DISPLAY_MODE_ICONS: Record<FieldDisplayMode, IconComponent> = {
   [FieldDisplayMode.TABLE]: IconTable,
 };
 
-// One flat picker: inline display modes (Field / Card / Editor) followed by the
-// embedded-view layouts (Table / Kanban / Calendar). Picking a layout selects
-// the TABLE display mode under the hood — users choose "Kanban" directly
-// instead of "Table" first and a layout second.
+// One flat picker: inline display modes followed by the embedded-view layouts.
+// Picking a layout selects the TABLE display mode under the hood — users choose
+// "Kanban" directly instead of "Table" first and a layout second.
 export const FieldWidgetLayoutDropdownContent = () => {
   const { t } = useLingui();
 
@@ -60,11 +64,15 @@ export const FieldWidgetLayoutDropdownContent = () => {
     | FieldConfiguration
     | undefined;
 
-  const currentDisplayMode = fieldConfiguration?.fieldDisplayMode;
+  const currentDisplayMode = isDefined(fieldConfiguration)
+    ? getFieldWidgetEffectiveDisplayMode(fieldConfiguration)
+    : undefined;
   const currentFieldMetadataId = fieldConfiguration?.fieldMetadataId;
   const currentNestedRelationFieldMetadataId =
     fieldConfiguration?.nestedRelationFieldMetadataId;
-  const currentViewId = fieldConfiguration?.viewId ?? null;
+  const currentViewId = isDefined(fieldConfiguration)
+    ? getWidgetConfigurationViewId(fieldConfiguration)
+    : null;
 
   const { fieldMetadataItem } = useFieldMetadataItemById(
     currentFieldMetadataId ?? '',
@@ -100,9 +108,6 @@ export const FieldWidgetLayoutDropdownContent = () => {
     : availableDisplayModes.filter(
         (displayMode) => displayMode !== FieldDisplayMode.TABLE,
       );
-  const hasEmbeddedViewLayouts = availableDisplayModes.includes(
-    FieldDisplayMode.TABLE,
-  );
 
   // A configured but unresolvable second hop yields no traversal at all, so a
   // stale nested widget cannot fall back to scoping by its first hop.
@@ -120,6 +125,14 @@ export const FieldWidgetLayoutDropdownContent = () => {
   const relationTargetFieldMetadataId =
     relationTraversal?.relationTargetFieldMetadataId ?? null;
 
+  // Every embedded layout renders a view scoped by the relation's inverse
+  // field, so a relation the traversal cannot resolve offers none of them
+  // rather than entries that would leave the widget with nothing to render.
+  const hasEmbeddedViewLayouts =
+    availableDisplayModes.includes(FieldDisplayMode.TABLE) &&
+    isDefined(targetObjectMetadataId) &&
+    isDefined(inverseFieldMetadataId);
+
   const targetObjectMetadataItem = isNestedRelationWidget
     ? resolvedNestedRelation?.nestedRelationTargetObjectMetadataItem
     : objectMetadataItems.find(
@@ -127,18 +140,11 @@ export const FieldWidgetLayoutDropdownContent = () => {
           objectMetadataItemToFind.id === targetObjectMetadataId,
       );
 
-  const defaultGroupByFieldMetadataItem =
-    (targetObjectMetadataItem?.readableFields ?? []).find(
-      isFieldMetadataItemAvailableAsWidgetGroupByField,
-    ) ?? null;
-
-  const defaultCalendarFieldMetadataItem =
-    (targetObjectMetadataItem?.readableFields ?? []).find(
-      isFieldMetadataItemAvailableAsCalendarField,
-    ) ?? null;
-
-  const isKanbanAvailable = isDefined(defaultGroupByFieldMetadataItem);
-  const isCalendarAvailable = isDefined(defaultCalendarFieldMetadataItem);
+  const {
+    layoutOptions,
+    defaultGroupByFieldMetadataItem,
+    defaultCalendarFieldMetadataItem,
+  } = useRecordTableWidgetLayoutPickerOptions(targetObjectMetadataItem);
 
   const { view: embeddedWidgetView } = useRecordTableWidgetViewForDisplay({
     viewId: currentViewId ?? '',
@@ -148,12 +154,9 @@ export const FieldWidgetLayoutDropdownContent = () => {
 
   const isTableDisplayMode = currentDisplayMode === FieldDisplayMode.TABLE;
 
-  const currentEmbeddedViewType: RecordTableWidgetLayoutViewType =
-    embeddedWidgetView?.type === ViewType.KANBAN_WIDGET
-      ? ViewType.KANBAN_WIDGET
-      : embeddedWidgetView?.type === ViewType.CALENDAR_WIDGET
-        ? ViewType.CALENDAR_WIDGET
-        : ViewType.TABLE_WIDGET;
+  const currentEmbeddedViewType = getRecordTableWidgetLayoutViewType(
+    embeddedWidgetView?.type,
+  );
 
   const dropdownId = useAvailableComponentInstanceIdOrThrow(
     DropdownComponentInstanceContext,
@@ -192,38 +195,35 @@ export const FieldWidgetLayoutDropdownContent = () => {
     if (!isDefined(widgetInEditMode)) {
       return;
     }
-    if (targetViewType === ViewType.KANBAN_WIDGET && !isKanbanAvailable) {
-      return;
-    }
-    if (targetViewType === ViewType.CALENDAR_WIDGET && !isCalendarAvailable) {
+    if (!isSelectableLayout(layoutOptions, targetViewType)) {
       return;
     }
 
-    if (
-      !isDefined(currentViewId) &&
-      isDefined(targetObjectMetadataId) &&
-      isDefined(inverseFieldMetadataId)
-    ) {
-      const viewId = addDraftViewForFieldRelationTableWidget({
-        widgetId: widgetInEditMode.id,
-        targetObjectMetadataId,
-        inverseFieldMetadataId,
-        relationTargetFieldMetadataId,
-      });
+    const viewId =
+      currentViewId ??
+      (isDefined(targetObjectMetadataId) && isDefined(inverseFieldMetadataId)
+        ? addDraftViewForFieldRelationTableWidget({
+            widgetId: widgetInEditMode.id,
+            targetObjectMetadataId,
+            inverseFieldMetadataId,
+            relationTargetFieldMetadataId,
+          })
+        : undefined);
 
-      updateCurrentWidgetConfig({
-        configToUpdate: {
-          fieldDisplayMode: FieldDisplayMode.TABLE,
-          viewId,
-        },
-      });
-    } else {
-      updateCurrentWidgetConfig({
-        configToUpdate: {
-          fieldDisplayMode: FieldDisplayMode.TABLE,
-        },
-      });
+    // Creating the draft view still fails if the target object is not loaded,
+    // and switching to the table display mode without one would leave the
+    // widget with nothing to render, so it keeps the display mode it has.
+    if (!isDefined(viewId)) {
+      closeDropdown();
+      return;
     }
+
+    updateCurrentWidgetConfig({
+      configToUpdate: {
+        fieldDisplayMode: FieldDisplayMode.TABLE,
+        viewId,
+      },
+    });
 
     handleLayoutChange({
       targetViewType,
@@ -247,11 +247,7 @@ export const FieldWidgetLayoutDropdownContent = () => {
         selectableItemIdArray={[
           ...inlineDisplayModes,
           ...(hasEmbeddedViewLayouts
-            ? [
-                ViewType.TABLE_WIDGET,
-                ...(isKanbanAvailable ? [ViewType.KANBAN_WIDGET] : []),
-                ...(isCalendarAvailable ? [ViewType.CALENDAR_WIDGET] : []),
-              ]
+            ? getSelectableLayoutViewTypes(layoutOptions)
             : []),
         ]}
       >
@@ -275,63 +271,14 @@ export const FieldWidgetLayoutDropdownContent = () => {
           </SelectableListItem>
         ))}
         {hasEmbeddedViewLayouts && (
-          <>
-            <SelectableListItem
-              itemId={ViewType.TABLE_WIDGET}
-              onEnter={() => handleSelectViewLayout(ViewType.TABLE_WIDGET)}
-            >
-              <MenuItemSelect
-                text={t`Table`}
-                LeftIcon={IconTable}
-                selected={
-                  isTableDisplayMode &&
-                  currentEmbeddedViewType === ViewType.TABLE_WIDGET
-                }
-                focused={selectedItemId === ViewType.TABLE_WIDGET}
-                onClick={() => handleSelectViewLayout(ViewType.TABLE_WIDGET)}
-              />
-            </SelectableListItem>
-            <SelectableListItem
-              itemId={ViewType.KANBAN_WIDGET}
-              onEnter={() => handleSelectViewLayout(ViewType.KANBAN_WIDGET)}
-            >
-              <MenuItemSelect
-                text={t`Kanban`}
-                LeftIcon={IconLayoutKanban}
-                disabled={!isKanbanAvailable}
-                contextualText={
-                  !isKanbanAvailable ? t`Needs a Select field` : undefined
-                }
-                contextualTextPosition="right"
-                selected={
-                  isTableDisplayMode &&
-                  currentEmbeddedViewType === ViewType.KANBAN_WIDGET
-                }
-                focused={selectedItemId === ViewType.KANBAN_WIDGET}
-                onClick={() => handleSelectViewLayout(ViewType.KANBAN_WIDGET)}
-              />
-            </SelectableListItem>
-            <SelectableListItem
-              itemId={ViewType.CALENDAR_WIDGET}
-              onEnter={() => handleSelectViewLayout(ViewType.CALENDAR_WIDGET)}
-            >
-              <MenuItemSelect
-                text={t`Calendar`}
-                LeftIcon={IconCalendar}
-                disabled={!isCalendarAvailable}
-                contextualText={
-                  !isCalendarAvailable ? t`Needs a Date field` : undefined
-                }
-                contextualTextPosition="right"
-                selected={
-                  isTableDisplayMode &&
-                  currentEmbeddedViewType === ViewType.CALENDAR_WIDGET
-                }
-                focused={selectedItemId === ViewType.CALENDAR_WIDGET}
-                onClick={() => handleSelectViewLayout(ViewType.CALENDAR_WIDGET)}
-              />
-            </SelectableListItem>
-          </>
+          <RecordTableWidgetLayoutMenuItems
+            layoutOptions={layoutOptions}
+            selectedViewType={
+              isTableDisplayMode ? currentEmbeddedViewType : undefined
+            }
+            focusedItemId={selectedItemId}
+            onSelect={handleSelectViewLayout}
+          />
         )}
       </SelectableList>
     </DropdownMenuItemsContainer>

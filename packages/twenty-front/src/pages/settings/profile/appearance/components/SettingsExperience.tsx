@@ -1,5 +1,8 @@
+import { styled } from '@linaria/react';
+
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { FormatPreferencesSettings } from '@/settings/experience/components/FormatPreferencesSettings';
+import { UiScalePicker } from '@/settings/experience/components/UiScalePicker';
 import { OpenRecordInPreferencePicker } from '@/settings/experience/components/OpenRecordInPreferencePicker';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
@@ -9,7 +12,14 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/typography';
 import { ColorSchemePicker } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { LocalePicker } from '~/pages/settings/profile/appearance/components/LocalePicker';
+
+const StyledInterfaceControls = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[4]};
+`;
 
 export const SettingsExperience = () => {
   const { colorScheme, setColorScheme } = useColorScheme();
@@ -40,18 +50,21 @@ export const SettingsExperience = () => {
 
         <Section>
           <H2Title
-            title={t`Navigation`}
-            description={t`Choose where records open by default. Some objects may use a workspace setting`}
+            title={t`Interface`}
+            description={t`Select your language and adjust the size of the interface`}
           />
-          <OpenRecordInPreferencePicker />
+          <StyledInterfaceControls>
+            <LocalePicker />
+            <UiScalePicker />
+          </StyledInterfaceControls>
         </Section>
 
         <Section>
           <H2Title
-            title={t`Language`}
-            description={t`Select your preferred language`}
+            title={t`Navigation`}
+            description={t`Choose where records open by default. Some objects may use a workspace setting`}
           />
-          <LocalePicker />
+          <OpenRecordInPreferencePicker />
         </Section>
 
         <Section>

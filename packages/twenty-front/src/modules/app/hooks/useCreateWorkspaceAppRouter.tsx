@@ -111,9 +111,15 @@ const StandalonePageLayoutPage = lazy(() =>
   })),
 );
 
-const WorkspaceSetup = lazyWithPreload(() =>
-  import('~/pages/onboarding/WorkspaceSetup').then((module) => ({
-    default: module.WorkspaceSetup,
+const AiChatPage = lazy(() =>
+  import('~/pages/ai-chat/AiChatPage').then((module) => ({
+    default: module.AiChatPage,
+  })),
+);
+
+const MobileHomePage = lazy(() =>
+  import('~/pages/mobile-home/MobileHomePage').then((module) => ({
+    default: module.MobileHomePage,
   })),
 );
 
@@ -131,7 +137,6 @@ const preloadOnboardingPages = () => {
   InviteTeam.preload();
   BookCall.preload();
   ChooseYourPlan.preload();
-  WorkspaceSetup.preload();
 
   return null;
 };
@@ -148,14 +153,6 @@ const createWorkspaceAppRouter = (
       >
         <Route element={<MinimalMetadataGate />}>
           <Route element={<DefaultLayout />}>
-            <Route
-              path={AppPath.WorkspaceSetup}
-              element={
-                <LazyRoute fallback={null}>
-                  <WorkspaceSetup />
-                </LazyRoute>
-              }
-            />
             <Route element={<MainAppLayoutWithSidePanel />}>
               <Route
                 path={indexAppPath.getIndexAppPath()}
@@ -182,6 +179,22 @@ const createWorkspaceAppRouter = (
                 element={
                   <LazyRoute>
                     <StandalonePageLayoutPage />
+                  </LazyRoute>
+                }
+              />
+              <Route
+                path={AppPath.AiChat}
+                element={
+                  <LazyRoute>
+                    <AiChatPage />
+                  </LazyRoute>
+                }
+              />
+              <Route
+                path={AppPath.Home}
+                element={
+                  <LazyRoute>
+                    <MobileHomePage />
                   </LazyRoute>
                 }
               />

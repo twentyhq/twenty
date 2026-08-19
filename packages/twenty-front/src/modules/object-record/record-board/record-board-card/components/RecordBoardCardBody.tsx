@@ -19,6 +19,7 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 export const RecordBoardCardBody = () => {
   const { recordId, isRecordReadOnly, isDragOverlay } = useContext(
@@ -69,6 +70,10 @@ export const RecordBoardCardBody = () => {
       {visibleRecordFieldsExceptLabelIdentifier.map((recordField, index) => {
         const correspondingFieldDefinition =
           fieldDefinitionByFieldMetadataItemId[recordField.fieldMetadataItemId];
+
+        if (!isDefined(correspondingFieldDefinition)) {
+          return null;
+        }
 
         return (
           <StopPropagationContainer key={recordField.fieldMetadataItemId}>

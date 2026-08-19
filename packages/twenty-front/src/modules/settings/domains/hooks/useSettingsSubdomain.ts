@@ -1,11 +1,9 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { getSubdomainValidationSchema } from '@/settings/domains/utils/getSubdomainValidationSchema';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
@@ -18,8 +16,7 @@ export const SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID =
 
 export const useSettingsSubdomain = () => {
   const { t } = useLingui();
-  const { subdomainMinLength } = useAtomStateValue(domainConfigurationState);
-  const subdomainSchema = getSubdomainValidationSchema(subdomainMinLength);
+  const subdomainSchema = getSubdomainValidationSchema();
 
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);

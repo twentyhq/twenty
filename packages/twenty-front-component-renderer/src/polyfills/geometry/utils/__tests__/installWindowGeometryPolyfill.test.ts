@@ -1,5 +1,5 @@
-import { createViewportGeometrySnapshotFixture } from '@/__tests__/createViewportGeometrySnapshotFixture';
-import { createWorkerGeometryStoreStub } from '@/__tests__/createWorkerGeometryStoreStub';
+import { createViewportGeometrySnapshotFixture } from '@/testing/createViewportGeometrySnapshotFixture';
+import { createWorkerGeometryStoreStub } from '@/testing/createWorkerGeometryStoreStub';
 import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot';
 import { installWindowGeometryPolyfill } from '../installWindowGeometryPolyfill';
 

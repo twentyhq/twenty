@@ -15,13 +15,11 @@ import { type TimelineActivityWorkspaceEntity } from 'src/modules/timeline/stand
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export class CompanyWorkspaceEntity {
-  // Base fields
   id: string;
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
 
-  // Company-specific fields
   name: string | null;
   domainName: LinksMetadata;
   linkedinLink: LinksMetadata | null;
@@ -34,7 +32,6 @@ export class CompanyWorkspaceEntity {
   addressOld: string | null;
   searchVector: string;
 
-  // Relations
   people: EntityRelation<PersonWorkspaceEntity[]>;
   accountOwner: EntityRelation<WorkspaceMemberWorkspaceEntity> | null;
   accountOwnerId: string | null;

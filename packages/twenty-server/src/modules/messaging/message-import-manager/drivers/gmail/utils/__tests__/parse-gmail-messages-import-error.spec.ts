@@ -41,12 +41,12 @@ describe('GmailMessagesImportErrorHandler', () => {
     );
   });
 
-  it('should handle 401 Invalid Credentials', () => {
+  it('should handle 401 Invalid Credentials as temporary so the next attempt can refresh the token', () => {
     const error = getGmailApiError({ code: 401 });
 
     expect(() => handler.handleError(error, messageExternalId)).toThrow(
       expect.objectContaining({
-        code: MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+        code: MessageImportDriverExceptionCode.TEMPORARY_ERROR,
       }),
     );
   });
@@ -81,12 +81,12 @@ describe('GmailMessagesImportErrorHandler', () => {
     );
   });
 
-  it('should handle 403 Domain Policy Error', () => {
+  it('should handle 403 Domain Policy Error as temporary', () => {
     const error = getGmailApiError({ code: 403, reason: 'domainPolicy' });
 
     expect(() => handler.handleError(error, messageExternalId)).toThrow(
       expect.objectContaining({
-        code: MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+        code: MessageImportDriverExceptionCode.TEMPORARY_ERROR,
       }),
     );
   });

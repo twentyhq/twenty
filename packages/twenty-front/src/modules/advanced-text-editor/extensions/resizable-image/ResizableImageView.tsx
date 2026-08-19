@@ -66,13 +66,11 @@ export const ResizableImageView = (props: ResizableImageViewProps) => {
 
   const imageWrapperRef = useRef<HTMLDivElement>(null);
 
-  // Controls visibility of resize handles when hovering over the image
   const [isHovering, setIsHovering] = useState(false);
   const [width, setWidth] = useState(initialWidth || 0);
   // Controls actual resize operation state (null = not resizing, object = actively resizing)
   const [resizeParams, setResizeParams] = useState<ResizeParams | null>(null);
 
-  // Create stable event handlers using a closure approach
   const createMouseHandlers = useCallback(() => {
     let currentResizeParams: ResizeParams | null = null;
 

@@ -172,6 +172,10 @@ const handler = async (event: RoutePayload) => {
 状态码必须是有效的 HTTP 状态码（介于 100 和 599 之间）。 响应头名称的匹配不区分大小写。
 </Note>
 
+#### 平台错误响应
+
+除了处理程序自身的响应之外，在某些情况下，平台会直接对路由调用做出响应：当路由或函数不存在时返回 `404`，当应用停止时返回 `403`，当触发执行速率限制时返回 `429`，以及当应用的生产环境 `dependencies` 过大而无法安装时返回 `422`——请参见[依赖项大小限制](/l/zh/developers/extend/apps/getting-started/project-structure#dependencies)。
+
 #### 服务端路由触发器
 
 `httpRouteTriggerSettings` 在 `/s/` 下暴露一个函数，并根据请求主机解析 workspace——这在每个 workspace 都有自己域名时有效。 然而，第三方服务商会将每个租户的事件发送到**同一个** URL。 在这种情况下，请使用 `serverRouteTriggerSettings`。

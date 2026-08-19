@@ -45,6 +45,7 @@ import {
   MessagingMessageListFetchJob,
   type MessagingMessageListFetchJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
+import { OnboardingRecentMessagesImportService } from 'src/modules/onboarding-recent-messages-import/services/onboarding-recent-messages-import.service';
 import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
@@ -65,6 +66,7 @@ export class MicrosoftAPIsService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly syncMessageFoldersService: SyncMessageFoldersService,
     private readonly emailAliasManagerService: EmailAliasManagerService,
+    private readonly onboardingRecentMessagesImportService: OnboardingRecentMessagesImportService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectRepository(UserWorkspaceEntity)
@@ -307,6 +309,12 @@ export class MicrosoftAPIsService {
                   messageChannelId: messageChannel.id,
                 },
               );
+              this.onboardingRecentMessagesImportService
+                .importRecentMessages({
+                  messageChannelId: messageChannel.id,
+                  workspaceId,
+                })
+                .catch(() => undefined);
             }
           }
         }

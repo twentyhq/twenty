@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -16,6 +17,8 @@ import { GlobalWorkspaceDataSourceService } from 'src/engine/twenty-orm/global-w
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { WorkspaceORMEntityMetadatasCacheService } from 'src/engine/twenty-orm/global-workspace-datasource/workspace-orm-entity-metadatas-cache.service';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
+import { TwentyORMV2Module } from 'src/engine/twenty-orm-v2/twenty-orm-v2.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
@@ -29,6 +32,7 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
       ObjectMetadataEntity,
       FieldMetadataEntity,
       ApplicationEntity,
+      FeatureFlagEntity,
     ]),
     WorkspaceCacheStorageModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
@@ -37,6 +41,7 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
     WorkspaceEventEmitterModule,
     WorkspaceCacheModule,
     TwentyORMModule,
+    TwentyORMV2Module,
   ],
   providers: [
     GlobalWorkspaceDataSourceService,
@@ -45,6 +50,7 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
     EntitySchemaColumnFactory,
     EntitySchemaRelationFactory,
     WorkspaceORMEntityMetadatasCacheService,
+    provideWorkspaceScopedRepository(FeatureFlagEntity),
   ],
   exports: [GlobalWorkspaceDataSourceService, GlobalWorkspaceOrmManager],
 })

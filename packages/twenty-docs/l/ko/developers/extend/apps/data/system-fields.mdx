@@ -142,23 +142,26 @@ const attachmentTargetRocketFieldId =
   `getSystemViewUniversalIdentifier`와 `getSystemViewFieldUniversalIdentifier`는 `twenty-sdk` 2.26부터 사용 가능하며, Twenty 서버 버전 2.26 이상이 필요합니다.
 </Note>
 
-서버는 또한 모든 객체에 대해 **시스템 뷰**를 프로비저닝합니다. 즉, 표시 가능한 각 필드마다 하나의 열이 있는 기본 목록 보기(`All {objectLabelPlural}`, `ViewKey.INDEX`를 키로 사용)를 제공합니다. 시스템 관계 필드와 마찬가지로, 이들의 식별자는 **이름에 의존하지 않고** 도출되므로, 객체나 필드의 이름을 변경해도 식별자는 절대 바뀌지 않습니다.
+서버는 또한 모든 객체에 대해 **시스템 뷰**를 프로비저닝합니다. 즉, 기본 목록 보기(`All {objectLabelPlural}`; 키는 `SYSTEM_VIEW_KEYS.INDEX`에서 파생된 `ViewKey.INDEX`)로, 표시 가능한 각 필드마다 하나의 열이 있습니다. 시스템 관계 필드와 마찬가지로, 이들의 식별자는 **이름에 의존하지 않고** 도출되므로, 객체나 필드의 이름을 변경해도 식별자는 절대 바뀌지 않습니다.
 
 뷰를 해석하려면 `getSystemViewUniversalIdentifier`를 사용하세요:
 
 ```ts
-import { getSystemViewUniversalIdentifier, ViewKey } from 'twenty-sdk/define';
+import {
+  getSystemViewUniversalIdentifier,
+  SYSTEM_VIEW_KEYS,
+} from 'twenty-sdk/define';
 
 const rocketIndexViewId = getSystemViewUniversalIdentifier({
   objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
-  viewKey: ViewKey.INDEX,
+  viewKey: SYSTEM_VIEW_KEYS.INDEX,
 });
 ```
 
 * `objectMetadataApplicationUniversalIdentifier`는 **객체**를 소유하는 애플리케이션으로, 뷰의 네임스페이스 기준이 됩니다.
 * `objectUniversalIdentifier`는 뷰가 목록으로 표시하는 객체입니다.
-* `viewKey`는 시스템 뷰 키이며, 현재는 `ViewKey.INDEX`입니다.
+* `viewKey`는 시스템 뷰를 구분하는 값입니다. 기본 목록 보기를 위한 `SYSTEM_VIEW_KEYS.INDEX`, 레코드 페이지 필드 위젯 뷰를 위한 `SYSTEM_VIEW_KEYS.FIELDS_WIDGET`이 있습니다. 이는 파생을 위한 키이며, 이 중 `INDEX`만 뷰 행에 함께 저장됩니다.
 
 해석된 ID는 [`NavigationMenuItemType.VIEW`](/l/ko/developers/extend/apps/layout/navigation-menu-items) 사이드바 항목처럼, `viewUniversalIdentifier`가 필요한 모든 곳에서 사용할 수 있습니다. 객체의 기본 목록만 단순히 열고 싶다면, 파생 과정이 필요 없는 `targetObjectUniversalIdentifier`와 함께 `NavigationMenuItemType.OBJECT`를 사용하는 것이 좋습니다.
 

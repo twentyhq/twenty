@@ -43,6 +43,8 @@ export default defineField({
 
 * 파일 위치는 자유롭게 정할 수 있습니다. 규칙으로는 `src/fields/\<name>.field.ts`를 사용하지만, SDK는 `src/` 어디에서든 필드를 감지합니다.
 
+* `writability`는 필드별로도 설정할 수 있습니다. `MetadataWritability.APPLICATION`은 앱 자체의 로직 함수에서만 쓰기가 가능하도록 제한하고, `MetadataWritability.SYSTEM`은 플랫폼에서 관리하는 데이터에 예약되어 있습니다. 필드의 쓰기 가능 여부는 해당 객체의 수준보다 더 엄격하게만 설정할 수 있으며, 읽기 동작에는 영향을 주지 않습니다. 전체 의미는 [Objects](/l/ko/developers/extend/apps/data/objects)를 참조하세요.
+
 * 표준 페이지 레이아웃(예: Task 또는 Company 상세 페이지)에 탭을 추가하려면, `twenty-sdk/define`의 `STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS`와 함께 [`definePageLayoutTab`](/l/ko/developers/extend/apps/layout/page-layouts#definepagelayouttab)을(를) 사용하십시오.
 
 ## 기존 객체에 관계 추가하기

@@ -18,7 +18,7 @@ import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/uti
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
-@WorkspaceCache('flatRolePermissionFlagMaps')
+@WorkspaceCache('flatRolePermissionFlagMaps', { packingPonderation: 1 })
 export class WorkspaceFlatRolePermissionFlagMapCacheService extends WorkspaceCacheProvider<FlatRolePermissionFlagMaps> {
   constructor(
     @InjectRepository(RolePermissionFlagEntity)

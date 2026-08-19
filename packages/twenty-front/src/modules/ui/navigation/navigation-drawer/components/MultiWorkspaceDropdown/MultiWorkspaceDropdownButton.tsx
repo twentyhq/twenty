@@ -10,7 +10,13 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMemo } from 'react';
 
-export const MultiWorkspaceDropdownButton = () => {
+type MultiWorkspaceDropdownButtonProps = {
+  shouldHideLabel?: boolean;
+};
+
+export const MultiWorkspaceDropdownButton = ({
+  shouldHideLabel = false,
+}: MultiWorkspaceDropdownButtonProps) => {
   const [multiWorkspaceDropdown, setMultiWorkspaceDropdown] = useAtomState(
     multiWorkspaceDropdownState,
   );
@@ -32,13 +38,18 @@ export const MultiWorkspaceDropdownButton = () => {
   return (
     <Dropdown
       dropdownId={MULTI_WORKSPACE_DROPDOWN_ID}
-      dropdownOffset={{ y: -31, x: -5 }}
+      dropdownOffset={
+        // The drawer trigger is full width and the panel sits over it; the
+        // icon-only trigger is too small for that, so the panel drops below.
+        shouldHideLabel ? { y: 4, x: 0 } : { y: -31, x: -5 }
+      }
       clickableComponent={
         <MultiWorkspaceDropdownClickableComponent
           disabled={isLayoutCustomizationModeEnabled}
+          shouldHideLabel={shouldHideLabel}
         />
       }
-      clickableComponentWidth="100%"
+      clickableComponentWidth={shouldHideLabel ? 'auto' : '100%'}
       disableClickForClickableComponent={isLayoutCustomizationModeEnabled}
       dropdownComponents={<DropdownComponents />}
       onClose={() => {

@@ -21,14 +21,12 @@ export class UpdateViewFilterGroupPermissionGuard implements CanActivate {
 
     let entityId = '';
 
-    // For GraphQL: extract from args.id
     const args = gqlContext.getArgs();
 
     if (typeof args?.id === 'string') {
       entityId = args.id;
     }
 
-    // For REST: extract from URL params
     if (!entityId && typeof request.params?.id === 'string') {
       entityId = request.params.id;
     }

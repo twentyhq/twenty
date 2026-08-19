@@ -2,12 +2,10 @@ import { act, render } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter, Route, Routes, useNavigate } from 'react-router-dom';
 
-import { aiChatExpandedReturnLocationState } from '@/ai/states/aiChatExpandedReturnLocationState';
+import { AiChatPageContinueInSidePanelEffect } from '@/ai/components/AiChatPageContinueInSidePanelEffect';
 import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
-import { WorkspaceSetupChatSidePanelHandoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatSidePanelHandoffEffect';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { SidePanelAskAiHandoffEffect } from '@/side-panel/components/SidePanelAskAiHandoffEffect';
-import { useShouldShrinkSidePanelFromFullWidth } from '@/side-panel/hooks/useShouldShrinkSidePanelFromFullWidth';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -19,37 +17,28 @@ jest.mock('@/side-panel/hooks/useOpenAskAiPageInSidePanel', () => ({
   useOpenAskAiPageInSidePanel: () => ({ openAskAiPage: openAskAiPageMock }),
 }));
 
-jest.mock('framer-motion', () => ({
-  useReducedMotion: () => false,
-}));
+const onContinueChatFromFullWidthMock = jest.fn();
 
-let navigateAwayFromWorkspaceSetup: (() => void) | undefined;
+let navigateAwayFromChatPage: (() => void) | undefined;
 
-const WorkspaceSetupRoute = () => {
+const ChatPageRoute = () => {
   const navigate = useNavigate();
 
-  navigateAwayFromWorkspaceSetup = () => navigate('/objects/companies');
+  navigateAwayFromChatPage = () => navigate('/objects/companies');
 
-  return <WorkspaceSetupChatSidePanelHandoffEffect />;
+  return <AiChatPageContinueInSidePanelEffect />;
 };
 
-const SidePanelRoute = () => {
-  const shouldShrinkFromFullWidth = useShouldShrinkSidePanelFromFullWidth();
-
-  return (
-    <>
-      <SidePanelAskAiHandoffEffect />
-      <div data-testid="side-panel">{String(shouldShrinkFromFullWidth)}</div>
-    </>
-  );
-};
-
-const RouterUnderTest = () => (
+const RouterUnderTest = ({ initialPath }: { initialPath: string }) => (
   <JotaiProvider store={jotaiStore}>
-    <MemoryRouter initialEntries={['/workspace-setup']}>
+    <MemoryRouter initialEntries={[initialPath]}>
+      {/* The handoff lives in the persistent layout, outside the routes. */}
+      <SidePanelAskAiHandoffEffect
+        onContinueChatFromFullWidth={onContinueChatFromFullWidthMock}
+      />
       <Routes>
-        <Route path="/workspace-setup" element={<WorkspaceSetupRoute />} />
-        <Route path="/objects/companies" element={<SidePanelRoute />} />
+        <Route path="/chat/:threadId?" element={<ChatPageRoute />} />
+        <Route path="/objects/companies" element={<div />} />
       </Routes>
     </MemoryRouter>
   </JotaiProvider>
@@ -60,43 +49,51 @@ describe('SidePanelAskAiHandoffEffect', () => {
     jest.clearAllMocks();
     sessionStorage.clear();
     resetJotaiStore();
-    navigateAwayFromWorkspaceSetup = undefined;
+    navigateAwayFromChatPage = undefined;
   });
 
-  it('should consume the marker and open the ask ai page when the workspace setup page unmounts in the same commit', () => {
+  it('should continue the chat in the side panel on the navigation leaving the chat page', () => {
     jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
-    jotaiStore.set(aiChatExpandedReturnLocationState.atom, '/objects/people');
 
-    const { getByTestId } = render(<RouterUnderTest />);
+    render(<RouterUnderTest initialPath="/chat" />);
 
     expect(jotaiStore.get(shouldContinueAiChatInSidePanelState.atom)).toBe(
       true,
     );
+    expect(openAskAiPageMock).not.toHaveBeenCalled();
 
     act(() => {
-      navigateAwayFromWorkspaceSetup?.();
+      navigateAwayFromChatPage?.();
     });
 
     expect(openAskAiPageMock).toHaveBeenCalledWith({
       resetNavigationStack: true,
     });
-    expect(getByTestId('side-panel')).toHaveTextContent('true');
+    expect(onContinueChatFromFullWidthMock).toHaveBeenCalled();
     expect(jotaiStore.get(shouldContinueAiChatInSidePanelState.atom)).toBe(
       false,
     );
     expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
       false,
     );
-    expect(jotaiStore.get(aiChatExpandedReturnLocationState.atom)).toBeNull();
   });
 
-  it('should do nothing when the marker is not set', () => {
-    render(
-      <JotaiProvider store={jotaiStore}>
-        <SidePanelAskAiHandoffEffect />
-      </JotaiProvider>,
-    );
+  it('should stay silent when the continuation marker was cleared before leaving', () => {
+    render(<RouterUnderTest initialPath="/chat" />);
+
+    act(() => {
+      jotaiStore.set(shouldContinueAiChatInSidePanelState.atom, false);
+      navigateAwayFromChatPage?.();
+    });
 
     expect(openAskAiPageMock).not.toHaveBeenCalled();
+    expect(onContinueChatFromFullWidthMock).not.toHaveBeenCalled();
+  });
+
+  it('should do nothing away from the chat page when the marker is not set', () => {
+    render(<RouterUnderTest initialPath="/objects/companies" />);
+
+    expect(openAskAiPageMock).not.toHaveBeenCalled();
+    expect(onContinueChatFromFullWidthMock).not.toHaveBeenCalled();
   });
 });

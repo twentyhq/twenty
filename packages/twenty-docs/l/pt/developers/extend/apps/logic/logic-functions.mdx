@@ -171,6 +171,10 @@ Por motivos de segurança, os cabeçalhos de resposta são restringidos a uma li
 O código de status deve ser um código de status HTTP válido (entre 100 e 599). Os nomes dos cabeçalhos de resposta são comparados sem distinção entre maiúsculas e minúsculas.
 </Note>
 
+#### Respostas de erro da plataforma
+
+Além das próprias respostas do seu handler, a plataforma responde diretamente às chamadas de rota em algumas situações: `404` quando a rota ou função não existe, `403` quando a aplicação está parada, `429` quando o limite de taxa de execução é atingido e `422` quando as `dependencies` de produção da aplicação são grandes demais para serem instaladas — consulte [limites de tamanho de dependencies](/l/pt/developers/extend/apps/getting-started/project-structure#dependencies).
+
 #### Gatilho de rota de servidor
 
 `httpRouteTriggerSettings` expõe uma função em `/s/` e resolve o workspace a partir do host da solicitação — o que funciona quando cada workspace tem seu próprio domínio. Provedores de terceiros, entretanto, entregam os eventos de todos os workspaces para **uma** URL. Para esse caso, use `serverRouteTriggerSettings`.

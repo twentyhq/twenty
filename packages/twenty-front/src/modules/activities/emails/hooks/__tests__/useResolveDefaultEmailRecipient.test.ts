@@ -149,7 +149,6 @@ describe('useResolveDefaultEmailRecipient', () => {
       }),
     );
 
-    // Person query should NOT be skipped
     const personCall = mockUseFindOneRecord.mock.calls.find(
       (call: { objectNameSingular: string }[]) =>
         call[0].objectNameSingular === CoreObjectNameSingular.Person,
@@ -157,7 +156,6 @@ describe('useResolveDefaultEmailRecipient', () => {
 
     expect(personCall?.[0].skip).toBe(false);
 
-    // Opportunity query SHOULD be skipped
     const oppCall = mockUseFindOneRecord.mock.calls.find(
       (call: { objectNameSingular: string }[]) =>
         call[0].objectNameSingular === CoreObjectNameSingular.Opportunity,
@@ -165,7 +163,6 @@ describe('useResolveDefaultEmailRecipient', () => {
 
     expect(oppCall?.[0].skip).toBe(true);
 
-    // Company people query SHOULD be skipped
     expect(mockUseFindManyRecords.mock.calls[0][0].skip).toBe(true);
   });
 });

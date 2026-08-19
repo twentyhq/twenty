@@ -37,7 +37,6 @@ import { ThemeProvider } from 'twenty-ui/theme-constants';
 // oxlint-disable-next-line no-restricted-imports
 import { messages as enMessages } from '../src/locales/generated/en';
 
-// Initialize i18n globally for all stories
 i18n.load({ [SOURCE_LOCALE]: enMessages });
 i18n.activate(SOURCE_LOCALE);
 import { mockedUserJWT } from '~/testing/mock-data/jwt';

@@ -1,4 +1,5 @@
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
@@ -61,7 +62,16 @@ export const SSEClientEffect = () => {
       const newSseClient = createClient({
         url: `${REACT_APP_SERVER_BASE_URL}/metadata`,
         credentials: 'include',
-        headers: () => {
+        headers: (): Record<string, string> => {
+          // Same rule as the Apollo auth link: the retained token pair is a
+          // dormant fallback once cookie auth is active and must not be sent.
+          // The server prefers Bearer over the session cookie, so attaching a
+          // token nothing refreshes any more authenticates the stream with a
+          // credential that expires and never recovers.
+          if (store.get(isCookieAuthActiveState.atom)) {
+            return {};
+          }
+
           const currentTokenPair = store.get(tokenPairState.atom);
           const token = currentTokenPair?.accessOrWorkspaceAgnosticToken?.token;
 

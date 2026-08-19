@@ -45,6 +45,9 @@ export default defineConnectionProvider({
   // Optional: a logic function in this app to run right after a connection is
   // established. See "Run a logic function on connect".
   // onConnectLogicFunction: { universalIdentifier: '3a2b1c0d-...-...' },
+  // Optional: a logic function in this app to run right after a connection is
+  // removed. See "Run a logic function on disconnect".
+  // onDisconnectLogicFunction: { universalIdentifier: '4d5e6f70-...-...' },
 });
 ```
 
@@ -121,6 +124,42 @@ type OnConnectPayload = {
 ```
 
 A partir daí, use `getConnection(connectedAccountId)` para ler o token de acesso atualizado e chamar a API do provedor (por exemplo, Slack `auth.test`) ou persistir um mapeamento com o [armazenamento de chave-valor](/l/pt/developers/extend/apps/logic/key-value-store).
+
+</Accordion>
+
+<Accordion title="Execute uma função lógica ao desconectar" description="Limpar quando uma conexão for removida">
+
+Tudo o que um app reivindica no momento da conexão precisa ser liberado quando a conexão é encerrada. Uma integração do Slack que reivindica um `team_id` ao conectar, por exemplo, precisa liberar essa reivindicação para que outro espaço de trabalho possa conectar a mesma equipe do Slack. Defina `onDisconnectLogicFunction` para fazer referência a uma função lógica no mesmo app, e ela será executada logo após o `ConnectedAccount` ser excluído.
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  // Runs releaseSlackTeam after every Slack disconnection.
+  onDisconnectLogicFunction: {
+    universalIdentifier: '4470aba8-5ff5-4800-88db-2a427cd8677c',
+  },
+});
+```
+
+Assim como o hook de on-connect, ele é executado **assincronamente no espaço de trabalho que está sendo desconectado** e nunca bloqueia a desconexão. O handler recebe o mesmo formato de payload:
+
+```ts
+type OnDisconnectPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  connectedAccountId: string;
+};
+```
+
+O `ConnectedAccount` já não existe mais quando o hook é executado, então `getConnection(connectedAccountId)` não retorna mais resultado. Tudo o que a limpeza precisar (um `team_id`, um id de assinatura externa) deve ter sido gravado no [key-value store](/l/pt/developers/extend/apps/logic/key-value-store) no momento da conexão, indexado por `connectedAccountId`.
+
+O hook é disparado quando uma conexão é removida por conta própria. A desinstalação do app remove suas conexões por meio de uma cascata de banco de dados; portanto, o hook não é executado nesse caso. Declare um `uninstallLogicFunction` em `defineApplication` para esse caminho: ele é executado antes de os metadados do app serem excluídos, então ainda pode chamar `listConnections` e limpar o que tiver restado.
 
 </Accordion>
 

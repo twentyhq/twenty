@@ -12,7 +12,7 @@ import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
-import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
+import { generateMessageId } from 'twenty-shared/i18n';
 
 const client = request(`http://localhost:${APP_PORT}`);
 

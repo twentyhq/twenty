@@ -4639,6 +4639,7 @@
                       "l/pt/developers/extend/apps/logic/overview",
                       "l/pt/developers/extend/apps/logic/logic-functions",
                       "l/pt/developers/extend/apps/logic/key-value-store",
+                      "l/pt/developers/extend/apps/logic/background-jobs",
                       "l/pt/developers/extend/apps/logic/skills-and-agents",
                       "l/pt/developers/extend/apps/logic/connections"
                     ]
@@ -5484,13 +5485,27 @@
                       "l/ru/user-guide/settings/capabilities/member-management",
                       "l/ru/user-guide/settings/capabilities/profile-settings",
                       "l/ru/user-guide/settings/capabilities/experience-settings",
-                      "l/ru/user-guide/settings/capabilities/domains-settings"
+                      "l/ru/user-guide/settings/capabilities/domains-settings",
+                      "l/ru/user-guide/settings/capabilities/community-settings"
                     ]
                   },
                   {
                     "group": "Инструкции",
                     "pages": [
                       "l/ru/user-guide/settings/how-tos/settings-faq"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Юридическая информация",
+                "icon": "book",
+                "pages": [
+                  "l/ru/user-guide/legal/overview",
+                  {
+                    "group": "Инструкции",
+                    "pages": [
+                      "l/ru/user-guide/legal/how-tos/legal-faq"
                     ]
                   }
                 ]
@@ -5521,6 +5536,18 @@
                     ]
                   },
                   {
+                    "group": "Обучение",
+                    "pages": [
+                      "l/ru/developers/extend/apps/tutorials/document-generator/overview",
+                      "l/ru/developers/extend/apps/tutorials/document-generator/data-model",
+                      "l/ru/developers/extend/apps/tutorials/document-generator/generating-documents",
+                      "l/ru/developers/extend/apps/tutorials/document-generator/http-routes",
+                      "l/ru/developers/extend/apps/tutorials/document-generator/building-the-ui",
+                      "l/ru/developers/extend/apps/tutorials/document-generator/ai-agent",
+                      "l/ru/developers/extend/apps/tutorials/document-generator/publishing"
+                    ]
+                  },
+                  {
                     "group": "Конфигурация",
                     "pages": [
                       "l/ru/developers/extend/apps/config/overview",
@@ -5536,6 +5563,7 @@
                       "l/ru/developers/extend/apps/data/overview",
                       "l/ru/developers/extend/apps/data/objects",
                       "l/ru/developers/extend/apps/data/extending-objects",
+                      "l/ru/developers/extend/apps/data/system-fields",
                       "l/ru/developers/extend/apps/data/relations"
                     ]
                   },
@@ -5545,6 +5573,7 @@
                       "l/ru/developers/extend/apps/logic/overview",
                       "l/ru/developers/extend/apps/logic/logic-functions",
                       "l/ru/developers/extend/apps/logic/key-value-store",
+                      "l/ru/developers/extend/apps/logic/background-jobs",
                       "l/ru/developers/extend/apps/logic/skills-and-agents",
                       "l/ru/developers/extend/apps/logic/connections"
                     ]
@@ -5568,6 +5597,12 @@
                       "l/ru/developers/extend/apps/operations/sync-and-recovery",
                       "l/ru/developers/extend/apps/operations/testing",
                       "l/ru/developers/extend/apps/operations/publishing"
+                    ]
+                  },
+                  {
+                    "group": "Переводы",
+                    "pages": [
+                      "l/ru/developers/extend/apps/translations/overview"
                     ]
                   }
                 ]
@@ -6472,6 +6507,7 @@
                       "l/zh/developers/extend/apps/logic/overview",
                       "l/zh/developers/extend/apps/logic/logic-functions",
                       "l/zh/developers/extend/apps/logic/key-value-store",
+                      "l/zh/developers/extend/apps/logic/background-jobs",
                       "l/zh/developers/extend/apps/logic/skills-and-agents",
                       "l/zh/developers/extend/apps/logic/connections"
                     ]

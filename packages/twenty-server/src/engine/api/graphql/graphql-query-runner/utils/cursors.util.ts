@@ -112,17 +112,3 @@ export const getCursor = (
 
   return undefined;
 };
-
-export const getPaginationInfo = (
-  objectRecords: ObjectRecord[],
-  limit: number,
-  isForwardPagination: boolean,
-) => {
-  const hasMoreRecords = objectRecords.length > limit;
-
-  return {
-    hasNextPage: isForwardPagination && hasMoreRecords,
-    hasPreviousPage: !isForwardPagination && hasMoreRecords,
-    hasMoreRecords,
-  };
-};

@@ -83,7 +83,7 @@ export const computeManyResultPath = (
         { $ref: '#/components/parameters/endingBefore' },
       ],
       responses: {
-        '200': getFindManyResponse200(item),
+        '200': getFindManyResponse200({ item }),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
       },

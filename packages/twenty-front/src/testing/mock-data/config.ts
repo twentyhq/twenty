@@ -5,7 +5,6 @@ export const mockedClientConfig: ClientConfig = {
   aiModels: [],
   signInPrefilled: true,
   isMultiWorkspaceEnabled: false,
-  isCookieSessionEnabled: false,
   isEmailVerificationRequired: false,
   authProviders: {
     google: true,
@@ -16,7 +15,6 @@ export const mockedClientConfig: ClientConfig = {
   },
   frontDomain: 'localhost',
   defaultSubdomain: 'app',
-  subdomainMinLength: 3,
   analyticsEnabled: true,
   support: {
     supportDriver: SupportDriver.FRONT,
