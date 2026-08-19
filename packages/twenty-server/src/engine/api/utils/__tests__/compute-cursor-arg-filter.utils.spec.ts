@@ -128,15 +128,6 @@ describe('computeCursorArgFilter', () => {
     companyNameField,
   ]);
 
-  const companyObjectMetadata = {
-    id: 'company-object-id',
-    universalIdentifier: 'company-object-id',
-    workspaceId,
-    nameSingular: 'company',
-    namePlural: 'companies',
-    fieldIds: ['company-name-id'],
-  } as unknown as FlatObjectMetadata;
-
   const flatObjectMetadata: FlatObjectMetadata = {
     id: objectMetadataId,
     workspaceId,
@@ -167,6 +158,15 @@ describe('computeCursorArgFilter', () => {
     applicationId: null,
   } as unknown as FlatObjectMetadata;
 
+  const companyObjectMetadata = {
+    id: 'company-object-id',
+    universalIdentifier: 'company-object-id',
+    workspaceId,
+    nameSingular: 'company',
+    namePlural: 'companies',
+    fieldIds: ['company-name-id'],
+  } as unknown as FlatObjectMetadata;
+
   const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> = {
     byUniversalIdentifier: {
       'object-id': flatObjectMetadata,
@@ -181,14 +181,14 @@ describe('computeCursorArgFilter', () => {
 
   describe('basic cursor filtering', () => {
     it('should return empty array when cursor is empty', () => {
-      const result = computeCursorArgFilter(
-        {},
-        [],
+      const result = computeCursorArgFilter({
+        cursor: {},
+        orderBy: [],
         flatObjectMetadata,
-        flatFieldMetadataMaps,
-        true,
         flatObjectMetadataMaps,
-      );
+        flatFieldMetadataMaps,
+        isForwardPagination: true,
+      });
 
       expect(result).toEqual([]);
     });
@@ -197,14 +197,14 @@ describe('computeCursorArgFilter', () => {
       const cursor = { name: 'John' };
       const orderBy = [{ name: OrderByDirection.AscNullsLast }];
 
-      const result = computeCursorArgFilter(
+      const result = computeCursorArgFilter({
         cursor,
         orderBy,
         flatObjectMetadata,
-        flatFieldMetadataMaps,
-        true,
         flatObjectMetadataMaps,
-      );
+        flatFieldMetadataMaps,
+        isForwardPagination: true,
+      });
 
       expect(result).toEqual([{ name: { gt: 'John' } }]);
     });
@@ -213,14 +213,14 @@ describe('computeCursorArgFilter', () => {
       const cursor = { name: 'John' };
       const orderBy = [{ name: OrderByDirection.AscNullsLast }];
 
-      const result = computeCursorArgFilter(
+      const result = computeCursorArgFilter({
         cursor,
         orderBy,
         flatObjectMetadata,
-        flatFieldMetadataMaps,
-        false,
         flatObjectMetadataMaps,
-      );
+        flatFieldMetadataMaps,
+        isForwardPagination: false,
+      });
 
       expect(result).toEqual([{ name: { lt: 'John' } }]);
     });
@@ -234,14 +234,14 @@ describe('computeCursorArgFilter', () => {
         { age: OrderByDirection.DescNullsLast },
       ];
 
-      const result = computeCursorArgFilter(
+      const result = computeCursorArgFilter({
         cursor,
         orderBy,
         flatObjectMetadata,
-        flatFieldMetadataMaps,
-        true,
         flatObjectMetadataMaps,
-      );
+        flatFieldMetadataMaps,
+        isForwardPagination: true,
+      });
 
       expect(result).toEqual([
         { name: { gt: 'John' } },
@@ -269,14 +269,14 @@ describe('computeCursorArgFilter', () => {
         },
       ];
 
-      const result = computeCursorArgFilter(
+      const result = computeCursorArgFilter({
         cursor,
         orderBy,
         flatObjectMetadata,
-        flatFieldMetadataMaps,
-        true,
         flatObjectMetadataMaps,
-      );
+        flatFieldMetadataMaps,
+        isForwardPagination: true,
+      });
 
       expect(result).toEqual([
         {
@@ -317,14 +317,14 @@ describe('computeCursorArgFilter', () => {
         },
       ];
 
-      const result = computeCursorArgFilter(
+      const result = computeCursorArgFilter({
         cursor,
         orderBy,
         flatObjectMetadata,
-        flatFieldMetadataMaps,
-        true,
         flatObjectMetadataMaps,
-      );
+        flatFieldMetadataMaps,
+        isForwardPagination: true,
+      });
 
       expect(result).toEqual([
         {
@@ -349,14 +349,14 @@ describe('computeCursorArgFilter', () => {
         },
       ];
 
-      const result = computeCursorArgFilter(
+      const result = computeCursorArgFilter({
         cursor,
         orderBy,
         flatObjectMetadata,
-        flatFieldMetadataMaps,
-        true,
         flatObjectMetadataMaps,
-      );
+        flatFieldMetadataMaps,
+        isForwardPagination: true,
+      });
 
       expect(result).toEqual([
         {
@@ -394,14 +394,14 @@ describe('computeCursorArgFilter', () => {
         },
       ];
 
-      const result = computeCursorArgFilter(
+      const result = computeCursorArgFilter({
         cursor,
         orderBy,
         flatObjectMetadata,
-        flatFieldMetadataMaps,
-        false,
         flatObjectMetadataMaps,
-      );
+        flatFieldMetadataMaps,
+        isForwardPagination: false,
+      });
 
       expect(result).toEqual([
         {
@@ -437,14 +437,14 @@ describe('computeCursorArgFilter', () => {
       const orderBy = [{ invalidField: OrderByDirection.AscNullsLast }];
 
       expect(() =>
-        computeCursorArgFilter(
+        computeCursorArgFilter({
           cursor,
           orderBy,
           flatObjectMetadata,
-          flatFieldMetadataMaps,
-          true,
           flatObjectMetadataMaps,
-        ),
+          flatFieldMetadataMaps,
+          isForwardPagination: true,
+        }),
       ).toThrow(GraphqlQueryRunnerException);
     });
 
@@ -453,14 +453,14 @@ describe('computeCursorArgFilter', () => {
       const orderBy = [{ age: OrderByDirection.AscNullsLast }];
 
       expect(() =>
-        computeCursorArgFilter(
+        computeCursorArgFilter({
           cursor,
           orderBy,
           flatObjectMetadata,
-          flatFieldMetadataMaps,
-          true,
           flatObjectMetadataMaps,
-        ),
+          flatFieldMetadataMaps,
+          isForwardPagination: true,
+        }),
       ).toThrow(GraphqlQueryRunnerException);
     });
   });
@@ -470,14 +470,14 @@ describe('computeCursorArgFilter', () => {
       const cursor = { closeDate: '2026-01-01T00:00:00Z' };
       const orderBy = [{ closeDate: OrderByDirection.AscNullsLast }];
 
-      const result = computeCursorArgFilter(
+      const result = computeCursorArgFilter({
         cursor,
         orderBy,
         flatObjectMetadata,
-        flatFieldMetadataMaps,
-        true,
         flatObjectMetadataMaps,
-      );
+        flatFieldMetadataMaps,
+        isForwardPagination: true,
+      });
 
       expect(result).toEqual([
         {
@@ -493,14 +493,14 @@ describe('computeCursorArgFilter', () => {
       const cursor = { closeDate: '2026-01-01T00:00:00Z' };
       const orderBy = [{ closeDate: OrderByDirection.AscNullsFirst }];
 
-      const result = computeCursorArgFilter(
+      const result = computeCursorArgFilter({
         cursor,
         orderBy,
         flatObjectMetadata,
-        flatFieldMetadataMaps,
-        true,
         flatObjectMetadataMaps,
-      );
+        flatFieldMetadataMaps,
+        isForwardPagination: true,
+      });
 
       expect(result).toEqual([{ closeDate: { gt: '2026-01-01T00:00:00Z' } }]);
     });
@@ -512,14 +512,14 @@ describe('computeCursorArgFilter', () => {
         { id: OrderByDirection.AscNullsFirst },
       ];
 
-      const result = computeCursorArgFilter(
+      const result = computeCursorArgFilter({
         cursor,
         orderBy,
         flatObjectMetadata,
-        flatFieldMetadataMaps,
-        true,
         flatObjectMetadataMaps,
-      );
+        flatFieldMetadataMaps,
+        isForwardPagination: true,
+      });
 
       expect(result).toEqual([
         {
@@ -535,14 +535,14 @@ describe('computeCursorArgFilter', () => {
         { id: OrderByDirection.AscNullsFirst },
       ];
 
-      const result = computeCursorArgFilter(
+      const result = computeCursorArgFilter({
         cursor,
         orderBy,
         flatObjectMetadata,
-        flatFieldMetadataMaps,
-        true,
         flatObjectMetadataMaps,
-      );
+        flatFieldMetadataMaps,
+        isForwardPagination: true,
+      });
 
       expect(result).toEqual([
         { closeDate: { is: 'NOT_NULL' } },
@@ -556,14 +556,14 @@ describe('computeCursorArgFilter', () => {
       const cursor = { closeDate: '2026-01-01T00:00:00Z' };
       const orderBy = [{ closeDate: OrderByDirection.AscNullsFirst }];
 
-      const result = computeCursorArgFilter(
+      const result = computeCursorArgFilter({
         cursor,
         orderBy,
         flatObjectMetadata,
-        flatFieldMetadataMaps,
-        false,
         flatObjectMetadataMaps,
-      );
+        flatFieldMetadataMaps,
+        isForwardPagination: false,
+      });
 
       expect(result).toEqual([
         {
@@ -579,14 +579,14 @@ describe('computeCursorArgFilter', () => {
       const cursor = { name: 'John' };
       const orderBy = [{ name: OrderByDirection.AscNullsLast }];
 
-      const result = computeCursorArgFilter(
+      const result = computeCursorArgFilter({
         cursor,
         orderBy,
         flatObjectMetadata,
-        flatFieldMetadataMaps,
-        true,
         flatObjectMetadataMaps,
-      );
+        flatFieldMetadataMaps,
+        isForwardPagination: true,
+      });
 
       expect(result).toEqual([{ name: { gt: 'John' } }]);
     });
@@ -601,14 +601,14 @@ describe('computeCursorArgFilter', () => {
       ];
 
       expect(() =>
-        computeCursorArgFilter(
+        computeCursorArgFilter({
           cursor,
           orderBy,
           flatObjectMetadata,
-          flatFieldMetadataMaps,
-          true,
           flatObjectMetadataMaps,
-        ),
+          flatFieldMetadataMaps,
+          isForwardPagination: true,
+        }),
       ).toThrow('Cursor is missing the value for orderBy field "closeDate"');
     });
 
@@ -620,14 +620,14 @@ describe('computeCursorArgFilter', () => {
       ];
 
       expect(() =>
-        computeCursorArgFilter(
+        computeCursorArgFilter({
           cursor,
           orderBy,
           flatObjectMetadata,
-          flatFieldMetadataMaps,
-          true,
           flatObjectMetadataMaps,
-        ),
+          flatFieldMetadataMaps,
+          isForwardPagination: true,
+        }),
       ).toThrow(
         'Cursor is missing the value for orderBy field "fullName.firstName"',
       );
@@ -641,14 +641,14 @@ describe('computeCursorArgFilter', () => {
       ];
 
       expect(() =>
-        computeCursorArgFilter(
+        computeCursorArgFilter({
           cursor,
           orderBy,
           flatObjectMetadata,
-          flatFieldMetadataMaps,
-          true,
           flatObjectMetadataMaps,
-        ),
+          flatFieldMetadataMaps,
+          isForwardPagination: true,
+        }),
       ).not.toThrow();
     });
   });
@@ -662,14 +662,14 @@ describe('computeCursorArgFilter', () => {
     it('should continue on the joined column with the missing-relation block last', () => {
       const cursor = { company: { name: 'Acme' }, id: 'uuid-1' };
 
-      const result = computeCursorArgFilter(
+      const result = computeCursorArgFilter({
         cursor,
-        relationOrderBy,
+        orderBy: relationOrderBy,
         flatObjectMetadata,
-        flatFieldMetadataMaps,
-        true,
         flatObjectMetadataMaps,
-      );
+        flatFieldMetadataMaps,
+        isForwardPagination: true,
+      });
 
       expect(result).toEqual([
         {
@@ -690,14 +690,14 @@ describe('computeCursorArgFilter', () => {
     it('should ride the tie-breaking keys inside the missing-relation block', () => {
       const cursor = { company: { name: null }, id: 'uuid-1' };
 
-      const result = computeCursorArgFilter(
+      const result = computeCursorArgFilter({
         cursor,
-        relationOrderBy,
+        orderBy: relationOrderBy,
         flatObjectMetadata,
-        flatFieldMetadataMaps,
-        true,
         flatObjectMetadataMaps,
-      );
+        flatFieldMetadataMaps,
+        isForwardPagination: true,
+      });
 
       expect(result).toEqual([
         {
@@ -710,14 +710,14 @@ describe('computeCursorArgFilter', () => {
       const cursor = { id: 'uuid-1' };
 
       expect(() =>
-        computeCursorArgFilter(
+        computeCursorArgFilter({
           cursor,
-          relationOrderBy,
+          orderBy: relationOrderBy,
           flatObjectMetadata,
-          flatFieldMetadataMaps,
-          true,
           flatObjectMetadataMaps,
-        ),
+          flatFieldMetadataMaps,
+          isForwardPagination: true,
+        }),
       ).toThrow(
         'include the ordered relation field in the selection (e.g. "company { name }")',
       );

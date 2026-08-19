@@ -6,17 +6,17 @@ import {
   type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { findPostgresDefaultNullEquivalentValue } from 'src/engine/api/common/common-args-processors/data-arg-processor/utils/find-postgres-default-null-equivalent-value.util';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { areNullsScannedAfterCursor } from 'src/engine/api/utils/are-nulls-scanned-after-cursor.utils';
-import { computeOperator } from 'src/engine/api/utils/compute-operator.utils';
-import { isAscendingOrder } from 'src/engine/api/utils/is-ascending-order.utils';
-import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { isOrderByDirection } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/is-order-by-direction.util';
+import {
+  buildCursorKeysetCondition,
+  checkIfColumnHasNullEquivalentDefault,
+} from 'src/engine/api/utils/build-cursor-keyset-condition.utils';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -62,10 +62,9 @@ export const buildCursorRelationFieldWhereCondition = ({
 > | null => {
   const relationFieldName = relationFieldMetadata.name;
 
-  const relationOrderByEntry = orderBy.find(
+  const relationOrderByValue = orderBy.find(
     (orderByEntry) => relationFieldName in orderByEntry,
-  );
-  const relationOrderByValue = relationOrderByEntry?.[relationFieldName];
+  )?.[relationFieldName];
 
   if (!isPlainObject(relationOrderByValue)) {
     return throwInvalidCursor(
@@ -73,9 +72,7 @@ export const buildCursorRelationFieldWhereCondition = ({
     );
   }
 
-  const orderedSubFieldNames = Object.keys(
-    relationOrderByValue as Record<string, unknown>,
-  );
+  const orderedSubFieldNames = Object.keys(relationOrderByValue);
 
   if (orderedSubFieldNames.length !== 1) {
     return throwInvalidCursor(
@@ -84,9 +81,7 @@ export const buildCursorRelationFieldWhereCondition = ({
   }
 
   const [subFieldName] = orderedSubFieldNames;
-  const orderByDirection = (relationOrderByValue as Record<string, unknown>)[
-    subFieldName
-  ];
+  const orderByDirection = relationOrderByValue[subFieldName];
 
   if (!isOrderByDirection(orderByDirection)) {
     return throwInvalidCursor(
@@ -94,17 +89,15 @@ export const buildCursorRelationFieldWhereCondition = ({
     );
   }
 
-  if (!isPlainObject(cursorValue)) {
-    return throwInvalidCursor(
-      `Invalid cursor value for relation field "${relationFieldName}"`,
-    );
-  }
-
-  const subFieldValue = (cursorValue as Record<string, unknown>)[subFieldName];
+  const subFieldValue = isPlainObject(cursorValue)
+    ? cursorValue[subFieldName]
+    : undefined;
 
   if (subFieldValue === undefined) {
+    // Unreachable through computeCursorArgFilter: the cursor/orderBy guard
+    // already reports missing relation values with an actionable message
     return throwInvalidCursor(
-      `Cursor is missing the value for orderBy field "${relationFieldName}.${subFieldName}": include the ordered relation field in the selection (e.g. "${relationFieldName} { ${subFieldName} }") so cursors can carry it`,
+      `Invalid cursor value for relation field "${relationFieldName}"`,
     );
   }
 
@@ -116,16 +109,15 @@ export const buildCursorRelationFieldWhereCondition = ({
         flatEntityMaps: flatObjectMetadataMaps,
       })
     : undefined;
-  const { fieldIdByName: targetFieldIdByName } = isDefined(targetObjectMetadata)
-    ? buildFieldMapsFromFlatObjectMetadata(
-        flatFieldMetadataMaps,
-        targetObjectMetadata,
-      )
-    : { fieldIdByName: {} as Record<string, string> };
-  const targetSubFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-    flatEntityId: targetFieldIdByName[subFieldName],
-    flatEntityMaps: flatFieldMetadataMaps,
-  });
+  const targetSubFieldMetadata = isDefined(targetObjectMetadata)
+    ? findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: buildFieldMapsFromFlatObjectMetadata(
+          flatFieldMetadataMaps,
+          targetObjectMetadata,
+        ).fieldIdByName[subFieldName],
+        flatEntityMaps: flatFieldMetadataMaps,
+      })
+    : undefined;
 
   // Joined columns of types with a Postgres null-equivalent default (e.g. TEXT '')
   // are only ever NULL when the join found no row, and their `is: NULL` filter
@@ -133,52 +125,29 @@ export const buildCursorRelationFieldWhereCondition = ({
   // instead so the NULL block matches exactly the rows without a related record
   const isSubFieldNullOnlyWhenRelationIsMissing =
     isDefined(targetSubFieldMetadata) &&
-    isDefined(
-      findPostgresDefaultNullEquivalentValue(
-        'NULL',
-        targetSubFieldMetadata.type,
-      ),
-    );
+    checkIfColumnHasNullEquivalentDefault(targetSubFieldMetadata.type);
 
   const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
     name: relationFieldName,
   });
 
-  const nullBlockCondition = isSubFieldNullOnlyWhenRelationIsMissing
-    ? { [joinColumnName]: { is: 'NULL' } }
-    : { [relationFieldName]: { [subFieldName]: { is: 'NULL' } } };
-  const outsideNullBlockCondition = isSubFieldNullOnlyWhenRelationIsMissing
-    ? { [joinColumnName]: { is: 'NOT_NULL' } }
-    : { [relationFieldName]: { [subFieldName]: { is: 'NOT_NULL' } } };
-
-  if (isEqualityCondition) {
-    if (subFieldValue === null) {
-      return nullBlockCondition;
-    }
-
-    return { [relationFieldName]: { [subFieldName]: { eq: subFieldValue } } };
-  }
-
-  const isAscending = isAscendingOrder(orderByDirection);
-  const computedOperator = computeOperator(isAscending, isForwardPagination);
-  const areNullsScannedAfter = areNullsScannedAfterCursor(
+  return buildCursorKeysetCondition({
+    cursorValue: subFieldValue,
     orderByDirection,
     isForwardPagination,
-  );
-
-  if (subFieldValue === null) {
-    return areNullsScannedAfter ? null : outsideNullBlockCondition;
-  }
-
-  const mainCondition = {
-    [relationFieldName]: {
-      [subFieldName]: { [computedOperator]: subFieldValue },
-    },
-  };
-
-  if (areNullsScannedAfter) {
-    return { or: [mainCondition, nullBlockCondition] };
-  }
-
-  return mainCondition;
+    isEqualityCondition,
+    // A LEFT JOIN can always produce NULLs, whatever the target column's type
+    canFieldHoldNullValue: true,
+    buildLeafCondition: (leafFilter) => ({
+      [relationFieldName]: { [subFieldName]: leafFilter },
+    }),
+    buildNullCheckCondition: (isNull) =>
+      isSubFieldNullOnlyWhenRelationIsMissing
+        ? { [joinColumnName]: { is: isNull ? 'NULL' : 'NOT_NULL' } }
+        : {
+            [relationFieldName]: {
+              [subFieldName]: { is: isNull ? 'NULL' : 'NOT_NULL' },
+            },
+          },
+  });
 };

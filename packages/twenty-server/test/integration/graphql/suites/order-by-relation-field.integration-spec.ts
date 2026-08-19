@@ -408,6 +408,98 @@ describe('Order by relation field (e2e)', () => {
     );
   });
 
+  it('should walk backward across the missing-relation boundary with before cursors', async () => {
+    const forwardResponse = await makeGraphqlAPIRequest({
+      query: gql`
+        query People(
+          $orderBy: [PersonOrderByInput]
+          $filter: PersonFilterInput
+          $first: Int
+        ) {
+          people(orderBy: $orderBy, filter: $filter, first: $first) {
+            edges {
+              node {
+                id
+                company {
+                  name
+                }
+              }
+            }
+            pageInfo {
+              endCursor
+            }
+          }
+        }
+      `,
+      variables: {
+        orderBy: [{ company: { name: 'AscNullsLast' } }],
+        filter: { id: { in: TEST_PERSON_IDS } },
+        first: TEST_PERSON_IDS.length,
+      },
+    });
+
+    expect(forwardResponse.body.errors).toBeUndefined();
+
+    const forwardConnection = forwardResponse.body.data.people;
+    const forwardIds = forwardConnection.edges.map(
+      (edge: { node: { id: string } }) => edge.node.id,
+    );
+
+    expect(forwardIds).toHaveLength(TEST_PERSON_IDS.length);
+
+    const backwardIds: string[] = [];
+    let before: string | undefined = forwardConnection.pageInfo.endCursor;
+
+    for (let iteration = 0; iteration < 10; iteration++) {
+      const response = await makeGraphqlAPIRequest({
+        query: gql`
+          query People(
+            $orderBy: [PersonOrderByInput]
+            $filter: PersonFilterInput
+            $before: String
+          ) {
+            people(orderBy: $orderBy, filter: $filter, last: 3, before: $before) {
+              edges {
+                node {
+                  id
+                  company {
+                    name
+                  }
+                }
+              }
+              pageInfo {
+                hasPreviousPage
+                startCursor
+              }
+            }
+          }
+        `,
+        variables: {
+          orderBy: [{ company: { name: 'AscNullsLast' } }],
+          filter: { id: { in: TEST_PERSON_IDS } },
+          before,
+        },
+      });
+
+      expect(response.body.errors).toBeUndefined();
+
+      const connection = response.body.data.people;
+
+      backwardIds.unshift(
+        ...connection.edges.map((edge: { node: { id: string } }) => edge.node.id),
+      );
+
+      if (!connection.pageInfo.hasPreviousPage) {
+        break;
+      }
+
+      before = connection.pageInfo.startCursor;
+    }
+
+    // Everything before the last record, in the same order as the forward scan
+    expect(backwardIds).toEqual(forwardIds.slice(0, -1));
+  });
+
   it('should return an actionable error when paginating without the ordered relation field selected', async () => {
     const firstPageResponse = await makeGraphqlAPIRequest({
       query: gql`

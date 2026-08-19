@@ -20,14 +20,23 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-export const computeCursorArgFilter = (
-  cursor: ObjectRecordCursor,
-  orderBy: ObjectRecordOrderBy,
-  flatObjectMetadata: FlatObjectMetadata,
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
-  isForwardPagination: boolean,
-  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-): ObjectRecordFilter[] => {
+type ComputeCursorArgFilterParams = {
+  cursor: ObjectRecordCursor;
+  orderBy: ObjectRecordOrderBy;
+  flatObjectMetadata: FlatObjectMetadata;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  isForwardPagination: boolean;
+};
+
+export const computeCursorArgFilter = ({
+  cursor,
+  orderBy,
+  flatObjectMetadata,
+  flatObjectMetadataMaps,
+  flatFieldMetadataMaps,
+  isForwardPagination,
+}: ComputeCursorArgFilterParams): ObjectRecordFilter[] => {
   validateCursorMatchesOrderByOrThrow({
     cursor,
     orderBy,

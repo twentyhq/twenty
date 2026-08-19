@@ -43,17 +43,25 @@ const companyField = buildMockField(
   FieldMetadataType.RELATION,
   { settings: { relationType: RelationType.MANY_TO_ONE } },
 );
+const ownerField = buildMockField(
+  'owner-id',
+  'owner',
+  FieldMetadataType.MORPH_RELATION,
+  { settings: { relationType: RelationType.MANY_TO_ONE } },
+);
 
 const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
   byUniversalIdentifier: {
     'closedate-id': closeDateField,
     'fullname-id': fullNameField,
     'company-id': companyField,
+    'owner-id': ownerField,
   },
   universalIdentifierById: {
     'closedate-id': 'closedate-id',
     'fullname-id': 'fullname-id',
     'company-id': 'company-id',
+    'owner-id': 'owner-id',
   },
   universalIdentifiersByApplicationId: {},
 };
@@ -62,7 +70,7 @@ const flatObjectMetadata = {
   id: 'obj-id',
   universalIdentifier: 'obj-id',
   nameSingular: 'opportunity',
-  fieldIds: ['closedate-id', 'fullname-id', 'company-id'],
+  fieldIds: ['closedate-id', 'fullname-id', 'company-id', 'owner-id'],
 } as unknown as FlatObjectMetadata;
 
 describe('buildOrderByColumnsToSelect', () => {
@@ -97,6 +105,19 @@ describe('buildOrderByColumnsToSelect', () => {
     const result = buildOrderByColumnsToSelect({
       orderBy: [
         { company: { name: OrderByDirection.AscNullsLast } },
+        { closeDate: OrderByDirection.AscNullsLast },
+      ],
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    });
+
+    expect(result).toEqual({ closeDate: true });
+  });
+
+  it('should skip morph relation orderBy fields like relation ones', () => {
+    const result = buildOrderByColumnsToSelect({
+      orderBy: [
+        { owner: { name: OrderByDirection.AscNullsLast } },
         { closeDate: OrderByDirection.AscNullsLast },
       ],
       flatObjectMetadata,

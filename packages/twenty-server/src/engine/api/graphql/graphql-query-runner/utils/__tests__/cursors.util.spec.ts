@@ -49,17 +49,25 @@ const companyField = buildMockField(
   FieldMetadataType.RELATION,
   { settings: { relationType: RelationType.MANY_TO_ONE } },
 );
+const ownerField = buildMockField(
+  'owner-id',
+  'owner',
+  FieldMetadataType.MORPH_RELATION,
+  { settings: { relationType: RelationType.MANY_TO_ONE } },
+);
 
 const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
   byUniversalIdentifier: {
     'name-id': nameField,
     'fullname-id': fullNameField,
     'company-id': companyField,
+    'owner-id': ownerField,
   },
   universalIdentifierById: {
     'name-id': 'name-id',
     'fullname-id': 'fullname-id',
     'company-id': 'company-id',
+    'owner-id': 'owner-id',
   },
   universalIdentifiersByApplicationId: {},
 };
@@ -81,7 +89,7 @@ const flatObjectMetadata: FlatObjectMetadata = {
   icon: 'Icon123',
   createdAt: new Date(),
   updatedAt: new Date(),
-  fieldIds: ['name-id', 'fullname-id', 'company-id'],
+  fieldIds: ['name-id', 'fullname-id', 'company-id', 'owner-id'],
   indexMetadataIds: [],
   viewIds: [],
   applicationId: null,
@@ -236,6 +244,20 @@ describe('encodeCursor', () => {
     const decoded = decodeCursor(callEncodeCursor(record, orderBy));
 
     expect(decoded).toEqual({ companyId: 'company-1', id: 'abc' });
+  });
+
+  it('should carry morph relation sub-field values like relation ones', () => {
+    const record = {
+      id: 'abc',
+      owner: { id: 'owner-1', name: 'Morph target' },
+    };
+    const orderBy = [
+      { owner: { name: OrderByDirection.AscNullsLast } },
+    ] as Parameters<typeof encodeCursor>[0]['order'];
+
+    const decoded = decodeCursor(callEncodeCursor(record, orderBy));
+
+    expect(decoded).toEqual({ owner: { name: 'Morph target' }, id: 'abc' });
   });
 
   it('should handle undefined orderBy', () => {
