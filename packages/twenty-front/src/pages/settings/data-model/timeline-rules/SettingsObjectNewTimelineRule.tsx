@@ -79,7 +79,7 @@ export const SettingsObjectNewTimelineRule = () => {
       relationFieldMetadataId: candidate.relationFieldMetadataItem.id,
     });
 
-    if (!isDefined(result.error)) {
+    if (result.status === 'successful') {
       navigate(SettingsPath.ObjectTimelineRuleEdit, {
         objectNamePlural,
         relationFieldMetadataId: candidate.relationFieldMetadataItem.id,

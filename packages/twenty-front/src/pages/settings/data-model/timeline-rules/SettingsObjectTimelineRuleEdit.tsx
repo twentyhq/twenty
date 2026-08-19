@@ -8,9 +8,8 @@ import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsO
 import { useFindManyTimelineActivityRules } from '@/settings/data-model/timeline-rules/hooks/useFindManyTimelineActivityRules';
 import { useResetTimelineActivityRule } from '@/settings/data-model/timeline-rules/hooks/useResetTimelineActivityRule';
 import { useUpsertTimelineActivityRule } from '@/settings/data-model/timeline-rules/hooks/useUpsertTimelineActivityRule';
+import { SettingsDataModelFieldSelectRows } from '@/settings/data-model/components/SettingsDataModelFieldSelectRows';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Select } from '@/ui/input/components/Select';
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -20,34 +19,15 @@ import {
   IconLink,
   IconPencil,
   IconRestore,
-  IconTrash,
   IconUnlink,
   useIcons,
 } from 'twenty-ui/icon';
-import { Button, IconButton, type SelectOption } from 'twenty-ui/input';
+import { Button, type SelectOption } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { Card } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-
-const StyledFieldRow = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  margin-bottom: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledSelectWrapper = styled.div`
-  flex: 1;
-  min-width: 0;
-`;
-
-const StyledPlaceholder = styled.div`
-  height: ${themeCssVariables.spacing[8]};
-  width: ${themeCssVariables.spacing[8]};
-`;
 
 const isTriggerableField = (field: FieldMetadataItem): boolean =>
   field.isActive === true &&
@@ -161,7 +141,7 @@ export const SettingsObjectTimelineRuleEdit = () => {
         triggerFieldMetadataIds.length > 0 ? triggerFieldMetadataIds : null,
     });
 
-    if (!isDefined(result.error)) {
+    if (result.status === 'successful') {
       enqueueSuccessSnackBar({ message: t`Timeline rule saved` });
       navigate(SettingsPath.ObjectDetail, { objectNamePlural });
     }
@@ -173,7 +153,7 @@ export const SettingsObjectTimelineRuleEdit = () => {
       relationFieldMetadataId: timelineActivityRule.relationFieldMetadataId,
     });
 
-    if (!isDefined(result.error)) {
+    if (result.status === 'successful') {
       enqueueSuccessSnackBar({ message: t`Timeline rule reset` });
       navigate(SettingsPath.ObjectDetail, { objectNamePlural });
     }
@@ -186,11 +166,6 @@ export const SettingsObjectTimelineRuleEdit = () => {
       Icon: getIcon(field.icon),
     }),
   );
-
-  const triggerFieldRows: (string | null)[] = [
-    ...triggerFieldMetadataIds,
-    null,
-  ];
 
   return (
     <SettingsPageLayout
@@ -258,60 +233,12 @@ export const SettingsObjectTimelineRuleEdit = () => {
               title={t`Fields that trigger it`}
               description={t`Only changes to these fields write an entry on linked timelines. With no field selected, any change does.`}
             />
-            {triggerFieldRows.map((triggerFieldMetadataId, rowIndex) => {
-              const availableOptions = triggerFieldOptions.filter(
-                (option) =>
-                  option.value === triggerFieldMetadataId ||
-                  !triggerFieldMetadataIds.includes(option.value),
-              );
-
-              return (
-                <StyledFieldRow
-                  key={triggerFieldMetadataId ?? `empty-${rowIndex}`}
-                >
-                  <StyledSelectWrapper>
-                    <Select
-                      dropdownId={`timeline-rule-trigger-field-${rowIndex}`}
-                      value={triggerFieldMetadataId ?? ''}
-                      options={availableOptions}
-                      emptyOption={{ label: t`Select a field`, value: '' }}
-                      onChange={(newValue) => {
-                        if (newValue === '') {
-                          return;
-                        }
-
-                        setTriggerFieldMetadataIds((previousIds) => {
-                          const nextIds = [...previousIds];
-
-                          if (rowIndex < previousIds.length) {
-                            nextIds[rowIndex] = newValue;
-                          } else {
-                            nextIds.push(newValue);
-                          }
-
-                          return nextIds;
-                        });
-                      }}
-                      fullWidth
-                      withSearchInput
-                    />
-                  </StyledSelectWrapper>
-                  {triggerFieldMetadataId === null ? (
-                    <StyledPlaceholder />
-                  ) : (
-                    <IconButton
-                      Icon={IconTrash}
-                      variant="tertiary"
-                      onClick={() =>
-                        setTriggerFieldMetadataIds((previousIds) =>
-                          previousIds.filter((_, index) => index !== rowIndex),
-                        )
-                      }
-                    />
-                  )}
-                </StyledFieldRow>
-              );
-            })}
+            <SettingsDataModelFieldSelectRows
+              values={triggerFieldMetadataIds}
+              options={triggerFieldOptions}
+              dropdownIdPrefix="timeline-rule-trigger-field"
+              onChange={setTriggerFieldMetadataIds}
+            />
           </Section>
         )}
         {timelineActivityRule.isOverridden && (

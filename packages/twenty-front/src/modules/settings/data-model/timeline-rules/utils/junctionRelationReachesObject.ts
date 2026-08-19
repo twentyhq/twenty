@@ -1,5 +1,6 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { getTargetObjectMetadataIdsFromField } from '@/object-record/record-field/ui/utils/junction/getTargetObjectMetadataIdsFromField';
 import { hasJunctionTargetFieldId } from '@/object-record/record-field/ui/utils/junction/hasJunctionTargetFieldId';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -74,12 +75,7 @@ export const junctionRelationReachesObject = ({
     return false;
   }
 
-  return junctionTargetFieldMetadataItem.type ===
-    FieldMetadataType.MORPH_RELATION
-    ? (junctionTargetFieldMetadataItem.morphRelations ?? []).some(
-        (morphRelation) =>
-          morphRelation.targetObjectMetadata.id === objectMetadataItem.id,
-      )
-    : junctionTargetFieldMetadataItem.relation?.targetObjectMetadata.id ===
-        objectMetadataItem.id;
+  return getTargetObjectMetadataIdsFromField(
+    junctionTargetFieldMetadataItem,
+  ).includes(objectMetadataItem.id);
 };

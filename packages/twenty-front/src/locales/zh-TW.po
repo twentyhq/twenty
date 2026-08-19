@@ -2270,6 +2270,8 @@ msgstr "上傳圖片時發生錯誤。"
 #: src/modules/page-layout/hooks/useResetPageLayoutToDefault.ts
 #: src/modules/page-layout/hooks/useResetPageLayoutWidgetToDefault.ts
 #: src/modules/page-layout/hooks/useUpdatePageLayoutWithTabsAndWidgets.ts
+#: src/modules/settings/data-model/timeline-rules/hooks/useResetTimelineActivityRule.ts
+#: src/modules/settings/data-model/timeline-rules/hooks/useUpsertTimelineActivityRule.ts
 #: src/modules/ui/feedback/snack-bar-manager/hooks/useSnackBar.ts
 #: src/modules/views/hooks/internal/usePerformViewAPIUpdate.ts
 #: src/modules/views/hooks/internal/usePerformViewEntityAPIPersistOperation.ts
@@ -15791,7 +15793,7 @@ msgid "Remove Favorite"
 msgstr "移除收藏"
 
 #. js-lingui-id: /hrkZs
-#: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexFieldsForm.tsx
+#: src/modules/settings/data-model/components/SettingsDataModelFieldSelectRows.tsx
 msgid "Remove field"
 msgstr "移除欄位"
 
@@ -16979,9 +16981,8 @@ msgid "Select a date and time"
 msgstr "選取日期與時間"
 
 #. js-lingui-id: 1YV5aa
-#: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexFieldsForm.tsx
+#: src/modules/settings/data-model/components/SettingsDataModelFieldSelectRows.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterFieldSelect.tsx
-#: src/pages/settings/data-model/timeline-rules/SettingsObjectTimelineRuleEdit.tsx
 msgid "Select a field"
 msgstr "選擇一個欄位"
 
