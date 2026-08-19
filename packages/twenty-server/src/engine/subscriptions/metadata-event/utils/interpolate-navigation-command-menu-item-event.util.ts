@@ -1,11 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import {
-  interpolateCommandMenuItemTemplate,
-  isDefined,
-} from 'twenty-shared/utils';
+import { interpolateMessagePlaceholders } from 'twenty-shared/i18n';
+import { isDefined } from 'twenty-shared/utils';
 
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
-import { buildNavigationInterpolationContext } from 'src/engine/metadata-modules/command-menu-item/utils/build-navigation-interpolation-context.util';
+import { buildNavigationPlaceholderValues } from 'src/engine/metadata-modules/command-menu-item/utils/build-navigation-placeholder-values.util';
 import { isObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/utils/is-object-metadata-command-menu-item-payload.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -19,8 +17,8 @@ type InterpolatableCommandMenuItemRecord = Record<string, unknown> & {
 
 const INTERPOLATED_FIELDS = ['label', 'shortLabel', 'icon'] as const;
 
-// NAVIGATION items are the only ones whose template names another entity, and
-// the label they interpolate is the target object's -- which is locale
+// NAVIGATION items are the only ones whose placeholders name another entity,
+// and the label that fills them is the target object's -- which is locale
 // dependent, so this runs at delivery on already-resolved values.
 export const interpolateNavigationCommandMenuItemEvent = ({
   record,
@@ -52,7 +50,7 @@ export const interpolateNavigationCommandMenuItemEvent = ({
     return record;
   }
 
-  const context = buildNavigationInterpolationContext({
+  const placeholderValues = buildNavigationPlaceholderValues({
     objectMetadata: flatObjectMetadata,
     i18nContext: buildI18nContext(
       flatObjectMetadata.applicationId ?? undefined,
@@ -68,14 +66,10 @@ export const interpolateNavigationCommandMenuItemEvent = ({
       continue;
     }
 
-    const resolvedValue = interpolateCommandMenuItemTemplate({
-      label: value,
-      context,
-    });
-
-    if (isDefined(resolvedValue)) {
-      interpolated[field] = resolvedValue;
-    }
+    interpolated[field] = interpolateMessagePlaceholders(
+      value,
+      placeholderValues,
+    );
   }
 
   return interpolated;
