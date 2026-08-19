@@ -12,35 +12,29 @@ import {
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/data-display';
 import { IconRestore } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import {
-  MetadataTranslationProvenance,
-  type MetadataTranslationsInput,
-} from '~/generated-metadata/graphql';
+import { H2Title } from 'twenty-ui/typography';
+import { MetadataTranslationProvenance } from '~/generated-metadata/graphql';
 
-const TRANSLATIONS_ROW_GRID_TEMPLATE_COLUMNS = '112px 1fr 84px 24px';
-
-const getMetadataTranslationsInput = (
-  target: SettingsTranslationsSidePanelTarget,
-): MetadataTranslationsInput =>
-  target.metadataName === 'objectMetadata'
-    ? { objectMetadataId: target.recordId }
-    : { fieldMetadataId: target.recordId };
+const TRANSLATIONS_ROW_GRID_TEMPLATE_COLUMNS = '112px 1fr 24px';
 
 const StyledPageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[3]};
+  gap: ${themeCssVariables.spacing[6]};
   padding: ${themeCssVariables.spacing[3]};
+`;
+
+const StyledHeader = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledEntityLabel = styled.div`
@@ -53,6 +47,18 @@ const StyledExplanation = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   font-size: ${themeCssVariables.font.size.sm};
 `;
+
+const StyledPropertySection = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const getMetadataTranslationsInput = (
+  target: SettingsTranslationsSidePanelTarget,
+) =>
+  target.metadataName === 'objectMetadata'
+    ? { objectMetadataId: target.recordId }
+    : { fieldMetadataId: target.recordId };
 
 export const SidePanelSettingsMetadataTranslationsPage = () => {
   const { t } = useLingui();
@@ -71,13 +77,6 @@ export const SidePanelSettingsMetadataTranslationsPage = () => {
     return null;
   }
 
-  // The source language comes first: every untranslated language falls back
-  // to what its row shows.
-  const orderedLocaleOptions = [
-    ...localeOptions.filter(({ value }) => value === SOURCE_LOCALE),
-    ...localeOptions.filter(({ value }) => value !== SOURCE_LOCALE),
-  ];
-
   const rowsByProperty = new Map<string, Map<string, MetadataTranslationRow>>();
 
   for (const row of metadataTranslations) {
@@ -89,22 +88,28 @@ export const SidePanelSettingsMetadataTranslationsPage = () => {
 
   return (
     <StyledPageContainer>
-      <StyledEntityLabel>
-        {settingsTranslationsSidePanelTarget.label}
-      </StyledEntityLabel>
-      <StyledExplanation>
-        {t`Languages without their own translation show the source text.`}
-      </StyledExplanation>
-      {[...rowsByProperty.entries()].map(([property, localeRows]) => (
-        <Table key={property}>
-          <TableSection
-            title={getPropertyLabel({
-              metadataName: settingsTranslationsSidePanelTarget.metadataName,
-              property,
-            })}
-          >
-            {orderedLocaleOptions.map(
-              ({ value: locale, label: localeLabel }) => {
+      <StyledHeader>
+        <StyledEntityLabel>
+          {settingsTranslationsSidePanelTarget.label}
+        </StyledEntityLabel>
+        <StyledExplanation>
+          {t`Languages without their own translation show the source text.`}
+        </StyledExplanation>
+      </StyledHeader>
+      {[...rowsByProperty.entries()].map(([property, localeRows]) => {
+        const canonicalValue = [...localeRows.values()][0]?.canonicalValue;
+
+        return (
+          <StyledPropertySection key={property}>
+            <H2Title
+              title={getPropertyLabel({
+                metadataName: settingsTranslationsSidePanelTarget.metadataName,
+                property,
+              })}
+              description={t`Source: ${canonicalValue}`}
+            />
+            <Table>
+              {localeOptions.map(({ value: locale, label: localeLabel }) => {
                 const row = localeRows.get(locale);
 
                 if (!isDefined(row)) {
@@ -113,7 +118,6 @@ export const SidePanelSettingsMetadataTranslationsPage = () => {
 
                 const isEdited =
                   row.provenance === MetadataTranslationProvenance.WORKSPACE;
-                const isSourceRow = locale === SOURCE_LOCALE && !isEdited;
 
                 return (
                   <TableRow
@@ -128,14 +132,6 @@ export const SidePanelSettingsMetadataTranslationsPage = () => {
                       />
                     </TableCell>
                     <TableCell>
-                      {isSourceRow && (
-                        <Tag color="gray" text={t`Source`} weight="medium" />
-                      )}
-                      {isEdited && (
-                        <Tag color="blue" text={t`Edited`} weight="medium" />
-                      )}
-                    </TableCell>
-                    <TableCell>
                       {isEdited && (
                         <LightIconButton
                           Icon={IconRestore}
@@ -147,11 +143,11 @@ export const SidePanelSettingsMetadataTranslationsPage = () => {
                     </TableCell>
                   </TableRow>
                 );
-              },
-            )}
-          </TableSection>
-        </Table>
-      ))}
+              })}
+            </Table>
+          </StyledPropertySection>
+        );
+      })}
     </StyledPageContainer>
   );
 };
