@@ -64,11 +64,11 @@ export const buildCursorWhereCondition = ({
   const fieldMetadataKey = fieldKey as keyof ObjectRecord;
   const { fieldMetadata, isReferencedByFieldName } =
     resolveFilterKeyFieldMetadata({
-    filterKey: fieldKey,
-    fieldIdByName,
-    fieldIdByJoinColumnName,
-    flatFieldMetadataMaps,
-  });
+      filterKey: fieldKey,
+      fieldIdByName,
+      fieldIdByJoinColumnName,
+      flatFieldMetadataMaps,
+    });
 
   if (!fieldMetadata) {
     throw new GraphqlQueryRunnerException(

@@ -458,7 +458,12 @@ describe('Order by relation field (e2e)', () => {
             $filter: PersonFilterInput
             $before: String
           ) {
-            people(orderBy: $orderBy, filter: $filter, last: 3, before: $before) {
+            people(
+              orderBy: $orderBy
+              filter: $filter
+              last: 3
+              before: $before
+            ) {
               edges {
                 node {
                   id
@@ -486,7 +491,9 @@ describe('Order by relation field (e2e)', () => {
       const connection = response.body.data.people;
 
       backwardIds.unshift(
-        ...connection.edges.map((edge: { node: { id: string } }) => edge.node.id),
+        ...connection.edges.map(
+          (edge: { node: { id: string } }) => edge.node.id,
+        ),
       );
 
       if (!connection.pageInfo.hasPreviousPage) {
