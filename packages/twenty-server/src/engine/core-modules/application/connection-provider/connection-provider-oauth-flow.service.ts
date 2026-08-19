@@ -310,6 +310,33 @@ export class ConnectionProviderOAuthFlowService {
     return this.twentyConfigService.get('SERVER_URL');
   }
 
+  private async resolveConnectedAccountHandle({
+    tokenResponse,
+    userId,
+  }: {
+    tokenResponse: TokenExchangeResponse;
+    userId: string;
+  }): Promise<string> {
+    const idTokenEmail = isDefined(tokenResponse.idToken)
+      ? extractEmailFromIdTokenClaims(tokenResponse.idToken)
+      : null;
+
+    if (isDefined(idTokenEmail)) {
+      return idTokenEmail;
+    }
+
+    const user = await this.userRepository.findOneBy({ id: userId });
+
+    if (!isDefined(user)) {
+      throw new ConnectionProviderException(
+        'User not found',
+        ConnectionProviderExceptionCode.INVALID_STATE,
+      );
+    }
+
+    return user.email;
+  }
+
   private async persistConnectedAccount({
     provider,
     tokenResponse,
@@ -336,22 +363,10 @@ export class ConnectionProviderOAuthFlowService {
         workspaceId,
       });
 
-    let handle = isDefined(tokenResponse.idToken)
-      ? extractEmailFromIdTokenClaims(tokenResponse.idToken)
-      : null;
-
-    if (!isDefined(handle)) {
-      const user = await this.userRepository.findOneBy({ id: userId });
-
-      if (!isDefined(user)) {
-        throw new ConnectionProviderException(
-          'User not found',
-          ConnectionProviderExceptionCode.INVALID_STATE,
-        );
-      }
-
-      handle = user.email;
-    }
+    const handle = await this.resolveConnectedAccountHandle({
+      tokenResponse,
+      userId,
+    });
 
     const sharedFields = {
       accessToken: encryptedAccessToken,
