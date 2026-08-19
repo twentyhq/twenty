@@ -15,7 +15,6 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { resolveOrderByFields } from 'src/engine/api/utils/resolve-order-by-fields.utils';
-import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -85,14 +84,10 @@ export const validateCursorMatchesOrderByOrThrow = ({
       isCompositeFieldMetadataType(fieldMetadata.type) &&
       isPlainObject(orderByValue)
     ) {
-      const compositeType = compositeTypeDefinitions.get(
-        fieldMetadata.type as CompositeFieldMetadataType,
-      );
+      const compositeType = compositeTypeDefinitions.get(fieldMetadata.type);
       const compositeCursorValue = cursor[fieldName];
 
-      for (const subFieldKey of Object.keys(
-        orderByValue as Record<string, unknown>,
-      )) {
+      for (const subFieldKey of Object.keys(orderByValue)) {
         const property = compositeType?.properties.find(
           (compositeProperty) => compositeProperty.name === subFieldKey,
         );
@@ -103,8 +98,7 @@ export const validateCursorMatchesOrderByOrThrow = ({
 
         const hasNestedValue =
           isPlainObject(compositeCursorValue) &&
-          (compositeCursorValue as Record<string, unknown>)[subFieldKey] !==
-            undefined;
+          compositeCursorValue[subFieldKey] !== undefined;
         // Legacy cursors carried composite values under dotted keys
         const hasDottedValue =
           cursor[`${fieldName}.${subFieldKey}`] !== undefined;

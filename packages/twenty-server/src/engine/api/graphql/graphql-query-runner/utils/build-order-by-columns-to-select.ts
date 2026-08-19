@@ -47,9 +47,7 @@ export const buildOrderByColumnsToSelect = ({
       isCompositeFieldMetadataType(fieldMetadata.type) &&
       isPlainObject(orderByValue)
     ) {
-      for (const subFieldKey of Object.keys(
-        orderByValue as Record<string, unknown>,
-      )) {
+      for (const subFieldKey of Object.keys(orderByValue)) {
         columnsToSelect[`${fieldMetadata.name}${capitalize(subFieldKey)}`] =
           true;
       }
