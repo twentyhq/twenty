@@ -70,10 +70,10 @@ export const SidePanelSettingsMetadataTranslationsPage = () => {
       {[...rowsByProperty.entries()].map(([property, localeRows]) => (
         <Table key={property}>
           <TableSection
-            title={getPropertyLabel(
-              settingsTranslationsSidePanelTarget.metadataName,
+            title={getPropertyLabel({
+              metadataName: settingsTranslationsSidePanelTarget.metadataName,
               property,
-            )}
+            })}
           >
             {localeOptions.map(({ value: locale, label: localeLabel }) => {
               const row = localeRows.get(locale);

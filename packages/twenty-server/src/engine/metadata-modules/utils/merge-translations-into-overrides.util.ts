@@ -1,6 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type APP_LOCALES } from 'twenty-shared/translations';
-import { isDefined } from 'twenty-shared/utils';
 
 import { ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-translatable-properties-by-metadata-name.constant';
 
@@ -30,14 +29,14 @@ type OverridesWithTranslations = Record<string, unknown> & {
   translations?: Record<string, Record<string, unknown>> | null;
 };
 
-// Mirrors computeMetadataOverridesBlob for the nested translations key: an
-// empty value deletes the entry, empty locale groups and an empty blob
-// collapse to null so a fully-reverted entity stores no overrides at all.
 // Locale and property are allowlist-validated by the callers; this re-checks
 // object-safety so a hostile key can never reach the prototype chain.
 const isSafeObjectKey = (key: string): boolean =>
   !['__proto__', 'constructor', 'prototype'].includes(key);
 
+// Mirrors computeMetadataOverridesBlob for the nested translations key: an
+// empty value deletes the entry, empty locale groups and an empty blob
+// collapse to null so a fully-reverted entity stores no overrides at all.
 export const mergeTranslationsIntoOverrides = <
   TOverrides = Record<string, unknown>,
 >({
@@ -56,36 +55,50 @@ export const mergeTranslationsIntoOverrides = <
     return existingOverrides;
   }
 
-  const overrides = {
-    ...(existingOverrides ?? {}),
-  } as OverridesWithTranslations;
-  const translations = Object.fromEntries(
-    Object.entries(overrides.translations ?? {}).map(([locale, values]) => [
-      locale,
-      { ...values },
-    ]),
+  const { translations: existingTranslations, ...otherOverrides } =
+    (existingOverrides ?? {}) as OverridesWithTranslations;
+
+  const locales = new Set([
+    ...Object.keys(existingTranslations ?? {}),
+    ...safeTranslationEntries.map(({ locale }) => locale),
+  ]);
+
+  const mergedTranslations = Object.fromEntries(
+    [...locales]
+      .map((locale) => {
+        const localeEntries = safeTranslationEntries.filter(
+          (entry) => entry.locale === locale,
+        );
+        const removedProperties = new Set(
+          localeEntries
+            .filter(({ value }) => !isNonEmptyString(value))
+            .map(({ property }) => property),
+        );
+        const addedValues = Object.fromEntries(
+          localeEntries
+            .filter(({ value }) => isNonEmptyString(value))
+            .map(({ property, value }) => [property, value]),
+        );
+
+        return [
+          locale,
+          {
+            ...Object.fromEntries(
+              Object.entries(existingTranslations?.[locale] ?? {}).filter(
+                ([property]) => !removedProperties.has(property),
+              ),
+            ),
+            ...addedValues,
+          },
+        ] as const;
+      })
+      .filter(([, values]) => Object.keys(values).length > 0),
   );
 
-  for (const { locale, property, value } of safeTranslationEntries) {
-    if (isNonEmptyString(value)) {
-      translations[locale] = { ...translations[locale], [property]: value };
-      continue;
-    }
-
-    if (isDefined(translations[locale])) {
-      delete translations[locale][property];
-
-      if (Object.keys(translations[locale]).length === 0) {
-        delete translations[locale];
-      }
-    }
-  }
-
-  if (Object.keys(translations).length === 0) {
-    delete overrides.translations;
-  } else {
-    overrides.translations = translations;
-  }
+  const overrides =
+    Object.keys(mergedTranslations).length > 0
+      ? { ...otherOverrides, translations: mergedTranslations }
+      : otherOverrides;
 
   if (Object.keys(overrides).length === 0) {
     return null;

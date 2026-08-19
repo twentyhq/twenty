@@ -15,8 +15,13 @@ export const useTranslatablePropertyLabel = () => {
     },
   };
 
-  const getPropertyLabel = (metadataName: string, property: string): string =>
-    labelsByMetadataName[metadataName]?.[property] ?? property;
+  const getPropertyLabel = ({
+    metadataName,
+    property,
+  }: {
+    metadataName: string;
+    property: string;
+  }): string => labelsByMetadataName[metadataName]?.[property] ?? property;
 
   return { getPropertyLabel };
 };

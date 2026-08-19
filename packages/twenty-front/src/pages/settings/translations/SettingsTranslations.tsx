@@ -188,8 +188,14 @@ export const SettingsTranslations = () => {
                           ? (fieldLabelByRecordId.get(row.recordId) ?? '')
                           : null;
                       const rowLabel = isDefined(fieldLabel)
-                        ? `${fieldLabel} · ${getPropertyLabel(row.metadataName, row.property)}`
-                        : getPropertyLabel(row.metadataName, row.property);
+                        ? `${fieldLabel} · ${getPropertyLabel({
+                            metadataName: row.metadataName,
+                            property: row.property,
+                          })}`
+                        : getPropertyLabel({
+                            metadataName: row.metadataName,
+                            property: row.property,
+                          });
 
                       return (
                         <TableRow

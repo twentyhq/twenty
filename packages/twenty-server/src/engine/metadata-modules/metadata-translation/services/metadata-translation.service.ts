@@ -112,9 +112,9 @@ export class MetadataTranslationService {
           metadataName
         ] ?? []) {
           const sourceValue = readStringProperty(entity, property);
-          const overrideValue = (
-            overrides as Record<string, unknown> | null
-          )?.[property];
+          const overrideValue = (overrides as Record<string, unknown> | null)?.[
+            property
+          ];
           const canonicalValue = isNonEmptyString(overrideValue)
             ? overrideValue
             : sourceValue;
