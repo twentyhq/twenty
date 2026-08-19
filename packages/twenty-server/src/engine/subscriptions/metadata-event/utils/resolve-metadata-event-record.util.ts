@@ -6,7 +6,6 @@ import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/uti
 import { resolveEffectiveEntityPropertyByName } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 import { isTranslatableMetadataName } from 'src/engine/subscriptions/metadata-event/utils/is-translatable-metadata-name.util';
 
-// Per-locale overrides are consumed by the resolver, not copied onto the record.
 const TRANSLATIONS_OVERRIDE_KEY = 'translations';
 
 export const resolveMetadataEventRecord = ({

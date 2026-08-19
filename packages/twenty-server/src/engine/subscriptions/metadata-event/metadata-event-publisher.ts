@@ -60,8 +60,6 @@ export class MetadataEventPublisher {
     return record?.userWorkspaceId ?? undefined;
   }
 
-  // Publish-time work is per-workspace lookups only. Anything viewer-dependent
-  // (overrides, translations) belongs at delivery, where the subscriber is known.
   private async enrichMetadataEventBatch(
     metadataEventBatch: MetadataEventBatch,
   ): Promise<MetadataEventBatch> {

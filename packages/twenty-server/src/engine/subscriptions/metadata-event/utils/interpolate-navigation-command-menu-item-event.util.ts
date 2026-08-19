@@ -12,8 +12,6 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/utils/effective-entity-i18n-context.type';
 
-// Described by what this reads rather than by the full flat entity, so callers
-// and specs can pass the event payload without casting it into one.
 type InterpolatableCommandMenuItemRecord = Record<string, unknown> & {
   engineComponentKey?: unknown;
   payload?: unknown;
