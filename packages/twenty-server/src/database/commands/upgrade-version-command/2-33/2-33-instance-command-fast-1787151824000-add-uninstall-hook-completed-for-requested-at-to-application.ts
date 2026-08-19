@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.33.0', 1787486400000)
+@RegisteredInstanceCommand('2.33.0', 1787151824000)
 export class AddUninstallHookCompletedForRequestedAtToApplicationFastInstanceCommand
   implements FastInstanceCommand
 {

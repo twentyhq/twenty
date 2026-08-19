@@ -128,7 +128,7 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true, type: 'timestamptz' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.33.0_AddUninstallHookCompletedForRequestedAtToApplicationFastInstanceCommand_1787486400000',
+      '2.33.0_AddUninstallHookCompletedForRequestedAtToApplicationFastInstanceCommand_1787151824000',
   })
   uninstallHookCompletedForRequestedAt: Date | null;
 
