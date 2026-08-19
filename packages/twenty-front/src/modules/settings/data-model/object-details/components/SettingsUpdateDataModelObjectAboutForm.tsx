@@ -227,12 +227,21 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
       property,
       value: pendingFormValues[property] ?? null,
     }));
+    // With label↔name sync on, the name fields were auto-derived from the
+    // label being translated (they are not editable directly in that state):
+    // a translation must not rename the API.
+    const isPendingLabelSyncedWithName =
+      pendingFormValues.isLabelSyncedWithName ?? isLabelSyncedWithName;
+    const syncDerivedNameProperties: readonly string[] =
+      isPendingLabelSyncedWithName ? ['nameSingular', 'namePlural'] : [];
     // Unrelated dirty edits (icon, ...) ride along as canonical updates —
     // only the label edits become locale-scoped.
     const dirtyNonTranslatableValues = Object.fromEntries(
       Object.entries(pickDirtyValues(pendingFormValues)).filter(
         ([key]) =>
-          !(OBJECT_TRANSLATABLE_PROPERTIES as readonly string[]).includes(key),
+          !(OBJECT_TRANSLATABLE_PROPERTIES as readonly string[]).includes(
+            key,
+          ) && !syncDerivedNameProperties.includes(key),
       ),
     );
 
@@ -245,7 +254,13 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
     setPendingFormValues(null);
 
     if (updateResult.status === 'successful') {
-      formConfig.reset(pendingFormValues);
+      // The form must reflect what was saved: the unchanged API names, not
+      // the ones the sync derived from the translated label.
+      formConfig.reset(
+        isPendingLabelSyncedWithName
+          ? { ...pendingFormValues, nameSingular, namePlural }
+          : pendingFormValues,
+      );
     }
   };
 
