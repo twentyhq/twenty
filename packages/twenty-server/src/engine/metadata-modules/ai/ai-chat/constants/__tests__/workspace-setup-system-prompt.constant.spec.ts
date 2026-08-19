@@ -22,6 +22,8 @@ describe('WORKSPACE_SETUP_SYSTEM_PROMPT', () => {
     expect(prompt).toContain(
       'The first message of this conversation is not from the user',
     );
+    expect(prompt).toContain('the person setting it up');
+    expect(prompt).toContain('what you know about them and their company');
     expect(prompt).toContain('invisible');
     expect(prompt).toContain('follow these rules silently');
     expect(prompt).not.toContain('already loaded');
@@ -83,6 +85,12 @@ describe('WORKSPACE_SETUP_SYSTEM_PROMPT', () => {
       'the two most widely used when you know nothing about them',
     );
     expect(prompt).toContain('what they want to use Twenty for');
+  });
+
+  it('should fold at most one person detail into the framing without reciting it', () => {
+    expect(prompt).toContain('When the first message carries person context');
+    expect(prompt).toContain('fold at most one specific detail');
+    expect(prompt).toContain('never recite their profile back at them');
   });
 
   it('should open with the migration-or-scratch question as a tool call', () => {

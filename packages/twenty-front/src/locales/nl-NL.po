@@ -1283,8 +1283,8 @@ msgid "Add Field"
 msgstr "Veld toevoegen"
 
 #. js-lingui-id: T7RGT6
-#: src/modules/activities/files/components/FilesCard.tsx
-#: src/modules/activities/files/components/FilesCard.tsx
+#: src/modules/activities/files/components/FilesCardContent.tsx
+#: src/modules/page-layout/widgets/files/components/WidgetActionFileAttach.tsx
 msgid "Add file"
 msgstr "Bestand toevoegen"
 
@@ -2034,7 +2034,7 @@ msgid "All system objects are already in the sidebar"
 msgstr "Alle systeemobjecten staan al in de zijbalk"
 
 #. js-lingui-id: p+lpde
-#: src/modules/activities/tasks/components/TaskGroups.tsx
+#: src/modules/activities/tasks/components/TaskGroupsContent.tsx
 msgid "All tasks addressed. Maintain the momentum."
 msgstr "Alle taken opgepakt. Houd het momentum vast."
 
@@ -2266,6 +2266,11 @@ msgstr "En"
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
 msgid "Annual"
 msgstr "Jaarlijks"
+
+#. js-lingui-id: GqCA/t
+#: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
+msgid "Answered"
+msgstr ""
 
 #. js-lingui-id: +qygei
 #: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
@@ -4356,7 +4361,7 @@ msgid "Component name"
 msgstr "Componentnaam"
 
 #. js-lingui-id: QOhkyl
-#: src/modules/activities/emails/components/EmailsCard.tsx
+#: src/modules/page-layout/widgets/emails/components/WidgetActionEmailCompose.tsx
 msgid "Compose"
 msgstr ""
 
@@ -6269,6 +6274,7 @@ msgid "Delete group"
 msgstr "Groep verwijderen"
 
 #. js-lingui-id: Wk+A9S
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeDeleteButton.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 msgid "Delete node"
 msgstr "Knopen verwijderen"
@@ -8329,7 +8335,7 @@ msgid "Failed to delete unsubscribe topic."
 msgstr "Verwijderen van afmeldonderwerp mislukt."
 
 #. js-lingui-id: NUmmdc
-#: src/modules/command-menu-item/engine-command/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
+#: src/modules/dashboards/hooks/useDuplicateDashboard.ts
 msgid "Failed to duplicate dashboard"
 msgstr "Het dupliceren van het dashboard is mislukt"
 
@@ -12061,7 +12067,7 @@ msgid "Missing email draft permission."
 msgstr "Toestemming voor het opstellen van e-mailconcepten ontbreekt."
 
 #. js-lingui-id: mibKsa
-#: src/modules/activities/tasks/components/TaskGroups.tsx
+#: src/modules/activities/tasks/components/TaskGroupsContent.tsx
 msgid "Mission accomplished!"
 msgstr "Missie volbracht!"
 
@@ -12283,6 +12289,11 @@ msgstr "Breng het werk vooruit over teams en agenten heen"
 #. js-lingui-id: XXzjfC
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
 msgid "Msgs"
+msgstr ""
+
+#. js-lingui-id: cT1jbf
+#: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
+msgid "Multiple answers"
 msgstr ""
 
 #. js-lingui-id: asWVA5
@@ -12621,8 +12632,8 @@ msgid "New Model"
 msgstr "Nieuw model"
 
 #. js-lingui-id: zPPcuu
-#: src/modules/activities/notes/components/NotesCard.tsx
-#: src/modules/activities/notes/components/NotesCard.tsx
+#: src/modules/activities/notes/components/NotesCardContent.tsx
+#: src/modules/page-layout/widgets/notes/components/WidgetActionNoteCreate.tsx
 msgid "New note"
 msgstr "Nieuwe notitie"
 
@@ -12671,8 +12682,8 @@ msgid "New Tab"
 msgstr "Nieuw tabblad"
 
 #. js-lingui-id: wl18ST
-#: src/modules/activities/tasks/components/TaskGroups.tsx
-#: src/modules/activities/tasks/components/TaskGroups.tsx
+#: src/modules/activities/tasks/components/TaskGroupsContent.tsx
+#: src/modules/page-layout/widgets/tasks/components/WidgetActionTaskCreate.tsx
 msgid "New task"
 msgstr "Nieuwe taak"
 
@@ -13052,12 +13063,12 @@ msgid "No event logs found"
 msgstr "Geen gebeurtenislogs gevonden"
 
 #. js-lingui-id: l7y8S8
-#: src/modules/activities/calendar/components/CalendarEventsCard.tsx
+#: src/modules/activities/calendar/components/CalendarEventsCardContent.tsx
 msgid "No Events"
 msgstr "Geen evenementen"
 
 #. js-lingui-id: wY82y3
-#: src/modules/activities/calendar/components/CalendarEventsCard.tsx
+#: src/modules/activities/calendar/components/CalendarEventsCardContent.tsx
 msgid "No events have been scheduled with this {objectName} yet."
 msgstr "Er zijn nog geen evenementen gepland met deze {objectName}."
 
@@ -13082,7 +13093,7 @@ msgid "No fields to display"
 msgstr "Geen velden om weer te geven"
 
 #. js-lingui-id: 23Rceg
-#: src/modules/activities/files/components/FilesCard.tsx
+#: src/modules/activities/files/components/FilesCardContent.tsx
 msgid "No Files"
 msgstr "Geen bestanden"
 
@@ -13196,7 +13207,7 @@ msgid "No models available. Please configure AI models in your workspace setting
 msgstr "Geen modellen beschikbaar. Configureer AI-modellen in je werkruimte-instellingen."
 
 #. js-lingui-id: 9VrTfZ
-#: src/modules/activities/notes/components/NotesCard.tsx
+#: src/modules/activities/notes/components/NotesCardContent.tsx
 msgid "No notes"
 msgstr "Geen notities"
 
@@ -14234,6 +14245,7 @@ msgstr "Ordenen"
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
@@ -15174,6 +15186,11 @@ msgstr ""
 msgid "Queries that relied on it will fall back to a sequential scan. You can recreate it later."
 msgstr "Query’s die erop vertrouwden, vallen terug op een sequentiële scan. Je kunt hem later opnieuw maken."
 
+#. js-lingui-id: enzGAL
+#: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
+msgid "Questions"
+msgstr ""
+
 #. js-lingui-id: /IUt/5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerHealthStatus.tsx
 msgid "Queue information is not available because the worker is down"
@@ -15353,6 +15370,7 @@ msgstr ""
 
 #. js-lingui-id: WEYdDv
 #: src/modules/ai/components/AiChatQuestionCard.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
 msgid "Recommended"
 msgstr "Aanbevolen"
 
@@ -17596,6 +17614,11 @@ msgstr "Sla het aanmaken van een Naam-veld over "
 msgid "Skip the junction object (similar to many-to-many relations)"
 msgstr "Sla het koppelingsobject over (vergelijkbaar met veel-op-veel-relaties)"
 
+#. js-lingui-id: 9NyAH9
+#: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
+msgid "Skipped"
+msgstr ""
+
 #. js-lingui-id: BIZl8w
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Sky"
@@ -18730,12 +18753,12 @@ msgid "then"
 msgstr "dan"
 
 #. js-lingui-id: l2fWLK
-#: src/modules/activities/files/components/FilesCard.tsx
+#: src/modules/activities/files/components/FilesCardContent.tsx
 msgid "There are no associated files with this record."
 msgstr "Er zijn geen bijbehorende bestanden met dit record."
 
 #. js-lingui-id: 6g0c8y
-#: src/modules/activities/notes/components/NotesCard.tsx
+#: src/modules/activities/notes/components/NotesCardContent.tsx
 msgid "There are no associated notes with this record."
 msgstr "Er zijn geen bijbehorende notities bij dit record."
 
@@ -19703,6 +19726,11 @@ msgstr "Kan de applicatiedetails niet laden. Probeer het later opnieuw."
 #: src/modules/client-config/components/ClientConfigProvider.tsx
 msgid "Unable to Reach Back-end"
 msgstr "Kan de back-end niet bereiken"
+
+#. js-lingui-id: 2lF8Zj
+#: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
+msgid "Unanswered"
+msgstr ""
 
 #. js-lingui-id: 5JOLV9
 #: src/modules/ai/components/AiChatThreadItemMenu.tsx

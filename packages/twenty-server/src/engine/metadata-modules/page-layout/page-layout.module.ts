@@ -5,6 +5,7 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { I18nModule } from 'src/engine/core-modules/i18n/i18n.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules/application-translation-catalog/application-translation-catalog.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FlatPageLayoutTabModule } from 'src/engine/metadata-modules/flat-page-layout-tab/flat-page-layout-tab.module';
 import { FlatPageLayoutWidgetModule } from 'src/engine/metadata-modules/flat-page-layout-widget/flat-page-layout-widget.module';
@@ -34,6 +35,7 @@ import { DashboardSyncModule } from 'src/modules/dashboard-sync/dashboard-sync.m
     WorkspaceCacheStorageModule,
     WorkspaceMigrationModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
+    ApplicationTranslationCatalogModule,
     FlatPageLayoutModule,
     FlatPageLayoutTabModule,
     FlatPageLayoutWidgetModule,

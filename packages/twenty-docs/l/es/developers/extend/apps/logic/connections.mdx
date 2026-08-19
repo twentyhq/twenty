@@ -212,15 +212,16 @@ export const createLinearIssueHandler = async (input: {
 
 Cada conexión tiene:
 
-| Campo             | Descripción                                                                                                                      |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `id`              | ID de fila único; pásalo a `getConnection(id)` para volver a obtener una sola conexión                                           |
-| `visibility`      | `'user'` (privada para un miembro del espacio de trabajo) o `'workspace'` (compartida con todos los miembros)                    |
-| `scopes`          | Permisos de OAuth concedidos por el proveedor de origen (distintos de `visibility` — no están relacionados)                      |
-| `userWorkspaceId` | El id de userWorkspace del propietario — útil para elegir "la conexión del usuario de la solicitud" en activadores de rutas HTTP |
-| `accessToken`     | Token de acceso OAuth actualizado (se renueva automáticamente si ha expirado)                                                    |
-| `name` / `handle` | El nombre para mostrar de la conexión (derivado automáticamente en el callback de OAuth, el usuario puede cambiarlo)             |
-| `authFailedAt`    | Se establece cuando la actualización más reciente falló; el usuario debe reconectarse                                            |
+| Campo             | Descripción                                                                                                                                                                                                                                                       |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`              | ID de fila único; pásalo a `getConnection(id)` para volver a obtener una sola conexión                                                                                                                                                                            |
+| `visibility`      | `'user'` (privada para un miembro del espacio de trabajo) o `'workspace'` (compartida con todos los miembros)                                                                                                                                                     |
+| `scopes`          | Permisos de OAuth concedidos por el proveedor de origen (distintos de `visibility` — no están relacionados)                                                                                                                                                       |
+| `userWorkspaceId` | El id de userWorkspace del propietario — útil para elegir "la conexión del usuario de la solicitud" en activadores de rutas HTTP                                                                                                                                  |
+| `accessToken`     | Token de acceso OAuth actualizado (se renueva automáticamente si ha expirado)                                                                                                                                                                                     |
+| `nombre`          | El nombre para mostrar de la conexión (derivado automáticamente en el callback de OAuth, el usuario puede cambiarlo)                                                                                                                                              |
+| `handle`          | El correo electrónico de la cuenta principal conectada, se actualizó en cada reconecto; resuelto desde el OIDC `id_token` devuelto en intercambio de tokens, volviendo a la conexión de correo electrónico del usuario Veinte cuando el proveedor no devuelve uno |
+| `authFailedAt`    | Se establece cuando la actualización más reciente falló; el usuario debe reconectarse                                                                                                                                                                             |
 
 Puntos clave:
 

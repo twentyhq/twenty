@@ -55,7 +55,9 @@ import {
   extractCacheCreationTokens,
   extractCacheCreationTokensFromSteps,
 } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
+import { AI_CHAT_STREAM_FUNCTION_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-stream-function-id.constant';
 import { AI_CHAT_TOOL_NAMES_TO_PRELOAD } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-tool-names-to-preload.const';
+import { AI_CHAT_WORKSPACE_SETUP_STREAM_FUNCTION_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-workspace-setup-stream-function-id.constant';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
 import {
@@ -472,7 +474,9 @@ export class ChatExecutionService {
         hasToolCall(COMPLETE_WORKSPACE_SETUP_TOOL_NAME)(step) ||
         hasNoMoreAvailableCredits,
       experimental_telemetry: buildAiTelemetry({
-        functionId: 'ai-chat-stream',
+        functionId: isWorkspaceSetupThread
+          ? AI_CHAT_WORKSPACE_SETUP_STREAM_FUNCTION_ID
+          : AI_CHAT_STREAM_FUNCTION_ID,
         workspaceId: workspace.id,
         userWorkspaceId,
         threadId,
