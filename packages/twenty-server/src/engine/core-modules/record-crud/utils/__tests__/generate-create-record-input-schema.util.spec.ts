@@ -78,8 +78,6 @@ describe('generateCreateRecordInputSchema', () => {
       buildMockI18nContext(),
     );
 
-    expect(schema.shape.status.description).toBe(
-      'Original status description',
-    );
+    expect(schema.shape.status.description).toBe('Original status description');
   });
 });

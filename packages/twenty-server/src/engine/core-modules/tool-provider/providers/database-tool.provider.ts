@@ -282,7 +282,11 @@ export class DatabaseToolProvider implements ToolProvider {
           category: ToolCategory.DATABASE_CRUD,
           ...(shouldIncludeSchema(`create_one_${snakeSingular}`) && {
             inputSchema: toToolJsonSchema(
-              generateCreateRecordInputSchema(objectMetadata, restrictedFields, i18nContext),
+              generateCreateRecordInputSchema(
+                objectMetadata,
+                restrictedFields,
+                i18nContext,
+              ),
             ),
           }),
           executionRef: {
@@ -336,7 +340,11 @@ export class DatabaseToolProvider implements ToolProvider {
           category: ToolCategory.DATABASE_CRUD,
           ...(shouldIncludeSchema(`update_one_${snakeSingular}`) && {
             inputSchema: toToolJsonSchema(
-              generateUpdateRecordInputSchema(objectMetadata, restrictedFields, i18nContext),
+              generateUpdateRecordInputSchema(
+                objectMetadata,
+                restrictedFields,
+                i18nContext,
+              ),
             ),
           }),
           executionRef: {

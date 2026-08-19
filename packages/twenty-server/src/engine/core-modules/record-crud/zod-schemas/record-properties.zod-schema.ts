@@ -33,7 +33,7 @@ import {
 } from 'src/engine/core-modules/record-crud/zod-schemas/shared-value-defs.zod-schema';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/utils/effective-entity-i18n-context.type';
-import { type MetadataPresentationOverrides } from 'src/engine/metadata-modules/utils/metadata-presentation-overrides.type';
+import { type FieldMetadataOverrides } from 'src/engine/metadata-modules/field-metadata/types/field-metadata-overrides.type';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
@@ -110,7 +110,10 @@ export const generateRecordPropertiesZodSchema = (
       ? resolveEffectiveEntityProperty({
           metadataName: 'fieldMetadata',
           baseValue: field.description,
-          overrides: (field as unknown as { overrides: MetadataPresentationOverrides<'fieldMetadata'> | null }).overrides,
+          overrides: field.overrides as
+            | FieldMetadataOverrides
+            | null
+            | undefined,
           property: 'description',
           i18nContext,
         })
