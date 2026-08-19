@@ -109,6 +109,7 @@ export class LocalDriver implements LogicFunctionDriver {
     flatApplication,
     applicationUniversalIdentifier,
     payload,
+    context,
     env,
     timeoutMs = 900_000,
     forceExecutionMode,
@@ -203,6 +204,7 @@ export class LocalDriver implements LogicFunctionDriver {
             runnerPath,
             env: env ?? {},
             payload,
+            context,
             timeoutMs,
           });
 

@@ -20,8 +20,8 @@ describe('LocalChildProcessRunnerService', () => {
 
       await writeFile(
         builtLogicFunctionPath,
-        `export const main = async () => {
-          const retryableError = new Error('Dependency unavailable');
+        `export const main = async (_payload, context) => {
+          const retryableError = new Error('Dependency unavailable on retry ' + context.retryCount);
           retryableError.name = 'RetryableLogicFunctionError';
           throw retryableError;
         };`,
@@ -42,13 +42,14 @@ describe('LocalChildProcessRunnerService', () => {
           runnerPath,
           env: {},
           payload: {},
+          context: { retryCount: 2, maxRetries: 3 },
           timeoutMs: 5_000,
         });
 
       expect(executionResult).toMatchObject({
         ok: false,
         errorType: 'RetryableLogicFunctionError',
-        error: 'Dependency unavailable',
+        error: 'Dependency unavailable on retry 2',
       });
     } finally {
       await rm(logicFunctionDirectory, { recursive: true, force: true });

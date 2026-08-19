@@ -221,6 +221,8 @@ export class BullMQDriver
             data: job.data,
             id: job.id ?? '',
             name: job.name,
+            retryLimit: Math.max(0, (job.opts.attempts ?? 1) - 1),
+            updateData: (data) => job.updateData(data),
             abortSignal,
           });
           const timeEnd = performance.now();
