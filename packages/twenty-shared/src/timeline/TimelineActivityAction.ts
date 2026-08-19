@@ -3,4 +3,5 @@ export type TimelineActivityAction =
   | 'updated'
   | 'deleted'
   | 'restored'
-  | 'linked';
+  | 'linked'
+  | 'unlinked';

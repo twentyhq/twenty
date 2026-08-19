@@ -3,6 +3,7 @@ import { type EventRowDynamicComponentProps } from '@/activities/timeline-activi
 import { EventRowItem } from '@/activities/timeline-activities/rows/components/EventRowItem';
 import { EventRowMainObjectUpdated } from '@/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated';
 import { styled } from '@linaria/react';
+import { getTimelineActivityAction } from 'twenty-shared/timeline';
 import { t } from '@lingui/core/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -36,7 +37,7 @@ export const EventRowMainObject = ({
   mainObjectMetadataItem,
   createdAt,
 }: EventRowMainObjectProps) => {
-  const [, eventAction] = event.name.split('.');
+  const eventAction = getTimelineActivityAction(event);
 
   switch (eventAction) {
     case 'created': {

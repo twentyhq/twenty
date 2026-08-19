@@ -2,7 +2,7 @@ import { type TimelineActivity } from '@/activities/timeline-activities/types/Ti
 import { findFieldMetadataItemByDiffKey } from '@/activities/timeline-activities/utils/findFieldMetadataItemByDiffKey';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { parseTimelineActivityAction } from 'twenty-shared/timeline';
+import { getTimelineActivityAction } from 'twenty-shared/timeline';
 import { isDefined } from 'twenty-shared/utils';
 
 const keepActivityWithReadableDiff = (
@@ -76,7 +76,7 @@ export const filterOutInvalidTimelineActivities = (
             objectMetadataItems,
           );
 
-      const action = parseTimelineActivityAction(timelineActivity.name);
+      const action = getTimelineActivityAction(timelineActivity);
 
       if (isDefined(linkedObjectMetadataItem)) {
         if (!isDefined(timelineActivity.properties?.diff)) {

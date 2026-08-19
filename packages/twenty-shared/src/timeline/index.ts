@@ -7,5 +7,6 @@
  *                              |___/
  */
 
+export { getTimelineActivityAction } from './getTimelineActivityAction';
 export { parseTimelineActivityAction } from './parseTimelineActivityAction';
 export type { TimelineActivityAction } from './TimelineActivityAction';

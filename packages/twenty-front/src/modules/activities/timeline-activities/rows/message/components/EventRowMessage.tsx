@@ -1,3 +1,4 @@
+import { getTimelineActivityAction } from 'twenty-shared/timeline';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
@@ -29,10 +30,10 @@ export const EventRowMessage = ({
   authorFullName,
   labelIdentifierValue,
 }: EventRowMessageProps) => {
-  const [, eventAction] = event.name.split('.');
+  const eventAction = getTimelineActivityAction(event);
   const [isOpen, setIsOpen] = useState(false);
 
-  if (['linked'].includes(eventAction) === false) {
+  if (eventAction !== 'linked') {
     throw new Error('Invalid event action for message event type.');
   }
 

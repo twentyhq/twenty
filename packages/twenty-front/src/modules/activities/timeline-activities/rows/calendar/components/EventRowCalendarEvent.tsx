@@ -1,3 +1,4 @@
+import { getTimelineActivityAction } from 'twenty-shared/timeline';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -30,10 +31,10 @@ export const EventRowCalendarEvent = ({
   labelIdentifierValue,
 }: EventRowCalendarEventProps) => {
   const { t } = useLingui();
-  const [, eventAction] = event.name.split('.');
+  const eventAction = getTimelineActivityAction(event);
   const [isOpen, setIsOpen] = useState(false);
 
-  if (['linked'].includes(eventAction) === false) {
+  if (eventAction !== 'linked') {
     throw new Error('Invalid event action for calendarEvent event type.');
   }
 

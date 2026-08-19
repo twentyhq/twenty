@@ -2,7 +2,7 @@ import { type TimelineActivity } from '@/activities/timeline-activities/types/Ti
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import {
-  parseTimelineActivityAction,
+  getTimelineActivityAction,
   type TimelineActivityAction,
 } from 'twenty-shared/timeline';
 import {
@@ -29,7 +29,7 @@ export const EventIconDynamicComponent = ({
   event: TimelineActivity;
   linkedObjectMetadataItem: EnrichedObjectMetadataItem | null;
 }) => {
-  const action = parseTimelineActivityAction(event.name);
+  const action = getTimelineActivityAction(event);
 
   const ActionIcon = RECORD_CHANGE_ICONS[action];
 
