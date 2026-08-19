@@ -24,5 +24,6 @@ export const buildWidgetVisibilityContext = ({
     // are false — so a widget gated on the record stays hidden until it loads
     // rather than appearing and being taken away.
     selectedRecords: isDefined(targetRecord) ? [targetRecord] : [],
+    record: targetRecord,
   };
 };

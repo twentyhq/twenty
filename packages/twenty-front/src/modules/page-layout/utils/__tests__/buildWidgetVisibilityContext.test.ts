@@ -7,7 +7,11 @@ describe('buildWidgetVisibilityContext', () => {
       isInSidePanel: false,
     });
 
-    expect(result).toEqual({ device: 'MOBILE', selectedRecords: [] });
+    expect(result).toEqual({
+      device: 'MOBILE',
+      selectedRecords: [],
+      record: undefined,
+    });
   });
 
   it('should return MOBILE device when isInSidePanel is true', () => {
@@ -16,7 +20,11 @@ describe('buildWidgetVisibilityContext', () => {
       isInSidePanel: true,
     });
 
-    expect(result).toEqual({ device: 'MOBILE', selectedRecords: [] });
+    expect(result).toEqual({
+      device: 'MOBILE',
+      selectedRecords: [],
+      record: undefined,
+    });
   });
 
   it('should return MOBILE device when both isMobile and isInSidePanel are true', () => {
@@ -25,7 +33,11 @@ describe('buildWidgetVisibilityContext', () => {
       isInSidePanel: true,
     });
 
-    expect(result).toEqual({ device: 'MOBILE', selectedRecords: [] });
+    expect(result).toEqual({
+      device: 'MOBILE',
+      selectedRecords: [],
+      record: undefined,
+    });
   });
 
   it('should return DESKTOP device when both are false', () => {
@@ -34,10 +46,14 @@ describe('buildWidgetVisibilityContext', () => {
       isInSidePanel: false,
     });
 
-    expect(result).toEqual({ device: 'DESKTOP', selectedRecords: [] });
+    expect(result).toEqual({
+      device: 'DESKTOP',
+      selectedRecords: [],
+      record: undefined,
+    });
   });
 
-  it('should expose the target record as a single-record selection', () => {
+  it('should expose the target record as both record and single-record selection', () => {
     const result = buildWidgetVisibilityContext({
       isMobile: false,
       isInSidePanel: false,
@@ -47,10 +63,11 @@ describe('buildWidgetVisibilityContext', () => {
     expect(result).toEqual({
       device: 'DESKTOP',
       selectedRecords: [{ id: 'a', status: 'DRAFT' }],
+      record: { id: 'a', status: 'DRAFT' },
     });
   });
 
-  it('should expose an empty selection when there is no target record', () => {
+  it('should expose an empty selection and undefined record when there is no target record', () => {
     const result = buildWidgetVisibilityContext({
       isMobile: false,
       isInSidePanel: false,
@@ -58,5 +75,6 @@ describe('buildWidgetVisibilityContext', () => {
     });
 
     expect(result.selectedRecords).toEqual([]);
+    expect(result.record).toBeUndefined();
   });
 });

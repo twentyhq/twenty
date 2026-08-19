@@ -258,4 +258,66 @@ describe('evaluateWidgetVisibility', () => {
       expect(result).toBe(true);
     });
   });
+
+  describe('evaluating record in conditionalDisplay', () => {
+    it('should evaluate conditionalDisplay rules referencing record properties on record pages', () => {
+      const conditionalDisplay: RulesLogic = {
+        '===': [{ var: 'record.profile' }, 'A'],
+      };
+
+      const matchingResult = evaluateWidgetVisibility({
+        conditionalAvailabilityExpression: undefined,
+        conditionalDisplay,
+        context: {
+          device: 'DESKTOP',
+          selectedRecords: [{ id: 'rec-1', profile: 'A' }],
+          record: { id: 'rec-1', profile: 'A' },
+        },
+      });
+
+      expect(matchingResult).toBe(true);
+
+      const nonMatchingResult = evaluateWidgetVisibility({
+        conditionalAvailabilityExpression: undefined,
+        conditionalDisplay,
+        context: {
+          device: 'DESKTOP',
+          selectedRecords: [{ id: 'rec-2', profile: 'B' }],
+          record: { id: 'rec-2', profile: 'B' },
+        },
+      });
+
+      expect(nonMatchingResult).toBe(false);
+    });
+
+    it('should evaluate truthiness of record id when record is present', () => {
+      const conditionalDisplay: RulesLogic = {
+        '!!': [{ var: 'record.id' }],
+      };
+
+      const withRecordResult = evaluateWidgetVisibility({
+        conditionalAvailabilityExpression: undefined,
+        conditionalDisplay,
+        context: {
+          device: 'DESKTOP',
+          selectedRecords: [{ id: 'rec-1' }],
+          record: { id: 'rec-1' },
+        },
+      });
+
+      expect(withRecordResult).toBe(true);
+
+      const withoutRecordResult = evaluateWidgetVisibility({
+        conditionalAvailabilityExpression: undefined,
+        conditionalDisplay,
+        context: {
+          device: 'DESKTOP',
+          selectedRecords: [],
+          record: undefined,
+        },
+      });
+
+      expect(withoutRecordResult).toBe(false);
+    });
+  });
 });
