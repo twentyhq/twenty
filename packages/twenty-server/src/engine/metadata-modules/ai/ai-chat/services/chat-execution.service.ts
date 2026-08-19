@@ -307,14 +307,15 @@ export class ChatExecutionService {
       userContext.timezone,
     );
 
-    const systemPrompt = this.systemPromptBuilder.buildFullPrompt(
+    const systemPrompt = this.systemPromptBuilder.buildFullPrompt({
       toolCatalog,
       skillCatalog,
-      preloadedToolNames,
+      preloadedTools: preloadedToolNames,
       storedFiles,
-      workspace.aiAdditionalInstructions ?? undefined,
+      workspaceInstructions: workspace.aiAdditionalInstructions ?? undefined,
       userContext,
-    );
+      isWorkspaceSetupThread,
+    });
 
     this.logger.log(
       `Starting chat execution with model ${registeredModel.modelId}, ${Object.keys(activeTools).length} active tools`,

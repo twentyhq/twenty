@@ -16,6 +16,7 @@ import {
   type UserContext,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { CHAT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-chat/constants/chat-system-prompts.const';
+import { WORKSPACE_SETUP_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-chat/constants/workspace-setup-system-prompt.const';
 import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 
@@ -132,29 +133,42 @@ export class SystemPromptBuilderService {
     };
   }
 
-  buildFullPrompt(
-    toolCatalog: ToolIndexEntry[],
-    skillCatalog: FlatSkill[],
-    preloadedTools: string[],
+  buildFullPrompt({
+    toolCatalog,
+    skillCatalog,
+    preloadedTools,
+    storedFiles,
+    workspaceInstructions,
+    userContext,
+    isWorkspaceSetupThread,
+  }: {
+    toolCatalog: ToolIndexEntry[];
+    skillCatalog: FlatSkill[];
+    preloadedTools: string[];
     storedFiles?: Array<{
       filename: string;
       fileId: string;
-    }>,
-    workspaceInstructions?: string,
-    userContext?: UserContext,
-  ): string {
-    const parts: string[] = [
-      CHAT_SYSTEM_PROMPTS.BASE,
-      CHAT_SYSTEM_PROMPTS.BROWSING_CONTEXT_INSTRUCTION,
-      CHAT_SYSTEM_PROMPTS.RESPONSE_FORMAT,
-    ];
+    }>;
+    workspaceInstructions?: string;
+    userContext?: UserContext;
+    isWorkspaceSetupThread?: boolean;
+  }): string {
+    const parts: string[] =
+      isWorkspaceSetupThread === true
+        ? [WORKSPACE_SETUP_SYSTEM_PROMPT, CHAT_SYSTEM_PROMPTS.RESPONSE_FORMAT]
+        : [
+            CHAT_SYSTEM_PROMPTS.BASE,
+            CHAT_SYSTEM_PROMPTS.BROWSING_CONTEXT_INSTRUCTION,
+            CHAT_SYSTEM_PROMPTS.RESPONSE_FORMAT,
+          ];
 
-    const workspaceInstructionsSection = this.buildWorkspaceInstructionsSection(
-      workspaceInstructions ?? '',
-    );
+    if (isWorkspaceSetupThread !== true) {
+      const workspaceInstructionsSection =
+        this.buildWorkspaceInstructionsSection(workspaceInstructions ?? '');
 
-    if (isNonEmptyString(workspaceInstructionsSection)) {
-      parts.push(workspaceInstructionsSection);
+      if (isNonEmptyString(workspaceInstructionsSection)) {
+        parts.push(workspaceInstructionsSection);
+      }
     }
 
     if (userContext) {
