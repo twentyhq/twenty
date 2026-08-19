@@ -164,7 +164,7 @@ describe('morph relation cursor pagination', () => {
     }
   });
 
-  it('should paginate exhaustively when ordering by one morph leg', async () => {
+  const collectAllPages = async (gqlFields: string) => {
     const collectedIds: string[] = [];
     const collectedOwnerNames: (string | null)[] = [];
     let after: string | undefined = undefined;
@@ -179,12 +179,7 @@ describe('morph relation cursor pagination', () => {
         findManyOperationFactory({
           objectMetadataSingularName: 'morphCursorParent',
           objectMetadataPluralName: 'morphCursorParents',
-          gqlFields: `
-            id
-            ownerMorphCursorPerson {
-              name
-            }
-          `,
+          gqlFields,
           orderBy: { ownerMorphCursorPerson: { name: 'AscNullsLast' } },
           first: 2,
           after,
@@ -211,10 +206,21 @@ describe('morph relation cursor pagination', () => {
 
     expect(collectedIds).toHaveLength(parentTotalCount);
     expect(new Set(collectedIds).size).toBe(parentTotalCount);
-
     expect(collectedIds.slice(0, personAttachedParentIds.length)).toEqual(
       personAttachedParentIds,
     );
+
+    return { collectedIds, collectedOwnerNames };
+  };
+
+  it('should paginate exhaustively when ordering by one morph leg', async () => {
+    const { collectedIds, collectedOwnerNames } = await collectAllPages(`
+      id
+      ownerMorphCursorPerson {
+        name
+      }
+    `);
+
     expect(new Set(collectedIds.slice(personAttachedParentIds.length))).toEqual(
       new Set([...companyAttachedParentIds, ...unattachedParentIds]),
     );
@@ -226,43 +232,6 @@ describe('morph relation cursor pagination', () => {
   // Cursors read the morph leg's orderBy values from the ordering join itself,
   // so pagination must not depend on the selection set (issue #24333)
   it('should paginate exhaustively when the ordered morph leg is not selected', async () => {
-    const collectedIds: string[] = [];
-    let after: string | undefined = undefined;
-
-    for (let iteration = 0; iteration < 10; iteration++) {
-      const response: {
-        body: {
-          errors?: unknown;
-          data: { morphCursorParents: MorphParentConnection };
-        };
-      } = await makeGraphqlAPIRequestWithApiKey(
-        findManyOperationFactory({
-          objectMetadataSingularName: 'morphCursorParent',
-          objectMetadataPluralName: 'morphCursorParents',
-          gqlFields: 'id',
-          orderBy: { ownerMorphCursorPerson: { name: 'AscNullsLast' } },
-          first: 2,
-          after,
-        }),
-      ).expect(200);
-
-      expect(response.body.errors).toBeUndefined();
-
-      const connection = response.body.data.morphCursorParents;
-
-      collectedIds.push(...connection.edges.map((edge) => edge.node.id));
-
-      if (!connection.pageInfo.hasNextPage) {
-        break;
-      }
-
-      after = connection.pageInfo.endCursor;
-    }
-
-    expect(collectedIds).toHaveLength(parentTotalCount);
-    expect(new Set(collectedIds).size).toBe(parentTotalCount);
-    expect(collectedIds.slice(0, personAttachedParentIds.length)).toEqual(
-      personAttachedParentIds,
-    );
+    await collectAllPages('id');
   });
 });
