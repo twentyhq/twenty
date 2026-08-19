@@ -48,29 +48,40 @@ export class IfElseWorkflowAction implements WorkflowAction {
       );
     }
 
-    const resolvedFilters = stepFilters.map((filter) => {
+    const hasUnresolvedFilter = stepFilters.some((filter) => {
       const rightOperand = resolveInput(filter.value, context);
-      const leftOperand = resolveInput(filter.stepOutputKey, context);
 
-      if (
+      return (
         !isDefined(rightOperand) &&
         filter.operand !== ViewFilterOperand.IS_EMPTY &&
         filter.operand !== ViewFilterOperand.IS_NOT_EMPTY
-      ) {
-        return {
-          ...filter,
-          rightOperand: undefined,
-          leftOperand,
-          operand: ViewFilterOperand.IS,
-        };
+      );
+    });
+
+    if (hasUnresolvedFilter) {
+      const defaultBranch = branches.find(
+        (branch) => !isDefined(branch.filterGroupId),
+      );
+
+      if (!isDefined(defaultBranch)) {
+        throw new WorkflowStepExecutorException(
+          'No matching branch found in if-else action',
+          WorkflowStepExecutorExceptionCode.INTERNAL_ERROR,
+        );
       }
 
       return {
-        ...filter,
-        rightOperand,
-        leftOperand,
+        result: {
+          matchingBranchId: defaultBranch.id,
+        },
       };
-    });
+    }
+
+    const resolvedFilters = stepFilters.map((filter) => ({
+      ...filter,
+      rightOperand: resolveInput(filter.value, context),
+      leftOperand: resolveInput(filter.stepOutputKey, context),
+    }));
 
     const matchingBranch = findMatchingBranch({
       branches,
