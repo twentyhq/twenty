@@ -13,8 +13,6 @@ import { ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadat
 import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/utils/effective-entity-i18n-context.type';
 import { type MetadataPresentationOverrides } from 'src/engine/metadata-modules/utils/metadata-presentation-overrides.type';
 
-// Reads off an overrides bag whose exact shape depends on a metadata name only
-// known at runtime, so the two lookups it needs are guarded rather than typed.
 const readOverrideProperty = (overrides: unknown, property: string): unknown =>
   isDefined(overrides) && typeof overrides === 'object'
     ? (overrides as Record<string, unknown>)[property]
@@ -36,10 +34,6 @@ const readOverrideTranslation = ({
   return typeof translation === 'string' ? translation : undefined;
 };
 
-// The resolution itself never depends on the metadata name being a literal: it
-// asks the registry whether the property is translatable and reads the rest by
-// string. Both entry points share this so neither has to assert its way past
-// the other's signature.
 const resolveEffectiveProperty = ({
   metadataName,
   baseValue,
