@@ -48,6 +48,16 @@ export type ConnectedAccountHandleDto = {
   provider: Scalars['String']['output'];
 };
 
+export type CoreWorkflowDto = {
+  __typename?: 'CoreWorkflowDTO';
+  applicationName?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  name?: Maybe<Scalars['String']['output']>;
+  status: Scalars['String']['output'];
+  updatedAt: Scalars['String']['output'];
+  workspaceWorkflowId?: Maybe<Scalars['UUID']['output']>;
+};
+
 export type CreateDraftFromWorkflowVersionInput = {
   /** Workflow ID */
   workflowId: Scalars['UUID']['input'];
@@ -348,6 +358,7 @@ export type ObjectRecordFilterInput = {
 
 export type Query = {
   __typename?: 'Query';
+  coreWorkflows: Array<CoreWorkflowDto>;
   dpaAgreements: Array<DpaAgreement>;
   dpaPreview: DpaDocument;
   /** @deprecated Use getTimelineCalendarEventsFromObjectRecord instead */
