@@ -39,10 +39,16 @@ export const resolveSlackAssistantRecordCard = ({
   workspaceBaseUrl: string | undefined;
 }): SlackAssistantRecordCard | undefined => {
   if (recordCardPayload === undefined) {
+    console.log(
+      '[slack] the assistant reply carried no record card, so none is rendered',
+    );
+
     return undefined;
   }
 
   if (isSlackAssistantRecordListAnswer({ answerText, workspaceBaseUrl })) {
+    console.log('[slack] record card dropped: the reply lists several records');
+
     return undefined;
   }
 
@@ -56,12 +62,18 @@ export const resolveSlackAssistantRecordCard = ({
   }).find((reference) => reference.recordId === cardRecordId);
 
   if (recordReference === undefined) {
+    console.warn(
+      `[slack] record card dropped: the reply does not link record ${cardRecordId}`,
+    );
+
     return undefined;
   }
 
   const fields = sanitizeCardFields(recordCardPayload.fields);
 
   if (fields.length === 0) {
+    console.warn('[slack] record card dropped: it carries no usable field');
+
     return undefined;
   }
 
@@ -76,6 +88,8 @@ export const resolveSlackAssistantRecordCard = ({
     .find(isNonEmptyString);
 
   if (!isNonEmptyString(title)) {
+    console.warn('[slack] record card dropped: it carries no title');
+
     return undefined;
   }
 

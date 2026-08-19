@@ -40,9 +40,20 @@ describe('extractSlackAssistantRecordCard', () => {
     expect(recordCardPayload).toBeUndefined();
   });
 
-  it('should strip a card the agent never closed', () => {
+  it('should recover a card the agent never closed and strip the open tag', () => {
     const { answerText, recordCardPayload } = extractSlackAssistantRecordCard(
       `Moved **ACME** to Proposal.\n\n<record-card>\n${CARD_JSON}`,
+    );
+
+    expect(answerText).toBe('Moved **ACME** to Proposal.');
+    expect(recordCardPayload?.recordId).toBe(
+      '3f77d0b1-30a1-4c3d-9d02-2f2a9f6f9d10',
+    );
+  });
+
+  it('should strip an open tag that carries nothing parsable', () => {
+    const { answerText, recordCardPayload } = extractSlackAssistantRecordCard(
+      'Moved **ACME** to Proposal.\n\n<record-card>\nnot json',
     );
 
     expect(answerText).toBe('Moved **ACME** to Proposal.');
@@ -67,9 +78,41 @@ describe('extractSlackAssistantRecordCard', () => {
     ]);
   });
 
+  it('should read a card the agent fenced as a record-card block', () => {
+    const { answerText, recordCardPayload } = extractSlackAssistantRecordCard(
+      `Moved **ACME** to Proposal.\n\n\`\`\`record-card\n${CARD_JSON}\n\`\`\``,
+    );
+
+    expect(answerText).toBe('Moved **ACME** to Proposal.');
+    expect(recordCardPayload?.recordId).toBe(
+      '3f77d0b1-30a1-4c3d-9d02-2f2a9f6f9d10',
+    );
+  });
+
+  it('should read a trailing bare card object when the agent drops the tag', () => {
+    const { answerText, recordCardPayload } = extractSlackAssistantRecordCard(
+      `Moved **ACME** to Proposal.\n\n${CARD_JSON}`,
+    );
+
+    expect(answerText).toBe('Moved **ACME** to Proposal.');
+    expect(recordCardPayload?.recordId).toBe(
+      '3f77d0b1-30a1-4c3d-9d02-2f2a9f6f9d10',
+    );
+  });
+
+  it('should treat an empty card as no card and strip it', () => {
+    const { answerText, recordCardPayload } = extractSlackAssistantRecordCard(
+      'Found 3 companies in Berlin.\n\n<record-card>{}</record-card>',
+    );
+
+    expect(answerText).toBe('Found 3 companies in Berlin.');
+    expect(recordCardPayload).toBeUndefined();
+  });
+
   it('should leave a reply without a card untouched', () => {
-    const { answerText, recordCardPayload } =
-      extractSlackAssistantRecordCard('ACME has 3 open opportunities.');
+    const { answerText, recordCardPayload } = extractSlackAssistantRecordCard(
+      'ACME has 3 open opportunities.',
+    );
 
     expect(answerText).toBe('ACME has 3 open opportunities.');
     expect(recordCardPayload).toBeUndefined();

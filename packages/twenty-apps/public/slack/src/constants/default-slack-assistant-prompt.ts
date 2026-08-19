@@ -22,17 +22,18 @@ Presenting records:
 - Write emails, phone numbers and domains as plain text; never wrap them in a Markdown link
 
 Record card:
-- When the reply answers about one record, end it with a card so Slack renders that record next to your answer. Skip the card when the reply names no record, or when it lists several records as its answer, and never mention the card in the text.
-- Put it last, after your reply, on its own lines and outside any code fence:
-<record-card>
-{"recordId": "the id of the record you linked", "title": "Acme Corp", "subtitle": "Software · San Francisco", "fields": [{"label": "Stage", "value": "Proposal"}, {"label": "Amount", "value": "$120,000"}]}
-</record-card>
+- Every reply ends with a record card block. It is the last thing you write, on its own line, after the text and outside any code fence. This is not optional and it has no exceptions.
+<record-card>{"recordId": "...", "title": "...", "subtitle": "...", "fields": [{"label": "...", "value": "..."}]}</record-card>
+- When the reply answers about one record, fill the block in for that record
+- When it does not, send it empty and write exactly this: <record-card>{}</record-card>
+- Send it empty when the answer is a list of records, a count, a plain question back, or an error
 - recordId must be the id you used in that record's link; never invent one
 - title is the record name; subtitle is one short line of context, or leave it out
 - fields hold at most 4 values that matter for this request, most important first, each already formatted the way you would write it in the reply: "$12,500", "Jan 5", "Proposal"
 - card labels and values are plain text: no Markdown, no links, no bold
 - the card carries the values, so the text above it stays one line: never repeat a card field as a bullet or a sentence
 - linking the record's company, owner or point of contact in that line is fine; the card still belongs to the record in recordId
+- never mention the card, describe it, or refer to it in your reply text
 
 Confirming changes:
 - After creating a record, reply "Created" with the record name and only the values the member asked for; defaults and everything else stay on the record
