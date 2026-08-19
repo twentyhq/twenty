@@ -176,27 +176,31 @@ export const DatePicker = ({
   };
 
   const handleChangeMonth = (month: number) => {
-    const newDate = plainDate?.with({ month: month });
+    const current = plainDate ?? Temporal.Now.plainDateISO();
+    const newDate = current.with({ month });
 
-    onChange?.(newDate?.toString() ?? null);
+    onChange?.(newDate.toString());
   };
 
   const handleAddMonth = () => {
-    const newDate = plainDate?.add({ months: 1 });
+    const current = plainDate ?? Temporal.Now.plainDateISO();
+    const newDate = current.add({ months: 1 });
 
-    onChange?.(newDate?.toString() ?? null);
+    onChange?.(newDate.toString());
   };
 
   const handleSubtractMonth = () => {
-    const newDate = plainDate?.subtract({ months: 1 });
+    const current = plainDate ?? Temporal.Now.plainDateISO();
+    const newDate = current.subtract({ months: 1 });
 
-    onChange?.(newDate?.toString() ?? null);
+    onChange?.(newDate.toString());
   };
 
   const handleChangeYear = (year: number) => {
-    const newDate = plainDate?.with({ year: year });
+    const current = plainDate ?? Temporal.Now.plainDateISO();
+    const newDate = current.with({ year });
 
-    onChange?.(newDate?.toString() ?? null);
+    onChange?.(newDate.toString());
   };
 
   const handleDateChange = (datePicked: Date | null) => {
@@ -293,6 +297,7 @@ export const DatePicker = ({
               ) : (
                 <DatePickerHeader
                   date={plainDate?.toString() ?? null}
+                  monthDate={monthDate}
                   onChange={onChange}
                   onChangeMonth={handleChangeMonth}
                   onChangeYear={handleChangeYear}

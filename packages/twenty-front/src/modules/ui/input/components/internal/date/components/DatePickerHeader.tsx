@@ -36,6 +36,7 @@ const StyledCustomDatePickerHeader = styled.div`
 
 type DatePickerHeaderProps = {
   date: string | null;
+  monthDate?: Date;
   onChange?: (date: string | null) => void;
   onChangeMonth: (month: number) => void;
   onChangeYear: (year: number) => void;
@@ -48,6 +49,7 @@ type DatePickerHeaderProps = {
 
 export const DatePickerHeader = ({
   date,
+  monthDate,
   onChange,
   onChangeMonth,
   onChangeYear,
@@ -60,7 +62,11 @@ export const DatePickerHeader = ({
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const userLocale = currentWorkspaceMember?.locale ?? SOURCE_LOCALE;
 
-  const dateParsed = isDefined(date) ? Temporal.PlainDate.from(date) : null;
+  const dateParsed = isDefined(date)
+    ? Temporal.PlainDate.from(date)
+    : isDefined(monthDate)
+      ? turnJSDateToPlainDate(monthDate)
+      : Temporal.Now.plainDateISO();
 
   return (
     <>
