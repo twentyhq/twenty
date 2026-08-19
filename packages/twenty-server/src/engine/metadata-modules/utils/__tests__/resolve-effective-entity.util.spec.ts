@@ -60,8 +60,11 @@ const frozenResolveObjectOverride = (
     return objectMetadata.overrides[labelKey] ?? '';
   }
 
+  // S5 keys metadata entries per role; the frozen resolvers carry the same
+  // context so the corpus keeps pinning precedence, not the old keying.
   return translateStandardLabel({
     sourceValue: objectMetadata[labelKey] ?? '',
+    context: `objectMetadata.${labelKey}`,
     isStandardApp,
     applicationCatalog,
     i18nInstance,
@@ -101,6 +104,7 @@ const frozenResolveFieldOverride = (
 
   return translateStandardLabel({
     sourceValue: fieldMetadata[labelKey] ?? '',
+    context: `fieldMetadata.${labelKey}`,
     isStandardApp,
     applicationCatalog,
     i18nInstance,
@@ -302,6 +306,7 @@ const frozenResolveBespokeProperty = (
   baseValue: string,
   overrides: AnyOverrides,
   property: string,
+  metadataLabelContext: string,
   isStandardApp: boolean,
   i18nInstance: I18n,
   applicationCatalog?: Record<string, string>,
@@ -312,6 +317,7 @@ const frozenResolveBespokeProperty = (
 
   return translateStandardLabel({
     sourceValue: baseValue,
+    context: metadataLabelContext,
     isStandardApp,
     applicationCatalog,
     i18nInstance,
@@ -341,6 +347,7 @@ const expectParityFor = (
     context: AnyOverrides,
   ) => string,
   property: string,
+  metadataLabelContext: string,
 ) => {
   for (const { base, overrides } of BESPOKE_CORPUS) {
     for (const locale of LOCALES) {
@@ -350,6 +357,7 @@ const expectParityFor = (
             base,
             overrides,
             property,
+            metadataLabelContext,
             isStandardApp,
             mockI18n,
             applicationCatalog,
@@ -381,6 +389,7 @@ describe('resolveEffectiveEntityProperty (parity with the per-entity resolvers)'
           i18nContext,
         }),
       'name',
+      'viewFieldGroup.name',
     );
   });
 
@@ -395,6 +404,7 @@ describe('resolveEffectiveEntityProperty (parity with the per-entity resolvers)'
           i18nContext,
         }),
       'title',
+      'pageLayoutTab.title',
     );
   });
 
@@ -409,6 +419,7 @@ describe('resolveEffectiveEntityProperty (parity with the per-entity resolvers)'
           i18nContext,
         }),
       'title',
+      'pageLayoutWidget.title',
     );
   });
 });

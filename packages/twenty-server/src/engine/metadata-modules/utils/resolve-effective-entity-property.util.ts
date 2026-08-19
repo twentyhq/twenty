@@ -90,6 +90,7 @@ const resolveEffectiveProperty = ({
 
   return translateStandardLabel({
     sourceValue: safeBaseValue,
+    context: `${metadataName}.${property}`,
     isStandardApp,
     applicationCatalog,
     i18nInstance,
