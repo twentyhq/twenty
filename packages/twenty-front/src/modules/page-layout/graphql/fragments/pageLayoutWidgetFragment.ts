@@ -176,6 +176,7 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
         fieldMetadataId
         viewId
         nestedRelationFieldMetadataId
+        isRecordMutationEnabled
       }
       ... on FieldRichTextConfiguration {
         configurationType

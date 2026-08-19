@@ -1253,6 +1253,7 @@ type FieldConfiguration {
   fieldDisplayMode: FieldDisplayMode!
   viewId: String
   nestedRelationFieldMetadataId: String
+  isRecordMutationEnabled: Boolean
 }
 
 """Display mode for field configuration widgets"""

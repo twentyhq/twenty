@@ -2454,6 +2454,9 @@ export default {
             "nestedRelationFieldMetadataId": [
                 1
             ],
+            "isRecordMutationEnabled": [
+                8
+            ],
             "__typename": [
                 1
             ]
