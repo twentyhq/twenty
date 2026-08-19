@@ -10,7 +10,7 @@
 
 ## 🤖 The assistant
 
-Mention the bot in a channel or DM it. It replies in the thread with your CRM data, using the recent conversation as context.
+Mention the bot in a channel or DM it. It replies in the thread with your CRM data, using the recent conversation as context. Answers end with native thumbs up / thumbs down feedback buttons — except very long answers, which fall back to plain text without them — and ratings are stored on the matching Slack Assistant Request record in Twenty.
 
 The bot runs with the **Slack Assistant** role, which by default can read, create, update and soft-delete people, companies, opportunities, notes and tasks. Workspace members stay read-only and hard delete is off. Tighten the role in **Settings → Roles** if you want a narrower bot.
 
@@ -45,4 +45,4 @@ The assistant still runs on your workspace AI credits, billed on the model's tok
 
 ## 📌 Heads up
 
-You need to create a Slack app and connect it — see [SETUP.md](./SETUP.md). The assistant needs a few extra steps (signing secret and event subscriptions) on top of the base connection.
+You need to create a Slack app and connect it — see [SETUP.md](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/public/slack/SETUP.md). The assistant needs a few extra steps (signing secret and event subscriptions) on top of the base connection.

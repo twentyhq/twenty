@@ -1,0 +1,2 @@
+export const ADD_METADATA_WRITABILITY_UPGRADE_COMMAND_NAME =
+  '2.32.0_AddWritabilityToMetadataFastInstanceCommand_1786713600000';

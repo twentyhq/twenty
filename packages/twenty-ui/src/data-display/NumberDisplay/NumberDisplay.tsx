@@ -1,4 +1,4 @@
-import { EllipsisDisplay } from './EllipsisDisplay';
+import { EllipsisDisplay } from '@ui/data-display/EllipsisDisplay/EllipsisDisplay';
 
 type NumberDisplayProps = {
   value: string | number | null | undefined;
