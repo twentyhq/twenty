@@ -34,9 +34,7 @@ describe('extractEmailFromIdTokenClaims', () => {
   it('reads the email claim from a Google-shaped id_token', () => {
     const idToken = jwt.sign(GOOGLE_ID_TOKEN_CLAIMS, 'test-secret');
 
-    expect(extractEmailFromIdTokenClaims(idToken)).toBe(
-      'jsmith@example.com',
-    );
+    expect(extractEmailFromIdTokenClaims(idToken)).toBe('jsmith@example.com');
   });
 
   it('falls back to the upn claim on a Microsoft Entra ID-shaped id_token with no email claim', () => {
@@ -45,9 +43,7 @@ describe('extractEmailFromIdTokenClaims', () => {
       'test-secret',
     );
 
-    expect(extractEmailFromIdTokenClaims(idToken)).toBe(
-      'abeli@microsoft.com',
-    );
+    expect(extractEmailFromIdTokenClaims(idToken)).toBe('abeli@microsoft.com');
   });
 
   it('prefers the email claim over upn when both are present', () => {
