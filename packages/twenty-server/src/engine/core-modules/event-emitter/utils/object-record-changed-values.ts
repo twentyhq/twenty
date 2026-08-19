@@ -7,6 +7,7 @@ import { fastDeepEqual, isDefined } from 'twenty-shared/utils';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
+import { getJoinColumnNameForRelationFlatFieldMetadata } from 'src/engine/metadata-modules/field-metadata/utils/get-join-column-name-for-relation-flat-field-metadata.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -30,17 +31,6 @@ const isManyToOneRelationField = (
   return (
     isFlatFieldMetadataOfType(field, FieldMetadataType.RELATION) &&
     field.settings?.relationType === RelationType.MANY_TO_ONE
-  );
-};
-
-const getJoinColumnNameForRelationField = (
-  field: FlatFieldMetadata<FieldMetadataType.RELATION>,
-) => {
-  return (
-    field.settings?.joinColumnName ??
-    computeMorphOrRelationFieldJoinColumnName({
-      name: field.name,
-    })
   );
 };
 
@@ -145,7 +135,7 @@ export const objectRecordChangedValues = (
       continue;
     }
 
-    const joinColumnName = getJoinColumnNameForRelationField(field);
+    const joinColumnName = getJoinColumnNameForRelationFlatFieldMetadata(field);
     const oldJoinColumnValue = oldRecord[joinColumnName];
     const newJoinColumnValue = newRecord[joinColumnName];
 
