@@ -105,6 +105,7 @@ export type FieldConfiguration = {
   // One-to-many relation field on the relation target object, to list records
   // two relation hops away (e.g. Company -> People -> Owned opportunities)
   nestedRelationFieldMetadataId?: string | null;
+  isRecordMutationEnabled?: boolean;
 };
 
 export type FieldsConfiguration = {
