@@ -40,6 +40,26 @@ const readStringProperty = (
   return typeof value === 'string' ? value : '';
 };
 
+const resolveProvenance = ({
+  workspaceTranslation,
+  value,
+  canonicalValue,
+}: {
+  workspaceTranslation: string | undefined;
+  value: string;
+  canonicalValue: string;
+}): MetadataTranslationProvenance => {
+  if (isDefined(workspaceTranslation)) {
+    return MetadataTranslationProvenance.WORKSPACE;
+  }
+
+  if (value !== canonicalValue) {
+    return MetadataTranslationProvenance.SHIPPED;
+  }
+
+  return MetadataTranslationProvenance.INHERITED;
+};
+
 const readTranslation = (
   overrides: TranslatableFlatEntity['overrides'],
   locale: string,
@@ -151,11 +171,11 @@ export class MetadataTranslationService {
             sourceValue,
             canonicalValue,
             value,
-            provenance: isDefined(workspaceTranslation)
-              ? MetadataTranslationProvenance.WORKSPACE
-              : value !== canonicalValue
-                ? MetadataTranslationProvenance.SHIPPED
-                : MetadataTranslationProvenance.INHERITED,
+            provenance: resolveProvenance({
+              workspaceTranslation,
+              value,
+              canonicalValue,
+            }),
           });
         }
       }

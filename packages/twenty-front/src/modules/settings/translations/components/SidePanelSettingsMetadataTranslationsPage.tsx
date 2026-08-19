@@ -5,7 +5,10 @@ import {
   useMetadataTranslations,
 } from '@/settings/translations/hooks/useMetadataTranslations';
 import { useTranslatablePropertyLabel } from '@/settings/translations/hooks/useTranslatablePropertyLabel';
-import { settingsTranslationsSidePanelTargetState } from '@/settings/translations/states/settingsTranslationsSidePanelTargetState';
+import {
+  type SettingsTranslationsSidePanelTarget,
+  settingsTranslationsSidePanelTargetState,
+} from '@/settings/translations/states/settingsTranslationsSidePanelTargetState';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -19,9 +22,19 @@ import { Tag } from 'twenty-ui/data-display';
 import { IconRestore } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { MetadataTranslationProvenance } from '~/generated-metadata/graphql';
+import {
+  MetadataTranslationProvenance,
+  type MetadataTranslationsInput,
+} from '~/generated-metadata/graphql';
 
 const TRANSLATIONS_ROW_GRID_TEMPLATE_COLUMNS = '112px 1fr 84px 24px';
+
+const getMetadataTranslationsInput = (
+  target: SettingsTranslationsSidePanelTarget,
+): MetadataTranslationsInput =>
+  target.metadataName === 'objectMetadata'
+    ? { objectMetadataId: target.recordId }
+    : { fieldMetadataId: target.recordId };
 
 const StyledPageContainer = styled.div`
   display: flex;
@@ -48,9 +61,7 @@ export const SidePanelSettingsMetadataTranslationsPage = () => {
   );
   const { metadataTranslations, saveTranslationRow } = useMetadataTranslations(
     isDefined(settingsTranslationsSidePanelTarget)
-      ? settingsTranslationsSidePanelTarget.metadataName === 'objectMetadata'
-        ? { objectMetadataId: settingsTranslationsSidePanelTarget.recordId }
-        : { fieldMetadataId: settingsTranslationsSidePanelTarget.recordId }
+      ? getMetadataTranslationsInput(settingsTranslationsSidePanelTarget)
       : null,
   );
   const { getPropertyLabel } = useTranslatablePropertyLabel();
