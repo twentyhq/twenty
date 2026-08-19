@@ -1,10 +1,10 @@
 import {
-  FieldMetadataType,
   MetadataWritability,
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
   type FieldMetadataDefaultValue,
   type FieldMetadataSettings,
+  type FieldMetadataType,
 } from 'twenty-shared/types';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
@@ -88,10 +88,11 @@ export const createStandardFieldFlatMetadata = <
     isNullable,
     isUnique,
     isUIEditable,
-    // Search vectors are Postgres generated columns: nothing may write them
     writability:
-      type === FieldMetadataType.TS_VECTOR
-        ? MetadataWritability.SYSTEM
+      name in PARTIAL_SYSTEM_FLAT_FIELD_METADATAS
+        ? PARTIAL_SYSTEM_FLAT_FIELD_METADATAS[
+            name as keyof typeof PARTIAL_SYSTEM_FLAT_FIELD_METADATAS
+          ].writability
         : MetadataWritability.OPEN,
     isLabelSyncedWithName: false,
     overrides: null,
