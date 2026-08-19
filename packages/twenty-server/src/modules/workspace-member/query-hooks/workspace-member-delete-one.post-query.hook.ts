@@ -11,6 +11,7 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
+import { ConnectedAccountOwnershipTransferService } from 'src/engine/metadata-modules/connected-account/services/connected-account-ownership-transfer.service';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -28,6 +29,7 @@ export class WorkspaceMemberDeleteOnePostQueryHook implements WorkspacePostQuery
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly userWorkspaceService: UserWorkspaceService,
+    private readonly connectedAccountOwnershipTransferService: ConnectedAccountOwnershipTransferService,
   ) {}
 
   async execute(
@@ -86,6 +88,16 @@ export class WorkspaceMemberDeleteOnePostQueryHook implements WorkspacePostQuery
         PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND,
       );
     }
+
+    await this.connectedAccountOwnershipTransferService.transferConnectedAccountsOwnershipToCustodian(
+      {
+        removedUserWorkspace: userWorkspace,
+        actingUserWorkspaceId:
+          'userWorkspaceId' in authContext
+            ? authContext.userWorkspaceId
+            : undefined,
+      },
+    );
 
     await this.userWorkspaceService.deleteUserWorkspace({
       userWorkspaceId: userWorkspace.id,
