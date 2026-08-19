@@ -7,11 +7,13 @@ import {
   type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+import { findPostgresDefaultNullEquivalentValue } from 'src/engine/api/common/common-args-processors/data-arg-processor/utils/find-postgres-default-null-equivalent-value.util';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { areNullsScannedAfterCursor } from 'src/engine/api/utils/are-nulls-scanned-after-cursor.utils';
 import { buildCursorCompositeFieldWhereCondition } from 'src/engine/api/utils/build-cursor-composite-field-where-condition.utils';
 import { computeOperator } from 'src/engine/api/utils/compute-operator.utils';
 import { isAscendingOrder } from 'src/engine/api/utils/is-ascending-order.utils';
@@ -35,6 +37,9 @@ type BuildCursorWhereConditionParams = {
   isEqualityCondition?: boolean;
 };
 
+// Returns null when no row can sort strictly after the cursor on this key alone
+// (e.g. the cursor sits inside the trailing NULL block): the caller must then rely
+// on the tie-breaking keys and drop this or-branch entirely.
 export const buildCursorWhereCondition = ({
   cursorKey,
   cursorValue,
@@ -43,16 +48,20 @@ export const buildCursorWhereCondition = ({
   orderBy,
   isForwardPagination,
   isEqualityCondition = false,
-}: BuildCursorWhereConditionParams): Record<string, unknown> => {
-  const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
-    flatFieldMetadataMaps,
-    flatObjectMetadata,
-  );
+}: BuildCursorWhereConditionParams): Record<string, unknown> | null => {
+  const { fieldIdByName, fieldIdByJoinColumnName } =
+    buildFieldMapsFromFlatObjectMetadata(
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
+    );
 
   const [fieldKey, ...subFieldPath] = cursorKey.split('.');
   const compositeSubFieldKey = subFieldPath.join('.');
   const fieldMetadataKey = fieldKey as keyof ObjectRecord;
-  const fieldMetadataId = fieldIdByName[fieldMetadataKey];
+  const isAccessedByFieldName = isDefined(fieldIdByName[fieldMetadataKey]);
+  const fieldMetadataId =
+    fieldIdByName[fieldMetadataKey] ??
+    fieldIdByJoinColumnName[fieldMetadataKey];
 
   const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
     flatEntityMaps: flatFieldMetadataMaps,
@@ -67,7 +76,10 @@ export const buildCursorWhereCondition = ({
     );
   }
 
-  if (isCompositeFieldMetadataType(fieldMetadata.type)) {
+  if (
+    isAccessedByFieldName &&
+    isCompositeFieldMetadataType(fieldMetadata.type)
+  ) {
     if (compositeSubFieldKey.length > 0) {
       return buildCursorCompositeFieldWhereCondition({
         fieldType: fieldMetadata.type,
@@ -92,6 +104,10 @@ export const buildCursorWhereCondition = ({
   }
 
   if (isEqualityCondition) {
+    if (cursorValue === null) {
+      return { [fieldMetadataKey]: { is: 'NULL' } };
+    }
+
     return { [fieldMetadataKey]: { eq: cursorValue } };
   }
 
@@ -111,6 +127,36 @@ export const buildCursorWhereCondition = ({
 
   const isAscending = isAscendingOrder(orderByDirection);
   const computedOperator = computeOperator(isAscending, isForwardPagination);
+  const areNullsScannedAfter = areNullsScannedAfterCursor(
+    orderByDirection,
+    isForwardPagination,
+  );
 
-  return { [fieldMetadataKey]: { [computedOperator]: cursorValue } };
+  if (cursorValue === null) {
+    // Inside the leading NULL block only the tie-breaking keys can advance the
+    // scan; inside the trailing one nothing sorts after on this key at all
+    return areNullsScannedAfter
+      ? null
+      : { [fieldMetadataKey]: { is: 'NOT_NULL' } };
+  }
+
+  const mainCondition = {
+    [fieldMetadataKey]: { [computedOperator]: cursorValue },
+  };
+
+  // Fields with a Postgres null-equivalent default (e.g. TEXT '') never hold SQL
+  // NULL, so they need no null continuation branch
+  const canFieldHoldNullValue =
+    fieldMetadata.isNullable !== false &&
+    !isDefined(
+      findPostgresDefaultNullEquivalentValue('NULL', fieldMetadata.type),
+    );
+
+  if (areNullsScannedAfter && canFieldHoldNullValue) {
+    return {
+      or: [mainCondition, { [fieldMetadataKey]: { is: 'NULL' } }],
+    };
+  }
+
+  return mainCondition;
 };

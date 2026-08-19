@@ -10,6 +10,7 @@ import {
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -44,23 +45,36 @@ export const encodeCursor = <T extends ObjectRecord = ObjectRecord>({
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }): string => {
-  const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
-    flatFieldMetadataMaps,
-    flatObjectMetadata,
-  );
+  const { fieldIdByName, fieldIdByJoinColumnName } =
+    buildFieldMapsFromFlatObjectMetadata(
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
+    );
 
   // oxlint-disable-next-line typescript/no-explicit-any
   const orderByValues: Record<string, any> = {};
 
   for (const orderByEntry of order ?? []) {
     for (const [key, value] of Object.entries(orderByEntry)) {
-      const fieldMetadataId = fieldIdByName[key];
+      const isAccessedByFieldName = isDefined(fieldIdByName[key]);
+      const fieldMetadataId =
+        fieldIdByName[key] ?? fieldIdByJoinColumnName[key];
       const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
         flatEntityMaps: flatFieldMetadataMaps,
         flatEntityId: fieldMetadataId,
       });
 
       if (!isDefined(fieldMetadata)) {
+        continue;
+      }
+
+      // Relation orderBy values are not carried by cursors: embedding the loaded
+      // related record produced oversized cursors that cannot be turned back into
+      // a keyset condition on the root table
+      if (
+        isAccessedByFieldName &&
+        isMorphOrRelationFlatFieldMetadata(fieldMetadata)
+      ) {
         continue;
       }
 

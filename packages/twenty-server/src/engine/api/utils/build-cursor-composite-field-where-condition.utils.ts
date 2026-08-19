@@ -11,11 +11,13 @@ import {
   type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+import { findPostgresDefaultNullEquivalentValue } from 'src/engine/api/common/common-args-processors/data-arg-processor/utils/find-postgres-default-null-equivalent-value.util';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { areNullsScannedAfterCursor } from 'src/engine/api/utils/are-nulls-scanned-after-cursor.utils';
 import { buildCursorCumulativeWhereCondition } from 'src/engine/api/utils/build-cursor-cumulative-where-conditions.utils';
 import { computeOperator } from 'src/engine/api/utils/compute-operator.utils';
 import { isAscendingOrder } from 'src/engine/api/utils/is-ascending-order.utils';
@@ -40,7 +42,7 @@ export const buildCursorCompositeFieldWhereCondition = ({
 }: BuildCursorCompositeFieldWhereConditionParams): Record<
   string,
   ObjectRecordFilter
-> => {
+> | null => {
   const compositeType = compositeTypeDefinitions.get(fieldType);
 
   if (!compositeType) {
@@ -63,7 +65,7 @@ export const buildCursorCompositeFieldWhereCondition = ({
   );
 
   if (compositeFieldProperties.length === 0) {
-    return {};
+    return null;
   }
 
   const cursorEntries = compositeFieldProperties
@@ -85,9 +87,8 @@ export const buildCursorCompositeFieldWhereCondition = ({
 
         return {
           ...acc,
-          [cursorKey]: {
-            eq: cursorValue,
-          },
+          [cursorKey]:
+            cursorValue === null ? { is: 'NULL' } : { eq: cursorValue },
         };
       },
       {},
@@ -102,9 +103,8 @@ export const buildCursorCompositeFieldWhereCondition = ({
     cursorEntries,
     buildEqualityCondition: ({ cursorKey, cursorValue }) => ({
       [fieldKey]: {
-        [cursorKey]: {
-          eq: cursorValue,
-        },
+        [cursorKey]:
+          cursorValue === null ? { is: 'NULL' } : { eq: cursorValue },
       },
     }),
     buildMainCondition: ({ cursorKey, cursorValue }) => {
@@ -123,16 +123,53 @@ export const buildCursorCompositeFieldWhereCondition = ({
         isAscending,
         isForwardPagination,
       );
+      const areNullsScannedAfter = areNullsScannedAfterCursor(
+        orderByDirection,
+        isForwardPagination,
+      );
 
-      return {
+      if (cursorValue === null) {
+        return areNullsScannedAfter
+          ? null
+          : {
+              [fieldKey]: {
+                [cursorKey]: { is: 'NOT_NULL' },
+              },
+            };
+      }
+
+      const mainCondition = {
         [fieldKey]: {
-          [cursorKey]: {
-            [computedOperator]: cursorValue,
-          },
+          [cursorKey]: { [computedOperator]: cursorValue },
         },
       };
+
+      // Sub-fields with a Postgres null-equivalent default (e.g. TEXT '') never
+      // hold SQL NULL, so they need no null continuation branch
+      const canSubFieldHoldNullValue = !isDefined(
+        findPostgresDefaultNullEquivalentValue('NULL', fieldType, cursorKey),
+      );
+
+      if (areNullsScannedAfter && canSubFieldHoldNullValue) {
+        return {
+          or: [
+            mainCondition,
+            {
+              [fieldKey]: {
+                [cursorKey]: { is: 'NULL' },
+              },
+            },
+          ],
+        };
+      }
+
+      return mainCondition;
     },
   });
+
+  if (orConditions.length === 0) {
+    return null;
+  }
 
   if (orConditions.length === 1) {
     return orConditions[0];

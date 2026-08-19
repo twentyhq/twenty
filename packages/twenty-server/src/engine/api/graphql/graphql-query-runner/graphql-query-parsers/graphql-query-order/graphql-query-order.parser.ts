@@ -1,4 +1,5 @@
 import { isObject } from 'class-validator';
+import { type ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -23,6 +24,11 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 
 import { type OrderByClause } from './types/order-by-condition.type';
 import { type ParseOrderByResult } from './types/parse-order-by-result.type';
@@ -60,6 +66,7 @@ export class GraphqlQueryOrderFieldParser {
     orderBy: ObjectRecordOrderBy,
     objectNameSingular: string,
     isForwardPagination = true,
+    objectsPermissions?: ObjectsPermissions,
   ): ParseOrderByResult {
     const orderByConditions: Record<string, OrderByClause> = {};
     const relationJoins: RelationJoinInfo[] = [];
@@ -85,6 +92,18 @@ export class GraphqlQueryOrderFieldParser {
           );
         }
 
+        // Ordering by a non-readable field would leak its values through cursors
+        if (
+          objectsPermissions?.[this.flatObjectMetadata.id]?.restrictedFields[
+            fieldMetadata.id
+          ]?.canRead === false
+        ) {
+          throw new PermissionsException(
+            PermissionsExceptionMessage.PERMISSION_DENIED,
+            PermissionsExceptionCode.PERMISSION_DENIED,
+          );
+        }
+
         // Only treat as relation if accessed by relation name (not FK like companyId)
         if (
           isAccessedByRelationName &&
@@ -102,6 +121,7 @@ export class GraphqlQueryOrderFieldParser {
             fieldMetadata,
             orderByDirection: orderByDirection as Record<string, unknown>,
             isForwardPagination,
+            objectsPermissions,
           });
 
           if (relationOrderResult) {
@@ -165,10 +185,12 @@ export class GraphqlQueryOrderFieldParser {
     fieldMetadata,
     orderByDirection,
     isForwardPagination,
+    objectsPermissions,
   }: {
     fieldMetadata: FlatFieldMetadata;
     orderByDirection: Record<string, unknown>;
     isForwardPagination: boolean;
+    objectsPermissions?: ObjectsPermissions;
   }): {
     orderBy: Record<string, OrderByClause>;
     joinInfo: RelationJoinInfo;
@@ -216,6 +238,18 @@ export class GraphqlQueryOrderFieldParser {
 
     if (!isDefined(nestedFieldMetadata)) {
       return null;
+    }
+
+    // Ordering by a non-readable field would leak its values through cursors
+    if (
+      objectsPermissions?.[targetObjectMetadata.id]?.restrictedFields[
+        nestedFieldMetadata.id
+      ]?.canRead === false
+    ) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
     }
 
     const joinAlias = fieldMetadata.name;

@@ -284,7 +284,8 @@ describe('buildCompositeFieldWhereCondition', () => {
         });
 
         expect(result).toHaveProperty('or');
-        const orConditions = result.or;
+        // oxlint-disable-next-line typescript/no-explicit-any
+        const orConditions = (result?.or ?? []) as any[];
 
         expect(Array.isArray(orConditions)).toBe(true);
 

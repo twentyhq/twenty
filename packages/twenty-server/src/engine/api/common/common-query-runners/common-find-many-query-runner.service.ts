@@ -37,6 +37,7 @@ import { getPageInfo } from 'src/engine/api/common/utils/get-page-info.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { type ReadRecordQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/types/record-query-builder.type';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
+import { buildOrderByColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-order-by-columns-to-select';
 import { getCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
 import {
@@ -129,11 +130,13 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
         isForwardPagination,
       );
 
-      appliedFilters = (args.filter && Object.keys(args.filter).length > 0
-        ? {
-            and: [args.filter, { or: cursorArgFilter }],
-          }
-        : { or: cursorArgFilter }) as unknown as ObjectRecordFilter;
+      if (cursorArgFilter.length > 0) {
+        appliedFilters = (args.filter && Object.keys(args.filter).length > 0
+          ? {
+              and: [args.filter, { or: cursorArgFilter }],
+            }
+          : { or: cursorArgFilter }) as unknown as ObjectRecordFilter;
+      }
     }
 
     commonQueryParser.applyFilterToBuilder(
@@ -159,13 +162,22 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 
     const limit = args.first ?? args.last ?? QUERY_MAX_RECORDS;
 
-    const columnsToSelect = buildColumnsToSelect({
-      select: args.selectedFieldsResult.select,
-      relations: args.selectedFieldsResult.relations,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-    });
+    const columnsToSelect = {
+      ...buildColumnsToSelect({
+        select: args.selectedFieldsResult.select,
+        relations: args.selectedFieldsResult.relations,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      }),
+      // Order columns must be hydrated onto the records even when not requested:
+      // cursor encoding reads the sort values from them (issue #24333)
+      ...buildOrderByColumnsToSelect({
+        orderBy: args.orderBy,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    };
 
     queryBuilder.setFindOptions({ select: columnsToSelect });
 

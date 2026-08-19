@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   type ObjectRecordCursorLeafCompositeValue,
   type ObjectRecordCursorLeafScalarValue,
@@ -22,7 +24,7 @@ type BuildCursorCumulativeWhereConditionsParams<CursorValue> = {
   buildMainCondition: ({
     cursorKey,
     cursorValue,
-  }: BuildCursorConditionParams<CursorValue>) => ObjectRecordFilter;
+  }: BuildCursorConditionParams<CursorValue>) => ObjectRecordFilter | null;
 };
 
 export const buildCursorCumulativeWhereCondition = <
@@ -34,9 +36,22 @@ export const buildCursorCumulativeWhereCondition = <
   buildEqualityCondition,
   buildMainCondition,
 }: BuildCursorCumulativeWhereConditionsParams<CursorValue>): ReturnType => {
-  return cursorEntries.map((cursorEntry, index) => {
+  return cursorEntries.flatMap((cursorEntry, index) => {
     const [currentCursorKey, currentCursorValue] =
       Object.entries(cursorEntry)[0];
+
+    const mainCondition = buildMainCondition({
+      cursorKey: currentCursorKey,
+      cursorValue: currentCursorValue,
+    });
+
+    // A null main condition means no row can sort strictly after the cursor on
+    // this key alone (e.g. inside a trailing NULL block): only the tie-breaking
+    // keys of the following branches can advance the scan
+    if (!isDefined(mainCondition) || Object.keys(mainCondition).length === 0) {
+      return [];
+    }
+
     const andConditions: ObjectRecordFilter[] = [];
 
     for (
@@ -56,19 +71,16 @@ export const buildCursorCumulativeWhereCondition = <
       );
     }
 
-    andConditions.push(
-      buildMainCondition({
-        cursorKey: currentCursorKey,
-        cursorValue: currentCursorValue,
-      }),
-    );
+    andConditions.push(mainCondition);
 
     if (andConditions.length === 1) {
-      return andConditions[0];
+      return [andConditions[0]];
     }
 
-    return {
-      and: andConditions,
-    };
+    return [
+      {
+        and: andConditions,
+      },
+    ];
   });
 };

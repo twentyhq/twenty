@@ -11,27 +11,25 @@ export const convertOrderByToFindOptionsOrder = (
   direction: OrderByDirection,
   isForwardPagination = true,
 ): OrderByClause => {
+  // Backward pagination scans in the exact reverse of the requested order, which
+  // reverses the NULLS placement along with the direction
   switch (direction) {
     case OrderByDirection.AscNullsFirst:
-      return {
-        order: isForwardPagination ? 'ASC' : 'DESC',
-        nulls: 'NULLS FIRST',
-      };
+      return isForwardPagination
+        ? { order: 'ASC', nulls: 'NULLS FIRST' }
+        : { order: 'DESC', nulls: 'NULLS LAST' };
     case OrderByDirection.AscNullsLast:
-      return {
-        order: isForwardPagination ? 'ASC' : 'DESC',
-        nulls: 'NULLS LAST',
-      };
+      return isForwardPagination
+        ? { order: 'ASC', nulls: 'NULLS LAST' }
+        : { order: 'DESC', nulls: 'NULLS FIRST' };
     case OrderByDirection.DescNullsFirst:
-      return {
-        order: isForwardPagination ? 'DESC' : 'ASC',
-        nulls: 'NULLS FIRST',
-      };
+      return isForwardPagination
+        ? { order: 'DESC', nulls: 'NULLS FIRST' }
+        : { order: 'ASC', nulls: 'NULLS LAST' };
     case OrderByDirection.DescNullsLast:
-      return {
-        order: isForwardPagination ? 'DESC' : 'ASC',
-        nulls: 'NULLS LAST',
-      };
+      return isForwardPagination
+        ? { order: 'DESC', nulls: 'NULLS LAST' }
+        : { order: 'ASC', nulls: 'NULLS FIRST' };
     default:
       throw new GraphqlQueryRunnerException(
         `Invalid direction: ${direction}`,
