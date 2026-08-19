@@ -1,4 +1,4 @@
-import { type MarketplacePartner } from './marketplace-partner';
+import { type RankedMarketplacePartner } from './marketplace-partner';
 import { type CurrencyValue, type LinkValue } from './marketplace-api-types';
 import { linkUrl } from './link-url';
 import { microsToUsd } from './micros-to-usd';
@@ -23,6 +23,10 @@ type ApiPartner = {
   skills: string[] | null;
   city: string | null;
   country: string | null;
+  partnerTier: RankedMarketplacePartner['partnerTier'];
+  serviceCount: number;
+  approvedCaseStudyCount: number;
+  rotationKey: string;
 };
 
 type ApiResponse = {
@@ -34,7 +38,7 @@ type ApiResponse = {
 // to [] on any failure (matching the old getPartners) so the page renders the
 // empty state rather than crashing.
 export async function fetchLiveMarketplacePartners(): Promise<
-  readonly MarketplacePartner[]
+  readonly RankedMarketplacePartner[]
 > {
   try {
     const data = (await partnersApiFetch('/s/partners')) as ApiResponse;
@@ -65,6 +69,10 @@ export async function fetchLiveMarketplacePartners(): Promise<
       services: [],
       portfolio: [],
       clients: [],
+      partnerTier: apiPartner.partnerTier,
+      serviceCount: apiPartner.serviceCount,
+      approvedCaseStudyCount: apiPartner.approvedCaseStudyCount,
+      rotationKey: apiPartner.rotationKey,
     }));
   } catch (error) {
     console.error('[partners-marketplace] live fetch failed:', error);

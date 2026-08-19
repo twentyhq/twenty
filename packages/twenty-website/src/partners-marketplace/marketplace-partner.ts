@@ -39,3 +39,12 @@ export type MarketplacePartner = {
   portfolio: readonly PartnerCaseStudy[];
   clients: readonly PartnerClient[];
 };
+
+export type PartnerTier = 'ADVANCED' | 'INTERMEDIATE' | 'NEW';
+
+export type RankedMarketplacePartner = MarketplacePartner & {
+  partnerTier: PartnerTier | null;
+  serviceCount: number;
+  approvedCaseStudyCount: number;
+  rotationKey: string;
+};

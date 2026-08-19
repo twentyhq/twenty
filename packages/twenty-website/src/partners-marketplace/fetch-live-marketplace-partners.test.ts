@@ -31,6 +31,10 @@ describe('fetchLiveMarketplacePartners', () => {
           skills: null,
           city: null,
           country: null,
+          partnerTier: 'ADVANCED',
+          serviceCount: 2,
+          approvedCaseStudyCount: 3,
+          rotationKey: 'weekly-key',
         },
       ],
     });
@@ -59,6 +63,10 @@ describe('fetchLiveMarketplacePartners', () => {
         services: [],
         portfolio: [],
         clients: [],
+        partnerTier: 'ADVANCED',
+        serviceCount: 2,
+        approvedCaseStudyCount: 3,
+        rotationKey: 'weekly-key',
       },
     ]);
   });

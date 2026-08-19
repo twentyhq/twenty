@@ -1,8 +1,12 @@
-import { type MarketplacePartner } from './marketplace-partner';
+import { type RankedMarketplacePartner } from './marketplace-partner';
 
-export const DUMMY_PARTNERS: MarketplacePartner[] = [
+export const DUMMY_PARTNERS: RankedMarketplacePartner[] = [
   {
     slug: 'atelier-sigma',
+    partnerTier: null,
+    serviceCount: 4,
+    approvedCaseStudyCount: 3,
+    rotationKey: 'atelier-sigma',
     name: 'Atelier Sigma',
     description: `**Senior CRM partner for venture-backed teams, with Twenty at the core.**
 
@@ -147,6 +151,10 @@ Twenty is the foundation. Around it we build modular GTM stacks that are structu
   },
   {
     slug: 'northbeam-studio',
+    partnerTier: null,
+    serviceCount: 1,
+    approvedCaseStudyCount: 1,
+    rotationKey: 'northbeam-studio',
     name: 'Northbeam Studio',
     description:
       'RevOps and reporting for B2B SaaS teams that have outgrown spreadsheets and their first CRM. We turn messy pipelines into forecasts leadership actually trusts, redesign stages and scoring around how reps really sell, wire up the dashboards your board keeps asking for, connect the enrichment and outreach tools your growth team already runs, and document every last piece of it so the system keeps working long after we hand it back over. Based in London, working across the UK and EU in English, and yes this sentence is deliberately far too long to prove the card never breaks no matter how much a partner writes.',
@@ -194,6 +202,10 @@ Twenty is the foundation. Around it we build modular GTM stacks that are structu
   },
   {
     slug: '9-dots-ventures',
+    partnerTier: null,
+    serviceCount: 2,
+    approvedCaseStudyCount: 1,
+    rotationKey: '9-dots-ventures',
     name: '9 Dots Ventures',
     description:
       'Boutique CRM implementer for real-estate workflows and WhatsApp automation, with self-hosted Twenty deployments across APAC.',
@@ -249,6 +261,10 @@ Twenty is the foundation. Around it we build modular GTM stacks that are structu
   },
   {
     slug: 'halden-roe',
+    partnerTier: null,
+    serviceCount: 2,
+    approvedCaseStudyCount: 0,
+    rotationKey: 'halden-roe',
     name: 'Halden & Roe',
     description:
       'Migrations off legacy CRMs for mid-market teams. German and English, with EU data residency by default.',
@@ -285,6 +301,10 @@ Twenty is the foundation. Around it we build modular GTM stacks that are structu
   },
   {
     slug: 'verza-collective',
+    partnerTier: null,
+    serviceCount: 2,
+    approvedCaseStudyCount: 0,
+    rotationKey: 'verza-collective',
     name: 'Verza Collective',
     description:
       'No-code operations and automations for scaling startups. 150 projects shipped across Europe and LATAM, from first pipeline to full RevOps tooling.',
@@ -327,6 +347,10 @@ Twenty is the foundation. Around it we build modular GTM stacks that are structu
   },
   {
     slug: 'kioko-labs',
+    partnerTier: null,
+    serviceCount: 1,
+    approvedCaseStudyCount: 0,
+    rotationKey: 'kioko-labs',
     name: 'Kioko Labs',
     description:
       'Self-hosted Twenty deployments and API work for teams across Africa and the Gulf.',
@@ -358,6 +382,10 @@ Twenty is the foundation. Around it we build modular GTM stacks that are structu
   },
   {
     slug: 'tomas-brandt',
+    partnerTier: null,
+    serviceCount: 0,
+    approvedCaseStudyCount: 0,
+    rotationKey: 'tomas-brandt',
     name: 'Tomas Brandt',
     description:
       'Independent Twenty consultant, ex-Salesforce admin. Available for short solutioning engagements.',
@@ -383,6 +411,10 @@ Twenty is the foundation. Around it we build modular GTM stacks that are structu
   },
   {
     slug: 'benjamin-reynolds',
+    partnerTier: null,
+    serviceCount: 0,
+    approvedCaseStudyCount: 0,
+    rotationKey: 'benjamin-reynolds',
     name: 'Benjamin Reynolds',
     description: '',
     calendarLink: '',
