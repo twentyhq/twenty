@@ -25,7 +25,6 @@ import {
   IconDoorEnter,
   IconHelpCircle,
   IconHierarchy2,
-  IconLanguage,
   IconLayout,
   IconMail,
   IconMessage,
@@ -128,12 +127,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Data model`,
           path: SettingsPath.Objects,
           Icon: IconHierarchy2,
-          isHidden: !permissionMap[PermissionFlagType.DATA_MODEL],
-        },
-        {
-          label: t`Translations`,
-          path: SettingsPath.Translations,
-          Icon: IconLanguage,
           isHidden: !permissionMap[PermissionFlagType.DATA_MODEL],
         },
         {

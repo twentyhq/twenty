@@ -456,14 +456,6 @@ const SettingsObjects = lazy(() =>
   })),
 );
 
-const SettingsTranslations = lazy(() =>
-  import('~/pages/settings/translations/SettingsTranslations').then(
-    (module) => ({
-      default: module.SettingsTranslations,
-    }),
-  ),
-);
-
 const SettingsDevelopersWebhookNew = lazy(() =>
   import('~/pages/settings/developers/webhooks/components/SettingsDevelopersWebhookNew').then(
     (module) => ({
@@ -853,10 +845,6 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         }
       >
         <Route path={SettingsPath.Objects} element={<SettingsObjects />} />
-        <Route
-          path={SettingsPath.Translations}
-          element={<SettingsTranslations />}
-        />
         <Route
           path={SettingsPath.ObjectOverview}
           element={<SettingsObjectOverview />}

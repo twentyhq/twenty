@@ -11,7 +11,10 @@ import {
   type SettingsDataModelObjectAboutFormValues,
   settingsDataModelObjectAboutFormSchema,
 } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import {
+  ConfirmationModal,
+  StyledCenteredButton,
+} from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -24,7 +27,6 @@ import { TRANSLATABLE_PROPERTIES_BY_METADATA_NAME } from 'twenty-shared/i18n';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/input';
 import { parseThemeColor } from 'twenty-ui/utilities';
 import { useLocaleOptions } from '~/localization/hooks/useLocaleOptions';
 import { MetadataTranslationsDocument } from '~/generated-metadata/graphql';
@@ -309,20 +311,22 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
       />
       <ConfirmationModal
         modalInstanceId={TRANSLATION_INTENT_MODAL_ID}
-        title={t`Rename or translate?`}
-        subtitle={t`You are editing the ${currentLanguageLabel} version of a translated label. Other languages keep their own translation unless you rename for everyone.`}
+        title={t`Translate or rename?`}
+        subtitle={t`You are editing the ${currentLanguageLabel} translation. Renaming instead changes the source label, for every language.`}
         confirmButtonText={t`Only in ${currentLanguageLabel}`}
         confirmButtonAccent="blue"
+        hideCancelButton
         onConfirmClick={saveAsTranslation}
         onClose={() => {
           setPendingFormValues(null);
           formConfig.reset();
         }}
         AdditionalButtons={
-          <Button
+          <StyledCenteredButton
             title={t`Rename for all languages`}
             variant="secondary"
             fullWidth
+            justify="center"
             onClick={handleRenameForAllLanguages}
           />
         }

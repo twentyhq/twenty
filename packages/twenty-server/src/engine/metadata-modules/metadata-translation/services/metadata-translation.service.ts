@@ -69,11 +69,10 @@ export class MetadataTranslationService {
   }): Promise<MetadataTranslationDTO[]> {
     if (
       !isDefined(input.objectMetadataId) &&
-      !isDefined(input.fieldMetadataId) &&
-      !isDefined(input.locale)
+      !isDefined(input.fieldMetadataId)
     ) {
       throw new UserInputError(
-        'metadataTranslations requires an entity id or a locale',
+        'metadataTranslations requires an objectMetadataId or a fieldMetadataId',
       );
     }
 
@@ -221,24 +220,6 @@ export class MetadataTranslationService {
         : [];
     }
 
-    const activeObjects = Object.values(
-      flatObjectMetadataMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter(({ isActive, isSystem }) => isActive && !isSystem);
-    const activeObjectIds = new Set(activeObjects.map(({ id }) => id));
-    const activeFields = Object.values(
-      flatFieldMetadataMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter(
-        ({ isActive, isSystem, objectMetadataId }) =>
-          isActive && !isSystem && activeObjectIds.has(objectMetadataId),
-      );
-
-    return [
-      ...activeObjects.map(toObjectEntity),
-      ...activeFields.map(toFieldEntity),
-    ];
+    return [];
   }
 }
