@@ -21,7 +21,7 @@ import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { MetadataTranslationProvenance } from '~/generated-metadata/graphql';
 
-const TRANSLATIONS_ROW_GRID_TEMPLATE_COLUMNS = '112px 1fr 72px 24px';
+const TRANSLATIONS_ROW_GRID_TEMPLATE_COLUMNS = '112px 1fr 84px 24px';
 
 const StyledPageContainer = styled.div`
   display: flex;
