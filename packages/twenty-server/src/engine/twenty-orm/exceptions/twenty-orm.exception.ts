@@ -3,7 +3,6 @@ import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
-import { INVALID_INPUT_USER_FRIENDLY_MESSAGE } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants';
 import { CustomException } from 'src/utils/custom-exception';
 
 export enum TwentyORMExceptionCode {
@@ -64,7 +63,7 @@ const getTwentyORMExceptionUserFriendlyMessage = (
     case TwentyORMExceptionCode.TOO_MANY_RECORDS_TO_UPDATE:
       return msg`Too many records to update at once.`;
     case TwentyORMExceptionCode.INVALID_INPUT:
-      return INVALID_INPUT_USER_FRIENDLY_MESSAGE;
+      return msg`Invalid input provided.`;
     case TwentyORMExceptionCode.RLS_VALIDATION_FAILED:
       return msg`Record does not satisfy security constraints.`;
     case TwentyORMExceptionCode.ENUM_TYPE_NAME_NOT_FOUND:

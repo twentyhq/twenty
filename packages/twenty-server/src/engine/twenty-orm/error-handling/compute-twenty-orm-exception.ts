@@ -1,14 +1,11 @@
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { QueryFailedError } from 'typeorm';
 
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
-import {
-  CONSTRAINT_VIOLATION_USER_FRIENDLY_MESSAGES,
-  QUERY_READ_TIMEOUT_MESSAGE,
-  QUERY_READ_TIMEOUT_USER_FRIENDLY_MESSAGE,
-} from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants';
 import { handleDuplicateKeyError } from 'src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util';
 import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -22,6 +19,12 @@ interface QueryFailedErrorWithCode extends QueryFailedError {
   code?: string;
 }
 
+const CONSTRAINT_VIOLATION_MESSAGES: Record<string, MessageDescriptor> = {
+  [POSTGRESQL_ERROR_CODES.NOT_NULL_VIOLATION]: msg`A required field is missing. Please provide all required values and try again.`,
+  [POSTGRESQL_ERROR_CODES.FOREIGN_KEY_VIOLATION]: msg`This operation references a record that does not exist or cannot be modified due to existing relationships.`,
+  [POSTGRESQL_ERROR_CODES.RESTRICT_VIOLATION]: msg`This record cannot be deleted because it is still referenced by other records.`,
+};
+
 export const computeTwentyORMException = async (
   error: Error,
   objectMetadata?: FlatObjectMetadata,
@@ -29,12 +32,12 @@ export const computeTwentyORMException = async (
   internalContext?: WorkspaceInternalContext,
 ): Promise<Error | TwentyORMException> => {
   if (error instanceof QueryFailedError) {
-    if (error.message.includes(QUERY_READ_TIMEOUT_MESSAGE)) {
+    if (error.message.includes('Query read timeout')) {
       return new TwentyORMException(
-        QUERY_READ_TIMEOUT_MESSAGE,
+        'Query read timeout',
         TwentyORMExceptionCode.QUERY_READ_TIMEOUT,
         {
-          userFriendlyMessage: QUERY_READ_TIMEOUT_USER_FRIENDLY_MESSAGE,
+          userFriendlyMessage: msg`We are experiencing a temporary issue with our database. Please try again later.`,
         },
       );
     }
@@ -62,16 +65,12 @@ export const computeTwentyORMException = async (
       );
     }
 
-    if (
-      isDefined(errorCode) &&
-      errorCode in CONSTRAINT_VIOLATION_USER_FRIENDLY_MESSAGES
-    ) {
+    if (isDefined(errorCode) && errorCode in CONSTRAINT_VIOLATION_MESSAGES) {
       return new TwentyORMException(
         error.message,
         TwentyORMExceptionCode.INVALID_INPUT,
         {
-          userFriendlyMessage:
-            CONSTRAINT_VIOLATION_USER_FRIENDLY_MESSAGES[errorCode],
+          userFriendlyMessage: CONSTRAINT_VIOLATION_MESSAGES[errorCode],
         },
       );
     }

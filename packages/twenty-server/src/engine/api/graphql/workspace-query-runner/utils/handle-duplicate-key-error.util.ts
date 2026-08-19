@@ -1,9 +1,5 @@
 import { msg } from '@lingui/core/macro';
 
-import {
-  DUPLICATE_ENTRY_DETECTED_MESSAGE,
-  DUPLICATE_ENTRY_USER_FRIENDLY_MESSAGE,
-} from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -34,10 +30,10 @@ export const handleDuplicateKeyError = async (
 
   if (!parsedError) {
     return new TwentyORMException(
-      DUPLICATE_ENTRY_DETECTED_MESSAGE,
+      `A duplicate entry was detected`,
       TwentyORMExceptionCode.DUPLICATE_ENTRY_DETECTED,
       {
-        userFriendlyMessage: DUPLICATE_ENTRY_USER_FRIENDLY_MESSAGE,
+        userFriendlyMessage: msg`This record already exists. Please check your data and try again.`,
       },
     );
   }
@@ -53,10 +49,10 @@ export const handleDuplicateKeyError = async (
   const fieldLabel = conflictingRecord?.fieldLabel;
   const userFriendlyMessage = fieldLabel
     ? msg`This ${fieldLabel} value is already in use. Please check your data and try again.`
-    : DUPLICATE_ENTRY_USER_FRIENDLY_MESSAGE;
+    : msg`This record already exists. Please check your data and try again.`;
 
   const exception: DuplicateKeyErrorWithMetadata = new TwentyORMException(
-    DUPLICATE_ENTRY_DETECTED_MESSAGE,
+    `A duplicate entry was detected`,
     TwentyORMExceptionCode.DUPLICATE_ENTRY_DETECTED,
     {
       userFriendlyMessage,
