@@ -45,6 +45,13 @@ export const useSortedArray = <T>(
         return sortOrder === 'AscNullsLast' || sortOrder === 'AscNullsFirst'
           ? (a[sortFieldName] as number) - (b[sortFieldName] as number)
           : (b[sortFieldName] as number) - (a[sortFieldName] as number);
+      } else if (sortFieldType === 'date') {
+        const aTime = new Date(a[sortFieldName] as string).getTime();
+        const bTime = new Date(b[sortFieldName] as string).getTime();
+
+        return sortOrder === 'AscNullsLast' || sortOrder === 'AscNullsFirst'
+          ? aTime - bTime
+          : bTime - aTime;
       } else {
         return 0;
       }

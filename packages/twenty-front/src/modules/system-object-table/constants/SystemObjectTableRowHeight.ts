@@ -1,1 +1,0 @@
-export const SYSTEM_OBJECT_TABLE_ROW_HEIGHT = 32;

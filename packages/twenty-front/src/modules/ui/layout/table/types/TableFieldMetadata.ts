@@ -4,7 +4,7 @@ import { type IconComponent } from 'twenty-ui/icon';
 export type TableFieldMetadata<ItemType> = {
   fieldLabel: MessageDescriptor;
   fieldName: keyof ItemType;
-  fieldType: 'string' | 'number';
+  fieldType: 'string' | 'number' | 'date';
   align: 'left' | 'right';
   FieldIcon?: IconComponent;
 };
