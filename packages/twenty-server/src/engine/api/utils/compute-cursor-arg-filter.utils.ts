@@ -25,7 +25,8 @@ export const computeCursorArgFilter = (
   orderBy: ObjectRecordOrderBy,
   flatObjectMetadata: FlatObjectMetadata,
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
-  isForwardPagination = true,
+  isForwardPagination: boolean,
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
 ): ObjectRecordFilter[] => {
   validateCursorMatchesOrderByOrThrow({
     cursor,
@@ -59,6 +60,7 @@ export const computeCursorArgFilter = (
         cursorKey,
         cursorValue,
         flatObjectMetadata,
+        flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         orderBy,
         isForwardPagination: true,
@@ -82,6 +84,7 @@ export const computeCursorArgFilter = (
         cursorKey,
         cursorValue,
         flatObjectMetadata,
+        flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         orderBy,
         isForwardPagination,

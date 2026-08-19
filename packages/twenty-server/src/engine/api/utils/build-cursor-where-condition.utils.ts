@@ -33,6 +33,7 @@ type BuildCursorWhereConditionParams = {
     | ObjectRecordCursorLeafScalarValue
     | ObjectRecordCursorLeafCompositeValue;
   flatObjectMetadata: FlatObjectMetadata;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   orderBy: ObjectRecordOrderBy;
   isForwardPagination: boolean;
@@ -46,6 +47,7 @@ export const buildCursorWhereCondition = ({
   cursorKey,
   cursorValue,
   flatObjectMetadata,
+  flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   orderBy,
   isForwardPagination,
@@ -85,6 +87,7 @@ export const buildCursorWhereCondition = ({
     return buildCursorRelationFieldWhereCondition({
       relationFieldMetadata: fieldMetadata,
       cursorValue,
+      flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       orderBy,
       isForwardPagination,

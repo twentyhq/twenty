@@ -125,17 +125,3 @@ export const countRelationFieldsInOrderBy = (
     return fieldMetadata?.type === FieldMetadataType.RELATION;
   }).length;
 };
-
-export const hasRelationFieldInOrderBy = (
-  orderBy: ObjectRecordOrderBy,
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
-  fieldIdByName: Record<string, string>,
-): boolean => {
-  return (
-    countRelationFieldsInOrderBy(
-      orderBy,
-      flatFieldMetadataMaps,
-      fieldIdByName,
-    ) > 0
-  );
-};

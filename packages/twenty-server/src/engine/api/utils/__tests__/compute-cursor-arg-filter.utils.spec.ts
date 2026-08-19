@@ -128,6 +128,15 @@ describe('computeCursorArgFilter', () => {
     companyNameField,
   ]);
 
+  const companyObjectMetadata = {
+    id: 'company-object-id',
+    universalIdentifier: 'company-object-id',
+    workspaceId,
+    nameSingular: 'company',
+    namePlural: 'companies',
+    fieldIds: ['company-name-id'],
+  } as unknown as FlatObjectMetadata;
+
   const flatObjectMetadata: FlatObjectMetadata = {
     id: objectMetadataId,
     workspaceId,
@@ -158,6 +167,18 @@ describe('computeCursorArgFilter', () => {
     applicationId: null,
   } as unknown as FlatObjectMetadata;
 
+  const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> = {
+    byUniversalIdentifier: {
+      'object-id': flatObjectMetadata,
+      'company-object-id': companyObjectMetadata,
+    },
+    universalIdentifierById: {
+      'object-id': 'object-id',
+      'company-object-id': 'company-object-id',
+    },
+    universalIdentifiersByApplicationId: {},
+  };
+
   describe('basic cursor filtering', () => {
     it('should return empty array when cursor is empty', () => {
       const result = computeCursorArgFilter(
@@ -166,6 +187,7 @@ describe('computeCursorArgFilter', () => {
         flatObjectMetadata,
         flatFieldMetadataMaps,
         true,
+        flatObjectMetadataMaps,
       );
 
       expect(result).toEqual([]);
@@ -181,6 +203,7 @@ describe('computeCursorArgFilter', () => {
         flatObjectMetadata,
         flatFieldMetadataMaps,
         true,
+        flatObjectMetadataMaps,
       );
 
       expect(result).toEqual([{ name: { gt: 'John' } }]);
@@ -196,6 +219,7 @@ describe('computeCursorArgFilter', () => {
         flatObjectMetadata,
         flatFieldMetadataMaps,
         false,
+        flatObjectMetadataMaps,
       );
 
       expect(result).toEqual([{ name: { lt: 'John' } }]);
@@ -216,6 +240,7 @@ describe('computeCursorArgFilter', () => {
         flatObjectMetadata,
         flatFieldMetadataMaps,
         true,
+        flatObjectMetadataMaps,
       );
 
       expect(result).toEqual([
@@ -250,6 +275,7 @@ describe('computeCursorArgFilter', () => {
         flatObjectMetadata,
         flatFieldMetadataMaps,
         true,
+        flatObjectMetadataMaps,
       );
 
       expect(result).toEqual([
@@ -297,6 +323,7 @@ describe('computeCursorArgFilter', () => {
         flatObjectMetadata,
         flatFieldMetadataMaps,
         true,
+        flatObjectMetadataMaps,
       );
 
       expect(result).toEqual([
@@ -328,6 +355,7 @@ describe('computeCursorArgFilter', () => {
         flatObjectMetadata,
         flatFieldMetadataMaps,
         true,
+        flatObjectMetadataMaps,
       );
 
       expect(result).toEqual([
@@ -372,6 +400,7 @@ describe('computeCursorArgFilter', () => {
         flatObjectMetadata,
         flatFieldMetadataMaps,
         false,
+        flatObjectMetadataMaps,
       );
 
       expect(result).toEqual([
@@ -414,6 +443,7 @@ describe('computeCursorArgFilter', () => {
           flatObjectMetadata,
           flatFieldMetadataMaps,
           true,
+          flatObjectMetadataMaps,
         ),
       ).toThrow(GraphqlQueryRunnerException);
     });
@@ -429,6 +459,7 @@ describe('computeCursorArgFilter', () => {
           flatObjectMetadata,
           flatFieldMetadataMaps,
           true,
+          flatObjectMetadataMaps,
         ),
       ).toThrow(GraphqlQueryRunnerException);
     });
@@ -445,6 +476,7 @@ describe('computeCursorArgFilter', () => {
         flatObjectMetadata,
         flatFieldMetadataMaps,
         true,
+        flatObjectMetadataMaps,
       );
 
       expect(result).toEqual([
@@ -467,6 +499,7 @@ describe('computeCursorArgFilter', () => {
         flatObjectMetadata,
         flatFieldMetadataMaps,
         true,
+        flatObjectMetadataMaps,
       );
 
       expect(result).toEqual([{ closeDate: { gt: '2026-01-01T00:00:00Z' } }]);
@@ -485,6 +518,7 @@ describe('computeCursorArgFilter', () => {
         flatObjectMetadata,
         flatFieldMetadataMaps,
         true,
+        flatObjectMetadataMaps,
       );
 
       expect(result).toEqual([
@@ -507,6 +541,7 @@ describe('computeCursorArgFilter', () => {
         flatObjectMetadata,
         flatFieldMetadataMaps,
         true,
+        flatObjectMetadataMaps,
       );
 
       expect(result).toEqual([
@@ -527,6 +562,7 @@ describe('computeCursorArgFilter', () => {
         flatObjectMetadata,
         flatFieldMetadataMaps,
         false,
+        flatObjectMetadataMaps,
       );
 
       expect(result).toEqual([
@@ -549,6 +585,7 @@ describe('computeCursorArgFilter', () => {
         flatObjectMetadata,
         flatFieldMetadataMaps,
         true,
+        flatObjectMetadataMaps,
       );
 
       expect(result).toEqual([{ name: { gt: 'John' } }]);
@@ -570,6 +607,7 @@ describe('computeCursorArgFilter', () => {
           flatObjectMetadata,
           flatFieldMetadataMaps,
           true,
+          flatObjectMetadataMaps,
         ),
       ).toThrow('Cursor is missing the value for orderBy field "closeDate"');
     });
@@ -588,6 +626,7 @@ describe('computeCursorArgFilter', () => {
           flatObjectMetadata,
           flatFieldMetadataMaps,
           true,
+          flatObjectMetadataMaps,
         ),
       ).toThrow(
         'Cursor is missing the value for orderBy field "fullName.firstName"',
@@ -608,6 +647,7 @@ describe('computeCursorArgFilter', () => {
           flatObjectMetadata,
           flatFieldMetadataMaps,
           true,
+          flatObjectMetadataMaps,
         ),
       ).not.toThrow();
     });
@@ -628,6 +668,7 @@ describe('computeCursorArgFilter', () => {
         flatObjectMetadata,
         flatFieldMetadataMaps,
         true,
+        flatObjectMetadataMaps,
       );
 
       expect(result).toEqual([
@@ -655,6 +696,7 @@ describe('computeCursorArgFilter', () => {
         flatObjectMetadata,
         flatFieldMetadataMaps,
         true,
+        flatObjectMetadataMaps,
       );
 
       expect(result).toEqual([
@@ -674,6 +716,7 @@ describe('computeCursorArgFilter', () => {
           flatObjectMetadata,
           flatFieldMetadataMaps,
           true,
+          flatObjectMetadataMaps,
         ),
       ).toThrow(
         'include the ordered relation field in the selection (e.g. "company { name }")',

@@ -105,6 +105,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
         flatObjectMetadata,
         flatFieldMetadataMaps,
         isForwardPagination,
+        flatObjectMetadataMaps,
       );
 
       if (cursorArgFilter.length > 0) {

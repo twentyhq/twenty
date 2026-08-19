@@ -18,13 +18,17 @@ import { isAscendingOrder } from 'src/engine/api/utils/is-ascending-order.utils'
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { isOrderByDirection } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/is-order-by-direction.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 type BuildCursorRelationFieldWhereConditionParams = {
   relationFieldMetadata: FlatFieldMetadata;
   cursorValue:
     | ObjectRecordCursorLeafScalarValue
     | ObjectRecordCursorLeafCompositeValue;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   orderBy: ObjectRecordOrderBy;
   isForwardPagination: boolean;
@@ -47,6 +51,7 @@ const throwInvalidCursor = (message: string): never => {
 export const buildCursorRelationFieldWhereCondition = ({
   relationFieldMetadata,
   cursorValue,
+  flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   orderBy,
   isForwardPagination,
@@ -103,20 +108,30 @@ export const buildCursorRelationFieldWhereCondition = ({
     );
   }
 
-  const targetSubFieldMetadata = Object.values(
-    flatFieldMetadataMaps.byUniversalIdentifier,
-  ).find(
-    (fieldMetadata) =>
-      fieldMetadata?.objectMetadataId ===
-        relationFieldMetadata.relationTargetObjectMetadataId &&
-      fieldMetadata.name === subFieldName,
-  );
+  const targetObjectMetadata = isDefined(
+    relationFieldMetadata.relationTargetObjectMetadataId,
+  )
+    ? findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: relationFieldMetadata.relationTargetObjectMetadataId,
+        flatEntityMaps: flatObjectMetadataMaps,
+      })
+    : undefined;
+  const { fieldIdByName: targetFieldIdByName } = isDefined(targetObjectMetadata)
+    ? buildFieldMapsFromFlatObjectMetadata(
+        flatFieldMetadataMaps,
+        targetObjectMetadata,
+      )
+    : { fieldIdByName: {} as Record<string, string> };
+  const targetSubFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: targetFieldIdByName[subFieldName],
+    flatEntityMaps: flatFieldMetadataMaps,
+  });
 
   // Joined columns of types with a Postgres null-equivalent default (e.g. TEXT '')
   // are only ever NULL when the join found no row, and their `is: NULL` filter
   // operator also matches the null-equivalent value: target the join column
   // instead so the NULL block matches exactly the rows without a related record
-  const subFieldSqlNullOnlyMeansMissingRelation =
+  const isSubFieldNullOnlyWhenRelationIsMissing =
     isDefined(targetSubFieldMetadata) &&
     isDefined(
       findPostgresDefaultNullEquivalentValue(
@@ -129,10 +144,10 @@ export const buildCursorRelationFieldWhereCondition = ({
     name: relationFieldName,
   });
 
-  const nullBlockCondition = subFieldSqlNullOnlyMeansMissingRelation
+  const nullBlockCondition = isSubFieldNullOnlyWhenRelationIsMissing
     ? { [joinColumnName]: { is: 'NULL' } }
     : { [relationFieldName]: { [subFieldName]: { is: 'NULL' } } };
-  const outsideNullBlockCondition = subFieldSqlNullOnlyMeansMissingRelation
+  const outsideNullBlockCondition = isSubFieldNullOnlyWhenRelationIsMissing
     ? { [joinColumnName]: { is: 'NOT_NULL' } }
     : { [relationFieldName]: { [subFieldName]: { is: 'NOT_NULL' } } };
 
