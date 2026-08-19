@@ -1,6 +1,6 @@
 import { lazy, useMemo } from 'react';
 
-import { WorkflowCoreIndexPage } from '~/pages/system-object/WorkflowCoreIndexPage';
+import { WorkflowCoreIndexPage } from '~/pages/object-core/WorkflowCoreIndexPage';
 import {
   createBrowserRouter,
   createRoutesFromElements,

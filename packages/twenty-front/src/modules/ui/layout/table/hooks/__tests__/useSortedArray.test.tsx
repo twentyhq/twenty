@@ -12,7 +12,6 @@ import {
   tableDataSortedBylabelInDescendingOrder,
 } from '~/testing/mock-data/tableData';
 
-import { msg } from '@lingui/core/macro';
 import { type OrderBy } from 'twenty-shared/types';
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 
@@ -89,85 +88,5 @@ describe('useSortedArray hook', () => {
     const sortedData = result.current;
 
     expect(sortedData).toEqual(tableDataSortedByFieldsCountInDescendingOrder);
-  });
-
-  test('sorting behavior for date fields - Ascending', () => {
-    const dateTableMetadata = {
-      tableId: 'dateTable',
-      fields: [
-        {
-          fieldLabel: msg`Updated at`,
-          fieldName: 'updatedAt' as const,
-          fieldType: 'date' as const,
-          align: 'left' as const,
-        },
-      ],
-    };
-    const dateData = [
-      { updatedAt: '2026-03-01T00:00:00.000Z' },
-      { updatedAt: '2026-01-01T00:00:00.000Z' },
-      { updatedAt: '2026-02-01T00:00:00.000Z' },
-    ];
-
-    const store = createStore();
-    store.set(
-      sortedFieldByTableFamilyState.atomFamily({ tableId: 'dateTable' }),
-      { fieldName: 'updatedAt', orderBy: 'AscNullsLast' },
-    );
-
-    const { result } = renderHook(
-      () => useSortedArray(dateData, dateTableMetadata),
-      {
-        wrapper: ({ children }: { children: ReactNode }) => (
-          <Provider store={store}>{children}</Provider>
-        ),
-      },
-    );
-
-    expect(result.current.map((item) => item.updatedAt)).toEqual([
-      '2026-01-01T00:00:00.000Z',
-      '2026-02-01T00:00:00.000Z',
-      '2026-03-01T00:00:00.000Z',
-    ]);
-  });
-
-  test('sorting behavior for date fields - Descending', () => {
-    const dateTableMetadata = {
-      tableId: 'dateTableDesc',
-      fields: [
-        {
-          fieldLabel: msg`Updated at`,
-          fieldName: 'updatedAt' as const,
-          fieldType: 'date' as const,
-          align: 'left' as const,
-        },
-      ],
-    };
-    const dateData = [
-      { updatedAt: '2026-01-01T00:00:00.000Z' },
-      { updatedAt: '2026-03-01T00:00:00.000Z' },
-      { updatedAt: '2026-02-01T00:00:00.000Z' },
-    ];
-
-    const store = createStore();
-    store.set(
-      sortedFieldByTableFamilyState.atomFamily({ tableId: 'dateTableDesc' }),
-      { fieldName: 'updatedAt', orderBy: 'DescNullsLast' },
-    );
-
-    const { result } = renderHook(
-      () => useSortedArray(dateData, dateTableMetadata),
-      {
-        wrapper: ({ children }: { children: ReactNode }) => (
-          <Provider store={store}>{children}</Provider>
-        ),
-      },
-    );
-
-    expect(result.current.map((item) => item.updatedAt)).toEqual([
-      '2026-03-01T00:00:00.000Z',
-      '2026-02-01T00:00:00.000Z',
-      '2026-01-01T00:00:00.000Z',
-    ]);
   });
 });

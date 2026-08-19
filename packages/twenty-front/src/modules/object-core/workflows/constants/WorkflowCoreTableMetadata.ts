@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
 
-import { type CoreWorkflow } from '@/workflow-core/types/CoreWorkflow';
+import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
 
 export const WORKFLOW_CORE_TABLE_METADATA: TableMetadata<CoreWorkflow> = {
@@ -27,7 +27,7 @@ export const WORKFLOW_CORE_TABLE_METADATA: TableMetadata<CoreWorkflow> = {
     {
       fieldLabel: msg`Last update`,
       fieldName: 'updatedAt',
-      fieldType: 'date',
+      fieldType: 'string',
       align: 'left',
     },
   ],

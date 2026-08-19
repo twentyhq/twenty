@@ -5,10 +5,10 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
-import { WORKFLOW_CORE_TABLE_METADATA } from '@/workflow-core/constants/WorkflowCoreTableMetadata';
-import { WORKFLOW_CORE_TABLE_ROW_GRID_TEMPLATE_COLUMNS } from '@/workflow-core/constants/WorkflowCoreTableRowGridTemplateColumns';
-import { WorkflowCoreTableRow } from '@/workflow-core/components/WorkflowCoreTableRow';
-import { type CoreWorkflow } from '@/workflow-core/types/CoreWorkflow';
+import { WORKFLOW_CORE_TABLE_METADATA } from '@/object-core/workflows/constants/WorkflowCoreTableMetadata';
+import { WORKFLOW_CORE_TABLE_ROW_GRID_TEMPLATE_COLUMNS } from '@/object-core/workflows/constants/WorkflowCoreTableRowGridTemplateColumns';
+import { WorkflowCoreTableRow } from '@/object-core/workflows/components/WorkflowCoreTableRow';
+import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
 
 type WorkflowCoreTableProps = {
   coreWorkflows: CoreWorkflow[];

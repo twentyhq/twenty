@@ -5,8 +5,8 @@ import { AppPath } from 'twenty-shared/types';
 import { IconSettingsAutomation } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { WorkflowCoreTable } from '@/workflow-core/components/WorkflowCoreTable';
-import { useCoreWorkflows } from '@/workflow-core/hooks/useCoreWorkflows';
+import { WorkflowCoreTable } from '@/object-core/workflows/components/WorkflowCoreTable';
+import { useCoreWorkflows } from '@/object-core/workflows/hooks/useCoreWorkflows';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 

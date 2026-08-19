@@ -7,9 +7,9 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { WORKFLOW_CORE_STATUS_TAG } from '@/workflow-core/constants/WorkflowCoreStatusTag';
-import { WORKFLOW_CORE_TABLE_ROW_GRID_TEMPLATE_COLUMNS } from '@/workflow-core/constants/WorkflowCoreTableRowGridTemplateColumns';
-import { type CoreWorkflow } from '@/workflow-core/types/CoreWorkflow';
+import { WORKFLOW_CORE_STATUS_TAG } from '@/object-core/workflows/constants/WorkflowCoreStatusTag';
+import { WORKFLOW_CORE_TABLE_ROW_GRID_TEMPLATE_COLUMNS } from '@/object-core/workflows/constants/WorkflowCoreTableRowGridTemplateColumns';
+import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
 
 const StyledNameContainer = styled.div`
   align-items: center;
