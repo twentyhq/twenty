@@ -337,19 +337,81 @@ describe('Order by relation field (e2e)', () => {
     expect(overlap.length).toBe(0);
   });
 
-  it.skip('should return clear error when using cursor pagination with relation orderBy', async () => {
-    const firstQueryData = {
+  it('should paginate exhaustively with cursors when the ordered relation field is selected', async () => {
+    const collectedIds: string[] = [];
+    const collectedCompanyNames: (string | null)[] = [];
+    let after: string | undefined = undefined;
+
+    for (let iteration = 0; iteration < 10; iteration++) {
+      const response = await makeGraphqlAPIRequest({
+        query: gql`
+          query People(
+            $orderBy: [PersonOrderByInput]
+            $filter: PersonFilterInput
+            $after: String
+          ) {
+            people(orderBy: $orderBy, filter: $filter, first: 3, after: $after) {
+              edges {
+                node {
+                  id
+                  company {
+                    name
+                  }
+                }
+              }
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
+            }
+          }
+        `,
+        variables: {
+          orderBy: [{ company: { name: 'AscNullsLast' } }],
+          filter: { id: { in: TEST_PERSON_IDS } },
+          after,
+        },
+      });
+
+      expect(response.body.errors).toBeUndefined();
+
+      const connection = response.body.data.people;
+
+      for (const edge of connection.edges) {
+        collectedIds.push(edge.node.id);
+        collectedCompanyNames.push(edge.node.company?.name ?? null);
+      }
+
+      if (!connection.pageInfo.hasNextPage) {
+        break;
+      }
+
+      after = connection.pageInfo.endCursor;
+    }
+
+    expect(collectedIds).toHaveLength(TEST_PERSON_IDS.length);
+    expect(new Set(collectedIds).size).toBe(TEST_PERSON_IDS.length);
+
+    // Company names must be globally non-decreasing across pages, nulls last
+    const companyNames = collectedCompanyNames.filter(
+      (name): name is string => name !== null,
+    );
+
+    expect(companyNames).toEqual([...companyNames].sort());
+    expect(collectedCompanyNames.slice(companyNames.length)).toEqual(
+      Array(TEST_PERSON_IDS.length - companyNames.length).fill(null),
+    );
+  });
+
+  it('should return an actionable error when paginating without the ordered relation field selected', async () => {
+    const firstPageResponse = await makeGraphqlAPIRequest({
       query: gql`
-        query People(
-          $orderBy: [PersonOrderByInput]
-          $filter: PersonFilterInput
-        ) {
+        query People($orderBy: [PersonOrderByInput], $filter: PersonFilterInput) {
           people(orderBy: $orderBy, filter: $filter, first: 3) {
             edges {
               node {
                 id
               }
-              cursor
             }
             pageInfo {
               hasNextPage
@@ -362,20 +424,12 @@ describe('Order by relation field (e2e)', () => {
         orderBy: [{ company: { name: 'AscNullsLast' } }],
         filter: { id: { in: TEST_PERSON_IDS } },
       },
-    };
+    });
 
-    const firstResponse = await makeGraphqlAPIRequest(firstQueryData);
+    expect(firstPageResponse.body.errors).toBeUndefined();
+    expect(firstPageResponse.body.data.people.pageInfo.hasNextPage).toBe(true);
 
-    expect(firstResponse.body.data).toBeDefined();
-    expect(firstResponse.body.errors).toBeUndefined();
-
-    const pageInfo = firstResponse.body.data.people.pageInfo;
-
-    // Assert we have enough data for pagination test
-    expect(pageInfo.hasNextPage).toBe(true);
-    expect(pageInfo.endCursor).toBeDefined();
-
-    const secondQueryData = {
+    const secondPageResponse = await makeGraphqlAPIRequest({
       query: gql`
         query People(
           $orderBy: [PersonOrderByInput]
@@ -394,16 +448,13 @@ describe('Order by relation field (e2e)', () => {
       variables: {
         orderBy: [{ company: { name: 'AscNullsLast' } }],
         filter: { id: { in: TEST_PERSON_IDS } },
-        after: pageInfo.endCursor,
+        after: firstPageResponse.body.data.people.pageInfo.endCursor,
       },
-    };
+    });
 
-    const secondResponse = await makeGraphqlAPIRequest(secondQueryData);
-
-    expect(secondResponse.body.errors).toBeDefined();
-
-    expect(secondResponse.body.errors[0].message).toContain(
-      'Cursor-based pagination is not supported with relation field ordering',
+    expect(secondPageResponse.body.errors).toBeDefined();
+    expect(secondPageResponse.body.errors[0].message).toContain(
+      'include the ordered relation field in the selection',
     );
   });
 

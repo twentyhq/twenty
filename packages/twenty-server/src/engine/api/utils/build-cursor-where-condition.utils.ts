@@ -15,6 +15,7 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { areNullsScannedAfterCursor } from 'src/engine/api/utils/are-nulls-scanned-after-cursor.utils';
 import { buildCursorCompositeFieldWhereCondition } from 'src/engine/api/utils/build-cursor-composite-field-where-condition.utils';
+import { buildCursorRelationFieldWhereCondition } from 'src/engine/api/utils/build-cursor-relation-field-where-condition.utils';
 import { computeOperator } from 'src/engine/api/utils/compute-operator.utils';
 import { isAscendingOrder } from 'src/engine/api/utils/is-ascending-order.utils';
 import { validateAndGetOrderByForScalarField } from 'src/engine/api/utils/validate-and-get-order-by.utils';
@@ -23,6 +24,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 type BuildCursorWhereConditionParams = {
@@ -74,6 +76,20 @@ export const buildCursorWhereCondition = ({
       GraphqlQueryRunnerExceptionCode.INVALID_CURSOR,
       { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
     );
+  }
+
+  if (
+    isAccessedByFieldName &&
+    isMorphOrRelationFlatFieldMetadata(fieldMetadata)
+  ) {
+    return buildCursorRelationFieldWhereCondition({
+      relationFieldMetadata: fieldMetadata,
+      cursorValue,
+      flatFieldMetadataMaps,
+      orderBy,
+      isForwardPagination,
+      isEqualityCondition,
+    });
   }
 
   if (

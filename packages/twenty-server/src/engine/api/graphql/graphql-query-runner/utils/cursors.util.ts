@@ -68,13 +68,38 @@ export const encodeCursor = <T extends ObjectRecord = ObjectRecord>({
         continue;
       }
 
-      // Relation orderBy values are not carried by cursors: embedding the loaded
-      // related record produced oversized cursors that cannot be turned back into
-      // a keyset condition on the root table
+      // Relation orderBy entries carry only the ordered sub-field values, read
+      // from the loaded related record; an unloaded relation or sub-field leaves
+      // the cursor incomplete, which cursor decoding reports with a dedicated
+      // error instead of paginating incorrectly
       if (
         isAccessedByFieldName &&
-        isMorphOrRelationFlatFieldMetadata(fieldMetadata)
+        isMorphOrRelationFlatFieldMetadata(fieldMetadata) &&
+        isPlainObject(value)
       ) {
+        const relatedRecord = objectRecord[key] as
+          | Record<string, unknown>
+          | null
+          | undefined;
+
+        if (relatedRecord === undefined) {
+          continue;
+        }
+
+        const existingRelationValue: Record<string, unknown> =
+          orderByValues[key] ?? {};
+
+        for (const subFieldKey of Object.keys(
+          value as Record<string, unknown>,
+        )) {
+          if (relatedRecord === null) {
+            existingRelationValue[subFieldKey] = null;
+          } else if (relatedRecord[subFieldKey] !== undefined) {
+            existingRelationValue[subFieldKey] = relatedRecord[subFieldKey];
+          }
+        }
+
+        orderByValues[key] = existingRelationValue;
         continue;
       }
 

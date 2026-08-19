@@ -68,9 +68,26 @@ export const validateCursorMatchesOrderByOrThrow = ({
 
       if (
         isAccessedByFieldName &&
-        isMorphOrRelationFlatFieldMetadata(fieldMetadata)
+        isMorphOrRelationFlatFieldMetadata(fieldMetadata) &&
+        isPlainObject(orderByValue)
       ) {
-        // Relation orderBy values are not carried by cursors yet
+        const relationCursorValue = cursor[fieldName];
+
+        for (const subFieldKey of Object.keys(
+          orderByValue as Record<string, unknown>,
+        )) {
+          if (
+            !isPlainObject(relationCursorValue) ||
+            (relationCursorValue as Record<string, unknown>)[subFieldKey] ===
+              undefined
+          ) {
+            throw new GraphqlQueryRunnerException(
+              `Cursor is missing the value for orderBy field "${fieldName}.${subFieldKey}": include the ordered relation field in the selection (e.g. "${fieldName} { ${subFieldKey} }") so cursors can carry it`,
+              GraphqlQueryRunnerExceptionCode.INVALID_CURSOR,
+              { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+            );
+          }
+        }
         continue;
       }
 

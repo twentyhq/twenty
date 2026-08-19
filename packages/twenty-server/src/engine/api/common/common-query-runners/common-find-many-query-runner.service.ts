@@ -40,10 +40,7 @@ import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runne
 import { buildOrderByColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-order-by-columns-to-select';
 import { getCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
-import {
-  countRelationFieldsInOrderBy,
-  hasRelationFieldInOrderBy,
-} from 'src/engine/api/utils/validate-and-get-order-by.utils';
+import { countRelationFieldsInOrderBy } from 'src/engine/api/utils/validate-and-get-order-by.utils';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -102,26 +99,6 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     const cursor = getCursor(args);
 
     if (cursor) {
-      const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
-        flatFieldMetadataMaps,
-        flatObjectMetadata,
-      );
-
-      if (
-        hasRelationFieldInOrderBy(
-          args.orderBy ?? [],
-          flatFieldMetadataMaps,
-          fieldIdByName,
-        )
-      ) {
-        // Not throwing exception because still used on record show page
-        /* throw new GraphqlQueryRunnerException(
-          'Cursor-based pagination is not supported with relation field ordering. Use offset pagination instead.',
-          GraphqlQueryRunnerExceptionCode.INVALID_CURSOR,
-          { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
-        ); */
-      }
-
       const cursorArgFilter = computeCursorArgFilter(
         cursor,
         orderByWithIdCondition,
@@ -221,14 +198,6 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       hasAfterCursor: Boolean(args.after),
       hasBeforeCursor: Boolean(args.before),
     });
-    const pageInfo = getPageInfo({
-      records: objectRecords,
-      orderBy: orderByWithIdCondition,
-      pageInfo: cursorPageInfo,
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
-    });
-
     const hasAggregatedFields =
       Object.keys(args.selectedFieldsResult.aggregate ?? {}).length > 0;
 
@@ -256,6 +225,16 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
         ...this.getNestedRelationsReadPathOptions(queryRunnerContext),
       });
     }
+
+    // Cursors are encoded after nested relations are attached so relation
+    // orderBy values reach the cursor (the REST API paginates from this pageInfo)
+    const pageInfo = getPageInfo({
+      records: objectRecords,
+      orderBy: orderByWithIdCondition,
+      pageInfo: cursorPageInfo,
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    });
 
     return {
       records: objectRecords,

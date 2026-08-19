@@ -1,4 +1,8 @@
-import { FieldMetadataType, OrderByDirection } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  OrderByDirection,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
@@ -71,6 +75,27 @@ describe('computeCursorArgFilter', () => {
     isNullable: true,
   });
 
+  const companyField = {
+    ...createMockField({
+      id: 'company-id',
+      type: FieldMetadataType.RELATION,
+      name: 'company',
+      label: 'Company',
+    }),
+    settings: { relationType: RelationType.MANY_TO_ONE },
+    relationTargetObjectMetadataId: 'company-object-id',
+  } as FlatFieldMetadata;
+
+  const companyNameField = {
+    ...createMockField({
+      id: 'company-name-id',
+      type: FieldMetadataType.TEXT,
+      name: 'name',
+      label: 'Name',
+    }),
+    objectMetadataId: 'company-object-id',
+  } as FlatFieldMetadata;
+
   const buildFlatFieldMetadataMaps = (
     fields: FlatFieldMetadata[],
   ): FlatEntityMaps<FlatFieldMetadata> => ({
@@ -99,6 +124,8 @@ describe('computeCursorArgFilter', () => {
     fullNameField,
     idField,
     closeDateField,
+    companyField,
+    companyNameField,
   ]);
 
   const flatObjectMetadata: FlatObjectMetadata = {
@@ -118,7 +145,14 @@ describe('computeCursorArgFilter', () => {
     createdAt: new Date(),
     updatedAt: new Date(),
     universalIdentifier: objectMetadataId,
-    fieldIds: ['name-id', 'age-id', 'fullname-id', 'id-id', 'closedate-id'],
+    fieldIds: [
+      'name-id',
+      'age-id',
+      'fullname-id',
+      'id-id',
+      'closedate-id',
+      'company-id',
+    ],
     indexMetadataIds: [],
     viewIds: [],
     applicationId: null,
@@ -576,6 +610,75 @@ describe('computeCursorArgFilter', () => {
           true,
         ),
       ).not.toThrow();
+    });
+  });
+
+
+  describe('relation orderBy cursor continuation', () => {
+    const relationOrderBy = [
+      { company: { name: OrderByDirection.AscNullsLast } },
+      { id: OrderByDirection.AscNullsFirst },
+    ];
+
+    it('should continue on the joined column with the missing-relation block last', () => {
+      const cursor = { company: { name: 'Acme' }, id: 'uuid-1' };
+
+      const result = computeCursorArgFilter(
+        cursor,
+        relationOrderBy,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+        true,
+      );
+
+      expect(result).toEqual([
+        {
+          or: [
+            { company: { name: { gt: 'Acme' } } },
+            { companyId: { is: 'NULL' } },
+          ],
+        },
+        {
+          and: [
+            { company: { name: { eq: 'Acme' } } },
+            { id: { gt: 'uuid-1' } },
+          ],
+        },
+      ]);
+    });
+
+    it('should ride the tie-breaking keys inside the missing-relation block', () => {
+      const cursor = { company: { name: null }, id: 'uuid-1' };
+
+      const result = computeCursorArgFilter(
+        cursor,
+        relationOrderBy,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+        true,
+      );
+
+      expect(result).toEqual([
+        {
+          and: [{ companyId: { is: 'NULL' } }, { id: { gt: 'uuid-1' } }],
+        },
+      ]);
+    });
+
+    it('should reject a cursor without the relation orderBy value with an actionable error', () => {
+      const cursor = { id: 'uuid-1' };
+
+      expect(() =>
+        computeCursorArgFilter(
+          cursor,
+          relationOrderBy,
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+          true,
+        ),
+      ).toThrow(
+        'include the ordered relation field in the selection (e.g. "company { name }")',
+      );
     });
   });
 });

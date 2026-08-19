@@ -189,11 +189,33 @@ describe('encodeCursor', () => {
     expect(decoded).toEqual({ name: null, id: 'abc' });
   });
 
-  it('should not embed related records for relation orderBy entries', () => {
+  it('should carry only the ordered sub-field of a loaded relation', () => {
     const record = {
       id: 'abc',
-      company: { id: 'company-1', name: 'Acme' },
+      company: { id: 'company-1', name: 'Acme', employees: 10 },
     };
+    const orderBy = [
+      { company: { name: OrderByDirection.AscNullsLast } },
+    ] as Parameters<typeof encodeCursor>[0]['order'];
+
+    const decoded = decodeCursor(callEncodeCursor(record, orderBy));
+
+    expect(decoded).toEqual({ company: { name: 'Acme' }, id: 'abc' });
+  });
+
+  it('should carry null for a relation orderBy entry when there is no related record', () => {
+    const record = { id: 'abc', company: null };
+    const orderBy = [
+      { company: { name: OrderByDirection.AscNullsLast } },
+    ] as Parameters<typeof encodeCursor>[0]['order'];
+
+    const decoded = decodeCursor(callEncodeCursor(record, orderBy));
+
+    expect(decoded).toEqual({ company: { name: null }, id: 'abc' });
+  });
+
+  it('should leave the relation orderBy entry out when the relation is not loaded', () => {
+    const record = { id: 'abc' };
     const orderBy = [
       { company: { name: OrderByDirection.AscNullsLast } },
     ] as Parameters<typeof encodeCursor>[0]['order'];
