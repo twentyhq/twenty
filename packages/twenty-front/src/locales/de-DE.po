@@ -1117,7 +1117,6 @@ msgstr "Wird aktiviert..."
 
 #. js-lingui-id: F6pfE9
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
-#: src/modules/object-core/workflows/constants/WorkflowCoreStatusTag.ts
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
@@ -2392,7 +2391,6 @@ msgid "Apostrophe and dot"
 msgstr "Apostroph und Punkt"
 
 #. js-lingui-id: LMUw1U
-#: src/modules/object-core/workflows/constants/WorkflowCoreTableMetadata.ts
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
@@ -6002,7 +6000,6 @@ msgid "Deactivate this field"
 msgstr "Dieses Feld deaktivieren"
 
 #. js-lingui-id: yAT3be
-#: src/modules/object-core/workflows/constants/WorkflowCoreStatusTag.ts
 #: src/modules/settings/data-model/fields/forms/components/text/constants/TextDataModelSelectOptions.ts
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectItemTableRow.tsx
@@ -6798,7 +6795,6 @@ msgstr "Beispieldatei herunterladen"
 
 #. js-lingui-id: eneWvv
 #: src/modules/activities/emails/components/EmailThreadPreview.tsx
-#: src/modules/object-core/workflows/constants/WorkflowCoreStatusTag.ts
 msgid "Draft"
 msgstr "Entwurf"
 
@@ -11060,11 +11056,6 @@ msgstr "Zuletzt aktualisiert"
 msgid "Last signed in"
 msgstr "Zuletzt angemeldet"
 
-#. js-lingui-id: o1zvNS
-#: src/modules/object-core/workflows/constants/WorkflowCoreTableMetadata.ts
-msgid "Last update"
-msgstr ""
-
 #. js-lingui-id: C3yOz3
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
@@ -12351,7 +12342,6 @@ msgstr "N/A"
 
 #. js-lingui-id: 6YtxFj
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm.tsx
-#: src/modules/object-core/workflows/constants/WorkflowCoreTableMetadata.ts
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
@@ -17920,7 +17910,6 @@ msgstr "Zustand"
 #. js-lingui-id: uAQUqI
 #: src/modules/ai/components/AiChatThreadFilterDropdownRootMenu.tsx
 #: src/modules/ai/components/AiChatThreadFilterDropdownStatusMenu.tsx
-#: src/modules/object-core/workflows/constants/WorkflowCoreTableMetadata.ts
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -20019,7 +20008,6 @@ msgstr ""
 #: src/modules/ai/components/ChatReferenceChipDisplay.tsx
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 #: src/modules/mention/components/MentionRecordChip.tsx
-#: src/modules/object-core/workflows/components/WorkflowCoreTableRow.tsx
 #: src/modules/object-record/components/RecordChip.tsx
 #: src/modules/object-record/components/RecordChip.tsx
 #: src/modules/object-record/record-title-cell/components/RecordTitleCellTextFieldDisplay.tsx
@@ -21358,7 +21346,6 @@ msgstr "Workflow-Ausführung"
 #. js-lingui-id: woYYQq
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
-#: src/pages/object-core/WorkflowCoreIndexPage.tsx
 msgid "Workflows"
 msgstr "Workflows"
 
