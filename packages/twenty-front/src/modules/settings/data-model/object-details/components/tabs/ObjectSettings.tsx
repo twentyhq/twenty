@@ -9,6 +9,11 @@ import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsW
 import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm';
 import { SettingsObjectIndexesSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection';
 import { SettingsObjectSearchSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection';
+import { SettingsObjectTimelineSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectTimelineSection';
+import { getObjectHasTimelineActivities } from '@/settings/data-model/object-details/utils/getObjectHasTimelineActivities';
+import { getSettingsTimelineActivityRules } from '@/settings/data-model/object-details/utils/getSettingsTimelineActivityRules';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -16,7 +21,8 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { styled } from '@linaria/react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
-import { SettingsPath } from 'twenty-shared/types';
+import { useMemo } from 'react';
+import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { IconArchive, IconTrash } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
@@ -63,6 +69,26 @@ export const ObjectSettings = ({
   const { openModal, closeModal } = useModal();
 
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
+
+  const { objectMetadataItems } = useObjectMetadataItems();
+  const isTimelineRulesEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_TIMELINE_RULES_ENABLED,
+  );
+
+  const timelineActivityRules = useMemo(
+    () =>
+      getSettingsTimelineActivityRules({
+        objectMetadataItem,
+        objectMetadataItems,
+      }),
+    [objectMetadataItem, objectMetadataItems],
+  );
+
+  const shouldShowTimelineSection =
+    isTimelineRulesEnabled &&
+    !objectMetadataItem.isRemote &&
+    timelineActivityRules.length > 0 &&
+    getObjectHasTimelineActivities({ objectMetadataItem, objectMetadataItems });
 
   const isReadOnly =
     isObjectMetadataReadOnly({ objectMetadataItem }) || isDDLLocked;
@@ -153,6 +179,21 @@ export const ObjectSettings = ({
           </Section>
         </StyledFormSectionContainer>
       </AdvancedSettingsWrapper>
+      {shouldShowTimelineSection && (
+        <AdvancedSettingsWrapper>
+          <StyledFormSectionContainer>
+            <Section>
+              <H2Title
+                title={t`Timeline`}
+                description={t`Events on related records that also appear on this timeline, derived from your data model`}
+              />
+              <SettingsObjectTimelineSection
+                timelineActivityRules={timelineActivityRules}
+              />
+            </Section>
+          </StyledFormSectionContainer>
+        </AdvancedSettingsWrapper>
+      )}
       {!isReadOnly && (
         <StyledFormSectionContainer>
           <Section>
