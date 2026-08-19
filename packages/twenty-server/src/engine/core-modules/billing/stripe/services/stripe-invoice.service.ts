@@ -81,7 +81,10 @@ export class StripeInvoiceService {
         },
       );
     } catch (error) {
-      await this.deleteDraftUpgradeInvoice(invoice.id, invoiceItem.id);
+      await this.deleteDraftUpgradeInvoice({
+        invoiceId: invoice.id,
+        invoiceItemId: invoiceItem.id,
+      });
 
       throw error;
     }
@@ -143,10 +146,13 @@ export class StripeInvoiceService {
     );
   }
 
-  private async deleteDraftUpgradeInvoice(
-    invoiceId: string,
-    invoiceItemId: string,
-  ): Promise<void> {
+  private async deleteDraftUpgradeInvoice({
+    invoiceId,
+    invoiceItemId,
+  }: {
+    invoiceId: string;
+    invoiceItemId: string;
+  }): Promise<void> {
     try {
       await this.stripe.invoices.del(invoiceId);
     } catch (deleteError) {
