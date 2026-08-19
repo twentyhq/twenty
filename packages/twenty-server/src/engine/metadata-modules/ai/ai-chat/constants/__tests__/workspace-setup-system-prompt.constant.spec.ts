@@ -9,6 +9,12 @@ describe('WORKSPACE_SETUP_SYSTEM_PROMPT', () => {
     expect(prompt).not.toContain('Domain:');
   });
 
+  it('should state the two-call reply contract up front', () => {
+    expect(prompt).toContain(
+      'While the setup runs, every reply of yours ends with one of two tool calls, ask_questions or complete_workspace_setup, as the final section below spells out',
+    );
+  });
+
   it('should frame the first message as hidden company context', () => {
     expect(prompt).toContain(
       'kicking off the setup of this brand-new workspace',
