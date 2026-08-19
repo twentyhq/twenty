@@ -1,4 +1,4 @@
-import { WORKSPACE_SETUP_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-chat/constants/workspace-setup-system-prompt.const';
+import { WORKSPACE_SETUP_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-chat/constants/workspace-setup-system-prompt.constant';
 
 describe('WORKSPACE_SETUP_SYSTEM_PROMPT', () => {
   const prompt = WORKSPACE_SETUP_SYSTEM_PROMPT;

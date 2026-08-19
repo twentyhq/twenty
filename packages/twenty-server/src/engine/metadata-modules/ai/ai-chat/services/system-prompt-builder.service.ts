@@ -16,7 +16,7 @@ import {
   type UserContext,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { CHAT_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-chat/constants/chat-system-prompts.const';
-import { WORKSPACE_SETUP_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-chat/constants/workspace-setup-system-prompt.const';
+import { WORKSPACE_SETUP_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-chat/constants/workspace-setup-system-prompt.constant';
 import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 
