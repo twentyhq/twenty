@@ -3203,6 +3203,7 @@ enum AllMetadataName {
   applicationVariable
   connectionProvider
   searchFieldMetadata
+  timelineActivityRule
 }
 
 type MinimalObjectMetadata {

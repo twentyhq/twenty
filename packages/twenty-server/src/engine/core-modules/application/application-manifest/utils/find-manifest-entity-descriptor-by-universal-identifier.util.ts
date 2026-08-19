@@ -258,6 +258,10 @@ const MANIFEST_ENTITY_REGISTRY: Record<
     entityKind: 'search field',
     getCandidates: () => NO_MANIFEST_CANDIDATES,
   },
+  timelineActivityRule: {
+    entityKind: 'timeline activity rule',
+    getCandidates: () => NO_MANIFEST_CANDIDATES,
+  },
 };
 
 const MANIFEST_ENTITY_REGISTRY_ENTRIES = Object.values(

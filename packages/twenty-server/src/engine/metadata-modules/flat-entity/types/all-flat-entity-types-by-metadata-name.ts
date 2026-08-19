@@ -46,6 +46,8 @@ import { type FlatViewGroup } from 'src/engine/metadata-modules/flat-view-group/
 import { type FlatViewSortMaps } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort-maps.type';
 import { type FlatViewSort } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort.type';
 import { type FlatSearchFieldMetadataMaps } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata-maps.type';
+import { type FlatTimelineActivityRuleMaps } from 'src/engine/metadata-modules/flat-timeline-activity-rule/types/flat-timeline-activity-rule-maps.type';
+import { type FlatTimelineActivityRule } from 'src/engine/metadata-modules/flat-timeline-activity-rule/types/flat-timeline-activity-rule.type';
 import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata.type';
 import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/flat-view-maps.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
@@ -87,6 +89,7 @@ import { type UniversalFlatViewFilter } from 'src/engine/workspace-manager/works
 import { type UniversalFlatViewGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-group.type';
 import { type UniversalFlatViewSort } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-sort.type';
 import { type UniversalFlatSearchFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-search-field-metadata.type';
+import { type UniversalFlatTimelineActivityRule } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-timeline-activity-rule.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 import { type UniversalFlatApplicationVariable } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-application-variable.type';
 import { type UniversalFlatWebhook } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-webhook.type';
@@ -338,6 +341,14 @@ import {
   type UniversalDeleteSearchFieldMetadataAction,
   type UniversalUpdateSearchFieldMetadataAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/search-field-metadata/types/workspace-migration-search-field-metadata-action.type';
+import {
+  type FlatCreateTimelineActivityRuleAction,
+  type FlatDeleteTimelineActivityRuleAction,
+  type FlatUpdateTimelineActivityRuleAction,
+  type UniversalCreateTimelineActivityRuleAction,
+  type UniversalDeleteTimelineActivityRuleAction,
+  type UniversalUpdateTimelineActivityRuleAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/timeline-activity-rule/types/workspace-migration-timeline-activity-rule-action.type';
 
 export type AllFlatEntityTypesByMetadataName = {
   fieldMetadata: {
@@ -838,5 +849,21 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntity: FlatSearchFieldMetadata;
     universalFlatEntity: UniversalFlatSearchFieldMetadata;
     entity: MetadataEntity<'searchFieldMetadata'>;
+  };
+  timelineActivityRule: {
+    flatEntityMaps: FlatTimelineActivityRuleMaps;
+    universalActions: {
+      create: UniversalCreateTimelineActivityRuleAction;
+      update: UniversalUpdateTimelineActivityRuleAction;
+      delete: UniversalDeleteTimelineActivityRuleAction;
+    };
+    flatActions: {
+      create: FlatCreateTimelineActivityRuleAction;
+      update: FlatUpdateTimelineActivityRuleAction;
+      delete: FlatDeleteTimelineActivityRuleAction;
+    };
+    flatEntity: FlatTimelineActivityRule;
+    universalFlatEntity: UniversalFlatTimelineActivityRule;
+    entity: MetadataEntity<'timelineActivityRule'>;
   };
 };

@@ -8,6 +8,7 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.searchFieldMetadata.delete,
     ...aggregatedOrchestratorActionsReport.searchFieldMetadata.create,
     ...aggregatedOrchestratorActionsReport.searchFieldMetadata.update,
+    ...aggregatedOrchestratorActionsReport.timelineActivityRule.delete,
 
     ...aggregatedOrchestratorActionsReport.index.delete,
     ...aggregatedOrchestratorActionsReport.fieldMetadata.delete,
@@ -18,6 +19,9 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.fieldMetadata.update,
     ...aggregatedOrchestratorActionsReport.index.create,
     ...aggregatedOrchestratorActionsReport.index.update.flat(),
+
+    ...aggregatedOrchestratorActionsReport.timelineActivityRule.create,
+    ...aggregatedOrchestratorActionsReport.timelineActivityRule.update,
 
     ...aggregatedOrchestratorActionsReport.view.create,
     ...aggregatedOrchestratorActionsReport.view.update,

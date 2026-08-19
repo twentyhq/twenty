@@ -306,7 +306,8 @@ export const enrichCreateWorkspaceMigrationActionsWithIds = ({
       case 'webhook':
       case 'applicationVariable':
       case 'connectionProvider':
-      case 'searchFieldMetadata': {
+      case 'searchFieldMetadata':
+      case 'timelineActivityRule': {
         if (!isDefined(idByUniversalIdentifier)) {
           return action;
         }

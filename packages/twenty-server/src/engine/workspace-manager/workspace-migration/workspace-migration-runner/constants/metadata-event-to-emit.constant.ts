@@ -32,4 +32,5 @@ export const METADATA_EVENTS_TO_EMIT = {
   applicationVariable: false,
   connectionProvider: true,
   searchFieldMetadata: true,
+  timelineActivityRule: false,
 } as const satisfies { [P in AllMetadataName]: boolean };

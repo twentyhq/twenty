@@ -151,6 +151,13 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for skill 1`] = `[]`;
 
+exports[`getMetadataRelatedMetadataNames should return related metadata names for timelineActivityRule 1`] = `
+[
+  "objectMetadata",
+  "fieldMetadata",
+]
+`;
+
 exports[`getMetadataRelatedMetadataNames should return related metadata names for view 1`] = `
 [
   "objectMetadata",

@@ -13,6 +13,7 @@ exports[`sortMetadataNamesChildrenFirst should return metadata names sorted with
   "pageLayoutWidget",
   "rolePermissionFlag",
   "roleTarget",
+  "timelineActivityRule",
   "viewSort",
   "index",
   "pageLayout",

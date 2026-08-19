@@ -1,0 +1,2 @@
+export const CREATE_TIMELINE_ACTIVITY_RULE_CORE_TABLE_UPGRADE_COMMAND_NAME =
+  '2.33.0_CreateTimelineActivityRuleCoreTableFastInstanceCommand_1787125000000';

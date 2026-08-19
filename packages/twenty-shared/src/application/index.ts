@@ -86,6 +86,7 @@ export {
   SYSTEM_VIEW_KEYS,
   getSystemViewUniversalIdentifier,
 } from './deterministic-identifier/get-system-view-universal-identifier.util';
+export { getTimelineActivityRuleUniversalIdentifier } from './deterministic-identifier/get-timeline-activity-rule-universal-identifier.util';
 export { getViewFieldUniversalIdentifier } from './deterministic-identifier/get-view-field-universal-identifier.util';
 export { getViewFilterUniversalIdentifier } from './deterministic-identifier/get-view-filter-universal-identifier.util';
 export { getViewGroupUniversalIdentifier } from './deterministic-identifier/get-view-group-universal-identifier.util';

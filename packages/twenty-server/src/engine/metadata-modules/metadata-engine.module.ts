@@ -29,6 +29,7 @@ import { ServerRouteTriggerModule } from 'src/engine/core-modules/server-route-t
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { RouteTriggerModule } from 'src/engine/metadata-modules/route-trigger/route-trigger.module';
 import { SearchFieldMetadataModule } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.module';
+import { TimelineActivityRuleModule } from 'src/engine/metadata-modules/timeline-activity-rule/timeline-activity-rule.module';
 import { SkillModule } from 'src/engine/metadata-modules/skill/skill.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WebhookModule } from 'src/engine/metadata-modules/webhook/webhook.module';
@@ -40,6 +41,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     FrontComponentModule,
     ObjectMetadataModule,
     SearchFieldMetadataModule,
+    TimelineActivityRuleModule,
     LogicFunctionModule,
     LogicFunctionLayerModule,
     SkillModule,
@@ -82,6 +84,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     FrontComponentModule,
     ObjectMetadataModule,
     SearchFieldMetadataModule,
+    TimelineActivityRuleModule,
     LogicFunctionModule,
     SkillModule,
     CommandMenuItemModule,

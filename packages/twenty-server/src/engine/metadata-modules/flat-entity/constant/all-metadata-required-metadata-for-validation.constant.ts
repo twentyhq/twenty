@@ -123,4 +123,8 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
     objectMetadata: true,
     fieldMetadata: true,
   },
+  timelineActivityRule: {
+    objectMetadata: true,
+    fieldMetadata: true,
+  },
 } as const satisfies MetadataRequiredForValidation;

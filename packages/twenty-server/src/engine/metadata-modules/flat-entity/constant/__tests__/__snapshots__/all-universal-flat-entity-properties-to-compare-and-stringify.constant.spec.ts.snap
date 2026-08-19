@@ -334,6 +334,18 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
     ],
     "propertiesToStringify": [],
   },
+  "timelineActivityRule": {
+    "propertiesToCompare": [
+      "resolution",
+      "actions",
+      "triggerFieldMetadataIds",
+      "isActive",
+    ],
+    "propertiesToStringify": [
+      "actions",
+      "triggerFieldMetadataIds",
+    ],
+  },
   "view": {
     "propertiesToCompare": [
       "deletedAt",

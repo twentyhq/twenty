@@ -59,6 +59,7 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = ({
 
       return allFlatEntityMaps;
     }
+    case 'timelineActivityRule':
     case 'view':
     case 'viewField':
     case 'viewGroup':

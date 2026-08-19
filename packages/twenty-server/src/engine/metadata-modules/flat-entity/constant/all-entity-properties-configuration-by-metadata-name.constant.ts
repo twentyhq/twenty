@@ -1888,6 +1888,48 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
   },
+  timelineActivityRule: {
+    objectMetadataId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'objectMetadataUniversalIdentifier',
+    },
+    relationFieldMetadataId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'relationFieldMetadataUniversalIdentifier',
+    },
+    resolution: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    actions: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    triggerFieldMetadataIds: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    isActive: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
 } as const satisfies {
   [P in AllMetadataName]: MetadataEntityPropertyConfiguration<P>;
 };
