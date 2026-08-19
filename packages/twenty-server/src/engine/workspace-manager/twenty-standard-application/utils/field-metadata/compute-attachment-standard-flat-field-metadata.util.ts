@@ -26,7 +26,6 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
   CreateStandardFieldArgs<'attachment', FieldMetadataType>,
   'context'
 >): Record<AllStandardObjectFieldName<'attachment'>, FlatFieldMetadata> => ({
-  // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -112,7 +111,6 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     now,
   }),
 
-  // Attachment-specific fields
   name: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -331,7 +329,6 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     now,
   }),
 
-  // Relation fields
   targetTask: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

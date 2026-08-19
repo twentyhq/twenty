@@ -63,6 +63,38 @@ describe('slackPostMessageHandler', () => {
     });
   });
 
+  it('should leave Slack link previews alone when the caller does not ask for them to be turned off', async () => {
+    postMessageMock.mockResolvedValue({ ts: '1700000000.000600' });
+
+    await slackPostMessageHandler({
+      slackChannelId: CHANNEL_ID,
+      messageText: 'hello',
+    });
+
+    expect(postMessageMock).toHaveBeenCalledTimes(1);
+    expect(postMessageMock.mock.calls[0][0]).toStrictEqual({
+      channel: CHANNEL_ID,
+      thread_ts: undefined,
+      text: 'hello',
+    });
+  });
+
+  it('should turn off link and media previews when asked', async () => {
+    postMessageMock.mockResolvedValue({ ts: '1700000000.000700' });
+
+    await slackPostMessageHandler({
+      slackChannelId: CHANNEL_ID,
+      messageText: 'hello',
+      unfurlLinks: false,
+      unfurlMedia: false,
+    });
+
+    expect(postMessageMock).toHaveBeenCalledTimes(1);
+    expect(postMessageMock).toHaveBeenCalledWith(
+      expect.objectContaining({ unfurl_links: false, unfurl_media: false }),
+    );
+  });
+
   it('should reply inside a thread with a trimmed parent timestamp', async () => {
     postMessageMock.mockResolvedValue({
       ts: '1700000000.000200',
@@ -108,6 +140,21 @@ describe('slackPostMessageHandler', () => {
     );
   });
 
+  it('should treat a runtime non-string parent timestamp as no thread without throwing', async () => {
+    postMessageMock.mockResolvedValue({ ts: '1700000000.000450' });
+
+    const result = await slackPostMessageHandler({
+      slackChannelId: CHANNEL_ID,
+      messageText: 'standalone',
+      parentMessageTimestamp: 1700000000 as unknown as string,
+    });
+
+    expect(postMessageMock).toHaveBeenCalledWith(
+      expect.objectContaining({ thread_ts: undefined }),
+    );
+    expect(result.success).toBe(true);
+  });
+
   it('should return a failure result when the Slack API throws', async () => {
     postMessageMock.mockRejectedValue(new Error('channel_not_found'));
 
@@ -121,5 +168,44 @@ describe('slackPostMessageHandler', () => {
       message: 'Failed to post Slack message',
       error: 'channel_not_found',
     });
+  });
+
+  it('should retry as plain text when the workspace rejects markdown_text', async () => {
+    postMessageMock
+      .mockRejectedValueOnce(
+        Object.assign(new Error('invalid_arguments'), {
+          data: { error: 'invalid_arguments' },
+        }),
+      )
+      .mockResolvedValueOnce({ ts: '1700000000.000500', channel: CHANNEL_ID });
+
+    const result = await slackPostMessageHandler({
+      slackChannelId: CHANNEL_ID,
+      messageText: '**hello**',
+      messageFormat: 'markdown',
+    });
+
+    expect(postMessageMock).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({ text: '**hello**', mrkdwn: false }),
+    );
+    expect(result.success).toBe(true);
+  });
+
+  it('should not retry when a markdown post fails for an unrelated reason', async () => {
+    postMessageMock.mockRejectedValue(
+      Object.assign(new Error('channel_not_found'), {
+        data: { error: 'channel_not_found' },
+      }),
+    );
+
+    const result = await slackPostMessageHandler({
+      slackChannelId: CHANNEL_ID,
+      messageText: '**hello**',
+      messageFormat: 'markdown',
+    });
+
+    expect(postMessageMock).toHaveBeenCalledTimes(1);
+    expect(result.success).toBe(false);
   });
 });

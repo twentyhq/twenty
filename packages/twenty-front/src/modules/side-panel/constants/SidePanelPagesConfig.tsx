@@ -2,7 +2,7 @@ import { SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/display
 import { SidePanelCommandMenuItemEditPage } from '@/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage';
 import { SidePanelNavigationMenuItemEditPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNavigationMenuItemEditPage';
 import { SidePanelNewSidebarItemPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemPage';
-import { SidePanelAiChatThreadsPage } from '@/side-panel/pages/ai-chat-threads/components/SidePanelAiChatThreadsPage';
+import { SidePanelEmailBlockSettingsPage } from '@/side-panel/pages/email-block-settings/components/SidePanelEmailBlockSettingsPage';
 import { SidePanelAskAiPage } from '@/side-panel/pages/ask-ai/components/SidePanelAskAiPage';
 import { SidePanelComposeEmailPage } from '@/side-panel/pages/compose-email/components/SidePanelComposeEmailPage';
 import { SidePanelSendCampaignTestPage } from '@/side-panel/pages/send-campaign-test/components/SidePanelSendCampaignTestPage';
@@ -16,6 +16,7 @@ import { SidePanelPageLayoutDashboardWidgetTypeSelect } from '@/side-panel/pages
 import { SidePanelPageLayoutRecordPageWidgetTypeSelect } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect';
 import { SidePanelPageLayoutTabSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettings';
 import { SidePanelMergeRecordPage } from '@/side-panel/pages/record-page/components/SidePanelMergeRecordPage';
+import { SidePanelRecordsPage } from '@/side-panel/pages/records-page/components/SidePanelRecordsPage';
 import { SidePanelRecordPage } from '@/side-panel/pages/record-page/components/SidePanelRecordPage';
 import { SidePanelUpdateMultipleRecords } from '@/side-panel/pages/record-page/components/SidePanelUpdateMultipleRecords';
 import { SidePanelEditRichTextPage } from '@/side-panel/pages/rich-text-page/components/SidePanelEditRichTextPage';
@@ -35,6 +36,7 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<SidePanelPages, React.ReactNode>(
       <SidePanelCommandMenuItemDisplayPage />,
     ],
     [SidePanelPages.ViewRecord, <SidePanelRecordPage />],
+    [SidePanelPages.ViewRecords, <SidePanelRecordsPage />],
     [SidePanelPages.MergeRecords, <SidePanelMergeRecordPage />],
     [SidePanelPages.UpdateRecords, <SidePanelUpdateMultipleRecords />],
     [SidePanelPages.EditRichText, <SidePanelEditRichTextPage />],
@@ -49,7 +51,6 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<SidePanelPages, React.ReactNode>(
     [SidePanelPages.WorkflowRunStepView, <SidePanelWorkflowRunViewStep />],
     [SidePanelPages.SearchRecords, <SidePanelSearchRecordsPage />],
     [SidePanelPages.AskAI, <SidePanelAskAiPage />],
-    [SidePanelPages.ViewPreviousAiChats, <SidePanelAiChatThreadsPage />],
     [
       SidePanelPages.PageLayoutDashboardWidgetTypeSelect,
       <SidePanelPageLayoutDashboardWidgetTypeSelect />,
@@ -88,5 +89,6 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<SidePanelPages, React.ReactNode>(
     [SidePanelPages.CommandMenuEdit, <SidePanelCommandMenuItemEditPage />],
     [SidePanelPages.ComposeEmail, <SidePanelComposeEmailPage />],
     [SidePanelPages.SendCampaignTest, <SidePanelSendCampaignTestPage />],
+    [SidePanelPages.EmailBlockSettings, <SidePanelEmailBlockSettingsPage />],
   ],
 );

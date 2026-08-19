@@ -20,9 +20,12 @@ vi.mock('src/logic-functions/data/get-current-workspace-id.util', () => ({
   getCurrentWorkspaceId: getCurrentWorkspaceIdMock,
 }));
 
-vi.mock('src/logic-functions/recall-api/list-scheduled-recall-bots.util', () => ({
-  listScheduledRecallBots: listScheduledRecallBotsMock,
-}));
+vi.mock(
+  'src/logic-functions/recall-api/list-scheduled-recall-bots.util',
+  () => ({
+    listScheduledRecallBots: listScheduledRecallBotsMock,
+  }),
+);
 
 vi.mock('src/logic-functions/recall-api/list-recall-transcripts.util', () => ({
   listRecallTranscripts: listRecallTranscriptsMock,
@@ -306,7 +309,7 @@ describe('convergeDivergedCallRecordings', () => {
     });
   });
 
-  it('marks FAILED when Recall is done but has no recording artifact path', async () => {
+  it('marks NOT_RECORDED when Recall is done but never produced a recording', async () => {
     getRecallBotMock.mockResolvedValue({
       ok: true,
       bot: {
@@ -329,8 +332,8 @@ describe('convergeDivergedCallRecordings', () => {
       {
         id: 'call-recording-1',
         data: {
-          status: 'FAILED',
-          callRecorderFailureReason: 'recording_artifacts_unavailable',
+          status: 'NOT_RECORDED',
+          callRecorderFailureReason: 'recall_bot_did_not_record',
         },
       },
     ]);

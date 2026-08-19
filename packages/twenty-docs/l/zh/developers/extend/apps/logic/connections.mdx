@@ -45,6 +45,9 @@ export default defineConnectionProvider({
   // Optional: a logic function in this app to run right after a connection is
   // established. See "Run a logic function on connect".
   // onConnectLogicFunction: { universalIdentifier: '3a2b1c0d-...-...' },
+  // Optional: a logic function in this app to run right after a connection is
+  // removed. See "Run a logic function on disconnect".
+  // onDisconnectLogicFunction: { universalIdentifier: '4d5e6f70-...-...' },
 });
 ```
 
@@ -121,6 +124,42 @@ type OnConnectPayload = {
 ```
 
 接下来，使用 `getConnection(connectedAccountId)` 读取最新的访问令牌，并调用提供商的 API（例如 Slack `auth.test`），或者使用[key-value store](/l/zh/developers/extend/apps/logic/key-value-store) 持久化映射。
+
+</Accordion>
+
+<Accordion title="在断开连接时运行逻辑函数" description="在移除连接时进行清理">
+
+应用在连接时声明的任何内容，都必须在连接断开时被释放。 例如，一个在连接时声明了 `team_id` 的 Slack 集成，必须在连接结束时释放该声明，以便其他工作区可以连接同一个 Slack 团队。 将 `onDisconnectLogicFunction` 设置为引用同一应用中的某个逻辑函数，该函数会在删除 `ConnectedAccount` 之后立即运行。
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  // Runs releaseSlackTeam after every Slack disconnection.
+  onDisconnectLogicFunction: {
+    universalIdentifier: '4470aba8-5ff5-4800-88db-2a427cd8677c',
+  },
+});
+```
+
+与 on-connect 钩子类似，它在**正在断开连接的工作区中以异步方式运行**，并且不会阻塞断开过程。 处理程序接收的负载结构相同：
+
+```ts
+type OnDisconnectPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  connectedAccountId: string;
+};
+```
+
+当钩子运行时，`ConnectedAccount` 已经不存在了，因此 `getConnection(connectedAccountId)` 将不再返回结果。 清理所需的任何内容（例如 `team_id`、外部订阅 ID）必须在连接时写入到按 `connectedAccountId` 作为键的[key-value store](/l/zh/developers/extend/apps/logic/key-value-store) 中。
+
+当连接自身被移除时，该钩子会被触发。 卸载应用会通过数据库级联来删除其连接，因此该钩子在这种情况下不会运行。 在 `defineApplication` 上声明一个 `uninstallLogicFunction` 用于该路径：它在应用的元数据被删除之前运行，因此仍然可以调用 `listConnections` 并清理剩余的内容。
 
 </Accordion>
 

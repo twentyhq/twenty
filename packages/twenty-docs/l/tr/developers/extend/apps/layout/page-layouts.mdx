@@ -58,6 +58,28 @@ export default definePageLayout({
 * Bir sekmenin içindeki her `widget`, bir [ön uç bileşeni](/l/tr/developers/extend/apps/layout/front-components), bir ilişki listesi veya diğer yerleşik widget türlerini oluşturabilir.
 * Sekmelerdeki `position`, sıralarını kontrol eder. Özel sekmeleri yerleşik olanların sonrasına yerleştirmek için daha yüksek değerler kullanın (ör. 50).
 
+### Alan bileşenleri
+
+Bir `FIELD` bileşeni, kaydın tek bir alanını görüntüler. İlişki alanları için, ilişkili kayıtların bir listesini de gömebilir:
+
+```ts
+{
+  universalIdentifier: 'c1c2c3c4-c5c6-4000-8000-000000000003',
+  title: 'People → Opportunities',
+  type: 'FIELD',
+  configuration: {
+    configurationType: 'FIELD',
+    fieldMetadataId: PEOPLE_FIELD_UNIVERSAL_IDENTIFIER,
+    fieldDisplayMode: 'TABLE',
+    nestedRelationFieldMetadataId: OPPORTUNITIES_FIELD_UNIVERSAL_IDENTIFIER,
+  },
+}
+```
+
+* `fieldMetadataId`, yerleşimin nesnesindeki bir alanın evrensel tanımlayıcısını alır.
+* `fieldDisplayMode`, `'FIELD'`, `'CARD'`, `'EDITOR'`, `'VIEW'` veya `'TABLE'` değerlerinden biridir. `TABLE`, bire-çok ilişki alanının kayıtlarını listeleyen bir görünümü gömer.
+* `nestedRelationFieldMetadataId` isteğe bağlıdır ve ilişki hedef nesnesi üzerinde, iki ilişki adımı uzaktaki kayıtları listelemek için bire-çok ilişki alanının evrensel tanımlayıcısını alır (örneğin, bir Şirket sayfasının şirketin kişilerinin fırsatlarını listelemesi veya bir Kişi sayfasının kişinin şirketinin fırsatlarını listelemesi gibi). İlk adım bire-çok veya çoktan-bire ilişki alanı olabilir, ikincisi mutlaka bire-çok olmalıdır (bağlantı ilişkileri desteklenmez) ve `fieldDisplayMode: 'TABLE'` gerektirir — bunu başka herhangi bir görüntüleme modu ile birleştirmek bir doğrulama hatasıdır, çünkü iç içe bir bileşen her zaman gömülü bir görünüm olarak işlenir.
+
 ## definePageLayoutTab
 
 Bunu yalnızca mevcut bir düzene **sekme eklemek** istediğinizde kullanın — örneğin, standart Company sayfasında bir analitik sekmesi veya kendi nesnenizin düzenine eklenmiş bir yapay zeka özeti sekmesi.

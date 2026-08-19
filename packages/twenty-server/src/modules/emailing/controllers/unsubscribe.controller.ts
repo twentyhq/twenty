@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { ApiPath } from 'twenty-shared/types';
 
 import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
 import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
@@ -24,8 +25,8 @@ import { MessageSuppressionService } from 'src/modules/emailing/services/message
 
 const UNSUBSCRIBE_TOKEN_FORMAT = /^[A-Za-z0-9_-]{1,1024}$/;
 
-const UPDATE_PREFERENCES_PATH = '/emailing/unsubscribe/preferences';
-const UNSUBSCRIBE_ALL_PATH = '/emailing/unsubscribe/all';
+const UPDATE_PREFERENCES_PATH = `/${ApiPath.Emailing}/unsubscribe/preferences`;
+const UNSUBSCRIBE_ALL_PATH = `/${ApiPath.Emailing}/unsubscribe/all`;
 
 const HTML_CONTENT_TYPE = 'text/html; charset=utf-8';
 
@@ -39,7 +40,7 @@ type UnsubscribeFormBody = {
   unsubscribeTopicId?: string | string[];
 };
 
-@Controller('emailing/unsubscribe')
+@Controller(`${ApiPath.Emailing}/unsubscribe`)
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
 export class UnsubscribeController {
   constructor(

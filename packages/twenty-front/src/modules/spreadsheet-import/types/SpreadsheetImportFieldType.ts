@@ -7,7 +7,6 @@ export type SpreadsheetImportCheckbox = {
 
 export type SpreadsheetImportSelect = {
   type: 'select';
-  // Options displayed in Select component
   options: SelectOption[];
 };
 

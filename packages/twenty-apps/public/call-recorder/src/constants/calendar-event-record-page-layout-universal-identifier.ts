@@ -1,2 +1,7 @@
+import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+// Shared core CalendarEvent record page layout that this app attaches tabs to,
+// resolved from the derived standard identifiers (re-owned in Twenty 2.31).
 export const CALENDAR_EVENT_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
-  'b9b10e40-9ce2-4704-8ac6-c6e92e2563c1';
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage
+    .universalIdentifier;

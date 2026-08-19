@@ -45,6 +45,9 @@ export default defineConnectionProvider({
   // Optional: a logic function in this app to run right after a connection is
   // established. See "Run a logic function on connect".
   // onConnectLogicFunction: { universalIdentifier: '3a2b1c0d-...-...' },
+  // Optional: a logic function in this app to run right after a connection is
+  // removed. See "Run a logic function on disconnect".
+  // onDisconnectLogicFunction: { universalIdentifier: '4d5e6f70-...-...' },
 });
 ```
 
@@ -121,6 +124,42 @@ type OnConnectPayload = {
 ```
 
 Da lì usa `getConnection(connectedAccountId)` per leggere il token di accesso aggiornato e chiamare l'API del provider (ad es. Slack `auth.test`) o salvare una mappatura con il [key-value store](/l/it/developers/extend/apps/logic/key-value-store).
+
+</Accordion>
+
+<Accordion title="Esegui una funzione logica alla disconnessione" description="Effettua la pulizia quando una connessione viene rimossa">
+
+Qualsiasi elemento che un'app rivendica al momento della connessione deve essere rilasciato quando la connessione viene meno. Un'integrazione Slack che, ad esempio, rivendica un `team_id` al momento della connessione deve rilasciare tale rivendicazione, in modo che un'altra area di lavoro possa connettere lo stesso team Slack. Imposta `onDisconnectLogicFunction` per fare riferimento a una funzione logica nella stessa app, e questa verrà eseguita subito dopo l'eliminazione di `ConnectedAccount`.
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  // Runs releaseSlackTeam after every Slack disconnection.
+  onDisconnectLogicFunction: {
+    universalIdentifier: '4470aba8-5ff5-4800-88db-2a427cd8677c',
+  },
+});
+```
+
+Come l'hook on-connect, viene eseguito **in modo asincrono nell'area di lavoro in fase di disconnessione** e non blocca mai la disconnessione. L'handler riceve la stessa struttura del payload:
+
+```ts
+type OnDisconnectPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  connectedAccountId: string;
+};
+```
+
+Il `ConnectedAccount` è già stato rimosso quando l'hook viene eseguito, quindi `getConnection(connectedAccountId)` non restituisce più alcun risultato. Tutto ciò di cui la procedura di cleanup ha bisogno (un `team_id`, un id di sottoscrizione esterna) deve essere stato scritto nello [store chiave-valore](/l/it/developers/extend/apps/logic/key-value-store) al momento della connessione, con chiave `connectedAccountId`.
+
+L'hook viene attivato quando una connessione viene rimossa autonomamente. La disinstallazione dell'app elimina le sue connessioni tramite una cascata del database, quindi in questo caso l'hook non viene eseguito. Dichiara una `uninstallLogicFunction` su `defineApplication` per quel percorso: viene eseguita prima che i metadati dell'app vengano eliminati, così può ancora chiamare `listConnections` ed eseguire il cleanup di ciò che resta.
 
 </Accordion>
 

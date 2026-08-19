@@ -5,7 +5,6 @@ import { computeDeterministicUuid } from '@/application/deterministic-identifier
 // target, so each variant has its own discriminator (prefixed by the type to
 // keep the shared `navigationMenuItem` namespace collision-free).
 
-// A FOLDER navigation item is identified by its name within its application.
 export const getFolderNavigationMenuItemUniversalIdentifier = ({
   applicationUniversalIdentifier,
   name,

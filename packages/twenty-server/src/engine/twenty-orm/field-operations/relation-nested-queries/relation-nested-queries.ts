@@ -28,6 +28,12 @@ import { getAssociatedRelationFieldName } from 'src/engine/twenty-orm/utils/get-
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 import { getRecordToConnectFields } from 'src/engine/twenty-orm/utils/get-record-to-connect-fields.util';
 
+export type ConnectQueryRunner = (args: {
+  connectQueryConfig: RelationConnectQueryConfig;
+  clause: string;
+  parameters: Record<string, unknown>;
+}) => Promise<Record<string, unknown>[]>;
+
 export class RelationNestedQueries {
   private readonly internalContext: WorkspaceInternalContext;
 
@@ -88,6 +94,7 @@ export class RelationNestedQueries {
     entities,
     relationNestedConfig,
     queryBuilder,
+    connectQueryRunner,
   }: {
     entities:
       | QueryDeepPartialEntityWithNestedRelationFields<Entity>[]
@@ -96,9 +103,10 @@ export class RelationNestedQueries {
       RelationConnectQueryConfig[],
       RelationDisconnectQueryFieldsByEntityIndex,
     ];
-    queryBuilder:
+    queryBuilder?:
       | WorkspaceSelectQueryBuilder<Entity>
       | SelectQueryBuilder<Entity>;
+    connectQueryRunner?: ConnectQueryRunner;
   }): Promise<QueryDeepPartialEntity<Entity>[]> {
     const entitiesArray = Array.isArray(entities) ? entities : [entities];
 
@@ -116,6 +124,7 @@ export class RelationNestedQueries {
       entities: updatedEntitiesWithDisconnect,
       relationConnectQueryConfigs,
       queryBuilder,
+      connectQueryRunner,
     });
 
     return updatedEntitiesWithConnect;
@@ -125,18 +134,21 @@ export class RelationNestedQueries {
     entities,
     relationConnectQueryConfigs,
     queryBuilder,
+    connectQueryRunner,
   }: {
     entities: QueryDeepPartialEntityWithNestedRelationFields<Entity>[];
     relationConnectQueryConfigs: RelationConnectQueryConfig[];
-    queryBuilder:
+    queryBuilder?:
       | WorkspaceSelectQueryBuilder<Entity>
       | SelectQueryBuilder<Entity>;
+    connectQueryRunner?: ConnectQueryRunner;
   }): Promise<QueryDeepPartialEntity<Entity>[]> {
     if (relationConnectQueryConfigs.length === 0) return entities;
 
     const recordsToConnectWithConfig = await this.executeConnectQueries(
       relationConnectQueryConfigs,
       queryBuilder,
+      connectQueryRunner,
     );
 
     const updatedEntities = this.updateEntitiesWithRecordToConnectId<Entity>(
@@ -151,7 +163,9 @@ export class RelationNestedQueries {
     relationConnectQueryConfigs: RelationConnectQueryConfig[],
     queryBuilder:
       | WorkspaceSelectQueryBuilder<Entity>
-      | SelectQueryBuilder<Entity>,
+      | SelectQueryBuilder<Entity>
+      | undefined,
+    connectQueryRunner?: ConnectQueryRunner,
   ): Promise<[RelationConnectQueryConfig, Record<string, unknown>[]][]> {
     const allRecordsToConnectWithConfig: [
       RelationConnectQueryConfig,
@@ -164,17 +178,32 @@ export class RelationNestedQueries {
         connectQueryConfig.targetObjectName,
       );
 
-      queryBuilder.expressionMap.aliases = [];
-      queryBuilder.expressionMap.mainAlias = undefined;
+      let recordsToConnect: Record<string, unknown>[];
 
-      const recordsToConnect = await queryBuilder
-        .select(getRecordToConnectFields(connectQueryConfig))
-        .where(clause, parameters)
-        .from(
-          connectQueryConfig.targetObjectName,
-          connectQueryConfig.targetObjectName,
-        )
-        .getRawMany();
+      if (connectQueryRunner) {
+        recordsToConnect = await connectQueryRunner({
+          connectQueryConfig,
+          clause,
+          parameters,
+        });
+      } else if (queryBuilder) {
+        queryBuilder.expressionMap.aliases = [];
+        queryBuilder.expressionMap.mainAlias = undefined;
+
+        recordsToConnect = await queryBuilder
+          .select(getRecordToConnectFields(connectQueryConfig))
+          .where(clause, parameters)
+          .from(
+            connectQueryConfig.targetObjectName,
+            connectQueryConfig.targetObjectName,
+          )
+          .getRawMany();
+      } else {
+        throw new TwentyORMException(
+          'A query builder or a connect query runner is required to resolve connect queries',
+          TwentyORMExceptionCode.INVALID_INPUT,
+        );
+      }
 
       allRecordsToConnectWithConfig.push([
         connectQueryConfig,

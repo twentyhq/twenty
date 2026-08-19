@@ -9,25 +9,26 @@ import {
 } from '@nestjs/common';
 
 import { type Request } from 'express';
+import { ApiPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
+import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
+import { SesInboundWebhookDriverService } from 'src/modules/messaging-webhooks/drivers/aws-ses/services/ses-inbound-webhook-driver.service';
+import { SesOutboundWebhookDriverService } from 'src/modules/messaging-webhooks/drivers/aws-ses/services/ses-outbound-webhook-driver.service';
 import { MessagingWebhookApiExceptionFilter } from 'src/modules/messaging-webhooks/filters/messaging-webhook-api-exception.filter';
 import { MessagingWebhookExceptionCode } from 'src/modules/messaging-webhooks/messaging-webhook-exception-code.enum';
 import { MessagingWebhookException } from 'src/modules/messaging-webhooks/messaging-webhook.exception';
-import { SesInboundWebhookRouterService } from 'src/modules/messaging-webhooks/services/ses-inbound-webhook-router.service';
-import { SesOutboundWebhookRouterService } from 'src/modules/messaging-webhooks/services/ses-outbound-webhook-router.service';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { isDefined } from 'twenty-shared/utils';
 
 @Controller()
 @UseFilters(MessagingWebhookApiExceptionFilter)
 export class MessagingWebhooksController {
   constructor(
-    private readonly sesInboundWebhookRouterService: SesInboundWebhookRouterService,
-    private readonly sesOutboundWebhookRouterService: SesOutboundWebhookRouterService,
+    private readonly sesInboundWebhookDriverService: SesInboundWebhookDriverService,
+    private readonly sesOutboundWebhookDriverService: SesOutboundWebhookDriverService,
   ) {}
 
-  @Post(['webhooks/messaging/ses/inbound'])
+  @Post(`${ApiPath.Webhooks}/messaging/ses/inbound`)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   @HttpCode(200)
   async handleSesInboundWebhook(
@@ -40,10 +41,10 @@ export class MessagingWebhooksController {
       );
     }
 
-    await this.sesInboundWebhookRouterService.route(request.rawBody);
+    await this.sesInboundWebhookDriverService.handle(request.rawBody);
   }
 
-  @Post(['webhooks/messaging/ses/outbound'])
+  @Post(`${ApiPath.Webhooks}/messaging/ses/outbound`)
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   @HttpCode(200)
   async handleSesOutboundWebhook(
@@ -56,6 +57,6 @@ export class MessagingWebhooksController {
       );
     }
 
-    await this.sesOutboundWebhookRouterService.route(request.rawBody);
+    await this.sesOutboundWebhookDriverService.handle(request.rawBody);
   }
 }

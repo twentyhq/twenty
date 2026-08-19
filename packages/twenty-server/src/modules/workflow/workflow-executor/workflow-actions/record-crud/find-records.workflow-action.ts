@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import {
   computeRecordGqlOperationFilter,
   isDefined,
+  isEmptyObject,
+  isNonEmptyArray,
   isRecordFilterValueValid,
   resolveInput,
 } from 'twenty-shared/utils';
@@ -21,6 +24,8 @@ import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executo
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { isWorkflowFindRecordsAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-find-records-action.guard';
 import { type WorkflowFindRecordsActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
+import { resolveLimitInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/resolve-limit-input.util';
+import { resolveOffsetInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/resolve-offset-input.util';
 
 @Injectable()
 export class FindRecordsWorkflowAction implements WorkflowAction {
@@ -75,27 +80,44 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       }
     }
 
-    const gqlOperationFilter =
-      workflowActionInput.filter?.recordFilters &&
-      workflowActionInput.filter?.recordFilterGroups
+    const recordFilters = workflowActionInput.filter?.recordFilters;
+
+    let gqlOperationFilter: RecordGqlOperationFilter;
+
+    try {
+      gqlOperationFilter = isDefined(recordFilters)
         ? computeRecordGqlOperationFilter({
             fieldMetadataItems: Object.values(
               flatFieldMetadataMaps.byUniversalIdentifier,
             ).filter(isDefined),
-            recordFilters: workflowActionInput.filter.recordFilters,
-            recordFilterGroups: workflowActionInput.filter.recordFilterGroups,
+            recordFilters,
+            recordFilterGroups:
+              workflowActionInput.filter?.recordFilterGroups ?? [],
             filterValueDependencies: {
               timeZone: 'UTC',
             },
           })
         : {};
+    } catch (error) {
+      throw new WorkflowStepExecutorException(
+        `Filter could not be computed: ${error.message}`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
+    }
+
+    if (isNonEmptyArray(recordFilters) && isEmptyObject(gqlOperationFilter)) {
+      throw new WorkflowStepExecutorException(
+        'Filter could not be resolved to a valid query. Check that filtered fields exist and that grouped filters include their recordFilterGroups.',
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
+    }
 
     const toolOutput = await this.findRecordsService.execute({
       objectName: workflowActionInput.objectName,
       filter: gqlOperationFilter,
       orderBy: workflowActionInput.orderBy?.gqlOperationOrderBy,
-      limit: workflowActionInput.limit,
-      offset: workflowActionInput.offset,
+      limit: resolveLimitInput(workflowActionInput.limit),
+      offset: resolveOffsetInput(workflowActionInput.offset),
       authContext: executionContext.authContext,
       rolePermissionConfig: executionContext.rolePermissionConfig,
       shouldBuildEffectiveSelectFields: false,

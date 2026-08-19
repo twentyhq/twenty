@@ -118,7 +118,6 @@ type RecordSeedConfig = {
   recordSeeds: Record<string, unknown>[];
 };
 
-// Organize seeds into dependency batches for parallel insertion
 const getRecordSeedsBatches = (
   workspaceId: string,
   attachmentSeeds: RecordSeedConfig['recordSeeds'],
@@ -198,7 +197,6 @@ const getRecordSeedsBatches = (
       pgColumns: MESSAGE_THREAD_DATA_SEED_COLUMNS,
       recordSeeds: MESSAGE_THREAD_DATA_SEEDS,
     },
-    // Junction tables
     {
       tableName: '_employmentHistory',
       pgColumns: EMPLOYMENT_HISTORY_DATA_SEED_COLUMNS,
@@ -444,7 +442,6 @@ export class DevSeederDataService {
         )
       : join(__dirname, '../sample-files');
 
-    // Read each sample file once and cache the buffer
     const sampleFileBuffers: Buffer[] = [];
 
     for (const sampleFile of ATTACHMENT_SAMPLE_FILES) {

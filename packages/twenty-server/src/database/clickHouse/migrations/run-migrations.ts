@@ -104,7 +104,6 @@ async function runMigrations() {
 
     console.log(`⚡ Running ${file}...`);
 
-    // Split by semicolons and filter out empty statements/comments
     const statements = sql
       .split(';')
       .map((stmt) => stmt.trim())
@@ -114,7 +113,6 @@ async function runMigrations() {
       );
 
     for (const statement of statements) {
-      // Skip comment-only blocks
       const cleanedStatement = statement
         .split('\n')
         .filter((line) => !line.trim().startsWith('--'))

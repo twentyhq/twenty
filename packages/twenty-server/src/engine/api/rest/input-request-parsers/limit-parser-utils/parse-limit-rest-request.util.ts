@@ -13,6 +13,7 @@ import { type RequestContext } from 'src/engine/api/rest/types/RequestContext';
 export const parseLimitRestRequest = (
   request: AuthenticatedRequest | RequestContext,
   defaultLimit = QUERY_DEFAULT_LIMIT_RECORDS,
+  maxLimit = QUERY_MAX_RECORDS,
 ): number => {
   if (!request.query?.limit) {
     return defaultLimit;
@@ -26,5 +27,5 @@ export const parseLimitRestRequest = (
     );
   }
 
-  return Math.min(limit, QUERY_MAX_RECORDS);
+  return Math.min(limit, maxLimit);
 };

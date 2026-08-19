@@ -106,6 +106,14 @@ const validateBranchingStep = (
       });
     }
 
+    const stepFilterGroups = (input as Partial<IfElseStepInput> | undefined)
+      ?.stepFilterGroups;
+    const stepFilterGroupIds = new Set(
+      (Array.isArray(stepFilterGroups) ? stepFilterGroups : [])
+        .filter(isDefined)
+        .map((filterGroup) => filterGroup.id),
+    );
+
     for (const branch of branches) {
       const branchNextStepIds = branch?.nextStepIds;
 
@@ -114,6 +122,18 @@ const validateBranchingStep = (
           severity: 'error',
           code: 'IF_ELSE_BRANCH_HAS_NO_NEXT_STEP',
           message: `A branch of If/Else step "${step.name ?? step.id}" is not connected to any step.`,
+          stepId: step.id,
+        });
+      }
+
+      if (
+        isDefined(branch?.filterGroupId) &&
+        !stepFilterGroupIds.has(branch.filterGroupId)
+      ) {
+        issues.push({
+          severity: 'error',
+          code: 'INVALID_STEP_PARAMS',
+          message: `A branch of If/Else step "${step.name ?? step.id}" references filter group "${branch.filterGroupId}", which does not exist.`,
           stepId: step.id,
         });
       }

@@ -11,7 +11,11 @@ import {
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 import { updateOnePageLayoutWithTabsAndWidgets } from 'test/integration/metadata/suites/page-layout/utils/update-one-page-layout-with-tabs-and-widgets.util';
-import { AggregateOperations, FieldMetadataType } from 'twenty-shared/types';
+import {
+  AggregateOperations,
+  FieldMetadataType,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -166,7 +170,7 @@ describe('Page layout with tabs update should fail', () => {
           recordFilters: [
             {
               fieldMetadataId: testFilterFieldMetadataId,
-              operand: 'contains',
+              operand: ViewFilterOperand.CONTAINS,
               value: 'acme',
             },
           ],

@@ -48,8 +48,11 @@ export class ClickHouseEventSink implements EventSink {
         );
 
         if (!result.success) {
-          throw new Error(
-            `Failed to insert ${rows.length} ${table} row(s) into ClickHouse`,
+          throw Object.assign(
+            new Error(
+              `Failed to insert ${rows.length} ${table} row(s) into ClickHouse: ${result.error.message}`,
+            ),
+            { cause: result.error },
           );
         }
       }),

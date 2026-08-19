@@ -12,6 +12,15 @@ type WidgetCardContentStyledProps = {
   hasBoundedHeight: boolean;
 };
 
+const StyledRecordWidgetOutline = styled.div`
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+`;
+
 const StyledWidgetCardContent = styled.div<WidgetCardContentStyledProps>`
   background-color: ${({ variant, isInVerticalListTab, isMobile }) =>
     variant === 'record-page' && isInVerticalListTab && !isMobile
@@ -101,7 +110,11 @@ export const WidgetCardContent = ({
       className={className}
       onClick={handleContentClick}
     >
-      {children}
+      {hasInteractiveContent ? (
+        <StyledRecordWidgetOutline>{children}</StyledRecordWidgetOutline>
+      ) : (
+        children
+      )}
     </StyledWidgetCardContent>
   );
 };

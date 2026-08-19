@@ -94,7 +94,7 @@ export class StripeCustomerService {
       },
     });
 
-    await this.billingCustomerRepository.save(workspaceId, {
+    await this.billingCustomerRepository.insert(workspaceId, {
       stripeCustomerId: customer.id,
       hasPaymentMethod: false,
     });

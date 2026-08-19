@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 
 import { Response } from 'express';
+import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
@@ -21,7 +22,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
-@Controller('auth/oauth-propagator')
+@Controller(`${ApiPath.Auth}/oauth-propagator`)
 @UseFilters(AuthRestApiExceptionFilter)
 export class OAuthPropagatorController {
   constructor(

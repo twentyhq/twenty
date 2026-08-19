@@ -1,3 +1,4 @@
+import { hasEditorExtension } from '@/advanced-text-editor/utils/hasEditorExtension';
 import { useLingui } from '@lingui/react/macro';
 import { type Editor, useEditorState } from '@tiptap/react';
 import {
@@ -17,8 +18,20 @@ export type TurnIntoBlockOptions = {
   icon: IconComponent;
 };
 
+const HEADING_ICONS: Record<number, IconComponent> = {
+  1: IconH1,
+  2: IconH2,
+  3: IconH3,
+};
+
 export const useTurnIntoBlockOptions = (editor: Editor) => {
   const { t } = useLingui();
+
+  const headingTitles: Record<number, string> = {
+    1: t`Heading 1`,
+    2: t`Heading 2`,
+    3: t`Heading 3`,
+  };
 
   return useEditorState({
     editor,
@@ -37,48 +50,22 @@ export const useTurnIntoBlockOptions = (editor: Editor) => {
           return editor.isActive('paragraph');
         },
       },
-      {
-        id: 'heading1',
-        title: t`Heading 1`,
-        icon: IconH1,
-        onClick: () => {
-          return editor.chain().focus().setHeading({ level: 1 }).run();
-        },
-        disabled: () => {
-          return !editor.can().setHeading({ level: 1 });
-        },
-        isActive: () => {
-          return editor.isActive('heading', { level: 1 });
-        },
-      },
-      {
-        id: 'heading2',
-        title: t`Heading 2`,
-        icon: IconH2,
-        onClick: () => {
-          return editor.chain().focus().setHeading({ level: 2 }).run();
-        },
-        disabled: () => {
-          return !editor.can().setHeading({ level: 2 });
-        },
-        isActive: () => {
-          return editor.isActive('heading', { level: 2 });
-        },
-      },
-      {
-        id: 'heading3',
-        title: t`Heading 3`,
-        icon: IconH3,
-        onClick: () => {
-          return editor.chain().focus().setHeading({ level: 3 }).run();
-        },
-        disabled: () => {
-          return !editor.can().setHeading({ level: 3 });
-        },
-        isActive: () => {
-          return editor.isActive('heading', { level: 3 });
-        },
-      },
+      ...(hasEditorExtension(editor, 'heading')
+        ? ([1, 2, 3] as const).map((level) => ({
+            id: `heading${level}`,
+            title: headingTitles[level],
+            icon: HEADING_ICONS[level],
+            onClick: () => {
+              return editor.chain().focus().setHeading({ level }).run();
+            },
+            disabled: () => {
+              return !editor.can().setHeading({ level });
+            },
+            isActive: () => {
+              return editor.isActive('heading', { level });
+            },
+          }))
+        : []),
     ],
   });
 };

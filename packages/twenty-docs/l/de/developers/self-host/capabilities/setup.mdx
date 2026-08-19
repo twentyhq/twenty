@@ -204,7 +204,13 @@ Aktivieren Sie diese APIs im "Berechtigungen"-Bereich der Microsoft Azure-Konsol
 * Microsoft Graph: profil
 * Microsoft Graph: offline_access
 
-Hinweis: "Mail.ReadWrite" und "Mail.Send" sind nur erforderlich, wenn Sie E-Mails mit unseren Workflow-Aktionen senden möchten. Sie können stattdessen "Mail.Read" verwenden, wenn Sie nur E-Mails empfangen möchten.
+<Note>
+"Mail.ReadWrite" und "Mail.Send" sind nur erforderlich, wenn Sie E-Mails mit unseren Workflow-Aktionen senden möchten. Sie können stattdessen "Mail.Read" verwenden, wenn Sie nur E-Mails empfangen möchten.
+</Note>
+
+<Note>
+"Calendars.ReadWrite" ist erforderlich, wenn Sie Kalenderereignisse mit unseren Workflow-Aktionen erstellen möchten. Wenn Sie nur Kalenderereignisse synchronisieren möchten, verwenden Sie "Calendars.Read".
+</Note>
 
 ### Autorisierte Redirect-URIs
 
@@ -380,3 +386,29 @@ LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 <Note>
 Bei Verwendung von `LOGIC_FUNCTION_TYPE=DISABLED` oder `CODE_INTERPRETER_TYPE=DISABLED` führt jeder Ausführungsversuch zu einem Fehler. Dies ist nützlich, wenn Sie Twenty ohne diese Funktionen betreiben möchten.
 </Note>
+
+## API und Frontend auf getrennten Hosts
+
+Nur relevant, wenn Sie das Frontend nicht vom Backend ausliefern lassen. Same-Origin-
+Bereitstellungen benötigen hier nichts.
+
+Geben Sie alle Browser-Ursprünge an, die mit der API kommunizieren, kommagetrennt. `SERVER_URL`
+und `FRONTEND_URL` sind bereits vertrauenswürdig. Der Server protokolliert eine Warnung, wenn ein Browser
+diese aus nicht deklariertem Ursprung aufruft.
+
+```bash
+AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com
+```
+
+<Warning>
+Das Frontend sendet Anmeldeinformationen auf jeder Anfrage, und Browser lehnen eine
+Anmeldebestätigung von nicht angemeldeter Herkunft ab, so dass die App nicht geladen werden kann, bis
+Sie dies gesetzt haben.
+</Warning>
+
+Wenn sich die beiden Hosts auf unterschiedlichen registrierbaren Domains befinden (nicht nur auf unterschiedlichen Subdomains), setzen Sie außerdem `AUTH_COOKIE_SAME_SITE=none`, was HTTPS erfordert.
+
+Wenn Multiworkspace aktiviert ist, listet hier nicht jede Workspace-Subdomain auf.
+Stattdessen Route API Pfade (`/graphql`, `/metadata`, `/rest`, `/auth/`,
+`/client-config`, `/file`) in das Backend jedes Hostnamens des Arbeitsbereichs, also bleibt jeder
+Arbeitsbereich gleich — so läuft 20 Cloud.

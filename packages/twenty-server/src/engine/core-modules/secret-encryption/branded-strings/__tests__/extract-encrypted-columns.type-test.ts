@@ -25,7 +25,6 @@ class FakeRelatedEntity extends WorkspaceRelatedEntity {
 }
 
 type TestedRecord = {
-  // Non-EncryptedString fields - must NOT be extracted
   plainString: string;
   plainStringNullable: string | null;
   plainNumber: number;
@@ -41,7 +40,6 @@ type TestedRecord = {
   recordWithoutEncryption: { host: string; port: number };
   arrayOfPlaintextRecords: Array<{ host: string }>;
 
-  // Direct EncryptedString fields - MUST be extracted
   encryptedRequired: EncryptedString;
   encryptedNullable: EncryptedString | null;
   encryptedUndefinable: EncryptedString | undefined;
@@ -50,7 +48,6 @@ type TestedRecord = {
   encryptedUnionWithPrimitive: EncryptedString | string;
   encryptedUnionWithPlaintext: EncryptedString | PlaintextString;
 
-  // Nested EncryptedString — MUST be extracted (transitive structural)
   connectionParametersLike: EncryptedConnectionParametersLike;
   connectionParametersLikeNullable: EncryptedConnectionParametersLike | null;
   arrayOfRecordsWithEncrypted: Array<{ secret: EncryptedString }>;
@@ -87,15 +84,12 @@ type Assertions = [
     >
   >,
 
-  // Empty object returns never
   Expect<Equal<ExtractEncryptedColumns<EmptyObject>, never>>,
 
-  // Object with no EncryptedString fields returns never
   Expect<
     Equal<ExtractEncryptedColumns<{ a: string; b: number; c: '' }>, never>
   >,
 
-  // Object with only PlaintextString fields returns never (brands don't cross)
   Expect<
     Equal<
       ExtractEncryptedColumns<{

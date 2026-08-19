@@ -19,7 +19,6 @@ export const removeUndefinedFromRecord = <T extends Record<string, unknown>>(
         value as Record<string, unknown>,
       );
 
-      // Only include the nested object if it has at least one defined property
       if (Object.keys(cleaned).length > 0) {
         result[key] = cleaned;
       }

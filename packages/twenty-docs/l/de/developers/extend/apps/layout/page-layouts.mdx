@@ -58,6 +58,28 @@ export default definePageLayout({
 * Jedes `widget` innerhalb eines Tabs kann eine [Frontend-Komponente](/l/de/developers/extend/apps/layout/front-components), eine Relationenliste oder andere eingebaute Widget-Typen rendern.
 * `position` auf Tabs steuert deren Reihenfolge. Verwenden Sie höhere Werte (z. B. 50), um benutzerdefinierte Tabs hinter den integrierten zu platzieren.
 
+### Feld-Widgets
+
+Ein `FIELD`-Widget rendert ein Feld des Datensatzes. Bei Relationsfeldern kann es auch eine Liste verwandter Datensätze einbetten:
+
+```ts
+{
+  universalIdentifier: 'c1c2c3c4-c5c6-4000-8000-000000000003',
+  title: 'People → Opportunities',
+  type: 'FIELD',
+  configuration: {
+    configurationType: 'FIELD',
+    fieldMetadataId: PEOPLE_FIELD_UNIVERSAL_IDENTIFIER,
+    fieldDisplayMode: 'TABLE',
+    nestedRelationFieldMetadataId: OPPORTUNITIES_FIELD_UNIVERSAL_IDENTIFIER,
+  },
+}
+```
+
+* `fieldMetadataId` nimmt den universellen Bezeichner eines Feldes am Objekt des Layouts.
+* `fieldDisplayMode` ist eines von `'FIELD'`, `'CARD'`, `'EDITOR'`, `'VIEW'` oder `'TABLE'`. `TABLE` bettet eine Ansicht ein, die die Datensätze eines 1:n-Relationsfeldes auflistet.
+* `nestedRelationFieldMetadataId` ist optional und nimmt den universellen Bezeichner eines Eins-zu-viele-Beziehungsfelds auf dem Beziehungszielobjekt entgegen, um Datensätze aufzulisten, die zwei Beziehungssprünge entfernt sind (z. B. eine Company-Seite, die die Opportunities der Personen des Unternehmens auflistet, oder eine Person-Seite, die die Opportunities des Unternehmens der Person auflistet). Der erste Sprung kann ein Eins-zu-viele- oder ein Viele-zu-eins-Beziehungsfeld sein, der zweite muss Eins-zu-viele sein (Junction-Beziehungen werden nicht unterstützt), und es erfordert `fieldDisplayMode: 'TABLE'` — die Kombination mit jedem anderen Anzeigemodus ist ein Validierungsfehler, da ein verschachteltes Widget immer als eingebettete Ansicht gerendert wird.
+
 ## definePageLayoutTab
 
 Verwenden Sie dies, wenn Sie nur einen Tab zu einem vorhandenen Layout **hinzufügen** möchten – zum Beispiel einen Analytics-Tab auf der standardmäßigen Company-Seite oder einen KI-Zusammenfassungs-Tab, der an das Layout Ihres eigenen Objekts angehängt ist.

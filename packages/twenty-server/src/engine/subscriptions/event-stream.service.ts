@@ -175,7 +175,10 @@ export class EventStreamService implements OnModuleInit {
   }): Promise<boolean> {
     if (isDefined(authContext.userWorkspaceId)) {
       return (
-        streamData.authContext.userWorkspaceId === authContext.userWorkspaceId
+        streamData.authContext.userWorkspaceId ===
+          authContext.userWorkspaceId &&
+        (streamData.authContext.applicationId ?? null) ===
+          (authContext.applicationId ?? null)
       );
     }
 

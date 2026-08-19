@@ -43,6 +43,8 @@ export const buildMutationQueryBuilder = ({
     .select(`${alias}.id`)
     .withDeleted();
 
+  idSubQueryBuilder.applyRowLevelPermissionPredicatesToMainAliasAndJoinedRelations();
+
   return repository
     .createQueryBuilder(alias)
     .where(`"${alias}"."id" IN (${idSubQueryBuilder.getQuery()})`)

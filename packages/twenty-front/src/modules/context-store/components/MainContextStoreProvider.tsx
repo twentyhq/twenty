@@ -45,6 +45,7 @@ export const MainContextStoreProvider = () => {
   );
   const isRecordShowPage = isMatchingLocation(location, AppPath.RecordShowPage);
   const isStandalonePage = isMatchingLocation(location, AppPath.PageLayoutPage);
+  const isAiChatPage = isMatchingLocation(location, AppPath.AiChat);
   const isSettingsPage = useIsSettingsPage();
 
   const objectNamePlural = useParams().objectNamePlural ?? '';
@@ -112,6 +113,7 @@ export const MainContextStoreProvider = () => {
     (isRecordIndexPage ||
       isRecordShowPage ||
       isStandalonePage ||
+      isAiChatPage ||
       isSettingsPage) &&
     metadataStore.status === 'up-to-date';
 

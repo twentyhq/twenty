@@ -10,6 +10,8 @@ import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs';
 
 import { AppModule } from 'src/app.module';
 import { settings } from 'src/engine/constants/settings';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { applyCredentialedCors } from 'src/engine/core-modules/user-session/utils/apply-credentialed-cors.util';
 import { StripeSDKMockService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/mocks/stripe-sdk-mock.service';
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
 import { CaptchaDriverFactory } from 'src/engine/core-modules/captcha/captcha-driver.factory';
@@ -62,8 +64,11 @@ export const createApp = async (
 
   const app = moduleFixture.createNestApplication<NestExpressApplication>({
     rawBody: true,
-    cors: true,
   });
+
+  // The production CORS setup, not the Nest wildcard default, so integration
+  // tests exercise the credentialed-origin allowlist the deployment runs.
+  applyCredentialedCors(app, app.get(TwentyConfigService));
 
   app.use(
     '/graphql',

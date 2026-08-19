@@ -29,6 +29,7 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
+import { resolveRoleIdsForUser } from 'src/engine/twenty-orm/utils/resolve-role-ids-for-user.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -201,6 +202,26 @@ export class PermissionsService {
         );
       }
 
+      const applicationRoleId = isDefined(applicationId)
+        ? await this.findApplicationDefaultRoleIdOrThrow({
+            applicationId,
+            workspaceId,
+          })
+        : undefined;
+
+      const roleIds = resolveRoleIdsForUser({
+        userRoleId: roleOfUserWorkspace.id,
+        applicationRoleId,
+      });
+
+      if (roleIds.length > 1) {
+        return this.checkRolesPermissions(
+          { intersectionOf: roleIds },
+          workspaceId,
+          setting,
+        );
+      }
+
       return this.checkRolePermissions(roleOfUserWorkspace, setting);
     }
 
@@ -246,6 +267,29 @@ export class PermissionsService {
         userFriendlyMessage: msg`Authentication is required to access this feature. Please sign in and try again.`,
       },
     );
+  }
+
+  // Naming an application that no longer exists is not the same as declaring
+  // no role, and must not fall back to the full permissions of the user.
+  private async findApplicationDefaultRoleIdOrThrow({
+    applicationId,
+    workspaceId,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+  }): Promise<string | undefined> {
+    const application = await this.applicationRepository.findOne({
+      where: { id: applicationId, workspaceId },
+    });
+
+    if (!isDefined(application)) {
+      throw new ApplicationException(
+        `Could not find application ${applicationId}`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    return application.defaultRoleId ?? undefined;
   }
 
   public checkRolePermissions(

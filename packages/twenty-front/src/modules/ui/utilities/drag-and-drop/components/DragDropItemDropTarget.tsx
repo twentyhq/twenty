@@ -4,13 +4,18 @@ import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
-
-type DragDropItemDropTargetOrientation = 'vertical' | 'horizontal';
+import { type DragDropItemDropTargetOrientation } from '@/ui/utilities/drag-and-drop/types/DragDropItemDropTargetOrientation';
 
 const StyledDropTarget = styled.div<{
   $compact?: boolean;
   $overlay?: boolean;
+  $seamAligned?: boolean;
 }>`
+  // The line normally nudges up into the gap the dragged item opens; seam-aligned
+  // targets drop the nudge so the line sits exactly on the boundary between two
+  // bordered cells instead of overlapping the leading one's border.
+  --drop-line-nudge: ${({ $seamAligned }) =>
+    $seamAligned ? '0px' : themeCssVariables.spacing[1]};
   min-height: ${({ $compact }) =>
     $compact ? '0' : themeCssVariables.spacing[2]};
   position: ${({ $overlay }) => ($overlay ? 'absolute' : 'relative')};
@@ -49,8 +54,7 @@ const StyledDropTarget = styled.div<{
     height: 2px;
     left: 0;
     top: 50%;
-    transform: translateY(calc(-50% - ${themeCssVariables.spacing[1]}))
-      scaleX(0.7);
+    transform: translateY(calc(-50% - var(--drop-line-nudge))) scaleX(0.7);
     width: 100%;
   }
 
@@ -65,8 +69,7 @@ const StyledDropTarget = styled.div<{
 
   &[data-orientation='horizontal'][data-drag-over='true']::before {
     opacity: 1;
-    transform: translateY(calc(-50% - ${themeCssVariables.spacing[1]}))
-      scaleX(1);
+    transform: translateY(calc(-50% - var(--drop-line-nudge))) scaleX(1);
   }
 
   &[data-orientation='horizontal'][data-leading='true']::before {
@@ -87,6 +90,9 @@ type DragDropItemDropTargetProps = {
   index: number;
   orientation?: DragDropItemDropTargetOrientation;
   overlay?: boolean;
+  // Centers the line on the seam between two cells; use for bordered items where
+  // the default gap nudge would overlap the leading cell's border.
+  seamAligned?: boolean;
 };
 
 export const DragDropItemDropTarget = ({
@@ -96,6 +102,7 @@ export const DragDropItemDropTarget = ({
   index,
   orientation,
   overlay = false,
+  seamAligned = false,
 }: DragDropItemDropTargetProps) => {
   const { activeDropTargetIndex, activeDroppableId } = useContext(
     DragDropItemDndContext,
@@ -110,6 +117,7 @@ export const DragDropItemDropTarget = ({
     <StyledDropTarget
       $compact={compact}
       $overlay={overlay}
+      $seamAligned={seamAligned}
       data-orientation={orientation}
       data-leading={
         orientation === 'horizontal' && index === 0 ? 'true' : undefined

@@ -11,7 +11,7 @@ import { fromApplicationEntityToFlatApplication } from 'src/engine/core-modules/
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 
 @Injectable()
-@WorkspaceCache('flatApplicationMaps')
+@WorkspaceCache('flatApplicationMaps', { packingPonderation: 1 })
 export class WorkspaceFlatApplicationMapCacheService extends WorkspaceCacheProvider<FlatApplicationCacheMaps> {
   constructor(
     @InjectRepository(ApplicationEntity)

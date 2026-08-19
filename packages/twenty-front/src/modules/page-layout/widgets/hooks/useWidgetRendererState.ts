@@ -9,17 +9,17 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { useIsCurrentWidgetLastOfTab } from '@/page-layout/widgets/hooks/useIsCurrentWidgetLastOfTab';
 import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
 import { useWidgetPermissions } from '@/page-layout/widgets/hooks/useWidgetPermissions';
+import { WIDGET_TYPES_WITH_ALWAYS_VISIBLE_SOLO_HEADER } from '@/page-layout/widgets/constants/WidgetTypesWithAlwaysVisibleSoloHeader';
 import { widgetCardHoveredComponentFamilyState } from '@/page-layout/widgets/states/widgetCardHoveredComponentFamilyState';
-import { widgetHeaderInfoComponentFamilyState } from '@/page-layout/widgets/states/widgetHeaderInfoComponentFamilyState';
+import { widgetHasHeaderCountComponentFamilySelector } from '@/page-layout/widgets/states/selectors/widgetHasHeaderCountComponentFamilySelector';
 import { getWidgetCardVariant } from '@/page-layout/widgets/utils/getWidgetCardVariant';
 import { useOpenWidgetSettingsInSidePanel } from '@/side-panel/hooks/useOpenWidgetSettingsInSidePanel';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
 import { type MouseEvent } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import {
   PageLayoutTabLayoutMode,
   WidgetType,
@@ -58,14 +58,14 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
 
   const isLastWidget = useIsCurrentWidgetLastOfTab(widget.id);
 
-  const widgetHeaderInfo = useAtomComponentFamilyStateValue(
-    widgetHeaderInfoComponentFamilyState,
+  const hasWidgetHeaderCount = useAtomComponentFamilySelectorValue(
+    widgetHasHeaderCountComponentFamilySelector,
     widget.id,
   );
 
   const hasWidgetHeaderInfo =
-    isDefined(widgetHeaderInfo?.count) ||
-    isDefined(widgetHeaderInfo?.primaryAction);
+    hasWidgetHeaderCount ||
+    WIDGET_TYPES_WITH_ALWAYS_VISIBLE_SOLO_HEADER.includes(widget.type);
 
   const isHeaderHiddenInViewMode =
     widget.type === WidgetType.STANDALONE_RICH_TEXT ||
@@ -76,7 +76,7 @@ export const useWidgetRendererState = (widget: PageLayoutWidget) => {
     isHeaderHiddenInViewMode && !isPageLayoutInEditMode;
 
   // A solo widget owns its tab, and the tab label already names it: the
-  // header only appears when the widget published something to say in it.
+  // header only appears when the widget content set something to show in it.
   const showHeader =
     presentation === 'solo' ? hasWidgetHeaderInfo : !hideHeaderInViewMode;
 

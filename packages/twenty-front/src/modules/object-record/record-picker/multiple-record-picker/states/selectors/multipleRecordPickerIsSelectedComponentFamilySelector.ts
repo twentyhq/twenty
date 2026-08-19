@@ -4,7 +4,7 @@ import { createAtomComponentFamilySelector } from '@/ui/utilities/state/jotai/ut
 
 export const multipleRecordPickerIsSelectedComponentFamilySelector =
   createAtomComponentFamilySelector<boolean, string>({
-    key: 'visibleRecordGroupIdsComponentFamilySelector',
+    key: 'multipleRecordPickerIsSelectedComponentFamilySelector',
     componentInstanceContext: MultipleRecordPickerComponentInstanceContext,
     get:
       ({ instanceId, familyKey: recordId }) =>

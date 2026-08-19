@@ -45,6 +45,9 @@ export default defineConnectionProvider({
   // Optional: a logic function in this app to run right after a connection is
   // established. See "Run a logic function on connect".
   // onConnectLogicFunction: { universalIdentifier: '3a2b1c0d-...-...' },
+  // Optional: a logic function in this app to run right after a connection is
+  // removed. See "Run a logic function on disconnect".
+  // onDisconnectLogicFunction: { universalIdentifier: '4d5e6f70-...-...' },
 });
 ```
 
@@ -121,6 +124,42 @@ type OnConnectPayload = {
 ```
 
 Odtud použijte `getConnection(connectedAccountId)` ke čtení čerstvého přístupového tokenu a zavolejte API poskytovatele (např. Slack `auth.test`) nebo uložte mapování pomocí [úložiště klíč–hodnota](/l/cs/developers/extend/apps/logic/key-value-store).
+
+</Accordion>
+
+<Accordion title="Spusťte logickou funkci při odpojení" description="Proveďte vyčištění při odstranění připojení">
+
+Cokoli, co aplikace nárokuje v čase připojení, musí být uvolněno, jakmile připojení zanikne. Integrace Slacku, která si například při připojení nárokuje `team_id`, musí tento nárok uvolnit, aby se mohl jiný pracovní prostor připojit ke stejnému týmu ve Slacku. Nastavte `onDisconnectLogicFunction` tak, aby odkazovala na logickou funkci ve stejné aplikaci, a ta se spustí hned poté, co je `ConnectedAccount` smazán.
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  // Runs releaseSlackTeam after every Slack disconnection.
+  onDisconnectLogicFunction: {
+    universalIdentifier: '4470aba8-5ff5-4800-88db-2a427cd8677c',
+  },
+});
+```
+
+Stejně jako hook pro připojení běží **asynchronně v odpojovaném pracovním prostoru** a nikdy neblokuje odpojení. Handler dostává stejný tvar payloadu:
+
+```ts
+type OnDisconnectPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  connectedAccountId: string;
+};
+```
+
+`ConnectedAccount` už v době spuštění hooku neexistuje, takže `getConnection(connectedAccountId)` už nic nevrátí. Všechno, co čištění potřebuje (například `team_id`, externí ID předplatného), muselo být při připojení zapsáno do [key-value store](/l/cs/developers/extend/apps/logic/key-value-store) pod klíčem `connectedAccountId`.
+
+Hook se spustí, když se připojení odstraní samostatně. Odinstalace aplikace zruší její připojení pomocí kaskádového mazání v databázi, takže se hook v tomto případě nespustí. Pro tento případ deklarujte `uninstallLogicFunction` na `defineApplication`: spustí se před tím, než jsou smazána metadata aplikace, takže může stále volat `listConnections` a dočistit vše, co zůstalo.
 
 </Accordion>
 

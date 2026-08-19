@@ -29,7 +29,6 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
   AllStandardObjectFieldName<'timelineActivity'>,
   FlatFieldMetadata
 > => ({
-  // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -174,7 +173,6 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  // TimelineActivity-specific fields
   happensAt: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -282,7 +280,6 @@ export const buildTimelineActivityStandardFlatFieldMetadatas = ({
     now,
   }),
 
-  // Relation fields
   workspaceMember: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

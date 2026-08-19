@@ -1,0 +1,75 @@
+import { FieldMetadataType } from '../../../types/FieldMetadataType';
+import { listCampaignVariablesForFields } from '../list-campaign-variables-for-fields';
+
+describe('listCampaignVariablesForFields', () => {
+  it('should expose scalar fields under their own name', () => {
+    expect(
+      listCampaignVariablesForFields([
+        { name: 'city', label: 'City', type: FieldMetadataType.TEXT },
+        { name: 'score', label: 'Score', type: FieldMetadataType.NUMBER },
+      ]),
+    ).toEqual([
+      {
+        name: 'city',
+        label: 'City',
+        fieldName: 'city',
+        fieldType: FieldMetadataType.TEXT,
+      },
+      {
+        name: 'score',
+        label: 'Score',
+        fieldName: 'score',
+        fieldType: FieldMetadataType.NUMBER,
+      },
+    ]);
+  });
+
+  it('should expand the name composite and skip contact-detail composites', () => {
+    const definitions = listCampaignVariablesForFields([
+      { name: 'name', label: 'Name', type: FieldMetadataType.FULL_NAME },
+      { name: 'emails', label: 'Emails', type: FieldMetadataType.EMAILS },
+      {
+        name: 'linkedinLink',
+        label: 'LinkedIn',
+        type: FieldMetadataType.LINKS,
+      },
+      { name: 'phones', label: 'Phones', type: FieldMetadataType.PHONES },
+    ]);
+
+    expect(definitions.map((definition) => definition.name)).toEqual([
+      'name.firstName',
+      'name.lastName',
+    ]);
+
+    expect(definitions[0].label).toBe('Name · First name');
+  });
+
+  it('should skip system, inactive and unsupported fields', () => {
+    expect(
+      listCampaignVariablesForFields([
+        {
+          name: 'searchVector',
+          label: 'Search vector',
+          type: FieldMetadataType.TEXT,
+          isSystem: true,
+        },
+        {
+          name: 'oldField',
+          label: 'Old field',
+          type: FieldMetadataType.TEXT,
+          isActive: false,
+        },
+        {
+          name: 'company',
+          label: 'Company',
+          type: FieldMetadataType.RELATION,
+        },
+        {
+          name: 'createdBy',
+          label: 'Created by',
+          type: FieldMetadataType.ACTOR,
+        },
+      ]),
+    ).toEqual([]);
+  });
+});

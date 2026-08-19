@@ -1,6 +1,7 @@
 export enum SidePanelPages {
   CommandMenuDisplay = 'command-menu-display',
   ViewRecord = 'view-record',
+  ViewRecords = 'view-records',
   MergeRecords = 'merge-records',
   UpdateRecords = 'update-records',
   EditRichText = 'edit-rich-text',
@@ -13,7 +14,6 @@ export enum SidePanelPages {
   WorkflowRunStepView = 'workflow-run-step-view',
   SearchRecords = 'search-records',
   AskAI = 'ask-ai',
-  ViewPreviousAiChats = 'view-previous-ai-chats',
   PageLayoutDashboardWidgetTypeSelect = 'page-layout-dashboard-widget-type-select',
   PageLayoutTabSettings = 'page-layout-tab-settings',
   DashboardChartSettings = 'dashboard-chart-settings',
@@ -28,4 +28,5 @@ export enum SidePanelPages {
   PageLayoutRecordPageWidgetTypeSelect = 'page-layout-record-page-widget-type-select',
   ComposeEmail = 'compose-email',
   SendCampaignTest = 'send-campaign-test',
+  EmailBlockSettings = 'email-block-settings',
 }
