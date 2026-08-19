@@ -21,7 +21,7 @@ export const buildUnselectableRelationWarningsByFieldName = ({
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   selectableRelationFields: CommonSelectedFields;
-  objectsPermissions?: ObjectsPermissions;
+  objectsPermissions: ObjectsPermissions;
 }): Map<string, string> => {
   const warningsByFieldName = new Map<string, string>();
 
@@ -43,7 +43,7 @@ export const buildUnselectableRelationWarningsByFieldName = ({
     }
 
     const isSourceFieldRestricted =
-      objectsPermissions?.[flatObjectMetadata.id]?.restrictedFields[field.id]
+      objectsPermissions[flatObjectMetadata.id]?.restrictedFields[field.id]
         ?.canRead === false;
 
     if (isSourceFieldRestricted) {
