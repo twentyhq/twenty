@@ -1,4 +1,4 @@
-export type CoreWorkflowStatus = 'ACTIVE' | 'DRAFT' | 'DEACTIVATED';
+import { type CoreWorkflowStatus } from '@/object-core/workflows/types/CoreWorkflowStatus';
 
 export type CoreWorkflow = {
   id: string;

@@ -1,7 +1,7 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 
-import { type CoreWorkflowStatus } from '@/object-core/workflows/types/CoreWorkflow';
+import { type CoreWorkflowStatus } from '@/object-core/workflows/types/CoreWorkflowStatus';
 
 export const WORKFLOW_CORE_STATUS_TAG: Record<
   CoreWorkflowStatus,

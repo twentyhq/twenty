@@ -4,6 +4,8 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
 import { type CoreWorkflowDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow.dto';
+import { computeCoreWorkflowStatus } from 'src/engine/core-modules/workflow/utils/compute-core-workflow-status.util';
+import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 type CoreWorkflowRow = {
@@ -24,29 +26,26 @@ export class CoreWorkflowListService {
   ) {}
 
   async findManyByWorkspaceId(workspaceId: string): Promise<CoreWorkflowDTO[]> {
-    const schemaName = getWorkspaceSchemaName(workspaceId);
+    const schemaName = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
 
-    // core.workflowVersion.workflowId holds the WORKSPACE workflow id, so the
-    // status has to be resolved through the workspace row rather than joined
-    // directly on core.workflow.id
     const rows: CoreWorkflowRow[] = await this.coreDataSource.query(
       `SELECT
          c.id,
          c.name,
          app.name AS "applicationName",
-         wf.id AS "workspaceWorkflowId",
+         min(wf.id::text) AS "workspaceWorkflowId",
          c."updatedAt",
-         bool_or(v.status = 'ACTIVE') AS "hasActiveVersion",
-         bool_or(v.status = 'DRAFT') AS "hasDraftVersion"
+         coalesce(bool_or(v.status = 'ACTIVE'), false) AS "hasActiveVersion",
+         coalesce(bool_or(v.status = 'DRAFT'), false) AS "hasDraftVersion"
        FROM core."workflow" c
-       LEFT JOIN "${schemaName}"."workflow" wf
+       LEFT JOIN ${schemaName}."workflow" wf
          ON wf."coreWorkflowId" = c.id AND wf."deletedAt" IS NULL
        LEFT JOIN core."workflowVersion" v
          ON v."workflowId" = wf.id AND v."workspaceId" = $1
        LEFT JOIN core."application" app
          ON app.id = c."applicationId"
        WHERE c."workspaceId" = $1
-       GROUP BY c.id, c.name, app.name, wf.id, c."updatedAt"
+       GROUP BY c.id, c.name, app.name, c."updatedAt"
        ORDER BY c."updatedAt" DESC`,
       [workspaceId],
     );
@@ -54,11 +53,10 @@ export class CoreWorkflowListService {
     return rows.map((row) => ({
       id: row.id,
       name: row.name,
-      status: row.hasActiveVersion
-        ? 'ACTIVE'
-        : row.hasDraftVersion
-          ? 'DRAFT'
-          : 'DEACTIVATED',
+      status: computeCoreWorkflowStatus({
+        hasActiveVersion: row.hasActiveVersion,
+        hasDraftVersion: row.hasDraftVersion,
+      }),
       applicationName: row.applicationName,
       workspaceWorkflowId: row.workspaceWorkflowId,
       updatedAt: row.updatedAt.toISOString(),

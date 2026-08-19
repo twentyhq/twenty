@@ -1,6 +1,5 @@
 import { lazy, useMemo } from 'react';
 
-import { WorkflowCoreIndexPage } from '~/pages/object-core/WorkflowCoreIndexPage';
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -28,6 +27,12 @@ import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import { MainAppLayoutWithSidePanel } from '@/ui/layout/page/components/MainAppLayoutWithSidePanel';
 import { Verify } from '~/pages/onboarding/Verify';
 import { lazyWithPreload } from '~/utils/lazyWithPreload';
+
+const WorkflowCoreIndexPage = lazy(() =>
+  import('~/pages/object-core/WorkflowCoreIndexPage').then((module) => ({
+    default: module.WorkflowCoreIndexPage,
+  })),
+);
 
 const RecordIndexPage = lazy(() =>
   import('~/pages/object-record/RecordIndexPage').then((module) => ({
@@ -158,7 +163,11 @@ const createWorkspaceAppRouter = (
             <Route element={<MainAppLayoutWithSidePanel />}>
               <Route
                 path="/workflow-core"
-                element={<WorkflowCoreIndexPage />}
+                element={
+                  <LazyRoute>
+                    <WorkflowCoreIndexPage />
+                  </LazyRoute>
+                }
               />
               <Route
                 path={indexAppPath.getIndexAppPath()}
