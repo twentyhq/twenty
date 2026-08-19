@@ -1,12 +1,11 @@
-import { capitalize, isDefined, isPlainObject } from 'twenty-shared/utils';
+import { capitalize, isPlainObject } from 'twenty-shared/utils';
 
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+import { resolveOrderByFields } from 'src/engine/api/utils/resolve-order-by-fields.utils';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -23,54 +22,43 @@ export const buildOrderByColumnsToSelect = ({
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }): Record<string, boolean> => {
-  const { fieldIdByName, fieldIdByJoinColumnName } =
-    buildFieldMapsFromFlatObjectMetadata(
-      flatFieldMetadataMaps,
-      flatObjectMetadata,
-    );
-
   const columnsToSelect: Record<string, boolean> = {};
 
-  for (const orderByEntry of orderBy ?? []) {
-    for (const [fieldName, orderByValue] of Object.entries(orderByEntry)) {
-      const isAccessedByFieldName = isDefined(fieldIdByName[fieldName]);
-      const fieldMetadataId =
-        fieldIdByName[fieldName] ?? fieldIdByJoinColumnName[fieldName];
-      const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: fieldMetadataId,
-        flatEntityMaps: flatFieldMetadataMaps,
-      });
-
-      if (!isDefined(fieldMetadata)) {
-        continue;
-      }
-
-      if (
-        isAccessedByFieldName &&
-        isMorphOrRelationFlatFieldMetadata(fieldMetadata)
-      ) {
-        // Relation orderBy values live on a joined alias, they cannot hydrate
-        // onto the root entity through a column selection
-        continue;
-      }
-
-      if (
-        isCompositeFieldMetadataType(fieldMetadata.type) &&
-        isPlainObject(orderByValue)
-      ) {
-        for (const subFieldKey of Object.keys(
-          orderByValue as Record<string, unknown>,
-        )) {
-          columnsToSelect[`${fieldMetadata.name}${capitalize(subFieldKey)}`] =
-            true;
-        }
-        continue;
-      }
-
-      // Join column access (e.g. companyId) selects the column under its own name
-      columnsToSelect[isAccessedByFieldName ? fieldMetadata.name : fieldName] =
-        true;
+  for (const {
+    fieldName,
+    orderByValue,
+    fieldMetadata,
+    isAccessedByFieldName,
+  } of resolveOrderByFields({
+    orderBy,
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+  })) {
+    if (
+      isAccessedByFieldName &&
+      isMorphOrRelationFlatFieldMetadata(fieldMetadata)
+    ) {
+      // Relation orderBy values live on a joined alias, they cannot hydrate
+      // onto the root entity through a column selection
+      continue;
     }
+
+    if (
+      isCompositeFieldMetadataType(fieldMetadata.type) &&
+      isPlainObject(orderByValue)
+    ) {
+      for (const subFieldKey of Object.keys(
+        orderByValue as Record<string, unknown>,
+      )) {
+        columnsToSelect[`${fieldMetadata.name}${capitalize(subFieldKey)}`] =
+          true;
+      }
+      continue;
+    }
+
+    // Join column access (e.g. companyId) selects the column under its own name
+    columnsToSelect[isAccessedByFieldName ? fieldMetadata.name : fieldName] =
+      true;
   }
 
   return columnsToSelect;

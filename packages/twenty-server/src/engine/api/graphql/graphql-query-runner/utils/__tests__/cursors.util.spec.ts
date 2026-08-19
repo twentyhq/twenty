@@ -15,12 +15,14 @@ const buildMockField = (
   id: string,
   name: string,
   type: FieldMetadataType,
+  overrides: Partial<FlatFieldMetadata> = {},
 ): FlatFieldMetadata =>
   ({
     id,
     universalIdentifier: id,
     name,
     type,
+    ...overrides,
     objectMetadataId: 'obj-id',
     workspaceId: 'ws-id',
     label: name,
@@ -41,10 +43,12 @@ const fullNameField = buildMockField(
   'fullName',
   FieldMetadataType.FULL_NAME,
 );
-const companyField = {
-  ...buildMockField('company-id', 'company', FieldMetadataType.RELATION),
-  settings: { relationType: RelationType.MANY_TO_ONE },
-} as unknown as FlatFieldMetadata;
+const companyField = buildMockField(
+  'company-id',
+  'company',
+  FieldMetadataType.RELATION,
+  { settings: { relationType: RelationType.MANY_TO_ONE } },
+);
 
 const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
   byUniversalIdentifier: {

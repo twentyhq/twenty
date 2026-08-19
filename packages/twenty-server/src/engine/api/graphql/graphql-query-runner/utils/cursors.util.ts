@@ -9,12 +9,11 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { resolveOrderByFields } from 'src/engine/api/utils/resolve-order-by-fields.utils';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export interface CursorData {
@@ -45,87 +44,76 @@ export const encodeCursor = <T extends ObjectRecord = ObjectRecord>({
   flatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
 }): string => {
-  const { fieldIdByName, fieldIdByJoinColumnName } =
-    buildFieldMapsFromFlatObjectMetadata(
-      flatFieldMetadataMaps,
-      flatObjectMetadata,
-    );
-
   // oxlint-disable-next-line typescript/no-explicit-any
   const orderByValues: Record<string, any> = {};
 
-  for (const orderByEntry of order ?? []) {
-    for (const [key, value] of Object.entries(orderByEntry)) {
-      const isAccessedByFieldName = isDefined(fieldIdByName[key]);
-      const fieldMetadataId =
-        fieldIdByName[key] ?? fieldIdByJoinColumnName[key];
-      const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityMaps: flatFieldMetadataMaps,
-        flatEntityId: fieldMetadataId,
-      });
+  for (const {
+    fieldName,
+    orderByValue,
+    fieldMetadata,
+    isAccessedByFieldName,
+  } of resolveOrderByFields({
+    orderBy: order,
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+  })) {
+    // Relation orderBy entries carry only the ordered sub-field values, read
+    // from the loaded related record; an unloaded relation or sub-field leaves
+    // the cursor incomplete, which cursor decoding reports with a dedicated
+    // error instead of paginating incorrectly
+    if (
+      isAccessedByFieldName &&
+      isMorphOrRelationFlatFieldMetadata(fieldMetadata) &&
+      isPlainObject(orderByValue)
+    ) {
+      const relatedRecord = objectRecord[fieldName] as
+        | Record<string, unknown>
+        | null
+        | undefined;
 
-      if (!isDefined(fieldMetadata)) {
+      if (relatedRecord === undefined) {
         continue;
       }
 
-      // Relation orderBy entries carry only the ordered sub-field values, read
-      // from the loaded related record; an unloaded relation or sub-field leaves
-      // the cursor incomplete, which cursor decoding reports with a dedicated
-      // error instead of paginating incorrectly
-      if (
-        isAccessedByFieldName &&
-        isMorphOrRelationFlatFieldMetadata(fieldMetadata) &&
-        isPlainObject(value)
-      ) {
-        const relatedRecord = objectRecord[key] as
-          | Record<string, unknown>
-          | null
-          | undefined;
+      const existingRelationValue: Record<string, unknown> =
+        orderByValues[fieldName] ?? {};
 
-        if (relatedRecord === undefined) {
-          continue;
+      for (const subFieldKey of Object.keys(
+        orderByValue as Record<string, unknown>,
+      )) {
+        if (relatedRecord === null) {
+          existingRelationValue[subFieldKey] = null;
+        } else if (relatedRecord[subFieldKey] !== undefined) {
+          existingRelationValue[subFieldKey] = relatedRecord[subFieldKey];
         }
-
-        const existingRelationValue: Record<string, unknown> =
-          orderByValues[key] ?? {};
-
-        for (const subFieldKey of Object.keys(
-          value as Record<string, unknown>,
-        )) {
-          if (relatedRecord === null) {
-            existingRelationValue[subFieldKey] = null;
-          } else if (relatedRecord[subFieldKey] !== undefined) {
-            existingRelationValue[subFieldKey] = relatedRecord[subFieldKey];
-          }
-        }
-
-        orderByValues[key] = existingRelationValue;
-        continue;
       }
 
-      if (
-        isCompositeFieldMetadataType(fieldMetadata.type) &&
-        isPlainObject(value) &&
-        isDefined(value)
-      ) {
-        const compositeOrderByKeys = Object.keys(
-          value as Record<string, unknown>,
-        );
-        const existingCompositeValue: Record<string, unknown> =
-          orderByValues[key] ?? {};
-        const recordCompositeValue = objectRecord[key] as
-          | Record<string, unknown>
-          | null
-          | undefined;
+      orderByValues[fieldName] = existingRelationValue;
+      continue;
+    }
 
-        for (const subKey of compositeOrderByKeys) {
-          existingCompositeValue[subKey] = recordCompositeValue?.[subKey];
-        }
+    if (
+      isCompositeFieldMetadataType(fieldMetadata.type) &&
+      isPlainObject(orderByValue) &&
+      isDefined(orderByValue)
+    ) {
+      const compositeOrderByKeys = Object.keys(
+        orderByValue as Record<string, unknown>,
+      );
+      const existingCompositeValue: Record<string, unknown> =
+        orderByValues[fieldName] ?? {};
+      const recordCompositeValue = objectRecord[fieldName] as
+        | Record<string, unknown>
+        | null
+        | undefined;
 
-        orderByValues[key] = existingCompositeValue;
-      } else {
-        orderByValues[key] = objectRecord[key];
+      for (const subKey of compositeOrderByKeys) {
+        existingCompositeValue[subKey] = recordCompositeValue?.[subKey];
       }
+
+      orderByValues[fieldName] = existingCompositeValue;
+    } else {
+      orderByValues[fieldName] = objectRecord[fieldName];
     }
   }
 
