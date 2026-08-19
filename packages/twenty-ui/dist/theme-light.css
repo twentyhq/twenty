@@ -250,10 +250,10 @@
   --t-code-text-orange: color(display-p3 0.877 0.597 0.379);
   --t-code-text-green: color(display-p3 0.585 0.707 0.378);
   --t-code-font-family: DM Mono;
-  --t--illustration-icon-color-blue: color(display-p3 0.569 0.639 0.916);
-  --t--illustration-icon-color-gray: color(display-p3 0.6 0.6 0.6);
-  --t--illustration-icon-fill-blue: color(display-p3 0.831 0.87 1);
-  --t--illustration-icon-fill-gray: color(display-p3 0.922 0.922 0.922);
+  --t-illustration-icon-color-blue: color(display-p3 0.569 0.639 0.916);
+  --t-illustration-icon-color-gray: color(display-p3 0.6 0.6 0.6);
+  --t-illustration-icon-fill-blue: color(display-p3 0.831 0.87 1);
+  --t-illustration-icon-fill-gray: color(display-p3 0.922 0.922 0.922);
   --t-gray-scale-gray1: color(display-p3 1 1 1);
   --t-gray-scale-gray2: color(display-p3 0.988 0.988 0.988);
   --t-gray-scale-gray3: color(display-p3 0.976 0.976 0.976);

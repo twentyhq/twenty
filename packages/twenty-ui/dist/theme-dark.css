@@ -246,10 +246,10 @@
   --t-code-text-orange: color(display-p3 0.601 0.359 0.201);
   --t-code-text-green: color(display-p3 0.365 0.456 0.25);
   --t-code-font-family: DM Mono;
-  --t--illustration-icon-color-blue: color(display-p3 0.354 0.445 0.866);
-  --t--illustration-icon-color-gray: color(display-p3 0.4 0.4 0.4);
-  --t--illustration-icon-fill-blue: color(display-p3 0.848 0.881 0.99);
-  --t--illustration-icon-fill-gray: color(display-p3 0.133 0.133 0.133);
+  --t-illustration-icon-color-blue: color(display-p3 0.354 0.445 0.866);
+  --t-illustration-icon-color-gray: color(display-p3 0.4 0.4 0.4);
+  --t-illustration-icon-fill-blue: color(display-p3 0.848 0.881 0.99);
+  --t-illustration-icon-fill-gray: color(display-p3 0.133 0.133 0.133);
   --t-gray-scale-gray1: color(display-p3 0.09 0.09 0.09);
   --t-gray-scale-gray2: color(display-p3 0.106 0.106 0.106);
   --t-gray-scale-gray3: color(display-p3 0.098 0.098 0.098);

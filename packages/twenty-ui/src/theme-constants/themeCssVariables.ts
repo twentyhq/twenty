@@ -319,12 +319,12 @@ export const themeCssVariables = {
   },
   IllustrationIcon: {
     color: {
-      blue: 'var(--t--illustration-icon-color-blue)',
-      gray: 'var(--t--illustration-icon-color-gray)',
+      blue: 'var(--t-illustration-icon-color-blue)',
+      gray: 'var(--t-illustration-icon-color-gray)',
     },
     fill: {
-      blue: 'var(--t--illustration-icon-fill-blue)',
-      gray: 'var(--t--illustration-icon-fill-gray)',
+      blue: 'var(--t-illustration-icon-fill-blue)',
+      gray: 'var(--t-illustration-icon-fill-gray)',
     },
   },
   grayScale: {

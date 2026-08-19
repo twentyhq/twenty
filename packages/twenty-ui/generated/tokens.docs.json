@@ -1420,25 +1420,25 @@
     },
     {
       "path": "IllustrationIcon.color.blue",
-      "cssVariable": "--t--illustration-icon-color-blue",
+      "cssVariable": "--t-illustration-icon-color-blue",
       "light": "color(display-p3 0.569 0.639 0.916)",
       "dark": "color(display-p3 0.354 0.445 0.866)"
     },
     {
       "path": "IllustrationIcon.color.gray",
-      "cssVariable": "--t--illustration-icon-color-gray",
+      "cssVariable": "--t-illustration-icon-color-gray",
       "light": "color(display-p3 0.6 0.6 0.6)",
       "dark": "color(display-p3 0.4 0.4 0.4)"
     },
     {
       "path": "IllustrationIcon.fill.blue",
-      "cssVariable": "--t--illustration-icon-fill-blue",
+      "cssVariable": "--t-illustration-icon-fill-blue",
       "light": "color(display-p3 0.831 0.87 1)",
       "dark": "color(display-p3 0.848 0.881 0.99)"
     },
     {
       "path": "IllustrationIcon.fill.gray",
-      "cssVariable": "--t--illustration-icon-fill-gray",
+      "cssVariable": "--t-illustration-icon-fill-gray",
       "light": "color(display-p3 0.922 0.922 0.922)",
       "dark": "color(display-p3 0.133 0.133 0.133)"
     },
