@@ -40,9 +40,7 @@ export const RecordDetailRelationSectionDropdown = ({
 
   const isRecordReadOnlyFromRelatedRecordPerspective = useIsRecordReadOnly({
     recordId,
-    objectMetadataId: isToOneObject
-      ? recordObjectMetadataItem.id
-      : relationObjectMetadataItem.id,
+    objectMetadataId: recordObjectMetadataItem.id,
   });
 
   if (
