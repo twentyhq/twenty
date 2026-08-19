@@ -1,8 +1,8 @@
 import { isUndefined } from '@sniptt/guards';
 
 import { cancelRecallBot } from 'src/logic-functions/recall-api/cancel-recall-bot.util';
+import { getClaimedWorkspaceId } from 'src/logic-functions/recall-api/get-claimed-workspace-id.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 import { listScheduledRecallBots } from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
 
 export type CancelWorkspaceRecallBotsResult = {
@@ -69,14 +69,9 @@ export const cancelWorkspaceRecallBots = async ({
     truncatedBotList = listResult.truncated;
     listResult.bots.forEach((bot) => scannedExternalBotIds.add(bot.id));
 
-    const workspaceBots = listResult.bots.filter((bot) => {
-      const claimedWorkspaceId = bot.metadata.twentyWorkspaceId;
-
-      return (
-        isNonEmptyString(claimedWorkspaceId) &&
-        claimedWorkspaceId.trim() === currentWorkspaceId
-      );
-    });
+    const workspaceBots = listResult.bots.filter(
+      (bot) => getClaimedWorkspaceId(bot) === currentWorkspaceId,
+    );
 
     let canceledBotCountInCurrentPass = 0;
 

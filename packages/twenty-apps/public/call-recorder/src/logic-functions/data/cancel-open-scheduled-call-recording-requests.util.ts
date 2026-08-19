@@ -3,13 +3,9 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 
-type CallRecordingIdNode = {
-  id: string;
-};
-
 export const cancelOpenScheduledCallRecordingRequests = async (
   client: CoreApiClient,
-): Promise<string[]> => {
+): Promise<number> => {
   const result = await client.mutation({
     updateCallRecordings: {
       __args: {
@@ -23,7 +19,5 @@ export const cancelOpenScheduledCallRecordingRequests = async (
     },
   });
 
-  return (
-    (result.updateCallRecordings as CallRecordingIdNode[] | undefined) ?? []
-  ).map((callRecording) => callRecording.id);
+  return (result.updateCallRecordings ?? []).length;
 };

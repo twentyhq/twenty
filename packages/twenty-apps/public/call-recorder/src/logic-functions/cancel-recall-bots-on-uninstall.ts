@@ -7,10 +7,6 @@ import {
   cancelWorkspaceRecallBots,
   type CancelWorkspaceRecallBotsResult,
 } from 'src/logic-functions/flows/cancel-workspace-recall-bots.util';
-import {
-  buildStepFailure,
-  type StepFailure,
-} from 'src/logic-functions/utils/build-step-failure.util';
 
 const UNINSTALL_TIMEOUT_SECONDS = 250;
 // Best-effort headroom for an in-flight Recall request and returning the summary.
@@ -22,10 +18,7 @@ type UninstallCleanupSummary = CancelWorkspaceRecallBotsResult & {
 
 const cancelOpenCallRecordingRequests = async (): Promise<number> => {
   try {
-    const canceledCallRecordingIds =
-      await cancelOpenScheduledCallRecordingRequests(new CoreApiClient());
-
-    return canceledCallRecordingIds.length;
+    return await cancelOpenScheduledCallRecordingRequests(new CoreApiClient());
   } catch (error) {
     console.warn(
       `[call-recorder] uninstall record cleanup incomplete: failed to cancel open call recording requests: ${
@@ -37,30 +30,27 @@ const cancelOpenCallRecordingRequests = async (): Promise<number> => {
   }
 };
 
-const cancelRecallBotsOnUninstallHandler = async (): Promise<
-  UninstallCleanupSummary | StepFailure
-> => {
-  const deadlineEpochMs =
-    Date.now() +
-    UNINSTALL_TIMEOUT_SECONDS * 1_000 -
-    CANCELLATION_DEADLINE_HEADROOM_MS;
+const cancelRecallBotsOnUninstallHandler =
+  async (): Promise<UninstallCleanupSummary> => {
+    const deadlineEpochMs =
+      Date.now() +
+      UNINSTALL_TIMEOUT_SECONDS * 1_000 -
+      CANCELLATION_DEADLINE_HEADROOM_MS;
 
-  // Requests flip first so a deadline-truncated bot drain still leaves the
-  // records marked canceled instead of waiting on bots that never come.
-  const canceledCallRecordingRequestCount =
-    await cancelOpenCallRecordingRequests();
+    // Requests flip first so a deadline-truncated bot drain still leaves the
+    // records marked canceled instead of waiting on bots that never come.
+    const canceledCallRecordingRequestCount =
+      await cancelOpenCallRecordingRequests();
 
-  try {
+    // An unexpected drain error propagates so the execution is recorded as
+    // failed and the uninstall runner logs its hook-failure warning.
     const botCancellationResult = await cancelWorkspaceRecallBots({
       joinAtAfter: new Date().toISOString(),
       deadlineEpochMs,
     });
 
     return { canceledCallRecordingRequestCount, ...botCancellationResult };
-  } catch (error) {
-    return buildStepFailure('uninstall bot cancellation', error);
-  }
-};
+  };
 
 export default defineUninstallLogicFunction({
   universalIdentifier:
