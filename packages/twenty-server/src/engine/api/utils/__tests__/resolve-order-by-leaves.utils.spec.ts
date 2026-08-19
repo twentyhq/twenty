@@ -350,6 +350,57 @@ describe('resolveOrderByLeaves', () => {
     });
   });
 
+  describe('field read permissions', () => {
+    const permissionsRestricting = (
+      fieldMetadataId: string,
+      objectId: string,
+    ) => ({
+      [objectId]: {
+        canReadObjectRecords: true,
+        canUpdateObjectRecords: true,
+        canSoftDeleteObjectRecords: true,
+        canDestroyObjectRecords: true,
+        restrictedFields: { [fieldMetadataId]: { canRead: false } },
+        // oxlint-disable-next-line typescript/no-explicit-any
+      } as any,
+    });
+
+    it('should reject ordering by a role-restricted root field', () => {
+      expect(() =>
+        resolveOrderByLeaves({
+          orderBy: [{ closeDate: OrderByDirection.AscNullsLast }],
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+          objectsPermissions: permissionsRestricting(
+            'closedate-id',
+            objectMetadataId,
+          ),
+        }),
+      ).toThrow('does not have permission');
+    });
+
+    it('should reject ordering by a role-restricted relation target field', () => {
+      expect(() =>
+        resolveOrderByLeaves({
+          orderBy: [{ company: { name: OrderByDirection.AscNullsLast } }],
+          flatObjectMetadata,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+          objectsPermissions: permissionsRestricting(
+            'company-name-id',
+            'company-object-id',
+          ),
+        }),
+      ).toThrow('does not have permission');
+    });
+  });
+
+  it('should reject a relation entry with no valid nested direction in strict mode', () => {
+    expect(() => resolve([{ company: { name: 5 } }], true)).toThrow(
+      'requires nested field ordering',
+    );
+  });
+
   describe('getCursorValueForLeaf', () => {
     const firstNameLeaf = resolve([
       { fullName: { firstName: OrderByDirection.AscNullsLast } },

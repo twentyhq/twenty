@@ -1,6 +1,7 @@
 import {
   type CompositeProperty,
   FieldMetadataType,
+  type ObjectsPermissions,
   type OrderByDirection,
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
@@ -13,6 +14,7 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { assertFieldIsReadableOrThrow } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/assert-field-is-readable-or-throw.util';
 import { isOrderByDirection } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/is-order-by-direction.util';
 import { resolveFilterKeyFieldMetadata } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/resolve-filter-key-field-metadata.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -77,8 +79,6 @@ const flattenNestedOrderByValue = (
       );
     }
 
-    // The SQL order parser silently ignores relation entries whose nested
-    // value is not a direction; mirror that here so both stay aligned
     return isOrderByDirection(nestedValue)
       ? [{ path: [key], direction: nestedValue }]
       : [];
@@ -95,6 +95,7 @@ const resolveRelationLeaf = ({
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   strictValidation,
+  objectsPermissions,
 }: {
   fieldMetadata: FlatFieldMetadata;
   path: string[];
@@ -102,6 +103,7 @@ const resolveRelationLeaf = ({
   flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   strictValidation: boolean;
+  objectsPermissions?: ObjectsPermissions;
 }): OrderByLeaf | null => {
   const targetObjectMetadata =
     isDefined(flatObjectMetadataMaps) &&
@@ -139,6 +141,12 @@ const resolveRelationLeaf = ({
 
     return null;
   }
+
+  assertFieldIsReadableOrThrow({
+    objectsPermissions,
+    objectMetadataId: targetObjectMetadata.id,
+    fieldMetadataId: targetFieldMetadata.id,
+  });
 
   if (isCompositeFieldMetadataType(targetFieldMetadata.type)) {
     const targetCompositeProperty = compositeTypeDefinitions
@@ -185,20 +193,22 @@ const resolveRelationLeaf = ({
 };
 
 // Single source of truth for walking an orderBy: every entry is flattened into
-// ordered leaves that carry their own direction, so the SQL ordering, column
+// ordered leaves that carry their own direction, and the SQL order parser
+// compiles its clauses from these leaves, so the SQL ordering, column
 // selection, cursor encoding, cursor validation and keyset conditions all
 // consume the same list and cannot drift apart. Duplicated leaves keep their
 // first occurrence, which lets callers append the id tie-breaker untouched: a
 // caller-provided id ordering wins over the appended default.
-// Strict validation rejects unknown or malformed entries the way the SQL order
-// parser does; the lenient mode skips them instead, for callers that re-walk an
-// already-validated orderBy against another object (e.g. nested connections).
+// Strict validation rejects unknown or malformed entries; the lenient mode
+// skips them instead, for callers that re-walk an already-validated orderBy
+// against another object (e.g. nested connections).
 export const resolveOrderByLeaves = ({
   orderBy,
   flatObjectMetadata,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   strictValidation = false,
+  objectsPermissions,
 }: {
   orderBy: ObjectRecordOrderBy | undefined;
   flatObjectMetadata: FlatObjectMetadata;
@@ -207,6 +217,9 @@ export const resolveOrderByLeaves = ({
   flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   strictValidation?: boolean;
+  // Sort values embed into cursors, so ordering by a field the role cannot
+  // read is rejected like filtering by one is
+  objectsPermissions?: ObjectsPermissions;
 }): OrderByLeaf[] => {
   if (!isDefined(orderBy) || !isNonEmptyArray(orderBy)) {
     return [];
@@ -252,6 +265,12 @@ export const resolveOrderByLeaves = ({
         continue;
       }
 
+      assertFieldIsReadableOrThrow({
+        objectsPermissions,
+        objectMetadataId: flatObjectMetadata.id,
+        fieldMetadataId: fieldMetadata.id,
+      });
+
       if (
         isReferencedByFieldName &&
         isMorphOrRelationFlatFieldMetadata(fieldMetadata)
@@ -265,9 +284,17 @@ export const resolveOrderByLeaves = ({
           continue;
         }
 
-        for (const { path, direction } of flattenNestedOrderByValue(
-          orderByValue,
-        )) {
+        const flattenedRelationPaths = flattenNestedOrderByValue(orderByValue);
+
+        // An entry whose nested values are no directions at all would
+        // otherwise order by nothing without telling the caller
+        if (flattenedRelationPaths.length === 0 && strictValidation) {
+          throwInvalidOrderByInput(
+            `Relation field "${fieldName}" requires nested field ordering (e.g., { ${fieldName}: { fieldName: 'AscNullsFirst' } })`,
+          );
+        }
+
+        for (const { path, direction } of flattenedRelationPaths) {
           const relationLeaf = resolveRelationLeaf({
             fieldMetadata,
             path: [fieldName, ...path],
@@ -275,6 +302,7 @@ export const resolveOrderByLeaves = ({
             flatObjectMetadataMaps,
             flatFieldMetadataMaps,
             strictValidation,
+            objectsPermissions,
           });
 
           if (isDefined(relationLeaf)) {
