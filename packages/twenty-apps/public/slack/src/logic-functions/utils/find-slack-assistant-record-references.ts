@@ -1,21 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { type SlackAssistantRecordReference } from 'src/logic-functions/types/slack-assistant-record-reference.type';
-
-const UUID_PATTERN_SOURCE =
-  '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
-
-const escapeRegExp = (value: string): string =>
-  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-const buildRecordUrlPattern = (workspaceBaseUrl: string): RegExp =>
-  new RegExp(
-    `(?:\\[([^\\]\\n]*)\\]\\()?(${escapeRegExp(workspaceBaseUrl)}/object/([a-zA-Z][a-zA-Z0-9]*)/(${UUID_PATTERN_SOURCE}))`,
-    'gi',
-  );
+import { buildSlackRecordUrlPatternSource } from 'src/logic-functions/utils/build-slack-record-url-pattern-source';
 
 // Every record the agent names is written as a Markdown link to its Twenty
-// page, so the reply itself tells us which records the answer is about.
+// page, so the reply itself tells us which records the answer touches.
 export const findSlackAssistantRecordReferences = ({
   responseText,
   workspaceBaseUrl,
@@ -28,7 +17,10 @@ export const findSlackAssistantRecordReferences = ({
   }
 
   const referencesByRecordId = new Map<string, SlackAssistantRecordReference>();
-  const recordUrlPattern = buildRecordUrlPattern(workspaceBaseUrl);
+  const recordUrlPattern = new RegExp(
+    `(?:\\[([^\\]\\n]*)\\]\\()?(${buildSlackRecordUrlPatternSource(workspaceBaseUrl)})`,
+    'gi',
+  );
 
   for (const match of responseText.matchAll(recordUrlPattern)) {
     const [, linkLabel, recordUrl, objectNameSingular, recordId] = match;

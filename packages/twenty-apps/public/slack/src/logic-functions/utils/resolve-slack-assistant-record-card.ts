@@ -5,6 +5,7 @@ import { type SlackAssistantRecordCard } from 'src/logic-functions/types/slack-a
 import { type SlackAssistantRecordCardField } from 'src/logic-functions/types/slack-assistant-record-card-field.type';
 import { type SlackAssistantRecordCardPayload } from 'src/logic-functions/types/slack-assistant-record-card-payload.type';
 import { findSlackAssistantRecordReferences } from 'src/logic-functions/utils/find-slack-assistant-record-references';
+import { isSlackAssistantRecordListAnswer } from 'src/logic-functions/utils/is-slack-assistant-record-list-answer';
 import { sanitizeSlackRecordCardText } from 'src/logic-functions/utils/sanitize-slack-record-card-text';
 
 const sanitizeCardFields = (
@@ -22,8 +23,7 @@ const sanitizeCardFields = (
       ),
     }))
     .filter(
-      (field) =>
-        isNonEmptyString(field.label) && isNonEmptyString(field.value),
+      (field) => isNonEmptyString(field.label) && isNonEmptyString(field.value),
     )
     .slice(0, SLACK_ASSISTANT_RECORD_CARD_LIMITS.MAX_FIELDS);
 
@@ -42,20 +42,20 @@ export const resolveSlackAssistantRecordCard = ({
     return undefined;
   }
 
-  const recordReferences = findSlackAssistantRecordReferences({
-    responseText: answerText,
-    workspaceBaseUrl,
-  });
-
-  if (recordReferences.length !== 1) {
+  if (isSlackAssistantRecordListAnswer({ answerText, workspaceBaseUrl })) {
     return undefined;
   }
 
-  const [recordReference] = recordReferences;
+  const cardRecordId = recordCardPayload.recordId.toLowerCase();
 
-  if (
-    recordCardPayload.recordId.toLowerCase() !== recordReference.recordId
-  ) {
+  // The card must point at a record the reply itself links, so a hallucinated
+  // id never reaches Slack as a working record link.
+  const recordReference = findSlackAssistantRecordReferences({
+    responseText: answerText,
+    workspaceBaseUrl,
+  }).find((reference) => reference.recordId === cardRecordId);
+
+  if (recordReference === undefined) {
     return undefined;
   }
 

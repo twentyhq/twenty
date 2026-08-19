@@ -38,7 +38,9 @@ const resolve = ({
 
 describe('resolveSlackAssistantRecordCard', () => {
   it('should resolve a card when the reply is about a single record', () => {
-    expect(resolve({ answerText: `Moved [ACME](${ACME_URL}) to Proposal.` })).toEqual({
+    expect(
+      resolve({ answerText: `Moved [ACME](${ACME_URL}) to Proposal.` }),
+    ).toEqual({
       recordId: ACME_ID,
       objectNameSingular: 'company',
       recordUrl: ACME_URL,
@@ -51,10 +53,46 @@ describe('resolveSlackAssistantRecordCard', () => {
     });
   });
 
-  it('should drop the card when the reply lists more than one record', () => {
+  it('should drop the card when the reply lists several records as its answer', () => {
     expect(
       resolve({
-        answerText: `- [ACME](${ACME_URL})\n- [Globex](${WORKSPACE_BASE_URL}/object/company/${GLOBEX_ID})`,
+        answerText: `2 companies in Berlin:\n- [ACME](${ACME_URL}) — $120,000\n- [Globex](${WORKSPACE_BASE_URL}/object/company/${GLOBEX_ID}) — $80,000`,
+      }),
+    ).toBeUndefined();
+  });
+
+  it('should keep the card when related records are linked around the answer', () => {
+    expect(
+      resolve({
+        answerText: [
+          `Found 1 match: [ACME](${ACME_URL})`,
+          `- Owner: [Jane Doe](${WORKSPACE_BASE_URL}/object/workspaceMember/${GLOBEX_ID})`,
+          '- Stage: Proposal',
+        ].join('\n'),
+      })?.recordId,
+    ).toBe(ACME_ID);
+  });
+
+  it('should keep the card when the lead line names a related record too', () => {
+    expect(
+      resolve({
+        answerText: `[ACME](${ACME_URL}) is owned by [Jane Doe](${WORKSPACE_BASE_URL}/object/workspaceMember/${GLOBEX_ID}).`,
+      })?.recordId,
+    ).toBe(ACME_ID);
+  });
+
+  it('should drop the card when the reply lists records as a numbered answer', () => {
+    expect(
+      resolve({
+        answerText: `Top 2:\n1. [ACME](${ACME_URL})\n2. [Globex](${WORKSPACE_BASE_URL}/object/company/${GLOBEX_ID})`,
+      }),
+    ).toBeUndefined();
+  });
+
+  it('should drop the card when listed records are bolded', () => {
+    expect(
+      resolve({
+        answerText: `Top 2:\n- **[ACME](${ACME_URL})** — $120,000\n- **[Globex](${WORKSPACE_BASE_URL}/object/company/${GLOBEX_ID})** — $80,000`,
       }),
     ).toBeUndefined();
   });
