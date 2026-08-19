@@ -3,19 +3,21 @@ import { isDefined } from 'twenty-shared/utils';
 import { ALLOWED_HTML_ELEMENTS } from '@/constants/AllowedHtmlElements';
 import { isAriaOrDataAttribute } from '@/remote/elements/utils/isAriaOrDataAttribute';
 
-const ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME = new Map<string, string>([
-  ['className', 'className'],
-  ['class', 'className'],
+const PROPERTY_MAPPED_ATTRIBUTES = [
+  { attributeName: 'class', elementPropertyName: 'className' },
+  { attributeName: 'for', elementPropertyName: 'htmlFor' },
+  { attributeName: 'tabindex', elementPropertyName: 'tabIndex' },
+  { attributeName: 'srcdoc', elementPropertyName: 'srcDoc' },
+];
 
-  ['htmlFor', 'htmlFor'],
-  ['for', 'htmlFor'],
-
-  ['tabIndex', 'tabIndex'],
-  ['tabindex', 'tabIndex'],
-
-  ['srcDoc', 'srcDoc'],
-  ['srcdoc', 'srcDoc'],
-]);
+const ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME = new Map<string, string>(
+  PROPERTY_MAPPED_ATTRIBUTES.flatMap(
+    ({ attributeName, elementPropertyName }): [string, string][] => [
+      [attributeName, elementPropertyName],
+      [elementPropertyName, elementPropertyName],
+    ],
+  ),
+);
 
 type RemoteElementWithAttributeUpdater = Element &
   Record<string, unknown> & {
@@ -81,6 +83,19 @@ export const patchRemoteElementAttributes = (): void => {
       }
 
       return originalHasAttribute.call(this, attributeName);
+    };
+
+    const originalGetAttributeNames =
+      elementConstructor.prototype.getAttributeNames;
+
+    elementConstructor.prototype.getAttributeNames = function (
+      this: RemoteElementWithAttributeUpdater,
+    ) {
+      const mappedAttributeNames = PROPERTY_MAPPED_ATTRIBUTES.filter(
+        ({ elementPropertyName }) => isDefined(this[elementPropertyName]),
+      ).map(({ attributeName }) => attributeName);
+
+      return [...originalGetAttributeNames.call(this), ...mappedAttributeNames];
     };
 
     const originalSetAttribute = elementConstructor.prototype.setAttribute;

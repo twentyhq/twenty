@@ -113,6 +113,47 @@ describe('patchRemoteElementAttributes', () => {
     });
   });
 
+  describe('getAttributeNames on property-mapped attributes', () => {
+    it('should not list a mapped attribute whose property was never set', () => {
+      expect(createHtmlDivElement().getAttributeNames()).not.toContain('class');
+    });
+
+    it('should list the canonical name, not the property alias', () => {
+      const element = createHtmlDivElement();
+
+      element.className = 'from-react';
+
+      expect(element.getAttributeNames()).toEqual(['class']);
+    });
+
+    it('should list a mapped attribute holding a falsy value', () => {
+      const element = createHtmlDivElement();
+
+      element.tabIndex = 0;
+
+      expect(element.getAttributeNames()).toEqual(['tabindex']);
+    });
+
+    it('should list mapped attributes alongside real ones', () => {
+      const element = createHtmlDivElement();
+
+      element.setAttribute('id', 'anchor');
+      element.setAttribute('class', 'present');
+
+      expect(element.getAttributeNames()).toEqual(['id', 'class']);
+    });
+
+    it('should stop listing a mapped attribute after removeAttribute', () => {
+      const element = createHtmlDivElement();
+
+      element.setAttribute('id', 'anchor');
+      element.setAttribute('class', 'present');
+      element.removeAttribute('class');
+
+      expect(element.getAttributeNames()).toEqual(['id']);
+    });
+  });
+
   describe('attribute names colliding with Object prototype keys', () => {
     it('should store them as real attributes instead of mapping them to a property', () => {
       const element = createHtmlDivElement();
