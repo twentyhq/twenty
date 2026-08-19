@@ -61,21 +61,19 @@ export class StripeInvoiceService {
     const invoice = await this.stripe.invoices.create({
       customer: stripeCustomerId,
       subscription: stripeSubscriptionId,
-      pending_invoice_items_behavior: 'exclude',
+    });
+    const invoiceItem = await this.stripe.invoiceItems.create({
+      customer: stripeCustomerId,
+      subscription: stripeSubscriptionId,
+      invoice: invoice.id,
+      amount: diffAmountInCents,
+      currency,
+      description,
     });
 
     let finalizedInvoice: Stripe.Invoice;
 
     try {
-      await this.stripe.invoiceItems.create({
-        customer: stripeCustomerId,
-        subscription: stripeSubscriptionId,
-        invoice: invoice.id,
-        amount: diffAmountInCents,
-        currency,
-        description,
-      });
-
       finalizedInvoice = await this.stripe.invoices.finalizeInvoice(
         invoice.id,
         {
@@ -83,7 +81,7 @@ export class StripeInvoiceService {
         },
       );
     } catch (error) {
-      await this.deleteDraftUpgradeInvoice(invoice.id);
+      await this.deleteDraftUpgradeInvoice(invoice.id, invoiceItem.id);
 
       throw error;
     }
@@ -145,12 +143,23 @@ export class StripeInvoiceService {
     );
   }
 
-  private async deleteDraftUpgradeInvoice(invoiceId: string): Promise<void> {
+  private async deleteDraftUpgradeInvoice(
+    invoiceId: string,
+    invoiceItemId: string,
+  ): Promise<void> {
     try {
       await this.stripe.invoices.del(invoiceId);
     } catch (deleteError) {
       this.logger.error(
         `Failed to delete draft upgrade invoice ${invoiceId}: ${this.getErrorMessage(deleteError)}`,
+      );
+    }
+
+    try {
+      await this.stripe.invoiceItems.del(invoiceItemId);
+    } catch (deleteError) {
+      this.logger.error(
+        `Failed to delete upgrade invoice item ${invoiceItemId}: ${this.getErrorMessage(deleteError)}`,
       );
     }
   }
