@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { buildToolCatalogSection } from 'src/engine/core-modules/tool-provider/utils/build-tool-catalog-section.util';
@@ -61,7 +62,7 @@ export const buildFullSystemPrompt = ({
     parts.push(skillSection);
   }
 
-  if (storedFiles && storedFiles.length > 0) {
+  if (isNonEmptyArray(storedFiles)) {
     parts.push(buildUploadedFilesSection(storedFiles));
   }
 
