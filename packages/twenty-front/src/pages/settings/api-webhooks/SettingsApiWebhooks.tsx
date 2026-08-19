@@ -17,11 +17,11 @@ import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
-    IconBrandGraphql,
-    IconPlug,
-    IconPlus,
-    IconSparkle2,
-    IconWebhook
+  IconBrandGraphql,
+  IconPlug,
+  IconPlus,
+  IconSparkle2,
+  IconWebhook,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -112,13 +112,15 @@ export const SettingsApiWebhooks = () => {
             instanceIdPrefix={SETTINGS_API_HERO_INSTANCE_ID_PREFIX}
             tabs={
               isMcpTab
-                ? [{
-                id: 'mcp_api_webhook_walkthrough',
-                title: t`Walkthrough`,
-                Icon: IconSparkle2,
-                vimeoId: '1217967646',
-                hasSound: true,
-              }]
+                ? [
+                    {
+                      id: 'mcp_api_webhook_walkthrough',
+                      title: t`Walkthrough`,
+                      Icon: IconSparkle2,
+                      vimeoId: '1217967646',
+                      hasSound: true,
+                    },
+                  ]
                 : [
                     {
                       id: 'api_webhook_walkthrough',

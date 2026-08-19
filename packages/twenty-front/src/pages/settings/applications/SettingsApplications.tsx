@@ -8,11 +8,11 @@ import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
-    IconApps,
-    IconCode,
-    IconDownload,
-    IconPlug,
-    IconSparkle2,
+  IconApps,
+  IconCode,
+  IconDownload,
+  IconPlug,
+  IconSparkle2,
 } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/layout';
 import { PermissionFlagType } from '~/generated-metadata/graphql';

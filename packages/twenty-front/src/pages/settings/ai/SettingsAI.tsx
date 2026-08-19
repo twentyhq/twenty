@@ -8,13 +8,13 @@ import { getSettingsPath } from 'twenty-shared/utils';
 
 import { t } from '@lingui/core/macro';
 import {
-    IconChartBar,
-    IconCpu,
-    IconLayoutDashboard,
-    IconPlus,
-    IconSparkle2,
-    IconSparkles,
-    IconTool,
+  IconChartBar,
+  IconCpu,
+  IconLayoutDashboard,
+  IconPlus,
+  IconSparkle2,
+  IconSparkles,
+  IconTool,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';

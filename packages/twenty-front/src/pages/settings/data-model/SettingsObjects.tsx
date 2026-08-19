@@ -10,12 +10,12 @@ import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
-    IconEye,
-    IconHierarchy2,
-    IconLink,
-    IconList,
-    IconPlus,
-    IconSparkle2,
+  IconEye,
+  IconHierarchy2,
+  IconLink,
+  IconList,
+  IconPlus,
+  IconSparkle2,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';

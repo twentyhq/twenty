@@ -94,7 +94,11 @@ export const SettingsCustomizeVideoModal = ({
       <StyledVideoContainer>
         <StyledVideoIframe
           key={activeTab.id}
-          src={activeTab.hasSound ? `https://player.vimeo.com/video/${activeTab.vimeoId}?byline=0&portrait=0&title=0&vimeo_logo=0&app_id=58479&dnt=1` : `https://player.vimeo.com/video/${activeTab.vimeoId}?autoplay=1&loop=1&autopause=0&background=1&muted=1&dnt=1`}
+          src={
+            activeTab.hasSound
+              ? `https://player.vimeo.com/video/${activeTab.vimeoId}?byline=0&portrait=0&title=0&vimeo_logo=0&app_id=58479&dnt=1`
+              : `https://player.vimeo.com/video/${activeTab.vimeoId}?autoplay=1&loop=1&autopause=0&background=1&muted=1&dnt=1`
+          }
           allow="autoplay; fullscreen; picture-in-picture"
           title={activeTab.title}
         />
