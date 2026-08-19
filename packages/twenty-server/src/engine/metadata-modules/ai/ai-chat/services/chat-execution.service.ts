@@ -79,6 +79,7 @@ import {
   injectCacheBreakpoint,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
 import { replaceUnsupportedFileParts } from 'src/engine/metadata-modules/ai/ai-chat/utils/replace-unsupported-file-parts.util';
+import { tagAiChatKindScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-kind-scope.util';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { NativeToolBinderService } from 'src/engine/metadata-modules/ai/ai-models/services/native-tool-binder.service';
@@ -224,6 +225,8 @@ export class ChatExecutionService {
           userWorkspaceId,
         }) &&
       !hasSucceededWorkspaceSetupCompletion(messages);
+
+    tagAiChatKindScope({ isWorkspaceSetupThread });
 
     const preloadedToolNames = [
       ...Object.keys(preloadedTools),
