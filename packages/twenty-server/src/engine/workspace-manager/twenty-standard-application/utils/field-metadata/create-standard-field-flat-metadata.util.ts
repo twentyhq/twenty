@@ -32,7 +32,6 @@ export type CreateStandardFieldArgs<
     isNullable?: boolean;
     isUnique?: boolean;
     isUIEditable?: boolean;
-    writability?: MetadataWritability;
     defaultValue?: FieldMetadataDefaultValue<T>;
     settings?: FieldMetadataSettings<T>;
     options?:
@@ -58,7 +57,6 @@ export const createStandardFieldFlatMetadata = <
     isNullable = true,
     isUnique = false,
     isUIEditable = true,
-    writability,
     defaultValue,
     settings,
     options: fieldOptions = null,
@@ -90,12 +88,11 @@ export const createStandardFieldFlatMetadata = <
     isNullable,
     isUnique,
     isUIEditable,
-    // Search vectors are Postgres generated columns: nothing may write them.
+    // Search vectors are Postgres generated columns: nothing may write them
     writability:
-      writability ??
-      (type === FieldMetadataType.TS_VECTOR
+      type === FieldMetadataType.TS_VECTOR
         ? MetadataWritability.SYSTEM
-        : MetadataWritability.OPEN),
+        : MetadataWritability.OPEN,
     isLabelSyncedWithName: false,
     overrides: null,
     defaultValue: defaultValue ?? null,
