@@ -36,9 +36,7 @@ export const turnSortsIntoOrderBy = (
         return undefined;
       }
 
-      // Empty values stay at the bottom in both directions: sorting is about
-      // seeing values, so a sparsely-filled column must not start with a wall
-      // of empty rows when sorted ascending
+      // Nulls last in both directions so a sparse column doesn't open with a wall of empty rows
       const direction: OrderBy =
         sort.direction === ViewSortDirection.ASC
           ? 'AscNullsLast'
