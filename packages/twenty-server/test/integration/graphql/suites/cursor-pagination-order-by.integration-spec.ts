@@ -44,12 +44,18 @@ type RecordConnection = {
 
 type PaginateAllParams = {
   orderBy: object;
+  objectMetadataSingularName?: string;
+  objectMetadataPluralName?: string;
+  filter?: object;
   gqlFields?: string;
   first?: number;
 };
 
 const paginateForward = async ({
   orderBy,
+  objectMetadataSingularName = 'opportunity',
+  objectMetadataPluralName = 'opportunities',
+  filter,
   gqlFields = 'id',
   first = PAGE_SIZE,
 }: PaginateAllParams) => {
@@ -61,9 +67,10 @@ const paginateForward = async ({
   for (let iteration = 0; iteration < 20; iteration++) {
     const response: GraphqlResponse = await makeGraphqlAPIRequest(
       findManyOperationFactory({
-        objectMetadataSingularName: 'opportunity',
-        objectMetadataPluralName: 'opportunities',
+        objectMetadataSingularName,
+        objectMetadataPluralName,
         gqlFields,
+        filter,
         orderBy,
         first,
         after,
@@ -72,11 +79,10 @@ const paginateForward = async ({
 
     expect(response.body.errors).toBeUndefined();
 
-    const connection = response.body.data.opportunities;
+    const connection: RecordConnection =
+      response.body.data[objectMetadataPluralName];
 
-    ids.push(
-      ...connection.edges.map((edge: { node: { id: string } }) => edge.node.id),
-    );
+    ids.push(...connection.edges.map((edge) => edge.node.id));
     pages++;
 
     if (!connection.pageInfo.hasNextPage) {
@@ -96,7 +102,6 @@ const paginateBackwardFrom = async ({
 }: PaginateAllParams & { startingBefore: string }) => {
   const ids: string[] = [];
   let before: string | undefined = startingBefore;
-  let pages = 0;
 
   for (let iteration = 0; iteration < 20; iteration++) {
     const response: GraphqlResponse = await makeGraphqlAPIRequest(
@@ -115,7 +120,6 @@ const paginateBackwardFrom = async ({
     const connection: RecordConnection = response.body.data.opportunities;
 
     ids.unshift(...connection.edges.map((edge) => edge.node.id));
-    pages++;
 
     if (!connection.pageInfo.hasPreviousPage) {
       break;
@@ -124,7 +128,7 @@ const paginateBackwardFrom = async ({
     before = connection.pageInfo.startCursor;
   }
 
-  return { ids, pages };
+  return { ids };
 };
 
 describe('Cursor pagination exhaustiveness with orderBy (issue #24333)', () => {
@@ -263,41 +267,13 @@ describe('Cursor pagination exhaustiveness with orderBy (issue #24333)', () => {
   });
 
   it('should paginate exhaustively when a filter is combined with the cursor', async () => {
-    const expectedIds = datedOpportunityIds.slice(2);
-    const ids: string[] = [];
-    let after: string | undefined = undefined;
+    const { ids } = await paginateForward({
+      filter: { closeDate: { gte: DATED_CLOSE_DATES[2] } },
+      orderBy: { closeDate: 'AscNullsLast' },
+      first: 2,
+    });
 
-    for (let iteration = 0; iteration < 10; iteration++) {
-      const response: GraphqlResponse = await makeGraphqlAPIRequest(
-        findManyOperationFactory({
-          objectMetadataSingularName: 'opportunity',
-          objectMetadataPluralName: 'opportunities',
-          gqlFields: 'id',
-          filter: { closeDate: { gte: DATED_CLOSE_DATES[2] } },
-          orderBy: { closeDate: 'AscNullsLast' },
-          first: 2,
-          after,
-        }),
-      ).expect(200);
-
-      expect(response.body.errors).toBeUndefined();
-
-      const connection = response.body.data.opportunities;
-
-      ids.push(
-        ...connection.edges.map(
-          (edge: { node: { id: string } }) => edge.node.id,
-        ),
-      );
-
-      if (!connection.pageInfo.hasNextPage) {
-        break;
-      }
-
-      after = connection.pageInfo.endCursor;
-    }
-
-    expect(ids).toEqual(expectedIds);
+    expect(ids).toEqual(datedOpportunityIds.slice(2));
   });
 });
 
@@ -325,39 +301,188 @@ describe('Cursor pagination with composite orderBy not in the selection set', ()
   });
 
   it('should return every record when only id is selected', async () => {
-    const ids: string[] = [];
-    let after: string | undefined = undefined;
-
-    for (let iteration = 0; iteration < 10; iteration++) {
-      const response: GraphqlResponse = await makeGraphqlAPIRequest(
-        findManyOperationFactory({
-          objectMetadataSingularName: 'person',
-          objectMetadataPluralName: 'people',
-          gqlFields: 'id',
-          orderBy: { name: { firstName: 'AscNullsLast' } },
-          first: 2,
-          after,
-        }),
-      ).expect(200);
-
-      expect(response.body.errors).toBeUndefined();
-
-      const connection = response.body.data.people;
-
-      ids.push(
-        ...connection.edges.map(
-          (edge: { node: { id: string } }) => edge.node.id,
-        ),
-      );
-
-      if (!connection.pageInfo.hasNextPage) {
-        break;
-      }
-
-      after = connection.pageInfo.endCursor;
-    }
+    const { ids } = await paginateForward({
+      objectMetadataSingularName: 'person',
+      objectMetadataPluralName: 'people',
+      orderBy: { name: { firstName: 'AscNullsLast' } },
+      first: 2,
+    });
 
     // Global order must hold across pages: Alice..Eve
     expect(ids).toEqual(personIds);
+  });
+});
+
+describe('Cursor pagination ordered by a nullable foreign key', () => {
+  const companyIds = [randomUUID(), randomUUID()];
+  const withCompanyOpportunityIds = [randomUUID(), randomUUID(), randomUUID()];
+  const withoutCompanyOpportunityIds = [
+    randomUUID(),
+    randomUUID(),
+    randomUUID(),
+  ];
+  const fkTotalCount =
+    withCompanyOpportunityIds.length + withoutCompanyOpportunityIds.length;
+
+  beforeAll(async () => {
+    await deleteAllRecords('opportunity');
+    await deleteAllRecords('company');
+
+    await makeGraphqlAPIRequest(
+      createManyOperationFactory({
+        objectMetadataSingularName: 'company',
+        objectMetadataPluralName: 'companies',
+        gqlFields: 'id',
+        data: companyIds.map((id, index) => ({
+          id,
+          name: `Cursor FK company ${index + 1}`,
+        })),
+      }),
+    ).expect(200);
+
+    await makeGraphqlAPIRequest(
+      createManyOperationFactory({
+        objectMetadataSingularName: 'opportunity',
+        objectMetadataPluralName: 'opportunities',
+        gqlFields: 'id',
+        data: [
+          ...withCompanyOpportunityIds.map((id, index) => ({
+            id,
+            name: `FK opportunity ${index + 1}`,
+            companyId: companyIds[index % companyIds.length],
+          })),
+          ...withoutCompanyOpportunityIds.map((id, index) => ({
+            id,
+            name: `FK-less opportunity ${index + 1}`,
+          })),
+        ],
+      }),
+    ).expect(200);
+  });
+
+  it('should return every record when ordering by the foreign key column', async () => {
+    const { ids } = await paginateForward({
+      orderBy: { companyId: 'AscNullsLast' },
+      first: 2,
+    });
+
+    expect(ids).toHaveLength(fkTotalCount);
+    expect(new Set(ids).size).toBe(fkTotalCount);
+    expect(new Set(ids.slice(withCompanyOpportunityIds.length))).toEqual(
+      new Set(withoutCompanyOpportunityIds),
+    );
+  });
+});
+
+describe('Cursor pagination ordered by a nullable composite sub-field', () => {
+  const withAmountOpportunityIds = [
+    randomUUID(),
+    randomUUID(),
+    randomUUID(),
+    randomUUID(),
+  ];
+  const withoutAmountOpportunityIds = [
+    randomUUID(),
+    randomUUID(),
+    randomUUID(),
+  ];
+  const amountTotalCount =
+    withAmountOpportunityIds.length + withoutAmountOpportunityIds.length;
+
+  beforeAll(async () => {
+    await deleteAllRecords('opportunity');
+
+    await makeGraphqlAPIRequest(
+      createManyOperationFactory({
+        objectMetadataSingularName: 'opportunity',
+        objectMetadataPluralName: 'opportunities',
+        gqlFields: 'id',
+        data: [
+          ...withAmountOpportunityIds.map((id, index) => ({
+            id,
+            name: `Amount opportunity ${index + 1}`,
+            amount: {
+              amountMicros: (index + 1) * 1_000_000,
+              currencyCode: 'USD',
+            },
+          })),
+          ...withoutAmountOpportunityIds.map((id, index) => ({
+            id,
+            name: `Amount-less opportunity ${index + 1}`,
+          })),
+        ],
+      }),
+    ).expect(200);
+  });
+
+  it('should paginate across the NULL block of a currency sub-field', async () => {
+    const { ids } = await paginateForward({
+      orderBy: { amount: { amountMicros: 'AscNullsLast' } },
+      first: 2,
+    });
+
+    expect(ids).toHaveLength(amountTotalCount);
+    expect(new Set(ids).size).toBe(amountTotalCount);
+    // Non-null amounts keep their micros order across pages
+    expect(ids.slice(0, withAmountOpportunityIds.length)).toEqual(
+      withAmountOpportunityIds,
+    );
+    expect(new Set(ids.slice(withAmountOpportunityIds.length))).toEqual(
+      new Set(withoutAmountOpportunityIds),
+    );
+  });
+});
+
+describe('Cursor pagination with duplicate sort values', () => {
+  const duplicatedCloseDates = [
+    '2026-02-01T00:00:00.000Z',
+    '2026-02-01T00:00:00.000Z',
+    '2026-02-02T00:00:00.000Z',
+    '2026-02-02T00:00:00.000Z',
+    '2026-02-03T00:00:00.000Z',
+    '2026-02-03T00:00:00.000Z',
+  ];
+  const duplicateDatedOpportunityIds = duplicatedCloseDates.map(() =>
+    randomUUID(),
+  );
+  const duplicateNullOpportunityIds = [randomUUID(), randomUUID()];
+  const duplicatesTotalCount =
+    duplicateDatedOpportunityIds.length + duplicateNullOpportunityIds.length;
+
+  beforeAll(async () => {
+    await deleteAllRecords('opportunity');
+
+    await makeGraphqlAPIRequest(
+      createManyOperationFactory({
+        objectMetadataSingularName: 'opportunity',
+        objectMetadataPluralName: 'opportunities',
+        gqlFields: 'id',
+        data: [
+          ...duplicatedCloseDates.map((closeDate, index) => ({
+            id: duplicateDatedOpportunityIds[index],
+            name: `Duplicate dated opportunity ${index + 1}`,
+            closeDate,
+          })),
+          ...duplicateNullOpportunityIds.map((id, index) => ({
+            id,
+            name: `Duplicate undated opportunity ${index + 1}`,
+          })),
+        ],
+      }),
+    ).expect(200);
+  });
+
+  it('should neither skip nor repeat records when the sort value has duplicates', async () => {
+    // Page size 2 lands page boundaries inside the duplicate groups
+    const { ids } = await paginateForward({
+      orderBy: { closeDate: 'AscNullsLast' },
+      first: 2,
+    });
+
+    expect(ids).toHaveLength(duplicatesTotalCount);
+    expect(new Set(ids).size).toBe(duplicatesTotalCount);
+    expect(new Set(ids.slice(duplicatedCloseDates.length))).toEqual(
+      new Set(duplicateNullOpportunityIds),
+    );
   });
 });

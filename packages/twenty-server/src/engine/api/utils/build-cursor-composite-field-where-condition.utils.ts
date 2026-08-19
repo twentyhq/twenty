@@ -11,16 +11,16 @@ import {
   type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { findPostgresDefaultNullEquivalentValue } from 'src/engine/api/common/common-args-processors/data-arg-processor/utils/find-postgres-default-null-equivalent-value.util';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { areNullsScannedAfterCursor } from 'src/engine/api/utils/are-nulls-scanned-after-cursor.utils';
 import { buildCursorCumulativeWhereCondition } from 'src/engine/api/utils/build-cursor-cumulative-where-conditions.utils';
-import { computeOperator } from 'src/engine/api/utils/compute-operator.utils';
-import { isAscendingOrder } from 'src/engine/api/utils/is-ascending-order.utils';
+import {
+  buildCursorKeysetCondition,
+  checkIfColumnHasNullEquivalentDefault,
+} from 'src/engine/api/utils/build-cursor-keyset-condition.utils';
 import { validateAndGetOrderByForCompositeField } from 'src/engine/api/utils/validate-and-get-order-by.utils';
 
 type BuildCursorCompositeFieldWhereConditionParams = {
@@ -55,37 +55,55 @@ export const buildCursorCompositeFieldWhereCondition = ({
     orderBy,
   );
 
-  const compositeFieldProperties = compositeType.properties.filter(
-    (property) =>
-      property.type !== FieldMetadataType.RAW_JSON &&
-      cursorValue[property.name] !== undefined,
-  );
+  const cursorEntries = compositeType.properties
+    .filter(
+      (property) =>
+        property.type !== FieldMetadataType.RAW_JSON &&
+        cursorValue[property.name] !== undefined,
+    )
+    .map((property) => ({ [property.name]: cursorValue[property.name] }));
 
-  if (compositeFieldProperties.length === 0) {
+  if (cursorEntries.length === 0) {
     return null;
   }
 
-  const cursorEntries = compositeFieldProperties
-    .map((property) => {
-      if (cursorValue[property.name] === undefined) {
-        return null;
-      }
+  const buildSubFieldKeysetParams = (
+    cursorKey: string,
+    subFieldValue: unknown,
+  ) => {
+    const orderByDirection = fieldOrderBy[fieldKey]?.[cursorKey];
 
-      return {
-        [property.name]: cursorValue[property.name],
-      };
-    })
-    .filter(isDefined);
+    if (!isDefined(orderByDirection)) {
+      throw new GraphqlQueryRunnerException(
+        'Invalid cursor',
+        GraphqlQueryRunnerExceptionCode.INVALID_CURSOR,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+      );
+    }
+
+    return {
+      cursorValue: subFieldValue,
+      orderByDirection,
+      isForwardPagination,
+      canFieldHoldNullValue: !checkIfColumnHasNullEquivalentDefault(
+        fieldType,
+        cursorKey,
+      ),
+      buildLeafCondition: (leafFilter: Record<string, unknown>) => ({
+        [fieldKey]: { [cursorKey]: leafFilter },
+      }),
+    };
+  };
 
   if (isEqualityCondition) {
-    const result = cursorEntries.reduce<Record<string, ObjectRecordFilter>>(
+    const result = cursorEntries.reduce<Record<string, unknown>>(
       (acc, cursorEntry) => {
-        const [cursorKey, cursorValue] = Object.entries(cursorEntry)[0];
+        const [cursorKey, subFieldValue] = Object.entries(cursorEntry)[0];
 
         return {
           ...acc,
           [cursorKey]:
-            cursorValue === null ? { is: 'NULL' } : { eq: cursorValue },
+            subFieldValue === null ? { is: 'NULL' } : { eq: subFieldValue },
         };
       },
       {},
@@ -98,70 +116,16 @@ export const buildCursorCompositeFieldWhereCondition = ({
 
   const orConditions = buildCursorCumulativeWhereCondition({
     cursorEntries,
-    buildEqualityCondition: ({ cursorKey, cursorValue }) => ({
-      [fieldKey]: {
-        [cursorKey]:
-          cursorValue === null ? { is: 'NULL' } : { eq: cursorValue },
-      },
-    }),
-    buildMainCondition: ({ cursorKey, cursorValue }) => {
-      const orderByDirection = fieldOrderBy[fieldKey]?.[cursorKey];
-
-      if (!isDefined(orderByDirection)) {
-        throw new GraphqlQueryRunnerException(
-          'Invalid cursor',
-          GraphqlQueryRunnerExceptionCode.INVALID_CURSOR,
-          { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
-        );
-      }
-
-      const isAscending = isAscendingOrder(orderByDirection);
-      const computedOperator = computeOperator(
-        isAscending,
-        isForwardPagination,
-      );
-      const areNullsScannedAfter = areNullsScannedAfterCursor(
-        orderByDirection,
-        isForwardPagination,
-      );
-
-      if (cursorValue === null) {
-        return areNullsScannedAfter
-          ? null
-          : {
-              [fieldKey]: {
-                [cursorKey]: { is: 'NOT_NULL' },
-              },
-            };
-      }
-
-      const mainCondition = {
-        [fieldKey]: {
-          [cursorKey]: { [computedOperator]: cursorValue },
-        },
-      };
-
-      // Sub-fields with a Postgres null-equivalent default (e.g. TEXT '') never
-      // hold SQL NULL, so they need no null continuation branch
-      const canSubFieldHoldNullValue = !isDefined(
-        findPostgresDefaultNullEquivalentValue('NULL', fieldType, cursorKey),
-      );
-
-      if (areNullsScannedAfter && canSubFieldHoldNullValue) {
-        return {
-          or: [
-            mainCondition,
-            {
-              [fieldKey]: {
-                [cursorKey]: { is: 'NULL' },
-              },
-            },
-          ],
-        };
-      }
-
-      return mainCondition;
-    },
+    buildEqualityCondition: ({ cursorKey, cursorValue: subFieldValue }) =>
+      buildCursorKeysetCondition({
+        ...buildSubFieldKeysetParams(cursorKey, subFieldValue),
+        isEqualityCondition: true,
+      }),
+    buildMainCondition: ({ cursorKey, cursorValue: subFieldValue }) =>
+      buildCursorKeysetCondition({
+        ...buildSubFieldKeysetParams(cursorKey, subFieldValue),
+        isEqualityCondition: false,
+      }),
   });
 
   if (orConditions.length === 0) {

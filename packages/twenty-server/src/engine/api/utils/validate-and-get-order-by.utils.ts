@@ -1,5 +1,4 @@
 import {
-  FieldMetadataType,
   type ObjectRecord,
   type ObjectRecordOrderByForCompositeField,
   type ObjectRecordOrderByForScalarField,
@@ -14,9 +13,10 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { resolveOrderByFields } from 'src/engine/api/utils/resolve-order-by-fields.utils';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 const isOrderByDirection = (value: unknown): value is OrderByDirection => {
   return Object.values(OrderByDirection).includes(value as OrderByDirection);
@@ -111,31 +111,27 @@ export const validateAndGetOrderByForCompositeField = (
 
 export const countRelationFieldsInOrderBy = (
   orderBy: ObjectRecordOrderBy,
+  flatObjectMetadata: FlatObjectMetadata,
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
-  fieldIdByName: Record<string, string>,
 ): number => {
-  return orderBy.filter((orderByItem) => {
-    const fieldName = Object.keys(orderByItem)[0];
-    const fieldMetadataId = fieldIdByName[fieldName];
-    const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: fieldMetadataId,
-      flatEntityMaps: flatFieldMetadataMaps,
-    });
-
-    return fieldMetadata?.type === FieldMetadataType.RELATION;
-  }).length;
+  return resolveOrderByFields({
+    orderBy,
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+  }).filter((resolvedOrderByField) => resolvedOrderByField.kind === 'relation')
+    .length;
 };
 
 export const hasRelationFieldInOrderBy = (
   orderBy: ObjectRecordOrderBy,
+  flatObjectMetadata: FlatObjectMetadata,
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
-  fieldIdByName: Record<string, string>,
 ): boolean => {
   return (
     countRelationFieldsInOrderBy(
       orderBy,
+      flatObjectMetadata,
       flatFieldMetadataMaps,
-      fieldIdByName,
     ) > 0
   );
 };

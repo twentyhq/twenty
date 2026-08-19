@@ -36,6 +36,13 @@ export const buildCursorCumulativeWhereCondition = <
   buildEqualityCondition,
   buildMainCondition,
 }: BuildCursorCumulativeWhereConditionsParams<CursorValue>): ReturnType => {
+  // Each equality condition is reused by every later branch: compute them once
+  const equalityConditions = cursorEntries.map((cursorEntry) => {
+    const [cursorKey, cursorValue] = Object.entries(cursorEntry)[0];
+
+    return buildEqualityCondition({ cursorKey, cursorValue });
+  });
+
   return cursorEntries.flatMap((cursorEntry, index) => {
     const [currentCursorKey, currentCursorValue] =
       Object.entries(cursorEntry)[0];
@@ -48,30 +55,14 @@ export const buildCursorCumulativeWhereCondition = <
     // A null main condition means no row can sort strictly after the cursor on
     // this key alone (e.g. inside a trailing NULL block): only the tie-breaking
     // keys of the following branches can advance the scan
-    if (!isDefined(mainCondition) || Object.keys(mainCondition).length === 0) {
+    if (!isDefined(mainCondition)) {
       return [];
     }
 
-    const andConditions: ObjectRecordFilter[] = [];
-
-    for (
-      let subConditionIndex = 0;
-      subConditionIndex < index;
-      subConditionIndex++
-    ) {
-      const previousCursorEntry = cursorEntries[subConditionIndex];
-      const [previousCursorKey, previousCursorValue] =
-        Object.entries(previousCursorEntry)[0];
-
-      andConditions.push(
-        buildEqualityCondition({
-          cursorKey: previousCursorKey,
-          cursorValue: previousCursorValue,
-        }),
-      );
-    }
-
-    andConditions.push(mainCondition);
+    const andConditions = [
+      ...equalityConditions.slice(0, index),
+      mainCondition,
+    ];
 
     if (andConditions.length === 1) {
       return [andConditions[0]];

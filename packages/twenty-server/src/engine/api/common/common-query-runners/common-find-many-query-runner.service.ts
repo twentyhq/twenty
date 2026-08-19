@@ -47,7 +47,6 @@ import {
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 @Injectable()
@@ -102,16 +101,11 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     const cursor = getCursor(args);
 
     if (cursor) {
-      const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
-        flatFieldMetadataMaps,
-        flatObjectMetadata,
-      );
-
       if (
         hasRelationFieldInOrderBy(
           args.orderBy ?? [],
+          flatObjectMetadata,
           flatFieldMetadataMaps,
-          fieldIdByName,
         )
       ) {
         // Not throwing exception because still used on record show page
@@ -122,13 +116,13 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
         ); */
       }
 
-      const cursorArgFilter = computeCursorArgFilter(
+      const cursorArgFilter = computeCursorArgFilter({
         cursor,
-        orderByWithIdCondition,
+        orderBy: orderByWithIdCondition,
         flatObjectMetadata,
         flatFieldMetadataMaps,
         isForwardPagination,
-      );
+      });
 
       if (cursorArgFilter.length > 0) {
         appliedFilters = (args.filter && Object.keys(args.filter).length > 0
@@ -373,15 +367,10 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 
     const { flatObjectMetadata, flatFieldMetadataMaps } = queryRunnerContext;
 
-    const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
-      flatFieldMetadataMaps,
-      flatObjectMetadata,
-    );
-
     const orderByRelationCount = countRelationFieldsInOrderBy(
       args.orderBy ?? [],
+      flatObjectMetadata,
       flatFieldMetadataMaps,
-      fieldIdByName,
     );
 
     return baseComplexity + orderByRelationCount;
