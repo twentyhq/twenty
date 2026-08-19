@@ -3,46 +3,89 @@ import { describe, expect, it, vi } from 'vitest';
 import { cancelOpenScheduledCallRecordingRequests } from 'src/logic-functions/data/cancel-open-scheduled-call-recording-requests.util';
 
 describe('cancelOpenScheduledCallRecordingRequests', () => {
-  it('flips every open scheduled request to canceled and returns the count', async () => {
-    let capturedArgs: { filter: unknown; data: unknown } | undefined;
-    const mutation = vi.fn(async (mutationArg: any) => {
-      capturedArgs = mutationArg.updateCallRecordings.__args;
+  it('cancels explicit recording ids in batches of at most 200', async () => {
+    const capturedMutationArguments: Array<{
+      filter: unknown;
+      data: unknown;
+    }> = [];
+    const mutation = vi.fn(async (mutationArgument: any) => {
+      const updateCallRecordingsArguments =
+        mutationArgument.updateCallRecordings.__args;
+
+      capturedMutationArguments.push(updateCallRecordingsArguments);
 
       return {
-        updateCallRecordings: [
-          { id: 'call-recording-1' },
-          { id: 'call-recording-2' },
-        ],
+        updateCallRecordings: updateCallRecordingsArguments.filter.id.in.map(
+          (id: string) => ({ id }),
+        ),
       };
     });
+    const callRecordingIds = Array.from(
+      { length: 201 },
+      (_, index) => `call-recording-${index + 1}`,
+    );
 
     const canceledCallRecordingRequestCount =
-      await cancelOpenScheduledCallRecordingRequests({ mutation } as never);
+      await cancelOpenScheduledCallRecordingRequests(
+        { mutation } as never,
+        callRecordingIds,
+      );
 
-    expect(canceledCallRecordingRequestCount).toBe(2);
-    expect(mutation).toHaveBeenCalledTimes(1);
-    expect(capturedArgs?.filter).toEqual({
+    expect(canceledCallRecordingRequestCount).toBe(201);
+    expect(mutation).toHaveBeenCalledTimes(2);
+    expect(capturedMutationArguments[0]?.filter).toEqual({
+      id: { in: callRecordingIds.slice(0, 200) },
       recordingRequestStatus: { eq: 'REQUESTED' },
       status: { eq: 'SCHEDULED' },
     });
-    expect(capturedArgs?.data).toEqual({ recordingRequestStatus: 'CANCELED' });
+    expect(capturedMutationArguments[1]?.filter).toEqual({
+      id: { in: callRecordingIds.slice(200) },
+      recordingRequestStatus: { eq: 'REQUESTED' },
+      status: { eq: 'SCHEDULED' },
+    });
+    expect(capturedMutationArguments[0]?.data).toEqual({
+      recordingRequestStatus: 'CANCELED',
+    });
   });
 
-  it('returns zero when no request is open', async () => {
+  it('returns zero without issuing a mutation when no id is provided', async () => {
     const mutation = vi.fn(async () => ({ updateCallRecordings: [] }));
 
     const canceledCallRecordingRequestCount =
-      await cancelOpenScheduledCallRecordingRequests({ mutation } as never);
+      await cancelOpenScheduledCallRecordingRequests({ mutation } as never, []);
+
+    expect(canceledCallRecordingRequestCount).toBe(0);
+    expect(mutation).not.toHaveBeenCalled();
+  });
+
+  it('counts an omitted result list as zero for its batch', async () => {
+    const mutation = vi.fn(async () => ({}));
+
+    const canceledCallRecordingRequestCount =
+      await cancelOpenScheduledCallRecordingRequests({ mutation } as never, [
+        'call-recording-1',
+      ]);
 
     expect(canceledCallRecordingRequestCount).toBe(0);
   });
 
-  it('returns zero when the API omits the result list', async () => {
-    const mutation = vi.fn(async () => ({}));
+  it('attempts later batches before surfacing an earlier batch failure', async () => {
+    const mutation = vi
+      .fn()
+      .mockResolvedValueOnce({ updateCallRecordings: [] })
+      .mockRejectedValueOnce(new Error('Second batch failed'))
+      .mockResolvedValueOnce({ updateCallRecordings: [] });
+    const callRecordingIds = Array.from(
+      { length: 401 },
+      (_, index) => `call-recording-${index + 1}`,
+    );
 
-    const canceledCallRecordingRequestCount =
-      await cancelOpenScheduledCallRecordingRequests({ mutation } as never);
-
-    expect(canceledCallRecordingRequestCount).toBe(0);
+    await expect(
+      cancelOpenScheduledCallRecordingRequests(
+        { mutation } as never,
+        callRecordingIds,
+      ),
+    ).rejects.toThrow('1 of 3 call recording update batches failed');
+    expect(mutation).toHaveBeenCalledTimes(3);
   });
 });
