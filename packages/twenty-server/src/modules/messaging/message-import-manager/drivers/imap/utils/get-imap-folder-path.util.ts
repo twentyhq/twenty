@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ImapFlow } from 'imapflow';
 
-import { normalizeImapMailboxPath } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/normalize-imap-mailbox-path.util';
+import { normalizeImapUnicode } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/normalize-imap-unicode.util';
 
 export const getImapFolderPath = (
   externalId: string | null | undefined,
@@ -14,14 +14,14 @@ export const getImapFolderPath = (
   const lastColonIndex = externalId.lastIndexOf(':');
 
   if (lastColonIndex === -1) {
-    return normalizeImapMailboxPath(externalId, client);
+    return normalizeImapUnicode(externalId, client);
   }
 
   const suffix = externalId.slice(lastColonIndex + 1);
 
   if (!/^\d+$/.test(suffix)) {
-    return normalizeImapMailboxPath(externalId, client);
+    return normalizeImapUnicode(externalId, client);
   }
 
-  return normalizeImapMailboxPath(externalId.slice(0, lastColonIndex), client);
+  return normalizeImapUnicode(externalId.slice(0, lastColonIndex), client);
 };

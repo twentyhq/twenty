@@ -184,6 +184,7 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
             label: t(CREDIT_GRANT_TYPE_LABELS[grantType]),
           }))}
           onChange={setType}
+          isDropdownInModal
           fullWidth
         />
 

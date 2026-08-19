@@ -613,6 +613,16 @@ export class AgentChatService {
     return (result.affected ?? 0) > 0;
   }
 
+  async deleteMessage({
+    messageId,
+    workspaceId,
+  }: {
+    messageId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    await this.messageRepository.delete(workspaceId, { id: messageId });
+  }
+
   async promoteQueuedMessage({
     messageId,
     threadId,

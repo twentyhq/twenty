@@ -134,6 +134,15 @@ export class BillingWebhookInvoiceService {
     invoicePeriodEnd: Date;
     isFirstPeriodAfterTrial: boolean;
   }): Promise<void> {
+    const workspaceExists = await this.workspaceRepository.exists({
+      where: { id: subscription.workspaceId },
+      withDeleted: true,
+    });
+
+    if (!workspaceExists) {
+      return;
+    }
+
     const params =
       await this.resourceCreditService.getResourceCreditRolloverParameters(
         subscription.workspaceId,

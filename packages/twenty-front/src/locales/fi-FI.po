@@ -5390,10 +5390,10 @@ msgstr ""
 msgid "Credits are used by workflows, AI chats, agents, and approved apps"
 msgstr "Krediittejä käyttävät työnkulut, AI-keskustelut, agentit ja hyväksytyt sovellukset"
 
-#. js-lingui-id: tx/xSF
+#. js-lingui-id: Ydxr+g
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
-msgid "credits available (Including {rolloverCreditsDisplay} from rollover)"
-msgstr "krediittiä käytettävissä (sisältää {rolloverCreditsDisplay} siirrosta)"
+msgid "credits available (including {extraCreditsDisplay} on top of your plan)"
+msgstr ""
 
 #. js-lingui-id: zaaZ8V
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -9392,6 +9392,7 @@ msgid "Granted {parsedAmount} credits to this workspace."
 msgstr ""
 
 #. js-lingui-id: fqtGOd
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantsTable.tsx
 msgid "Granted credits"
 msgstr ""
@@ -16135,11 +16136,6 @@ msgstr "Roolit"
 msgid "Rollover"
 msgstr ""
 
-#. js-lingui-id: ufKFGo
-#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
-msgid "Rollover credits"
-msgstr "Siirretyt krediitit"
-
 #. js-lingui-id: uJc01W
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Romanian"
@@ -20888,6 +20884,11 @@ msgstr "Visualisoi tietomalli"
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "VS Code"
 msgstr "VS Code"
+
+#. js-lingui-id: mVkP/D
+#: src/modules/ai/hooks/useSubmitQuestionAnswer.ts
+msgid "Wait for files to finish uploading before answering."
+msgstr ""
 
 #. js-lingui-id: uUehLT
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx

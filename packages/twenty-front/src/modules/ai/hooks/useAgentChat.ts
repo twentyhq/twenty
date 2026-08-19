@@ -219,7 +219,10 @@ export const useAgentChat = (
           ? { [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: '' }
           : {}),
       }));
-      setAgentChatUploadedFiles(uploadedFilesSnapshot);
+      setAgentChatUploadedFiles((currentUploadedFiles) => [
+        ...uploadedFilesSnapshot,
+        ...currentUploadedFiles,
+      ]);
 
       const latestMessages = store.get(messagesAtom);
 
