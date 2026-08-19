@@ -1,10 +1,10 @@
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+import { computeOrderByLeafColumn } from 'src/engine/api/utils/compute-order-by-leaf-column.util';
 import {
   checkIfLeafCanCarryCursorValue,
   resolveOrderByLeaves,
 } from 'src/engine/api/utils/resolve-order-by-leaves.utils';
-import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -35,11 +35,14 @@ export const buildOrderByColumnsToSelect = ({
       continue;
     }
 
-    columnsToSelect[
-      leaf.kind === 'composite'
-        ? computeCompositeColumnName(leaf.path[0], leaf.compositeProperty)
-        : leaf.path[0]
-    ] = true;
+    const leafColumn = computeOrderByLeafColumn(
+      leaf,
+      flatObjectMetadata.nameSingular,
+    );
+
+    if (leafColumn) {
+      columnsToSelect[leafColumn.columnName] = true;
+    }
   }
 
   return columnsToSelect;
