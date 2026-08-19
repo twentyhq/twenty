@@ -39,6 +39,7 @@ import { type ReadRecordQueryBuilder } from 'src/engine/api/graphql/graphql-quer
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { buildOrderByColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-order-by-columns-to-select';
 import { getCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
+import { buildOrderByValuesByRecordId } from 'src/engine/api/utils/build-order-by-values-by-record-id.util';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
 import {
   buildOrderByFromLeaves,
@@ -94,17 +95,17 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     // Normalizing to deduplicated leaves makes the appended id tie-breaker
     // yield to a caller-provided id ordering, and guarantees the SQL scan
     // order and the keyset conditions derive from the same list
-    const orderByWithIdCondition = buildOrderByFromLeaves(
-      resolveOrderByLeaves({
-        orderBy: [
-          ...(args.orderBy ?? []),
-          { id: OrderByDirection.AscNullsFirst },
-        ] as ObjectRecordOrderBy,
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-        strictValidation: true,
-      }),
-    );
+    const orderByLeaves = resolveOrderByLeaves({
+      orderBy: [
+        ...(args.orderBy ?? []),
+        { id: OrderByDirection.AscNullsFirst },
+      ] as ObjectRecordOrderBy,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      strictValidation: true,
+    });
+    const orderByWithIdCondition = buildOrderByFromLeaves(orderByLeaves);
 
     const isForwardPagination = !isDefined(args.before);
 
@@ -115,6 +116,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
         cursor,
         orderBy: orderByWithIdCondition,
         flatObjectMetadata,
+        flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         isForwardPagination,
       });
@@ -199,8 +201,20 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       columnsToSelect,
     );
 
-    const fetchedObjectRecords =
-      (await queryBuilder.getMany()) as ObjectRecord[];
+    // Raw rows travel along the entities: the ordered join columns already
+    // selected for the relation ordering are read out of them, so cursors get
+    // their relation values whatever the client selected (or the REST depth)
+    const { entities: fetchedObjectRecords, raw: fetchedRawRows } =
+      (await queryBuilder.getRawAndEntities()) as {
+        entities: ObjectRecord[];
+        raw: Record<string, unknown>[];
+      };
+    const orderByValuesByRecordId = buildOrderByValuesByRecordId({
+      orderByLeaves,
+      records: fetchedObjectRecords,
+      rawRows: fetchedRawRows,
+      objectNameSingular: flatObjectMetadata.nameSingular,
+    });
     const { items: objectRecords, pageInfo: cursorPageInfo } = buildCursorPage({
       fetchedItems: fetchedObjectRecords,
       limit,
@@ -215,9 +229,10 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       orderBy: orderByWithIdCondition,
       pageInfo: cursorPageInfo,
       flatObjectMetadata,
+      flatObjectMetadataMaps,
       flatFieldMetadataMaps,
+      orderByValuesByRecordId,
     });
-
     const hasAggregatedFields =
       Object.keys(args.selectedFieldsResult.aggregate ?? {}).length > 0;
 
@@ -251,6 +266,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       aggregatedValues: parentObjectRecordsAggregatedValues,
       totalCount: parentObjectRecordsAggregatedValues?.totalCount,
       pageInfo,
+      orderByValuesByRecordId,
       selectedFieldsResult: args.selectedFieldsResult,
     };
   }

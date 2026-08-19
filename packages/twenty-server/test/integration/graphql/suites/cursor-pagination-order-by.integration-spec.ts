@@ -520,3 +520,73 @@ describe('Cursor pagination with duplicate sort values', () => {
     );
   });
 });
+
+// Empty TEXT values are stored as SQL NULL (write-side normalization) and
+// presented as '' by the API: the scan's NULL block holds every empty row, and
+// cursors read the raw SQL values so the continuation follows the scan exactly
+describe('Cursor pagination ordered by a TEXT field with empty values', () => {
+  const namedCompanyIds = {
+    ALPHA: '20202020-eeee-4000-8000-000000000001',
+    BETA: '20202020-eeee-4000-8000-000000000002',
+  };
+  const emptyNameCompanyIds = [
+    '20202020-eeee-4000-8000-000000000003',
+    '20202020-eeee-4000-8000-000000000004',
+    '20202020-eeee-4000-8000-000000000005',
+    '20202020-eeee-4000-8000-000000000006',
+  ];
+  const allCompanyIds = [
+    ...Object.values(namedCompanyIds),
+    ...emptyNameCompanyIds,
+  ];
+
+  beforeAll(async () => {
+    await makeGraphqlAPIRequest(
+      createManyOperationFactory({
+        objectMetadataSingularName: 'company',
+        objectMetadataPluralName: 'companies',
+        gqlFields: 'id',
+        data: [
+          { id: namedCompanyIds.ALPHA, name: 'Alpha Corp' },
+          { id: namedCompanyIds.BETA, name: 'Beta Inc' },
+          // One explicitly empty, the others without the field: both store NULL
+          { id: emptyNameCompanyIds[0], name: '' },
+          ...emptyNameCompanyIds.slice(1).map((id) => ({ id })),
+        ],
+        upsert: true,
+      }),
+    ).expect(200);
+  });
+
+  it('should paginate the empty block exhaustively with AscNullsLast', async () => {
+    const { ids } = await paginateForward({
+      objectMetadataSingularName: 'company',
+      objectMetadataPluralName: 'companies',
+      filter: { id: { in: allCompanyIds } },
+      orderBy: { name: 'AscNullsLast' },
+      first: 2,
+    });
+
+    expect(ids).toEqual([
+      namedCompanyIds.ALPHA,
+      namedCompanyIds.BETA,
+      ...emptyNameCompanyIds,
+    ]);
+  });
+
+  it('should paginate the empty block exhaustively with DescNullsLast', async () => {
+    const { ids } = await paginateForward({
+      objectMetadataSingularName: 'company',
+      objectMetadataPluralName: 'companies',
+      filter: { id: { in: allCompanyIds } },
+      orderBy: { name: 'DescNullsLast' },
+      first: 2,
+    });
+
+    expect(ids).toEqual([
+      namedCompanyIds.BETA,
+      namedCompanyIds.ALPHA,
+      ...emptyNameCompanyIds,
+    ]);
+  });
+});

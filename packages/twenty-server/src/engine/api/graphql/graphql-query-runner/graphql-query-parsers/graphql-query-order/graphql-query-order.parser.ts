@@ -198,7 +198,19 @@ export class GraphqlQueryOrderFieldParser {
       return null;
     }
 
-    const nestedFieldName = Object.keys(orderByDirection)[0];
+    const nestedFieldNames = Object.keys(orderByDirection);
+
+    // Cursor continuation carries exactly one sub-field value per relation, so
+    // reject ambiguous input here instead of silently ordering by the first key
+    if (nestedFieldNames.length !== 1) {
+      throw new GraphqlQueryRunnerException(
+        `Relation field "${fieldMetadata.name}" supports ordering by exactly one field of the related object`,
+        GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+      );
+    }
+
+    const [nestedFieldName] = nestedFieldNames;
     const nestedFieldOrderByValue = orderByDirection[nestedFieldName];
 
     if (!isDefined(nestedFieldOrderByValue)) {

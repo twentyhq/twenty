@@ -49,17 +49,25 @@ const companyField = buildMockField(
   FieldMetadataType.RELATION,
   { settings: { relationType: RelationType.MANY_TO_ONE } },
 );
+const ownerField = buildMockField(
+  'owner-id',
+  'owner',
+  FieldMetadataType.MORPH_RELATION,
+  { settings: { relationType: RelationType.MANY_TO_ONE } },
+);
 
 const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
   byUniversalIdentifier: {
     'name-id': nameField,
     'fullname-id': fullNameField,
     'company-id': companyField,
+    'owner-id': ownerField,
   },
   universalIdentifierById: {
     'name-id': 'name-id',
     'fullname-id': 'fullname-id',
     'company-id': 'company-id',
+    'owner-id': 'owner-id',
   },
   universalIdentifiersByApplicationId: {},
 };
@@ -81,7 +89,7 @@ const flatObjectMetadata: FlatObjectMetadata = {
   icon: 'Icon123',
   createdAt: new Date(),
   updatedAt: new Date(),
-  fieldIds: ['name-id', 'fullname-id', 'company-id'],
+  fieldIds: ['name-id', 'fullname-id', 'company-id', 'owner-id'],
   indexMetadataIds: [],
   viewIds: [],
   applicationId: null,
@@ -193,11 +201,33 @@ describe('encodeCursor', () => {
     expect(decoded).toEqual({ name: null, id: 'abc' });
   });
 
-  it('should not embed related records for relation orderBy entries', () => {
+  it('should carry only the ordered sub-field of a loaded relation', () => {
     const record = {
       id: 'abc',
-      company: { id: 'company-1', name: 'Acme' },
+      company: { id: 'company-1', name: 'Acme', employees: 10 },
     };
+    const orderBy = [
+      { company: { name: OrderByDirection.AscNullsLast } },
+    ] as Parameters<typeof encodeCursor>[0]['order'];
+
+    const decoded = decodeCursor(callEncodeCursor(record, orderBy));
+
+    expect(decoded).toEqual({ company: { name: 'Acme' }, id: 'abc' });
+  });
+
+  it('should carry null for a relation orderBy entry when there is no related record', () => {
+    const record = { id: 'abc', company: null };
+    const orderBy = [
+      { company: { name: OrderByDirection.AscNullsLast } },
+    ] as Parameters<typeof encodeCursor>[0]['order'];
+
+    const decoded = decodeCursor(callEncodeCursor(record, orderBy));
+
+    expect(decoded).toEqual({ company: { name: null }, id: 'abc' });
+  });
+
+  it('should leave the relation orderBy entry out when the relation is not loaded', () => {
+    const record = { id: 'abc' };
     const orderBy = [
       { company: { name: OrderByDirection.AscNullsLast } },
     ] as Parameters<typeof encodeCursor>[0]['order'];
@@ -207,6 +237,52 @@ describe('encodeCursor', () => {
     expect(decoded).toEqual({ id: 'abc' });
   });
 
+  it('should prefer relation order values from the ordering join over the loaded record', () => {
+    const record = { id: 'abc' };
+    const orderBy = [
+      { company: { name: OrderByDirection.AscNullsLast } },
+    ] as Parameters<typeof encodeCursor>[0]['order'];
+
+    const decoded = decodeCursor(
+      encodeCursor({
+        objectRecord: record as never,
+        order: orderBy,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+        orderByValuesFromScan: { company: { name: 'Acme' } },
+      }),
+    );
+
+    expect(decoded).toEqual({ company: { name: 'Acme' }, id: 'abc' });
+  });
+
+  it('should nest composite target values of a relation orderBy', () => {
+    const record = { id: 'abc' };
+    const orderBy = [
+      {
+        company: { contactName: { firstName: OrderByDirection.AscNullsLast } },
+      },
+      { company: { contactName: { lastName: OrderByDirection.AscNullsLast } } },
+    ] as unknown as Parameters<typeof encodeCursor>[0]['order'];
+
+    const decoded = decodeCursor(
+      encodeCursor({
+        objectRecord: record as never,
+        order: orderBy,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+        orderByValuesFromScan: {
+          company: { contactName: { firstName: 'Ada', lastName: null } },
+        },
+      }),
+    );
+
+    expect(decoded).toEqual({
+      company: { contactName: { firstName: 'Ada', lastName: null } },
+      id: 'abc',
+    });
+  });
+
   it('should encode join column values when ordering by the foreign key', () => {
     const record = { id: 'abc', companyId: 'company-1' };
     const orderBy = [{ companyId: OrderByDirection.AscNullsLast }];
@@ -214,6 +290,20 @@ describe('encodeCursor', () => {
     const decoded = decodeCursor(callEncodeCursor(record, orderBy));
 
     expect(decoded).toEqual({ companyId: 'company-1', id: 'abc' });
+  });
+
+  it('should carry morph relation sub-field values like relation ones', () => {
+    const record = {
+      id: 'abc',
+      owner: { id: 'owner-1', name: 'Morph target' },
+    };
+    const orderBy = [
+      { owner: { name: OrderByDirection.AscNullsLast } },
+    ] as Parameters<typeof encodeCursor>[0]['order'];
+
+    const decoded = decodeCursor(callEncodeCursor(record, orderBy));
+
+    expect(decoded).toEqual({ owner: { name: 'Morph target' }, id: 'abc' });
   });
 
   it('should handle undefined orderBy', () => {

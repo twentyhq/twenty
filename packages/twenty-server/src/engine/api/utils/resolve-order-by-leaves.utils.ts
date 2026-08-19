@@ -17,6 +17,7 @@ import { isOrderByDirection } from 'src/engine/api/graphql/graphql-query-runner/
 import { resolveFilterKeyFieldMetadata } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/resolve-filter-key-field-metadata.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
@@ -24,8 +25,9 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 
 export type OrderByLeaf = {
   // Path of the ordered value from the record root, e.g. ['closeDate'],
-  // ['name', 'firstName'] or ['company', 'name']. It is at once the cursor
-  // value path and the filter nesting of the keyset conditions.
+  // ['name', 'firstName'], ['company', 'name'] or ['company', 'name',
+  // 'firstName']. It is at once the cursor value path and the filter nesting
+  // of the keyset conditions.
   path: string[];
   direction: OrderByDirection;
   fieldMetadata: FlatFieldMetadata;
@@ -33,16 +35,20 @@ export type OrderByLeaf = {
   | // Scalar columns, including join columns addressed directly (e.g. companyId)
     { kind: 'scalar' }
   | { kind: 'composite'; compositeProperty: CompositeProperty }
-  | { kind: 'relation' }
+  | {
+      kind: 'relation';
+      // Resolved against the target object when flatObjectMetadataMaps is
+      // provided; the keyset condition builder relies on it for NULL semantics
+      targetFieldMetadata?: FlatFieldMetadata;
+      targetCompositeProperty?: CompositeProperty;
+    }
 );
 
-// RAW_JSON sub-fields can be ordered by in SQL but take no part in cursors;
-// relation values live on a joined alias and are carried by cursors only once
-// the relation cursor continuation supports them.
+// RAW_JSON sub-fields can be ordered by in SQL but take no part in cursors
 export const checkIfLeafCanCarryCursorValue = (leaf: OrderByLeaf): boolean => {
   switch (leaf.kind) {
     case 'relation':
-      return false;
+      return leaf.targetCompositeProperty?.type !== FieldMetadataType.RAW_JSON;
     case 'composite':
       return leaf.compositeProperty.type !== FieldMetadataType.RAW_JSON;
     case 'scalar':
@@ -78,6 +84,106 @@ const flattenNestedOrderByValue = (
       : [];
   });
 
+// Resolves one flattened relation orderBy path (e.g. ['company', 'name'] or
+// ['pointOfContact', 'name', 'firstName']) against the relation's target
+// object. Without the object metadata maps the leaf stays unresolved, which is
+// enough for consumers that ignore relation leaves (e.g. column selection).
+const resolveRelationLeaf = ({
+  fieldMetadata,
+  path,
+  direction,
+  flatObjectMetadataMaps,
+  flatFieldMetadataMaps,
+  strictValidation,
+}: {
+  fieldMetadata: FlatFieldMetadata;
+  path: string[];
+  direction: OrderByDirection;
+  flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  strictValidation: boolean;
+}): OrderByLeaf | null => {
+  const targetObjectMetadata =
+    isDefined(flatObjectMetadataMaps) &&
+    isDefined(fieldMetadata.relationTargetObjectMetadataId)
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: fieldMetadata.relationTargetObjectMetadataId,
+          flatEntityMaps: flatObjectMetadataMaps,
+        })
+      : undefined;
+
+  if (!isDefined(targetObjectMetadata)) {
+    return { kind: 'relation', path, direction, fieldMetadata };
+  }
+
+  const [, targetFieldName, targetPropertyName, ...extraPath] = path;
+  const targetFieldMetadataId = buildFieldMapsFromFlatObjectMetadata(
+    flatFieldMetadataMaps,
+    targetObjectMetadata,
+  ).fieldIdByName[targetFieldName];
+  const targetFieldMetadata = isDefined(targetFieldMetadataId)
+    ? findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: targetFieldMetadataId,
+        flatEntityMaps: flatFieldMetadataMaps,
+      })
+    : undefined;
+
+  if (!isDefined(targetFieldMetadata)) {
+    if (strictValidation) {
+      throw new GraphqlQueryRunnerException(
+        `Nested field "${targetFieldName}" not found in target object "${targetObjectMetadata.nameSingular}"`,
+        GraphqlQueryRunnerExceptionCode.FIELD_NOT_FOUND,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+      );
+    }
+
+    return null;
+  }
+
+  if (isCompositeFieldMetadataType(targetFieldMetadata.type)) {
+    const targetCompositeProperty = compositeTypeDefinitions
+      .get(targetFieldMetadata.type)
+      ?.properties.find((property) => property.name === targetPropertyName);
+
+    if (!isDefined(targetCompositeProperty) || extraPath.length > 0) {
+      if (strictValidation) {
+        throwInvalidOrderByInput(
+          `Composite field "${path[0]}.${targetFieldName}" requires one of its sub fields to be ordered`,
+        );
+      }
+
+      return null;
+    }
+
+    return {
+      kind: 'relation',
+      path,
+      direction,
+      fieldMetadata,
+      targetFieldMetadata,
+      targetCompositeProperty,
+    };
+  }
+
+  if (isDefined(targetPropertyName)) {
+    if (strictValidation) {
+      throwInvalidOrderByInput(
+        `Field "${path[0]}.${targetFieldName}" does not support nested ordering`,
+      );
+    }
+
+    return null;
+  }
+
+  return {
+    kind: 'relation',
+    path,
+    direction,
+    fieldMetadata,
+    targetFieldMetadata,
+  };
+};
+
 // Single source of truth for walking an orderBy: every entry is flattened into
 // ordered leaves that carry their own direction, so the SQL ordering, column
 // selection, cursor encoding, cursor validation and keyset conditions all
@@ -90,11 +196,15 @@ const flattenNestedOrderByValue = (
 export const resolveOrderByLeaves = ({
   orderBy,
   flatObjectMetadata,
+  flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   strictValidation = false,
 }: {
   orderBy: ObjectRecordOrderBy | undefined;
   flatObjectMetadata: FlatObjectMetadata;
+  // Needed to resolve relation leaves against their target object; without it
+  // they stay unresolved, which lenient callers tolerate
+  flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   strictValidation?: boolean;
 }): OrderByLeaf[] => {
@@ -158,12 +268,18 @@ export const resolveOrderByLeaves = ({
         for (const { path, direction } of flattenNestedOrderByValue(
           orderByValue,
         )) {
-          pushLeaf({
-            kind: 'relation',
+          const relationLeaf = resolveRelationLeaf({
+            fieldMetadata,
             path: [fieldName, ...path],
             direction,
-            fieldMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            strictValidation,
           });
+
+          if (isDefined(relationLeaf)) {
+            pushLeaf(relationLeaf);
+          }
         }
         continue;
       }

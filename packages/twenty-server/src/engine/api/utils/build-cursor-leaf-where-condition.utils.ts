@@ -1,28 +1,13 @@
-import {
-  buildCursorKeysetCondition,
-  checkIfColumnHasNullEquivalentDefault,
-} from 'src/engine/api/utils/build-cursor-keyset-condition.utils';
+import { buildCursorKeysetCondition } from 'src/engine/api/utils/build-cursor-keyset-condition.utils';
 import { type OrderByLeaf } from 'src/engine/api/utils/resolve-order-by-leaves.utils';
 
-// Composite sub-columns are NOT NULL whenever their type defines a Postgres
-// null-equivalent default; scalar columns additionally honor field nullability.
-const checkIfLeafCanHoldNullValue = (leaf: OrderByLeaf): boolean => {
-  switch (leaf.kind) {
-    case 'composite':
-      return !checkIfColumnHasNullEquivalentDefault(
-        leaf.fieldMetadata.type,
-        leaf.compositeProperty.name,
-      );
-    case 'scalar':
-      return (
-        leaf.fieldMetadata.isNullable !== false &&
-        !checkIfColumnHasNullEquivalentDefault(leaf.fieldMetadata.type)
-      );
-    // A LEFT JOIN can always produce NULLs, whatever the target column's type
-    case 'relation':
-      return true;
-  }
-};
+// SQL NULL can sit in any nullable column whatever its type: write-side
+// normalization stores empty TEXT-like values as NULL, and rows written
+// without the field hold NULL too, so they all sort into the NULL block.
+// Composite sub-columns and joined columns carry no own nullability metadata
+// and are treated as nullable; a needless IS NULL branch matches nothing.
+const checkIfLeafCanHoldNullValue = (leaf: OrderByLeaf): boolean =>
+  leaf.kind === 'scalar' ? leaf.fieldMetadata.isNullable !== false : true;
 
 type BuildCursorLeafWhereConditionParams = {
   leaf: OrderByLeaf;
@@ -31,8 +16,9 @@ type BuildCursorLeafWhereConditionParams = {
   isEqualityCondition: boolean;
 };
 
-// The leaf's path is also its filter nesting: { name: { firstName: { gt: v } } }
-// resolves against the same column the ordering uses.
+// The leaf's path is also its filter nesting: { company: { name: { gt: v } } }
+// resolves against the same column the ordering uses (relation paths through
+// the LEFT JOIN of the ordering, composite paths through the flat sub-column).
 export function buildCursorLeafWhereCondition(
   params: BuildCursorLeafWhereConditionParams & { isEqualityCondition: true },
 ): Record<string, unknown>;

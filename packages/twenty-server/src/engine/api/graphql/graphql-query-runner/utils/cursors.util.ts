@@ -38,12 +38,20 @@ export const encodeCursor = <T extends ObjectRecord = ObjectRecord>({
   objectRecord,
   order,
   flatObjectMetadata,
+  flatObjectMetadataMaps,
   flatFieldMetadataMaps,
+  orderByValuesFromScan,
 }: {
   objectRecord: T;
   order: ObjectRecordOrderBy | undefined;
   flatObjectMetadata: FlatObjectMetadata;
+  flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  // Sort values read from the scan's raw rows by the find-many runner: they
+  // carry the exact SQL values (NULLs included) the continuation must mirror.
+  // Falling back to the formatted record covers callers without them (e.g.
+  // nested connections), whose cursors do not continue a root scan.
+  orderByValuesFromScan?: Record<string, unknown>;
 }): string => {
   // oxlint-disable-next-line typescript/no-explicit-any
   const orderByValues: Record<string, any> = {};
@@ -51,15 +59,27 @@ export const encodeCursor = <T extends ObjectRecord = ObjectRecord>({
   for (const leaf of resolveOrderByLeaves({
     orderBy: order,
     flatObjectMetadata,
+    flatObjectMetadataMaps,
     flatFieldMetadataMaps,
   }).filter(checkIfLeafCanCarryCursorValue)) {
-    // Read the ordered value along the leaf's path (a null or missing
-    // container makes the value undefined, which JSON serialization drops)
+    // Read the ordered value along the leaf's path: a null container yields
+    // null (the row belongs to the NULL block of the ordering), a missing one
+    // yields undefined, which JSON serialization drops
     const [rootKey, ...nestedKeys] = leaf.path;
-    let leafValue: unknown = objectRecord[rootKey];
+    const valueSource = orderByValuesFromScan ?? objectRecord;
+    let leafValue: unknown = valueSource[rootKey];
 
     for (const key of nestedKeys) {
+      if (leafValue === null) {
+        break;
+      }
       leafValue = isPlainObject(leafValue) ? leafValue[key] : undefined;
+    }
+
+    // An unloaded relation cannot contribute a value at all: leave the key out
+    // instead of writing an empty object
+    if (leaf.kind === 'relation' && leafValue === undefined) {
+      continue;
     }
 
     // Write it back under the same path

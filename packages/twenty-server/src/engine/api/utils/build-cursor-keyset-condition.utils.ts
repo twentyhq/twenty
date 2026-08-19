@@ -1,25 +1,6 @@
-import {
-  type FieldMetadataType,
-  type OrderByDirection,
-} from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { type OrderByDirection } from 'twenty-shared/types';
 
-import { findPostgresDefaultNullEquivalentValue } from 'src/engine/api/common/common-args-processors/data-arg-processor/utils/find-postgres-default-null-equivalent-value.util';
 import { getEffectiveScanOrder } from 'src/engine/api/utils/get-effective-scan-order.utils';
-
-// Columns of these types are created NOT NULL with a Postgres default (e.g. ''
-// for TEXT), so they never hold SQL NULL and need no NULL-continuation branch
-export const checkIfColumnHasNullEquivalentDefault = (
-  fieldType: FieldMetadataType,
-  compositeSubFieldKey?: string,
-): boolean =>
-  isDefined(
-    findPostgresDefaultNullEquivalentValue(
-      'NULL',
-      fieldType,
-      compositeSubFieldKey,
-    ),
-  );
 
 type BuildCursorKeysetConditionParams = {
   cursorValue: unknown;
@@ -54,13 +35,15 @@ export function buildCursorKeysetCondition({
   isEqualityCondition,
   canFieldHoldNullValue,
   buildLeafCondition,
+  // The strict operators compare exactly: the empty-value widening of 'is'
+  // and 'eq' does not mirror the SQL scan order the cursor continues
   buildNullCheckCondition = (isNull) =>
-    buildLeafCondition({ is: isNull ? 'NULL' : 'NOT_NULL' }),
+    buildLeafCondition({ isStrictly: isNull ? 'NULL' : 'NOT_NULL' }),
 }: BuildCursorKeysetConditionParams): Record<string, unknown> | null {
   if (isEqualityCondition) {
     return cursorValue === null
       ? buildNullCheckCondition(true)
-      : buildLeafCondition({ eq: cursorValue });
+      : buildLeafCondition({ eqStrict: cursorValue });
   }
 
   const { isAscending, areNullsScannedLast } = getEffectiveScanOrder(
