@@ -79,9 +79,9 @@ export const buildCursorRelationFieldWhereCondition = ({
   }
 
   const [subFieldName] = orderedSubFieldNames;
-  const orderByDirection = (
-    relationOrderByValue as Record<string, unknown>
-  )[subFieldName];
+  const orderByDirection = (relationOrderByValue as Record<string, unknown>)[
+    subFieldName
+  ];
 
   if (!isOrderByDirection(orderByDirection)) {
     return throwInvalidCursor(
@@ -156,7 +156,9 @@ export const buildCursorRelationFieldWhereCondition = ({
   }
 
   const mainCondition = {
-    [relationFieldName]: { [subFieldName]: { [computedOperator]: subFieldValue } },
+    [relationFieldName]: {
+      [subFieldName]: { [computedOperator]: subFieldValue },
+    },
   };
 
   if (areNullsScannedAfter) {

@@ -350,7 +350,12 @@ describe('Order by relation field (e2e)', () => {
             $filter: PersonFilterInput
             $after: String
           ) {
-            people(orderBy: $orderBy, filter: $filter, first: 3, after: $after) {
+            people(
+              orderBy: $orderBy
+              filter: $filter
+              first: 3
+              after: $after
+            ) {
               edges {
                 node {
                   id
@@ -406,7 +411,10 @@ describe('Order by relation field (e2e)', () => {
   it('should return an actionable error when paginating without the ordered relation field selected', async () => {
     const firstPageResponse = await makeGraphqlAPIRequest({
       query: gql`
-        query People($orderBy: [PersonOrderByInput], $filter: PersonFilterInput) {
+        query People(
+          $orderBy: [PersonOrderByInput]
+          $filter: PersonFilterInput
+        ) {
           people(orderBy: $orderBy, filter: $filter, first: 3) {
             edges {
               node {

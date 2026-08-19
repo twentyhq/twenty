@@ -613,7 +613,6 @@ describe('computeCursorArgFilter', () => {
     });
   });
 
-
   describe('relation orderBy cursor continuation', () => {
     const relationOrderBy = [
       { company: { name: OrderByDirection.AscNullsLast } },
