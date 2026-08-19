@@ -14,8 +14,6 @@ import { type EventStreamMetadataEvent } from 'src/engine/subscriptions/types/ev
 
 const RECORD_KEYS = ['before', 'after'] as const;
 
-// Event records are untyped bags, so the application a record belongs to has to
-// be read defensively -- in the same way at both call sites.
 const readRecordApplicationId = (
   record: EventStreamMetadataEvent['properties'][(typeof RECORD_KEYS)[number]],
 ): string | undefined =>
@@ -51,7 +49,6 @@ export class MetadataEventResolutionService {
       isTranslatableMetadataName(metadataEvent.metadataName),
     );
 
-    // Most batches have nothing to resolve; they return without a cache read.
     const carriesOverrides = metadataEvents.some((metadataEvent) =>
       RECORD_KEYS.some((key) =>
         recordCarriesOverrides(metadataEvent.properties[key]),
@@ -90,8 +87,6 @@ export class MetadataEventResolutionService {
         : undefined,
     });
 
-    // Only NAVIGATION command menu items interpolate against another entity, so
-    // the object maps are fetched only when such an event is actually present.
     const flatObjectMetadataMaps = metadataEvents.some(
       (metadataEvent) => metadataEvent.metadataName === 'commandMenuItem',
     )
