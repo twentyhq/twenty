@@ -107,7 +107,7 @@ const findTimelineActivityRowsByLinkedRecordId = async ({
 }: {
   name: string;
   linkedRecordId: string;
-}): Promise<TimelineActivityRow[]> =>
+}): Promise<Pick<TimelineActivityRow, 'targetCompanyId' | 'targetNoteId'>[]> =>
   global.testDataSource.query(
     `SELECT "targetCompanyId", "targetNoteId" FROM "${TEST_SCHEMA_NAME}"."timelineActivity" WHERE name = $1 AND "linkedRecordId" = $2`,
     [name, linkedRecordId],
