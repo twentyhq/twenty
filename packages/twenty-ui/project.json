@@ -6,9 +6,46 @@
   "tags": ["scope:shared"],
   "targets": {
     "build": { "dependsOn": ["^build"], "outputs": ["{projectRoot}/dist"] },
+    "generateTokens": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/design-tokens/**/*",
+        "{projectRoot}/scripts/generateThemeTokens.ts",
+        "{workspaceRoot}/.oxfmtrc.jsonc"
+      ],
+      "outputs": [
+        "{projectRoot}/src/theme-constants/theme-light.css",
+        "{projectRoot}/src/theme-constants/theme-dark.css",
+        "{projectRoot}/src/theme-constants/themeCssVariables.ts",
+        "{projectRoot}/src/theme-constants/themeTypes.generated.ts",
+        "{projectRoot}/src/tokens/tokensLight.ts",
+        "{projectRoot}/src/tokens/tokensDark.ts",
+        "{projectRoot}/dist/theme-light.css",
+        "{projectRoot}/dist/theme-dark.css",
+        "{projectRoot}/generated/tokens.docs.json"
+      ],
+      "options": {
+        "command": "tsx {projectRoot}/scripts/generateThemeTokens.ts"
+      }
+    },
+    "generate:check": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "commands": [
+          "tsx packages/twenty-ui/scripts/generateThemeTokens.ts",
+          "tsx packages/twenty-ui/scripts/generateBarrels.ts",
+          "git diff --exit-code -- packages/twenty-ui",
+          "test -z \"$(git status --porcelain -- packages/twenty-ui)\""
+        ],
+        "parallel": false
+      }
+    },
     "generateBarrels": {
       "executor": "nx:run-commands",
       "cache": true,
+      "dependsOn": ["generateTokens"],
       "inputs": ["production", "{projectRoot}/scripts/generateBarrels.ts"],
       "outputs": [
         "{projectRoot}/src/index.ts",

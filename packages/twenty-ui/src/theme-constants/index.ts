@@ -10,13 +10,10 @@
 export { MOBILE_VIEWPORT } from './constants';
 export { getNextThemeColor } from './getNextThemeColor';
 export { themeCssVariables } from './themeCssVariables';
-export type {
-  ThemeType,
-  ThemeContextType,
-  ThemeOverrides,
-} from './ThemeProvider';
+export type { ThemeContextType, ThemeOverrides } from './ThemeProvider';
 export { ThemeContext, ThemeProvider } from './ThemeProvider';
 export { ThemeScopeContext } from './ThemeScopeContext';
+export type { ThemeType } from './themeTypes.generated';
 export { useTheme } from './useTheme';
 export { useThemeColorScheme } from './useThemeColorScheme';
 export { useThemeContainer } from './useThemeContainer';

@@ -18,5 +18,6 @@ export * from './navigation';
 export * from './surfaces';
 export * from './theme';
 export * from './theme-constants';
+export * from './tokens';
 export * from './typography';
 export * from './utilities';

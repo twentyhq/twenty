@@ -5,46 +5,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { ThemeScopeContext } from './ThemeScopeContext';
 import { themeCssVariables } from './themeCssVariables';
-
-type StringLeaves<T> = {
-  [K in keyof T]: T[K] extends string ? string : StringLeaves<T[K]>;
-};
-
-type DeepMerge<T, U> = {
-  [K in keyof T]: K extends keyof U
-    ? U[K] extends Record<string, unknown>
-      ? T[K] extends Record<string, unknown>
-        ? DeepMerge<T[K], U[K]>
-        : U[K]
-      : U[K]
-    : T[K];
-};
-
-// CSS variables that resolve to pure numbers at runtime
-type NumericOverrides = {
-  icon: {
-    size: { sm: number; md: number; lg: number; xl: number };
-    stroke: { sm: number; md: number; lg: number };
-  };
-  animation: {
-    duration: { instant: number; fast: number; normal: number; slow: number };
-  };
-  text: {
-    lineHeight: { lg: number; md: number };
-    iconSizeMedium: number;
-    iconSizeSmall: number;
-    iconStrikeLight: number;
-    iconStrikeMedium: number;
-    iconStrikeBold: number;
-  };
-  spacingMultiplicator: number;
-  lastLayerZIndex: number;
-};
-
-export type ThemeType = DeepMerge<
-  StringLeaves<typeof themeCssVariables>,
-  NumericOverrides
->;
+import { type ThemeType } from './themeTypes.generated';
 
 export type ThemeContextType = {
   theme: ThemeType;

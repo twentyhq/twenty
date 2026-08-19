@@ -175,6 +175,11 @@
       "import": "./dist/theme-constants.mjs",
       "require": "./dist/theme-constants.cjs"
     },
+    "./tokens": {
+      "types": "./dist/tokens/index.d.ts",
+      "import": "./dist/tokens.mjs",
+      "require": "./dist/tokens.cjs"
+    },
     "./typography": {
       "types": "./dist/typography/index.d.ts",
       "import": "./dist/typography.mjs",
@@ -229,6 +234,9 @@
       ],
       "theme-constants": [
         "dist/theme-constants/index.d.ts"
+      ],
+      "tokens": [
+        "dist/tokens/index.d.ts"
       ],
       "typography": [
         "dist/typography/index.d.ts"

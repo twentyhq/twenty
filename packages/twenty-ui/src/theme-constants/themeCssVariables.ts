@@ -1,5 +1,5 @@
-// Theme CSS variable accessor, mirrored token-for-token from twenty-ui.
-// Kept in sync by the theme parity test (src/theme-constants/__tests__).
+// Generated from design-tokens by scripts/generateThemeTokens.ts.
+// Do not edit manually. Regenerate with: npx nx generateTokens twenty-ui.
 export const themeCssVariables = {
   icon: {
     size: {
