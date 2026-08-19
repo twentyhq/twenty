@@ -1,5 +1,4 @@
 import { getTimelineActivityRuleUniversalIdentifier } from 'twenty-shared/application';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { v4 } from 'uuid';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -21,44 +20,43 @@ export const buildStandardFlatTimelineActivityRuleMaps = ({
   let flatTimelineActivityRuleMaps = createEmptyFlatEntityMaps();
 
   for (const standardRule of STANDARD_TIMELINE_ACTIVITY_RULES) {
-    const { objectName, relationFieldName, actions, triggerFieldNames } =
-      standardRule;
+    const {
+      objectName,
+      relationFieldName,
+      actions,
+      triggerFieldNames,
+      objectUniversalIdentifier,
+      relationFieldUniversalIdentifier,
+    } = standardRule;
 
-    const objectDefinition = STANDARD_OBJECTS[objectName];
-    const objectFields = objectDefinition.fields;
-
-    const objectMetadataUniversalIdentifier =
-      objectDefinition.universalIdentifier;
     const flatObjectMetadata =
       findFlatEntityByUniversalIdentifierOrThrow<UniversalFlatObjectMetadata>({
-        universalIdentifier: objectMetadataUniversalIdentifier,
+        universalIdentifier: objectUniversalIdentifier,
         flatEntityMaps: flatObjectMetadataMaps,
       });
 
     const relatedEntityIds = standardObjectMetadataRelatedEntityIds[objectName];
-
-    const relationFieldMetadataUniversalIdentifier =
-      objectFields[relationFieldName as keyof typeof objectFields]
-        .universalIdentifier;
 
     const flatTimelineActivityRule: FlatTimelineActivityRule = {
       id: v4(),
       universalIdentifier: getTimelineActivityRuleUniversalIdentifier({
         applicationUniversalIdentifier:
           flatObjectMetadata.applicationUniversalIdentifier,
-        objectMetadataUniversalIdentifier,
-        relationFieldMetadataUniversalIdentifier,
+        objectMetadataUniversalIdentifier: objectUniversalIdentifier,
+        relationFieldMetadataUniversalIdentifier:
+          relationFieldUniversalIdentifier,
       }),
       applicationId: twentyStandardApplicationId,
       applicationUniversalIdentifier:
         flatObjectMetadata.applicationUniversalIdentifier,
       objectMetadataId: relatedEntityIds.id,
-      objectMetadataUniversalIdentifier,
+      objectMetadataUniversalIdentifier: objectUniversalIdentifier,
       relationFieldMetadataId:
         relatedEntityIds.fields[
           relationFieldName as keyof typeof relatedEntityIds.fields
         ].id,
-      relationFieldMetadataUniversalIdentifier,
+      relationFieldMetadataUniversalIdentifier:
+        relationFieldUniversalIdentifier,
       resolution: 'MATERIALIZED',
       actions: [...actions],
       triggerFieldMetadataIds: triggerFieldNames.map(

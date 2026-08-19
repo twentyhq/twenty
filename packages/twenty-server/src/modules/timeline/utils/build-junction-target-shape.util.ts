@@ -1,7 +1,7 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
+import { getJoinColumnNameForRelationFlatFieldMetadata } from 'src/engine/metadata-modules/field-metadata/utils/get-join-column-name-for-relation-flat-field-metadata.util';
 import { isFieldMetadataSettingsOfType } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -18,23 +18,6 @@ type BuildJunctionTargetShapeArgs = {
   relationFlatFieldMetadata: FlatFieldMetadata;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-};
-
-// The ORM derives relation columns from the field name, so fall back to it
-// rather than dropping a rule when settings carry no explicit join column.
-const getJoinColumnName = (flatFieldMetadata: FlatFieldMetadata): string => {
-  const { settings } = flatFieldMetadata;
-
-  if (
-    isFieldMetadataSettingsOfType(settings, FieldMetadataType.RELATION) &&
-    isDefined(settings.joinColumnName)
-  ) {
-    return settings.joinColumnName;
-  }
-
-  return computeMorphOrRelationFieldJoinColumnName({
-    name: flatFieldMetadata.name,
-  });
 };
 
 // A junction relation is a ONE_TO_MANY field declaring, through
@@ -92,9 +75,10 @@ export const buildJunctionTargetShape = ({
     return undefined;
   }
 
-  const junctionSourceJoinColumnName = getJoinColumnName(
-    junctionSourceFlatFieldMetadata,
-  );
+  const junctionSourceJoinColumnName =
+    getJoinColumnNameForRelationFlatFieldMetadata(
+      junctionSourceFlatFieldMetadata,
+    );
 
   const junctionTargetFlatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: junctionTargetFieldId,
@@ -139,7 +123,8 @@ export const buildJunctionTargetShape = ({
         }
 
         return {
-          joinColumnName: getJoinColumnName(flatFieldMetadata),
+          joinColumnName:
+            getJoinColumnNameForRelationFlatFieldMetadata(flatFieldMetadata),
           targetObjectNameSingular: targetFlatObjectMetadata.nameSingular,
         };
       },

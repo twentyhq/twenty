@@ -1,18 +1,19 @@
 import { Test } from '@nestjs/testing';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { TimelineActivityRuleResolverService } from 'src/modules/timeline/services/timeline-activity-rule-resolver.service';
 
 const WORKSPACE_ID = 'workspace-id';
 const COMPANY_OBJECT_ID = 'company-object-id';
 
-const companyFlatObjectMetadata = {
+const companyFlatObjectMetadata = getFlatObjectMetadataMock({
+  universalIdentifier: 'company-universal-identifier',
   id: COMPANY_OBJECT_ID,
   nameSingular: 'company',
   isAuditLogged: true,
   isSystem: false,
-} as unknown as FlatObjectMetadata;
+});
 
 const buildMaps = (
   entities: { universalIdentifier: string; id: string }[] = [],
@@ -120,7 +121,7 @@ describe('TimelineActivityRuleResolverService', () => {
       flatObjectMetadata: {
         ...companyFlatObjectMetadata,
         isSystem: true,
-      } as FlatObjectMetadata,
+      },
     });
 
     expect(sourceRules).toHaveLength(0);

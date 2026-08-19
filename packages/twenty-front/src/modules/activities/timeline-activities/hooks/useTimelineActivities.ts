@@ -3,6 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { useLinkedObjectsTitle } from '@/activities/timeline-activities/hooks/useLinkedObjectsTitle';
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { getTimelineActivityRecordGqlFields } from '@/activities/timeline-activities/utils/getTimelineActivityRecordGqlFields';
+import { getTimelineActivityTargetObjectMetadataList } from '@/activities/timeline-activities/utils/getTimelineActivityTargetObjectMetadataList';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -49,14 +50,12 @@ export const useTimelineActivities = (
       objectMetadataItem.nameSingular === CoreObjectNameSingular.Task,
   );
 
-  const hasTimelineActivityField = timelineActivityMetadata.fields.some(
-    (field) =>
-      isDefined(field.morphRelations) &&
-      field.morphRelations.some(
-        (morphRelation) =>
-          morphRelation.targetObjectMetadata?.nameSingular ===
-          targetableObject.targetObjectNameSingular,
-      ),
+  const hasTimelineActivityField = getTimelineActivityTargetObjectMetadataList(
+    timelineActivityMetadata.fields,
+  ).some(
+    (targetObjectMetadata) =>
+      targetObjectMetadata?.nameSingular ===
+      targetableObject.targetObjectNameSingular,
   );
 
   const recordGqlFields = useMemo(

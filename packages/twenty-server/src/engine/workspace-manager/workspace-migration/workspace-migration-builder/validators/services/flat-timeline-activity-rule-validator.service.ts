@@ -80,11 +80,11 @@ export class FlatTimelineActivityRuleValidatorService {
       flatTimelineActivityRule.relationFieldMetadataUniversalIdentifier;
 
     if (!isDefined(relationFieldUniversalIdentifier)) {
-      const linkActions = (flatTimelineActivityRule.actions ?? []).filter(
+      const hasLinkAction = (flatTimelineActivityRule.actions ?? []).some(
         (action) => action === 'linked' || action === 'unlinked',
       );
 
-      if (linkActions.length > 0) {
+      if (hasLinkAction) {
         errors.push({
           code: TimelineActivityRuleExceptionCode.INVALID_TIMELINE_ACTIVITY_RULE_INPUT,
           message: t`A self rule cannot emit linked or unlinked entries`,

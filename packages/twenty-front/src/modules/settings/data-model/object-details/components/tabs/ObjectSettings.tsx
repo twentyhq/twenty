@@ -20,6 +20,7 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { styled } from '@linaria/react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
+import { useMemo } from 'react';
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { IconArchive, IconTrash } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
@@ -73,10 +74,19 @@ export const ObjectSettings = ({
     FeatureFlagKey.IS_TIMELINE_RULES_ENABLED,
   );
 
+  const objectHasTimelineActivities = useMemo(
+    () =>
+      getObjectHasTimelineActivities({
+        objectMetadataItem,
+        objectMetadataItems,
+      }),
+    [objectMetadataItem, objectMetadataItems],
+  );
+
   const shouldShowTimelineSection =
     isTimelineRulesEnabled &&
     !objectMetadataItem.isRemote &&
-    getObjectHasTimelineActivities({ objectMetadataItem, objectMetadataItems });
+    objectHasTimelineActivities;
 
   const isReadOnly =
     isObjectMetadataReadOnly({ objectMetadataItem }) || isDDLLocked;
