@@ -4,10 +4,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatTimelineActivityRule } from 'src/engine/metadata-modules/flat-timeline-activity-rule/types/flat-timeline-activity-rule.type';
+import { findSelfOverrideFlatTimelineActivityRule } from 'src/engine/metadata-modules/timeline-activity-rule/utils/find-self-override-flat-timeline-activity-rule.util';
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
 import { buildJunctionTargetShape } from 'src/modules/timeline/utils/build-junction-target-shape.util';
 import { deriveDefaultTimelineActivityRule } from 'src/modules/timeline/utils/derive-default-timeline-activity-rule.util';
@@ -62,6 +64,27 @@ export class TimelineActivityRuleResolverService {
           flatRule.resolution === 'MATERIALIZED' &&
           isDefined(flatRule.relationFieldMetadataId),
       )
+      // Only rules whose source or junction is the batch object can match, so
+      // the target shape of every other rule is never built.
+      .filter((flatRule) => {
+        if (flatRule.objectMetadataId === flatObjectMetadata.id) {
+          return true;
+        }
+
+        const relationFlatFieldMetadata = isDefined(
+          flatRule.relationFieldMetadataId,
+        )
+          ? findFlatEntityByIdInFlatEntityMaps({
+              flatEntityId: flatRule.relationFieldMetadataId,
+              flatEntityMaps: flatFieldMetadataMaps,
+            })
+          : undefined;
+
+        return (
+          relationFlatFieldMetadata?.relationTargetObjectMetadataId ===
+          flatObjectMetadata.id
+        );
+      })
       .map((flatRule) =>
         this.buildRelationRule({
           flatRule,
@@ -111,12 +134,10 @@ export class TimelineActivityRuleResolverService {
       return undefined;
     }
 
-    const selfOverrideFlatRule = persistedFlatRules.find(
-      (flatRule) =>
-        flatRule.objectMetadataId === flatObjectMetadata.id &&
-        !isDefined(flatRule.relationFieldMetadataId) &&
-        flatRule.resolution === 'MATERIALIZED',
-    );
+    const selfOverrideFlatRule = findSelfOverrideFlatTimelineActivityRule({
+      persistedFlatRules,
+      objectMetadataId: flatObjectMetadata.id,
+    });
 
     if (!isDefined(selfOverrideFlatRule)) {
       return derivedSelfRule;
@@ -200,14 +221,9 @@ export class TimelineActivityRuleResolverService {
       return null;
     }
 
-    return triggerFieldMetadataIds
-      .map(
-        (triggerFieldMetadataId) =>
-          findFlatEntityByIdInFlatEntityMaps({
-            flatEntityId: triggerFieldMetadataId,
-            flatEntityMaps: flatFieldMetadataMaps,
-          })?.name,
-      )
-      .filter(isDefined);
+    return findManyFlatEntityByIdInFlatEntityMaps({
+      flatEntityIds: triggerFieldMetadataIds,
+      flatEntityMaps: flatFieldMetadataMaps,
+    }).map((flatFieldMetadata) => flatFieldMetadata.name);
   }
 }

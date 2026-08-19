@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { type ObjectRecordBaseEvent } from 'twenty-shared/database-events';
+import { type TimelineActivityAction } from 'twenty-shared/timeline';
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 import { isNonEmptyString } from '@sniptt/guards';
 import { fromArrayToValuesByKeyRecord, isDefined } from 'twenty-shared/utils';
@@ -25,16 +26,13 @@ import {
 } from 'src/modules/timeline/services/timeline-activity-target-resolver.service';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload';
-import {
-  type TimelineActivityRule,
-  type TimelineActivityRuleAction,
-} from 'src/modules/timeline/types/timeline-activity-rule.type';
+import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 // An event on the junction object is a change to the link, not to the linked
 // record. `updated` covers a junction row being repointed at another target.
 const JUNCTION_EVENT_ACTIONS: Partial<
-  Record<DatabaseEventAction, TimelineActivityRuleAction>
+  Record<DatabaseEventAction, TimelineActivityAction>
 > = {
   created: 'linked',
   restored: 'linked',
@@ -43,7 +41,7 @@ const JUNCTION_EVENT_ACTIONS: Partial<
 };
 
 const SOURCE_EVENT_ACTIONS: Partial<
-  Record<DatabaseEventAction, TimelineActivityRuleAction>
+  Record<DatabaseEventAction, TimelineActivityAction>
 > = {
   created: 'created',
   updated: 'updated',
@@ -65,7 +63,7 @@ const buildLinkedPayload = ({
 }: {
   rule: TimelineActivityRule;
   action: DatabaseEventAction;
-  ruleAction: TimelineActivityRuleAction;
+  ruleAction: TimelineActivityAction;
   target: ResolvedTimelineActivityTarget;
   workspaceMemberId: string | undefined;
   linkedRecordId: string;
@@ -181,7 +179,7 @@ export class TimelineActivityService {
     event,
   }: {
     rule: TimelineActivityRule;
-    ruleAction: TimelineActivityRuleAction;
+    ruleAction: TimelineActivityAction;
     event: ObjectRecordBaseEvent;
   }): boolean {
     if (!rule.actions.includes(ruleAction)) {

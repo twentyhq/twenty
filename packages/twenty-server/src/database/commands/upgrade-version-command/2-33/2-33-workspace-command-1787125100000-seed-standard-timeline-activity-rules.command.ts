@@ -1,7 +1,6 @@
 import { Command } from 'nest-commander';
 
 import { getTimelineActivityRuleUniversalIdentifier } from 'twenty-shared/application';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -56,22 +55,20 @@ export class SeedStandardTimelineActivityRulesCommand extends ProvisionedWorkspa
     const flatTimelineActivityRulesToCreate: FlatTimelineActivityRule[] = [];
 
     for (const standardRule of STANDARD_TIMELINE_ACTIVITY_RULES) {
-      const { objectName, relationFieldName, actions, triggerFieldNames } =
-        standardRule;
-
-      const objectDefinition = STANDARD_OBJECTS[objectName];
-      const objectFields = objectDefinition.fields as Record<
-        string,
-        { universalIdentifier: string }
-      >;
+      const {
+        objectName,
+        relationFieldName,
+        actions,
+        objectUniversalIdentifier,
+        relationFieldUniversalIdentifier,
+        triggerFieldUniversalIdentifiers,
+      } = standardRule;
 
       const flatObjectMetadata =
-        flatObjectMetadataMaps.byUniversalIdentifier[
-          objectDefinition.universalIdentifier
-        ];
+        flatObjectMetadataMaps.byUniversalIdentifier[objectUniversalIdentifier];
       const relationFlatFieldMetadata =
         flatFieldMetadataMaps.byUniversalIdentifier[
-          objectFields[relationFieldName].universalIdentifier
+          relationFieldUniversalIdentifier
         ];
 
       if (
@@ -87,9 +84,9 @@ export class SeedStandardTimelineActivityRulesCommand extends ProvisionedWorkspa
       const universalIdentifier = getTimelineActivityRuleUniversalIdentifier({
         applicationUniversalIdentifier:
           twentyStandardFlatApplication.universalIdentifier,
-        objectMetadataUniversalIdentifier: objectDefinition.universalIdentifier,
+        objectMetadataUniversalIdentifier: objectUniversalIdentifier,
         relationFieldMetadataUniversalIdentifier:
-          objectFields[relationFieldName].universalIdentifier,
+          relationFieldUniversalIdentifier,
       });
 
       if (
@@ -102,11 +99,11 @@ export class SeedStandardTimelineActivityRulesCommand extends ProvisionedWorkspa
         continue;
       }
 
-      const triggerFieldMetadataIds = triggerFieldNames
+      const triggerFieldMetadataIds = triggerFieldUniversalIdentifiers
         .map(
-          (triggerFieldName) =>
+          (triggerFieldUniversalIdentifier) =>
             flatFieldMetadataMaps.byUniversalIdentifier[
-              objectFields[triggerFieldName].universalIdentifier
+              triggerFieldUniversalIdentifier
             ]?.id,
         )
         .filter(isDefined);
@@ -118,11 +115,10 @@ export class SeedStandardTimelineActivityRulesCommand extends ProvisionedWorkspa
         applicationUniversalIdentifier:
           twentyStandardFlatApplication.universalIdentifier,
         objectMetadataId: flatObjectMetadata.id,
-        objectMetadataUniversalIdentifier:
-          objectDefinition.universalIdentifier,
+        objectMetadataUniversalIdentifier: objectUniversalIdentifier,
         relationFieldMetadataId: relationFlatFieldMetadata.id,
         relationFieldMetadataUniversalIdentifier:
-          objectFields[relationFieldName].universalIdentifier,
+          relationFieldUniversalIdentifier,
         resolution: 'MATERIALIZED',
         actions: [...actions],
         triggerFieldMetadataIds,

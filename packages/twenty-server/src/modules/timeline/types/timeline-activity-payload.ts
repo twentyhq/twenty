@@ -1,6 +1,6 @@
 import { type ObjectRecordBaseEvent } from 'twenty-shared/database-events';
 
-import { type TimelineActivityRuleAction } from 'src/modules/timeline/types/timeline-activity-rule.type';
+import { type TimelineActivityAction } from 'twenty-shared/timeline';
 
 export type TimelineActivityPayload = {
   properties: ObjectRecordBaseEvent['properties'];
@@ -11,7 +11,7 @@ export type TimelineActivityPayload = {
   name: string;
   // Authoritative action. `name` keeps the legacy string format for readers that
   // still parse it
-  action: TimelineActivityRuleAction;
+  action: TimelineActivityAction;
   sourceObjectMetadataId: string;
   recordId: string;
   objectSingularName?: string;
