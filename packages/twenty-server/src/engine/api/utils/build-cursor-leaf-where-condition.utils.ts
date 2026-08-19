@@ -38,9 +38,11 @@ export function buildCursorLeafWhereCondition({
     isEqualityCondition,
     canFieldHoldNullValue: checkIfLeafCanHoldNullValue(leaf),
     buildLeafCondition: (leafFilter) =>
-      leaf.path.reduceRight<Record<string, unknown>>(
-        (nested, key) => ({ [key]: nested }),
-        leafFilter,
-      ),
+      leaf.path.length === 1
+        ? { [leaf.path[0]]: leafFilter }
+        : leaf.path.reduceRight<Record<string, unknown>>(
+            (nested, key) => ({ [key]: nested }),
+            leafFilter,
+          ),
   });
 }
