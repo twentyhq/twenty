@@ -1,4 +1,5 @@
 import { type ObjectRecord } from 'twenty-shared/types';
+import { isPlainObject } from 'twenty-shared/utils';
 
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -8,7 +9,10 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
-import { resolveOrderByFields } from 'src/engine/api/utils/resolve-order-by-fields.utils';
+import {
+  checkIfLeafCanCarryCursorValue,
+  resolveOrderByLeaves,
+} from 'src/engine/api/utils/resolve-order-by-leaves.utils';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -44,39 +48,28 @@ export const encodeCursor = <T extends ObjectRecord = ObjectRecord>({
   // oxlint-disable-next-line typescript/no-explicit-any
   const orderByValues: Record<string, any> = {};
 
-  for (const resolvedOrderByField of resolveOrderByFields({
+  for (const leaf of resolveOrderByLeaves({
     orderBy: order,
     flatObjectMetadata,
     flatFieldMetadataMaps,
-  })) {
-    const { fieldName } = resolvedOrderByField;
+  }).filter(checkIfLeafCanCarryCursorValue)) {
+    // Read the ordered value along the leaf's path (a null or missing
+    // container makes the value undefined, which JSON serialization drops)
+    const [rootKey, ...nestedKeys] = leaf.path;
+    let leafValue: unknown = objectRecord[rootKey];
 
-    switch (resolvedOrderByField.kind) {
-      // Relation orderBy values are not carried by cursors: embedding the loaded
-      // related record produced oversized cursors that cannot be turned back into
-      // a keyset condition on the root table
-      case 'relation':
-        break;
-      case 'composite': {
-        const recordCompositeValue = objectRecord[fieldName] as
-          | Record<string, unknown>
-          | null
-          | undefined;
-        const existingCompositeValue: Record<string, unknown> =
-          orderByValues[fieldName] ?? {};
-
-        for (const property of resolvedOrderByField.orderedCompositeProperties) {
-          existingCompositeValue[property.name] =
-            recordCompositeValue?.[property.name];
-        }
-
-        orderByValues[fieldName] = existingCompositeValue;
-        break;
-      }
-      case 'scalar':
-        orderByValues[fieldName] = objectRecord[fieldName];
-        break;
+    for (const key of nestedKeys) {
+      leafValue = isPlainObject(leafValue) ? leafValue[key] : undefined;
     }
+
+    // Write it back under the same path
+    let container = orderByValues;
+
+    for (const key of leaf.path.slice(0, -1)) {
+      container[key] = isPlainObject(container[key]) ? container[key] : {};
+      container = container[key];
+    }
+    container[leaf.path[leaf.path.length - 1]] = leafValue;
   }
 
   const cursorData: CursorData = {

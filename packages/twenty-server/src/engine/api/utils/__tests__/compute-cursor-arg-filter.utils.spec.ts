@@ -220,25 +220,21 @@ describe('computeCursorArgFilter', () => {
 
       expect(result).toEqual([
         {
-          or: [
+          fullName: {
+            firstName: { gt: 'John' },
+          },
+        },
+        {
+          and: [
             {
               fullName: {
-                firstName: { gt: 'John' },
+                firstName: { eq: 'John' },
               },
             },
             {
-              and: [
-                {
-                  fullName: {
-                    firstName: { eq: 'John' },
-                  },
-                },
-                {
-                  fullName: {
-                    lastName: { gt: 'Doe' },
-                  },
-                },
-              ],
+              fullName: {
+                lastName: { gt: 'Doe' },
+              },
             },
           ],
         },
@@ -342,25 +338,21 @@ describe('computeCursorArgFilter', () => {
 
       expect(result).toEqual([
         {
-          or: [
+          fullName: {
+            firstName: { lt: 'John' },
+          },
+        },
+        {
+          and: [
             {
               fullName: {
-                firstName: { lt: 'John' },
+                firstName: { eq: 'John' },
               },
             },
             {
-              and: [
-                {
-                  fullName: {
-                    firstName: { eq: 'John' },
-                  },
-                },
-                {
-                  fullName: {
-                    lastName: { lt: 'Doe' },
-                  },
-                },
-              ],
+              fullName: {
+                lastName: { lt: 'Doe' },
+              },
             },
           ],
         },

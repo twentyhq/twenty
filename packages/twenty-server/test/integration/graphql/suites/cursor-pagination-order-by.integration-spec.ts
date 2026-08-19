@@ -275,6 +275,40 @@ describe('Cursor pagination exhaustiveness with orderBy (issue #24333)', () => {
 
     expect(ids).toEqual(datedOpportunityIds.slice(2));
   });
+
+  // Canonical lowercase UUID strings sort the same way in JS and in Postgres,
+  // so the expected order can be computed with a plain string sort
+  it('should honor an explicit descending id ordering across pages', async () => {
+    const { ids } = await paginateForward({
+      orderBy: { id: 'DescNullsLast' },
+    });
+
+    expect(ids).toEqual(
+      [...datedOpportunityIds, ...nullCloseDateOpportunityIds].sort().reverse(),
+    );
+  });
+
+  it('should tie-break with an explicit descending id inside the NULL block', async () => {
+    const { ids } = await paginateForward({
+      orderBy: [{ closeDate: 'AscNullsLast' }, { id: 'DescNullsLast' }],
+    });
+
+    expect(ids).toEqual([
+      ...datedOpportunityIds,
+      ...[...nullCloseDateOpportunityIds].sort().reverse(),
+    ]);
+  });
+
+  it('should keep the first direction when the same field is ordered twice', async () => {
+    const { ids } = await paginateForward({
+      orderBy: [{ closeDate: 'AscNullsLast' }, { closeDate: 'DescNullsFirst' }],
+    });
+
+    expect(ids.slice(0, DATED_CLOSE_DATES.length)).toEqual(datedOpportunityIds);
+    expect(new Set(ids.slice(DATED_CLOSE_DATES.length))).toEqual(
+      new Set(nullCloseDateOpportunityIds),
+    );
+  });
 });
 
 describe('Cursor pagination with composite orderBy not in the selection set', () => {

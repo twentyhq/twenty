@@ -41,9 +41,9 @@ import { buildOrderByColumnsToSelect } from 'src/engine/api/graphql/graphql-quer
 import { getCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
 import {
-  countRelationFieldsInOrderBy,
-  hasRelationFieldInOrderBy,
-} from 'src/engine/api/utils/validate-and-get-order-by.utils';
+  buildOrderByFromLeaves,
+  resolveOrderByLeaves,
+} from 'src/engine/api/utils/resolve-order-by-leaves.utils';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -91,31 +91,26 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       appliedFilters,
     );
 
-    const orderByWithIdCondition = [
-      ...(args.orderBy ?? []),
-      { id: OrderByDirection.AscNullsFirst },
-    ] as ObjectRecordOrderBy;
+    // Normalizing to deduplicated leaves makes the appended id tie-breaker
+    // yield to a caller-provided id ordering, and guarantees the SQL scan
+    // order and the keyset conditions derive from the same list
+    const orderByWithIdCondition = buildOrderByFromLeaves(
+      resolveOrderByLeaves({
+        orderBy: [
+          ...(args.orderBy ?? []),
+          { id: OrderByDirection.AscNullsFirst },
+        ] as ObjectRecordOrderBy,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+        strictValidation: true,
+      }),
+    );
 
     const isForwardPagination = !isDefined(args.before);
 
     const cursor = getCursor(args);
 
     if (cursor) {
-      if (
-        hasRelationFieldInOrderBy(
-          args.orderBy ?? [],
-          flatObjectMetadata,
-          flatFieldMetadataMaps,
-        )
-      ) {
-        // Not throwing exception because still used on record show page
-        /* throw new GraphqlQueryRunnerException(
-          'Cursor-based pagination is not supported with relation field ordering. Use offset pagination instead.',
-          GraphqlQueryRunnerExceptionCode.INVALID_CURSOR,
-          { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
-        ); */
-      }
-
       const cursorArgFilter = computeCursorArgFilter({
         cursor,
         orderBy: orderByWithIdCondition,
@@ -367,11 +362,11 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 
     const { flatObjectMetadata, flatFieldMetadataMaps } = queryRunnerContext;
 
-    const orderByRelationCount = countRelationFieldsInOrderBy(
-      args.orderBy ?? [],
+    const orderByRelationCount = resolveOrderByLeaves({
+      orderBy: args.orderBy ?? [],
       flatObjectMetadata,
       flatFieldMetadataMaps,
-    );
+    }).filter((leaf) => leaf.kind === 'relation').length;
 
     return baseComplexity + orderByRelationCount;
   }
