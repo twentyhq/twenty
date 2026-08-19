@@ -1,7 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { generateMessageId } from 'twenty-shared/i18n';
+import {
+  generateMessageId,
+  METADATA_LABEL_PLACEHOLDER_PASS_THROUGH,
+} from 'twenty-shared/i18n';
 
 import { type MessageIdTranslator } from 'src/engine/metadata-modules/utils/message-id-translator.type';
 
@@ -31,7 +34,10 @@ export const translateStandardLabel = ({
   }
 
   if (isStandardApp) {
-    const translatedMessage = i18nInstance._(messageId);
+    const translatedMessage = i18nInstance._(
+      messageId,
+      METADATA_LABEL_PLACEHOLDER_PASS_THROUGH,
+    );
 
     return translatedMessage === messageId ? sourceValue : translatedMessage;
   }

@@ -14,6 +14,7 @@ import {
 
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { ApiPath } from 'twenty-shared/types';
+import { hasObjectMetadataLabelPlaceholder } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
@@ -28,9 +29,8 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
-import { OBJECT_LABEL_PLURAL_PLACEHOLDER } from 'src/engine/metadata-modules/view/constants/object-label-plural-placeholder.constant';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
+import { buildViewNameObjectLabels } from 'src/engine/metadata-modules/view/utils/build-view-name-object-labels.util';
 import { resolveViewName } from 'src/engine/metadata-modules/view/utils/resolve-view-name.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { CreateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-permission.guard';
@@ -198,7 +198,7 @@ export class ViewController {
     locale?: keyof typeof APP_LOCALES,
   ): Promise<ViewDTO[]> {
     const hasTemplates = views.some((view) =>
-      view.name.includes(OBJECT_LABEL_PLURAL_PLACEHOLDER),
+      hasObjectMetadataLabelPlaceholder(view.name),
     );
 
     if (!hasTemplates && views.every((view) => view.isCustom)) {
@@ -225,19 +225,17 @@ export class ViewController {
       });
 
     return views.map((view) => {
-      const objectMetadata = view.name.includes(OBJECT_LABEL_PLURAL_PLACEHOLDER)
+      const objectMetadata = hasObjectMetadataLabelPlaceholder(view.name)
         ? findFlatEntityByIdInFlatEntityMaps({
             flatEntityId: view.objectMetadataId,
             flatEntityMaps: flatObjectMetadataMaps,
           })
         : undefined;
 
-      const objectLabelPlural = isDefined(objectMetadata)
-        ? resolveEffectiveEntityProperty({
-            metadataName: 'objectMetadata',
-            baseValue: objectMetadata.labelPlural,
-            overrides: objectMetadata.overrides ?? undefined,
-            property: 'labelPlural',
+      const objectLabelPlaceholderValues = isDefined(objectMetadata)
+        ? buildViewNameObjectLabels({
+            viewName: view.name,
+            objectMetadata,
             i18nContext: {
               locale,
               i18nInstance,
@@ -250,7 +248,7 @@ export class ViewController {
         ...view,
         name: resolveViewName({
           view,
-          objectLabelPlural,
+          objectLabelPlaceholderValues,
           i18nContext: {
             locale,
             i18nInstance,

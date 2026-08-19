@@ -1,20 +1,25 @@
+import {
+  buildObjectMetadataLabelPlaceholderValues,
+  type MetadataLabelPlaceholderValues,
+} from 'twenty-shared/i18n';
+
 import { type ObjectMetadataOverrides } from 'src/engine/metadata-modules/object-metadata/types/object-metadata-overrides.type';
 import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/utils/effective-entity-i18n-context.type';
 import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 
-export type NavigationInterpolationObjectMetadata = {
+export type NavigationPlaceholderObjectMetadata = {
   labelPlural: string;
   icon?: string | null;
   overrides?: ObjectMetadataOverrides | null;
 };
 
-export const buildNavigationInterpolationContext = ({
+export const buildNavigationPlaceholderValues = ({
   objectMetadata,
   i18nContext,
 }: {
-  objectMetadata: NavigationInterpolationObjectMetadata;
+  objectMetadata: NavigationPlaceholderObjectMetadata;
   i18nContext: EffectiveEntityI18nContext;
-}): Record<string, unknown> => {
+}): MetadataLabelPlaceholderValues => {
   const overrides = objectMetadata.overrides ?? undefined;
 
   const resolvedLabelPlural = resolveEffectiveEntityProperty({
@@ -33,10 +38,8 @@ export const buildNavigationInterpolationContext = ({
     i18nContext,
   });
 
-  return {
-    navigateToObjectMetadataItem: {
-      labelPlural: resolvedLabelPlural,
-      icon: resolvedIcon,
-    },
-  };
+  return buildObjectMetadataLabelPlaceholderValues({
+    labelPlural: resolvedLabelPlural,
+    icon: resolvedIcon,
+  });
 };
