@@ -24,6 +24,7 @@ export const queryAvailablePartners = (client: CoreApiClient) =>
           introduction: true,
           languagesSpoken: true,
           deploymentExpertise: true,
+          partnerTier: true,
           partnerScope: true,
           region: true,
           calendarLink: { primaryLinkUrl: true },
@@ -38,6 +39,17 @@ export const queryAvailablePartners = (client: CoreApiClient) =>
           skills: true,
           city: true,
           country: true,
+          partnerServices: {
+            edges: { node: { id: true } },
+          },
+          partnerContents: {
+            edges: {
+              node: {
+                contentType: true,
+                status: true,
+              },
+            },
+          },
         },
       },
     },
