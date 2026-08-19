@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import { AggregateOperations, ViewType, ViewKey } from 'twenty-shared/types';
 
 import { INDEX_VIEW_NAME } from 'src/engine/metadata-modules/view/constants/index-view-name.constant';
@@ -29,7 +31,7 @@ export const computeStandardOpportunityViews = (
       objectName: 'opportunity',
       context: {
         viewName: 'byStage',
-        name: 'By Stage',
+        name: i18nLabel(msg({ message: `By Stage`, context: 'view.name' })),
         type: ViewType.KANBAN,
         key: null,
         position: 2,
