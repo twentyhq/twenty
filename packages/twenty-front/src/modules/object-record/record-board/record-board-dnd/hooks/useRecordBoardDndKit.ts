@@ -8,7 +8,7 @@ import { isRecordBoardDropProcessingComponentState } from '@/object-record/recor
 import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
 import { getBoardCardDropBehavior } from '@/object-record/record-board/utils/getBoardCardDropBehavior';
 import { getDestinationIndex } from '@/ui/utilities/drag-and-drop/utils/getDestinationIndex';
-import { resolveDropFromPointerY } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointerY';
+import { resolveDropFromPointer } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointer';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useEndRecordDrag } from '@/object-record/record-drag/hooks/useEndRecordDrag';
@@ -114,9 +114,10 @@ export const useRecordBoardDndKit = (): {
   const handleDragMove = (event: DragMovePayload) => {
     const { target, position } = event.operation;
 
-    const resolvedDrop = resolveDropFromPointerY({
+    const resolvedDrop = resolveDropFromPointer({
       target,
-      pointerY: position.current.y,
+      pointer: position.current,
+      defaultOrientation: 'horizontal',
       getDroppableItemCount,
     });
 
@@ -142,9 +143,10 @@ export const useRecordBoardDndKit = (): {
     const sourceDroppableId = (source.data as DragDropItemData).droppableId;
     const sourceIndex = (source.data as DragDropItemData).index;
 
-    const resolvedDrop = resolveDropFromPointerY({
+    const resolvedDrop = resolveDropFromPointer({
       target,
-      pointerY: position.current.y,
+      pointer: position.current,
+      defaultOrientation: 'horizontal',
       getDroppableItemCount,
     });
     if (!isDefined(resolvedDrop)) {

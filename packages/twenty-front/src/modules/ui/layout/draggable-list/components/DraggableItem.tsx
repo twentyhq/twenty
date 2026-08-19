@@ -1,9 +1,10 @@
 import { useDragDropMonitor } from '@dnd-kit/react';
 import { isFunction } from '@sniptt/guards';
-import { type JSX, useContext, useEffect, useState } from 'react';
+import { Fragment, type JSX, useContext, useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { DraggableListGroupContext } from '@/ui/layout/draggable-list/contexts/DraggableListGroupContext';
+import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
 import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
 
 type DraggableItemProps = {
@@ -14,6 +15,7 @@ type DraggableItemProps = {
     | JSX.Element
     | ((props: { isDragging: boolean }) => JSX.Element);
   disableDraggingBackground?: boolean;
+  restrictMovementTo?: 'x' | 'y' | 'none';
 };
 
 export const DraggableItem = ({
@@ -22,6 +24,7 @@ export const DraggableItem = ({
   index,
   itemComponent,
   disableDraggingBackground = false,
+  restrictMovementTo = 'y',
 }: DraggableItemProps) => {
   const draggableListGroupContext = useContext(DraggableListGroupContext);
 
@@ -38,20 +41,17 @@ export const DraggableItem = ({
     },
   });
 
-  // The list's end drop zone resolves its drop index from this registry,
-  // since only the rendered items know how many of them there are.
+  // Items report their presence so the list can size its trailing drop target.
   useEffect(() => {
     if (!isDefined(draggableListGroupContext)) {
       return;
     }
 
-    const itemIndexByDraggableId =
-      draggableListGroupContext.itemIndexByDraggableId;
-
-    itemIndexByDraggableId.set(draggableId, index);
+    const { registerItem, unregisterItem } = draggableListGroupContext;
+    registerItem(draggableId, index);
 
     return () => {
-      itemIndexByDraggableId.delete(draggableId);
+      unregisterItem(draggableId);
     };
   }, [draggableListGroupContext, draggableId, index]);
 
@@ -62,19 +62,29 @@ export const DraggableItem = ({
   const { group } = draggableListGroupContext;
 
   return (
-    <DragDropItemSortableCell
-      id={draggableId}
-      index={index}
-      group={group}
-      type={group}
-      accept={group}
-      disabled={isDragDisabled}
-      highlightWhileDragging={!disableDraggingBackground}
-      dropLine="horizontal"
-    >
-      {isFunction(itemComponent)
-        ? itemComponent({ isDragging })
-        : itemComponent}
-    </DragDropItemSortableCell>
+    <Fragment>
+      <DragDropItemDropTarget
+        index={index}
+        droppableId={group}
+        orientation="horizontal"
+        compact
+        seamAligned
+      />
+      <DragDropItemSortableCell
+        id={draggableId}
+        index={index}
+        group={group}
+        type={group}
+        accept={group}
+        disabled={isDragDisabled}
+        highlightWhileDragging={!disableDraggingBackground}
+        orientation="horizontal"
+        restrictMovementTo={restrictMovementTo}
+      >
+        {isFunction(itemComponent)
+          ? itemComponent({ isDragging })
+          : itemComponent}
+      </DragDropItemSortableCell>
+    </Fragment>
   );
 };

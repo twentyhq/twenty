@@ -171,11 +171,14 @@ export class WorkspaceEntityManager extends EntityManager {
 
     if (rolePermissionConfig && 'intersectionOf' in rolePermissionConfig) {
       const allRolePermissions = rolePermissionConfig.intersectionOf.map(
-        (roleId: string) =>
-          this.getPermissionsForRole(roleId, objectPermissionsByRoleId),
+        (roleId: string) => objectPermissionsByRoleId?.[roleId],
       );
 
-      objectPermissions = computePermissionIntersection(allRolePermissions);
+      // defaultRoleId has no foreign key and can dangle. A bound that cannot
+      // be resolved denies rather than letting the rest decide alone.
+      objectPermissions = allRolePermissions.every(isDefined)
+        ? computePermissionIntersection(allRolePermissions)
+        : {};
     }
 
     const newRepository = new WorkspaceRepository<Entity>(
@@ -251,7 +254,7 @@ export class WorkspaceEntityManager extends EntityManager {
       permissionOptions,
     )
       .insert()
-      .setWorkspaceAuthContext(authContext ?? ({} as WorkspaceAuthContext))
+      .setWorkspaceAuthContext(authContext ?? this.authContext)
       .values(entity)
       .returning(selectedColumns)
       .execute();
@@ -482,6 +485,7 @@ export class WorkspaceEntityManager extends EntityManager {
       selectedColumns,
       allFieldsSelected: false,
       updatedColumns,
+      authContext: this.authContext,
     });
   }
 
@@ -536,7 +540,6 @@ export class WorkspaceEntityManager extends EntityManager {
     permissionOptions?: PermissionOptions,
   ): Promise<Entity | null> {
     const metadata = this.connection.getMetadata(entityClass);
-    // prepare alias for built query
     let alias = metadata.name;
 
     if (options && options.join) {
@@ -548,7 +551,6 @@ export class WorkspaceEntityManager extends EntityManager {
       );
     }
 
-    // create query builder and apply find options
     return this.createQueryBuilder(
       entityClass,
       alias,
@@ -569,7 +571,6 @@ export class WorkspaceEntityManager extends EntityManager {
   ): Promise<Entity | null> {
     const metadata = this.connection.getMetadata(entityClass);
 
-    // create query builder and apply find options
     return this.createQueryBuilder(
       entityClass,
       metadata.name,
@@ -705,7 +706,6 @@ export class WorkspaceEntityManager extends EntityManager {
     permissionOptions?: PermissionOptions,
     selectedColumns: string[] | '*' = '*',
   ): Promise<UpdateResult> {
-    // if user passed empty criteria or empty list of criterias, then throw an error
     if (
       criteria === undefined ||
       criteria === null ||
@@ -756,7 +756,6 @@ export class WorkspaceEntityManager extends EntityManager {
     permissionOptions?: PermissionOptions,
     selectedColumns: string[] | '*' = '*',
   ): Promise<UpdateResult> {
-    // if user passed empty criteria or empty list of criterias, then throw an error
     if (
       criteria === undefined ||
       criteria === null ||
@@ -1847,8 +1846,6 @@ export class WorkspaceEntityManager extends EntityManager {
 
     return isEntityArray ? formattedResult : formattedResult[0];
   }
-
-  // Forbidden methods
 
   // oxlint-disable-next-line typescript/no-explicit-any
   override query<T = any>(_query: string, _parameters?: any[]): Promise<T> {

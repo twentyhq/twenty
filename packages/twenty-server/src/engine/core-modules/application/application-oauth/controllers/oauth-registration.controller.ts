@@ -14,6 +14,7 @@ import {
 } from '@nestjs/common';
 
 import { type Request, type Response } from 'express';
+import { ApiPath } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { InjectRepository } from '@nestjs/typeorm';
@@ -41,7 +42,7 @@ const REGISTRATION_RATE_LIMIT_WINDOW_MS = 3_600_000;
 const ALLOWED_GRANT_TYPES = ['authorization_code', 'refresh_token'];
 const ALLOWED_RESPONSE_TYPES = ['code'];
 
-@Controller('oauth')
+@Controller(ApiPath.OAuth)
 @UseFilters(AuthRestApiExceptionFilter)
 export class OAuthRegistrationController {
   constructor(
@@ -67,7 +68,6 @@ export class OAuthRegistrationController {
       return rateLimitResult;
     }
 
-    // Validate redirect URIs
     for (const uri of body.redirect_uris) {
       const result = validateRedirectUri(uri);
 
@@ -104,7 +104,6 @@ export class OAuthRegistrationController {
       }
     }
 
-    // Validate response_types
     const responseTypes = body.response_types ?? ['code'];
 
     for (const responseType of responseTypes) {
@@ -137,7 +136,6 @@ export class OAuthRegistrationController {
       };
     }
 
-    // Parse and validate scopes — cap to allowed scopes
     const validScopes: readonly string[] = ALL_OAUTH_SCOPES;
     const requestedScopes = body.scope
       ? body.scope.split(' ').filter((s) => validScopes.includes(s))
@@ -174,7 +172,7 @@ export class OAuthRegistrationController {
       token_endpoint_auth_method: tokenEndpointAuthMethod,
       scope: requestedScopes.join(' '),
       client_id_issued_at: Math.floor(Date.now() / 1000),
-      registration_client_uri: `${issuer}/oauth/register/${clientId}`,
+      registration_client_uri: `${issuer}/${ApiPath.OAuth}/register/${clientId}`,
     };
   }
 
@@ -216,7 +214,7 @@ export class OAuthRegistrationController {
       response_types: ['code'],
       token_endpoint_auth_method: 'none',
       scope: registration.oAuthScopes.join(' '),
-      registration_client_uri: `${issuer}/oauth/register/${registration.oAuthClientId}`,
+      registration_client_uri: `${issuer}/${ApiPath.OAuth}/register/${registration.oAuthClientId}`,
     };
   }
 

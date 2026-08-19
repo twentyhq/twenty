@@ -75,6 +75,7 @@ const EMPTY_SORT_OPS = {
 const ALLOWED_WIDGET_VIEW_TYPES: ViewType[] = [
   ViewType.TABLE_WIDGET,
   ViewType.KANBAN_WIDGET,
+  ViewType.LIST_WIDGET,
   ViewType.CALENDAR_WIDGET,
 ];
 

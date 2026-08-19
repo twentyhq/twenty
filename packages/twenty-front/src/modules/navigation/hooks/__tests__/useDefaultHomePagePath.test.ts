@@ -14,7 +14,6 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import {
   type NavigationMenuItem,
   NavigationMenuItemType,
-  ViewOpenRecordIn,
   ViewType,
   ViewVisibility,
 } from '~/generated-metadata/graphql';
@@ -23,6 +22,12 @@ import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectM
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
+
+let mockIsMobile = false;
+
+jest.mock('@/ui/utilities/responsive/hooks/useIsMobile', () => ({
+  useIsMobile: () => mockIsMobile,
+}));
 
 const Wrapper = ({ children }: { children: ReactNode }) =>
   createElement(JotaiProvider, { store: jotaiStore }, children);
@@ -140,7 +145,6 @@ const renderHooks = ({
               type: ViewType.TABLE,
               key: null,
               isCompact: false,
-              openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
               viewFields: [],
               viewFieldGroups: [],
               viewGroups: [],
@@ -177,6 +181,10 @@ const renderHooks = ({
 };
 
 describe('useDefaultHomePagePath', () => {
+  afterEach(() => {
+    mockIsMobile = false;
+  });
+
   it('should return proper path when no currentUser', async () => {
     const { result } = renderHooks({
       withCurrentUser: false,
@@ -316,6 +324,32 @@ describe('useDefaultHomePagePath', () => {
 
     await waitFor(() => {
       expect(result.current.defaultHomePagePath).toEqual(AppPath.Index);
+    });
+  });
+  it('should return the mobile home page on mobile', async () => {
+    mockIsMobile = true;
+
+    const { result } = renderHooks({
+      withCurrentUser: true,
+      withExistingView: false,
+      navigationMenuItems: [buildObjectNavigationMenuItem('person', 0)],
+    });
+
+    await waitFor(() => {
+      expect(result.current.defaultHomePagePath).toEqual(AppPath.Home);
+    });
+  });
+  it('should still return the sign in page on mobile when there is no currentUser', async () => {
+    mockIsMobile = true;
+    jotaiStore.set(currentUserState.atom, null);
+
+    const { result } = renderHooks({
+      withCurrentUser: false,
+      withExistingView: false,
+    });
+
+    await waitFor(() => {
+      expect(result.current.defaultHomePagePath).toEqual(AppPath.SignInUp);
     });
   });
   it('should defer to AppPath.Index when object metadata is loaded but empty while navigation menu items are not loaded yet', async () => {

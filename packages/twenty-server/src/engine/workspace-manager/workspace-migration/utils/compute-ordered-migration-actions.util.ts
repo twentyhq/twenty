@@ -8,9 +8,7 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.searchFieldMetadata.delete,
     ...aggregatedOrchestratorActionsReport.searchFieldMetadata.create,
     ...aggregatedOrchestratorActionsReport.searchFieldMetadata.update,
-    ///
 
-    // Object and fields and indexes
     ...aggregatedOrchestratorActionsReport.index.delete,
     ...aggregatedOrchestratorActionsReport.fieldMetadata.delete,
     ...aggregatedOrchestratorActionsReport.objectMetadata.delete,
@@ -20,9 +18,7 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.fieldMetadata.update,
     ...aggregatedOrchestratorActionsReport.index.create,
     ...aggregatedOrchestratorActionsReport.index.update.flat(),
-    ///
 
-    // Views
     ...aggregatedOrchestratorActionsReport.view.create,
     ...aggregatedOrchestratorActionsReport.view.update,
     ...aggregatedOrchestratorActionsReport.viewField.delete,
@@ -44,46 +40,32 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.viewSort.update,
     ...aggregatedOrchestratorActionsReport.viewSort.delete,
     ...aggregatedOrchestratorActionsReport.view.delete,
-    ///
 
-    // Logic functions
     ...aggregatedOrchestratorActionsReport.logicFunction.delete,
     ...aggregatedOrchestratorActionsReport.logicFunction.create,
     ...aggregatedOrchestratorActionsReport.logicFunction.update,
-    ///
 
-    // Roles
     ...aggregatedOrchestratorActionsReport.role.delete,
     ...aggregatedOrchestratorActionsReport.role.create,
     ...aggregatedOrchestratorActionsReport.role.update,
-    ///
 
     // Role targets delete before agents (roleTarget may FK to agent)
     ...aggregatedOrchestratorActionsReport.roleTarget.delete,
-    ///
 
-    // Agents (must exist before roleTarget create/update that reference them)
     ...aggregatedOrchestratorActionsReport.agent.delete,
     ...aggregatedOrchestratorActionsReport.agent.create,
     ...aggregatedOrchestratorActionsReport.agent.update,
-    ///
 
-    // Role targets create/update after agents exist
     ...aggregatedOrchestratorActionsReport.roleTarget.create,
     ...aggregatedOrchestratorActionsReport.roleTarget.update,
-    ///
 
-    // Object permissions
     ...aggregatedOrchestratorActionsReport.objectPermission.delete,
     ...aggregatedOrchestratorActionsReport.objectPermission.create,
     ...aggregatedOrchestratorActionsReport.objectPermission.update,
-    ///
 
-    // Field permissions
     ...aggregatedOrchestratorActionsReport.fieldPermission.delete,
     ...aggregatedOrchestratorActionsReport.fieldPermission.create,
     ...aggregatedOrchestratorActionsReport.fieldPermission.update,
-    ///
 
     // Permission flag definitions and their role assignments.
     ...aggregatedOrchestratorActionsReport.rolePermissionFlag.delete,
@@ -92,77 +74,54 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.rolePermissionFlag.create,
     ...aggregatedOrchestratorActionsReport.permissionFlag.update,
     ...aggregatedOrchestratorActionsReport.rolePermissionFlag.update,
-    ///
 
-    // Skills
     ...aggregatedOrchestratorActionsReport.skill.delete,
     ...aggregatedOrchestratorActionsReport.skill.create,
     ...aggregatedOrchestratorActionsReport.skill.update,
-    ///
 
-    // Front components
     ...aggregatedOrchestratorActionsReport.frontComponent.delete,
     ...aggregatedOrchestratorActionsReport.frontComponent.create,
     ...aggregatedOrchestratorActionsReport.frontComponent.update,
-    ///
 
-    // Command Menu Items
     ...aggregatedOrchestratorActionsReport.commandMenuItem.delete,
     ...aggregatedOrchestratorActionsReport.commandMenuItem.create,
     ...aggregatedOrchestratorActionsReport.commandMenuItem.update,
-    ///
 
-    // Page layouts
     ...aggregatedOrchestratorActionsReport.pageLayout.delete,
     ...aggregatedOrchestratorActionsReport.pageLayout.create,
     ...aggregatedOrchestratorActionsReport.pageLayout.update,
-    ///
 
-    // Page layout tabs
     ...aggregatedOrchestratorActionsReport.pageLayoutTab.delete,
     ...aggregatedOrchestratorActionsReport.pageLayoutTab.create,
     ...aggregatedOrchestratorActionsReport.pageLayoutTab.update,
-    ///
 
-    // Page layout widgets
     ...aggregatedOrchestratorActionsReport.pageLayoutWidget.delete,
     ...aggregatedOrchestratorActionsReport.pageLayoutWidget.create,
     ...aggregatedOrchestratorActionsReport.pageLayoutWidget.update,
-    ///
 
-    // Navigation Menu Items
     ...aggregatedOrchestratorActionsReport.navigationMenuItem.delete,
     ...aggregatedOrchestratorActionsReport.navigationMenuItem.create,
     ...aggregatedOrchestratorActionsReport.navigationMenuItem.update,
-    ///
 
-    // Row level permission predicate groups
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicateGroup
       .delete,
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicateGroup
       .create,
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicateGroup
       .update,
-    ///
 
-    // Row level permission predicates
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate.delete,
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate.create,
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate.update,
-    ///
 
-    // Webhooks
     ...aggregatedOrchestratorActionsReport.webhook.delete,
     ...aggregatedOrchestratorActionsReport.webhook.create,
     ...aggregatedOrchestratorActionsReport.webhook.update,
-    ///
 
-    // Application Variables
     ...aggregatedOrchestratorActionsReport.applicationVariable.delete,
     ...aggregatedOrchestratorActionsReport.applicationVariable.create,
     ...aggregatedOrchestratorActionsReport.applicationVariable.update,
 
-    // Connection providers
     ...aggregatedOrchestratorActionsReport.connectionProvider.delete,
     ...aggregatedOrchestratorActionsReport.connectionProvider.create,
     ...aggregatedOrchestratorActionsReport.connectionProvider.update,

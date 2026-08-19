@@ -23,6 +23,7 @@ type Assertions = [
       | 'isUnique'
       | 'isLabelSyncedWithName'
       | 'isUIEditable'
+      | 'writability'
       | 'isNullable'
       | 'universalSettings'
     >
@@ -57,6 +58,7 @@ type Assertions = [
       | 'isSearchable'
       | 'isUIEditable'
       | 'isUICreatable'
+      | 'writability'
     >
   >,
 

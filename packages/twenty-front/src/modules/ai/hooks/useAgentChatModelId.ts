@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isAutoSelectModelId, isDefined } from 'twenty-shared/utils';
 
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
@@ -16,6 +16,7 @@ export const useAgentChatModelId = () => {
 
   const isUserModelAvailable =
     !isDefined(agentChatUserSelectedModel) ||
+    isAutoSelectModelId(agentChatUserSelectedModel) ||
     enabledModels.some((model) => model.modelId === agentChatUserSelectedModel);
 
   const selectedModelId = isUserModelAvailable

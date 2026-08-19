@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { camelToSnakeCase, isDefined } from 'twenty-shared/utils';
 import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
 
@@ -8,6 +9,7 @@ import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-pro
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { getCrudToolLabels } from 'src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util';
+import { resolveEffectiveFieldDescription } from 'src/engine/core-modules/tool-provider/utils/resolve-effective-field-description.util';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { generateCreateManyRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-many-record-input-schema.util';
@@ -125,6 +127,10 @@ export class DatabaseToolProvider implements ToolProvider {
       flatObjectMetadataMaps.byUniversalIdentifier,
     );
 
+    const i18nInstance = this.i18nService.getI18nInstance(
+      context.locale ?? SOURCE_LOCALE,
+    );
+
     for (const flatObject of allFlatObjects) {
       const permission = objectPermissions[flatObject.id];
       const explicitPermission = explicitPermissionByObjectId.get(
@@ -159,7 +165,17 @@ export class DatabaseToolProvider implements ToolProvider {
       }
 
       const fields = includeSchemas
-        ? getFlatFieldsFromFlatObjectMetadata(flatObject, flatFieldMetadataMaps)
+        ? getFlatFieldsFromFlatObjectMetadata(
+            flatObject,
+            flatFieldMetadataMaps,
+          ).map((flatFieldMetadata) => ({
+            ...flatFieldMetadata,
+            description: resolveEffectiveFieldDescription({
+              flatFieldMetadata,
+              locale: context.locale,
+              i18nInstance,
+            }),
+          }))
         : [];
 
       const objectMetadata = { ...flatObject, fields };
@@ -181,7 +197,7 @@ export class DatabaseToolProvider implements ToolProvider {
             this.i18nService,
             context.locale,
           ),
-          description: `Search for ${objectMetadata.labelPlural} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination and orderBy for sorting. Filter fields are top-level arguments — pass each field as its own key (e.g. { id: { eq: "record-id" } }, or { name: { firstName: { ilike: "%ada%" } } }); do NOT wrap them in a "filter" object and do NOT place a bare operator like "ilike"/"eq" at the top level. Combine conditions with and/or/not. Returns an array of matching records with their full data.`,
+          description: `Search for ${objectMetadata.labelPlural} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination and orderBy for sorting. Filter fields are top-level arguments — pass each field as its own key (e.g. { id: { eq: "record-id" } }, or { name: { firstName: { ilike: "%ada%" } } }); do NOT wrap them in a "filter" object and do NOT place a bare operator like "ilike"/"eq" at the top level. Combine conditions with and/or/not. Returns an array of matching records with their full data, plus a "count" of total matches and a "hasNextPage" flag. When "hasNextPage" is true, more records match than were returned: continue with a higher offset (or increase the limit) before concluding a record is absent or answering count/enumeration questions.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(shouldIncludeSchema(`find_many_${snakePlural}`) && {
             inputSchema: toToolJsonSchema(

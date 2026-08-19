@@ -43,7 +43,7 @@ export default defineView({
 
 | Property | Values | Description |
 |----------|--------|-------------|
-| `type` | `ViewType.TABLE` (default), `ViewType.KANBAN`, `ViewType.CALENDAR` | How records are laid out. (`FIELDS_WIDGET`, `TABLE_WIDGET`, `KANBAN_WIDGET`, and `CALENDAR_WIDGET` also exist but are used internally by page-layout widgets.) |
+| `type` | `ViewType.TABLE` (default), `ViewType.LIST`, `ViewType.KANBAN`, `ViewType.CALENDAR` | How records are laid out. (`FIELDS_WIDGET`, `TABLE_WIDGET`, `KANBAN_WIDGET`, `LIST_WIDGET`, and `CALENDAR_WIDGET` also exist but are used internally by page-layout widgets.) |
 | `visibility` | `ViewVisibility.WORKSPACE` (default), `ViewVisibility.UNLISTED` | Whether the view is listed for the whole workspace or hidden from pickers. |
 | `openRecordIn` | deprecated | No longer read: where records open is now a property of the [object](/developers/extend/apps/data/objects) (`openRecordIn` on `defineObject()`), falling back to each member's own preference. |
 | `sorts` | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]` | Default sort order. |
@@ -110,4 +110,4 @@ The `value` field is always a JSON-serializable value, but its expected shape de
 
 ## How views show up in the UI
 
-A view by itself isn't reachable from the sidebar. To make it appear there, pair it with a [navigation menu item](/developers/extend/apps/layout/navigation-menu-items) of type `VIEW` that points at the view's `universalIdentifier`. That's the canonical pattern: every custom object typically ships a default view + a sidebar entry that opens it.
+A view by itself isn't reachable from the sidebar. To make it appear there, pair it with a [navigation menu item](/developers/extend/apps/layout/navigation-menu-items) of type `VIEW` that points at the view's `universalIdentifier`. That's the canonical pattern: every custom object gets a default index view auto-generated at creation, so you only need to ship the sidebar entry that opens it.

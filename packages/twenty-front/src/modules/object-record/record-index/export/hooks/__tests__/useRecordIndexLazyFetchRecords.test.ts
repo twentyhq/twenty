@@ -83,7 +83,6 @@ describe('useRecordData', () => {
   let mockFetchAllRecords: jest.Mock;
 
   beforeEach(() => {
-    // Mock the hook's implementation
     mockFetchAllRecords = jest.fn();
     (useLazyFetchAllRecords as jest.Mock).mockReturnValue({
       progress: 100,

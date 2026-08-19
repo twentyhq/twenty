@@ -1,10 +1,11 @@
-import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types/components/FormFieldPlaceholder';
-import { InputLabel } from '@/ui/input/components/InputLabel';
+import { InputLabel, LightIconButton } from 'twenty-ui/input';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
+import { DragDropItemSortableHandle } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableHandle';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import {
   type WorkflowFormAction,
@@ -29,7 +30,6 @@ import {
   IconPlus,
   IconTrash,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
@@ -298,10 +298,12 @@ export const WorkflowEditActionFormBuilder = ({
 
                         {showButtons && (
                           <StyledGripButtonContainer>
-                            <LightIconButton
-                              Icon={IconGripVertical}
-                              aria-label={t`Reorder field`}
-                            />
+                            <DragDropItemSortableHandle>
+                              <LightIconButton
+                                Icon={IconGripVertical}
+                                aria-label={t`Reorder field`}
+                              />
+                            </DragDropItemSortableHandle>
                           </StyledGripButtonContainer>
                         )}
 

@@ -15,7 +15,7 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
-@WorkspaceCache('applicationVariableMaps')
+@WorkspaceCache('applicationVariableMaps', { packingPonderation: 1 })
 export class WorkspaceApplicationVariableMapCacheService extends WorkspaceCacheProvider<ApplicationVariableCacheMaps> {
   constructor(
     @InjectRepository(ApplicationVariableEntity)

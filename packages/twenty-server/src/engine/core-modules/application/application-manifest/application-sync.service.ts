@@ -9,7 +9,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { PackageJson } from 'type-fest';
 import { v4 } from 'uuid';
 
-import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
 import { enrichApplicationManifestSyncError } from 'src/engine/core-modules/application/application-manifest/utils/enrich-application-manifest-sync-error.util';
@@ -29,6 +28,8 @@ import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-f
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
+import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -49,8 +50,9 @@ export class ApplicationSyncService {
     @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
-    @InjectRepository(ApplicationRegistrationEntity)
-    private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
+    @InjectRepository(FrontComponentEntity)
+    private readonly frontComponentRepository: Repository<FrontComponentEntity>,
+    private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
   ) {}
 
   public async synchronizeFromManifest({
@@ -167,10 +169,13 @@ export class ApplicationSyncService {
       defaultRoleId: null,
       defaultRole: null,
       settingsCustomTabFrontComponentId: null,
+      uninstallLogicFunctionId: null,
       canBeUninstalled: true,
       autoUpgrade: false,
       isSdkLayerStale: false,
       sdkClientCoreChecksum: null,
+      frontComponentSharedDependenciesChecksum: null,
+      frontComponentSharedDependenciesBuiltPath: null,
       applicationRegistrationId: null,
       primaryPublicDomainId: null,
       createdAt: now,
@@ -249,16 +254,78 @@ export class ApplicationSyncService {
     const resolvedRegistrationId =
       applicationRegistrationId ?? application.applicationRegistrationId;
 
-    return await this.applicationService.update(application.id, {
-      name,
-      description: manifest.application.description,
-      logo: manifest.application.logo ?? manifest.application.logoUrl ?? null,
-      version: packageJson.version,
-      packageJsonChecksum: manifest.application.packageJsonChecksum,
-      yarnLockChecksum: manifest.application.yarnLockChecksum,
-      applicationRegistrationId: resolvedRegistrationId,
-      workspaceId,
-    });
+    const frontComponentSharedDependenciesChecksum =
+      manifest.application.frontComponentSharedDependencies?.builtChecksum ??
+      null;
+    const frontComponentSharedDependenciesBuiltPath =
+      manifest.application.frontComponentSharedDependencies?.builtPath ?? null;
+
+    const updatedApplication = await this.applicationService.update(
+      application.id,
+      {
+        name,
+        description: manifest.application.description,
+        logo: manifest.application.logo ?? manifest.application.logoUrl ?? null,
+        version: packageJson.version,
+        packageJsonChecksum: manifest.application.packageJsonChecksum,
+        yarnLockChecksum: manifest.application.yarnLockChecksum,
+        frontComponentSharedDependenciesChecksum,
+        frontComponentSharedDependenciesBuiltPath,
+        applicationRegistrationId: resolvedRegistrationId,
+        workspaceId,
+      },
+    );
+
+    if (
+      application.frontComponentSharedDependenciesChecksum !==
+      frontComponentSharedDependenciesChecksum
+    ) {
+      await this.broadcastFrontComponentSharedDependenciesChecksumUpdates({
+        workspaceId,
+        applicationId: application.id,
+        frontComponentSharedDependenciesChecksum,
+      });
+    }
+
+    return updatedApplication;
+  }
+
+  private async broadcastFrontComponentSharedDependenciesChecksumUpdates({
+    workspaceId,
+    applicationId,
+    frontComponentSharedDependenciesChecksum,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+    frontComponentSharedDependenciesChecksum: string | null;
+  }): Promise<void> {
+    try {
+      const frontComponents = await this.frontComponentRepository.find({
+        select: ['id'],
+        where: { applicationId, workspaceId },
+      });
+
+      await this.workspaceEventBroadcaster.broadcast({
+        workspaceId,
+        events: frontComponents.map((frontComponent) => ({
+          type: 'updated',
+          entityName: 'frontComponent',
+          recordId: frontComponent.id,
+          properties: {
+            updatedFields: ['frontComponentSharedDependenciesChecksum'],
+            after: {
+              id: frontComponent.id,
+              frontComponentSharedDependenciesChecksum,
+            },
+          },
+        })),
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to broadcast the shared dependencies checksum update for application ${applicationId} in workspace ${workspaceId}`,
+        error,
+      );
+    }
   }
 
   public async uninstallApplication({
@@ -346,7 +413,9 @@ export class ApplicationSyncService {
   // migration is applied, the hook's logic function metadata, code, and the
   // application's data are gone, so nothing can be executed anymore. It is
   // best-effort cleanup: a failure must never prevent the application from
-  // being removed.
+  // being removed. uninstallLogicFunctionId is resolved from the manifest at
+  // sync time, so it always points at the installed release, not at whatever
+  // the application registration currently publishes.
   private async runUninstallHook({
     application,
     workspaceId,
@@ -354,46 +423,17 @@ export class ApplicationSyncService {
     application: ApplicationEntity;
     workspaceId: string;
   }): Promise<void> {
-    if (!isDefined(application.applicationRegistrationId)) {
+    if (!isDefined(application.uninstallLogicFunctionId)) {
       return;
     }
 
     try {
-      const appRegistration = await this.appRegistrationRepository.findOne({
-        where: { id: application.applicationRegistrationId },
-      });
-
-      const uninstallLogicFunction =
-        appRegistration?.manifest?.application.uninstallLogicFunction;
-
-      if (!isDefined(uninstallLogicFunction)) {
-        return;
-      }
-
-      const { flatLogicFunctionMaps } =
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'flatLogicFunctionMaps',
-        ]);
-
-      const flatLogicFunction =
-        flatLogicFunctionMaps.byUniversalIdentifier[
-          uninstallLogicFunction.universalIdentifier
-        ];
-
-      if (!isDefined(flatLogicFunction)) {
-        this.logger.warn(
-          `Uninstall logic function "${uninstallLogicFunction.universalIdentifier}" not found for application "${application.universalIdentifier}"; skipping hook`,
-        );
-
-        return;
-      }
-
       this.logger.log(
         `Executing uninstall hook for app ${application.universalIdentifier}`,
       );
 
       const result = await this.logicFunctionExecutorService.execute({
-        logicFunctionId: flatLogicFunction.id,
+        logicFunctionId: application.uninstallLogicFunctionId,
         workspaceId,
         payload: { version: application.version ?? undefined },
       });

@@ -1,7 +1,30 @@
 .container {
+  align-items: center;
+  backdrop-filter: var(--t-blur-strong);
+  background: var(--t-background-transparent-primary);
+  border: 1px solid var(--t-border-color-transparent-strong);
+  border-radius: var(--t-border-radius-pill);
+  box-shadow: var(--t-box-shadow-strong);
+  box-sizing: border-box;
+  corner-shape: round;
   display: flex;
-  gap: var(--t-spacing-4);
+  gap: var(--t-spacing-1);
   justify-content: center;
-  padding: var(--t-spacing-3);
-  z-index: 1001;
+  padding: var(--t-spacing-1);
+  transition:
+    opacity duration(normal) ease,
+    transform duration(normal) ease,
+    visibility duration(normal);
+  width: max-content;
+
+  &[data-hidden] {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(calc(100% + var(--t-spacing-4)));
+    visibility: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 }

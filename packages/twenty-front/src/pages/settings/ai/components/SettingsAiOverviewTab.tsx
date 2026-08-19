@@ -1,5 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
+import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
+import { AI_INSTRUCTIONS_EDITOR_PROFILE } from '@/ai/constants/AiInstructionsEditorProfile';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsStatsGrid } from '@/settings/components/SettingsStatsGrid';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -137,7 +138,7 @@ export const SettingsAiOverviewTab = () => {
             key={originalInstructions}
             readonly={false}
             defaultValue={workspaceInstructions}
-            preset="aiInstructions"
+            profile={AI_INSTRUCTIONS_EDITOR_PROFILE}
             onChange={(value) => {
               setWorkspaceInstructions(value);
               autoSave(value);

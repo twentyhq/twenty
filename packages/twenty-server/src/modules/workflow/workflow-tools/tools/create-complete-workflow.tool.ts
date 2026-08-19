@@ -269,7 +269,7 @@ const createWorkflowVersion = async ({
 
   await deps.workflowVersionCoreSyncService.writeWorkflowVersionAndMirror(
     context.workspaceId,
-    async (workflowVersionRepository, entityManager) => {
+    async (workflowVersionRepository) => {
       const versionPosition =
         await deps.recordPositionService.buildRecordPosition({
           value: 'first',
@@ -280,18 +280,15 @@ const createWorkflowVersion = async ({
           workspaceId: context.workspaceId,
         });
 
-      await workflowVersionRepository.insert(
-        {
-          id: workflowVersionId,
-          workflowId,
-          name: 'v1',
-          status: WorkflowVersionStatus.DRAFT,
-          trigger,
-          steps,
-          position: versionPosition,
-        },
-        entityManager,
-      );
+      await workflowVersionRepository.insert({
+        id: workflowVersionId,
+        workflowId,
+        name: 'v1',
+        status: WorkflowVersionStatus.DRAFT,
+        trigger,
+        steps,
+        position: versionPosition,
+      });
 
       return workflowVersionId;
     },

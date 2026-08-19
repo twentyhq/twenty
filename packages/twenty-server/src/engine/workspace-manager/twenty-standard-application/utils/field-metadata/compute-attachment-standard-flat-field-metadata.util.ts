@@ -26,15 +26,16 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
   CreateStandardFieldArgs<'attachment', FieldMetadataType>,
   'context'
 >): Record<AllStandardObjectFieldName<'attachment'>, FlatFieldMetadata> => ({
-  // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
-      label: i18nLabel(msg`Id`),
-      description: i18nLabel(msg`Id`),
+      label: i18nLabel(msg({ message: `Id`, context: 'fieldMetadata.label' })),
+      description: i18nLabel(
+        msg({ message: `Id`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'Icon123',
       isSystem: true,
       isNullable: false,
@@ -52,8 +53,12 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'createdAt',
       type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(msg`Creation date`),
-      description: i18nLabel(msg`Creation date`),
+      label: i18nLabel(
+        msg({ message: `Creation date`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({ message: `Creation date`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'IconCalendar',
       isSystem: true,
       isNullable: false,
@@ -74,8 +79,15 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'updatedAt',
       type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(msg`Last update`),
-      description: i18nLabel(msg`Last time the record was changed`),
+      label: i18nLabel(
+        msg({ message: `Last update`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Last time the record was changed`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconCalendarClock',
       isSystem: true,
       isNullable: false,
@@ -96,8 +108,15 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'deletedAt',
       type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(msg`Deleted at`),
-      description: i18nLabel(msg`Date when the record was deleted`),
+      label: i18nLabel(
+        msg({ message: `Deleted at`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Date when the record was deleted`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconCalendarMinus',
       isSystem: true,
       isNullable: true,
@@ -112,15 +131,21 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     now,
   }),
 
-  // Attachment-specific fields
   name: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
       fieldName: 'name',
       type: FieldMetadataType.TEXT,
-      label: i18nLabel(msg`Name`),
-      description: i18nLabel(msg`Attachment name`),
+      label: i18nLabel(
+        msg({ message: `Name`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Attachment name`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconFileUpload',
       isNullable: true,
       isUIEditable: false,
@@ -136,8 +161,15 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'file',
       type: FieldMetadataType.FILES,
-      label: i18nLabel(msg`File`),
-      description: i18nLabel(msg`Attachment file`),
+      label: i18nLabel(
+        msg({ message: `File`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Attachment file`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconFileUpload',
       isNullable: true,
       isUIEditable: false,
@@ -157,8 +189,15 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'fullPath',
       type: FieldMetadataType.TEXT,
-      label: i18nLabel(msg`Full path`),
-      description: i18nLabel(msg`Attachment full path`),
+      label: i18nLabel(
+        msg({ message: `Full path`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Attachment full path`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconLink',
       isSystem: true,
       isNullable: true,
@@ -176,8 +215,15 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'fileCategory',
       type: FieldMetadataType.SELECT,
-      label: i18nLabel(msg`File category`),
-      description: i18nLabel(msg`Attachment file category`),
+      label: i18nLabel(
+        msg({ message: `File category`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Attachment file category`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconList',
       isSystem: true,
       isNullable: false,
@@ -187,56 +233,72 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
         {
           id: '20202020-11bb-4a52-b1f2-2159b07eec37',
           value: 'ARCHIVE',
-          label: i18nLabel(msg`Archive`),
+          label: i18nLabel(
+            msg({ message: `Archive`, context: 'fieldMetadata.label' }),
+          ),
           position: 0,
           color: 'gray',
         },
         {
           id: '20202020-ac54-475d-ab0d-e250c28da774',
           value: 'AUDIO',
-          label: i18nLabel(msg`Audio`),
+          label: i18nLabel(
+            msg({ message: `Audio`, context: 'fieldMetadata.label' }),
+          ),
           position: 1,
           color: 'pink',
         },
         {
           id: '20202020-66f7-41ba-81ad-f3371312247f',
           value: 'IMAGE',
-          label: i18nLabel(msg`Image`),
+          label: i18nLabel(
+            msg({ message: `Image`, context: 'fieldMetadata.label' }),
+          ),
           position: 2,
           color: 'yellow',
         },
         {
           id: '20202020-6113-4e3b-84e3-c617e9f25d0c',
           value: 'PRESENTATION',
-          label: i18nLabel(msg`Presentation`),
+          label: i18nLabel(
+            msg({ message: `Presentation`, context: 'fieldMetadata.label' }),
+          ),
           position: 3,
           color: 'orange',
         },
         {
           id: '20202020-44c1-47c7-8e66-e63558d7233f',
           value: 'SPREADSHEET',
-          label: i18nLabel(msg`Spreadsheet`),
+          label: i18nLabel(
+            msg({ message: `Spreadsheet`, context: 'fieldMetadata.label' }),
+          ),
           position: 4,
           color: 'turquoise',
         },
         {
           id: '20202020-cf07-4843-877e-3804cde801d1',
           value: 'TEXT_DOCUMENT',
-          label: i18nLabel(msg`Text Document`),
+          label: i18nLabel(
+            msg({ message: `Text Document`, context: 'fieldMetadata.label' }),
+          ),
           position: 5,
           color: 'blue',
         },
         {
           id: '20202020-443b-4159-a434-5fd9fc327639',
           value: 'VIDEO',
-          label: i18nLabel(msg`Video`),
+          label: i18nLabel(
+            msg({ message: `Video`, context: 'fieldMetadata.label' }),
+          ),
           position: 6,
           color: 'purple',
         },
         {
           id: '20202020-bbca-4802-9146-fd1503e94e58',
           value: 'OTHER',
-          label: i18nLabel(msg`Other`),
+          label: i18nLabel(
+            msg({ message: `Other`, context: 'fieldMetadata.label' }),
+          ),
           position: 7,
           color: 'gray',
         },
@@ -253,8 +315,15 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'createdBy',
       type: FieldMetadataType.ACTOR,
-      label: i18nLabel(msg`Created by`),
-      description: i18nLabel(msg`The creator of the record`),
+      label: i18nLabel(
+        msg({ message: `Created by`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `The creator of the record`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconCreativeCommonsSa',
       isSystem: true,
       isUIEditable: false,
@@ -276,9 +345,14 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'updatedBy',
       type: FieldMetadataType.ACTOR,
-      label: i18nLabel(msg`Updated by`),
+      label: i18nLabel(
+        msg({ message: `Updated by`, context: 'fieldMetadata.label' }),
+      ),
       description: i18nLabel(
-        msg`The workspace member who last updated the record`,
+        msg({
+          message: `The workspace member who last updated the record`,
+          context: 'fieldMetadata.description',
+        }),
       ),
       icon: 'IconUserCircle',
       isSystem: true,
@@ -301,8 +375,15 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'position',
       type: FieldMetadataType.POSITION,
-      label: i18nLabel(msg`Position`),
-      description: i18nLabel(msg`Attachment record position`),
+      label: i18nLabel(
+        msg({ message: `Position`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Attachment record position`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconHierarchy2',
       isSystem: true,
       isNullable: false,
@@ -319,8 +400,15 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'searchVector',
       type: FieldMetadataType.TS_VECTOR,
-      label: i18nLabel(msg`Search vector`),
-      description: i18nLabel(msg`Field used for full-text search`),
+      label: i18nLabel(
+        msg({ message: `Search vector`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Field used for full-text search`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
@@ -331,7 +419,6 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
     now,
   }),
 
-  // Relation fields
   targetTask: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -339,8 +426,15 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.MORPH_RELATION,
       morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
       fieldName: 'targetTask',
-      label: i18nLabel(msg`Task`),
-      description: i18nLabel(msg`Attachment target`),
+      label: i18nLabel(
+        msg({ message: `Task`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Attachment target`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconFileImport',
       isNullable: true,
       isUIEditable: false,
@@ -365,8 +459,15 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.MORPH_RELATION,
       morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
       fieldName: 'targetNote',
-      label: i18nLabel(msg`Note`),
-      description: i18nLabel(msg`Attachment target`),
+      label: i18nLabel(
+        msg({ message: `Note`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Attachment target`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconFileImport',
       isNullable: true,
       isUIEditable: false,
@@ -391,8 +492,15 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.MORPH_RELATION,
       morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
       fieldName: 'targetPerson',
-      label: i18nLabel(msg`Person`),
-      description: i18nLabel(msg`Attachment target`),
+      label: i18nLabel(
+        msg({ message: `Person`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Attachment target`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconFileImport',
       isNullable: true,
       isUIEditable: false,
@@ -417,8 +525,15 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.MORPH_RELATION,
       morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
       fieldName: 'targetCompany',
-      label: i18nLabel(msg`Company`),
-      description: i18nLabel(msg`Attachment target`),
+      label: i18nLabel(
+        msg({ message: `Company`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Attachment target`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconFileImport',
       isNullable: true,
       isUIEditable: false,
@@ -443,8 +558,15 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.MORPH_RELATION,
       morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
       fieldName: 'targetOpportunity',
-      label: i18nLabel(msg`Opportunity`),
-      description: i18nLabel(msg`Attachment target`),
+      label: i18nLabel(
+        msg({ message: `Opportunity`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Attachment target`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconFileImport',
       isNullable: true,
       isUIEditable: false,
@@ -469,8 +591,15 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.MORPH_RELATION,
       morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
       fieldName: 'targetDashboard',
-      label: i18nLabel(msg`Dashboard`),
-      description: i18nLabel(msg`Attachment target`),
+      label: i18nLabel(
+        msg({ message: `Dashboard`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Attachment target`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconFileImport',
       isNullable: true,
       isUIEditable: false,
@@ -495,8 +624,15 @@ export const buildAttachmentStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.MORPH_RELATION,
       morphId: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
       fieldName: 'targetWorkflow',
-      label: i18nLabel(msg`Workflow`),
-      description: i18nLabel(msg`Attachment target`),
+      label: i18nLabel(
+        msg({ message: `Workflow`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Attachment target`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconFileImport',
       isNullable: true,
       isUIEditable: false,

@@ -1,5 +1,6 @@
 export type RecallBotStatusChange = {
   code: string;
+  subCode?: string | undefined;
   createdAt: string | undefined;
 };
 

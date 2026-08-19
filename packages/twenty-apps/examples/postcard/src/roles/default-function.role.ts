@@ -32,7 +32,7 @@ export default defineRole({
     {
       objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
       fieldUniversalIdentifier: CONTENT_FIELD_UNIVERSAL_IDENTIFIER,
-      canReadFieldValue: false,
+      canReadFieldValue: true,
       canUpdateFieldValue: true,
     },
   ],

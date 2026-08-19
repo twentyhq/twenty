@@ -172,6 +172,10 @@ Güvenlik nedenleriyle, yanıt üstbilgileri bir izin listesiyle sınırlandır�
 Durum kodu geçerli bir HTTP durum kodu olmalıdır (100 ile 599 arasında). Yanıt üstbilgisi adları büyük/küçük harfe duyarsız olarak eşleştirilir.
 </Note>
 
+#### Platform hata yanıtları
+
+İşleyicinizin kendi yanıtlarının ötesinde, platform bazı durumlarda rota çağrılarına doğrudan yanıt verir: rota veya fonksiyon mevcut olmadığında `404`, uygulama durdurulduğunda `403`, yürütme hız sınırına ulaşıldığında `429` ve uygulamanın üretim `dependencies` değerleri kurulamayacak kadar büyük olduğunda `422` — bkz. [dependencies boyut sınırları](/l/tr/developers/extend/apps/getting-started/project-structure#dependencies).
+
 #### Sunucu rota tetikleyicisi
 
 `httpRouteTriggerSettings`, `/s/` altında bir fonksiyon sunar ve çalışma alanını istek ana bilgisayarından çözümler — bu da her çalışma alanının kendi alan adına sahip olduğu durumda işe yarar. Üçüncü taraf sağlayıcılar ise, her kiracının olaylarını **tek** URL’ye iletir. Bu durum için `serverRouteTriggerSettings` kullanın.

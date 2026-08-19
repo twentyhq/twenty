@@ -1,10 +1,9 @@
 import { styled } from '@linaria/react';
-import { useCallback } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
-import { RecordGroupChip } from '@/object-record/record-group/components/RecordGroupChip';
+import { RecordGroupAggregateDropdown } from '@/object-record/record-group/components/RecordGroupAggregateDropdown';
+import { RecordGroupSectionHeader } from '@/object-record/record-group/components/RecordGroupSectionHeader';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { useShouldHideRecordGroup } from '@/object-record/record-group/hooks/useShouldHideRecordGroup';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
@@ -36,12 +35,9 @@ import {
   isDefined,
   sumByProperty,
 } from 'twenty-shared/utils';
-import { IconChevronDown } from 'twenty-ui/icon';
-import { AnimatedLightIconButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledTrContainer = styled.div`
-  cursor: pointer;
   display: flex;
   flex-direction: row;
 
@@ -50,46 +46,20 @@ const StyledTrContainer = styled.div`
   }
 `;
 
-const StyledChevronContainer = styled.div`
-  border-right: none;
-  color: ${themeCssVariables.font.color.secondary};
-  display: flex;
-  left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
-  min-width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
-  position: sticky;
-  text-align: center;
-
-  vertical-align: middle;
-  width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
-
-  z-index: ${TABLE_Z_INDEX.groupSection.stickyCell};
-`;
-
-const StyledAnimatedLightIconButtonContainer = styled.div`
-  display: block;
-  margin: auto;
-
-  z-index: ${TABLE_Z_INDEX.groupSection.stickyCell};
-`;
-
-const StyledRecordGroupSection = styled.div<{ width: number }>`
+const StyledRecordGroupHeaderContainer = styled.div<{ width: number }>`
   align-items: center;
   border-right: none;
   display: flex;
   flex-direction: row;
   gap: ${themeCssVariables.spacing[1]};
   height: ${RECORD_TABLE_ROW_HEIGHT}px;
-  left: ${`${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px`};
-  min-width: ${({ width }) => width}px;
+  left: ${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH}px;
+  min-width: ${({ width }) => width + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
 
   position: sticky;
-  width: ${({ width }) => width}px;
+  width: ${({ width }) => width + RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
 
   z-index: ${TABLE_Z_INDEX.groupSection.stickyCell};
-`;
-
-const StyledTagContainer = styled.div`
-  flex-shrink: 0;
 `;
 
 const StyledAggregateDropdownContainer = styled.div<{
@@ -177,10 +147,6 @@ export const RecordTableRecordGroupSection = () => {
     isRecordTableCellsNonEditableComponentState,
   );
 
-  const handleDropdownToggle = useCallback(() => {
-    setIsRecordGroupTableSectionToggled((prevState) => !prevState);
-  }, [setIsRecordGroupTableSectionToggled]);
-
   const visibleRecordFieldsWithoutLabelIdentifier = visibleRecordFields.filter(
     filterOutByProperty(
       'fieldMetadataItemId',
@@ -206,41 +172,33 @@ export const RecordTableRecordGroupSection = () => {
   }
 
   return (
-    <StyledTrContainer onClick={handleDropdownToggle}>
+    <StyledTrContainer>
       <StyledRecordTableDragAndDropPlaceholderCell />
-      <StyledChevronContainer>
-        <StyledAnimatedLightIconButtonContainer>
-          <AnimatedLightIconButton
-            Icon={IconChevronDown}
-            size="small"
-            accent="secondary"
-            rotate={!isRecordGroupTableSectionToggled ? -90 : 0}
-          />
-        </StyledAnimatedLightIconButtonContainer>
-      </StyledChevronContainer>
-      <StyledRecordGroupSection
+      <StyledRecordGroupHeaderContainer
         className="disable-shadow"
         width={widthOfLabelIdentifierRecordField}
       >
-        <StyledTagContainer>
-          <RecordGroupChip
-            recordGroupDefinition={recordGroupDefinition}
-            fieldMetadataItem={recordIndexGroupFieldMetadataItem}
-            valueTagWeight="medium"
-          />
-        </StyledTagContainer>
+        <RecordGroupSectionHeader
+          recordGroupDefinition={recordGroupDefinition}
+          fieldMetadataItem={recordIndexGroupFieldMetadataItem}
+          isExpanded={isRecordGroupTableSectionToggled}
+          onToggle={() =>
+            setIsRecordGroupTableSectionToggled((prevState) => !prevState)
+          }
+          chevronWidth={RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}
+        />
         <StyledAggregateDropdownContainer
           isNonInteractive={isRecordTableCellsNonEditable}
           inert={isRecordTableCellsNonEditable || undefined}
         >
-          <RecordBoardColumnHeaderAggregateDropdown
+          <RecordGroupAggregateDropdown
             aggregateValue={recordIndexAggregateDisplayValueForGroupValue}
             dropdownId={`record-group-section-aggregate-dropdown-${currentRecordGroupId}`}
             objectMetadataItem={objectMetadataItem}
             aggregateLabel={recordIndexAggregateDisplayLabel}
           />
         </StyledAggregateDropdownContainer>
-      </StyledRecordGroupSection>
+      </StyledRecordGroupHeaderContainer>
       <StyledFieldPlaceholderCell widthOfFields={fieldsPlaceholderWidth} />
       <RecordTableAddButtonPlaceholderCell />
       <RecordTableGroupSectionLastDynamicFillingCell />

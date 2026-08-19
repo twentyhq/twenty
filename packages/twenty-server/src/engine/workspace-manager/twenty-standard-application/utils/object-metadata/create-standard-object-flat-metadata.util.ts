@@ -1,5 +1,5 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { ObjectOpenRecordIn } from 'twenty-shared/types';
+import { MetadataWritability, ObjectOpenRecordIn } from 'twenty-shared/types';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -93,6 +93,7 @@ export const createStandardObjectFlatMetadata = <
     isAuditLogged,
     isUIEditable,
     isUICreatable,
+    writability: MetadataWritability.OPEN,
     openRecordIn,
     isLabelSyncedWithName: false,
     overrides: null,

@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 
 import { Request } from 'express';
+import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AppConnectionDto } from 'src/engine/core-modules/application/connection-provider/connections/dtos/app-connection.dto';
@@ -26,7 +27,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
  * queries on the metadata schema (ApplicationConnectionsResolver). The SDK
  * helpers (`listConnections`, `getConnection`) now call GraphQL. Kept for
  * backward compatibility with already-deployed app runtimes. */
-@Controller('apps/connections')
+@Controller(`${ApiPath.Apps}/connections`)
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard, NoPermissionGuard)
 @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
 export class ApplicationConnectionsController {

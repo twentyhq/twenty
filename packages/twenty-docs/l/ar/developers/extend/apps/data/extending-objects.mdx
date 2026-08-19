@@ -43,6 +43,8 @@ export default defineField({
 
 * موقع الملف متروك لك. المتعارف عليه هو `src/fields/\<name>.field.ts`، لكن حزمة SDK تكتشف الحقول في أي مكان داخل `src/`.
 
+* يمكن أيضًا تعيين `writability` على مستوى الحقل: يقتصر السماح بالكتابة في حالة `MetadataWritability.APPLICATION` على دوال منطق تطبيقك نفسها، بينما يُخصَّص `MetadataWritability.SYSTEM` للبيانات المُدارة بواسطة المنصة. لا يمكن أن يكون مستوى قابلية الكتابة للحقل إلا أكثر تقييدًا من مستوى الكائن الذي ينتمي إليه، ولا تتأثر عمليات القراءة بذلك. راجع [Objects](/l/ar/developers/extend/apps/data/objects) للاطّلاع على الدلالات الكاملة.
+
 * لإضافة علامة تبويب إلى تخطيط صفحة قياسي (مثل صفحة تفاصيل Task أو Company)، استخدم [`definePageLayoutTab`](/l/ar/developers/extend/apps/layout/page-layouts#definepagelayouttab) مع `STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS` من `twenty-sdk/define`.
 
 ## إضافة علاقة إلى كائن موجود

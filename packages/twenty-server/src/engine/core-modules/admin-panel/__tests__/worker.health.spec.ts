@@ -70,7 +70,6 @@ describe('WorkerHealthIndicator', () => {
       .mockImplementation(() => {});
     jest.useFakeTimers();
 
-    // Reset mocks to their default success state before each test
     mockQueueInstance.getWorkers.mockResolvedValue([]);
     mockQueueInstance.getMetrics.mockResolvedValue({ count: 0, data: [] });
     mockQueueInstance.getWaitingCount.mockResolvedValue(0);
@@ -242,7 +241,6 @@ describe('WorkerHealthIndicator', () => {
 
   describe('getQueueDetails', () => {
     beforeEach(() => {
-      // Reset mocks to clean state before each test in this describe block
       mockQueueInstance.getWorkers.mockResolvedValue([{ id: 'worker1' }]);
       mockQueueInstance.getMetrics.mockResolvedValue({ count: 0, data: [] });
     });

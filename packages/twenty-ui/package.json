@@ -30,6 +30,7 @@
   ],
   "devDependencies": {
     "@argos-ci/storybook": "^6.0.6",
+    "@fontsource/inter": "^5.2.8",
     "@prettier/sync": "^0.5.2",
     "@size-limit/preset-small-lib": "^12.1.0",
     "@storybook-community/storybook-addon-cookie": "^5.0.0",

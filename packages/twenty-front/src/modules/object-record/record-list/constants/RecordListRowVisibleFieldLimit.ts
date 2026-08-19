@@ -1,0 +1,1 @@
+export const RECORD_LIST_ROW_VISIBLE_FIELD_LIMIT = 6;

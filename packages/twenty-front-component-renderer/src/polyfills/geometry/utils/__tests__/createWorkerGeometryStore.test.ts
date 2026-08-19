@@ -1,5 +1,5 @@
-import { createElementGeometrySnapshotFixture } from '@/__tests__/createElementGeometrySnapshotFixture';
-import { createViewportGeometrySnapshotFixture } from '@/__tests__/createViewportGeometrySnapshotFixture';
+import { createElementGeometrySnapshotFixture } from '@/testing/createElementGeometrySnapshotFixture';
+import { createViewportGeometrySnapshotFixture } from '@/testing/createViewportGeometrySnapshotFixture';
 import { GEOMETRY_OBSERVATION_LIMIT_WARNING } from '@/polyfills/geometry/constants/GeometryObservationLimitWarning';
 import { GEOMETRY_TRANSPORT_FAILURE_WARNING } from '@/polyfills/geometry/constants/GeometryTransportFailureWarning';
 import { createWorkerGeometryStore } from '../createWorkerGeometryStore';

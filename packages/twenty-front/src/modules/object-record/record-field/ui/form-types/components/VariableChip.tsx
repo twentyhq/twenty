@@ -1,4 +1,4 @@
-import { BaseChip } from '@/object-record/record-field/ui/form-types/components/BaseChip';
+import { BaseChip } from '@/ui/input/components/BaseChip';
 import { useSearchVariable } from '@/workflow/workflow-variables/hooks/useSearchVariable';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';

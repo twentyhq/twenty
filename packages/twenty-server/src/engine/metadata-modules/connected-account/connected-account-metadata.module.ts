@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ConnectionProviderModule } from 'src/engine/core-modules/application/connection-provider/connection-provider.module';
 import { AppOAuthRefreshModule } from 'src/engine/core-modules/application/connection-provider/refresh/app-oauth-refresh.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
@@ -21,6 +22,7 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
       MessageChannelEntity,
     ]),
     AppOAuthRefreshModule,
+    ConnectionProviderModule,
     FeatureFlagModule,
     PermissionsModule,
     WorkspaceEventEmitterModule,

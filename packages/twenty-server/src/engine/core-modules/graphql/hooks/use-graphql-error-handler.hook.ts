@@ -44,9 +44,6 @@ const APP_VERSION_MISMATCH_CODE = 'APP_VERSION_MISMATCH';
 type GraphQLErrorHandlerHookOptions = {
   metricsService: MetricsService;
 
-  /**
-   * The exception handler service to use.
-   */
   exceptionHandlerService: ExceptionHandlerService;
 
   i18nService: I18nService;
@@ -123,7 +120,6 @@ export const useGraphQLErrorHandlerHook = <
               return;
             }
 
-            // Step 1: Process errors - extract original errors and convert to BaseGraphQLError
             const processedErrors = result.errors.map((error) => {
               const originalError = error.originalError || error;
 
@@ -144,7 +140,6 @@ export const useGraphQLErrorHandlerHook = <
               return originalError;
             });
 
-            // Error metrics
             const codeToMetricKey: Partial<Record<ErrorCode, MetricsKeys>> = {
               [ErrorCode.UNAUTHENTICATED]: MetricsKeys.GraphqlOperation401,
               [ErrorCode.FORBIDDEN]: MetricsKeys.GraphqlOperation403,
@@ -188,7 +183,6 @@ export const useGraphQLErrorHandlerHook = <
               }
             });
 
-            // Step 2: Send errors to monitoring service (with stack traces)
             const errorsToCapture = processedErrors.filter(
               shouldCaptureException,
             );
@@ -216,7 +210,6 @@ export const useGraphQLErrorHandlerHook = <
               });
             }
 
-            // Step 3: Transform errors for GraphQL response (clean GraphQL errors)
             const userLocale = args.contextValue.req.locale ?? SOURCE_LOCALE;
             const i18n = options.i18nService.getI18nInstance(userLocale);
             const defaultErrorMessage = msg`An error occurred.`;

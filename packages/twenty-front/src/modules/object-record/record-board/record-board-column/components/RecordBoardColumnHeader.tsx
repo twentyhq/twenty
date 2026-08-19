@@ -6,18 +6,19 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
-import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';
 import { DragDropItemSortableHandle } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableHandle';
 import { RECORD_BOARD_COLUMN_WIDTH } from '@/object-record/record-board/constants/RecordBoardColumnWidth';
 import { RECORD_BOARD_COLUMN_WIDTH_CSS_VARIABLE_NAME } from '@/object-record/record-board/constants/RecordBoardColumnWidthCssVariableName';
 import { RecordBoardColumnResizeHandler } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnResizeHandler';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
+import { RecordGroupAggregateDropdown } from '@/object-record/record-group/components/RecordGroupAggregateDropdown';
 import { RecordGroupChip } from '@/object-record/record-group/components/RecordGroupChip';
 import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
 import { recordIndexAggregateDisplayLabelComponentState } from '@/object-record/record-index/states/recordIndexAggregateDisplayLabelComponentState';
 import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexAggregateDisplayValueForGroupValueComponentFamilyState';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
+import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { isRecordBoardViewSettingsReadOnlyComponentState } from '@/object-record/record-board/states/isRecordBoardViewSettingsReadOnlyComponentState';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -27,6 +28,7 @@ import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDrop
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { isDefined } from 'twenty-shared/utils';
 import { IconDotsVertical, IconPlus } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 
@@ -144,10 +146,18 @@ export const RecordBoardColumnHeader = () => {
     objectMetadataItem.id,
   );
 
-  const canCreateRecords = canCreateRecordsForObjectMetadataItem({
-    objectPermissions,
-    objectMetadataItem,
-  });
+  // Creating in a nested relation widget requires picking the related record
+  // to create through, which only the table layout offers today.
+  const nestedRelationCreateThrough = useContext(
+    RecordTableWidgetContext,
+  )?.nestedRelationCreateThrough;
+
+  const canCreateRecords =
+    !isDefined(nestedRelationCreateThrough) &&
+    canCreateRecordsForObjectMetadataItem({
+      objectPermissions,
+      objectMetadataItem,
+    });
 
   const hasAnySoftDeleteFilterOnView = useAtomComponentSelectorValue(
     hasAnySoftDeleteFilterOnViewComponentSelector,
@@ -227,7 +237,7 @@ export const RecordBoardColumnHeader = () => {
                 isNonInteractive={isRecordBoardViewSettingsReadOnly}
                 inert={isRecordBoardViewSettingsReadOnly || undefined}
               >
-                <RecordBoardColumnHeaderAggregateDropdown
+                <RecordGroupAggregateDropdown
                   aggregateValue={recordIndexAggregateDisplayValueForGroupValue}
                   dropdownId={`record-board-column-aggregate-dropdown-${columnDefinition.id}`}
                   objectMetadataItem={objectMetadataItem}
