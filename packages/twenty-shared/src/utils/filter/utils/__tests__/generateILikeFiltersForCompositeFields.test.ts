@@ -24,7 +24,8 @@ describe('generateILikeFiltersForCompositeFields', () => {
       },
     ]);
   });
-  it('should format composite filters for complex filter string', () => {
+
+  it('should format composite filters for complex multi-token filter string with AND/OR conjunction', () => {
     expect(
       generateILikeFiltersForCompositeFields('john doe', 'name', [
         'firstName',
@@ -32,32 +33,44 @@ describe('generateILikeFiltersForCompositeFields', () => {
       ]),
     ).toEqual([
       {
-        name: {
-          firstName: {
-            ilike: '%john%',
+        and: [
+          {
+            or: [
+              {
+                name: {
+                  firstName: {
+                    ilike: '%john%',
+                  },
+                },
+              },
+              {
+                name: {
+                  lastName: {
+                    ilike: '%john%',
+                  },
+                },
+              },
+            ],
           },
-        },
-      },
-      {
-        name: {
-          lastName: {
-            ilike: '%john%',
+          {
+            or: [
+              {
+                name: {
+                  firstName: {
+                    ilike: '%doe%',
+                  },
+                },
+              },
+              {
+                name: {
+                  lastName: {
+                    ilike: '%doe%',
+                  },
+                },
+              },
+            ],
           },
-        },
-      },
-      {
-        name: {
-          firstName: {
-            ilike: '%doe%',
-          },
-        },
-      },
-      {
-        name: {
-          lastName: {
-            ilike: '%doe%',
-          },
-        },
+        ],
       },
     ]);
   });
