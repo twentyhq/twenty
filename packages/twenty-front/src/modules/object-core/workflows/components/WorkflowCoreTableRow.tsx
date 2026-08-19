@@ -2,13 +2,13 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/data-display';
 import { IconSettingsAutomation } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { MultiSelectDisplay } from '@/ui/field/display/components/MultiSelectDisplay';
+import { useCoreWorkflowStatusOptions } from '@/object-core/workflows/hooks/useCoreWorkflowStatusOptions';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { WORKFLOW_CORE_STATUS_TAG } from '@/object-core/workflows/constants/WorkflowCoreStatusTag';
 import { WORKFLOW_CORE_TABLE_GRID_TEMPLATE_COLUMNS } from '@/object-core/workflows/constants/WorkflowCoreTableGridTemplateColumns';
 import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
 
@@ -38,7 +38,7 @@ export const WorkflowCoreTableRow = ({
 }: WorkflowCoreTableRowProps) => {
   const { t } = useLingui();
 
-  const statusTag = WORKFLOW_CORE_STATUS_TAG[workflow.status];
+  const statusOptions = useCoreWorkflowStatusOptions();
 
   return (
     <TableRow
@@ -62,9 +62,10 @@ export const WorkflowCoreTableRow = ({
         </StyledNameContainer>
       </TableCell>
       <TableCell>
-        {isDefined(statusTag) && (
-          <Tag color={statusTag.color} text={t(statusTag.label)} />
-        )}
+        <MultiSelectDisplay
+          values={[workflow.status]}
+          options={statusOptions}
+        />
       </TableCell>
       <TableCell>{workflow.applicationName ?? '-'}</TableCell>
       <TableCell>{new Date(workflow.updatedAt).toLocaleDateString()}</TableCell>
