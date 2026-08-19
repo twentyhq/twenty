@@ -36,9 +36,12 @@ export const turnSortsIntoOrderBy = (
         return undefined;
       }
 
+      // Empty values stay at the bottom in both directions: sorting is about
+      // seeing values, so a sparsely-filled column must not start with a wall
+      // of empty rows when sorted ascending
       const direction: OrderBy =
         sort.direction === ViewSortDirection.ASC
-          ? 'AscNullsFirst'
+          ? 'AscNullsLast'
           : 'DescNullsLast';
 
       if (correspondingField.type === FieldMetadataType.RELATION) {
