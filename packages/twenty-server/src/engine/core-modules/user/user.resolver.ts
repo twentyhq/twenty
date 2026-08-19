@@ -32,6 +32,7 @@ import {
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { buildTwoFactorAuthenticationMethodSummary } from 'src/engine/core-modules/two-factor-authentication/utils/two-factor-authentication-method.presenter';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { canListHiddenAvailableWorkspaces } from 'src/engine/core-modules/auth/utils/can-list-hidden-available-workspaces.util';
 import { filterOutHiddenAvailableWorkspaces } from 'src/engine/core-modules/user-workspace/utils/filter-out-hidden-available-workspaces.util';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { DeletedWorkspaceMemberDTO } from 'src/engine/core-modules/user/dtos/deleted-workspace-member.dto';
@@ -657,7 +658,10 @@ export class UserResolver {
       );
 
     return this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
-      isWorkspaceScopedCredential
+      canListHiddenAvailableWorkspaces({
+        isWorkspaceScopedCredential,
+        authProvider,
+      })
         ? availableWorkspaces
         : filterOutHiddenAvailableWorkspaces(availableWorkspaces),
       user,

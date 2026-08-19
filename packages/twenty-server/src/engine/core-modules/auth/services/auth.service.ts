@@ -65,6 +65,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { filterOutHiddenAvailableWorkspaces } from 'src/engine/core-modules/user-workspace/utils/filter-out-hidden-available-workspaces.util';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -476,9 +477,13 @@ export class AuthService {
     };
   }
 
+  // Reached by checkUserExists, a public endpoint accepting any email: a hidden
+  // workspace must not be revealed by the count either.
   async countAvailableWorkspacesByEmail(email: string): Promise<number> {
     return Object.values(
-      await this.userWorkspaceService.findAvailableWorkspacesByEmail(email),
+      filterOutHiddenAvailableWorkspaces(
+        await this.userWorkspaceService.findAvailableWorkspacesByEmail(email),
+      ),
     ).flat(2).length;
   }
 

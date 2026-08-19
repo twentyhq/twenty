@@ -402,6 +402,8 @@ export class UserWorkspaceService {
     const workspacesFromApprovedAccessDomainIds =
       workspacesFromApprovedAccessDomain.map(({ workspace }) => workspace.id);
 
+    // A HIDDEN workspace is never listed, so its invitations are only reachable
+    // through the emailed link, which carries its own token.
     const workspacesFromInvitations = (
       await this.workspaceInvitationService.findInvitationsByEmail(email)
     )
@@ -410,7 +412,9 @@ export class UserWorkspaceService {
           ![
             ...alreadyMemberWorkspacesIds,
             ...workspacesFromApprovedAccessDomainIds,
-          ].includes(workspace.id),
+          ].includes(workspace.id) &&
+          workspace.workspaceDiscoverability !==
+            WorkspaceDiscoverability.HIDDEN,
       )
       .map((appToken) => ({
         workspace: appToken.workspace,
