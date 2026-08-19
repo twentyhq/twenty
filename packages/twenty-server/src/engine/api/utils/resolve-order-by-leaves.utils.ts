@@ -175,7 +175,13 @@ const resolveRelationLeaf = ({
     return null;
   }
 
-  return { kind: 'relation', path, direction, fieldMetadata, targetFieldMetadata };
+  return {
+    kind: 'relation',
+    path,
+    direction,
+    fieldMetadata,
+    targetFieldMetadata,
+  };
 };
 
 // Single source of truth for walking an orderBy: every entry is flattened into
