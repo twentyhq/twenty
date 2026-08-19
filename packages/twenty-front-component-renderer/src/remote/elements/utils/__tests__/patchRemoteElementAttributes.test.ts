@@ -121,6 +121,7 @@ describe('patchRemoteElementAttributes', () => {
 
       expect(element.getAttribute('constructor')).toBe('plain-attribute-value');
       expect(element.hasAttribute('constructor')).toBe(true);
+      expect(element.getAttributeNames()).toContain('constructor');
     });
 
     it('should return null for an unset attribute named after an Object prototype key', () => {
