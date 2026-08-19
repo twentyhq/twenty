@@ -10,11 +10,13 @@ import { type MessageIdTranslator } from 'src/engine/metadata-modules/utils/mess
 
 export const translateStandardLabel = ({
   sourceValue,
+  context,
   isStandardApp,
   applicationCatalog,
   i18nInstance,
 }: {
   sourceValue: string;
+  context?: string;
   isStandardApp: boolean;
   applicationCatalog: Record<string, string> | undefined;
   i18nInstance: MessageIdTranslator;
@@ -27,7 +29,7 @@ export const translateStandardLabel = ({
     return sourceValue;
   }
 
-  const messageId = generateMessageId(sourceValue);
+  const messageId = generateMessageId(sourceValue, context);
 
   if (isDefined(applicationCatalog)) {
     return applicationCatalog[messageId] ?? sourceValue;

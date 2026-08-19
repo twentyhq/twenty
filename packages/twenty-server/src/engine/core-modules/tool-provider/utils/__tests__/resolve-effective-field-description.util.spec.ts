@@ -71,7 +71,8 @@ describe('resolveEffectiveFieldDescription', () => {
       flatFieldMetadata: getStandardFlatFieldMetadata(),
       locale: 'fr-FR',
       i18nInstance: buildTranslator({
-        [generateMessageId(BASE_DESCRIPTION)]: "Date d'échéance",
+        [generateMessageId(BASE_DESCRIPTION, 'fieldMetadata.description')]:
+          "Date d'échéance",
       }),
     });
 
