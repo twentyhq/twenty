@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { type ObjectRecordBaseEvent } from 'twenty-shared/database-events';
+import { type TimelineActivityAction } from 'twenty-shared/timeline';
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 import { isNonEmptyString } from '@sniptt/guards';
 import { fromArrayToValuesByKeyRecord, isDefined } from 'twenty-shared/utils';
+import { In } from 'typeorm';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { type DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -24,15 +26,13 @@ import {
 } from 'src/modules/timeline/services/timeline-activity-target-resolver.service';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload';
-import {
-  type TimelineActivityRule,
-  type TimelineActivityRuleAction,
-} from 'src/modules/timeline/types/timeline-activity-rule.type';
+import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 // An event on the junction object is a change to the link, not to the linked
 // record. `updated` covers a junction row being repointed at another target.
 const JUNCTION_EVENT_ACTIONS: Partial<
-  Record<DatabaseEventAction, TimelineActivityRuleAction>
+  Record<DatabaseEventAction, TimelineActivityAction>
 > = {
   created: 'linked',
   restored: 'linked',
@@ -41,7 +41,7 @@ const JUNCTION_EVENT_ACTIONS: Partial<
 };
 
 const SOURCE_EVENT_ACTIONS: Partial<
-  Record<DatabaseEventAction, TimelineActivityRuleAction>
+  Record<DatabaseEventAction, TimelineActivityAction>
 > = {
   created: 'created',
   updated: 'updated',
@@ -63,7 +63,7 @@ const buildLinkedPayload = ({
 }: {
   rule: TimelineActivityRule;
   action: DatabaseEventAction;
-  ruleAction: TimelineActivityRuleAction;
+  ruleAction: TimelineActivityAction;
   target: ResolvedTimelineActivityTarget;
   workspaceMemberId: string | undefined;
   linkedRecordId: string;
@@ -122,12 +122,19 @@ export class TimelineActivityService {
 
     const payloads = (
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () =>
-          Promise.all([
+        async () => {
+          // Resolved after the rule check so batches without rules, system
+          // objects mostly, never pay the workspace member query.
+          const enrichedEvents = await this.enrichEventsWithWorkspaceMemberId({
+            events: eventsWithoutPositionDiff,
+            workspaceId,
+          });
+
+          return Promise.all([
             ...sourceRules.map((rule) =>
               this.buildPayloadsForSourceRule({
                 rule,
-                events: eventsWithoutPositionDiff,
+                events: enrichedEvents,
                 action,
                 workspaceId,
                 flatFieldMetadataMaps,
@@ -136,13 +143,14 @@ export class TimelineActivityService {
             ...junctionRules.map((rule) =>
               this.buildPayloadsForJunctionRule({
                 rule,
-                events: eventsWithoutPositionDiff,
+                events: enrichedEvents,
                 action,
                 workspaceId,
                 flatFieldMetadataMaps,
               }),
             ),
-          ]),
+          ]);
+        },
         buildSystemAuthContext(workspaceId),
       )
     ).flat();
@@ -171,7 +179,7 @@ export class TimelineActivityService {
     event,
   }: {
     rule: TimelineActivityRule;
-    ruleAction: TimelineActivityRuleAction;
+    ruleAction: TimelineActivityAction;
     event: ObjectRecordBaseEvent;
   }): boolean {
     if (!rule.actions.includes(ruleAction)) {
@@ -346,6 +354,43 @@ export class TimelineActivityService {
 
   // Position changes reach other consumers (SSE, webhooks, workflows) but render
   // blank in the timeline, so exclude them to avoid empty activity rows.
+  private async enrichEventsWithWorkspaceMemberId({
+    events,
+    workspaceId,
+  }: {
+    events: ObjectRecordBaseEvent[];
+    workspaceId: string;
+  }): Promise<ObjectRecordBaseEvent[]> {
+    const userIds = events.map((event) => event.userId).filter(isDefined);
+
+    if (userIds.length === 0) {
+      return events;
+    }
+
+    const workspaceMemberRepository =
+      await this.globalWorkspaceOrmManager.getRepository(
+        workspaceId,
+        WorkspaceMemberWorkspaceEntity,
+        {
+          shouldBypassPermissionChecks: true,
+        },
+      );
+
+    const workspaceMembers = await workspaceMemberRepository.findBy({
+      userId: In(userIds),
+    });
+
+    return events.map((event) => {
+      const workspaceMember = workspaceMembers.find(
+        (member) => member.userId === event.userId,
+      );
+
+      return isDefined(event.userId) && isDefined(workspaceMember)
+        ? { ...event, workspaceMemberId: workspaceMember.id }
+        : event;
+    });
+  }
+
   private excludePositionFieldsFromEventsDiff({
     events,
     objectMetadata,

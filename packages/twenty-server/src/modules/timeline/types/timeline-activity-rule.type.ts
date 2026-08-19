@@ -1,12 +1,6 @@
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type TimelineActivityAction } from 'twenty-shared/timeline';
 
-export type TimelineActivityRuleAction =
-  | 'created'
-  | 'updated'
-  | 'deleted'
-  | 'restored'
-  | 'linked'
-  | 'unlinked';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export type TimelineActivityRuleTargetJoinColumn = {
   joinColumnName: string;
@@ -30,7 +24,7 @@ export type TimelineActivityRule = {
   // Object whose events trigger this rule. Carried whole so the label of a
   // linked record resolves through the shared display-name logic
   sourceFlatObjectMetadata: FlatObjectMetadata;
-  actions: TimelineActivityRuleAction[];
+  actions: TimelineActivityAction[];
   // Diff keys gating the `updated` action. null = any field
   triggerFieldNames: string[] | null;
   targetShape: TimelineActivityRuleTargetShape;
