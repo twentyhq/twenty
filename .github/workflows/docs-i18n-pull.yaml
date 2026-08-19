@@ -81,9 +81,12 @@ jobs:
         env:
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
-      - name: Repair escaped inline-code tags in Crowdin
+      # MT/AI pre-translate can HTML-escape tags inside inline-code spans
+      # (e.g. `<path>` -> `&lt;path&gt;`), which breaks Mintlify's MDX build.
+      # Normalize those in Crowdin before downloading so we never pull broken MDX.
+      - name: Normalize translations in Crowdin
         if: github.event_name != 'pull_request' && (inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
-        run: npx tsx packages/twenty-utils/fix-crowdin-inline-code.ts --project=2 --apply || echo "::warning::inline-code repair failed (non-blocking)"
+        run: npx tsx packages/twenty-utils/normalize-crowdin-translations.ts --project=2 --apply --rules=escaped-inline-code-tags || echo "::warning::translation normalization failed (non-blocking)"
         env:
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
