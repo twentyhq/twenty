@@ -57,12 +57,10 @@ export async function resolveCandidacy(
     }
   }
 
-  const now = new Date().toISOString();
   await updateApplication(client, applicationId, {
     partnerId,
     partnerUserId: memberId,
     state: 'APPLIED',
-    lastActivityAt: now,
   });
   // ponytail: dedupe by (opportunity, partner) above; two near-simultaneous creates could still both pass before either stamps — acceptable.
   return { applied: true, partnerId };
