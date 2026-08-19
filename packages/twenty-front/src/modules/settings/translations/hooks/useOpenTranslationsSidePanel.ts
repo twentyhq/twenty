@@ -11,12 +11,14 @@ import { IconLanguage } from 'twenty-ui/icon';
 export const useOpenTranslationsSidePanel = () => {
   const { t } = useLingui();
   const { navigateSidePanel } = useNavigateSidePanel();
-  const setTarget = useSetAtomState(settingsTranslationsSidePanelTargetState);
+  const setSettingsTranslationsSidePanelTarget = useSetAtomState(
+    settingsTranslationsSidePanelTargetState,
+  );
 
   const openTranslationsSidePanel = (
     target: SettingsTranslationsSidePanelTarget,
   ) => {
-    setTarget(target);
+    setSettingsTranslationsSidePanelTarget(target);
     navigateSidePanel({
       page: SidePanelPages.SettingsMetadataTranslations,
       pageTitle: t`Translations`,

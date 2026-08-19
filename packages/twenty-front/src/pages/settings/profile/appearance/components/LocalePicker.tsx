@@ -10,7 +10,7 @@ import { useInvalidateMetadataStore } from '@/metadata-store/hooks/useInvalidate
 import { useStore } from 'jotai';
 import { useLingui } from '@lingui/react/macro';
 import { enUS } from 'date-fns/locale';
-import { APP_LOCALES } from 'twenty-shared/translations';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { useLocaleOptions } from '~/localization/hooks/useLocaleOptions';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';

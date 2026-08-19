@@ -37,19 +37,21 @@ const StyledEntityLabel = styled.div`
 
 export const SidePanelSettingsMetadataTranslationsPage = () => {
   const { t } = useLingui();
-  const target = useAtomStateValue(settingsTranslationsSidePanelTargetState);
+  const settingsTranslationsSidePanelTarget = useAtomStateValue(
+    settingsTranslationsSidePanelTargetState,
+  );
   const { metadataTranslations, refetch } = useMetadataTranslations(
-    isDefined(target)
-      ? target.metadataName === 'objectMetadata'
-        ? { objectMetadataId: target.recordId }
-        : { fieldMetadataId: target.recordId }
+    isDefined(settingsTranslationsSidePanelTarget)
+      ? settingsTranslationsSidePanelTarget.metadataName === 'objectMetadata'
+        ? { objectMetadataId: settingsTranslationsSidePanelTarget.recordId }
+        : { fieldMetadataId: settingsTranslationsSidePanelTarget.recordId }
       : null,
   );
   const { saveMetadataTranslation } = useSaveMetadataTranslation();
   const { getPropertyLabel } = useTranslatablePropertyLabel();
   const localeOptions = useLocaleOptions();
 
-  if (!isDefined(target)) {
+  if (!isDefined(settingsTranslationsSidePanelTarget)) {
     return null;
   }
 
@@ -64,9 +66,9 @@ export const SidePanelSettingsMetadataTranslationsPage = () => {
 
   const saveRow = async (row: MetadataTranslationRow, value: string | null) => {
     await saveMetadataTranslation({
-      metadataName: target.metadataName,
-      recordId: target.recordId,
-      objectMetadataId: target.objectMetadataId,
+      metadataName: settingsTranslationsSidePanelTarget.metadataName,
+      recordId: settingsTranslationsSidePanelTarget.recordId,
+      objectMetadataId: settingsTranslationsSidePanelTarget.objectMetadataId,
       locale: row.locale,
       property: row.property,
       value,
@@ -76,10 +78,17 @@ export const SidePanelSettingsMetadataTranslationsPage = () => {
 
   return (
     <StyledPageContainer>
-      <StyledEntityLabel>{target.label}</StyledEntityLabel>
+      <StyledEntityLabel>
+        {settingsTranslationsSidePanelTarget.label}
+      </StyledEntityLabel>
       {[...rowsByProperty.entries()].map(([property, localeRows]) => (
         <Table key={property}>
-          <TableSection title={getPropertyLabel(target.metadataName, property)}>
+          <TableSection
+            title={getPropertyLabel(
+              settingsTranslationsSidePanelTarget.metadataName,
+              property,
+            )}
+          >
             {localeOptions.map(({ value: locale, label: localeLabel }) => {
               const row = localeRows.get(locale);
 
