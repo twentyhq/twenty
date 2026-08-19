@@ -6,8 +6,7 @@ import { pathToVarName } from './pathToVarName';
 const isLeaf = (
   node: DesignTokenNode | DesignTokenLeaf,
 ): node is DesignTokenLeaf =>
-  typeof (node as DesignTokenLeaf).light === 'string' &&
-  typeof (node as DesignTokenLeaf).dark === 'string';
+  typeof node.light === 'string' && typeof node.dark === 'string';
 
 export const collectLeaves = (
   node: DesignTokenNode,

@@ -9,8 +9,15 @@ export const buildLeafTree = (
   for (const leaf of leaves) {
     let node = tree;
     for (const segment of leaf.path.slice(0, -1)) {
-      node[segment] ??= {};
-      node = node[segment] as SerializableTree;
+      const existing = node[segment];
+      if (typeof existing === 'string') {
+        throw new Error(
+          `Token path collision at "${leaf.path.join('.')}": "${segment}" is already a leaf.`,
+        );
+      }
+      const child = existing ?? {};
+      node[segment] = child;
+      node = child;
     }
     node[leaf.path[leaf.path.length - 1]] = leafValue(leaf);
   }

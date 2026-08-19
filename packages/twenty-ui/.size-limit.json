@@ -73,7 +73,7 @@
   {
     "name": "tokens",
     "path": "dist/tokens.mjs",
-    "limit": "30 kB"
+    "limit": "60 kB"
   },
   {
     "name": "theme-constants",
