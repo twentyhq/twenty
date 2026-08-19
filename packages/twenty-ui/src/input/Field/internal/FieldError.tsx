@@ -1,8 +1,8 @@
 import { Field as FieldPrimitive } from '@base-ui/react/field';
-import { clsx } from 'clsx';
 import { forwardRef } from 'react';
 
 import styles from './FieldError.module.scss';
+import { mergeFieldPartClassName } from './mergeFieldPartClassName';
 
 type FieldErrorProps = React.ComponentPropsWithoutRef<
   typeof FieldPrimitive.Error
@@ -14,12 +14,7 @@ export const FieldError = forwardRef<
 >(({ className, ...props }, ref) => (
   <FieldPrimitive.Error
     ref={ref}
-    className={(state) =>
-      clsx(
-        styles.error,
-        typeof className === 'function' ? className(state) : className,
-      )
-    }
+    className={mergeFieldPartClassName(styles.error, className)}
     // oxlint-disable-next-line react/jsx-props-no-spreading
     {...props}
   />
