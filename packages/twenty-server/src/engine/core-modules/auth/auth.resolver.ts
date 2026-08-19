@@ -81,6 +81,7 @@ import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-fact
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { filterOutHiddenAvailableWorkspaces } from 'src/engine/core-modules/user-workspace/utils/filter-out-hidden-available-workspaces.util';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -250,10 +251,11 @@ export class AuthResolver {
     const user =
       await this.authService.validateLoginWithPassword(userCredentials);
 
-    const availableWorkspaces =
+    const availableWorkspaces = filterOutHiddenAvailableWorkspaces(
       await this.userWorkspaceService.findAvailableWorkspacesByEmail(
         user.email,
-      );
+      ),
+    );
 
     const result = {
       availableWorkspaces:
@@ -359,10 +361,11 @@ export class AuthResolver {
 
     await this.appTokenRepository.remove(appToken);
 
-    const availableWorkspaces =
+    const availableWorkspaces = filterOutHiddenAvailableWorkspaces(
       await this.userWorkspaceService.findAvailableWorkspacesByEmail(
         user.email,
-      );
+      ),
+    );
 
     const result = {
       availableWorkspaces:
@@ -455,10 +458,11 @@ export class AuthResolver {
       },
     );
 
-    const availableWorkspaces =
+    const availableWorkspaces = filterOutHiddenAvailableWorkspaces(
       await this.userWorkspaceService.findAvailableWorkspacesByEmail(
         user.email,
-      );
+      ),
+    );
 
     await this.emailVerificationService.sendVerificationEmail({
       userId: user.id,

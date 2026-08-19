@@ -3,7 +3,7 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 import { useAuth } from '@/auth/hooks/useAuth';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
+import { countOtherAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
@@ -61,8 +61,10 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   const { t } = useLingui();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const availableWorkspaces = useAtomStateValue(availableWorkspacesState);
-  const availableWorkspacesCount =
-    countAvailableWorkspaces(availableWorkspaces);
+  const otherAvailableWorkspacesCount = countOtherAvailableWorkspaces(
+    availableWorkspaces,
+    currentWorkspace?.id,
+  );
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
   const { redirectToDefaultDomain } = useRedirectToDefaultDomain();
   const { closeDropdown } = useCloseDropdown();
@@ -145,7 +147,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
       >
         {currentWorkspace?.displayName}
       </DropdownMenuHeader>
-      {availableWorkspacesCount > 1 && (
+      {otherAvailableWorkspacesCount > 0 && (
         <>
           <DropdownMenuItemsContainer>
             {[
@@ -179,7 +181,7 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                   />
                 </UndecoratedLink>
               ))}
-            {availableWorkspacesCount > 4 && (
+            {otherAvailableWorkspacesCount > 3 && (
               <MenuItem
                 LeftIcon={IconSwitchHorizontal}
                 text={t`Other workspaces`}

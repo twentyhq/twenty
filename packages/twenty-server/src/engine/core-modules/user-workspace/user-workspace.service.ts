@@ -375,16 +375,10 @@ export class UserWorkspaceService {
       },
     });
 
-    // HIDDEN workspaces are never advertised in the root-domain picker, even to
-    // their own members — they must sign in from the workspace URL directly.
+    // Membership is reported as-is: HIDDEN is a root-domain picker concern and
+    // is applied by its call sites, see filterOutHiddenAvailableWorkspaces.
     const alreadyMemberWorkspaces = user
-      ? user.userWorkspaces
-          .map(({ workspace }) => ({ workspace }))
-          .filter(
-            ({ workspace }) =>
-              workspace.workspaceDiscoverability !==
-              WorkspaceDiscoverability.HIDDEN,
-          )
+      ? user.userWorkspaces.map(({ workspace }) => ({ workspace }))
       : [];
 
     const alreadyMemberWorkspacesIds = alreadyMemberWorkspaces.map(
@@ -408,8 +402,6 @@ export class UserWorkspaceService {
     const workspacesFromApprovedAccessDomainIds =
       workspacesFromApprovedAccessDomain.map(({ workspace }) => workspace.id);
 
-    // HIDDEN removes the picker convenience only; invited users can still join
-    // through the direct invitation link, which carries its own token.
     const workspacesFromInvitations = (
       await this.workspaceInvitationService.findInvitationsByEmail(email)
     )
@@ -418,9 +410,7 @@ export class UserWorkspaceService {
           ![
             ...alreadyMemberWorkspacesIds,
             ...workspacesFromApprovedAccessDomainIds,
-          ].includes(workspace.id) &&
-          workspace.workspaceDiscoverability !==
-            WorkspaceDiscoverability.HIDDEN,
+          ].includes(workspace.id),
       )
       .map((appToken) => ({
         workspace: appToken.workspace,

@@ -5,6 +5,7 @@ import {
 } from '~/generated-metadata/graphql';
 import {
   countAvailableWorkspaces,
+  countOtherAvailableWorkspaces,
   getAvailableWorkspacePathAndSearchParams,
   getFirstAvailableWorkspaces,
 } from '@/auth/utils/availableWorkspacesUtils';
@@ -84,6 +85,42 @@ describe('availableWorkspacesUtils', () => {
       );
 
       expect(countAvailableWorkspaces(availableWorkspaces)).toBe(5);
+    });
+  });
+
+  describe('countOtherAvailableWorkspaces', () => {
+    it('should not count the workspace the user is currently in', () => {
+      const availableWorkspaces = createMockAvailableWorkspaces(
+        [
+          createMockAvailableWorkspace({ id: 'workspace-1' }),
+          createMockAvailableWorkspace({ id: 'workspace-2' }),
+        ],
+        [createMockAvailableWorkspace({ id: 'workspace-3' })],
+      );
+
+      expect(
+        countOtherAvailableWorkspaces(availableWorkspaces, 'workspace-1'),
+      ).toBe(2);
+    });
+
+    it('should count every workspace when the current one is not listed', () => {
+      const availableWorkspaces = createMockAvailableWorkspaces([
+        createMockAvailableWorkspace({ id: 'workspace-1' }),
+      ]);
+
+      expect(
+        countOtherAvailableWorkspaces(availableWorkspaces, 'workspace-2'),
+      ).toBe(1);
+    });
+
+    it('should return 0 when the user is only in the current workspace', () => {
+      const availableWorkspaces = createMockAvailableWorkspaces([
+        createMockAvailableWorkspace({ id: 'workspace-1' }),
+      ]);
+
+      expect(
+        countOtherAvailableWorkspaces(availableWorkspaces, 'workspace-1'),
+      ).toBe(0);
     });
   });
 

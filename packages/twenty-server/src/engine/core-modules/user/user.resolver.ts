@@ -32,6 +32,7 @@ import {
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { buildTwoFactorAuthenticationMethodSummary } from 'src/engine/core-modules/two-factor-authentication/utils/two-factor-authentication-method.presenter';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { filterOutHiddenAvailableWorkspaces } from 'src/engine/core-modules/user-workspace/utils/filter-out-hidden-available-workspaces.util';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { DeletedWorkspaceMemberDTO } from 'src/engine/core-modules/user/dtos/deleted-workspace-member.dto';
 import { UpdateUserEmailInput } from 'src/engine/core-modules/user/dtos/update-user-email.input';
@@ -648,14 +649,21 @@ export class UserResolver {
     workspace: WorkspaceEntity | undefined,
     @AuthAuthenticatedAt() authenticatedAt: Date | undefined,
   ): Promise<AvailableWorkspaces> {
-    return this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
+    const isWorkspaceScopedCredential = isDefined(workspace);
+
+    const availableWorkspaces =
       await this.userWorkspaceService.findAvailableWorkspacesByEmail(
         user.email,
-      ),
+      );
+
+    return this.userWorkspaceService.setLoginTokenToAvailableWorkspacesWhenAuthProviderMatch(
+      isWorkspaceScopedCredential
+        ? availableWorkspaces
+        : filterOutHiddenAvailableWorkspaces(availableWorkspaces),
       user,
       authProvider,
       canCredentialAutoLoginIntoWorkspaces({
-        isWorkspaceScopedCredential: isDefined(workspace),
+        isWorkspaceScopedCredential,
         authenticatedAt,
         autoLoginWindow: this.twentyConfigService.get(
           'WORKSPACE_AUTO_LOGIN_WINDOW',
