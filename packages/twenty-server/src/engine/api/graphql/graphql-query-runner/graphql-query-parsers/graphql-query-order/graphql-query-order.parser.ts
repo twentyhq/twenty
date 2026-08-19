@@ -1,4 +1,5 @@
 import { isObject } from 'class-validator';
+import { type ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
@@ -8,6 +9,7 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
+import { assertFieldIsReadableOrThrow } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/assert-field-is-readable-or-throw.util';
 import {
   buildOrderByColumnExpression,
   shouldCastToText,
@@ -60,6 +62,7 @@ export class GraphqlQueryOrderFieldParser {
     orderBy: ObjectRecordOrderBy,
     objectNameSingular: string,
     isForwardPagination = true,
+    objectsPermissions?: ObjectsPermissions,
   ): ParseOrderByResult {
     const orderByConditions: Record<string, OrderByClause> = {};
     const relationJoins: RelationJoinInfo[] = [];
@@ -85,6 +88,12 @@ export class GraphqlQueryOrderFieldParser {
           );
         }
 
+        assertFieldIsReadableOrThrow({
+          objectsPermissions,
+          objectMetadataId: this.flatObjectMetadata.id,
+          fieldMetadataId: fieldMetadata.id,
+        });
+
         // Only treat as relation if accessed by relation name (not FK like companyId)
         if (
           isAccessedByRelationName &&
@@ -102,6 +111,7 @@ export class GraphqlQueryOrderFieldParser {
             fieldMetadata,
             orderByDirection: orderByDirection as Record<string, unknown>,
             isForwardPagination,
+            objectsPermissions,
           });
 
           if (relationOrderResult) {
@@ -165,10 +175,12 @@ export class GraphqlQueryOrderFieldParser {
     fieldMetadata,
     orderByDirection,
     isForwardPagination,
+    objectsPermissions,
   }: {
     fieldMetadata: FlatFieldMetadata;
     orderByDirection: Record<string, unknown>;
     isForwardPagination: boolean;
+    objectsPermissions?: ObjectsPermissions;
   }): {
     orderBy: Record<string, OrderByClause>;
     joinInfo: RelationJoinInfo;
@@ -217,6 +229,12 @@ export class GraphqlQueryOrderFieldParser {
     if (!isDefined(nestedFieldMetadata)) {
       return null;
     }
+
+    assertFieldIsReadableOrThrow({
+      objectsPermissions,
+      objectMetadataId: targetObjectMetadata.id,
+      fieldMetadataId: nestedFieldMetadata.id,
+    });
 
     const joinAlias = fieldMetadata.name;
 

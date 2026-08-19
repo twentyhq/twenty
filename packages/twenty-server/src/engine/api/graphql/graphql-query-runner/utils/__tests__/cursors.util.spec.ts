@@ -1,4 +1,8 @@
-import { FieldMetadataType, OrderByDirection } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  OrderByDirection,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
@@ -11,12 +15,14 @@ const buildMockField = (
   id: string,
   name: string,
   type: FieldMetadataType,
+  overrides: Partial<FlatFieldMetadata> = {},
 ): FlatFieldMetadata =>
   ({
     id,
     universalIdentifier: id,
     name,
     type,
+    ...overrides,
     objectMetadataId: 'obj-id',
     workspaceId: 'ws-id',
     label: name,
@@ -37,15 +43,23 @@ const fullNameField = buildMockField(
   'fullName',
   FieldMetadataType.FULL_NAME,
 );
+const companyField = buildMockField(
+  'company-id',
+  'company',
+  FieldMetadataType.RELATION,
+  { settings: { relationType: RelationType.MANY_TO_ONE } },
+);
 
 const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
   byUniversalIdentifier: {
     'name-id': nameField,
     'fullname-id': fullNameField,
+    'company-id': companyField,
   },
   universalIdentifierById: {
     'name-id': 'name-id',
     'fullname-id': 'fullname-id',
+    'company-id': 'company-id',
   },
   universalIdentifiersByApplicationId: {},
 };
@@ -67,7 +81,7 @@ const flatObjectMetadata: FlatObjectMetadata = {
   icon: 'Icon123',
   createdAt: new Date(),
   updatedAt: new Date(),
-  fieldIds: ['name-id', 'fullname-id'],
+  fieldIds: ['name-id', 'fullname-id', 'company-id'],
   indexMetadataIds: [],
   viewIds: [],
   applicationId: null,
@@ -168,6 +182,38 @@ describe('encodeCursor', () => {
     const decoded = decodeCursor(callEncodeCursor(record, orderBy));
 
     expect(decoded).toEqual({ name: 'John', id: 'abc' });
+  });
+
+  it('should preserve null sort values in the cursor', () => {
+    const record = { id: 'abc', name: null };
+    const orderBy = [{ name: OrderByDirection.AscNullsLast }];
+
+    const decoded = decodeCursor(callEncodeCursor(record, orderBy));
+
+    expect(decoded).toEqual({ name: null, id: 'abc' });
+  });
+
+  it('should not embed related records for relation orderBy entries', () => {
+    const record = {
+      id: 'abc',
+      company: { id: 'company-1', name: 'Acme' },
+    };
+    const orderBy = [
+      { company: { name: OrderByDirection.AscNullsLast } },
+    ] as Parameters<typeof encodeCursor>[0]['order'];
+
+    const decoded = decodeCursor(callEncodeCursor(record, orderBy));
+
+    expect(decoded).toEqual({ id: 'abc' });
+  });
+
+  it('should encode join column values when ordering by the foreign key', () => {
+    const record = { id: 'abc', companyId: 'company-1' };
+    const orderBy = [{ companyId: OrderByDirection.AscNullsLast }];
+
+    const decoded = decodeCursor(callEncodeCursor(record, orderBy));
+
+    expect(decoded).toEqual({ companyId: 'company-1', id: 'abc' });
   });
 
   it('should handle undefined orderBy', () => {

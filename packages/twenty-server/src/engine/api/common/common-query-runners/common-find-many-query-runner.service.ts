@@ -37,16 +37,16 @@ import { getPageInfo } from 'src/engine/api/common/utils/get-page-info.util';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { type ReadRecordQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/types/record-query-builder.type';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
+import { buildOrderByColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-order-by-columns-to-select';
 import { getCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
 import {
-  countRelationFieldsInOrderBy,
-  hasRelationFieldInOrderBy,
-} from 'src/engine/api/utils/validate-and-get-order-by.utils';
+  buildOrderByFromLeaves,
+  resolveOrderByLeaves,
+} from 'src/engine/api/utils/resolve-order-by-leaves.utils';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 @Injectable()
@@ -91,49 +91,41 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       appliedFilters,
     );
 
-    const orderByWithIdCondition = [
-      ...(args.orderBy ?? []),
-      { id: OrderByDirection.AscNullsFirst },
-    ] as ObjectRecordOrderBy;
+    // Normalizing to deduplicated leaves makes the appended id tie-breaker
+    // yield to a caller-provided id ordering, and guarantees the SQL scan
+    // order and the keyset conditions derive from the same list
+    const orderByWithIdCondition = buildOrderByFromLeaves(
+      resolveOrderByLeaves({
+        orderBy: [
+          ...(args.orderBy ?? []),
+          { id: OrderByDirection.AscNullsFirst },
+        ] as ObjectRecordOrderBy,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+        strictValidation: true,
+      }),
+    );
 
     const isForwardPagination = !isDefined(args.before);
 
     const cursor = getCursor(args);
 
     if (cursor) {
-      const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
-        flatFieldMetadataMaps,
-        flatObjectMetadata,
-      );
-
-      if (
-        hasRelationFieldInOrderBy(
-          args.orderBy ?? [],
-          flatFieldMetadataMaps,
-          fieldIdByName,
-        )
-      ) {
-        // Not throwing exception because still used on record show page
-        /* throw new GraphqlQueryRunnerException(
-          'Cursor-based pagination is not supported with relation field ordering. Use offset pagination instead.',
-          GraphqlQueryRunnerExceptionCode.INVALID_CURSOR,
-          { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
-        ); */
-      }
-
-      const cursorArgFilter = computeCursorArgFilter(
+      const cursorArgFilter = computeCursorArgFilter({
         cursor,
-        orderByWithIdCondition,
+        orderBy: orderByWithIdCondition,
         flatObjectMetadata,
         flatFieldMetadataMaps,
         isForwardPagination,
-      );
+      });
 
-      appliedFilters = (args.filter && Object.keys(args.filter).length > 0
-        ? {
-            and: [args.filter, { or: cursorArgFilter }],
-          }
-        : { or: cursorArgFilter }) as unknown as ObjectRecordFilter;
+      if (cursorArgFilter.length > 0) {
+        appliedFilters = (args.filter && Object.keys(args.filter).length > 0
+          ? {
+              and: [args.filter, { or: cursorArgFilter }],
+            }
+          : { or: cursorArgFilter }) as unknown as ObjectRecordFilter;
+      }
     }
 
     commonQueryParser.applyFilterToBuilder(
@@ -159,13 +151,22 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 
     const limit = args.first ?? args.last ?? QUERY_MAX_RECORDS;
 
-    const columnsToSelect = buildColumnsToSelect({
-      select: args.selectedFieldsResult.select,
-      relations: args.selectedFieldsResult.relations,
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-    });
+    const columnsToSelect = {
+      ...buildColumnsToSelect({
+        select: args.selectedFieldsResult.select,
+        relations: args.selectedFieldsResult.relations,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      }),
+      // Order columns must be hydrated onto the records even when not requested:
+      // cursor encoding reads the sort values from them (issue #24333)
+      ...buildOrderByColumnsToSelect({
+        orderBy: args.orderBy,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    };
 
     queryBuilder.setFindOptions({ select: columnsToSelect });
 
@@ -361,16 +362,11 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 
     const { flatObjectMetadata, flatFieldMetadataMaps } = queryRunnerContext;
 
-    const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
-      flatFieldMetadataMaps,
+    const orderByRelationCount = resolveOrderByLeaves({
+      orderBy: args.orderBy ?? [],
       flatObjectMetadata,
-    );
-
-    const orderByRelationCount = countRelationFieldsInOrderBy(
-      args.orderBy ?? [],
       flatFieldMetadataMaps,
-      fieldIdByName,
-    );
+    }).filter((leaf) => leaf.kind === 'relation').length;
 
     return baseComplexity + orderByRelationCount;
   }
