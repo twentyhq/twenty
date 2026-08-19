@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { resolveInput } from 'twenty-shared/utils';
+import { ViewFilterOperand } from 'twenty-shared/types';
+import { isDefined, resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -47,11 +48,29 @@ export class IfElseWorkflowAction implements WorkflowAction {
       );
     }
 
-    const resolvedFilters = stepFilters.map((filter) => ({
-      ...filter,
-      rightOperand: resolveInput(filter.value, context),
-      leftOperand: resolveInput(filter.stepOutputKey, context),
-    }));
+    const resolvedFilters = stepFilters.map((filter) => {
+      const rightOperand = resolveInput(filter.value, context);
+      const leftOperand = resolveInput(filter.stepOutputKey, context);
+
+      if (
+        !isDefined(rightOperand) &&
+        filter.operand !== ViewFilterOperand.IS_EMPTY &&
+        filter.operand !== ViewFilterOperand.IS_NOT_EMPTY
+      ) {
+        return {
+          ...filter,
+          rightOperand: undefined,
+          leftOperand,
+          operand: ViewFilterOperand.IS,
+        };
+      }
+
+      return {
+        ...filter,
+        rightOperand,
+        leftOperand,
+      };
+    });
 
     const matchingBranch = findMatchingBranch({
       branches,

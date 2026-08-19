@@ -72,10 +72,13 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
     if (workflowActionInput.filter?.recordFilters) {
       for (const filter of workflowActionInput.filter.recordFilters) {
         if (!isRecordFilterValueValid(filter)) {
-          throw new WorkflowStepExecutorException(
-            `Filter condition has an empty value after variable resolution. This likely means a workflow variable could not be resolved. Filter field: ${filter.fieldMetadataId}, operand: ${filter.operand}`,
-            WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
-          );
+          return {
+            result: {
+              first: undefined,
+              all: [],
+              totalCount: 0,
+            },
+          };
         }
       }
     }
