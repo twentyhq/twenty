@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { computeOrderByLeafColumn } from 'src/engine/api/utils/compute-order-by-leaf-column.util';
@@ -40,7 +42,7 @@ export const buildOrderByColumnsToSelect = ({
       flatObjectMetadata.nameSingular,
     );
 
-    if (leafColumn) {
+    if (isDefined(leafColumn)) {
       columnsToSelect[leafColumn.columnName] = true;
     }
   }
