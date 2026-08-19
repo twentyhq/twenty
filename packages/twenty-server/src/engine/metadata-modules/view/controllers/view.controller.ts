@@ -12,8 +12,9 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { type APP_LOCALES } from 'twenty-shared/translations';
+import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { ApiPath } from 'twenty-shared/types';
+import { hasObjectMetadataLabelPlaceholder } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
@@ -28,7 +29,9 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
+import { buildViewNameObjectLabels } from 'src/engine/metadata-modules/view/utils/build-view-name-object-labels.util';
+import { resolveViewName } from 'src/engine/metadata-modules/view/utils/resolve-view-name.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { CreateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-permission.guard';
 import { DeleteViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-permission.guard';
@@ -61,6 +64,7 @@ export class ViewController {
   constructor(
     private readonly viewService: ViewService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
     private readonly i18nService: I18nService,
   ) {}
 
@@ -194,7 +198,7 @@ export class ViewController {
     locale?: keyof typeof APP_LOCALES,
   ): Promise<ViewDTO[]> {
     const hasTemplates = views.some((view) =>
-      view.name.includes('{objectLabelPlural}'),
+      hasObjectMetadataLabelPlaceholder(view.name),
     );
 
     if (!hasTemplates && views.every((view) => view.isCustom)) {
@@ -209,48 +213,49 @@ export class ViewController {
         },
       );
 
+    const safeLocale = locale ?? SOURCE_LOCALE;
+
+    const i18nInstance = this.i18nService.getI18nInstance(safeLocale);
+
+    const { standardApplicationId, catalogByApplicationId } =
+      await this.applicationTranslationCatalogService.getCatalogs({
+        applicationIds: views.map((view) => view.applicationId),
+        locale: safeLocale,
+        workspaceId,
+      });
+
     return views.map((view) => {
-      let processedName = view.name;
+      const objectMetadata = hasObjectMetadataLabelPlaceholder(view.name)
+        ? findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: view.objectMetadataId,
+            flatEntityMaps: flatObjectMetadataMaps,
+          })
+        : undefined;
 
-      if (view.name.includes('{objectLabelPlural}')) {
-        const objectMetadata = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: view.objectMetadataId,
-          flatEntityMaps: flatObjectMetadataMaps,
-        });
-
-        if (objectMetadata) {
-          const i18n = this.i18nService.getI18nInstance(locale ?? 'en');
-          const translatedObjectLabel = resolveEffectiveEntityProperty({
-            metadataName: 'objectMetadata',
-            baseValue: objectMetadata.labelPlural,
-            overrides: objectMetadata.overrides ?? undefined,
-            property: 'labelPlural',
+      const objectLabelPlaceholderValues = isDefined(objectMetadata)
+        ? buildViewNameObjectLabels({
+            viewName: view.name,
+            objectMetadata,
             i18nContext: {
               locale,
-              i18nInstance: i18n,
+              i18nInstance,
               isStandardApp: belongsToTwentyStandardApp(objectMetadata),
             },
-          });
-
-          processedName = this.viewService.processViewNameWithTemplate(
-            view.name,
-            view.isCustom,
-            translatedObjectLabel,
-            locale,
-          );
-        }
-      } else {
-        processedName = this.viewService.processViewNameWithTemplate(
-          view.name,
-          view.isCustom,
-          undefined,
-          locale,
-        );
-      }
+          })
+        : undefined;
 
       return {
         ...view,
-        name: processedName,
+        name: resolveViewName({
+          view,
+          objectLabelPlaceholderValues,
+          i18nContext: {
+            locale,
+            i18nInstance,
+            isStandardApp: view.applicationId === standardApplicationId,
+            applicationCatalog: catalogByApplicationId.get(view.applicationId),
+          },
+        }),
       };
     });
   }

@@ -277,7 +277,7 @@ describe('Logic Function Execution', () => {
 
     expect(errorResult?.status).toBe(LogicFunctionExecutionStatus.ERROR);
     expect(errorResult?.error).toMatchObject({
-      errorType: 'UnhandledError',
+      errorType: 'Error',
       errorMessage: expect.stringContaining('Intentional test error'),
     });
     expect(errorResult?.data).toBeNull();

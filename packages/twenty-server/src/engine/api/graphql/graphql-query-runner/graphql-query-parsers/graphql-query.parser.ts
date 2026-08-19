@@ -129,6 +129,7 @@ export class GraphqlQueryParser {
       orderBy as ObjectRecordOrderBy,
       objectNameSingular,
       isForwardPagination,
+      queryBuilder.objectRecordsPermissions,
     );
 
     for (const joinInfo of parseResult.relationJoins) {
@@ -177,12 +178,12 @@ export class GraphqlQueryParser {
   }
 
   public getOrderByRawSQL(
-    orderBy: ObjectRecordOrderBy | OrderByWithGroupBy,
+    orderBy: ObjectRecordOrderBy,
     objectNameSingular: string,
     isForwardPagination = true,
   ): { orderByRawSQL: string; relationJoins: RelationJoinInfo[] } {
     const parseResult = this.orderFieldParser.parse(
-      orderBy as ObjectRecordOrderBy,
+      orderBy,
       objectNameSingular,
       isForwardPagination,
     );
