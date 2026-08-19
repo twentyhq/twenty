@@ -1,4 +1,6 @@
 import { lazy, useMemo } from 'react';
+
+import { WorkflowCoreIndexPage } from '~/pages/system-object/WorkflowCoreIndexPage';
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -154,6 +156,10 @@ const createWorkspaceAppRouter = (
         <Route element={<MinimalMetadataGate />}>
           <Route element={<DefaultLayout />}>
             <Route element={<MainAppLayoutWithSidePanel />}>
+              <Route
+                path="/workflow-core"
+                element={<WorkflowCoreIndexPage />}
+              />
               <Route
                 path={indexAppPath.getIndexAppPath()}
                 element={<RecordIndexSkeletonLoader />}
