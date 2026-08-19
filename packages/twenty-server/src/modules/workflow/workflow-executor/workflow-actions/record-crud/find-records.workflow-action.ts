@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import {
@@ -29,6 +29,8 @@ import { resolveOffsetInput } from 'src/modules/workflow/workflow-executor/workf
 
 @Injectable()
 export class FindRecordsWorkflowAction implements WorkflowAction {
+  private readonly logger = new Logger(FindRecordsWorkflowAction.name);
+
   constructor(
     private readonly findRecordsService: FindRecordsService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
@@ -72,12 +74,17 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
     if (workflowActionInput.filter?.recordFilters) {
       for (const filter of workflowActionInput.filter.recordFilters) {
         if (!isRecordFilterValueValid(filter)) {
+          this.logger.warn(
+            `Find records step "${step.name}" has an invalid filter value after variable resolution. Returning empty results.`,
+          );
+
           return {
             result: {
               first: undefined,
               all: [],
               totalCount: 0,
             },
+            fallbackReason: 'unresolved-filter-value',
           };
         }
       }

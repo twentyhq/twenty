@@ -1,6 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
-import { ViewFilterOperand } from 'twenty-shared/types';
 import { isDefined, resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
@@ -12,17 +11,20 @@ import {
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
+import { isFilterValueUnresolved } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/is-filter-value-unresolved.util';
 import { isWorkflowIfElseAction } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/guards/is-workflow-if-else-action.guard';
 import { findMatchingBranch } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/utils/find-matching-branch.util';
 
 @Injectable()
 export class IfElseWorkflowAction implements WorkflowAction {
+  private readonly logger = new Logger(IfElseWorkflowAction.name);
+
   async execute(input: WorkflowActionInput): Promise<WorkflowActionOutput> {
     const { currentStepId, steps, context } = input;
 
     const step = findStepOrThrow({
-      stepId: currentStepId,
       steps,
+      stepId: currentStepId,
     });
 
     if (!isWorkflowIfElseAction(step)) {
@@ -48,17 +50,20 @@ export class IfElseWorkflowAction implements WorkflowAction {
       );
     }
 
-    const hasUnresolvedFilter = stepFilters.some((filter) => {
-      const rightOperand = resolveInput(filter.value, context);
+    const resolvedFilters = stepFilters.map((filter) => ({
+      ...filter,
+      rightOperand: resolveInput(filter.value, context),
+      leftOperand: resolveInput(filter.stepOutputKey, context),
+    }));
 
-      return (
-        !isDefined(rightOperand) &&
-        filter.operand !== ViewFilterOperand.IS_EMPTY &&
-        filter.operand !== ViewFilterOperand.IS_NOT_EMPTY
-      );
-    });
+    const hasUnresolvedFilterValue = resolvedFilters.some((filter) =>
+      isFilterValueUnresolved({
+        rightOperand: filter.rightOperand,
+        operand: filter.operand,
+      }),
+    );
 
-    if (hasUnresolvedFilter) {
+    if (hasUnresolvedFilterValue) {
       const defaultBranch = branches.find(
         (branch) => !isDefined(branch.filterGroupId),
       );
@@ -70,18 +75,17 @@ export class IfElseWorkflowAction implements WorkflowAction {
         );
       }
 
+      this.logger.warn(
+        `If-else step "${step.name}" has an unresolved filter value. Falling through to default branch "${defaultBranch.id}".`,
+      );
+
       return {
         result: {
           matchingBranchId: defaultBranch.id,
         },
+        fallbackReason: 'unresolved-filter-value',
       };
     }
-
-    const resolvedFilters = stepFilters.map((filter) => ({
-      ...filter,
-      rightOperand: resolveInput(filter.value, context),
-      leftOperand: resolveInput(filter.stepOutputKey, context),
-    }));
 
     const matchingBranch = findMatchingBranch({
       branches,

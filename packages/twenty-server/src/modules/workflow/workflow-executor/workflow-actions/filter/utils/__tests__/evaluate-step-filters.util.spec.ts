@@ -34,14 +34,17 @@ describe('evaluateStepFilters', () => {
     compositeFieldSubFieldName: 'source',
   });
 
-  it('returns true when there are no filters', () => {
+  it('matches and has no unresolved value when there are no filters', () => {
     expect(
       evaluateStepFilters({
         stepFilters: [],
         stepFilterGroups: [],
         context,
       }),
-    ).toBe(true);
+    ).toEqual({
+      matchesFilter: true,
+      hasUnresolvedFilterValue: false,
+    });
   });
 
   it('resolves operands from the context and matches the record', () => {
@@ -51,20 +54,26 @@ describe('evaluateStepFilters', () => {
         stepFilters: [sourceFilter(ViewFilterOperand.IS)],
         context,
       }),
-    ).toBe(true);
+    ).toEqual({
+      matchesFilter: true,
+      hasUnresolvedFilterValue: false,
+    });
   });
 
-  it('returns false when the record source is excluded (IS_NOT)', () => {
+  it('returns no match when the record source is excluded (IS_NOT)', () => {
     expect(
       evaluateStepFilters({
         stepFilterGroups: [group],
         stepFilters: [sourceFilter(ViewFilterOperand.IS_NOT)],
         context,
       }),
-    ).toBe(false);
+    ).toEqual({
+      matchesFilter: false,
+      hasUnresolvedFilterValue: false,
+    });
   });
 
-  it('returns true when a different source is excluded (IS_NOT)', () => {
+  it('matches when a different source is excluded (IS_NOT)', () => {
     const calendarFilter: StepFilter = {
       ...sourceFilter(ViewFilterOperand.IS_NOT),
       value: JSON.stringify(['CALENDAR']),
@@ -76,7 +85,10 @@ describe('evaluateStepFilters', () => {
         stepFilters: [calendarFilter],
         context,
       }),
-    ).toBe(true);
+    ).toEqual({
+      matchesFilter: true,
+      hasUnresolvedFilterValue: false,
+    });
   });
 
   it('evaluates IS_NOT_EMPTY against a present field when no value is set', () => {
@@ -95,7 +107,10 @@ describe('evaluateStepFilters', () => {
         stepFilters: [filter],
         context,
       }),
-    ).toBe(true);
+    ).toEqual({
+      matchesFilter: true,
+      hasUnresolvedFilterValue: false,
+    });
   });
 
   it('resolves a missing field path to empty (IS_EMPTY is true)', () => {
@@ -114,7 +129,10 @@ describe('evaluateStepFilters', () => {
         stepFilters: [filter],
         context,
       }),
-    ).toBe(true);
+    ).toEqual({
+      matchesFilter: true,
+      hasUnresolvedFilterValue: false,
+    });
   });
 
   it('applies implicit AND across flat filters without groups', () => {
@@ -138,6 +156,53 @@ describe('evaluateStepFilters', () => {
         stepFilters: [nameContains, sourceIsCalendar],
         context,
       }),
-    ).toBe(false);
+    ).toEqual({
+      matchesFilter: false,
+      hasUnresolvedFilterValue: false,
+    });
+  });
+
+  it('reports an unresolved filter value when the value variable cannot be resolved', () => {
+    const filter: StepFilter = {
+      id: 'filter-unresolved',
+      type: 'TEXT',
+      operand: ViewFilterOperand.IS,
+      value: '{{trigger.properties.after.missingValue}}',
+      stepOutputKey: '{{trigger.properties.after.name}}',
+      stepFilterGroupId: group.id,
+    };
+
+    expect(
+      evaluateStepFilters({
+        stepFilterGroups: [group],
+        stepFilters: [filter],
+        context,
+      }),
+    ).toEqual({
+      matchesFilter: false,
+      hasUnresolvedFilterValue: true,
+    });
+  });
+
+  it('does not report an unresolved value for IS_EMPTY/IS_NOT_EMPTY operands', () => {
+    const filter: StepFilter = {
+      id: 'filter-empty-check',
+      type: 'TEXT',
+      operand: ViewFilterOperand.IS_EMPTY,
+      value: '{{trigger.properties.after.missingValue}}',
+      stepOutputKey: '{{trigger.properties.after.name}}',
+      stepFilterGroupId: group.id,
+    };
+
+    expect(
+      evaluateStepFilters({
+        stepFilterGroups: [group],
+        stepFilters: [filter],
+        context,
+      }),
+    ).toEqual({
+      matchesFilter: false,
+      hasUnresolvedFilterValue: false,
+    });
   });
 });

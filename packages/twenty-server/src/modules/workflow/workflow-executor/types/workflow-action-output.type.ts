@@ -6,4 +6,5 @@ export type WorkflowActionOutput = {
   shouldRemainRunning?: boolean;
   shouldSkipStepExecution?: boolean;
   shouldFailSafely?: boolean;
+  fallbackReason?: 'unresolved-filter-value';
 };

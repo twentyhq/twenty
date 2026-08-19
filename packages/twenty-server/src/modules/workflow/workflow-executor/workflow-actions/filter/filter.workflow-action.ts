@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -14,6 +14,8 @@ import { evaluateStepFilters } from 'src/modules/workflow/workflow-executor/work
 
 @Injectable()
 export class FilterWorkflowAction implements WorkflowAction {
+  private readonly logger = new Logger(FilterWorkflowAction.name);
+
   async execute(input: WorkflowActionInput): Promise<WorkflowActionOutput> {
     const { currentStepId, steps, context } = input;
 
@@ -39,17 +41,26 @@ export class FilterWorkflowAction implements WorkflowAction {
       };
     }
 
-    const matchesFilter = evaluateStepFilters({
+    const { matchesFilter, hasUnresolvedFilterValue } = evaluateStepFilters({
       stepFilters,
       stepFilterGroups,
       context,
     });
+
+    if (hasUnresolvedFilterValue) {
+      this.logger.warn(
+        `Filter step "${step.name}" has an unresolved filter value. Treating as no match.`,
+      );
+    }
 
     return {
       result: {
         matchesFilter,
       },
       shouldEndWorkflowRun: !matchesFilter,
+      fallbackReason: hasUnresolvedFilterValue
+        ? 'unresolved-filter-value'
+        : undefined,
     };
   }
 }
