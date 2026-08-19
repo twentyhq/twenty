@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { camelToSnakeCase, isDefined } from 'twenty-shared/utils';
 import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
 
@@ -9,8 +8,6 @@ import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-pro
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { getCrudToolLabels } from 'src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util';
-import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
-import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/utils/effective-entity-i18n-context.type';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { generateCreateManyRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-many-record-input-schema.util';
@@ -167,13 +164,6 @@ export class DatabaseToolProvider implements ToolProvider {
 
       const objectMetadata = { ...flatObject, fields };
 
-      const safeLocale = context.locale ?? SOURCE_LOCALE;
-      const i18nContext: EffectiveEntityI18nContext = {
-        locale: safeLocale,
-        i18nInstance: this.i18nService.getI18nInstance(safeLocale),
-        isStandardApp: belongsToTwentyStandardApp(flatObject),
-      };
-
       const restrictedFields = permission.restrictedFields;
       const canBeManagedByAutomation = canObjectBeManagedByAutomation({
         nameSingular: objectMetadata.nameSingular,
@@ -282,11 +272,7 @@ export class DatabaseToolProvider implements ToolProvider {
           category: ToolCategory.DATABASE_CRUD,
           ...(shouldIncludeSchema(`create_one_${snakeSingular}`) && {
             inputSchema: toToolJsonSchema(
-              generateCreateRecordInputSchema(
-                objectMetadata,
-                restrictedFields,
-                i18nContext,
-              ),
+              generateCreateRecordInputSchema(objectMetadata, restrictedFields),
             ),
           }),
           executionRef: {
@@ -314,7 +300,6 @@ export class DatabaseToolProvider implements ToolProvider {
               generateCreateManyRecordInputSchema(
                 objectMetadata,
                 restrictedFields,
-                i18nContext,
               ),
             ),
           }),
@@ -340,11 +325,7 @@ export class DatabaseToolProvider implements ToolProvider {
           category: ToolCategory.DATABASE_CRUD,
           ...(shouldIncludeSchema(`update_one_${snakeSingular}`) && {
             inputSchema: toToolJsonSchema(
-              generateUpdateRecordInputSchema(
-                objectMetadata,
-                restrictedFields,
-                i18nContext,
-              ),
+              generateUpdateRecordInputSchema(objectMetadata, restrictedFields),
             ),
           }),
           executionRef: {
@@ -372,7 +353,6 @@ export class DatabaseToolProvider implements ToolProvider {
               generateUpdateManyRecordInputSchema(
                 objectMetadata,
                 restrictedFields,
-                i18nContext,
               ),
             ),
           }),
@@ -401,7 +381,6 @@ export class DatabaseToolProvider implements ToolProvider {
               generateCreateManyRecordInputSchema(
                 objectMetadata,
                 restrictedFields,
-                i18nContext,
               ),
             ),
           }),

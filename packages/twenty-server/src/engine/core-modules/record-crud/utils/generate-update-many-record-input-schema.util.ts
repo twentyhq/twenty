@@ -4,12 +4,10 @@ import { z } from 'zod';
 import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
 import { generateRecordFilterSchema } from 'src/engine/core-modules/record-crud/zod-schemas/record-filter.zod-schema';
 import { generateRecordPropertiesZodSchema } from 'src/engine/core-modules/record-crud/zod-schemas/record-properties.zod-schema';
-import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/utils/effective-entity-i18n-context.type';
 
 export const generateUpdateManyRecordInputSchema = (
   objectMetadata: ObjectMetadataForToolSchema,
-  restrictedFields: RestrictedFieldsPermissions | undefined,
-  i18nContext: EffectiveEntityI18nContext,
+  restrictedFields?: RestrictedFieldsPermissions,
 ) => {
   const { filterSchema } = generateRecordFilterSchema({
     objectMetadata,
@@ -21,7 +19,6 @@ export const generateUpdateManyRecordInputSchema = (
     objectMetadata,
     false,
     restrictedFields,
-    i18nContext,
   ).partial();
 
   return z.object({

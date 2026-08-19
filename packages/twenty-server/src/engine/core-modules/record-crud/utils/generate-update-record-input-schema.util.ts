@@ -3,18 +3,15 @@ import { z } from 'zod';
 
 import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
 import { generateRecordPropertiesZodSchema } from 'src/engine/core-modules/record-crud/zod-schemas/record-properties.zod-schema';
-import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/utils/effective-entity-i18n-context.type';
 
 export const generateUpdateRecordInputSchema = (
   objectMetadata: ObjectMetadataForToolSchema,
-  restrictedFields: RestrictedFieldsPermissions | undefined,
-  i18nContext: EffectiveEntityI18nContext,
+  restrictedFields?: RestrictedFieldsPermissions,
 ) => {
   const recordPropertiesSchema = generateRecordPropertiesZodSchema(
     objectMetadata,
     false,
     restrictedFields,
-    i18nContext,
   );
 
   return recordPropertiesSchema.partial().extend({
