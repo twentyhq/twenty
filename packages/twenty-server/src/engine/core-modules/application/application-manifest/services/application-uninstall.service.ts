@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { type Repository } from 'typeorm';
+import { In, type Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -96,19 +96,50 @@ export class ApplicationUninstallService {
     }
   }
 
-  async hasPendingUninstallHooks({
-    workspaceId,
-    uninstallRequestedAt,
-  }: {
-    workspaceId: string;
-    uninstallRequestedAt: Date;
-  }): Promise<boolean> {
-    const applications =
-      await this.applicationService.findManyApplications(workspaceId);
+  async findWorkspaceIdsWithPendingUninstallHooks(
+    workspaceUninstallRequests: {
+      workspaceId: string;
+      uninstallRequestedAt: Date;
+    }[],
+  ): Promise<Set<string>> {
+    if (workspaceUninstallRequests.length === 0) {
+      return new Set();
+    }
 
-    return applications.some((application) =>
-      isApplicationUninstallHookPending(application, uninstallRequestedAt),
+    const applications = await this.applicationRepository.find({
+      select: [
+        'workspaceId',
+        'uninstallLogicFunctionId',
+        'uninstallHookCompletedForRequestedAt',
+      ],
+      where: {
+        workspaceId: In(
+          workspaceUninstallRequests.map((request) => request.workspaceId),
+        ),
+      },
+    });
+    const uninstallRequestedAtByWorkspaceId = new Map(
+      workspaceUninstallRequests.map((request) => [
+        request.workspaceId,
+        request.uninstallRequestedAt,
+      ]),
     );
+    const workspaceIdsWithPendingUninstallHooks = new Set<string>();
+
+    for (const application of applications) {
+      const uninstallRequestedAt = uninstallRequestedAtByWorkspaceId.get(
+        application.workspaceId,
+      );
+
+      if (
+        isDefined(uninstallRequestedAt) &&
+        isApplicationUninstallHookPending(application, uninstallRequestedAt)
+      ) {
+        workspaceIdsWithPendingUninstallHooks.add(application.workspaceId);
+      }
+    }
+
+    return workspaceIdsWithPendingUninstallHooks;
   }
 
   // The hook must run before the application deletion migration removes its

@@ -26,7 +26,7 @@ describe('CleanSuspendedWorkspacesJob', () => {
     enqueueWorkspaceSuspensionApplicationUninstall: jest.fn(),
   };
   const applicationUninstallService = {
-    hasPendingUninstallHooks: jest.fn(),
+    findWorkspaceIdsWithPendingUninstallHooks: jest.fn(),
   };
   const postgresAdvisoryLockService = {
     tryWithLock: jest.fn(),
@@ -43,8 +43,13 @@ describe('CleanSuspendedWorkspacesJob', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    applicationUninstallService.hasPendingUninstallHooks.mockResolvedValue(
-      true,
+    applicationUninstallService.findWorkspaceIdsWithPendingUninstallHooks.mockImplementation(
+      async (workspaceUninstallRequests) =>
+        new Set(
+          workspaceUninstallRequests.map(
+            (request: { workspaceId: string }) => request.workspaceId,
+          ),
+        ),
     );
     workspaceRepository.find
       .mockResolvedValueOnce([{ id: 'workspace-id' }])
@@ -114,11 +119,20 @@ describe('CleanSuspendedWorkspacesJob', () => {
     await createJob().handle();
 
     expect(
-      applicationUninstallService.hasPendingUninstallHooks,
-    ).toHaveBeenCalledWith({
-      workspaceId: 'deleted-workspace-id',
-      uninstallRequestedAt: workspaceDeletedAt,
-    });
+      applicationUninstallService.findWorkspaceIdsWithPendingUninstallHooks,
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      applicationUninstallService.findWorkspaceIdsWithPendingUninstallHooks,
+    ).toHaveBeenCalledWith([
+      {
+        workspaceId: 'deleted-workspace-id',
+        uninstallRequestedAt: workspaceDeletedAt,
+      },
+      {
+        workspaceId: 'suspended-workspace-id',
+        uninstallRequestedAt: workspaceSuspendedAt,
+      },
+    ]);
     expect(
       workspaceService.enqueueWorkspaceDeletionApplicationUninstall,
     ).toHaveBeenCalledWith('deleted-workspace-id');
@@ -131,8 +145,8 @@ describe('CleanSuspendedWorkspacesJob', () => {
   });
 
   it('should not re-enqueue workspaces whose uninstall hooks already completed', async () => {
-    applicationUninstallService.hasPendingUninstallHooks.mockResolvedValue(
-      false,
+    applicationUninstallService.findWorkspaceIdsWithPendingUninstallHooks.mockResolvedValue(
+      new Set(),
     );
     workspaceRepository.find.mockReset();
     workspaceRepository.find

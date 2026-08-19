@@ -54,34 +54,56 @@ export class CleanSuspendedWorkspacesJob {
             withDeleted: true,
           });
 
-          for (const workspace of softDeletedWorkspaces) {
+          const workspaceDeletionUninstallRequests =
+            softDeletedWorkspaces.flatMap((workspace) =>
+              isDefined(workspace.deletedAt)
+                ? [
+                    {
+                      workspaceId: workspace.id,
+                      uninstallRequestedAt: workspace.deletedAt,
+                    },
+                  ]
+                : [],
+            );
+          const workspaceSuspensionUninstallRequests =
+            suspendedWorkspaces.flatMap((workspace) =>
+              !isDefined(workspace.deletedAt) &&
+              isDefined(workspace.suspendedAt)
+                ? [
+                    {
+                      workspaceId: workspace.id,
+                      uninstallRequestedAt: workspace.suspendedAt,
+                    },
+                  ]
+                : [],
+            );
+          const workspaceIdsWithPendingUninstallHooks =
+            await this.applicationUninstallService.findWorkspaceIdsWithPendingUninstallHooks(
+              [
+                ...workspaceDeletionUninstallRequests,
+                ...workspaceSuspensionUninstallRequests,
+              ],
+            );
+
+          for (const request of workspaceDeletionUninstallRequests) {
             if (
-              isDefined(workspace.deletedAt) &&
-              (await this.applicationUninstallService.hasPendingUninstallHooks({
-                workspaceId: workspace.id,
-                uninstallRequestedAt: workspace.deletedAt,
-              }))
+              workspaceIdsWithPendingUninstallHooks.has(request.workspaceId)
             ) {
               await this.workspaceService.enqueueWorkspaceDeletionApplicationUninstall(
-                workspace.id,
+                request.workspaceId,
               );
             }
           }
 
-          for (const workspace of suspendedWorkspaces) {
+          for (const request of workspaceSuspensionUninstallRequests) {
             if (
-              !isDefined(workspace.deletedAt) &&
-              isDefined(workspace.suspendedAt) &&
-              (await this.applicationUninstallService.hasPendingUninstallHooks({
-                workspaceId: workspace.id,
-                uninstallRequestedAt: workspace.suspendedAt,
-              }))
+              workspaceIdsWithPendingUninstallHooks.has(request.workspaceId)
             ) {
               await this.workspaceService.enqueueWorkspaceSuspensionApplicationUninstall(
                 {
-                  workspaceId: workspace.id,
+                  workspaceId: request.workspaceId,
                   workspaceSuspensionUninstallRequestedAt:
-                    workspace.suspendedAt,
+                    request.uninstallRequestedAt,
                 },
               );
             }

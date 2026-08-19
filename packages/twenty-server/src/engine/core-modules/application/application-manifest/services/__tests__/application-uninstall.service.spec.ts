@@ -9,6 +9,7 @@ import { type LogicFunctionExecutorService } from 'src/engine/core-modules/logic
 
 describe('ApplicationUninstallService', () => {
   const applicationRepository = {
+    find: jest.fn(),
     update: jest.fn(),
   };
   const applicationService = {
@@ -186,26 +187,32 @@ describe('ApplicationUninstallService', () => {
   it('should report pending hooks only for uncovered uninstall requests', async () => {
     const uninstallRequestedAt = new Date('2026-08-18T10:00:00.000Z');
 
-    applicationService.findManyApplications.mockResolvedValue([
-      createApplication({
-        id: 'completed',
-        uninstallHookCompletedForRequestedAt: uninstallRequestedAt,
+    applicationRepository.find.mockResolvedValue([
+      Object.assign(
+        createApplication({
+          id: 'completed',
+          uninstallHookCompletedForRequestedAt: uninstallRequestedAt,
+        }),
+        { workspaceId: 'covered-workspace-id' },
+      ),
+      Object.assign(createApplication({ id: 'pending' }), {
+        workspaceId: 'pending-workspace-id',
       }),
     ]);
 
     await expect(
-      createService().hasPendingUninstallHooks({
-        workspaceId: 'workspace-id',
-        uninstallRequestedAt,
-      }),
-    ).resolves.toBe(false);
-
-    await expect(
-      createService().hasPendingUninstallHooks({
-        workspaceId: 'workspace-id',
-        uninstallRequestedAt: new Date('2026-08-19T10:00:00.000Z'),
-      }),
-    ).resolves.toBe(true);
+      createService().findWorkspaceIdsWithPendingUninstallHooks([
+        {
+          workspaceId: 'covered-workspace-id',
+          uninstallRequestedAt,
+        },
+        {
+          workspaceId: 'pending-workspace-id',
+          uninstallRequestedAt,
+        },
+      ]),
+    ).resolves.toEqual(new Set(['pending-workspace-id']));
+    expect(applicationRepository.find).toHaveBeenCalledTimes(1);
   });
 
   it('should omit deletion credentials when handling workspace suspension', async () => {
