@@ -139,6 +139,30 @@ describe('Gmail contact auto-creation company domain matching (integration)', ()
     );
   }, 120000);
 
+  it('attaches a contact to a company whose primary link carries a path', async () => {
+    const domainName = `with-path-${randomUUID()}.com`;
+
+    const createResponse = await makeGraphqlAPIRequest(
+      createManyOperationFactory({
+        objectMetadataSingularName: 'company',
+        objectMetadataPluralName: 'companies',
+        gqlFields: 'id',
+        data: [
+          {
+            name: `With path ${randomUUID()}`,
+            domainName: { primaryLinkUrl: `https://${domainName}/careers` },
+          },
+        ],
+      }),
+    );
+
+    const [company] = createResponse.body.data.createCompanies;
+
+    createdCompanyIds.push(company.id);
+
+    expect(await syncMessageFrom(`sender@${domainName}`)).toBe(company.id);
+  }, 120000);
+
   it('attaches a contact to the surviving company on its primary domain', async () => {
     const survivingDomainName = `surviving-${randomUUID()}.com`;
     const mergedCompany = await mergeTwoCompanies({

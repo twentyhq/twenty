@@ -107,27 +107,26 @@ export class CreateCompanyService {
             ),
         );
 
-        let companiesMatchedOnSecondaryLinks: CompanyWorkspaceEntity[] = [];
+        let companiesMatchedOnFallbackScan: CompanyWorkspaceEntity[] = [];
 
         if (domainNamesWithoutCompany.length > 0) {
-          const secondaryLinksConditions = domainNamesWithoutCompany
+          const fallbackConditions = domainNamesWithoutCompany
             .map(
               (_, index) =>
-                `"company"."domainNameSecondaryLinks"::text ILIKE :domainName${index}`,
+                `("company"."domainNamePrimaryLinkUrl" ILIKE :domainName${index} OR "company"."domainNameSecondaryLinks"::text ILIKE :domainName${index})`,
             )
             .join(' OR ');
 
-          const secondaryLinksParameters = Object.fromEntries(
+          const fallbackParameters = Object.fromEntries(
             domainNamesWithoutCompany.map((domainName, index) => [
               `domainName${index}`,
               `%${domainName}%`,
             ]),
           );
 
-          companiesMatchedOnSecondaryLinks = await companyRepository
+          companiesMatchedOnFallbackScan = await companyRepository
             .createQueryBuilder('company')
-            .where('"company"."domainNameSecondaryLinks" IS NOT NULL')
-            .andWhere(`(${secondaryLinksConditions})`, secondaryLinksParameters)
+            .where(fallbackConditions, fallbackParameters)
             .withDeleted()
             .getMany();
         }
@@ -138,7 +137,7 @@ export class CreateCompanyService {
 
         const existingCompanies = [
           ...companiesMatchedOnPrimaryLink,
-          ...companiesMatchedOnSecondaryLinks.filter(
+          ...companiesMatchedOnFallbackScan.filter(
             (company) => !matchedCompanyIds.has(company.id),
           ),
         ];
