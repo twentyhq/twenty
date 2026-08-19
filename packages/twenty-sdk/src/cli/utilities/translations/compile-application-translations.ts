@@ -1,10 +1,9 @@
 import { readdir } from 'node:fs/promises';
 import path from 'path';
 
-import { parseTranslationCatalogKey } from '@/sdk/front-component/translations/message';
+import { compileCatalogToMessageIds } from '@/cli/utilities/translations/compile-catalog-to-message-ids';
 import { pathExists, readJson } from '@/cli/utilities/file/fs-utils';
 import { LOCALES_DIR } from '@/cli/utilities/translations/constants';
-import { generateMessageId } from 'twenty-shared/i18n';
 import { type TranslationsManifest } from 'twenty-shared/application';
 import {
   APP_LOCALES,
@@ -45,31 +44,17 @@ export const compileApplicationTranslations = async (
     }
 
     const sourceToTranslation =
-      (await readJson<Record<string, string>>(
+      (await readJson<Record<string, unknown>>(
         path.join(localesDir, localeFile),
       )) ?? {};
 
-    const compiled: Record<string, string> = {};
-    const keyByMessageId = new Map<string, string>();
-
-    for (const [key, translation] of Object.entries(sourceToTranslation)) {
-      if (typeof translation !== 'string' || translation.length === 0) {
-        continue;
-      }
-
-      const { message, context } = parseTranslationCatalogKey(key);
-      const messageId = generateMessageId(message, context);
-      const collidingKey = keyByMessageId.get(messageId);
-
-      if (collidingKey !== undefined && collidingKey !== key) {
+    const compiled = compileCatalogToMessageIds({
+      catalog: sourceToTranslation,
+      onCollision: ({ messageId, keptKey, droppedKey }) =>
         console.warn(
-          `Message id collision in "${localeFile}": "${key}" and "${collidingKey}" share id "${messageId}". Keeping "${key}".`,
-        );
-      }
-
-      keyByMessageId.set(messageId, key);
-      compiled[messageId] = translation;
-    }
+          `Message id collision in "${localeFile}": "${keptKey}" and "${droppedKey}" share id "${messageId}". Keeping "${keptKey}".`,
+        ),
+    });
 
     if (Object.keys(compiled).length > 0) {
       translations[locale] = compiled;

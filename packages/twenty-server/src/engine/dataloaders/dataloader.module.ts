@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules/application-translation-catalog/application-translation-catalog.module';
 
 import { ApplicationRegistrationVariableModule } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.module';
 import { ApplicationTranslationModule } from 'src/engine/core-modules/application/application-translation/application-translation.module';
@@ -10,6 +11,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
 
 @Module({
   imports: [
+    ApplicationTranslationCatalogModule,
     FieldMetadataModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     ApplicationRegistrationVariableModule,
