@@ -3,19 +3,19 @@ import { isDefined } from 'twenty-shared/utils';
 import { ALLOWED_HTML_ELEMENTS } from '@/constants/AllowedHtmlElements';
 import { isAriaOrDataAttribute } from '@/remote/elements/utils/isAriaOrDataAttribute';
 
-const ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME: Record<string, string> = {
-  className: 'className',
-  class: 'className',
+const ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME = new Map<string, string>([
+  ['className', 'className'],
+  ['class', 'className'],
 
-  htmlFor: 'htmlFor',
-  for: 'htmlFor',
+  ['htmlFor', 'htmlFor'],
+  ['for', 'htmlFor'],
 
-  tabIndex: 'tabIndex',
-  tabindex: 'tabIndex',
+  ['tabIndex', 'tabIndex'],
+  ['tabindex', 'tabIndex'],
 
-  srcDoc: 'srcDoc',
-  srcdoc: 'srcDoc',
-};
+  ['srcDoc', 'srcDoc'],
+  ['srcdoc', 'srcDoc'],
+]);
 
 type RemoteElementWithAttributeUpdater = Element &
   Record<string, unknown> & {
@@ -53,7 +53,7 @@ export const patchRemoteElementAttributes = (): void => {
       attributeName: string,
     ) {
       const mappedElementPropertyName =
-        ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME[attributeName];
+        ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME.get(attributeName);
 
       if (isDefined(mappedElementPropertyName)) {
         const elementPropertyValue = this[mappedElementPropertyName];
@@ -64,6 +64,24 @@ export const patchRemoteElementAttributes = (): void => {
       }
 
       return originalGetAttribute.call(this, attributeName);
+    };
+
+    const originalHasAttribute = elementConstructor.prototype.hasAttribute as (
+      attributeName: string,
+    ) => boolean;
+
+    elementConstructor.prototype.hasAttribute = function (
+      this: RemoteElementWithAttributeUpdater,
+      attributeName: string,
+    ) {
+      const mappedElementPropertyName =
+        ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME.get(attributeName);
+
+      if (isDefined(mappedElementPropertyName)) {
+        return isDefined(this[mappedElementPropertyName]);
+      }
+
+      return originalHasAttribute.call(this, attributeName);
     };
 
     const originalSetAttribute = elementConstructor.prototype.setAttribute as (
@@ -77,9 +95,9 @@ export const patchRemoteElementAttributes = (): void => {
       attributeValue: string,
     ) {
       const mappedElementPropertyName =
-        ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME[attributeName];
+        ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME.get(attributeName);
 
-      if (mappedElementPropertyName) {
+      if (isDefined(mappedElementPropertyName)) {
         this[mappedElementPropertyName] = attributeValue;
 
         return;
@@ -100,9 +118,9 @@ export const patchRemoteElementAttributes = (): void => {
       attributeName: string,
     ) {
       const mappedElementPropertyName =
-        ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME[attributeName];
+        ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME.get(attributeName);
 
-      if (mappedElementPropertyName) {
+      if (isDefined(mappedElementPropertyName)) {
         this[mappedElementPropertyName] = undefined;
 
         return;

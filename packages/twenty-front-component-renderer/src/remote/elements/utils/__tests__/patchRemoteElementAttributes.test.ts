@@ -2,20 +2,14 @@ import '@/remote/generated/remote-elements';
 
 import { patchRemoteElementAttributes } from '../patchRemoteElementAttributes';
 
-patchRemoteElementAttributes();
-
-type PatchedRemoteElement = {
-  className?: string;
-  tabIndex?: number;
-  getAttribute: (attributeName: string) => string | null;
-  setAttribute: (attributeName: string, attributeValue: string) => void;
-  removeAttribute: (attributeName: string) => void;
-};
-
-const createHtmlDivElement = (): PatchedRemoteElement =>
+const createHtmlDivElement = (): HTMLElement =>
   document.createElement('html-div');
 
 describe('patchRemoteElementAttributes', () => {
+  beforeAll(() => {
+    patchRemoteElementAttributes();
+  });
+
   describe('getAttribute on property-mapped attributes', () => {
     it('should return null when the mapped property was never set', () => {
       expect(createHtmlDivElement().getAttribute('class')).toBeNull();
@@ -60,6 +54,53 @@ describe('patchRemoteElementAttributes', () => {
       element.setAttribute('id', 'anchor');
 
       expect(element.getAttribute('id')).toBe('anchor');
+    });
+  });
+
+  describe('hasAttribute on property-mapped attributes', () => {
+    it('should return false when the mapped property was never set', () => {
+      expect(createHtmlDivElement().hasAttribute('class')).toBe(false);
+    });
+
+    it('should return true once the mapped property holds a value', () => {
+      const element = createHtmlDivElement();
+
+      element.setAttribute('class', 'present');
+
+      expect(element.hasAttribute('class')).toBe(true);
+    });
+
+    it('should return false again after removeAttribute', () => {
+      const element = createHtmlDivElement();
+
+      element.setAttribute('class', 'present');
+      element.removeAttribute('class');
+
+      expect(element.hasAttribute('class')).toBe(false);
+    });
+
+    it('should keep the original hasAttribute for unmapped attributes', () => {
+      const element = createHtmlDivElement();
+
+      element.setAttribute('id', 'anchor');
+
+      expect(element.hasAttribute('id')).toBe(true);
+      expect(element.hasAttribute('title')).toBe(false);
+    });
+  });
+
+  describe('attribute names colliding with Object prototype keys', () => {
+    it('should store them as real attributes instead of mapping them to a property', () => {
+      const element = createHtmlDivElement();
+
+      element.setAttribute('constructor', 'plain-attribute-value');
+
+      expect(element.getAttribute('constructor')).toBe('plain-attribute-value');
+      expect(element.hasAttribute('constructor')).toBe(true);
+    });
+
+    it('should return null for an unset attribute named after an Object prototype key', () => {
+      expect(createHtmlDivElement().getAttribute('toString')).toBeNull();
     });
   });
 });
