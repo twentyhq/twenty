@@ -1,7 +1,6 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 import axios from "axios";
-import { fetchCurrentWorkspace } from "src/logic-functions/requests/fetch-current-workspace.util";
-import { migrationState, setStateRef } from "src/logic-functions/utils/migration-state.util";
+import { loadMigrationStateCheckpoint, migrationState } from "src/logic-functions/utils/migration-state.util";
 import { startTimeBudget } from "src/logic-functions/utils/time-budget.util";
 import { TIMEOUT_SECONDS } from "src/constants/timeout-seconds";
 import { stage1 } from "src/logic-functions/stages/stage1";
@@ -74,9 +73,9 @@ const handler = async () => {
       'Authorization': `Bearer ${process.env.SOURCE_WORKSPACE_API_KEY}`,
     }
   });
-  const currentWorkspace = await fetchCurrentWorkspace(sourceWorkspace);
-  const MAX_REQUESTS = (currentWorkspace.length === 1 && currentWorkspace[0].metadata.plan === 'PRO') ? 50 : 100;
-  setStateRef('maxRequests', MAX_REQUESTS);
+
+  await loadMigrationStateCheckpoint();
+
   switch (migrationState.stage) {
     case 1:
       await stage1(sourceWorkspace, targetWorkspace);
@@ -110,8 +109,8 @@ export default defineLogicFunction({
   timeoutSeconds: TIMEOUT_SECONDS,
   handler,
   httpRouteTriggerSettings: {
-     path: TRIGGER_ROUTE_PATH,
-     httpMethod: 'POST',
-     isAuthRequired: true,
+    path: TRIGGER_ROUTE_PATH,
+    httpMethod: 'POST',
+    isAuthRequired: true,
   },
 });

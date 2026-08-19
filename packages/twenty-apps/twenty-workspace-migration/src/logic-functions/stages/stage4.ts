@@ -1,17 +1,13 @@
 import {
-  loadMigrationStateCheckpoint, migrationState,
-  setMigrationStage,
+  migrationState,
+  saveMigrationStateCheckpoint,
   setStateRef
 } from "src/logic-functions/utils/migration-state.util";
-import { executeWithRetryAndCheckpoint } from "src/logic-functions/utils/execute-with-retry-and-checkpoint.util";
-import { FindAllObjectsAndFields } from "src/logic-functions/requests/find-all-objects-and-fields.util";
-import { extractNodes } from "src/logic-functions/utils/extract-nodes.util";
 import { findViews } from "src/logic-functions/requests/find-views.util";
 import { findNavigationMenuItems } from "src/logic-functions/requests/find-navigation-menu-items.util";
 import { findSkills } from "src/logic-functions/requests/find-skills.util";
 import { findWebhooks } from "src/logic-functions/requests/find-webhooks.util";
 import { findRoles } from "src/logic-functions/requests/find-roles.util";
-import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.util";
 import { type AxiosInstance } from "axios";
 import { migrateNavigationMenuItems } from "src/logic-functions/migration/migrate-navigation-menu-items.util";
 import { migrateRoles } from "src/logic-functions/migration/migrate-roles.util";
@@ -20,7 +16,6 @@ import { migrateSkills } from "src/logic-functions/migration/migrate-skills.util
 import { migrateViews } from "src/logic-functions/migration/migrate-views.util";
 
 export const stage4 = async (sourceWorkspace: AxiosInstance, targetWorkspace: AxiosInstance) => {
-  await loadMigrationStateCheckpoint();
   const targetFieldIdBySourceFieldId = migrationState.targetFieldIdBySourceFieldId;
   const targetObjectIdBySourceObjectId = migrationState.targetObjectIdBySourceObjectId;
   const recordIdMap = migrationState.recordIdMap;
@@ -45,4 +40,5 @@ export const stage4 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
   await migrateRoles(targetWorkspace, sourceRoles, targetRoles, targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId);
 
   setStateRef('stage', 5);
+  await saveMigrationStateCheckpoint();
 }

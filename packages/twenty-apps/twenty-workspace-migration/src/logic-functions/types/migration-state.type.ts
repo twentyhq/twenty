@@ -6,13 +6,12 @@ import { ObjectType } from "src/logic-functions/types/find-objects-fields.type";
 export type MigrationState = {
   stage: number;
   maxRequests: number;
-  mergedWorkspaceMembers: { oldId: string, newId: string }[];
   sourceWorkspaceObjects: { id: string; nameSingular: string }[];
   targetWorkspaceObjects: { nameSingular: string, id: string, universalIdentifier: string }[];
   objectsToUpdate: UpdateOneObjectType[];
   fieldsToCreate: CreateOneFieldType[];
   fieldsToUpdate: UpdateOneFieldType[];
-  recordIdMap: Map<string, string>;
+  recordIdMap: Map<string, string>; // <oldId, newId>
   recordMigrationOrder: ObjectType[];
   targetObjectIdBySourceObjectId: Map<string, string>;
   targetFieldIdBySourceFieldId: Map<string, string>;

@@ -2,6 +2,7 @@ import type { AxiosInstance } from "axios";
 import { findWebhooks } from "src/logic-functions/requests/find-webhooks.util";
 import { executeWithRetryAndCheckpoint } from "src/logic-functions/utils/execute-with-retry-and-checkpoint.util";
 import { createMetadataEntity } from "src/logic-functions/requests/create-metadata-entity.util";
+import { logger } from "src/logic-functions/utils/logger.util";
 
 // A newly created workspace has no webhooks by default (unlike skills/views, which ship with
 // standard entries), so there's nothing to dedupe against on a first migration - this doesn't
@@ -20,5 +21,5 @@ export const migrateWebhooks = async (targetWorkspace: AxiosInstance, sourceWebh
     createdCount += 1;
   }
 
-  console.log(`Webhooks: created ${createdCount}. Review each targetUrl - the receiving endpoint may not expect events from this new workspace.`);
+  logger.log(`Webhooks: created ${createdCount}. Review each targetUrl - the receiving endpoint may not expect events from this new workspace.`);
 };

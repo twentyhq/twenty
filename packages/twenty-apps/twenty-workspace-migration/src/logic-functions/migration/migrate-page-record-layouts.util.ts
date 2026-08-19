@@ -3,6 +3,7 @@ import { findPageLayouts } from "src/logic-functions/requests/find-page-layouts.
 import { executeWithRetryAndCheckpoint } from "src/logic-functions/utils/execute-with-retry-and-checkpoint.util";
 import { createMetadataEntity } from "src/logic-functions/requests/create-metadata-entity.util";
 import { applyPageLayoutTabsAndWidgets } from "src/logic-functions/utils/apply-page-layout-tabs-and-widgets.util";
+import { logger } from "src/logic-functions/utils/logger.util";
 
 export const migrateRecordPageLayouts = async (
   sourceWorkspace: AxiosInstance,
@@ -33,7 +34,7 @@ export const migrateRecordPageLayouts = async (
       ? targetObjectIdBySourceObjectId.get(sourceLayout.objectMetadataId)
       : undefined;
     if (targetObjectMetadataId === undefined) {
-      console.warn(`Skipping record page layout "${sourceLayout.name}": target object not found for object ${sourceLayout.objectMetadataId}`);
+      logger.warn(`Skipping record page layout "${sourceLayout.name}": target object not found for object ${sourceLayout.objectMetadataId}`);
       continue;
     }
 
@@ -58,9 +59,9 @@ export const migrateRecordPageLayouts = async (
       );
       createdCount += 1;
     } catch (error) {
-      console.warn(`Skipping record page layout "${sourceLayout.name}": ${error instanceof Error ? error.message : String(error)}`);
+      logger.warn(`Skipping record page layout "${sourceLayout.name}": ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
-  console.log(`Record page layouts: created ${createdCount}`);
+  logger.log(`Record page layouts: created ${createdCount}`);
 };

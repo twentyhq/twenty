@@ -1,13 +1,10 @@
 import {
-  loadMigrationStateCheckpoint,
   migrationState,
   saveMigrationStateCheckpoint,
-  setMigrationStage,
   setStateRef
 } from "src/logic-functions/utils/migration-state.util";
 import { chunk } from "src/logic-functions/utils/chunk";
 import { updateOneObject } from "src/logic-functions/requests/update-one-object.util";
-import { executeWithRetryAndCheckpoint } from "src/logic-functions/utils/execute-with-retry-and-checkpoint.util";
 import { updateOneField } from "src/logic-functions/requests/update-one-field.util";
 import { createOneField } from "src/logic-functions/requests/create-one-field.util";
 import { AxiosInstance } from "axios";
@@ -15,50 +12,55 @@ import { extractNodes } from "src/logic-functions/utils/extract-nodes.util";
 import { FindAllObjectsAndFields } from "src/logic-functions/requests/find-all-objects-and-fields.util";
 import { executeWithRetry } from "src/logic-functions/utils/execute-with-retry.util";
 import { objectsToOmit } from "src/constants/to-omit";
+import { stopIfTimeBudgetExceeded } from "src/logic-functions/utils/time-budget.util";
 
 export const stage2 = async (sourceWorkspace: AxiosInstance, targetWorkspace: AxiosInstance) => {
-  await loadMigrationStateCheckpoint();
-
   const objectsToUpdate = migrationState.objectsToUpdate;
   const fieldsToUpdate = migrationState.fieldsToUpdate;
   const fieldsToCreate = migrationState.fieldsToCreate;
 
   if (objectsToUpdate.length > 0) {
-    const objectChunks = chunk(objectsToUpdate, 50);
+    const objectChunks = chunk(objectsToUpdate, migrationState.maxRequests);
     for (let index = 0; index < objectChunks.length; index += 1) {
       for (const object of objectChunks[index]) {
         await executeWithRetry(() => updateOneObject(targetWorkspace, object));
       }
-      setStateRef('objectsToUpdate', objectsToUpdate.slice((index + 1) * 50));
-      await saveMigrationStateCheckpoint();
+      setStateRef('objectsToUpdate', objectsToUpdate.slice((index + 1) * migrationState.maxRequests));
+      if (await stopIfTimeBudgetExceeded()) {
+        return;
+      }
     }
   }
 
   if (fieldsToUpdate.length > 0) {
-    const fieldsToUpdateChunks = chunk(fieldsToUpdate, 50);
+    const fieldsToUpdateChunks = chunk(fieldsToUpdate, migrationState.maxRequests);
     for (let index = 0; index < fieldsToUpdateChunks.length; index += 1) {
       for (const field of fieldsToUpdateChunks[index]) {
         await executeWithRetry(() => updateOneField(targetWorkspace, field));
       }
-      setStateRef('fieldsToUpdate', fieldsToUpdate.slice((index + 1) * 50));
-      await saveMigrationStateCheckpoint();
+      setStateRef('fieldsToUpdate', fieldsToUpdate.slice((index + 1) * migrationState.maxRequests));
+      if (await stopIfTimeBudgetExceeded()) {
+        return;
+      }
     }
   }
 
   if (fieldsToCreate.length > 0) {
-    const fieldsToCreateChunks = chunk(fieldsToCreate, 50);
+    const fieldsToCreateChunks = chunk(fieldsToCreate, migrationState.maxRequests);
     for (let index = 0; index < fieldsToCreateChunks.length; index += 1) {
       for (const field of fieldsToCreateChunks[index]) {
         await executeWithRetry(() => createOneField(targetWorkspace, field));
       }
-      setStateRef('fieldsToCreate', fieldsToCreate.slice((index + 1) * 50));
-      await saveMigrationStateCheckpoint();
+      setStateRef('fieldsToCreate', fieldsToCreate.slice((index + 1) * migrationState.maxRequests));
+      if (await stopIfTimeBudgetExceeded()) {
+        return;
+      }
     }
   }
 
-  const { data: sourceWorkspaceObjectsFields } = await executeWithRetryAndCheckpoint(() => FindAllObjectsAndFields(sourceWorkspace));
+  const { data: sourceWorkspaceObjectsFields } = await executeWithRetry(() => FindAllObjectsAndFields(sourceWorkspace));
   const extractedSourceWorkspaceObjects = extractNodes(sourceWorkspaceObjectsFields.objects).filter(n => objectsToOmit.includes(n.nameSingular) === false);
-  const { data: refetchedTargetWorkspaceObjectsFields } = await executeWithRetryAndCheckpoint(() => FindAllObjectsAndFields(targetWorkspace));
+  const { data: refetchedTargetWorkspaceObjectsFields } = await executeWithRetry(() => FindAllObjectsAndFields(targetWorkspace));
   const refetchedTargetObjectsByNameSingular = new Map(
     extractNodes(refetchedTargetWorkspaceObjectsFields.objects).map((object) => [object.nameSingular, object]),
   );
@@ -83,4 +85,5 @@ export const stage2 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
   setStateRef('targetFieldIdBySourceFieldId', targetFieldIdBySourceFieldId);
   setStateRef('targetWorkspaceObjects', extractNodes(refetchedTargetWorkspaceObjectsFields.objects))
   setStateRef('stage', 3)
+  await saveMigrationStateCheckpoint();
 }

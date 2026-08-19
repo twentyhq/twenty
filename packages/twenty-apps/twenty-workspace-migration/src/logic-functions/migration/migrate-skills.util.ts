@@ -2,6 +2,7 @@ import type { AxiosInstance } from "axios";
 import { findSkills } from "src/logic-functions/requests/find-skills.util";
 import { executeWithRetryAndCheckpoint } from "src/logic-functions/utils/execute-with-retry-and-checkpoint.util";
 import { createMetadataEntity } from "src/logic-functions/requests/create-metadata-entity.util";
+import { logger } from "src/logic-functions/utils/logger.util";
 
 export const migrateSkills = async (targetWorkspace: AxiosInstance, sourceSkills: Awaited<ReturnType<typeof findSkills>>, targetSkills: Awaited<ReturnType<typeof findSkills>>) => {
   const existingTargetSkillIds = new Set(targetSkills.map((skill) => skill.id));
@@ -24,5 +25,5 @@ export const migrateSkills = async (targetWorkspace: AxiosInstance, sourceSkills
     createdCount += 1;
   }
 
-  console.log(`Skills: created ${createdCount}`);
+  logger.log(`Skills: created ${createdCount}`);
 };

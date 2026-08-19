@@ -1,5 +1,4 @@
 import type { AxiosInstance } from "axios";
-import { findRoles } from "src/logic-functions/requests/find-roles.util";
 import { executeWithRetryAndCheckpoint } from "src/logic-functions/utils/execute-with-retry-and-checkpoint.util";
 import { createMetadataEntity } from "src/logic-functions/requests/create-metadata-entity.util";
 import {
@@ -8,6 +7,7 @@ import {
   upsertPermissionFlags
 } from "src/logic-functions/requests/upsert-role-permissions.util";
 import { Role } from "src/logic-functions/types/role.type";
+import { logger } from "src/logic-functions/utils/logger.util";
 
 export const migrateRoles = async (
   targetWorkspace: AxiosInstance,
@@ -16,11 +16,6 @@ export const migrateRoles = async (
   targetObjectIdBySourceObjectId: Map<string, string>,
   targetFieldIdBySourceFieldId: Map<string, string>,
 ) => {
-  // Unlike view/nav-item/skill/webhook create inputs, CreateRoleInput has no client-settable
-  // `id` - the row id (and universalIdentifier) are always server-generated. `label` is the
-  // real dedup key instead: it's workspace-uniquely enforced with a clean
-  // ROLE_LABEL_ALREADY_EXISTS error. A role's permissions are therefore only ever set once,
-  // at creation time - re-running this migration never touches an already-migrated role.
   const targetRoleIdByLabel = new Map(targetRoles.map((role) => [role.label, role.id]));
 
   let createdCount = 0;
@@ -31,7 +26,7 @@ export const migrateRoles = async (
     }
 
     if (role.rowLevelPermissionPredicates.length > 0 || role.rowLevelPermissionPredicateGroups.length > 0) {
-      console.warn(`Role "${role.label}": has row-level permission predicates, which this tool doesn't migrate - review manually`);
+      logger.warn(`Role "${role.label}": has row-level permission predicates, which this tool doesn't migrate - review manually`);
     }
 
     const created = await executeWithRetryAndCheckpoint(() => createMetadataEntity(targetWorkspace, 'createOneRole', 'createRoleInput', 'CreateRoleInput', {
@@ -60,7 +55,7 @@ export const migrateRoles = async (
     const objectPermissions = role.objectPermissions.flatMap((permission) => {
       const targetObjectMetadataId = targetObjectIdBySourceObjectId.get(permission.objectMetadataId);
       if (targetObjectMetadataId === undefined) {
-        console.warn(`Role "${role.label}": skipping object permission - target object not found for object ${permission.objectMetadataId}`);
+        logger.warn(`Role "${role.label}": skipping object permission - target object not found for object ${permission.objectMetadataId}`);
         return [];
       }
       return [{
@@ -79,7 +74,7 @@ export const migrateRoles = async (
       const targetObjectMetadataId = targetObjectIdBySourceObjectId.get(permission.objectMetadataId);
       const targetFieldMetadataId = targetFieldIdBySourceFieldId.get(permission.fieldMetadataId);
       if (targetObjectMetadataId === undefined || targetFieldMetadataId === undefined) {
-        console.warn(`Role "${role.label}": skipping field permission - target field not found for field ${permission.fieldMetadataId}`);
+        logger.warn(`Role "${role.label}": skipping field permission - target field not found for field ${permission.fieldMetadataId}`);
         return [];
       }
       return [{
@@ -94,5 +89,5 @@ export const migrateRoles = async (
     }
   }
 
-  console.log(`Roles: created ${createdCount}`);
+  logger.log(`Roles: created ${createdCount}`);
 };

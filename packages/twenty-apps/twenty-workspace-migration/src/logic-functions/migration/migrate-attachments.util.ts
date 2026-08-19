@@ -6,6 +6,7 @@ import { completeFileUpload } from "src/logic-functions/requests/complete-file-u
 import { FindAllObjectsAndFields } from "src/logic-functions/requests/find-all-objects-and-fields.util";
 import { extractNodes } from "src/logic-functions/utils/extract-nodes.util";
 import { executeWithRetryAndCheckpoint } from "src/logic-functions/utils/execute-with-retry-and-checkpoint.util";
+import { logger } from "src/logic-functions/utils/logger.util";
 
 const TARGET_FIELD_NAME_PREFIX = 'target';
 
@@ -69,11 +70,11 @@ export const migrateAttachments = async (
   const { targetFieldNameByObjectName } = await findAttachmentTargetInfo(sourceWorkspace);
   const { fileFieldId: targetFileFieldId } = await findAttachmentTargetInfo(targetWorkspace);
   if (targetFileFieldId === undefined) {
-    console.warn('Skipping attachments: target workspace has no attachment.file field metadata id');
+    logger.warn('Skipping attachments: target workspace has no attachment.file field metadata id');
     return;
   }
   if (targetFieldNameByObjectName.size === 0) {
-    console.warn('Skipping attachments: source workspace has no attachment target fields');
+    logger.warn('Skipping attachments: source workspace has no attachment target fields');
     return;
   }
 
@@ -104,7 +105,7 @@ file {
 
     const sourceFile = (attachment.file as { fileId: string; label: string; extension: string; url: string }[] | null)?.[0];
     if (sourceFile === undefined) {
-      console.warn(`Skipping attachment "${name}": no underlying file`);
+      logger.warn(`Skipping attachment "${name}": no underlying file`);
       continue;
     }
 
@@ -126,14 +127,14 @@ file {
       }
       const targetRecordId = recordIdMap.get(sourceRecordId as string);
       if (targetRecordId === undefined) {
-        console.warn(`Attachment "${name}": dropping ${foreignKeyName} - referenced record ${sourceRecordId as string} was not migrated`);
+        logger.warn(`Attachment "${name}": dropping ${foreignKeyName} - referenced record ${sourceRecordId as string} was not migrated`);
         continue;
       }
       targetFields[foreignKeyName] = targetRecordId;
     }
 
     if (Object.keys(targetFields).length === 0) {
-      console.warn(`Skipping attachment "${name}": no valid target record in the target workspace`);
+      logger.warn(`Skipping attachment "${name}": no valid target record in the target workspace`);
       continue;
     }
 
@@ -163,9 +164,9 @@ file {
     } catch (error) {
       // An attachment whose file can't be downloaded/re-uploaded can't be meaningfully
       // partially migrated - skip it and move on to the rest.
-      console.warn(`Skipping attachment "${name}": ${error instanceof Error ? error.message : String(error)}`);
+      logger.warn(`Skipping attachment "${name}": ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
-  console.log(`Attachments: created ${createdCount}`);
+  logger.log(`Attachments: created ${createdCount}`);
 };

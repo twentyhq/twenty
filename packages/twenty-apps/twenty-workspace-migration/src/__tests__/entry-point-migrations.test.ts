@@ -72,7 +72,7 @@ describe('migrateViews', () => {
     name: 'All People',
     objectMetadataId: 'source-object-1',
     type: 'TABLE',
-    key: 'INDEX',
+    key: null,
     icon: 'IconList',
     position: 0,
     isCompact: false,
@@ -146,6 +146,87 @@ describe('migrateViews', () => {
 
     expect(calls.filter((call) => call.operationName === 'createView')).toHaveLength(0);
     expect(calls.filter((call) => call.operationName === 'createViewFilter')).toHaveLength(1);
+  });
+
+  it('never re-creates an INDEX view, but redirects its filter onto the target object\'s own INDEX view', async () => {
+    const indexView: View = { ...view, key: 'INDEX' };
+    const targetIndexView: View = {
+      ...view,
+      id: 'target-index-view',
+      objectMetadataId: 'target-object-1',
+      key: 'INDEX',
+      viewFilters: [],
+    };
+    const { client, calls } = createMockGraphqlClient({
+      createView: { createView: { id: 'view-1' } },
+      createViewFilter: { createViewFilter: { id: 'filter-1' } },
+    });
+    const targetObjectIdBySourceObjectId = new Map([['source-object-1', 'target-object-1']]);
+    const targetFieldIdBySourceFieldId = new Map([['source-field-1', 'target-field-1']]);
+
+    await migrateViews(client, [indexView], [targetIndexView], targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId);
+
+    expect(calls.filter((call) => call.operationName === 'createView')).toHaveLength(0);
+    const createFilterCalls = calls.filter((call) => call.operationName === 'createViewFilter');
+    expect(createFilterCalls).toHaveLength(1);
+    expect(createFilterCalls[0].variables.input).toMatchObject({ id: 'filter-1', fieldMetadataId: 'target-field-1', viewId: 'target-index-view' });
+  });
+
+  it('skips an INDEX view\'s customization entirely when the target object has no INDEX view of its own', async () => {
+    const indexView: View = { ...view, key: 'INDEX' };
+    const { client, calls } = createMockGraphqlClient({});
+    const targetObjectIdBySourceObjectId = new Map([['source-object-1', 'target-object-1']]);
+    const targetFieldIdBySourceFieldId = new Map([['source-field-1', 'target-field-1']]);
+
+    await migrateViews(client, [indexView], [], targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId);
+
+    expect(calls).toHaveLength(0);
+  });
+
+  it('does not duplicate a viewField already present on the target INDEX view for the same field', async () => {
+    const indexViewWithField: View = {
+      ...view,
+      key: 'INDEX',
+      viewFilters: [],
+      viewFields: [
+        {
+          id: 'source-view-field-1',
+          fieldMetadataId: 'source-field-1',
+          isVisible: true,
+          size: 100,
+          position: 0,
+          aggregateOperation: null,
+          viewId: 'view-1',
+          viewFieldGroupId: null,
+        },
+      ],
+    };
+    const targetIndexView: View = {
+      ...view,
+      id: 'target-index-view',
+      objectMetadataId: 'target-object-1',
+      key: 'INDEX',
+      viewFilters: [],
+      viewFields: [
+        {
+          id: 'target-auto-view-field-1',
+          fieldMetadataId: 'target-field-1',
+          isVisible: true,
+          size: 100,
+          position: 0,
+          aggregateOperation: null,
+          viewId: 'target-index-view',
+          viewFieldGroupId: null,
+        },
+      ],
+    };
+    const { client, calls } = createMockGraphqlClient({});
+    const targetObjectIdBySourceObjectId = new Map([['source-object-1', 'target-object-1']]);
+    const targetFieldIdBySourceFieldId = new Map([['source-field-1', 'target-field-1']]);
+
+    await migrateViews(client, [indexViewWithField], [targetIndexView], targetObjectIdBySourceObjectId, targetFieldIdBySourceFieldId);
+
+    expect(calls.filter((call) => call.operationName === 'createViewField')).toHaveLength(0);
   });
 });
 

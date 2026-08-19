@@ -5,6 +5,7 @@ import { executeWithRetryAndCheckpoint } from "src/logic-functions/utils/execute
 import { createMetadataEntity } from "src/logic-functions/requests/create-metadata-entity.util";
 import { createManyRecords } from "src/logic-functions/requests/create-many-records.util";
 import { applyPageLayoutTabsAndWidgets } from "src/logic-functions/utils/apply-page-layout-tabs-and-widgets.util";
+import { logger } from "src/logic-functions/utils/logger.util";
 
 export const migrateDashboards = async (
   sourceWorkspace: AxiosInstance,
@@ -49,7 +50,7 @@ export const migrateDashboards = async (
 
     const sourcePageLayout = sourcePageLayoutById.get(dashboard.pageLayoutId as string);
     if (sourcePageLayout === undefined) {
-      console.warn(`Skipping dashboard "${title}": its page layout was not found`);
+      logger.warn(`Skipping dashboard "${title}": its page layout was not found`);
       continue;
     }
 
@@ -83,9 +84,9 @@ export const migrateDashboards = async (
     } catch (error) {
       // A dashboard whose layout/tab/widget tree fails to apply can't be meaningfully
       // partially migrated - skip it and move on to the rest.
-      console.warn(`Skipping dashboard "${title}": ${error instanceof Error ? error.message : String(error)}`);
+      logger.warn(`Skipping dashboard "${title}": ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
-  console.log(`Dashboards: created ${createdCount}`);
+  logger.log(`Dashboards: created ${createdCount}`);
 };

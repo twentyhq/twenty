@@ -1,5 +1,6 @@
 import type { PageLayoutTab } from "src/logic-functions/types/dashboard.type";
 import { remapWidgetConfiguration } from "src/logic-functions/utils/remap-widget-configuration.util";
+import { logger } from "src/logic-functions/utils/logger.util";
 
 export const buildPageLayoutTabsInput = (
   sourceTabs: PageLayoutTab[],
@@ -12,7 +13,7 @@ export const buildPageLayoutTabsInput = (
 
     const widgets = tab.widgets.flatMap((widget) => {
       if (widget.type === 'VIEW') {
-        console.warn(`Skipping widget "${widget.title}" on ${warningContext}: VIEW-type widgets aren't supported by the API yet`);
+        logger.warn(`Skipping widget "${widget.title}" on ${warningContext}: VIEW-type widgets aren't supported by the API yet`);
         return [];
       }
 
@@ -20,7 +21,7 @@ export const buildPageLayoutTabsInput = (
         ? targetObjectIdBySourceObjectId.get(widget.objectMetadataId)
         : undefined;
       if (widget.objectMetadataId !== null && targetObjectMetadataId === undefined) {
-        console.warn(`Skipping widget "${widget.title}" on ${warningContext}: target object not found for object ${widget.objectMetadataId}`);
+        logger.warn(`Skipping widget "${widget.title}" on ${warningContext}: target object not found for object ${widget.objectMetadataId}`);
         return [];
       }
 

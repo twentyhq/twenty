@@ -12,12 +12,18 @@ import { extractNodes } from "src/logic-functions/utils/extract-nodes.util";
 import { mapEntities } from "src/logic-functions/utils/map-entities.util";
 import { fieldsToOmit, objectsToOmit, objectsToOmitFromRecordMigration, sourceAppsToOmit } from "src/constants/to-omit";
 import { buildFieldToCreate } from "src/logic-functions/utils/build-field-to-create.util";
-import { executeWithRetryAndCheckpoint } from "src/logic-functions/utils/execute-with-retry-and-checkpoint.util";
-import { setStateRef } from "src/logic-functions/utils/migration-state.util";
+import { saveMigrationStateCheckpoint, setStateRef } from "src/logic-functions/utils/migration-state.util";
 import { sortObjectsByDependency } from "src/logic-functions/utils/sort-objects-by-dependency.util";
 import { executeWithRetry } from "src/logic-functions/utils/execute-with-retry.util";
+import { estimateMigrationDuration } from "src/logic-functions/utils/estimate-migration-duration.util";
+import { logger } from "src/logic-functions/utils/logger.util";
+import { fetchCurrentWorkspace } from "src/logic-functions/requests/fetch-current-workspace.util";
 
 export const stage1 = async (sourceWorkspace: AxiosInstance, targetWorkspace: AxiosInstance) => {
+  const currentWorkspace = await fetchCurrentWorkspace(sourceWorkspace);
+  const MAX_REQUESTS = (currentWorkspace.length === 1 && currentWorkspace[0].metadata.plan === 'PRO') ? 50 : 100;
+  setStateRef('maxRequests', MAX_REQUESTS);
+
   // Before any migration, check if all apps are installed with the same version and all workspace members are in new instance
   const { data: sourceWorkspaceInstalledApps } = await findInstalledApplications(sourceWorkspace);
   const { data: targetWorkspaceInstalledApps } = await findInstalledApplications(targetWorkspace);
@@ -35,7 +41,7 @@ export const stage1 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
   const sourceAppsIds = Object.keys(sourceApps);
   const missingAppsIds = sourceAppsIds.filter((app) => Object.keys(targetApps).indexOf(app) < 0);
   if (missingAppsIds.length > 0) {
-    console.error('Install missing apps: '.concat(...missingAppsIds.map(id => sourceApps[id].name)));
+    logger.error('Install missing apps: '.concat(...missingAppsIds.map(id => sourceApps[id].name)));
     return;
   }
   // check if apps have the same version
@@ -46,7 +52,7 @@ export const stage1 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
     }
   }
   if (diffVerApps.length > 0) {
-    console.error('Update following apps to latest version: '.concat(...diffVerApps.map(id => sourceApps[id].name)));
+    logger.error('Update following apps to latest version: '.concat(...diffVerApps.map(id => sourceApps[id].name)));
   }
 
   // Check for workspace members to prevent data loss with X object to workspace members relation
@@ -54,26 +60,26 @@ export const stage1 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
   const targetWorkspaceMembers = extractNodes((await FindWorkspaceMembers(targetWorkspace)).data.workspaceMembers);
   const missingWorkspaceMembers = sourceWorkspaceMembers.filter(mem => targetWorkspaceMembers.find(mem2 => mem2.userEmail === mem.userEmail) === undefined);
   if (missingWorkspaceMembers.length > 0) {
-    console.error("Add missing workspace members before proceeding:", ...missingWorkspaceMembers.filter(mem => mem.userEmail));
+    logger.error("Add missing workspace members before proceeding:", ...missingWorkspaceMembers.filter(mem => mem.userEmail));
     return;
   }
   // merge both workspaceMembers arrays into one
-  const mergedWorkspaceMembers: { oldId: string, newId: string }[] = [];
+  const mergedWorkspaceMembers: Map<string, string> = new Map();
   for (const sourceMember of sourceWorkspaceMembers) {
     const targetMember = targetWorkspaceMembers.find(mem => mem.userEmail === sourceMember.userEmail);
     if (targetMember === undefined) {
-      console.warn(`Skipping workspace member "${sourceMember.userEmail}": no matching member found in target workspace`);
+      logger.warn(`Skipping workspace member "${sourceMember.userEmail}": no matching member found in target workspace`);
       continue;
     }
-    mergedWorkspaceMembers.push({ oldId: sourceMember.id, newId: targetMember.id });
+    mergedWorkspaceMembers.set(sourceMember.id, targetMember.id);
   }
-  setStateRef('mergedWorkspaceMembers', mergedWorkspaceMembers);
+  setStateRef('recordIdMap', mergedWorkspaceMembers);
 
   // compare standard objects and fields and check if they need an update
   // compare custom objects and fields and check if they need an update
 
-  const { data: sourceWorkspaceObjectsFields } = await executeWithRetryAndCheckpoint(() => FindAllObjectsAndFields(sourceWorkspace));
-  const { data: targetWorkspaceObjectsFields } = await executeWithRetryAndCheckpoint(() => FindAllObjectsAndFields(targetWorkspace));
+  const { data: sourceWorkspaceObjectsFields } = await executeWithRetry(() => FindAllObjectsAndFields(sourceWorkspace));
+  const { data: targetWorkspaceObjectsFields } = await executeWithRetry(() => FindAllObjectsAndFields(targetWorkspace));
   const extractedSourceWorkspaceObjects = extractNodes(sourceWorkspaceObjectsFields.objects).filter(n => objectsToOmit.includes(n.nameSingular) === false);
   const extractedTargetWorkspaceObjects = extractNodes(targetWorkspaceObjectsFields.objects).filter(n => objectsToOmit.includes(n.nameSingular) === false);
 
@@ -164,9 +170,15 @@ export const stage1 = async (sourceWorkspace: AxiosInstance, targetWorkspace: Ax
     ...Array.from(customSourceObjects.values()),
   ].filter((object) => [...objectsToOmit, ...objectsToOmitFromRecordMigration].includes(object.nameSingular) === false));
 
+  const { estimatedMinutes, batchableRecordCount, otherRecordCount } = await estimateMigrationDuration(
+    sourceWorkspace,
+  );
+  logger.log(`Estimated migration time: ~${estimatedMinutes} minute(s) worst case (${batchableRecordCount} record(s) via createManyRecords, ${otherRecordCount} attachment(s))`);
+
   setStateRef('objectsToUpdate', objectsToUpdate);
   setStateRef('fieldsToCreate', fieldsToCreate);
   setStateRef('fieldsToUpdate', fieldsToUpdate);
   setStateRef('recordMigrationOrder', recordMigrationOrder);
   setStateRef('stage', 2);
+  await saveMigrationStateCheckpoint();
 }

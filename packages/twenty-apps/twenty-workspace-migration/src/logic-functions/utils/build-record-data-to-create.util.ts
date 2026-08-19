@@ -1,3 +1,5 @@
+import { logger } from "src/logic-functions/utils/logger.util";
+
 export const buildRecordDataToCreate = (
   node: Record<string, unknown>,
   dataKeys: string[],
@@ -15,7 +17,7 @@ export const buildRecordDataToCreate = (
       }
       const targetRecordId = recordIdMap.get(sourceRecordId as string);
       if (targetRecordId === undefined) {
-        console.warn(`Dropping relation "${key}": referenced record ${sourceRecordId as string} was not migrated`);
+        logger.warn(`Dropping relation "${key}": referenced record ${sourceRecordId as string} was not migrated`);
         continue;
       }
       data[key] = targetRecordId;

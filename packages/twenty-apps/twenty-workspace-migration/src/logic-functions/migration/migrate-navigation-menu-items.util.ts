@@ -2,6 +2,7 @@ import type { AxiosInstance } from "axios";
 import { findNavigationMenuItems } from "src/logic-functions/requests/find-navigation-menu-items.util";
 import { executeWithRetryAndCheckpoint } from "src/logic-functions/utils/execute-with-retry-and-checkpoint.util";
 import { createMetadataEntity } from "src/logic-functions/requests/create-metadata-entity.util";
+import { logger } from "src/logic-functions/utils/logger.util";
 
 export const migrateNavigationMenuItems = async (
   targetWorkspace: AxiosInstance,
@@ -23,7 +24,7 @@ export const migrateNavigationMenuItems = async (
       (item) => item.folderId === null || resolvedItemIds.has(item.folderId),
     );
     if (creatableNow.length === 0) {
-      console.warn(`Skipping ${remainingItems.length} navigation menu item(s): unresolved folder chain`);
+      logger.warn(`Skipping ${remainingItems.length} navigation menu item(s): unresolved folder chain`);
       break;
     }
 
@@ -34,11 +35,11 @@ export const migrateNavigationMenuItems = async (
         continue;
       }
       if (item.userWorkspaceId !== null) {
-        console.warn(`Skipping personal navigation menu item "${item.name ?? item.id}": personal items aren't portable across workspaces via API key`);
+        logger.warn(`Skipping personal navigation menu item "${item.name ?? item.id}": personal items aren't portable across workspaces via API key`);
         continue;
       }
       if (item.pageLayoutId !== null) {
-        console.warn(`Skipping navigation menu item "${item.name ?? item.id}": page layouts aren't migrated by this tool`);
+        logger.warn(`Skipping navigation menu item "${item.name ?? item.id}": page layouts aren't migrated by this tool`);
         continue;
       }
 
@@ -46,7 +47,7 @@ export const migrateNavigationMenuItems = async (
         ? targetObjectIdBySourceObjectId.get(item.targetObjectMetadataId)
         : undefined;
       if (item.targetObjectMetadataId !== null && targetObjectMetadataId === undefined) {
-        console.warn(`Skipping navigation menu item "${item.name ?? item.id}": target object not found for object ${item.targetObjectMetadataId}`);
+        logger.warn(`Skipping navigation menu item "${item.name ?? item.id}": target object not found for object ${item.targetObjectMetadataId}`);
         continue;
       }
 
@@ -54,7 +55,7 @@ export const migrateNavigationMenuItems = async (
         ? recordIdMap.get(item.targetRecordId)
         : undefined;
       if (item.targetRecordId !== null && targetRecordId === undefined) {
-        console.warn(`Skipping navigation menu item "${item.name ?? item.id}": target record not found for record ${item.targetRecordId}`);
+        logger.warn(`Skipping navigation menu item "${item.name ?? item.id}": target record not found for record ${item.targetRecordId}`);
         continue;
       }
 
@@ -76,5 +77,5 @@ export const migrateNavigationMenuItems = async (
     }
   }
 
-  console.log(`Navigation menu items: created ${createdCount}`);
+  logger.log(`Navigation menu items: created ${createdCount}`);
 };

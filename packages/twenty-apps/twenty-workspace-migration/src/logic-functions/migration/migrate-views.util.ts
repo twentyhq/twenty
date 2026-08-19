@@ -1,22 +1,32 @@
 import type { AxiosInstance } from "axios";
-import { findViews } from "src/logic-functions/requests/find-views.util";
 import { executeWithRetryAndCheckpoint } from "src/logic-functions/utils/execute-with-retry-and-checkpoint.util";
 import { createMetadataEntity } from "src/logic-functions/requests/create-metadata-entity.util";
+import { logger } from "src/logic-functions/utils/logger.util";
+import { View } from "src/logic-functions/types/view-entities.type";
 
 export const migrateViews = async (
   targetWorkspace: AxiosInstance,
-  sourceViews: Awaited<ReturnType<typeof findViews>>,
-  targetViews: Awaited<ReturnType<typeof findViews>>,
+  sourceViews: View[],
+  targetViews: View[],
   targetObjectIdBySourceObjectId: Map<string, string>,
   targetFieldIdBySourceFieldId: Map<string, string>,
 ) => {
   const existingTargetViewIds = new Set(targetViews.map((view) => view.id));
-  const existingTargetViewFieldIds = new Set(targetViews.flatMap((view) => view.viewFields.map((f) => f.id)));
   const existingTargetViewFilterIds = new Set(targetViews.flatMap((view) => view.viewFilters.map((f) => f.id)));
-  const existingTargetViewSortIds = new Set(targetViews.flatMap((view) => view.viewSorts.map((f) => f.id)));
   const existingTargetViewGroupIds = new Set(targetViews.flatMap((view) => view.viewGroups.map((f) => f.id)));
   const existingTargetViewFilterGroupIds = new Set(targetViews.flatMap((view) => view.viewFilterGroups.map((f) => f.id)));
   const existingTargetViewFieldGroupIds = new Set(targetViews.flatMap((view) => view.viewFieldGroups.map((f) => f.id)));
+
+  const existingTargetViewFieldKeys = new Set(
+    targetViews.flatMap((view) => view.viewFields.map((f) => `${view.id}::${f.fieldMetadataId}`)),
+  );
+  const existingTargetViewSortKeys = new Set(
+    targetViews.flatMap((view) => view.viewSorts.map((f) => `${view.id}::${f.fieldMetadataId}`)),
+  );
+
+  const targetIndexViewIdByObjectMetadataId = new Map(
+    targetViews.filter((view) => view.key === 'INDEX').map((view) => [view.objectMetadataId, view.id]),
+  );
 
   const resolveFieldId = (sourceFieldId: string | null): string | null =>
     sourceFieldId === null ? null : targetFieldIdBySourceFieldId.get(sourceFieldId) ?? null;
@@ -27,31 +37,44 @@ export const migrateViews = async (
   for (const view of sourceViews) {
     const targetObjectMetadataId = targetObjectIdBySourceObjectId.get(view.objectMetadataId);
     if (targetObjectMetadataId === undefined) {
-      console.warn(`Skipping view "${view.name}": target object not found for object ${view.objectMetadataId}`);
+      logger.warn(`Skipping view "${view.name}": target object not found for object ${view.objectMetadataId}`);
       continue;
     }
 
-    if (!existingTargetViewIds.has(view.id)) {
-      await executeWithRetryAndCheckpoint(() => createMetadataEntity(targetWorkspace, 'createView', 'input', 'CreateViewInput', {
-        id: view.id,
-        name: view.name,
-        objectMetadataId: targetObjectMetadataId,
-        type: view.type,
-        key: view.key,
-        icon: view.icon,
-        position: view.position,
-        isCompact: view.isCompact,
-        shouldHideEmptyGroups: view.shouldHideEmptyGroups,
-        kanbanColumnWidth: view.kanbanColumnWidth,
-        kanbanAggregateOperation: view.kanbanAggregateOperation,
-        kanbanAggregateOperationFieldMetadataId: resolveFieldId(view.kanbanAggregateOperationFieldMetadataId),
-        anyFieldFilterValue: view.anyFieldFilterValue,
-        calendarLayout: view.calendarLayout,
-        calendarFieldMetadataId: resolveFieldId(view.calendarFieldMetadataId),
-        calendarEndFieldMetadataId: resolveFieldId(view.calendarEndFieldMetadataId),
-        mainGroupByFieldMetadataId: resolveFieldId(view.mainGroupByFieldMetadataId),
-      }));
-      createdViews += 1;
+    const isIndexView = view.key === 'INDEX';
+    let effectiveViewId: string;
+
+    if (isIndexView) {
+      const targetIndexViewId = targetIndexViewIdByObjectMetadataId.get(targetObjectMetadataId);
+      if (targetIndexViewId === undefined) {
+        logger.warn(`Skipping default view customization for "${view.name}": target object has no INDEX view`);
+        continue;
+      }
+      effectiveViewId = targetIndexViewId;
+    } else {
+      effectiveViewId = view.id;
+      if (!existingTargetViewIds.has(view.id)) {
+        await executeWithRetryAndCheckpoint(() => createMetadataEntity(targetWorkspace, 'createView', 'input', 'CreateViewInput', {
+          id: view.id,
+          name: view.name,
+          objectMetadataId: targetObjectMetadataId,
+          type: view.type,
+          key: view.key,
+          icon: view.icon,
+          position: view.position,
+          isCompact: view.isCompact,
+          shouldHideEmptyGroups: view.shouldHideEmptyGroups,
+          kanbanColumnWidth: view.kanbanColumnWidth,
+          kanbanAggregateOperation: view.kanbanAggregateOperation,
+          kanbanAggregateOperationFieldMetadataId: resolveFieldId(view.kanbanAggregateOperationFieldMetadataId),
+          anyFieldFilterValue: view.anyFieldFilterValue,
+          calendarLayout: view.calendarLayout,
+          calendarFieldMetadataId: resolveFieldId(view.calendarFieldMetadataId),
+          calendarEndFieldMetadataId: resolveFieldId(view.calendarEndFieldMetadataId),
+          mainGroupByFieldMetadataId: resolveFieldId(view.mainGroupByFieldMetadataId),
+        }));
+        createdViews += 1;
+      }
     }
 
     for (const viewFieldGroup of view.viewFieldGroups) {
@@ -61,7 +84,7 @@ export const migrateViews = async (
       await executeWithRetryAndCheckpoint(() => createMetadataEntity(targetWorkspace, 'createViewFieldGroup', 'input', 'CreateViewFieldGroupInput', {
         id: viewFieldGroup.id,
         name: viewFieldGroup.name,
-        viewId: viewFieldGroup.viewId,
+        viewId: effectiveViewId,
         position: viewFieldGroup.position,
         isVisible: viewFieldGroup.isVisible,
       }));
@@ -69,29 +92,29 @@ export const migrateViews = async (
     }
 
     for (const viewField of view.viewFields) {
-      if (existingTargetViewFieldIds.has(viewField.id)) {
-        continue;
-      }
       const targetFieldMetadataId = resolveFieldId(viewField.fieldMetadataId);
       if (targetFieldMetadataId === null) {
-        console.warn(`Skipping view field "${viewField.id}" on view "${view.name}": target field not found for field ${viewField.fieldMetadataId}`);
+        logger.warn(`Skipping view field "${viewField.id}" on view "${view.name}": target field not found for field ${viewField.fieldMetadataId}`);
+        continue;
+      }
+      const viewFieldKey = `${effectiveViewId}::${targetFieldMetadataId}`;
+      if (existingTargetViewFieldKeys.has(viewFieldKey)) {
         continue;
       }
       await executeWithRetryAndCheckpoint(() => createMetadataEntity(targetWorkspace, 'createViewField', 'input', 'CreateViewFieldInput', {
         id: viewField.id,
         fieldMetadataId: targetFieldMetadataId,
-        viewId: viewField.viewId,
+        viewId: effectiveViewId,
         isVisible: viewField.isVisible,
         size: viewField.size,
         position: viewField.position,
         aggregateOperation: viewField.aggregateOperation,
         viewFieldGroupId: viewField.viewFieldGroupId,
       }));
+      existingTargetViewFieldKeys.add(viewFieldKey);
       createdSubEntities += 1;
     }
 
-    // ViewFilterGroups can nest under a parent, so a group is only created once its parent
-    // (if any) is already resolved - same dependency ordering NavigationMenuItem folders need.
     const remainingFilterGroups = [...view.viewFilterGroups];
     const resolvedFilterGroupIds = new Set(existingTargetViewFilterGroupIds);
     while (remainingFilterGroups.length > 0) {
@@ -99,7 +122,7 @@ export const migrateViews = async (
         (group) => group.parentViewFilterGroupId === null || resolvedFilterGroupIds.has(group.parentViewFilterGroupId),
       );
       if (creatableNow.length === 0) {
-        console.warn(`Skipping ${remainingFilterGroups.length} view filter group(s) on view "${view.name}": unresolved parent chain`);
+        logger.warn(`Skipping ${remainingFilterGroups.length} view filter group(s) on view "${view.name}": unresolved parent chain`);
         break;
       }
       for (const group of creatableNow) {
@@ -110,7 +133,7 @@ export const migrateViews = async (
             parentViewFilterGroupId: group.parentViewFilterGroupId,
             logicalOperator: group.logicalOperator,
             positionInViewFilterGroup: group.positionInViewFilterGroup,
-            viewId: group.viewId,
+            viewId: effectiveViewId,
           }));
           createdSubEntities += 1;
         }
@@ -124,7 +147,7 @@ export const migrateViews = async (
       }
       const targetFieldMetadataId = resolveFieldId(viewFilter.fieldMetadataId);
       if (targetFieldMetadataId === null) {
-        console.warn(`Skipping view filter "${viewFilter.id}" on view "${view.name}": target field not found for field ${viewFilter.fieldMetadataId}`);
+        logger.warn(`Skipping view filter "${viewFilter.id}" on view "${view.name}": target field not found for field ${viewFilter.fieldMetadataId}`);
         continue;
       }
       await executeWithRetryAndCheckpoint(() => createMetadataEntity(targetWorkspace, 'createViewFilter', 'input', 'CreateViewFilterInput', {
@@ -136,18 +159,19 @@ export const migrateViews = async (
         positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
         subFieldName: viewFilter.subFieldName,
         relationTargetFieldMetadataId: resolveFieldId(viewFilter.relationTargetFieldMetadataId),
-        viewId: viewFilter.viewId,
+        viewId: effectiveViewId,
       }));
       createdSubEntities += 1;
     }
 
     for (const viewSort of view.viewSorts) {
-      if (existingTargetViewSortIds.has(viewSort.id)) {
-        continue;
-      }
       const targetFieldMetadataId = resolveFieldId(viewSort.fieldMetadataId);
       if (targetFieldMetadataId === null) {
-        console.warn(`Skipping view sort "${viewSort.id}" on view "${view.name}": target field not found for field ${viewSort.fieldMetadataId}`);
+        logger.warn(`Skipping view sort "${viewSort.id}" on view "${view.name}": target field not found for field ${viewSort.fieldMetadataId}`);
+        continue;
+      }
+      const viewSortKey = `${effectiveViewId}::${targetFieldMetadataId}`;
+      if (existingTargetViewSortKeys.has(viewSortKey)) {
         continue;
       }
       await executeWithRetryAndCheckpoint(() => createMetadataEntity(targetWorkspace, 'createViewSort', 'input', 'CreateViewSortInput', {
@@ -155,9 +179,14 @@ export const migrateViews = async (
         fieldMetadataId: targetFieldMetadataId,
         direction: viewSort.direction,
         subFieldName: viewSort.subFieldName,
-        viewId: viewSort.viewId,
+        viewId: effectiveViewId,
       }));
+      existingTargetViewSortKeys.add(viewSortKey);
       createdSubEntities += 1;
+    }
+
+    if (isIndexView) {
+      continue;
     }
 
     for (const viewGroup of view.viewGroups) {
@@ -169,11 +198,11 @@ export const migrateViews = async (
         isVisible: viewGroup.isVisible,
         fieldValue: viewGroup.fieldValue,
         position: viewGroup.position,
-        viewId: viewGroup.viewId,
+        viewId: effectiveViewId,
       }));
       createdSubEntities += 1;
     }
   }
 
-  console.log(`Views: created ${createdViews} view(s) and ${createdSubEntities} related entitie(s)`);
+  logger.log(`Views: created ${createdViews} view(s) and ${createdSubEntities} related entitie(s)`);
 };

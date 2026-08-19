@@ -1,6 +1,7 @@
 import { FieldsListType, RelationType } from "src/logic-functions/types/find-objects-fields.type";
 import { CreateOneFieldType, RelationCreationPayload } from "src/logic-functions/types/create-one-field.type";
 import { FieldMetadataType } from "src/logic-functions/types/field-metadata-type.enum";
+import { logger } from "src/logic-functions/utils/logger.util";
 
 export const buildFieldToCreate = (
   field: FieldsListType,
@@ -13,7 +14,7 @@ export const buildFieldToCreate = (
     )?.id;
 
     if (targetRelationObjectId === undefined) {
-      console.warn(`Skipping relation field "${field.name}": relation target object not found in target workspace yet (possible dependency cycle)`);
+      logger.warn(`Skipping relation field "${field.name}": relation target object not found in target workspace yet (possible dependency cycle)`);
       return undefined;
     }
 
@@ -50,7 +51,7 @@ export const buildFieldToCreate = (
       )?.id;
 
       if (targetRelationObjectId === undefined) {
-        console.warn(`Skipping relation field "${field.name}": relation target object not found in target workspace yet (possible dependency cycle)`);
+        logger.warn(`Skipping relation field "${field.name}": relation target object not found in target workspace yet (possible dependency cycle)`);
         return undefined;
       }
 
