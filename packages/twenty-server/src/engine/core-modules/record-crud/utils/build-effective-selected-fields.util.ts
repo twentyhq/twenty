@@ -51,7 +51,11 @@ const buildSelectedField = ({
     labelIdentifierFieldName,
     ...filterFieldNames,
     ...orderByFieldNames,
-  ].filter((name) => cleanFieldNames.includes(name));
+  ].filter(
+    (name) =>
+      cleanFieldNames.includes(name) &&
+      !selectableRelationFieldNames.includes(name),
+  );
 
   if (rawSelect.includes('*')) {
     return {

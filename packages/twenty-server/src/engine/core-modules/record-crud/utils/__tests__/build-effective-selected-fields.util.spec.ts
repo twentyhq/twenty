@@ -462,6 +462,32 @@ describe('buildEffectiveSelectedFields', () => {
       });
     });
 
+    it('should hydrate a selected relation that also appears in orderBy', () => {
+      const objectsPermissions = buildObjectsPermissions({});
+
+      const { effectiveSelectedFields, warnings } =
+        buildEffectiveSelectedFields({
+          select: ['name', 'fund'],
+          filter: undefined,
+          orderBy: [{ fund: 'AscNullsLast' }],
+          objectName: 'investorLead',
+          flatObjectMetadataMaps: relationObjectMaps,
+          flatObjectMetadata: investorLeadObjectMetadata,
+          flatFieldMetadataMaps: relationFieldMaps,
+          selectedFields: { id: true, name: true, fund: true },
+          selectableRelationFields:
+            buildSelectableRelationFields(objectsPermissions),
+          objectsPermissions,
+        });
+
+      expect(warnings).toEqual([]);
+      expect(effectiveSelectedFields).toEqual({
+        id: true,
+        name: true,
+        fund: { id: true, name: true },
+      });
+    });
+
     it('should hydrate readable relations in wildcard selection', () => {
       const objectsPermissions = buildObjectsPermissions({});
 
@@ -514,7 +540,7 @@ describe('buildEffectiveSelectedFields', () => {
       ]);
     });
 
-    it('should not hydrate a relation whose source field is restricted', () => {
+    it('should warn when the relation field itself is restricted for the role', () => {
       const objectsPermissions = buildObjectsPermissions({
         sourceRestrictedFields: { 'fund-field': { canRead: false } },
       });
