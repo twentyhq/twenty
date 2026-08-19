@@ -1,16 +1,15 @@
 import { useQuery } from '@apollo/client/react';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { GET_CORE_WORKFLOWS } from '@/object-core/workflows/graphql/queries/getCoreWorkflows';
-import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
+import { GetCoreWorkflowsDocument } from '~/generated/graphql';
 
-export const useCoreWorkflows = ({ skip }: { skip: boolean }) => {
+export const useCoreWorkflows = () => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const { data, loading } = useQuery<{ coreWorkflows: CoreWorkflow[] }>(
-    GET_CORE_WORKFLOWS,
-    { client: apolloCoreClient, skip },
-  );
+  const { data, loading, error } = useQuery(GetCoreWorkflowsDocument, {
+    client: apolloCoreClient,
+    fetchPolicy: 'cache-and-network',
+  });
 
-  return { coreWorkflows: data?.coreWorkflows ?? [], loading };
+  return { coreWorkflows: data?.coreWorkflows ?? [], loading, error };
 };

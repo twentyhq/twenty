@@ -1,45 +1,62 @@
-import { useLingui } from '@lingui/react/macro';
-import { Navigate } from 'react-router-dom';
-import { AppPath } from 'twenty-shared/types';
-import { IconSettingsAutomation } from 'twenty-ui/icon';
+import { styled } from '@linaria/react';
+import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 
-import { CoreObjectIndexPageLayout } from '@/object-core/components/CoreObjectIndexPageLayout';
 import { CoreObjectTable } from '@/object-core/components/CoreObjectTable';
-import { WorkflowCoreTableRow } from '@/object-core/workflows/components/WorkflowCoreTableRow';
-import { WORKFLOW_CORE_TABLE_GRID_TEMPLATE_COLUMNS } from '@/object-core/workflows/constants/WorkflowCoreTableGridTemplateColumns';
-import { WORKFLOW_CORE_TABLE_METADATA } from '@/object-core/workflows/constants/WorkflowCoreTableMetadata';
+import { WORKFLOW_CORE_TABLE_COLUMNS } from '@/object-core/workflows/constants/WorkflowCoreTableColumns';
 import { useCoreWorkflows } from '@/object-core/workflows/hooks/useCoreWorkflows';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
+import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
+import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
+
+const StyledTableContainer = styled.div`
+  height: 100%;
+  overflow: auto;
+  width: 100%;
+`;
+
+const getCoreWorkflowLink = (workflow: CoreWorkflow) =>
+  isDefined(workflow.workspaceWorkflowId)
+    ? getAppPath(AppPath.RecordShowPage, {
+        objectNameSingular: CoreObjectNameSingular.Workflow,
+        objectRecordId: workflow.workspaceWorkflowId,
+      })
+    : undefined;
 
 export const WorkflowCoreIndexPage = () => {
-  const { t } = useLingui();
-
-  const isWorkflowCoreIndexPageEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
-  );
-
-  const { coreWorkflows } = useCoreWorkflows({
-    skip: !isWorkflowCoreIndexPageEnabled,
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: CoreObjectNameSingular.Workflow,
   });
 
-  if (!isWorkflowCoreIndexPageEnabled) {
-    return <Navigate to={AppPath.NotFound} replace />;
-  }
+  const { coreWorkflows } = useCoreWorkflows();
 
   return (
-    <CoreObjectIndexPageLayout
-      Icon={IconSettingsAutomation}
-      title={t`Workflows`}
-    >
-      <CoreObjectTable
-        items={coreWorkflows}
-        tableMetadata={WORKFLOW_CORE_TABLE_METADATA}
-        gridTemplateColumns={WORKFLOW_CORE_TABLE_GRID_TEMPLATE_COLUMNS}
-        renderRow={(workflow) => (
-          <WorkflowCoreTableRow key={workflow.id} workflow={workflow} />
-        )}
-      />
-    </CoreObjectIndexPageLayout>
+    <>
+      <PageTitle title={objectMetadataItem.labelPlural} />
+      <PageCardLayout
+        header={
+          <PageCardHeader
+            icon={
+              <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
+            }
+            title={objectMetadataItem.labelPlural}
+          />
+        }
+      >
+        <StyledTableContainer>
+          <CoreObjectTable
+            tableId="workflowCore"
+            columns={WORKFLOW_CORE_TABLE_COLUMNS}
+            items={coreWorkflows}
+            getItemKey={(workflow) => workflow.id}
+            getItemLink={getCoreWorkflowLink}
+            initialSort={{ fieldName: 'updatedAt', orderBy: 'DescNullsLast' }}
+          />
+        </StyledTableContainer>
+      </PageCardLayout>
+    </>
   );
 };

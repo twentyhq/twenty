@@ -151,6 +151,7 @@ const preloadOnboardingPages = () => {
 const createWorkspaceAppRouter = (
   isFunctionSettingsEnabled?: boolean,
   isAdminPageEnabled?: boolean,
+  isWorkflowCoreIndexPageEnabled?: boolean,
 ) =>
   createBrowserRouter(
     createRoutesFromElements(
@@ -161,14 +162,16 @@ const createWorkspaceAppRouter = (
         <Route element={<MinimalMetadataGate />}>
           <Route element={<DefaultLayout />}>
             <Route element={<MainAppLayoutWithSidePanel />}>
-              <Route
-                path="/workflow-core"
-                element={
-                  <LazyRoute>
-                    <WorkflowCoreIndexPage />
-                  </LazyRoute>
-                }
-              />
+              {isWorkflowCoreIndexPageEnabled && (
+                <Route
+                  path={AppPath.WorkflowCoreIndexPage}
+                  element={
+                    <LazyRoute>
+                      <WorkflowCoreIndexPage />
+                    </LazyRoute>
+                  }
+                />
+              )}
               <Route
                 path={indexAppPath.getIndexAppPath()}
                 element={<RecordIndexSkeletonLoader />}
@@ -366,9 +369,18 @@ const createWorkspaceAppRouter = (
 export const useCreateWorkspaceAppRouter = (
   isFunctionSettingsEnabled?: boolean,
   isAdminPageEnabled?: boolean,
+  isWorkflowCoreIndexPageEnabled?: boolean,
 ) =>
   useMemo(
     () =>
-      createWorkspaceAppRouter(isFunctionSettingsEnabled, isAdminPageEnabled),
-    [isFunctionSettingsEnabled, isAdminPageEnabled],
+      createWorkspaceAppRouter(
+        isFunctionSettingsEnabled,
+        isAdminPageEnabled,
+        isWorkflowCoreIndexPageEnabled,
+      ),
+    [
+      isFunctionSettingsEnabled,
+      isAdminPageEnabled,
+      isWorkflowCoreIndexPageEnabled,
+    ],
   );

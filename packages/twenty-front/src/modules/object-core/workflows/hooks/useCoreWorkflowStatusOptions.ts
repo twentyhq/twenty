@@ -8,9 +8,8 @@ export const useCoreWorkflowStatusOptions = (): SelectOption[] => {
     objectNameSingular: CoreObjectNameSingular.Workflow,
   });
 
-  const statusesField = objectMetadataItem.fields.find(
-    (field) => field.name === 'statuses',
+  return (
+    objectMetadataItem.fields.find((field) => field.name === 'statuses')
+      ?.options ?? []
   );
-
-  return statusesField?.options ?? [];
 };

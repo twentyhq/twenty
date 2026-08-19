@@ -5,8 +5,8 @@ export const GET_CORE_WORKFLOWS = gql`
     coreWorkflows {
       id
       name
-      status
-      applicationName
+      statuses
+      applicationId
       workspaceWorkflowId
       updatedAt
     }

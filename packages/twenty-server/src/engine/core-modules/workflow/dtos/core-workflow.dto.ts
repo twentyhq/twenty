@@ -10,11 +10,11 @@ export class CoreWorkflowDTO {
   @Field(() => String, { nullable: true })
   name: string | null;
 
-  @Field(() => String)
-  status: string;
+  @Field(() => [String])
+  statuses: string[];
 
-  @Field(() => String, { nullable: true })
-  applicationName: string | null;
+  @Field(() => UUIDScalarType, { nullable: true })
+  applicationId: string | null;
 
   @Field(() => UUIDScalarType, { nullable: true })
   workspaceWorkflowId: string | null;
