@@ -1,5 +1,3 @@
-// Parses the base .light{}/.dark{} block of a generated theme CSS file into
-// ordered declarations, joining formatter-wrapped values back to one line.
 export const parseThemeCssDeclarations = (
   css: string,
   scheme: 'light' | 'dark',

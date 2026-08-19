@@ -1,7 +1,5 @@
 // Generated from design-tokens by scripts/generateThemeTokens.ts.
 // Do not edit manually. Regenerate with: npx nx generateTokens twenty-ui.
-// Leaves marked unit: 'number' in design-tokens resolve to numbers at runtime
-// (see computeThemeFromCss); every other leaf stays a string.
 export type ThemeType = {
   icon: {
     size: {

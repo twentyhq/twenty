@@ -1,7 +1,6 @@
 import { type SerializableTree } from '../types/SerializableTree';
 import { referenceKey } from './referenceKey';
 
-// Leaf strings are inserted verbatim: callers pre-render quoting/typing.
 export const serializeTree = (
   node: SerializableTree,
   indent: number,
