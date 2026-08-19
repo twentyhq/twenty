@@ -1,7 +1,4 @@
-import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
-import { type AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
-import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
-import { type SkillService } from 'src/engine/metadata-modules/skill/skill.service';
+import { buildFullSystemPrompt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-full-system-prompt.util';
 
 const WORKSPACE_INSTRUCTIONS_DOCUMENT = JSON.stringify({
   type: 'doc',
@@ -21,23 +18,17 @@ const USER_CONTEXT = {
   timezone: 'Europe/Paris',
 };
 
-describe('SystemPromptBuilderService.buildFullPrompt', () => {
-  const service = new SystemPromptBuilderService(
-    {} as ToolRegistryService,
-    {} as SkillService,
-    {} as AgentActorContextService,
-  );
+const buildPrompt = (isWorkspaceSetupThread?: boolean) =>
+  buildFullSystemPrompt({
+    toolCatalog: [],
+    skillCatalog: [],
+    preloadedTools: [],
+    workspaceInstructions: WORKSPACE_INSTRUCTIONS_DOCUMENT,
+    userContext: USER_CONTEXT,
+    isWorkspaceSetupThread,
+  });
 
-  const buildPrompt = (isWorkspaceSetupThread?: boolean) =>
-    service.buildFullPrompt({
-      toolCatalog: [],
-      skillCatalog: [],
-      preloadedTools: [],
-      workspaceInstructions: WORKSPACE_INSTRUCTIONS_DOCUMENT,
-      userContext: USER_CONTEXT,
-      isWorkspaceSetupThread,
-    });
-
+describe('buildFullSystemPrompt', () => {
   it('should keep the standard composition for regular threads', () => {
     const prompt = buildPrompt(false);
 
