@@ -1,7 +1,7 @@
 import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
-// Same semantics and order as WorkflowStatusesUpdateJob.computeWorkflowStatuses,
-// so the core page shows what the workspace record index shows
+// Shared with WorkflowStatusesUpdateJob so the core page and the workspace
+// statuses field cannot drift
 export const computeCoreWorkflowStatuses = ({
   hasDraftVersion,
   hasActiveVersion,
@@ -21,7 +21,7 @@ export const computeCoreWorkflowStatuses = ({
     statuses.push(WorkflowStatus.ACTIVE);
   }
 
-  if (hasDeactivatedVersion) {
+  if (!hasActiveVersion && hasDeactivatedVersion) {
     statuses.push(WorkflowStatus.DEACTIVATED);
   }
 

@@ -11,14 +11,24 @@ describe('computeCoreWorkflowStatuses', () => {
     ).toEqual([]);
   });
 
-  it('should return every present status in DRAFT, ACTIVE, DEACTIVATED order', () => {
+  it('should return DRAFT then ACTIVE, and hide DEACTIVATED behind an active version', () => {
     expect(
       computeCoreWorkflowStatuses({
         hasDraftVersion: true,
         hasActiveVersion: true,
         hasDeactivatedVersion: true,
       }),
-    ).toEqual(['DRAFT', 'ACTIVE', 'DEACTIVATED']);
+    ).toEqual(['DRAFT', 'ACTIVE']);
+  });
+
+  it('should return DEACTIVATED only when no version is active', () => {
+    expect(
+      computeCoreWorkflowStatuses({
+        hasDraftVersion: false,
+        hasActiveVersion: false,
+        hasDeactivatedVersion: true,
+      }),
+    ).toEqual(['DEACTIVATED']);
   });
 
   it('should return only the statuses that are present', () => {
