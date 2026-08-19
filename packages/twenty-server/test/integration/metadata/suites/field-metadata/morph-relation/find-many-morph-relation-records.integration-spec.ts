@@ -10,9 +10,9 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-// todo @guillim : make ths test work to cover morph CORE api
-// Cursor pagination over morph-leg ordering is already covered by
-// morph-relation-cursor-pagination.integration-spec.ts in this directory
+// todo @guillim : make ths test work to cover morph CORE api (cursor pagination
+// over morph-leg ordering is already covered by the sibling
+// morph-relation-cursor-pagination spec)
 xdescribe('findMany morph relation records', () => {
   let createdObjectMetadataPersonId = '';
   let createdObjectMetadataOpportunityId = '';

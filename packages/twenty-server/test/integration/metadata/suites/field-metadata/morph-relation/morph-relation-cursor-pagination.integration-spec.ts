@@ -212,8 +212,6 @@ describe('morph relation cursor pagination', () => {
     expect(collectedIds).toHaveLength(parentTotalCount);
     expect(new Set(collectedIds).size).toBe(parentTotalCount);
 
-    // The person-attached parents come first in target-name order; parents
-    // attached to the other leg or to nothing form the NULL block at the end
     expect(collectedIds.slice(0, personAttachedParentIds.length)).toEqual(
       personAttachedParentIds,
     );
