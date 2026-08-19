@@ -15,7 +15,7 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
-import { type RelationOrderValuesByRecordId } from 'src/engine/api/utils/build-relation-order-values-by-record-id.util';
+import { type OrderByValuesByRecordId } from 'src/engine/api/utils/build-order-by-values-by-record-id.util';
 import { getTargetObjectMetadataOrThrow } from 'src/engine/api/graphql/graphql-query-runner/utils/get-target-object-metadata.util';
 import { type AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -56,7 +56,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
     hasNextPage,
     hasPreviousPage,
     depth = 0,
-    relationOrderValuesByRecordId,
+    orderByValuesByRecordId,
   }: {
     objectRecords: T[];
     parentObjectRecord?: T;
@@ -71,7 +71,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
     hasNextPage: boolean;
     hasPreviousPage: boolean;
     depth?: number;
-    relationOrderValuesByRecordId?: RelationOrderValuesByRecordId;
+    orderByValuesByRecordId?: OrderByValuesByRecordId;
   }): IConnection<T> {
     const objectMetadataId = this.objectIdByNameSingular[objectName];
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
@@ -96,7 +96,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
         flatObjectMetadata,
         flatObjectMetadataMaps: this.flatObjectMetadataMaps,
         flatFieldMetadataMaps: this.flatFieldMetadataMaps,
-        relationOrderValues: relationOrderValuesByRecordId?.[objectRecord.id],
+        orderByValuesFromScan: orderByValuesByRecordId?.[objectRecord.id],
       }),
     }));
 

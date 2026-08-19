@@ -1,5 +1,5 @@
 import { type ObjectRecord } from 'twenty-shared/types';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { isPlainObject } from 'twenty-shared/utils';
 
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -40,17 +40,18 @@ export const encodeCursor = <T extends ObjectRecord = ObjectRecord>({
   flatObjectMetadata,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
-  relationOrderValues,
+  orderByValuesFromScan,
 }: {
   objectRecord: T;
   order: ObjectRecordOrderBy | undefined;
   flatObjectMetadata: FlatObjectMetadata;
   flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-  // Relation orderBy values read from the ordering join's raw rows by the
-  // find-many runner; falling back to the loaded related record covers callers
-  // without them (e.g. nested connections)
-  relationOrderValues?: Record<string, unknown>;
+  // Sort values read from the scan's raw rows by the find-many runner: they
+  // carry the exact SQL values (NULLs included) the continuation must mirror.
+  // Falling back to the formatted record covers callers without them (e.g.
+  // nested connections), whose cursors do not continue a root scan.
+  orderByValuesFromScan?: Record<string, unknown>;
 }): string => {
   // oxlint-disable-next-line typescript/no-explicit-any
   const orderByValues: Record<string, any> = {};
@@ -65,10 +66,7 @@ export const encodeCursor = <T extends ObjectRecord = ObjectRecord>({
     // null (the row belongs to the NULL block of the ordering), a missing one
     // yields undefined, which JSON serialization drops
     const [rootKey, ...nestedKeys] = leaf.path;
-    const valueSource =
-      leaf.kind === 'relation' && isDefined(relationOrderValues)
-        ? relationOrderValues
-        : objectRecord;
+    const valueSource = orderByValuesFromScan ?? objectRecord;
     let leafValue: unknown = valueSource[rootKey];
 
     for (const key of nestedKeys) {

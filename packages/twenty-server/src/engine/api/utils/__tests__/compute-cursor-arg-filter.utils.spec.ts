@@ -222,7 +222,11 @@ describe('computeCursorArgFilter', () => {
         isForwardPagination: true,
       });
 
-      expect(result).toEqual([{ name: { gt: 'John' } }]);
+      // TEXT columns hold SQL NULL for rows written empty or without the
+      // field, so the trailing NULL block is part of the continuation
+      expect(result).toEqual([
+        { or: [{ name: { gt: 'John' } }, { name: { isStrictly: 'NULL' } }] },
+      ]);
     });
 
     it('should compute backward pagination filter for single field', () => {
@@ -260,11 +264,11 @@ describe('computeCursorArgFilter', () => {
       });
 
       expect(result).toEqual([
-        { name: { gt: 'John' } },
+        { or: [{ name: { gt: 'John' } }, { name: { isStrictly: 'NULL' } }] },
         {
           and: [
-            { name: { eq: 'John' } },
-            { or: [{ age: { lt: 30 } }, { age: { is: 'NULL' } }] },
+            { name: { eqStrict: 'John' } },
+            { or: [{ age: { lt: 30 } }, { age: { isStrictly: 'NULL' } }] },
           ],
         },
       ]);
@@ -296,21 +300,23 @@ describe('computeCursorArgFilter', () => {
 
       expect(result).toEqual([
         {
-          fullName: {
-            firstName: { gt: 'John' },
-          },
+          or: [
+            { fullName: { firstName: { gt: 'John' } } },
+            { fullName: { firstName: { isStrictly: 'NULL' } } },
+          ],
         },
         {
           and: [
             {
               fullName: {
-                firstName: { eq: 'John' },
+                firstName: { eqStrict: 'John' },
               },
             },
             {
-              fullName: {
-                lastName: { gt: 'Doe' },
-              },
+              or: [
+                { fullName: { lastName: { gt: 'Doe' } } },
+                { fullName: { lastName: { isStrictly: 'NULL' } } },
+              ],
             },
           ],
         },
@@ -340,9 +346,10 @@ describe('computeCursorArgFilter', () => {
 
       expect(result).toEqual([
         {
-          fullName: {
-            firstName: { gt: 'John' },
-          },
+          or: [
+            { fullName: { firstName: { gt: 'John' } } },
+            { fullName: { firstName: { isStrictly: 'NULL' } } },
+          ],
         },
       ]);
     });
@@ -372,21 +379,23 @@ describe('computeCursorArgFilter', () => {
 
       expect(result).toEqual([
         {
-          fullName: {
-            firstName: { gt: 'John' },
-          },
+          or: [
+            { fullName: { firstName: { gt: 'John' } } },
+            { fullName: { firstName: { isStrictly: 'NULL' } } },
+          ],
         },
         {
           and: [
             {
               fullName: {
-                firstName: { eq: 'John' },
+                firstName: { eqStrict: 'John' },
               },
             },
             {
-              fullName: {
-                lastName: { gt: 'Doe' },
-              },
+              or: [
+                { fullName: { lastName: { gt: 'Doe' } } },
+                { fullName: { lastName: { isStrictly: 'NULL' } } },
+              ],
             },
           ],
         },
@@ -425,7 +434,7 @@ describe('computeCursorArgFilter', () => {
           and: [
             {
               fullName: {
-                firstName: { eq: 'John' },
+                firstName: { eqStrict: 'John' },
               },
             },
             {
@@ -491,7 +500,7 @@ describe('computeCursorArgFilter', () => {
         {
           or: [
             { closeDate: { gt: '2026-01-01T00:00:00Z' } },
-            { closeDate: { is: 'NULL' } },
+            { closeDate: { isStrictly: 'NULL' } },
           ],
         },
       ]);
@@ -531,7 +540,10 @@ describe('computeCursorArgFilter', () => {
 
       expect(result).toEqual([
         {
-          and: [{ closeDate: { is: 'NULL' } }, { id: { gt: 'uuid-1' } }],
+          and: [
+            { closeDate: { isStrictly: 'NULL' } },
+            { id: { gt: 'uuid-1' } },
+          ],
         },
       ]);
     });
@@ -553,9 +565,12 @@ describe('computeCursorArgFilter', () => {
       });
 
       expect(result).toEqual([
-        { closeDate: { is: 'NOT_NULL' } },
+        { closeDate: { isStrictly: 'NOT_NULL' } },
         {
-          and: [{ closeDate: { is: 'NULL' } }, { id: { gt: 'uuid-1' } }],
+          and: [
+            { closeDate: { isStrictly: 'NULL' } },
+            { id: { gt: 'uuid-1' } },
+          ],
         },
       ]);
     });
@@ -577,15 +592,15 @@ describe('computeCursorArgFilter', () => {
         {
           or: [
             { closeDate: { lt: '2026-01-01T00:00:00Z' } },
-            { closeDate: { is: 'NULL' } },
+            { closeDate: { isStrictly: 'NULL' } },
           ],
         },
       ]);
     });
 
-    it('should not add a NULL block for fields with a null-equivalent default', () => {
-      const cursor = { name: 'John' };
-      const orderBy = [{ name: OrderByDirection.AscNullsLast }];
+    it('should not add a NULL block for non-nullable fields', () => {
+      const cursor = { id: 'uuid-1' };
+      const orderBy = [{ id: OrderByDirection.AscNullsLast }];
 
       const result = computeCursorArgFilter({
         cursor,
@@ -596,7 +611,7 @@ describe('computeCursorArgFilter', () => {
         isForwardPagination: true,
       });
 
-      expect(result).toEqual([{ name: { gt: 'John' } }]);
+      expect(result).toEqual([{ id: { gt: 'uuid-1' } }]);
     });
   });
 
@@ -683,12 +698,12 @@ describe('computeCursorArgFilter', () => {
         {
           or: [
             { company: { name: { gt: 'Acme' } } },
-            { companyId: { is: 'NULL' } },
+            { company: { name: { isStrictly: 'NULL' } } },
           ],
         },
         {
           and: [
-            { company: { name: { eq: 'Acme' } } },
+            { company: { name: { eqStrict: 'Acme' } } },
             { id: { gt: 'uuid-1' } },
           ],
         },
@@ -709,7 +724,10 @@ describe('computeCursorArgFilter', () => {
 
       expect(result).toEqual([
         {
-          and: [{ companyId: { is: 'NULL' } }, { id: { gt: 'uuid-1' } }],
+          and: [
+            { company: { name: { isStrictly: 'NULL' } } },
+            { id: { gt: 'uuid-1' } },
+          ],
         },
       ]);
     });
@@ -726,9 +744,7 @@ describe('computeCursorArgFilter', () => {
           flatFieldMetadataMaps,
           isForwardPagination: true,
         }),
-      ).toThrow(
-        'Cursor is missing the value for orderBy field "company.name"',
-      );
+      ).toThrow('Cursor is missing the value for orderBy field "company.name"');
     });
   });
 
@@ -736,7 +752,9 @@ describe('computeCursorArgFilter', () => {
     // The web app sorts person-labeled relation columns exactly like this: one
     // entry per ordered FULL_NAME property of the target's label identifier
     const relationCompositeOrderBy = [
-      { company: { contactName: { firstName: OrderByDirection.AscNullsLast } } },
+      {
+        company: { contactName: { firstName: OrderByDirection.AscNullsLast } },
+      },
       { company: { contactName: { lastName: OrderByDirection.AscNullsLast } } },
       { id: OrderByDirection.AscNullsFirst },
     ] as unknown as ObjectRecordOrderBy;
@@ -756,30 +774,37 @@ describe('computeCursorArgFilter', () => {
         isForwardPagination: true,
       });
 
-      // firstName has a null-equivalent '' default, so the missing-relation
-      // block is matched through the join column
+      // The joined column is NULL both for rows without a related record and
+      // for related records holding an empty value: they all sort into the
+      // NULL block, which the exact nested check matches
       expect(result).toEqual([
         {
           or: [
             { company: { contactName: { firstName: { gt: 'Ada' } } } },
-            { companyId: { is: 'NULL' } },
+            { company: { contactName: { firstName: { isStrictly: 'NULL' } } } },
           ],
         },
         {
           and: [
-            { company: { contactName: { firstName: { eq: 'Ada' } } } },
+            { company: { contactName: { firstName: { eqStrict: 'Ada' } } } },
             {
               or: [
                 { company: { contactName: { lastName: { gt: 'Lovelace' } } } },
-                { companyId: { is: 'NULL' } },
+                {
+                  company: {
+                    contactName: { lastName: { isStrictly: 'NULL' } },
+                  },
+                },
               ],
             },
           ],
         },
         {
           and: [
-            { company: { contactName: { firstName: { eq: 'Ada' } } } },
-            { company: { contactName: { lastName: { eq: 'Lovelace' } } } },
+            { company: { contactName: { firstName: { eqStrict: 'Ada' } } } },
+            {
+              company: { contactName: { lastName: { eqStrict: 'Lovelace' } } },
+            },
             { id: { gt: 'uuid-1' } },
           ],
         },

@@ -249,7 +249,7 @@ describe('encodeCursor', () => {
         order: orderBy,
         flatObjectMetadata,
         flatFieldMetadataMaps,
-        relationOrderValues: { company: { name: 'Acme' } },
+        orderByValuesFromScan: { company: { name: 'Acme' } },
       }),
     );
 
@@ -259,7 +259,9 @@ describe('encodeCursor', () => {
   it('should nest composite target values of a relation orderBy', () => {
     const record = { id: 'abc' };
     const orderBy = [
-      { company: { contactName: { firstName: OrderByDirection.AscNullsLast } } },
+      {
+        company: { contactName: { firstName: OrderByDirection.AscNullsLast } },
+      },
       { company: { contactName: { lastName: OrderByDirection.AscNullsLast } } },
     ] as unknown as Parameters<typeof encodeCursor>[0]['order'];
 
@@ -269,7 +271,7 @@ describe('encodeCursor', () => {
         order: orderBy,
         flatObjectMetadata,
         flatFieldMetadataMaps,
-        relationOrderValues: {
+        orderByValuesFromScan: {
           company: { contactName: { firstName: 'Ada', lastName: null } },
         },
       }),

@@ -39,7 +39,7 @@ import { type ReadRecordQueryBuilder } from 'src/engine/api/graphql/graphql-quer
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { buildOrderByColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-order-by-columns-to-select';
 import { getCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
-import { buildRelationOrderValuesByRecordId } from 'src/engine/api/utils/build-relation-order-values-by-record-id.util';
+import { buildOrderByValuesByRecordId } from 'src/engine/api/utils/build-order-by-values-by-record-id.util';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
 import {
   buildOrderByFromLeaves,
@@ -209,10 +209,8 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
         entities: ObjectRecord[];
         raw: Record<string, unknown>[];
       };
-    const relationOrderValuesByRecordId = buildRelationOrderValuesByRecordId({
-      relationOrderByLeaves: orderByLeaves.filter(
-        (leaf) => leaf.kind === 'relation',
-      ),
+    const orderByValuesByRecordId = buildOrderByValuesByRecordId({
+      orderByLeaves,
       records: fetchedObjectRecords,
       rawRows: fetchedRawRows,
       objectNameSingular: flatObjectMetadata.nameSingular,
@@ -233,7 +231,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      relationOrderValuesByRecordId,
+      orderByValuesByRecordId,
     });
     const hasAggregatedFields =
       Object.keys(args.selectedFieldsResult.aggregate ?? {}).length > 0;
@@ -268,7 +266,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       aggregatedValues: parentObjectRecordsAggregatedValues,
       totalCount: parentObjectRecordsAggregatedValues?.totalCount,
       pageInfo,
-      relationOrderValuesByRecordId,
+      orderByValuesByRecordId,
       selectedFieldsResult: args.selectedFieldsResult,
     };
   }

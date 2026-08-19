@@ -5,7 +5,7 @@ import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query
 import { type CommonPageInfo } from 'src/engine/api/common/types/common-page-info.type';
 import { type CursorPageFlags } from 'src/engine/api/types/cursor-page-flags.type';
 import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
-import { type RelationOrderValuesByRecordId } from 'src/engine/api/utils/build-relation-order-values-by-record-id.util';
+import { type OrderByValuesByRecordId } from 'src/engine/api/utils/build-order-by-values-by-record-id.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -17,7 +17,7 @@ export const getPageInfo = ({
   flatObjectMetadata,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
-  relationOrderValuesByRecordId,
+  orderByValuesByRecordId,
 }: {
   records: ObjectRecord[];
   orderBy: ObjectRecordOrderBy;
@@ -25,7 +25,7 @@ export const getPageInfo = ({
   flatObjectMetadata: FlatObjectMetadata;
   flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-  relationOrderValuesByRecordId?: RelationOrderValuesByRecordId;
+  orderByValuesByRecordId?: OrderByValuesByRecordId;
 }): CommonPageInfo => {
   const encodeRecordCursor = (record: ObjectRecord) =>
     encodeCursor({
@@ -34,7 +34,7 @@ export const getPageInfo = ({
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      relationOrderValues: relationOrderValuesByRecordId?.[record.id],
+      orderByValuesFromScan: orderByValuesByRecordId?.[record.id],
     });
 
   return {

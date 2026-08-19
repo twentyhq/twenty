@@ -43,7 +43,7 @@ export class FindManyResolverFactory implements WorkspaceResolverBuilderFactoryI
             aggregatedValues,
             totalCount,
             pageInfo,
-            relationOrderValuesByRecordId,
+            orderByValuesByRecordId,
             selectedFieldsResult,
           },
           args: processedArgs,
@@ -69,7 +69,7 @@ export class FindManyResolverFactory implements WorkspaceResolverBuilderFactoryI
           order: processedArgs.orderBy,
           hasNextPage: pageInfo.hasNextPage,
           hasPreviousPage: pageInfo.hasPreviousPage,
-          relationOrderValuesByRecordId,
+          orderByValuesByRecordId,
         });
       } catch (error) {
         workspaceQueryRunnerGraphqlApiExceptionHandler(error);
