@@ -10,6 +10,10 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { computeMetadataOverridesBlob } from 'src/engine/metadata-modules/utils/compute-metadata-overrides-blob.util';
+import {
+  findInvalidTranslationOverrideProperties,
+  mergeTranslationsIntoOverrides,
+} from 'src/engine/metadata-modules/utils/merge-translations-into-overrides.util';
 
 type SanitizeRawUpdateObjectInputArgs = {
   rawUpdateObjectInput: UpdateOneObjectInput;
@@ -32,11 +36,28 @@ export const sanitizeRawUpdateObjectInput = ({
       ]),
     ],
   );
+  const translationEntries = rawUpdateObjectInput.update.translations ?? [];
+  const invalidTranslationProperties = findInvalidTranslationOverrideProperties(
+    translationEntries,
+    'objectMetadata',
+  );
+
+  if (invalidTranslationProperties.length > 0) {
+    throw new ObjectMetadataException(
+      `Cannot translate object metadata properties: ${invalidTranslationProperties.join(', ')}`,
+      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+    );
+  }
 
   if (!isStandardObject) {
     return {
       updatedEditableObjectProperties,
-      overrides: null,
+      // Custom entities keep property edits in base columns but still hold
+      // per-locale translations in the overrides blob.
+      overrides: mergeTranslationsIntoOverrides({
+        existingOverrides: existingFlatObjectMetadata.overrides,
+        translationEntries,
+      }),
     };
   }
 
@@ -65,7 +86,10 @@ export const sanitizeRawUpdateObjectInput = ({
   });
 
   return {
-    overrides,
+    overrides: mergeTranslationsIntoOverrides({
+      existingOverrides: overrides,
+      translationEntries,
+    }),
     updatedEditableObjectProperties: remainingProperties,
   };
 };

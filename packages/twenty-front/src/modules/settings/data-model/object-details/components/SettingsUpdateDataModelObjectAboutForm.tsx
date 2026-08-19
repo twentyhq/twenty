@@ -1,3 +1,5 @@
+import { useApolloClient } from '@apollo/client/react';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
@@ -9,14 +11,23 @@ import {
   type SettingsDataModelObjectAboutFormValues,
   settingsDataModelObjectAboutFormSchema,
 } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { TRANSLATABLE_PROPERTIES_BY_METADATA_NAME } from 'twenty-shared/i18n';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { Button } from 'twenty-ui/input';
 import { parseThemeColor } from 'twenty-ui/utilities';
+import { useLocaleOptions } from '~/localization/hooks/useLocaleOptions';
+import { MetadataTranslationsDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
 
@@ -24,9 +35,18 @@ type SettingsUpdateDataModelObjectAboutFormProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
 };
 
+const TRANSLATION_INTENT_MODAL_ID = 'object-label-translation-intent-modal';
+
+const OBJECT_TRANSLATABLE_PROPERTIES =
+  TRANSLATABLE_PROPERTIES_BY_METADATA_NAME.objectMetadata;
+
+type ObjectTranslatableProperty =
+  (typeof OBJECT_TRANSLATABLE_PROPERTIES)[number];
+
 export const SettingsUpdateDataModelObjectAboutForm = ({
   objectMetadataItem,
 }: SettingsUpdateDataModelObjectAboutFormProps) => {
+  const { t } = useLingui();
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
 
   const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
@@ -45,6 +65,17 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
   );
 
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
+  const apolloClient = useApolloClient();
+  const { openModal, closeModal } = useModal();
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const currentLocale = currentWorkspaceMember?.locale ?? SOURCE_LOCALE;
+  const localeOptions = useLocaleOptions();
+  const currentLanguageLabel =
+    localeOptions.find(({ value }) => value === currentLocale)?.label ??
+    currentLocale;
+  const [pendingFormValues, setPendingFormValues] =
+    useState<SettingsDataModelObjectAboutFormValues | null>(null);
+
   const {
     description,
     icon,
@@ -71,6 +102,11 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
     },
   });
 
+  const pickDirtyTranslatableProperties = (): ObjectTranslatableProperty[] =>
+    OBJECT_TRANSLATABLE_PROPERTIES.filter((property) =>
+      isDefined(formConfig.formState.dirtyFields[property]),
+    );
+
   const handleSave = async (
     formValues: SettingsDataModelObjectAboutFormValues,
   ) => {
@@ -82,12 +118,50 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
       return;
     }
 
+    const dirtyTranslatableProperties = pickDirtyTranslatableProperties();
+
+    // Editing a label the viewer sees through a translation is ambiguous:
+    // fix the translation, or rename the concept for every language? Ask.
+    if (
+      dirtyTranslatableProperties.length > 0 &&
+      currentLocale !== SOURCE_LOCALE
+    ) {
+      const { data } = await apolloClient.query({
+        query: MetadataTranslationsDocument,
+        variables: {
+          input: {
+            objectMetadataId: objectMetadataItem.id,
+            locale: currentLocale,
+          },
+        },
+        fetchPolicy: 'network-only',
+      });
+
+      const isEditingThroughTranslation = dirtyTranslatableProperties.some(
+        (property) => {
+          const row = data?.metadataTranslations.find(
+            (translation) => translation.property === property,
+          );
+
+          return isDefined(row) && row.value !== row.canonicalValue;
+        },
+      );
+
+      if (isEditingThroughTranslation) {
+        setPendingFormValues(formValues);
+        openModal(TRANSLATION_INTENT_MODAL_ID);
+        return;
+      }
+    }
+
+    await saveAsRename(formValues);
+  };
+
+  const saveAsRename = async (
+    formValues: SettingsDataModelObjectAboutFormValues,
+  ) => {
     const objectNamePluralForRedirection =
       formValues.namePlural ?? objectMetadataItem.namePlural;
-
-    if (readonly) {
-      return;
-    }
 
     setUpdatedObjectNamePlural(objectNamePluralForRedirection);
     const updateResult = await updateObjectMetadata(formValues);
@@ -140,10 +214,58 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
     );
   };
 
+  const saveAsTranslation = async () => {
+    if (!isDefined(pendingFormValues)) {
+      return;
+    }
+
+    const dirtyTranslatableProperties = pickDirtyTranslatableProperties();
+    const translations = dirtyTranslatableProperties.map((property) => ({
+      locale: currentLocale,
+      property,
+      value: pendingFormValues[property] ?? null,
+    }));
+
+    const updateResult = await updateOneObjectMetadataItem({
+      idToUpdate: objectMetadataItem.id,
+      updatePayload: { translations },
+    });
+
+    closeModal(TRANSLATION_INTENT_MODAL_ID);
+    setPendingFormValues(null);
+
+    if (updateResult.status === 'successful') {
+      formConfig.reset(pendingFormValues);
+    }
+  };
+
+  const handleRenameForAllLanguages = async () => {
+    if (!isDefined(pendingFormValues)) {
+      return;
+    }
+
+    const formValues = pendingFormValues;
+
+    closeModal(TRANSLATION_INTENT_MODAL_ID);
+    setPendingFormValues(null);
+    await saveAsRename(formValues);
+  };
+
   const updateObjectMetadata = async (
     formValues: SettingsDataModelObjectAboutFormValues,
   ) => {
-    const updatePayload = { ...formValues };
+    // Only dirty fields are sent: untouched values hold the viewer-locale
+    // resolved labels, and sending those back would silently turn a
+    // translation into a rename.
+    const dirtyValues = Object.fromEntries(
+      Object.entries(formValues).filter(([key]) =>
+        isDefined(
+          formConfig.formState.dirtyFields[
+            key as keyof SettingsDataModelObjectAboutFormValues
+          ],
+        ),
+      ),
+    ) as Partial<SettingsDataModelObjectAboutFormValues>;
 
     if (!isCustomObject) {
       const {
@@ -152,7 +274,7 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
         isLabelSyncedWithName: _isLabelSyncedWithName,
         color: _color,
         ...payloadWithoutNames
-      } = updatePayload;
+      } = dirtyValues;
 
       return await updateOneObjectMetadataItem({
         idToUpdate: objectMetadataItem.id,
@@ -162,7 +284,7 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
 
     return await updateOneObjectMetadataItem({
       idToUpdate: objectMetadataItem.id,
-      updatePayload,
+      updatePayload: dirtyValues,
     });
   };
 
@@ -173,6 +295,26 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
         onNewDirtyField={() => formConfig.handleSubmit(handleSave)()}
         disableEdition={readonly}
         objectMetadataItem={objectMetadataItem}
+      />
+      <ConfirmationModal
+        modalInstanceId={TRANSLATION_INTENT_MODAL_ID}
+        title={t`Rename or translate?`}
+        subtitle={t`You are editing the ${currentLanguageLabel} version of a translated label. Other languages keep their own translation unless you rename for everyone.`}
+        confirmButtonText={t`Only in ${currentLanguageLabel}`}
+        confirmButtonAccent="blue"
+        onConfirmClick={saveAsTranslation}
+        onClose={() => {
+          setPendingFormValues(null);
+          formConfig.reset();
+        }}
+        AdditionalButtons={
+          <Button
+            title={t`Rename for all languages`}
+            variant="secondary"
+            fullWidth
+            onClick={handleRenameForAllLanguages}
+          />
+        }
       />
     </FormProvider>
   );
