@@ -1,0 +1,24 @@
+{
+  "name": "petbee-cadencia",
+  "version": "0.1.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "engines": {
+    "node": ">=22.6.0",
+    "npm": "please-use-yarn",
+    "yarn": ">=4.0.2"
+  },
+  "packageManager": "yarn@4.9.2",
+  "scripts": {
+    "twenty": "twenty",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "node --experimental-strip-types --test src/cadencia/__tests__/regua.test.ts src/cadencia/__tests__/plan.test.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^24.7.2",
+    "twenty-client-sdk": "^2.14.0",
+    "twenty-sdk": "^2.14.0",
+    "typescript": "^5.9.3"
+  }
+}

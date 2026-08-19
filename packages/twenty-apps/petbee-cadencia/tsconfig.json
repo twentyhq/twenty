@@ -1,0 +1,25 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": ".",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "allowImportingTsExtensions": true,
+    "allowUnreachableCode": false,
+    "strict": true,
+    "alwaysStrict": true,
+    "noImplicitAny": true,
+    "target": "es2022",
+    "module": "esnext",
+    "lib": ["es2022"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "resolveJsonModule": true,
+    "paths": {
+      "src/*": ["./src/*"],
+      "~/*": ["./*"]
+    }
+  },
+  "exclude": ["node_modules", "dist"]
+}
