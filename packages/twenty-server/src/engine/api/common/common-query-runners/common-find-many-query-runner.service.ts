@@ -39,8 +39,12 @@ import { type ReadRecordQueryBuilder } from 'src/engine/api/graphql/graphql-quer
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { buildOrderByColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-order-by-columns-to-select';
 import { getCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
+import { buildOrderByValuesByRecordId } from 'src/engine/api/utils/build-order-by-values-by-record-id.util';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
-import { countRelationFieldsInOrderBy } from 'src/engine/api/utils/validate-and-get-order-by.utils';
+import {
+  buildOrderByFromLeaves,
+  resolveOrderByLeaves,
+} from 'src/engine/api/utils/resolve-order-by-leaves.utils';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -88,10 +92,20 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       appliedFilters,
     );
 
-    const orderByWithIdCondition = [
-      ...(args.orderBy ?? []),
-      { id: OrderByDirection.AscNullsFirst },
-    ] as ObjectRecordOrderBy;
+    // Normalizing to deduplicated leaves makes the appended id tie-breaker
+    // yield to a caller-provided id ordering, and guarantees the SQL scan
+    // order and the keyset conditions derive from the same list
+    const orderByLeaves = resolveOrderByLeaves({
+      orderBy: [
+        ...(args.orderBy ?? []),
+        { id: OrderByDirection.AscNullsFirst },
+      ] as ObjectRecordOrderBy,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      strictValidation: true,
+    });
+    const orderByWithIdCondition = buildOrderByFromLeaves(orderByLeaves);
 
     const isForwardPagination = !isDefined(args.before);
 
@@ -187,8 +201,20 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       columnsToSelect,
     );
 
-    const fetchedObjectRecords =
-      (await queryBuilder.getMany()) as ObjectRecord[];
+    // Raw rows travel along the entities: the ordered join columns already
+    // selected for the relation ordering are read out of them, so cursors get
+    // their relation values whatever the client selected (or the REST depth)
+    const { entities: fetchedObjectRecords, raw: fetchedRawRows } =
+      (await queryBuilder.getRawAndEntities()) as {
+        entities: ObjectRecord[];
+        raw: Record<string, unknown>[];
+      };
+    const orderByValuesByRecordId = buildOrderByValuesByRecordId({
+      orderByLeaves,
+      records: fetchedObjectRecords,
+      rawRows: fetchedRawRows,
+      objectNameSingular: flatObjectMetadata.nameSingular,
+    });
     const { items: objectRecords, pageInfo: cursorPageInfo } = buildCursorPage({
       fetchedItems: fetchedObjectRecords,
       limit,
@@ -197,6 +223,15 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       // must not advertise navigation from a cursor.
       hasAfterCursor: Boolean(args.after),
       hasBeforeCursor: Boolean(args.before),
+    });
+    const pageInfo = getPageInfo({
+      records: objectRecords,
+      orderBy: orderByWithIdCondition,
+      pageInfo: cursorPageInfo,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      orderByValuesByRecordId,
     });
     const hasAggregatedFields =
       Object.keys(args.selectedFieldsResult.aggregate ?? {}).length > 0;
@@ -226,21 +261,12 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       });
     }
 
-    // Cursors are encoded after nested relations are attached so relation
-    // orderBy values reach the cursor (the REST API paginates from this pageInfo)
-    const pageInfo = getPageInfo({
-      records: objectRecords,
-      orderBy: orderByWithIdCondition,
-      pageInfo: cursorPageInfo,
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
-    });
-
     return {
       records: objectRecords,
       aggregatedValues: parentObjectRecordsAggregatedValues,
       totalCount: parentObjectRecordsAggregatedValues?.totalCount,
       pageInfo,
+      orderByValuesByRecordId,
       selectedFieldsResult: args.selectedFieldsResult,
     };
   }
@@ -352,11 +378,11 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 
     const { flatObjectMetadata, flatFieldMetadataMaps } = queryRunnerContext;
 
-    const orderByRelationCount = countRelationFieldsInOrderBy(
-      args.orderBy ?? [],
+    const orderByRelationCount = resolveOrderByLeaves({
+      orderBy: args.orderBy ?? [],
       flatObjectMetadata,
       flatFieldMetadataMaps,
-    );
+    }).filter((leaf) => leaf.kind === 'relation').length;
 
     return baseComplexity + orderByRelationCount;
   }

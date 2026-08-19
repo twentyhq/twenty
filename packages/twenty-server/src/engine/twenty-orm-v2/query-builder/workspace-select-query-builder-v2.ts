@@ -573,6 +573,22 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     return this.context.formatResult<T[]>(entities);
   }
 
+  async getRawAndEntities<T extends Record<string, unknown>>(): Promise<{
+    entities: T[];
+    raw: Record<string, unknown>[];
+  }> {
+    const rows = await this.executeSelect();
+    const columnNameByResultAlias = this.buildColumnNameByResultAlias();
+    const entities = rows.map((row) =>
+      mapRowToEntity<T>(row, columnNameByResultAlias),
+    );
+
+    return {
+      raw: rows,
+      entities: this.context.formatResult<T[]>(entities),
+    };
+  }
+
   async getOne<T extends Record<string, unknown>>(options?: {
     noFormatting?: boolean;
   }): Promise<T | null> {

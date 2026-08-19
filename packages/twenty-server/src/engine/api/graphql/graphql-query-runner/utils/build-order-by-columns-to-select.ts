@@ -1,6 +1,9 @@
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { resolveOrderByFields } from 'src/engine/api/utils/resolve-order-by-fields.utils';
+import {
+  checkIfLeafCanCarryCursorValue,
+  resolveOrderByLeaves,
+} from 'src/engine/api/utils/resolve-order-by-leaves.utils';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -21,27 +24,22 @@ export const buildOrderByColumnsToSelect = ({
 }): Record<string, boolean> => {
   const columnsToSelect: Record<string, boolean> = {};
 
-  for (const resolvedOrderByField of resolveOrderByFields({
+  for (const leaf of resolveOrderByLeaves({
     orderBy,
     flatObjectMetadata,
     flatFieldMetadataMaps,
-  })) {
-    switch (resolvedOrderByField.kind) {
-      // Relation orderBy values live on a joined alias, they cannot hydrate
-      // onto the root entity through a column selection
-      case 'relation':
-        break;
-      case 'composite':
-        for (const property of resolvedOrderByField.orderedCompositeProperties) {
-          columnsToSelect[
-            computeCompositeColumnName(resolvedOrderByField.fieldName, property)
-          ] = true;
-        }
-        break;
-      case 'scalar':
-        columnsToSelect[resolvedOrderByField.fieldName] = true;
-        break;
+  }).filter(checkIfLeafCanCarryCursorValue)) {
+    // Relation orderBy values live on a joined alias, not on a root column:
+    // cursors read them from the ordering join's raw rows instead
+    if (leaf.kind === 'relation') {
+      continue;
     }
+
+    columnsToSelect[
+      leaf.kind === 'composite'
+        ? computeCompositeColumnName(leaf.path[0], leaf.compositeProperty)
+        : leaf.path[0]
+    ] = true;
   }
 
   return columnsToSelect;
