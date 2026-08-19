@@ -37,7 +37,7 @@ export class MarkSearchVectorFieldsSystemCommand extends ProvisionedWorkspaceCom
       ]);
 
     const searchVectorFieldsToFlip = Object.values(
-      flatFieldMetadataMaps.byId,
+      flatFieldMetadataMaps.byUniversalIdentifier,
     ).filter(
       (flatFieldMetadata): flatFieldMetadata is FlatFieldMetadata =>
         isDefined(flatFieldMetadata) &&
