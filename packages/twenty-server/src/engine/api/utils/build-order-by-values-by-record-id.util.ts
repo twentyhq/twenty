@@ -20,7 +20,10 @@ const computeRawColumnAlias = (
     case 'relation':
       return `${leaf.path[0]}_${
         isDefined(leaf.targetCompositeProperty)
-          ? computeCompositeColumnName(leaf.path[1], leaf.targetCompositeProperty)
+          ? computeCompositeColumnName(
+              leaf.path[1],
+              leaf.targetCompositeProperty,
+            )
           : leaf.path[1]
       }`;
     case 'composite':

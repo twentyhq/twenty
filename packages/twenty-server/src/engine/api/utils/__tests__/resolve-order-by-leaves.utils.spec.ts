@@ -302,7 +302,11 @@ describe('resolveOrderByLeaves', () => {
     it('should resolve the target field and composite property when object maps are provided', () => {
       const [scalarTargetLeaf, compositeTargetLeaf] = resolveWithObjectMaps([
         { company: { name: OrderByDirection.AscNullsLast } },
-        { company: { contactName: { firstName: OrderByDirection.AscNullsLast } } },
+        {
+          company: {
+            contactName: { firstName: OrderByDirection.AscNullsLast },
+          },
+        },
       ]);
 
       expect(scalarTargetLeaf).toMatchObject({
