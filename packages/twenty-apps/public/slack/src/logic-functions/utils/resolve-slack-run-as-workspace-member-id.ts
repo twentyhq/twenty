@@ -53,15 +53,13 @@ export const resolveSlackRunAsWorkspaceMemberId = async ({
   let existingLink: SlackUserLink | undefined;
 
   try {
-    existingLink = await findSlackUserLink(client, {
-      slackTeamId,
-      slackUserId,
-    });
+    existingLink = await findSlackUserLink(client, { slackTeamId, slackUserId });
   } catch {
     return undefined;
   }
 
-  const isManualLink = existingLink?.source === SLACK_USER_LINK_SOURCE.MANUAL;
+  const isManualLink =
+    existingLink?.source === SLACK_USER_LINK_SOURCE.MANUAL;
 
   const linkableEmail = await resolveLinkableEmail({ slackClient, identity });
 

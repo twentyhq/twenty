@@ -142,15 +142,11 @@ test.describe('Postcard card front component', () => {
     const sdkPanel = page.getByTestId(CARD_TEST_IDS.sdkPanel);
     await expect(sdkPanel).toBeVisible();
 
-    await expect(page.getByTestId(CARD_TEST_IDS.sdkCore)).toHaveText(
-      'core: ok',
-    );
+    await expect(page.getByTestId(CARD_TEST_IDS.sdkCore)).toHaveText('core: ok');
     await expect(page.getByTestId(CARD_TEST_IDS.sdkMetadata)).toHaveText(
       'metadata: ok',
     );
 
-    await expect(page.getByTestId(CARD_TEST_IDS.sdkRest)).toHaveText(
-      'rest: ok',
-    );
+    await expect(page.getByTestId(CARD_TEST_IDS.sdkRest)).toHaveText('rest: ok');
   });
 });

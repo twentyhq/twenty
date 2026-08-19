@@ -203,11 +203,7 @@ describe('resolveSlackRunAsForRequest', () => {
             user: 'U0SOMEONEELSE',
             text: `<@${BOT_USER_ID}> a colleague's question`,
           },
-          {
-            ts: '1700000000.000100',
-            user: BOT_USER_ID,
-            text: 'Earlier answer',
-          },
+          { ts: '1700000000.000100', user: BOT_USER_ID, text: 'Earlier answer' },
           MENTIONLESS_MESSAGE,
         ],
       }),

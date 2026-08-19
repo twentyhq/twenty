@@ -32,8 +32,7 @@ describe('Failing manifest sync - RECORD_TABLE widget with unknown view universa
       name: 'Test Application',
       description:
         'App for testing a RECORD_TABLE widget referencing an unknown view universal identifier',
-      sourcePath:
-        'test-manifest-record-table-unknown-view-universal-identifier',
+      sourcePath: 'test-manifest-record-table-unknown-view-universal-identifier',
     });
   }, 60000);
 

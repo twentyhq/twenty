@@ -3,7 +3,9 @@
 // authenticate into from this URL's subdomain
 // (getWorkspaceByOriginOrDefaultWorkspace); it is routing data, unrelated to
 // the HTTP Origin header the CSRF and cookie-issuance gates read.
-export const buildWorkspaceOriginForSubdomain = (subdomain: string): string => {
+export const buildWorkspaceOriginForSubdomain = (
+  subdomain: string,
+): string => {
   const origin = new URL(`http://localhost:${APP_PORT}`);
 
   origin.hostname =

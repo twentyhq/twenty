@@ -1,15 +1,7 @@
 import { randomUUID } from 'crypto';
 
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import {
-  afterEach,
-  beforeAll,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest';
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { cancelCallRecordingRequest } from 'src/logic-functions/flows/cancel-call-recording-request.util';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
@@ -111,8 +103,7 @@ const discoverShareEverythingChannelId = async (): Promise<string> => {
 };
 
 const inOneHour = () => new Date(Date.now() + 60 * 60 * 1000).toISOString();
-const inTwoHours = () =>
-  new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString();
+const inTwoHours = () => new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString();
 const hoursAgo = (hours: number) =>
   new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
 
@@ -459,9 +450,7 @@ describe('call recorder app lifecycle (integration)', () => {
   const createPendingCallRecording = async ({
     calendarEventId,
     ...overrides
-  }: Record<string, unknown> & {
-    calendarEventId: string;
-  }): Promise<string> => {
+  }: Record<string, unknown> & { calendarEventId: string }): Promise<string> => {
     const callRecordingId = randomUUID();
 
     await client.mutation({
@@ -508,7 +497,9 @@ describe('call recorder app lifecycle (integration)', () => {
       },
     });
 
-    return (result.callRecordings?.edges ?? []).map((edge: any) => edge.node);
+    return (result.callRecordings?.edges ?? []).map(
+      (edge: any) => edge.node,
+    );
   };
 
   const fetchCallRecording = async (
@@ -592,9 +583,7 @@ describe('call recorder app lifecycle (integration)', () => {
       });
 
       expect(
-        await findCallRecordings({
-          calendarEventId: { in: [calendarEventId] },
-        }),
+        await findCallRecordings({ calendarEventId: { in: [calendarEventId] } }),
       ).toEqual([]);
     });
   });

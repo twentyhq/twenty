@@ -55,4 +55,5 @@ describe('buildSlackAssistantAnswerBlocks', () => {
 
     expect(markdownBlock).toEqual({ type: 'markdown', text: responseText });
   });
+
 });

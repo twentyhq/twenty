@@ -11,10 +11,7 @@ export const getAuthTokensFromLoginTokenQueryFactory = ({
 }: GetAuthTokensFromLoginTokenFactoryInput) => {
   return {
     query: gql`
-      mutation GetAuthTokensFromLoginToken(
-        $loginToken: String!
-        $origin: String!
-      ) {
+      mutation GetAuthTokensFromLoginToken($loginToken: String!, $origin: String!) {
         getAuthTokensFromLoginToken(loginToken: $loginToken, origin: $origin) {
           tokens {
             accessOrWorkspaceAgnosticToken {

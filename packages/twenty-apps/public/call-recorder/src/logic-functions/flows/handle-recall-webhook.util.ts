@@ -245,7 +245,10 @@ const resolveStatusAgainstKnownRecording = ({
     !isUndefined(callRecording.externalRecordingId) ||
     !isUndefined(webhookEvent.externalRecordingId);
 
-  if (mappedStatus !== CallRecordingStatus.NOT_RECORDED || !hasKnownRecording) {
+  if (
+    mappedStatus !== CallRecordingStatus.NOT_RECORDED ||
+    !hasKnownRecording
+  ) {
     return mappedStatus;
   }
 

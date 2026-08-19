@@ -76,7 +76,9 @@ describe('parseSlackHomeOpenedEvent', () => {
   });
 
   it('should skip an event without a user', () => {
-    const result = parseSlackHomeOpenedEvent(buildHomeOpenedBody({ user: '' }));
+    const result = parseSlackHomeOpenedEvent(
+      buildHomeOpenedBody({ user: '' }),
+    );
 
     expect(result).toEqual({
       homeOpened: null,

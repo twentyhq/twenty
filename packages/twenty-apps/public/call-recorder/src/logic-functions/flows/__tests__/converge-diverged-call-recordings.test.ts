@@ -20,12 +20,9 @@ vi.mock('src/logic-functions/data/get-current-workspace-id.util', () => ({
   getCurrentWorkspaceId: getCurrentWorkspaceIdMock,
 }));
 
-vi.mock(
-  'src/logic-functions/recall-api/list-scheduled-recall-bots.util',
-  () => ({
-    listScheduledRecallBots: listScheduledRecallBotsMock,
-  }),
-);
+vi.mock('src/logic-functions/recall-api/list-scheduled-recall-bots.util', () => ({
+  listScheduledRecallBots: listScheduledRecallBotsMock,
+}));
 
 vi.mock('src/logic-functions/recall-api/list-recall-transcripts.util', () => ({
   listRecallTranscripts: listRecallTranscriptsMock,

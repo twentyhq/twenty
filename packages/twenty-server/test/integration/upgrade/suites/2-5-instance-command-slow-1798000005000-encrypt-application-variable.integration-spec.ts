@@ -191,12 +191,9 @@ describe('2-5 slow instance command 1798000005000 - EncryptApplicationVariableSl
 
   it('leaves enc:v2 rows untouched and is idempotent across re-runs', async () => {
     const plaintext = 'already-v2-secret';
-    const preexistingV2 = secretEncryptionService.encryptVersioned(
-      plaintext as PlaintextString,
-      {
-        workspaceId,
-      },
-    );
+    const preexistingV2 = secretEncryptionService.encryptVersioned(plaintext as PlaintextString, {
+      workspaceId,
+    });
     const id = await seedRow({ isSecret: true, value: preexistingV2 });
 
     await command.runDataMigration(dataSource);
