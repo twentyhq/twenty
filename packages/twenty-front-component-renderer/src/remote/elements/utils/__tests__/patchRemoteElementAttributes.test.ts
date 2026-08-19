@@ -39,6 +39,22 @@ describe('patchRemoteElementAttributes', () => {
       expect(element.getAttribute('tabindex')).toBe('3');
     });
 
+    it('should read a falsy mapped property value', () => {
+      const element = createHtmlDivElement();
+
+      element.tabIndex = 0;
+
+      expect(element.getAttribute('tabindex')).toBe('0');
+    });
+
+    it('should read an explicitly emptied mapped property as an empty value', () => {
+      const element = createHtmlDivElement();
+
+      element.setAttribute('class', '');
+
+      expect(element.getAttribute('class')).toBe('');
+    });
+
     it('should return null again after removeAttribute', () => {
       const element = createHtmlDivElement();
 
@@ -68,6 +84,14 @@ describe('patchRemoteElementAttributes', () => {
       element.setAttribute('class', 'present');
 
       expect(element.hasAttribute('class')).toBe(true);
+    });
+
+    it('should return true for a falsy mapped property value', () => {
+      const element = createHtmlDivElement();
+
+      element.tabIndex = 0;
+
+      expect(element.hasAttribute('tabindex')).toBe(true);
     });
 
     it('should return false again after removeAttribute', () => {
