@@ -209,17 +209,17 @@ export class MetadataTranslationService {
         : [];
     }
 
-    if (isDefined(input.fieldMetadataId)) {
-      const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityMaps: flatFieldMetadataMaps,
-        flatEntityId: input.fieldMetadataId,
-      });
-
-      return isDefined(flatFieldMetadata)
-        ? [toFieldEntity(flatFieldMetadata)]
-        : [];
+    if (!isDefined(input.fieldMetadataId)) {
+      return [];
     }
 
-    return [];
+    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityMaps: flatFieldMetadataMaps,
+      flatEntityId: input.fieldMetadataId,
+    });
+
+    return isDefined(flatFieldMetadata)
+      ? [toFieldEntity(flatFieldMetadata)]
+      : [];
   }
 }

@@ -5,9 +5,8 @@ import { IsIn, IsOptional, IsUUID } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
-// Two access shapes, one query: an entity id scopes to that entity across all
-// locales (the per-entity translations panel), a locale alone scopes to every
-// translatable entity in that locale (the workspace translations page).
+// Scopes to one entity: all locales for the translations panel, or a single
+// locale when the caller only needs the viewer's resolution.
 @InputType()
 export class MetadataTranslationsInput {
   @IsUUID()
