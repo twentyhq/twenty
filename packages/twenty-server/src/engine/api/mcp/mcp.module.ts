@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { McpCoreController } from 'src/engine/api/mcp/controllers/mcp-core.controller';
 import { McpAuthGuard } from 'src/engine/api/mcp/guards/mcp-auth.guard';
@@ -31,6 +33,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     SkillModule,
     TwentyConfigModule,
     WorkspaceCacheModule,
+    TypeOrmModule.forFeature([Workspace], 'core'),
   ],
   controllers: [McpCoreController],
   exports: [McpProtocolService],
