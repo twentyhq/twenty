@@ -412,7 +412,7 @@ const TextInputComponent = forwardRef<
           </StyledInputContainer>
           {!noErrorHelper && error && (
             <StyledErrorHelper aria-live="polite">
-              <Field.Error>{error}</Field.Error>
+              <Field.Error match>{error}</Field.Error>
             </StyledErrorHelper>
           )}
         </StyledContainer>

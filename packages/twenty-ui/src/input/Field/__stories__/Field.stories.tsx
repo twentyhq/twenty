@@ -29,7 +29,7 @@ export const WithError: Story = {
   render: () => (
     <Field.Root>
       <Field.Label>Label</Field.Label>
-      <Field.Error>This field is required</Field.Error>
+      <Field.Error match>This field is required</Field.Error>
     </Field.Root>
   ),
 };

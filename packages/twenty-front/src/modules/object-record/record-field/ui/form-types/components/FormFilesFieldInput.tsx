@@ -94,7 +94,7 @@ export const FormFilesFieldInput = ({
           />
         )}
       </FormFieldInputRowContainer>
-      {error && <Field.Error>{error}</Field.Error>}
+      {error && <Field.Error match>{error}</Field.Error>}
     </FormFieldInputContainer>
   );
 };

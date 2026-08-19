@@ -11,10 +11,9 @@ type FieldErrorProps = React.ComponentPropsWithoutRef<
 export const FieldError = forwardRef<
   React.ElementRef<typeof FieldPrimitive.Error>,
   FieldErrorProps
->(({ className, match = true, ...props }, ref) => (
+>(({ className, ...props }, ref) => (
   <FieldPrimitive.Error
     ref={ref}
-    match={match}
     className={(state) =>
       clsx(
         styles.error,
