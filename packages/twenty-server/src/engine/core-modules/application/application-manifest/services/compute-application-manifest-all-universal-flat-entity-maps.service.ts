@@ -6,7 +6,7 @@ import {
 } from 'twenty-shared/application';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { fromAgentManifestToUniversalFlatRoleTarget } from 'src/engine/core-modules/application/application-manifest/converters/from-agent-manifest-to-universal-flat-role-target.util';
 import { fromApplicationVariableManifestToUniversalFlatApplicationVariable } from 'src/engine/core-modules/application/application-manifest/converters/from-application-variable-manifest-to-universal-flat-application-variable.util';
@@ -34,6 +34,7 @@ import { fromViewFieldManifestToUniversalFlatViewField } from 'src/engine/core-m
 import { fromViewFilterGroupManifestToUniversalFlatViewFilterGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-filter-group-manifest-to-universal-flat-view-filter-group.util';
 import { fromViewFilterManifestToUniversalFlatViewFilter } from 'src/engine/core-modules/application/application-manifest/converters/from-view-filter-manifest-to-universal-flat-view-filter.util';
 import { fromViewGroupManifestToUniversalFlatViewGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-group-manifest-to-universal-flat-view-group.util';
+import { fromViewManifestToDerivedUniversalFlatViewGroups } from 'src/engine/core-modules/application/application-manifest/converters/from-view-manifest-to-derived-universal-flat-view-groups.util';
 import { fromViewManifestToUniversalFlatView } from 'src/engine/core-modules/application/application-manifest/converters/from-view-manifest-to-universal-flat-view.util';
 import { fromViewSortManifestToUniversalFlatViewSort } from 'src/engine/core-modules/application/application-manifest/converters/from-view-sort-manifest-to-universal-flat-view-sort.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -56,11 +57,15 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     ownerFlatApplication,
     now,
     workspaceId,
+    existingFlatFieldMetadataMaps,
   }: {
     manifest: Manifest;
     ownerFlatApplication: FlatApplication;
     now: string;
     workspaceId: string;
+    // Workspace-wide field maps, used to resolve a view's group-by field when
+    // it is not declared in the manifest (e.g. a standard object field).
+    existingFlatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
   }): AllFlatEntityMaps {
     const allUniversalFlatEntityMaps = createEmptyAllFlatEntityMaps();
 
@@ -449,6 +454,45 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           universalFlatEntityMapsToMutate:
             allUniversalFlatEntityMaps.flatViewGroupMaps,
         });
+      }
+
+      const mainGroupByFieldMetadataUniversalIdentifier =
+        viewManifest.mainGroupByFieldMetadataUniversalIdentifier;
+
+      if (
+        !isNonEmptyArray(viewManifest.groups) &&
+        isDefined(mainGroupByFieldMetadataUniversalIdentifier)
+      ) {
+        const mainGroupByFlatFieldMetadata =
+          allUniversalFlatEntityMaps.flatFieldMetadataMaps
+            .byUniversalIdentifier[
+            mainGroupByFieldMetadataUniversalIdentifier
+          ] ??
+          existingFlatFieldMetadataMaps.byUniversalIdentifier[
+            mainGroupByFieldMetadataUniversalIdentifier
+          ];
+
+        // An unresolvable group-by field is reported by the workspace
+        // migration builder's view validation, not here.
+        if (isDefined(mainGroupByFlatFieldMetadata)) {
+          const derivedUniversalFlatViewGroups =
+            fromViewManifestToDerivedUniversalFlatViewGroups({
+              viewManifest,
+              mainGroupByFlatFieldMetadata,
+              applicationUniversalIdentifier,
+              now,
+            });
+
+          for (const universalFlatViewGroup of derivedUniversalFlatViewGroups) {
+            addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow(
+              {
+                universalFlatEntity: universalFlatViewGroup,
+                universalFlatEntityMapsToMutate:
+                  allUniversalFlatEntityMaps.flatViewGroupMaps,
+              },
+            );
+          }
+        }
       }
 
       for (const viewSortManifest of viewManifest.sorts ?? []) {
