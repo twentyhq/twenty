@@ -82,10 +82,11 @@ export const RecordTableWidgetRendererContent = ({
     !isPageLayoutInEditMode &&
     isCalendarWeekViewEnabled &&
     isCalendarDayOrWeek;
-  // Read-only unless this is the explicitly allowed live day/week calendar;
-  // a caller passing isReadOnly={false} must not make month (or flag-off)
-  // widget calendars editable. Object permissions still gate the drag.
-  const calendarIsReadOnly = !canEditCalendar;
+  // Read-only unless this is the explicitly allowed live day/week calendar
+  // AND the widget allows record mutation; a caller passing isReadOnly={false}
+  // must not make month (or flag-off) widget calendars editable. Object
+  // permissions still gate the drag.
+  const calendarIsReadOnly = !canEditCalendar || isReadOnly;
 
   // Keyed rather than chained so a layout added to RECORD_TABLE_WIDGET_LAYOUTS
   // fails to compile here instead of silently rendering as a table.
