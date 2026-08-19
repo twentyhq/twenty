@@ -4,6 +4,11 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 
+import {
+  type ObjectRecordCursor,
+  type ObjectRecordOrderBy,
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+
 import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -96,6 +101,16 @@ describe('computeCursorArgFilter', () => {
     objectMetadataId: 'company-object-id',
   } as FlatFieldMetadata;
 
+  const companyContactNameField = {
+    ...createMockField({
+      id: 'company-contactname-id',
+      type: FieldMetadataType.FULL_NAME,
+      name: 'contactName',
+      label: 'Contact Name',
+    }),
+    objectMetadataId: 'company-object-id',
+  } as FlatFieldMetadata;
+
   const buildFlatFieldMetadataMaps = (
     fields: FlatFieldMetadata[],
   ): FlatEntityMaps<FlatFieldMetadata> => ({
@@ -126,6 +141,7 @@ describe('computeCursorArgFilter', () => {
     closeDateField,
     companyField,
     companyNameField,
+    companyContactNameField,
   ]);
 
   const flatObjectMetadata: FlatObjectMetadata = {
@@ -164,7 +180,7 @@ describe('computeCursorArgFilter', () => {
     workspaceId,
     nameSingular: 'company',
     namePlural: 'companies',
-    fieldIds: ['company-name-id'],
+    fieldIds: ['company-name-id', 'company-contactname-id'],
   } as unknown as FlatObjectMetadata;
 
   const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> = {
@@ -698,7 +714,7 @@ describe('computeCursorArgFilter', () => {
       ]);
     });
 
-    it('should reject a cursor without the relation orderBy value with an actionable error', () => {
+    it('should reject a cursor without the relation orderBy value', () => {
       const cursor = { id: 'uuid-1' };
 
       expect(() =>
@@ -711,7 +727,82 @@ describe('computeCursorArgFilter', () => {
           isForwardPagination: true,
         }),
       ).toThrow(
-        'include the ordered relation field in the selection (e.g. "company { name }")',
+        'Cursor is missing the value for orderBy field "company.name"',
+      );
+    });
+  });
+
+  describe('relation orderBy on a composite target field', () => {
+    // The web app sorts person-labeled relation columns exactly like this: one
+    // entry per ordered FULL_NAME property of the target's label identifier
+    const relationCompositeOrderBy = [
+      { company: { contactName: { firstName: OrderByDirection.AscNullsLast } } },
+      { company: { contactName: { lastName: OrderByDirection.AscNullsLast } } },
+      { id: OrderByDirection.AscNullsFirst },
+    ] as unknown as ObjectRecordOrderBy;
+
+    it('should continue across both composite properties of the joined record', () => {
+      const cursor = {
+        company: { contactName: { firstName: 'Ada', lastName: 'Lovelace' } },
+        id: 'uuid-1',
+      } as unknown as ObjectRecordCursor;
+
+      const result = computeCursorArgFilter({
+        cursor,
+        orderBy: relationCompositeOrderBy,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        isForwardPagination: true,
+      });
+
+      // firstName has a null-equivalent '' default, so the missing-relation
+      // block is matched through the join column
+      expect(result).toEqual([
+        {
+          or: [
+            { company: { contactName: { firstName: { gt: 'Ada' } } } },
+            { companyId: { is: 'NULL' } },
+          ],
+        },
+        {
+          and: [
+            { company: { contactName: { firstName: { eq: 'Ada' } } } },
+            {
+              or: [
+                { company: { contactName: { lastName: { gt: 'Lovelace' } } } },
+                { companyId: { is: 'NULL' } },
+              ],
+            },
+          ],
+        },
+        {
+          and: [
+            { company: { contactName: { firstName: { eq: 'Ada' } } } },
+            { company: { contactName: { lastName: { eq: 'Lovelace' } } } },
+            { id: { gt: 'uuid-1' } },
+          ],
+        },
+      ]);
+    });
+
+    it('should reject a cursor missing one composite property of the relation', () => {
+      const cursor = {
+        company: { contactName: { firstName: 'Ada' } },
+        id: 'uuid-1',
+      } as unknown as ObjectRecordCursor;
+
+      expect(() =>
+        computeCursorArgFilter({
+          cursor,
+          orderBy: relationCompositeOrderBy,
+          flatObjectMetadata,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+          isForwardPagination: true,
+        }),
+      ).toThrow(
+        'Cursor is missing the value for orderBy field "company.contactName.lastName"',
       );
     });
   });

@@ -39,6 +39,7 @@ import { type ReadRecordQueryBuilder } from 'src/engine/api/graphql/graphql-quer
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { buildOrderByColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-order-by-columns-to-select';
 import { getCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
+import { buildRelationOrderValuesByRecordId } from 'src/engine/api/utils/build-relation-order-values-by-record-id.util';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
 import {
   buildOrderByFromLeaves,
@@ -94,17 +95,17 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     // Normalizing to deduplicated leaves makes the appended id tie-breaker
     // yield to a caller-provided id ordering, and guarantees the SQL scan
     // order and the keyset conditions derive from the same list
-    const orderByWithIdCondition = buildOrderByFromLeaves(
-      resolveOrderByLeaves({
-        orderBy: [
-          ...(args.orderBy ?? []),
-          { id: OrderByDirection.AscNullsFirst },
-        ] as ObjectRecordOrderBy,
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-        strictValidation: true,
-      }),
-    );
+    const orderByLeaves = resolveOrderByLeaves({
+      orderBy: [
+        ...(args.orderBy ?? []),
+        { id: OrderByDirection.AscNullsFirst },
+      ] as ObjectRecordOrderBy,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      strictValidation: true,
+    });
+    const orderByWithIdCondition = buildOrderByFromLeaves(orderByLeaves);
 
     const isForwardPagination = !isDefined(args.before);
 
@@ -200,8 +201,22 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       columnsToSelect,
     );
 
-    const fetchedObjectRecords =
-      (await queryBuilder.getMany()) as ObjectRecord[];
+    // Raw rows travel along the entities: the ordered join columns already
+    // selected for the relation ordering are read out of them, so cursors get
+    // their relation values whatever the client selected (or the REST depth)
+    const { entities: fetchedObjectRecords, raw: fetchedRawRows } =
+      (await queryBuilder.getRawAndEntities()) as {
+        entities: ObjectRecord[];
+        raw: Record<string, unknown>[];
+      };
+    const relationOrderValuesByRecordId = buildRelationOrderValuesByRecordId({
+      relationOrderByLeaves: orderByLeaves.filter(
+        (leaf) => leaf.kind === 'relation',
+      ),
+      records: fetchedObjectRecords,
+      rawRows: fetchedRawRows,
+      objectNameSingular: flatObjectMetadata.nameSingular,
+    });
     const { items: objectRecords, pageInfo: cursorPageInfo } = buildCursorPage({
       fetchedItems: fetchedObjectRecords,
       limit,
@@ -210,6 +225,15 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       // must not advertise navigation from a cursor.
       hasAfterCursor: Boolean(args.after),
       hasBeforeCursor: Boolean(args.before),
+    });
+    const pageInfo = getPageInfo({
+      records: objectRecords,
+      orderBy: orderByWithIdCondition,
+      pageInfo: cursorPageInfo,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      relationOrderValuesByRecordId,
     });
     const hasAggregatedFields =
       Object.keys(args.selectedFieldsResult.aggregate ?? {}).length > 0;
@@ -239,21 +263,12 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       });
     }
 
-    // Cursors are encoded after nested relations are attached so relation
-    // orderBy values reach the cursor (the REST API paginates from this pageInfo)
-    const pageInfo = getPageInfo({
-      records: objectRecords,
-      orderBy: orderByWithIdCondition,
-      pageInfo: cursorPageInfo,
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
-    });
-
     return {
       records: objectRecords,
       aggregatedValues: parentObjectRecordsAggregatedValues,
       totalCount: parentObjectRecordsAggregatedValues?.totalCount,
       pageInfo,
+      relationOrderValuesByRecordId,
       selectedFieldsResult: args.selectedFieldsResult,
     };
   }

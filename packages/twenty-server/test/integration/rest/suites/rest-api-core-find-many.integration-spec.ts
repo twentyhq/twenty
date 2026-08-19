@@ -407,6 +407,38 @@ describe('Core REST API Find Many endpoint', () => {
       expect(ids).toHaveLength(testPersonIds.length);
       expect(new Set(ids).size).toBe(testPersonIds.length);
     });
+
+    // Cursors read relation orderBy values from the ordering join itself, so
+    // continuation must not require any depth (issue #24333)
+    it('should continue past the first page at depth 0', async () => {
+      const ids: string[] = [];
+      let startingAfter: string | undefined = undefined;
+
+      for (let iteration = 0; iteration < 10; iteration++) {
+        const path: string =
+          '/people?order_by=company.name[AscNullsLast]&limit=2&depth=0' +
+          (startingAfter ? `&starting_after=${startingAfter}` : '');
+        const response = await makeRestAPIRequest({
+          method: 'get',
+          path,
+        }).expect(200);
+
+        ids.push(
+          ...response.body.data.people.map(
+            (person: { id: string }) => person.id,
+          ),
+        );
+
+        if (!response.body.pageInfo.hasNextPage) {
+          break;
+        }
+
+        startingAfter = response.body.pageInfo.endCursor;
+      }
+
+      expect(ids).toHaveLength(testPersonIds.length);
+      expect(new Set(ids).size).toBe(testPersonIds.length);
+    });
   });
 
   describe('cursor pagination ordered by a nullable field', () => {

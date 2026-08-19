@@ -70,13 +70,28 @@ describe('resolveOrderByLeaves', () => {
     } as any,
   });
 
-  const fields = [
+  const companyNameField = createMockField({
+    id: 'company-name-id',
+    type: FieldMetadataType.TEXT,
+    name: 'name',
+    objectMetadataId: 'company-object-id',
+  });
+
+  const companyContactNameField = createMockField({
+    id: 'company-contactname-id',
+    type: FieldMetadataType.FULL_NAME,
+    name: 'contactName',
+    objectMetadataId: 'company-object-id',
+  });
+
+  const rootFields = [
     idField,
     closeDateField,
     fullNameField,
     linksField,
     companyField,
   ];
+  const fields = [...rootFields, companyNameField, companyContactNameField];
 
   const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
     byUniversalIdentifier: Object.fromEntries(
@@ -92,8 +107,28 @@ describe('resolveOrderByLeaves', () => {
     id: objectMetadataId,
     workspaceId,
     nameSingular: 'opportunity',
-    fieldIds: fields.map((field) => field.id),
+    fieldIds: rootFields.map((field) => field.id),
   } as unknown as FlatObjectMetadata;
+
+  const companyObjectMetadata = {
+    id: 'company-object-id',
+    universalIdentifier: 'company-object-id',
+    workspaceId,
+    nameSingular: 'company',
+    fieldIds: ['company-name-id', 'company-contactname-id'],
+  } as unknown as FlatObjectMetadata;
+
+  const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> = {
+    byUniversalIdentifier: {
+      [objectMetadataId]: flatObjectMetadata,
+      'company-object-id': companyObjectMetadata,
+    },
+    universalIdentifierById: {
+      [objectMetadataId]: objectMetadataId,
+      'company-object-id': 'company-object-id',
+    },
+    universalIdentifiersByApplicationId: {},
+  };
 
   const resolve = (
     // oxlint-disable-next-line typescript/no-explicit-any
@@ -103,6 +138,19 @@ describe('resolveOrderByLeaves', () => {
     resolveOrderByLeaves({
       orderBy,
       flatObjectMetadata,
+      flatFieldMetadataMaps,
+      strictValidation,
+    });
+
+  const resolveWithObjectMaps = (
+    // oxlint-disable-next-line typescript/no-explicit-any
+    orderBy: any,
+    strictValidation = false,
+  ) =>
+    resolveOrderByLeaves({
+      orderBy,
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       strictValidation,
     });
@@ -235,7 +283,7 @@ describe('resolveOrderByLeaves', () => {
     ).toThrow('requires nested field ordering');
   });
 
-  it('should exclude relation and RAW_JSON leaves from cursor use', () => {
+  it('should exclude RAW_JSON leaves from cursor use', () => {
     const leaves = resolve([
       { company: { name: OrderByDirection.AscNullsLast } },
       { domainName: { primaryLinkUrl: OrderByDirection.AscNullsLast } },
@@ -247,7 +295,55 @@ describe('resolveOrderByLeaves', () => {
       leaves
         .filter(checkIfLeafCanCarryCursorValue)
         .map(({ path }) => path.join('.')),
-    ).toEqual(['domainName.primaryLinkUrl', 'id']);
+    ).toEqual(['company.name', 'domainName.primaryLinkUrl', 'id']);
+  });
+
+  describe('relation leaf resolution against the target object', () => {
+    it('should resolve the target field and composite property when object maps are provided', () => {
+      const [scalarTargetLeaf, compositeTargetLeaf] = resolveWithObjectMaps([
+        { company: { name: OrderByDirection.AscNullsLast } },
+        { company: { contactName: { firstName: OrderByDirection.AscNullsLast } } },
+      ]);
+
+      expect(scalarTargetLeaf).toMatchObject({
+        kind: 'relation',
+        path: ['company', 'name'],
+        targetFieldMetadata: { id: 'company-name-id' },
+      });
+      expect(compositeTargetLeaf).toMatchObject({
+        kind: 'relation',
+        path: ['company', 'contactName', 'firstName'],
+        targetFieldMetadata: { id: 'company-contactname-id' },
+        targetCompositeProperty: { name: 'firstName' },
+      });
+    });
+
+    it('should reject unknown or malformed target orderings in strict mode', () => {
+      expect(() =>
+        resolveWithObjectMaps(
+          [{ company: { unknownField: OrderByDirection.AscNullsLast } }],
+          true,
+        ),
+      ).toThrow('not found in target object "company"');
+      expect(() =>
+        resolveWithObjectMaps(
+          [{ company: { name: { nested: OrderByDirection.AscNullsLast } } }],
+          true,
+        ),
+      ).toThrow('does not support nested ordering');
+      expect(() =>
+        resolveWithObjectMaps(
+          [
+            {
+              company: {
+                contactName: { unknownSub: OrderByDirection.AscNullsLast },
+              },
+            },
+          ],
+          true,
+        ),
+      ).toThrow('requires one of its sub fields to be ordered');
+    });
   });
 
   describe('getCursorValueForLeaf', () => {

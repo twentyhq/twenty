@@ -237,6 +237,50 @@ describe('encodeCursor', () => {
     expect(decoded).toEqual({ id: 'abc' });
   });
 
+  it('should prefer relation order values from the ordering join over the loaded record', () => {
+    const record = { id: 'abc' };
+    const orderBy = [
+      { company: { name: OrderByDirection.AscNullsLast } },
+    ] as Parameters<typeof encodeCursor>[0]['order'];
+
+    const decoded = decodeCursor(
+      encodeCursor({
+        objectRecord: record as never,
+        order: orderBy,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+        relationOrderValues: { company: { name: 'Acme' } },
+      }),
+    );
+
+    expect(decoded).toEqual({ company: { name: 'Acme' }, id: 'abc' });
+  });
+
+  it('should nest composite target values of a relation orderBy', () => {
+    const record = { id: 'abc' };
+    const orderBy = [
+      { company: { contactName: { firstName: OrderByDirection.AscNullsLast } } },
+      { company: { contactName: { lastName: OrderByDirection.AscNullsLast } } },
+    ] as unknown as Parameters<typeof encodeCursor>[0]['order'];
+
+    const decoded = decodeCursor(
+      encodeCursor({
+        objectRecord: record as never,
+        order: orderBy,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+        relationOrderValues: {
+          company: { contactName: { firstName: 'Ada', lastName: null } },
+        },
+      }),
+    );
+
+    expect(decoded).toEqual({
+      company: { contactName: { firstName: 'Ada', lastName: null } },
+      id: 'abc',
+    });
+  });
+
   it('should encode join column values when ordering by the foreign key', () => {
     const record = { id: 'abc', companyId: 'company-1' };
     const orderBy = [{ companyId: OrderByDirection.AscNullsLast }];

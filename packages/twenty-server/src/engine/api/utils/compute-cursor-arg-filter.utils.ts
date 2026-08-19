@@ -25,6 +25,7 @@ type ComputeCursorArgFilterParams = {
   cursor: ObjectRecordCursor;
   orderBy: ObjectRecordOrderBy;
   flatObjectMetadata: FlatObjectMetadata;
+  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   isForwardPagination: boolean;
 };
@@ -39,12 +40,14 @@ export const computeCursorArgFilter = ({
   cursor,
   orderBy,
   flatObjectMetadata,
+  flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   isForwardPagination,
 }: ComputeCursorArgFilterParams): ObjectRecordFilter[] => {
   const leaves = resolveOrderByLeaves({
     orderBy,
     flatObjectMetadata,
+    flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     strictValidation: true,
   }).filter(checkIfLeafCanCarryCursorValue);

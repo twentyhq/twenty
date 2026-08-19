@@ -1,5 +1,5 @@
 import { type ObjectRecord } from 'twenty-shared/types';
-import { isPlainObject } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -38,12 +38,19 @@ export const encodeCursor = <T extends ObjectRecord = ObjectRecord>({
   objectRecord,
   order,
   flatObjectMetadata,
+  flatObjectMetadataMaps,
   flatFieldMetadataMaps,
+  relationOrderValues,
 }: {
   objectRecord: T;
   order: ObjectRecordOrderBy | undefined;
   flatObjectMetadata: FlatObjectMetadata;
+  flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  // Relation orderBy values read from the ordering join's raw rows by the
+  // find-many runner; falling back to the loaded related record covers callers
+  // without them (e.g. nested connections)
+  relationOrderValues?: Record<string, unknown>;
 }): string => {
   // oxlint-disable-next-line typescript/no-explicit-any
   const orderByValues: Record<string, any> = {};
@@ -51,15 +58,30 @@ export const encodeCursor = <T extends ObjectRecord = ObjectRecord>({
   for (const leaf of resolveOrderByLeaves({
     orderBy: order,
     flatObjectMetadata,
+    flatObjectMetadataMaps,
     flatFieldMetadataMaps,
   }).filter(checkIfLeafCanCarryCursorValue)) {
-    // Read the ordered value along the leaf's path (a null or missing
-    // container makes the value undefined, which JSON serialization drops)
+    // Read the ordered value along the leaf's path: a null container yields
+    // null (the row belongs to the NULL block of the ordering), a missing one
+    // yields undefined, which JSON serialization drops
     const [rootKey, ...nestedKeys] = leaf.path;
-    let leafValue: unknown = objectRecord[rootKey];
+    const valueSource =
+      leaf.kind === 'relation' && isDefined(relationOrderValues)
+        ? relationOrderValues
+        : objectRecord;
+    let leafValue: unknown = valueSource[rootKey];
 
     for (const key of nestedKeys) {
+      if (leafValue === null) {
+        break;
+      }
       leafValue = isPlainObject(leafValue) ? leafValue[key] : undefined;
+    }
+
+    // An unloaded relation cannot contribute a value at all: leave the key out
+    // instead of writing an empty object
+    if (leaf.kind === 'relation' && leafValue === undefined) {
+      continue;
     }
 
     // Write it back under the same path

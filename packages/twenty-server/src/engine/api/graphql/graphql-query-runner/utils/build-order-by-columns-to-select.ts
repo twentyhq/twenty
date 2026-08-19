@@ -29,6 +29,12 @@ export const buildOrderByColumnsToSelect = ({
     flatObjectMetadata,
     flatFieldMetadataMaps,
   }).filter(checkIfLeafCanCarryCursorValue)) {
+    // Relation orderBy values live on a joined alias, not on a root column:
+    // cursors read them from the ordering join's raw rows instead
+    if (leaf.kind === 'relation') {
+      continue;
+    }
+
     columnsToSelect[
       leaf.kind === 'composite'
         ? computeCompositeColumnName(leaf.path[0], leaf.compositeProperty)
