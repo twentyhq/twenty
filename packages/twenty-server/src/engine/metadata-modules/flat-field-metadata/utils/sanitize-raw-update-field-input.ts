@@ -20,10 +20,8 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { nullifyEmptyCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/nullify-empty-composite-default-value.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { computeMetadataOverridesBlob } from 'src/engine/metadata-modules/utils/compute-metadata-overrides-blob.util';
-import {
-  findInvalidTranslationOverrideProperties,
-  mergeTranslationsIntoOverrides,
-} from 'src/engine/metadata-modules/utils/merge-translations-into-overrides.util';
+import { findInvalidTranslationOverrideProperties } from 'src/engine/metadata-modules/utils/find-invalid-translation-override-properties.util';
+import { mergeTranslationsIntoOverrides } from 'src/engine/metadata-modules/utils/merge-translations-into-overrides.util';
 
 type SanitizeRawUpdateFieldInputArgs = {
   rawUpdateFieldInput: UpdateFieldInput;

@@ -1,29 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { type APP_LOCALES } from 'twenty-shared/translations';
 
-import { ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-translatable-properties-by-metadata-name.constant';
-
-export type TranslationOverrideEntry = {
-  locale: keyof typeof APP_LOCALES;
-  property: string;
-  value?: string | null;
-};
-
-export const findInvalidTranslationOverrideProperties = (
-  translationEntries: TranslationOverrideEntry[],
-  metadataName: keyof typeof ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME,
-): string[] => {
-  const translatableProperties: readonly string[] =
-    ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME[metadataName] ?? [];
-
-  return [
-    ...new Set(
-      translationEntries
-        .map(({ property }) => property)
-        .filter((property) => !translatableProperties.includes(property)),
-    ),
-  ];
-};
+import { type TranslationOverrideEntry } from 'src/engine/metadata-modules/utils/translation-override-entry.type';
 
 type OverridesWithTranslations = Record<string, unknown> & {
   translations?: Record<string, Record<string, unknown>> | null;
