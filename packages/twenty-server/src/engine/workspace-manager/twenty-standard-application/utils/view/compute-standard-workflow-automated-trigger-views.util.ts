@@ -1,11 +1,11 @@
 import { ViewType, ViewKey } from 'twenty-shared/types';
 
+import { INDEX_VIEW_NAME } from 'src/engine/metadata-modules/view/constants/index-view-name.constant';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import {
   createStandardViewFlatMetadata,
   type CreateStandardViewArgs,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/create-standard-view-flat-metadata.util';
-import { OBJECT_LABEL_PLURAL_PLACEHOLDER } from 'src/engine/metadata-modules/view/constants/object-label-plural-placeholder.constant';
 
 export const computeStandardWorkflowAutomatedTriggerViews = (
   args: Omit<CreateStandardViewArgs<'workflowAutomatedTrigger'>, 'context'>,
@@ -16,7 +16,7 @@ export const computeStandardWorkflowAutomatedTriggerViews = (
       objectName: 'workflowAutomatedTrigger',
       context: {
         viewName: 'allWorkflowAutomatedTriggers',
-        name: `All ${OBJECT_LABEL_PLURAL_PLACEHOLDER}`,
+        name: INDEX_VIEW_NAME,
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,
