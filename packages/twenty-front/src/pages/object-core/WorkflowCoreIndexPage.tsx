@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { styled } from '@linaria/react';
 import { useInView } from 'react-intersection-observer';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
@@ -44,13 +43,13 @@ export const WorkflowCoreIndexPage = () => {
   const { coreWorkflows, hasNextPage, loading, fetchNextPage } =
     useCoreWorkflows();
 
-  const { ref: fetchMoreRef, inView } = useInView();
-
-  useEffect(() => {
-    if (inView && hasNextPage && !loading) {
-      void fetchNextPage();
-    }
-  }, [inView, hasNextPage, loading, fetchNextPage]);
+  const { ref: fetchMoreRef } = useInView({
+    onChange: (inView) => {
+      if (inView && hasNextPage && !loading) {
+        void fetchNextPage();
+      }
+    },
+  });
 
   return (
     <>
