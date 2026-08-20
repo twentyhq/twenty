@@ -75,9 +75,6 @@ export class ApplicationUninstallService {
     });
   }
 
-  // Last-resort execution before the workspace hard deletion destroys the
-  // applications and their hook functions, so a failing hook cannot block
-  // erasing the workspace data.
   async runUninstallHooksForWorkspaceDeletionBestEffort({
     workspaceId,
     workspaceDeletedAt,
@@ -143,9 +140,6 @@ export class ApplicationUninstallService {
     return workspaceIdsWithPendingUninstallHooks;
   }
 
-  // The hook must run before the application deletion migration removes its
-  // function metadata and code. Explicit application uninstall remains
-  // best-effort so external cleanup cannot block removing the application.
   async runUninstallHookBestEffort({
     application,
     workspaceId,

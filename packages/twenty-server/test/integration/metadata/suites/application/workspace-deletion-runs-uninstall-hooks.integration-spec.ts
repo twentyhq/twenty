@@ -13,8 +13,6 @@ import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs
 import { type Manifest } from 'twenty-shared/application';
 import { v4 as uuidv4 } from 'uuid';
 
-// Type-only imports for container-resolved providers: value imports would pull
-// the ESM-only file-type chain that the integration jest config cannot transform.
 import { type PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { type ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { type LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
@@ -93,8 +91,6 @@ describe('Workspace deletion runs application uninstall hooks', () => {
       [appId],
     );
 
-    // The hard deletion removes the user along with its last workspace; this
-    // only cleans up when the test failed before reaching it.
     await deleteUser({ accessToken: userAccessToken });
   });
 
@@ -149,8 +145,6 @@ describe('Workspace deletion runs application uninstall hooks', () => {
       token: workspaceAccessToken,
     });
 
-    // setupApplicationForSync re-enables fake timers, which would freeze the
-    // job-drain polling below.
     jest.useRealTimers();
 
     await syncApplication({
@@ -179,7 +173,6 @@ describe('Workspace deletion runs application uninstall hooks', () => {
       softDeletedWorkspace.deletedAt,
     ).toISOString();
 
-    // The soft deletion enqueued the uninstall job; wait for the worker to run it.
     await waitForAllJobsToFinish();
 
     expect(executeSpy).toHaveBeenCalledTimes(1);

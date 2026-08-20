@@ -746,9 +746,6 @@ export class WorkspaceService {
     );
   }
 
-  // Hard deletion destroys the applications and their hook functions, so this
-  // is the last chance to run uninstall hooks that never completed. Best
-  // effort: a failing hook must not block erasing the workspace data.
   private async runPendingApplicationUninstallHooksBeforeHardDelete(
     workspace: WorkspaceEntity,
   ): Promise<void> {
