@@ -60,26 +60,40 @@ type NormalizationRule = {
 };
 
 // Matches inline-code spans: `...` (single backtick pairs, no newline inside)
-const INLINE_CODE_REGEX = /`([^`\n]+)`/g;
-
-function inlineCodeHasTag(text: string): boolean {
-  let match: RegExpExecArray | null;
-
-  while ((match = INLINE_CODE_REGEX.exec(text)) !== null) {
-    if (match[1].includes('<') || match[1].includes('>')) {
-      INLINE_CODE_REGEX.lastIndex = 0;
-
-      return true;
-    }
-  }
-
-  return false;
-}
-
-// The build-breaking signature: escaped angle brackets in a translation
+// Matches a full inline-code span, backticks included (single-line only).
+const INLINE_CODE_SPAN_REGEX = /`[^`\n]+`/g;
+// The build-breaking signature: escaped angle brackets
 const ESCAPED_TAG_REGEX = /&lt;|&gt;|&#0*60;|&#0*62;/i;
 // Literal \uXXXX sequences that leaked into a translation instead of the character
 const ESCAPED_UNICODE_REGEX = /\\u[0-9a-fA-F]{4}/;
+
+function inlineCodeSpans(text: string): string[] {
+  return text.match(INLINE_CODE_SPAN_REGEX) ?? [];
+}
+
+// Source strings worth repairing: those carrying an angle bracket inside inline code.
+function sourceHasTagInInlineCode(sourceText: string): boolean {
+  return inlineCodeSpans(sourceText).some(
+    (span) => span.includes('<') || span.includes('>'),
+  );
+}
+
+// Only flag/repair escaping that lives inside an inline-code span. Angle brackets
+// escaped elsewhere (e.g. intentionally in prose) are left untouched so we never
+// turn literal documentation content into markup.
+function inlineCodeHasEscapedTag(text: string): boolean {
+  return inlineCodeSpans(text).some((span) => ESCAPED_TAG_REGEX.test(span));
+}
+
+function unescapeInlineCodeTags(text: string): string {
+  return text.replace(INLINE_CODE_SPAN_REGEX, (span) =>
+    span
+      .replace(/&lt;/gi, '<')
+      .replace(/&gt;/gi, '>')
+      .replace(/&#0*60;/g, '<')
+      .replace(/&#0*62;/g, '>'),
+  );
+}
 
 const RULES: NormalizationRule[] = [
   {
@@ -96,14 +110,9 @@ const RULES: NormalizationRule[] = [
   },
   {
     name: 'escaped-inline-code-tags',
-    detect: (text) => ESCAPED_TAG_REGEX.test(text),
-    fix: (text) =>
-      text
-        .replace(/&lt;/gi, '<')
-        .replace(/&gt;/gi, '>')
-        .replace(/&#0*60;/g, '<')
-        .replace(/&#0*62;/g, '>'),
-    sourceFilter: inlineCodeHasTag,
+    detect: inlineCodeHasEscapedTag,
+    fix: unescapeInlineCodeTags,
+    sourceFilter: sourceHasTagInInlineCode,
   },
 ];
 
@@ -337,8 +346,8 @@ async function addTranslation(
   };
   const errorMsg = data?.errors?.[0]?.error?.errors?.[0]?.message || '';
 
-  // An identical translation already existing means the corrected version is
-  // now the active one after we deleted the corrupted record — treat as success.
+  // An identical translation already existing means our corrected text is
+  // already present as a translation for this string — treat as success.
   if (errorMsg.includes('identical')) return;
 
   throw new Error(`Failed to add translation: ${JSON.stringify(data)}`);
@@ -533,20 +542,25 @@ async function main() {
 
   console.log('\n=== Applying repairs ===');
   let repaired = 0;
+  let failed = 0;
 
   for (const finding of findings) {
     try {
-      await deleteTranslation(token, finding.translationId);
+      // Add the corrected translation first so a failed re-add can never leave
+      // the string empty; the newly added translation becomes the active one,
+      // then we remove the corrupted record.
       await addTranslation(
         token,
         finding.stringId,
         finding.languageId,
         finding.fixedText,
       );
+      await deleteTranslation(token, finding.translationId);
 
       repaired++;
       process.stdout.write('.');
     } catch (error) {
+      failed++;
       console.log(
         `\n  Failed to repair string ${finding.stringId} (${finding.languageId}): ${error}`,
       );
@@ -554,6 +568,15 @@ async function main() {
   }
 
   console.log(`\nDone! Repaired ${repaired} translation(s) in Crowdin.`);
+
+  // Surface failures loudly: exit non-zero so the workflow's warning wrapper fires
+  // instead of the run passing silently with translations left corrupted.
+  if (failed > 0) {
+    console.error(
+      `::warning::${failed} translation(s) could not be normalized and remain corrupted.`,
+    );
+    process.exit(1);
+  }
 }
 
 main().catch((error) => {
