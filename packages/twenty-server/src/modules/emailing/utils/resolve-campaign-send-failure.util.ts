@@ -37,6 +37,7 @@ export const resolveCampaignSendFailure = (
     case EmailingDomainDriverExceptionCode.INSUFFICIENT_PERMISSIONS:
     case EmailingDomainDriverExceptionCode.CONFIGURATION_ERROR:
     case EmailingDomainDriverExceptionCode.SANDBOX_ACCOUNT:
+    case EmailingDomainDriverExceptionCode.UNSUBSCRIBE_MULTIPLE_RECIPIENTS:
       return {
         deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED,
         shouldRetry: false,

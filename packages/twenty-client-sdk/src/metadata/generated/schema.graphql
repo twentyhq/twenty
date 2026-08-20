@@ -2608,6 +2608,8 @@ type EmailingDomain {
   updatedAt: DateTime!
   domain: String!
   status: EmailingDomainStatus!
+  tenantStatus: EmailingDomainTenantStatus!
+  unsubscribeHostnameStatus: UnsubscribeHostnameStatus
   verificationRecords: [VerificationRecord!]
   verifiedAt: DateTime
 }
@@ -2617,6 +2619,18 @@ enum EmailingDomainStatus {
   VERIFIED
   FAILED
   TEMPORARY_FAILURE
+}
+
+enum EmailingDomainTenantStatus {
+  ACTIVE
+  PAUSED
+  SANDBOX
+}
+
+enum UnsubscribeHostnameStatus {
+  PENDING
+  ACTIVE
+  FAILED
 }
 
 type MessageChannel {
@@ -2701,6 +2715,7 @@ type CampaignAudiencePreviewDTO {
   totalMembers: Int!
   withoutEmail: Int!
   duplicateEmails: Int!
+  overCap: Int!
   globallyUnsubscribed: Int!
   topicUnsubscribed: Int!
   sendable: Int!
@@ -2715,16 +2730,10 @@ type SendEmailViaDomainOutput {
   messageId: String!
 }
 
-type CampaignSkippedRecipientsDTO {
-  noEmail: Int!
-  deduped: Int!
-  overCap: Int!
-}
-
 type SendMessageCampaignOutputDTO {
   campaignId: String!
   queuedCount: Int!
-  skipped: CampaignSkippedRecipientsDTO!
+  audience: CampaignAudiencePreviewDTO!
 }
 
 type MessageSuppression {
@@ -3659,6 +3668,8 @@ type Mutation {
   sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
   cancelMessageCampaign(input: CancelMessageCampaignInput!): CancelMessageCampaignOutputDTO!
   sendMessageCampaignTest(input: SendMessageCampaignTestInput!): SendEmailViaDomainOutput!
+  createMessageSuppression(input: CreateMessageSuppressionInput!): MessageSuppression!
+  deleteMessageSuppression(id: UUID!): Boolean!
   createUnsubscribeTopic(input: CreateUnsubscribeTopicInput!): UnsubscribeTopic!
   updateUnsubscribeTopic(input: UpdateUnsubscribeTopicInput!): UnsubscribeTopic!
   deleteUnsubscribeTopic(id: String!): Boolean!
@@ -4753,6 +4764,11 @@ input SendMessageCampaignTestInput {
   subject: String!
   body: String!
   fromAddress: String!
+}
+
+input CreateMessageSuppressionInput {
+  emailAddress: String!
+  unsubscribeTopicId: UUID
 }
 
 input CreateUnsubscribeTopicInput {

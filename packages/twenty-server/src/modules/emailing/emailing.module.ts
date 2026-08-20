@@ -19,10 +19,13 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
 import { UnsubscribeController } from 'src/modules/emailing/controllers/unsubscribe.controller';
 import { EmailingOngoingStaleCronCommand } from 'src/modules/emailing/crons/commands/emailing-ongoing-stale.cron.command';
 import { EmailingOngoingStaleCronJob } from 'src/modules/emailing/crons/jobs/emailing-ongoing-stale.cron.job';
+import { ReconcileCampaignStatsCronCommand } from 'src/modules/emailing/crons/commands/reconcile-campaign-stats.cron.command';
+import { ReconcileCampaignStatsCronJob } from 'src/modules/emailing/crons/jobs/reconcile-campaign-stats.cron.job';
 import { EmailingSendResolver } from 'src/modules/emailing/resolvers/emailing-send.resolver';
 import { MessageSuppressionResolver } from 'src/modules/emailing/resolvers/message-suppression.resolver';
 import { UnsubscribeTopicResolver } from 'src/modules/emailing/resolvers/unsubscribe-topic.resolver';
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
+import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignDraftService } from 'src/modules/emailing/services/message-campaign-draft.service';
@@ -31,6 +34,7 @@ import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/
 import { MessageCampaignAudienceService } from 'src/modules/emailing/services/message-campaign-audience.service';
 import { MessageCampaignDeliveryFeedbackService } from 'src/modules/emailing/services/message-campaign-delivery-feedback.service';
 import { MessageCampaignDeliveryService } from 'src/modules/emailing/services/message-campaign-delivery.service';
+import { CampaignSendingReputationService } from 'src/modules/emailing/services/campaign-sending-reputation.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageCampaignMaterializationService } from 'src/modules/emailing/services/message-campaign-materialization.service';
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
@@ -41,6 +45,7 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
 @Module({
   imports: [
     EmailingDomainModule,
+    ThrottlerModule,
     MessageChannelMetadataModule,
     FeatureFlagModule,
     PermissionsModule,
@@ -66,6 +71,7 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     MessageCampaignDeliveryService,
     MessageCampaignDeliveryFeedbackService,
     MessageCampaignLifecycleService,
+    CampaignSendingReputationService,
     MessageCampaignMaterializationService,
     MessageCampaignDraftService,
     MessageCampaignRecoveryService,
@@ -82,9 +88,12 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     provideWorkspaceScopedRepository(UnsubscribeTopicEntity),
     EmailingOngoingStaleCronCommand,
     EmailingOngoingStaleCronJob,
+    ReconcileCampaignStatsCronCommand,
+    ReconcileCampaignStatsCronJob,
   ],
   exports: [
     EmailingDomainSenderService,
+    EmailBillingService,
     MessageCampaignService,
     MessageCampaignDeliveryService,
     MessageCampaignDeliveryFeedbackService,
@@ -95,6 +104,7 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     UnsubscribeTopicService,
     SaveCampaignTool,
     EmailingOngoingStaleCronCommand,
+    ReconcileCampaignStatsCronCommand,
   ],
 })
 export class EmailingModule {}

@@ -27,6 +27,18 @@ describe('readCampaignMessageCounts', () => {
     expect(counts.totalCount).toBe(7);
   });
 
+  it('should treat rejected and rendering-failed messages as failures so the campaign does not finish clean', () => {
+    const counts = readCampaignMessageCounts(
+      new Map([
+        [CAMPAIGN_MESSAGE_DELIVERY_STATUS.REJECTED, 2],
+        [CAMPAIGN_MESSAGE_DELIVERY_STATUS.RENDERING_FAILED, 1],
+        [CAMPAIGN_MESSAGE_DELIVERY_STATUS.SENT, 4],
+      ]),
+    );
+
+    expect(counts.failedCount).toBe(3);
+  });
+
   it('should report zero for a status no message holds', () => {
     const counts = readCampaignMessageCounts(
       new Map([[CAMPAIGN_MESSAGE_DELIVERY_STATUS.SENT, 3]]),

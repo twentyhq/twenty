@@ -2286,12 +2286,18 @@ export interface EmailingDomain {
     updatedAt: Scalars['DateTime']
     domain: Scalars['String']
     status: EmailingDomainStatus
+    tenantStatus: EmailingDomainTenantStatus
+    unsubscribeHostnameStatus?: UnsubscribeHostnameStatus
     verificationRecords?: VerificationRecord[]
     verifiedAt?: Scalars['DateTime']
     __typename: 'EmailingDomain'
 }
 
 export type EmailingDomainStatus = 'PENDING' | 'VERIFIED' | 'FAILED' | 'TEMPORARY_FAILURE'
+
+export type EmailingDomainTenantStatus = 'ACTIVE' | 'PAUSED' | 'SANDBOX'
+
+export type UnsubscribeHostnameStatus = 'PENDING' | 'ACTIVE' | 'FAILED'
 
 export interface MessageChannel {
     id: Scalars['UUID']
@@ -2343,6 +2349,7 @@ export interface CampaignAudiencePreviewDTO {
     totalMembers: Scalars['Int']
     withoutEmail: Scalars['Int']
     duplicateEmails: Scalars['Int']
+    overCap: Scalars['Int']
     globallyUnsubscribed: Scalars['Int']
     topicUnsubscribed: Scalars['Int']
     sendable: Scalars['Int']
@@ -2360,17 +2367,10 @@ export interface SendEmailViaDomainOutput {
     __typename: 'SendEmailViaDomainOutput'
 }
 
-export interface CampaignSkippedRecipientsDTO {
-    noEmail: Scalars['Int']
-    deduped: Scalars['Int']
-    overCap: Scalars['Int']
-    __typename: 'CampaignSkippedRecipientsDTO'
-}
-
 export interface SendMessageCampaignOutputDTO {
     campaignId: Scalars['String']
     queuedCount: Scalars['Int']
-    skipped: CampaignSkippedRecipientsDTO
+    audience: CampaignAudiencePreviewDTO
     __typename: 'SendMessageCampaignOutputDTO'
 }
 
@@ -3151,6 +3151,8 @@ export interface Mutation {
     sendMessageCampaign: SendMessageCampaignOutputDTO
     cancelMessageCampaign: CancelMessageCampaignOutputDTO
     sendMessageCampaignTest: SendEmailViaDomainOutput
+    createMessageSuppression: MessageSuppression
+    deleteMessageSuppression: Scalars['Boolean']
     createUnsubscribeTopic: UnsubscribeTopic
     updateUnsubscribeTopic: UnsubscribeTopic
     deleteUnsubscribeTopic: Scalars['Boolean']
@@ -5659,6 +5661,8 @@ export interface EmailingDomainGenqlSelection{
     updatedAt?: boolean | number
     domain?: boolean | number
     status?: boolean | number
+    tenantStatus?: boolean | number
+    unsubscribeHostnameStatus?: boolean | number
     verificationRecords?: VerificationRecordGenqlSelection
     verifiedAt?: boolean | number
     __typename?: boolean | number
@@ -5703,6 +5707,7 @@ export interface CampaignAudiencePreviewDTOGenqlSelection{
     totalMembers?: boolean | number
     withoutEmail?: boolean | number
     duplicateEmails?: boolean | number
+    overCap?: boolean | number
     globallyUnsubscribed?: boolean | number
     topicUnsubscribed?: boolean | number
     sendable?: boolean | number
@@ -5723,18 +5728,10 @@ export interface SendEmailViaDomainOutputGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface CampaignSkippedRecipientsDTOGenqlSelection{
-    noEmail?: boolean | number
-    deduped?: boolean | number
-    overCap?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface SendMessageCampaignOutputDTOGenqlSelection{
     campaignId?: boolean | number
     queuedCount?: boolean | number
-    skipped?: CampaignSkippedRecipientsDTOGenqlSelection
+    audience?: CampaignAudiencePreviewDTOGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6582,6 +6579,8 @@ export interface MutationGenqlSelection{
     sendMessageCampaign?: (SendMessageCampaignOutputDTOGenqlSelection & { __args: {input: SendMessageCampaignInput} })
     cancelMessageCampaign?: (CancelMessageCampaignOutputDTOGenqlSelection & { __args: {input: CancelMessageCampaignInput} })
     sendMessageCampaignTest?: (SendEmailViaDomainOutputGenqlSelection & { __args: {input: SendMessageCampaignTestInput} })
+    createMessageSuppression?: (MessageSuppressionGenqlSelection & { __args: {input: CreateMessageSuppressionInput} })
+    deleteMessageSuppression?: { __args: {id: Scalars['UUID']} }
     createUnsubscribeTopic?: (UnsubscribeTopicGenqlSelection & { __args: {input: CreateUnsubscribeTopicInput} })
     updateUnsubscribeTopic?: (UnsubscribeTopicGenqlSelection & { __args: {input: UpdateUnsubscribeTopicInput} })
     deleteUnsubscribeTopic?: { __args: {id: Scalars['String']} }
@@ -7006,6 +7005,8 @@ export interface SendMessageCampaignInput {campaignId: Scalars['String']}
 export interface CancelMessageCampaignInput {campaignId: Scalars['String']}
 
 export interface SendMessageCampaignTestInput {toAddress: Scalars['String'],unsubscribeTopicId?: (Scalars['String'] | null),subject: Scalars['String'],body: Scalars['String'],fromAddress: Scalars['String']}
+
+export interface CreateMessageSuppressionInput {emailAddress: Scalars['String'],unsubscribeTopicId?: (Scalars['UUID'] | null)}
 
 export interface CreateUnsubscribeTopicInput {name: Scalars['String'],description?: (Scalars['String'] | null),visibility?: (UnsubscribeTopicVisibility | null)}
 
@@ -8831,14 +8832,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const CampaignSkippedRecipientsDTO_possibleTypes: string[] = ['CampaignSkippedRecipientsDTO']
-    export const isCampaignSkippedRecipientsDTO = (obj?: { __typename?: any } | null): obj is CampaignSkippedRecipientsDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isCampaignSkippedRecipientsDTO"')
-      return CampaignSkippedRecipientsDTO_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const SendMessageCampaignOutputDTO_possibleTypes: string[] = ['SendMessageCampaignOutputDTO']
     export const isSendMessageCampaignOutputDTO = (obj?: { __typename?: any } | null): obj is SendMessageCampaignOutputDTO => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isSendMessageCampaignOutputDTO"')
@@ -9855,6 +9848,18 @@ export const enumEmailingDomainStatus = {
    VERIFIED: 'VERIFIED' as const,
    FAILED: 'FAILED' as const,
    TEMPORARY_FAILURE: 'TEMPORARY_FAILURE' as const
+}
+
+export const enumEmailingDomainTenantStatus = {
+   ACTIVE: 'ACTIVE' as const,
+   PAUSED: 'PAUSED' as const,
+   SANDBOX: 'SANDBOX' as const
+}
+
+export const enumUnsubscribeHostnameStatus = {
+   PENDING: 'PENDING' as const,
+   ACTIVE: 'ACTIVE' as const,
+   FAILED: 'FAILED' as const
 }
 
 export const enumMessageChannelVisibility = {

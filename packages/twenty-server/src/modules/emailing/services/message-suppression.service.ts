@@ -10,10 +10,11 @@ import { ILike, In, IsNull, QueryFailedError } from 'typeorm';
 
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { type QueryFailedErrorWithCode } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
+import { HARD_SUPPRESSION_REASONS } from 'src/engine/core-modules/emailing-domain/constants/hard-suppression-reasons.constant';
 import {
-  GLOBAL_BLOCKING_SUPPRESSION_REASONS,
-  HARD_SUPPRESSION_REASONS,
-} from 'src/engine/core-modules/emailing-domain/constants/hard-suppression-reasons.constant';
+  EmailingDomainException,
+  EmailingDomainExceptionCode,
+} from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
 import { MessageSuppressionEntity } from 'src/engine/core-modules/emailing-domain/message-suppression.entity';
 import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
 import { MessageSuppressionSource } from 'src/engine/core-modules/emailing-domain/types/message-suppression-source.type';
@@ -31,6 +32,12 @@ type FindSuppressionsArgs = {
   offset: number;
 };
 
+type FindApplicableSuppressionsArgs = {
+  workspaceId: string;
+  emailAddresses: string[];
+  unsubscribeTopicId?: string;
+};
+
 type SuppressArgs = {
   workspaceId: string;
   emailAddress: string;
@@ -38,6 +45,17 @@ type SuppressArgs = {
   source: MessageSuppressionSource;
   providerEventId?: string | null;
   unsubscribeTopicId?: string | null;
+};
+
+type SuppressManuallyArgs = {
+  workspaceId: string;
+  emailAddress: string;
+  unsubscribeTopicId?: string;
+};
+
+type RemoveSuppressionArgs = {
+  workspaceId: string;
+  suppressionId: string;
 };
 
 type TopicOptOutStateArgs = {
@@ -91,50 +109,28 @@ export class MessageSuppressionService {
     return { records, totalCount };
   }
 
-  async getSuppressedAddresses(
-    workspaceId: string,
-    emailAddresses: string[],
-  ): Promise<Set<string>> {
+  async findApplicableSuppressions({
+    workspaceId,
+    emailAddresses,
+    unsubscribeTopicId,
+  }: FindApplicableSuppressionsArgs): Promise<MessageSuppressionEntity[]> {
     const normalizedAddresses = this.normalizeAddresses(emailAddresses);
 
     if (!isNonEmptyArray(normalizedAddresses)) {
-      return new Set();
+      return [];
     }
 
-    const suppressions = await this.suppressionRepository.find(workspaceId, {
-      where: {
-        emailAddress: In(normalizedAddresses),
-        reason: In(GLOBAL_BLOCKING_SUPPRESSION_REASONS),
-        unsubscribeTopicId: IsNull(),
-      },
+    return this.suppressionRepository.find(workspaceId, {
+      where: [
+        {
+          emailAddress: In(normalizedAddresses),
+          unsubscribeTopicId: IsNull(),
+        },
+        ...(isNonEmptyString(unsubscribeTopicId)
+          ? [{ emailAddress: In(normalizedAddresses), unsubscribeTopicId }]
+          : []),
+      ],
     });
-
-    return new Set(suppressions.map((suppression) => suppression.emailAddress));
-  }
-
-  async getTopicSuppressedAddresses(
-    workspaceId: string,
-    emailAddresses: string[],
-    unsubscribeTopicId: string,
-  ): Promise<Set<string>> {
-    const normalizedAddresses = this.normalizeAddresses(emailAddresses);
-
-    if (
-      !isNonEmptyArray(normalizedAddresses) ||
-      !isNonEmptyString(unsubscribeTopicId)
-    ) {
-      return new Set();
-    }
-
-    const suppressions = await this.suppressionRepository.find(workspaceId, {
-      where: {
-        emailAddress: In(normalizedAddresses),
-        reason: MessageSuppressionReason.UNSUBSCRIBE,
-        unsubscribeTopicId,
-      },
-    });
-
-    return new Set(suppressions.map((suppression) => suppression.emailAddress));
   }
 
   async suppress({
@@ -208,6 +204,65 @@ export class MessageSuppressionService {
         throw error;
       }
     }
+  }
+
+  async suppressManually({
+    workspaceId,
+    emailAddress,
+    unsubscribeTopicId,
+  }: SuppressManuallyArgs): Promise<MessageSuppressionEntity> {
+    await this.suppress({
+      workspaceId,
+      emailAddress,
+      reason: MessageSuppressionReason.UNSUBSCRIBE,
+      source: MessageSuppressionSource.SYSTEM,
+      unsubscribeTopicId,
+    });
+
+    const suppression = await this.suppressionRepository.findOneBy(
+      workspaceId,
+      {
+        emailAddress: this.normalizeEmailAddress(emailAddress),
+        unsubscribeTopicId: isNonEmptyString(unsubscribeTopicId)
+          ? unsubscribeTopicId
+          : IsNull(),
+      },
+    );
+
+    if (!isDefined(suppression)) {
+      throw new EmailingDomainException(
+        `Suppression for ${emailAddress} was not persisted`,
+        EmailingDomainExceptionCode.MESSAGE_SUPPRESSION_NOT_FOUND,
+      );
+    }
+
+    return suppression;
+  }
+
+  async removeSuppression({
+    workspaceId,
+    suppressionId,
+  }: RemoveSuppressionArgs): Promise<void> {
+    const suppression = await this.suppressionRepository.findOneBy(
+      workspaceId,
+      { id: suppressionId },
+    );
+
+    if (!isDefined(suppression)) {
+      throw new EmailingDomainException(
+        `Suppression ${suppressionId} not found`,
+        EmailingDomainExceptionCode.MESSAGE_SUPPRESSION_NOT_FOUND,
+      );
+    }
+
+    if (HARD_SUPPRESSION_REASONS.includes(suppression.reason)) {
+      throw new EmailingDomainException(
+        `Suppression ${suppressionId} records a ${suppression.reason} and cannot be removed`,
+        EmailingDomainExceptionCode.MESSAGE_SUPPRESSION_NOT_REMOVABLE,
+      );
+    }
+
+    await this.suppressionRepository.delete(workspaceId, { id: suppressionId });
   }
 
   async getTopicOptOutState({

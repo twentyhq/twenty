@@ -24,13 +24,15 @@ export class InboundUnsubscribeHandlerService {
       return;
     }
 
-    const payload = this.unsubscribeTokenService.verify(subject.trim());
+    const verification = this.unsubscribeTokenService.verify(subject.trim());
 
-    if (!isDefined(payload)) {
+    if (!isDefined(verification)) {
       this.logger.warn('Unsubscribe email received with an invalid token');
 
       return;
     }
+
+    const { payload } = verification;
 
     if (payload.preview === true) {
       return;

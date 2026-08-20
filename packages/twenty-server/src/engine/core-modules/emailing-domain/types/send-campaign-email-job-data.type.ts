@@ -5,4 +5,5 @@ export type SendCampaignEmailJobData = {
   personId: string;
   recipientEmail: string;
   emailingDomainId: string;
+  userWorkspaceId: string;
 };
