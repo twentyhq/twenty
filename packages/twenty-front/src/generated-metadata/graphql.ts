@@ -871,6 +871,16 @@ export type CampaignSkippedRecipientsDto = {
   overCap: Scalars['Int']['output'];
 };
 
+export type CancelMessageCampaignInput = {
+  campaignId: Scalars['String']['input'];
+};
+
+export type CancelMessageCampaignOutputDto = {
+  __typename?: 'CancelMessageCampaignOutputDTO';
+  campaignId: Scalars['String']['output'];
+  canceledMessageCount: Scalars['Int']['output'];
+};
+
 export type Captcha = {
   __typename?: 'Captcha';
   provider?: Maybe<CaptchaDriverType>;
@@ -2641,6 +2651,7 @@ export type Mutation = {
   assignRoleToAgent: Scalars['Boolean']['output'];
   assignRoleToApiKey: Scalars['Boolean']['output'];
   authorizeApp: AuthorizeApp;
+  cancelMessageCampaign: CancelMessageCampaignOutputDto;
   cancelSwitchBillingInterval: BillingUpdate;
   cancelSwitchBillingPlan: BillingUpdate;
   cancelSwitchResourceCreditPrice: BillingUpdate;
@@ -2925,6 +2936,11 @@ export type MutationAuthorizeAppArgs = {
   redirectUrl: Scalars['String']['input'];
   scope?: InputMaybe<Scalars['String']['input']>;
   state?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type MutationCancelMessageCampaignArgs = {
+  input: CancelMessageCampaignInput;
 };
 
 

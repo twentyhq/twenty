@@ -2706,6 +2706,11 @@ type CampaignAudiencePreviewDTO {
   sendable: Int!
 }
 
+type CancelMessageCampaignOutputDTO {
+  campaignId: String!
+  canceledMessageCount: Int!
+}
+
 type SendEmailViaDomainOutput {
   messageId: String!
 }
@@ -3652,6 +3657,7 @@ type Mutation {
   removeRoleFromAgent(agentId: UUID!): Boolean!
   sendEmailViaEmailingDomain(input: SendEmailViaDomainInput!): SendEmailViaDomainOutput!
   sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
+  cancelMessageCampaign(input: CancelMessageCampaignInput!): CancelMessageCampaignOutputDTO!
   sendMessageCampaignTest(input: SendMessageCampaignTestInput!): SendEmailViaDomainOutput!
   createUnsubscribeTopic(input: CreateUnsubscribeTopicInput!): UnsubscribeTopic!
   updateUnsubscribeTopic(input: UpdateUnsubscribeTopicInput!): UnsubscribeTopic!
@@ -4734,6 +4740,10 @@ input SendEmailViaDomainInput {
 }
 
 input SendMessageCampaignInput {
+  campaignId: String!
+}
+
+input CancelMessageCampaignInput {
   campaignId: String!
 }
 
