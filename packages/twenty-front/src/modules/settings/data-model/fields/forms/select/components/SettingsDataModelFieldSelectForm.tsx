@@ -68,7 +68,7 @@ type SettingsDataModelFieldSelectFormProps = {
 };
 
 const StyledContainerWrapper = styled.div`
-  > * {
+  > div {
     padding-bottom: 14px;
   }
 `;
@@ -128,7 +128,7 @@ const StyledIconPointContainer = styled.span`
 `;
 
 const StyledFooterContainer = styled.div`
-  > * {
+  > div {
     background-color: ${themeCssVariables.background.secondary};
     padding: ${themeCssVariables.spacing[1]};
   }

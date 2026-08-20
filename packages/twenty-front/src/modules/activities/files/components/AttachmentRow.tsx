@@ -72,6 +72,10 @@ const StyledLinkContainer = styled.div`
   width: 100%;
 `;
 
+const StyledTextInputContainer = styled.div`
+  width: 100%;
+`;
+
 type AttachmentRowProps = {
   attachment: AttachmentWithFile;
   onPreview?: (attachment: AttachmentWithFile) => void;
@@ -153,14 +157,25 @@ export const AttachmentRow = ({
     downloadFile(fileUrl, `${attachmentFileName}${attachmentFileExtension}`);
   };
 
-  const handleOpenDocument = (e: React.MouseEvent) => {
+  const handleRowClick = () => {
+    if (isDefined(onPreview)) {
+      onPreview(attachment);
+      return;
+    }
+
+    window.open(getSafeUrl(fileUrl), '_blank', 'noopener,noreferrer');
+  };
+
+  const handleFileLinkClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.stopPropagation();
+
     // Cmd/Ctrl+click opens new tab, right click opens context menu
-    if (isNavigationModifierPressed(e) === true) {
+    if (isNavigationModifierPressed(event) === true) {
       return;
     }
 
     if (isDefined(onPreview)) {
-      e.preventDefault();
+      event.preventDefault();
       onPreview(attachment);
     }
   };
@@ -173,22 +188,26 @@ export const AttachmentRow = ({
         } as GenericFieldContextType
       }
     >
-      <ActivityRow disabled>
+      <ActivityRow onClick={handleRowClick} disabled={isEditing}>
         <StyledLeftContent>
           <FileIcon fileCategory={fileCategory} thumbnailUrl={fileUrl} />
           {isEditing ? (
-            <SettingsTextInput
-              instanceId={`attachment-${attachment.id}-name`}
-              value={attachmentFileName}
-              onChange={handleOnChange}
-              onBlur={handleOnBlur}
-              autoFocus
-              onKeyDown={handleOnKeyDown}
-            />
+            <StyledTextInputContainer
+              onClick={(event) => event.stopPropagation()}
+            >
+              <SettingsTextInput
+                instanceId={`attachment-${attachment.id}-name`}
+                value={attachmentFileName}
+                onChange={handleOnChange}
+                onBlur={handleOnBlur}
+                autoFocus
+                onKeyDown={handleOnKeyDown}
+              />
+            </StyledTextInputContainer>
           ) : (
             <StyledLinkContainer>
               <StyledLink
-                onClick={handleOpenDocument}
+                onClick={handleFileLinkClick}
                 href={getSafeUrl(fileUrl)}
                 target="_blank"
                 rel="noopener noreferrer"
