@@ -56,6 +56,8 @@ export const resolveCampaignSendFailure = (
       return failed(CAMPAIGN_FAILURE_REASON.INSUFFICIENT_PERMISSIONS, false);
     case EmailingDomainDriverExceptionCode.CONFIGURATION_ERROR:
       return failed(CAMPAIGN_FAILURE_REASON.CONFIGURATION_ERROR, false);
+    case EmailingDomainDriverExceptionCode.SANDBOX_ACCOUNT:
+      return failed(CAMPAIGN_FAILURE_REASON.SANDBOX_ACCOUNT, false);
     default:
       return assertUnreachable(error.code);
   }

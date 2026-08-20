@@ -1,3 +1,4 @@
+import { CAMPAIGN_SEND_RETRY_LIMIT } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-limit.constant';
 import { CAMPAIGN_SEND_RETRY_BACKOFF } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-backoff.constant';
 import { CAMPAIGN_MATERIALIZATION_CHUNK_SIZE } from 'src/engine/core-modules/emailing-domain/constants/campaign-materialization-chunk-size.constant';
 import { Injectable } from '@nestjs/common';
@@ -54,7 +55,7 @@ export class MessageCampaignMaterializationService {
     private readonly campaignDeliveryRepository: WorkspaceScopedRepository<CampaignDeliveryEntity>,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
-    @InjectMessageQueue(MessageQueue.emailQueue)
+    @InjectMessageQueue(MessageQueue.campaignQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
@@ -249,7 +250,10 @@ export class MessageCampaignMaterializationService {
         recipientEmail: recipient.email,
         emailingDomainId,
       })),
-      { retryLimit: 3, backoff: CAMPAIGN_SEND_RETRY_BACKOFF },
+      {
+        retryLimit: CAMPAIGN_SEND_RETRY_LIMIT,
+        backoff: CAMPAIGN_SEND_RETRY_BACKOFF,
+      },
     );
   }
 

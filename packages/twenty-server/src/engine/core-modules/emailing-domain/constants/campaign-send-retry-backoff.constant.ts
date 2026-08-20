@@ -2,6 +2,6 @@ import { type QueueJobBackoffOptions } from 'src/engine/core-modules/message-que
 
 export const CAMPAIGN_SEND_RETRY_BACKOFF = {
   strategy: 'exponential',
-  initialDelayMilliseconds: 30_000,
+  initialDelayMilliseconds: 5_000,
   jitter: 0.5,
 } as const satisfies QueueJobBackoffOptions;

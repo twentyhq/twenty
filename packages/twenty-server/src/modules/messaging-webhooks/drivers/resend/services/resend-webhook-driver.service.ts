@@ -1,16 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined, isNonEmptyArray, parseJson } from 'twenty-shared/utils';
+import { isDefined, parseJson } from 'twenty-shared/utils';
 
 import { RESEND_WORKSPACE_TAG_NAME } from 'src/engine/core-modules/emailing-domain/drivers/resend/constants/resend-workspace-tag-name.constant';
-import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
 import { ResendWebhookVerifierService } from 'src/modules/messaging-webhooks/drivers/resend/services/resend-webhook-verifier.service';
 import { type ResendWebhookHeaders } from 'src/modules/messaging-webhooks/drivers/resend/types/resend-webhook-headers.type';
 import { type ResendWebhookEvent } from 'src/modules/messaging-webhooks/drivers/resend/types/resend-webhook-event.type';
 import { getResendEventTagValue } from 'src/modules/messaging-webhooks/drivers/resend/utils/get-resend-event-tag-value.util';
+import { resolveResendOutboundDeliveryOutcome } from 'src/modules/messaging-webhooks/drivers/resend/utils/resolve-resend-outbound-delivery-outcome.util';
 import { InboundMailHandlerService } from 'src/modules/messaging-webhooks/handlers/inbound-mail-handler.service';
-import { OutboundSuppressionHandlerService } from 'src/modules/messaging-webhooks/handlers/outbound-suppression-handler.service';
+import { OutboundDeliveryEventHandlerService } from 'src/modules/messaging-webhooks/handlers/outbound-delivery-event-handler.service';
 import { MessagingWebhookExceptionCode } from 'src/modules/messaging-webhooks/messaging-webhook-exception-code.enum';
 import { MessagingWebhookException } from 'src/modules/messaging-webhooks/messaging-webhook.exception';
 import { INBOUND_EMAIL_MESSAGE_SOURCE } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/constants/inbound-email-message-source.constant';
@@ -21,12 +21,21 @@ export class ResendWebhookDriverService {
 
   constructor(
     private readonly resendWebhookVerifierService: ResendWebhookVerifierService,
-    private readonly outboundSuppressionHandlerService: OutboundSuppressionHandlerService,
+    private readonly outboundDeliveryEventHandlerService: OutboundDeliveryEventHandlerService,
     private readonly inboundMailHandlerService: InboundMailHandlerService,
   ) {}
 
   async handle(rawBody: Buffer, headers: ResendWebhookHeaders): Promise<void> {
     this.resendWebhookVerifierService.assertSigned(rawBody, headers);
+
+    const { svixId } = headers;
+
+    if (!isNonEmptyString(svixId)) {
+      throw new MessagingWebhookException(
+        'Resend webhook payload has no svix-id header',
+        MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_INVALID_PAYLOAD,
+      );
+    }
 
     const event = parseJson<ResendWebhookEvent>(rawBody.toString('utf8'));
 
@@ -37,39 +46,28 @@ export class ResendWebhookDriverService {
       );
     }
 
-    switch (event.type) {
-      case 'email.bounced':
-        if (event.data?.bounce?.type !== 'Permanent') {
-          return;
-        }
-        await this.handleSuppressionEvent(
-          event,
-          MessageSuppressionReason.BOUNCE,
-        );
+    if (event.type === 'email.received') {
+      await this.handleReceivedEvent(event);
 
-        return;
-      case 'email.complained':
-        await this.handleSuppressionEvent(
-          event,
-          MessageSuppressionReason.COMPLAINT,
-        );
-
-        return;
-      case 'email.received':
-        await this.handleReceivedEvent(event);
-
-        return;
-      default:
-        return;
+      return;
     }
+
+    await this.handleDeliveryEvent({ event, dedupeKey: svixId });
   }
 
-  private async handleSuppressionEvent(
-    event: ResendWebhookEvent,
-    reason:
-      | MessageSuppressionReason.BOUNCE
-      | MessageSuppressionReason.COMPLAINT,
-  ): Promise<void> {
+  private async handleDeliveryEvent({
+    event,
+    dedupeKey,
+  }: {
+    event: ResendWebhookEvent;
+    dedupeKey: string;
+  }): Promise<void> {
+    const outcome = resolveResendOutboundDeliveryOutcome(event);
+
+    if (!isDefined(outcome)) {
+      return;
+    }
+
     const workspaceId = getResendEventTagValue(
       event.data?.tags,
       RESEND_WORKSPACE_TAG_NAME,
@@ -83,18 +81,13 @@ export class ResendWebhookDriverService {
       return;
     }
 
-    const emailAddresses = event.data?.to ?? [];
-
-    if (!isNonEmptyArray(emailAddresses)) {
-      return;
-    }
-
-    await this.outboundSuppressionHandlerService.handle({
+    await this.outboundDeliveryEventHandlerService.handle({
       workspaceId,
-      reason,
-      emailAddresses,
+      deliveryStatus: outcome.deliveryStatus,
+      suppression: outcome.suppression,
       providerMessageId: event.data?.email_id ?? null,
-      providerEventId: event.data?.email_id ?? null,
+      providerEventId: outcome.providerEventId,
+      dedupeKey,
     });
   }
 
