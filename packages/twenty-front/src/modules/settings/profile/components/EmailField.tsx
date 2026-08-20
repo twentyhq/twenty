@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { emailSchema } from 'twenty-shared/utils';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useCanEditProfileField } from '@/settings/profile/hooks/useCanEditProfileField';
@@ -60,7 +61,7 @@ export const EmailField = () => {
   const isEmailChanged =
     normalizedDraftEmail.length > 0 && normalizedDraftEmail !== currentEmail;
   const isEmailFormatValid =
-    normalizedDraftEmail.includes('@') && !normalizedDraftEmail.endsWith('@');
+    emailSchema.safeParse(normalizedDraftEmail).success;
 
   const isSaveDisabled =
     !canEdit || !isEditing || !isEmailChanged || !isEmailFormatValid;
