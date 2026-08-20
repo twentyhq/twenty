@@ -92,6 +92,16 @@ test('awards one extra point per approved case study that has a cover', () => {
   ).toBe(13);
 });
 
+test('never counts more covers than counted case studies', () => {
+  expect(
+    completenessScore({
+      ...base,
+      approvedCaseStudyCount: 1,
+      approvedCaseStudyWithCoverCount: 3,
+    }),
+  ).toBe(5);
+});
+
 test('caps the cover bonus at the three counted case studies', () => {
   expect(
     completenessScore({

@@ -15,7 +15,7 @@ export const rankPartners = (
   partners: readonly RankedMarketplacePartner[],
 ): RankedMarketplacePartner[] =>
   partners
-    .filter((p) => !isGhost(p))
+    .filter((partner) => !isGhost(partner))
     .slice()
     .sort(
       (left, right) =>
