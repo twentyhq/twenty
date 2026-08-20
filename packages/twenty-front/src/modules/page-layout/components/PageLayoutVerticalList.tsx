@@ -207,7 +207,7 @@ export const PageLayoutVerticalList = ({
               fill={fillsViewport}
             >
               <WorkflowDiagramAllowPageScrollContext.Provider
-                value={fillsViewport && hasPageScroll}
+                value={hasPageScroll}
               >
                 <WidgetRenderer widget={widget} />
               </WorkflowDiagramAllowPageScrollContext.Provider>
