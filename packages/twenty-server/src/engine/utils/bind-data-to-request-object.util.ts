@@ -11,6 +11,7 @@ export const bindDataToRequestObject = (
   request.user = data.user;
   request.apiKey = data.apiKey;
   request.application = data.application;
+  request.applicationTriggeredBy = data.applicationTriggeredBy;
   request.userWorkspace = data.userWorkspace;
   request.workspace = data.workspace;
   request.workspaceId = data.workspace?.id;

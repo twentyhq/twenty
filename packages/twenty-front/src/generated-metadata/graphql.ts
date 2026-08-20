@@ -2334,6 +2334,14 @@ export type LogicFunctionLogsInput = {
   universalIdentifier?: InputMaybe<Scalars['UUID']['input']>;
 };
 
+export type LogicFunctionTriggeredBy = {
+  __typename?: 'LogicFunctionTriggeredBy';
+  permissionFlags: Array<PermissionFlagType>;
+  userId: Scalars['UUID']['output'];
+  userWorkspaceId: Scalars['UUID']['output'];
+  workspaceMemberId?: Maybe<Scalars['UUID']['output']>;
+};
+
 export type LoginToken = {
   __typename?: 'LoginToken';
   loginToken: AuthToken;
@@ -4677,6 +4685,7 @@ export type Query = {
   githubClaimAuthorizationUrl: Scalars['String']['output'];
   isApplicationStopped: Scalars['Boolean']['output'];
   lineChartData: LineChartData;
+  logicFunctionTriggeredBy?: Maybe<LogicFunctionTriggeredBy>;
   listPlans: Array<BillingPlan>;
   messageSuppressions: MessageSuppressionList;
   metadataTranslations: Array<MetadataTranslation>;

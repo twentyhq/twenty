@@ -7045,6 +7045,9 @@ export default {
                     ]
                 }
             ],
+            "logicFunctionTriggeredBy": [
+                530
+            ],
             "appConnections": [
                 204,
                 {
@@ -12734,6 +12737,23 @@ export default {
             ],
             "universalIdentifier": [
                 3
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "LogicFunctionTriggeredBy": {
+            "userId": [
+                3
+            ],
+            "userWorkspaceId": [
+                3
+            ],
+            "workspaceMemberId": [
+                3
+            ],
+            "permissionFlags": [
+                50
             ],
             "__typename": [
                 1

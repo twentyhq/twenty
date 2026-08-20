@@ -354,7 +354,11 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       );
     }
 
-    const context: AuthContext = { application, workspace };
+    const context: AuthContext = {
+      application,
+      workspace,
+      applicationTriggeredBy: payload.triggeredBy,
+    };
 
     if (payload.userId && payload.userWorkspaceId) {
       const userContext = await this.resolveUserContext({

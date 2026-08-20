@@ -434,6 +434,38 @@ describe('JwtAuthStrategy', () => {
       }
     });
 
+    it('should expose the person an application token was minted for', async () => {
+      const validApplicationId = randomUUID();
+      const validWorkspaceId = randomUUID();
+
+      const payload = {
+        sub: validApplicationId,
+        type: JwtTokenTypeEnum.APPLICATION_ACCESS,
+        applicationId: validApplicationId,
+        workspaceId: validWorkspaceId,
+        triggeredBy: {
+          userId: randomUUID(),
+          userWorkspaceId: randomUUID(),
+        },
+      };
+
+      const mockWorkspace = new WorkspaceEntity();
+
+      mockWorkspace.id = validWorkspaceId;
+      mockWorkspace.activationStatus = WorkspaceActivationStatus.ACTIVE;
+      workspaceStore[validWorkspaceId] = mockWorkspace;
+      applicationStore[validWorkspaceId] = {
+        [validApplicationId]: { id: validApplicationId },
+      };
+
+      strategy = createStrategy();
+
+      const context = await strategy.validate(payload as JwtPayload);
+
+      expect(context.applicationTriggeredBy).toEqual(payload.triggeredBy);
+      expect(context.user).toBeUndefined();
+    });
+
     it('should reject an application token bound to a user that cannot be resolved', async () => {
       const validApplicationId = randomUUID();
       const validWorkspaceId = randomUUID();

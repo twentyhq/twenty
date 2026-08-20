@@ -2768,6 +2768,15 @@ export interface AppKeyValue {
 }
 
 
+export interface LogicFunctionTriggeredBy {
+    userId: Scalars['UUID']
+    userWorkspaceId: Scalars['UUID']
+    workspaceMemberId?: Scalars['UUID']
+    permissionFlags: PermissionFlagType[]
+    __typename: 'LogicFunctionTriggeredBy'
+}
+
+
 /** WORKSPACE entries are private to one workspace install of the application. SERVER entries are shared across every install: the value is always the claiming workspaceId and only that workspace can overwrite or delete the key. */
 export type AppKeyValueScope = 'WORKSPACE' | 'SERVER'
 
@@ -2955,6 +2964,7 @@ export interface Query {
     myCalendarChannels: CalendarChannel[]
     minimalMetadata: MinimalMetadata
     appKeyValue?: AppKeyValue
+    logicFunctionTriggeredBy?: LogicFunctionTriggeredBy
     appConnections: AppConnection[]
     appConnection: AppConnection
     findWorkspaceAiStats: WorkspaceAiStats
@@ -6160,6 +6170,15 @@ export interface AppKeyValueGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface LogicFunctionTriggeredByGenqlSelection{
+    userId?: boolean | number
+    userWorkspaceId?: boolean | number
+    workspaceMemberId?: boolean | number
+    permissionFlags?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface CalendarChannelGenqlSelection{
     id?: boolean | number
     handle?: boolean | number
@@ -6347,6 +6366,7 @@ export interface QueryGenqlSelection{
     myCalendarChannels?: (CalendarChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
     minimalMetadata?: MinimalMetadataGenqlSelection
     appKeyValue?: (AppKeyValueGenqlSelection & { __args: {key: Scalars['String'], scope?: (AppKeyValueScope | null)} })
+    logicFunctionTriggeredBy?: LogicFunctionTriggeredByGenqlSelection
     appConnections?: (AppConnectionGenqlSelection & { __args?: {filter?: (ListAppConnectionsInput | null)} })
     appConnection?: (AppConnectionGenqlSelection & { __args: {id: Scalars['ID']} })
     findWorkspaceAiStats?: WorkspaceAiStatsGenqlSelection

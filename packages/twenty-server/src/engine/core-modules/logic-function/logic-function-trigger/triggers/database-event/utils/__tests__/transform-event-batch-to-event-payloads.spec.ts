@@ -450,4 +450,40 @@ describe('transformEventBatchToEventPayloads', () => {
       expect(result).toHaveLength(0);
     });
   });
+
+  describe('triggered by', () => {
+    it('should carry the mutator identity from the event', () => {
+      const workspaceEventBatch = createMockWorkspaceEventBatch({
+        events: [
+          createMockEvent({
+            userId: 'user-1',
+            userWorkspaceId: 'user-workspace-1',
+          }),
+        ],
+      });
+      const logicFunctions = [createMockLogicFunction()];
+
+      const result = transformEventBatchToEventPayloads({
+        workspaceEventBatch,
+        logicFunctions,
+      });
+
+      expect(result[0].triggeredBy).toEqual({
+        userId: 'user-1',
+        userWorkspaceId: 'user-workspace-1',
+      });
+    });
+
+    it('should carry no identity for a mutation nobody triggered', () => {
+      const workspaceEventBatch = createMockWorkspaceEventBatch();
+      const logicFunctions = [createMockLogicFunction()];
+
+      const result = transformEventBatchToEventPayloads({
+        workspaceEventBatch,
+        logicFunctions,
+      });
+
+      expect(result[0].triggeredBy).toBeUndefined();
+    });
+  });
 });

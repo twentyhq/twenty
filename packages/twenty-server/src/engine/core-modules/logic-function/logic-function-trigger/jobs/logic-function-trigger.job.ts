@@ -2,6 +2,8 @@ import { Logger, Scope } from '@nestjs/common';
 
 import { RetryableLogicFunctionError } from 'twenty-shared/logic-function';
 
+import { type ApplicationTriggeredBy } from 'src/engine/core-modules/auth/types/application-triggered-by.type';
+
 import { LOGIC_FUNCTION_APPLICATION_RETRY_LIMIT } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-application-retry-limit.constant';
 import { isRetryableLogicFunctionExecutionError } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/is-retryable-logic-function-execution-error.util';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -20,6 +22,7 @@ export type LogicFunctionTriggerJobData = {
   payload?: object;
   userId?: string;
   userWorkspaceId?: string;
+  triggeredBy?: ApplicationTriggeredBy;
   applicationRetryCount?: number;
 };
 
@@ -61,6 +64,7 @@ export class LogicFunctionTriggerJob {
             payload: logicFunctionPayload.payload ?? {},
             userId: logicFunctionPayload.userId,
             userWorkspaceId: logicFunctionPayload.userWorkspaceId,
+            triggeredBy: logicFunctionPayload.triggeredBy,
             context: { retryCount, maxRetries },
           });
 

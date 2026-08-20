@@ -30,6 +30,7 @@ import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/event-log
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { type ApplicationVariableCacheMaps } from 'src/engine/core-modules/application/application-variable/types/application-variable-cache-maps.type';
 import { isBillingExemptApplication } from 'src/engine/core-modules/application/application-marketplace/utils/is-billing-exempt-application.util';
+import { type ApplicationTriggeredBy } from 'src/engine/core-modules/auth/types/application-triggered-by.type';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
@@ -109,6 +110,7 @@ export class LogicFunctionExecutorService {
     payload,
     userId,
     userWorkspaceId,
+    triggeredBy,
     executionMode,
     context = { retryCount: 0, maxRetries: 0 },
   }: {
@@ -117,6 +119,7 @@ export class LogicFunctionExecutorService {
     payload: object;
     userId?: string;
     userWorkspaceId?: string;
+    triggeredBy?: ApplicationTriggeredBy;
     executionMode?: LogicFunctionExecutionMode;
     context?: LogicFunctionExecutionContext;
   }): Promise<LogicFunctionExecuteResult> {
@@ -138,6 +141,7 @@ export class LogicFunctionExecutorService {
       applicationVariableMaps,
       userId,
       userWorkspaceId,
+      triggeredBy,
     });
 
     const driver = this.logicFunctionDriverFactory.getCurrentDriver();
@@ -328,12 +332,14 @@ export class LogicFunctionExecutorService {
     applicationVariableMaps,
     userId,
     userWorkspaceId,
+    triggeredBy,
   }: {
     workspaceId: string;
     flatApplication: FlatApplication;
     applicationVariableMaps: ApplicationVariableCacheMaps;
     userId?: string;
     userWorkspaceId?: string;
+    triggeredBy?: ApplicationTriggeredBy;
   }) {
     const applicationAccessToken =
       await this.applicationTokenService.generateApplicationAccessToken({
@@ -341,6 +347,7 @@ export class LogicFunctionExecutorService {
         applicationId: flatApplication.id,
         userId,
         userWorkspaceId,
+        triggeredBy,
       });
 
     const baseUrl = cleanServerUrl(this.twentyConfigService.get('SERVER_URL'));

@@ -3091,6 +3091,13 @@ type AppKeyValue {
   scope: AppKeyValueScope!
 }
 
+type LogicFunctionTriggeredBy {
+  userId: UUID!
+  userWorkspaceId: UUID!
+  workspaceMemberId: UUID
+  permissionFlags: [PermissionFlagType!]!
+}
+
 """
 WORKSPACE entries are private to one workspace install of the application. SERVER entries are shared across every install: the value is always the claiming workspaceId and only that workspace can overwrite or delete the key.
 """
@@ -3358,6 +3365,7 @@ type Query {
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
   minimalMetadata: MinimalMetadata!
   appKeyValue(key: String!, scope: AppKeyValueScope = WORKSPACE): AppKeyValue
+  logicFunctionTriggeredBy: LogicFunctionTriggeredBy
   appConnections(filter: ListAppConnectionsInput): [AppConnection!]!
   appConnection(id: ID!): AppConnection!
   findWorkspaceAiStats: WorkspaceAiStats!

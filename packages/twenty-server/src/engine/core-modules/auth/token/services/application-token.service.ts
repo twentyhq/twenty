@@ -3,9 +3,10 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { type Repository } from 'typeorm';
 import { addMilliseconds } from 'date-fns';
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import ms from 'ms';
 
+import { type ApplicationTriggeredBy } from 'src/engine/core-modules/auth/types/application-triggered-by.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type ApplicationAccessTokenJwtPayload } from 'src/engine/core-modules/auth/types/application-access-token-jwt-payload.type';
@@ -44,11 +45,13 @@ export class ApplicationTokenService {
     applicationId,
     userWorkspaceId,
     userId,
+    triggeredBy,
   }: {
     workspaceId: string;
     applicationId: string;
     userWorkspaceId?: string;
     userId?: string;
+    triggeredBy?: ApplicationTriggeredBy;
   }): Promise<AuthToken> {
     await this.validateWorkspaceAndApplication(workspaceId, applicationId);
 
@@ -61,6 +64,7 @@ export class ApplicationTokenService {
       applicationId,
       userWorkspaceId,
       userId,
+      triggeredBy,
       tokenType: JwtTokenTypeEnum.APPLICATION_ACCESS,
       expiresIn,
     });
@@ -235,6 +239,7 @@ export class ApplicationTokenService {
     applicationId,
     userWorkspaceId,
     userId,
+    triggeredBy,
     tokenType,
     expiresIn,
   }: {
@@ -242,6 +247,7 @@ export class ApplicationTokenService {
     applicationId: string;
     userWorkspaceId?: string;
     userId?: string;
+    triggeredBy?: ApplicationTriggeredBy;
     tokenType:
       | JwtTokenTypeEnum.APPLICATION_ACCESS
       | JwtTokenTypeEnum.APPLICATION_REFRESH;
@@ -256,8 +262,9 @@ export class ApplicationTokenService {
       applicationId,
       workspaceId,
       type: tokenType,
-      ...(userWorkspaceId ? { userWorkspaceId } : {}),
-      ...(userId ? { userId } : {}),
+      ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
+      ...(isDefined(userId) ? { userId } : {}),
+      ...(isDefined(triggeredBy) ? { triggeredBy } : {}),
     };
 
     return {

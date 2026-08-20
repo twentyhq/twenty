@@ -641,6 +641,36 @@ const handler = async (params: { parentMessageId?: string }) => {
 **Install hooks** — pre-install, post-install, and uninstall handlers — share this runtime but are declared with their own define functions and don't take trigger settings. See [Install Hooks](/developers/extend/apps/config/install-hooks) for `definePreInstallLogicFunction`, `definePostInstallLogicFunction`, and `defineUninstallLogicFunction`.
 </Note>
 
+## Knowing who triggered a run
+
+A logic function always acts with your app's own access, never the caller's. When a run was started by a signed-in person, `getTriggeredBy` tells you who that was and what they are allowed to do, so your function can apply its own rules before acting.
+
+```ts
+import { getTriggeredBy, PermissionFlagType } from 'twenty-sdk/logic-function';
+
+const handler = async () => {
+  const triggeredBy = await getTriggeredBy();
+
+  if (!triggeredBy?.permissionFlags.includes(PermissionFlagType.WORKSPACE_MEMBERS)) {
+    throw new Error('Only admins can approve links');
+  }
+
+  // triggeredBy.workspaceMemberId is the member to attribute the approval to
+};
+```
+
+It returns `null` when nobody triggered the run: cron triggers, unauthenticated webhooks, and install hooks. Otherwise it returns the person's `userId`, `userWorkspaceId`, `workspaceMemberId`, and the `permissionFlags` their roles grant them.
+
+The identity is the one the server recorded when it started the run, carried by the app access token. Your function never passes it in and cannot ask about anyone else, so the answer cannot be steered from inside the runtime. The flags describe what that person may do in the workspace; they do not change what your function may do, which stays your app's own access.
+
+<Accordion title="Valid PermissionFlagType values">
+
+Settings permissions: `API_KEYS_AND_WEBHOOKS`, `WORKSPACE`, `WORKSPACE_MEMBERS`, `ROLES`, `DATA_MODEL`, `SECURITY`, `WORKFLOWS`, `IMPERSONATE`, `SSO_BYPASS`, `APPLICATIONS`, `MARKETPLACE_APPS`, `LAYOUTS`, `BILLING`, `AI_SETTINGS`.
+
+Feature and tool permissions: `AI`, `VIEWS`, `UPLOAD_FILE`, `DOWNLOAD_FILE`, `SEND_EMAIL_TOOL`, `CREATE_CALENDAR_EVENT_TOOL`, `HTTP_REQUEST_TOOL`, `CODE_INTERPRETER_TOOL`, `IMPORT_CSV`, `EXPORT_CSV`, `CONNECTED_ACCOUNTS`, `PROFILE_INFORMATION`.
+
+</Accordion>
+
 ## Typed API clients (twenty-client-sdk)
 
 The `twenty-client-sdk` package provides two typed GraphQL clients for interacting with the Twenty API from your logic functions and front components.

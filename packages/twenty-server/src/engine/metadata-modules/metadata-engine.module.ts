@@ -9,6 +9,7 @@ import { AiWorkspaceStatsModule } from 'src/engine/metadata-modules/ai/ai-worksp
 import { ApplicationConnectionsModule } from 'src/engine/core-modules/application/connection-provider/connections/application-connections.module';
 import { ApplicationJobModule } from 'src/engine/core-modules/application/application-job/application-job.module';
 import { ApplicationKeyValueModule } from 'src/engine/core-modules/application/application-key-value/application-key-value.module';
+import { ApplicationTriggeredByModule } from 'src/engine/core-modules/application/application-triggered-by/application-triggered-by.module';
 import { CalendarChannelMetadataModule } from 'src/engine/metadata-modules/calendar-channel/calendar-channel-metadata.module';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { CommandMenuItemModule } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.module';
@@ -55,6 +56,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     ApplicationConnectionsModule,
     ApplicationJobModule,
     ApplicationKeyValueModule,
+    ApplicationTriggeredByModule,
     MinimalMetadataModule,
     ViewModule,
     WorkspaceMetadataVersionModule,

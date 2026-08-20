@@ -1,5 +1,7 @@
 import { type APP_LOCALES } from 'twenty-shared/translations';
 
+import { type ApplicationTriggeredBy } from 'src/engine/core-modules/auth/types/application-triggered-by.type';
+
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type RawAuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -15,6 +17,7 @@ declare module 'express-serve-static-core' {
     user?: FlatAuthContextUser | null;
     apiKey?: FlatApiKey | null;
     application?: FlatApplication | null;
+    applicationTriggeredBy?: ApplicationTriggeredBy;
     userWorkspace?: FlatUserWorkspace;
     locale: keyof typeof APP_LOCALES;
     workspace?: FlatWorkspace;

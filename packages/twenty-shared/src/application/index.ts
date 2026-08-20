@@ -115,6 +115,7 @@ export type {
   DatabaseEventTriggerSettings,
   HttpRouteTriggerSettings,
 } from './logicFunctionManifestType';
+export type { LogicFunctionTriggeredBy } from './logicFunctionTriggeredByType';
 export type { TranslationsManifest, Manifest } from './manifestType';
 export type { NavigationMenuItemManifest } from './navigationMenuItemManifestType';
 export type { OAuthConnectionProviderConfig } from './oauthConnectionProviderConfigType';

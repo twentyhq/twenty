@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type ApplicationTriggeredBy } from 'src/engine/core-modules/auth/types/application-triggered-by.type';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { buildLogicFunctionEvent } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/build-logic-function-event.util';
 import {
@@ -29,6 +30,7 @@ export class LogicFunctionTriggerService {
     forwardAllHeaders = false,
     userId,
     userWorkspaceId,
+    triggeredBy,
   }: {
     logicFunction: LogicFunctionEntity;
     request: Request;
@@ -37,6 +39,7 @@ export class LogicFunctionTriggerService {
     forwardAllHeaders?: boolean;
     userId?: string | null;
     userWorkspaceId?: string | null;
+    triggeredBy?: ApplicationTriggeredBy;
   }): Promise<LogicFunctionTriggerOutcome> {
     const event = buildLogicFunctionEvent({
       request,
@@ -52,6 +55,7 @@ export class LogicFunctionTriggerService {
       payload: event,
       ...(isDefined(userId) ? { userId } : {}),
       ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
+      ...(isDefined(triggeredBy) ? { triggeredBy } : {}),
     });
 
     if (!isDefined(result)) {

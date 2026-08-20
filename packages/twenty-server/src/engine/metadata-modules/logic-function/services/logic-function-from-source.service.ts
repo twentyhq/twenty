@@ -6,6 +6,7 @@ import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type ApplicationTriggeredBy } from 'src/engine/core-modules/auth/types/application-triggered-by.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
@@ -348,10 +349,12 @@ export class LogicFunctionFromSourceService {
     id,
     payload,
     workspaceId,
+    triggeredBy,
   }: {
     id: string;
     payload: object;
     workspaceId: string;
+    triggeredBy?: ApplicationTriggeredBy;
   }): Promise<LogicFunctionExecutionResultDTO> {
     const { flatLogicFunction } =
       await this.helperService.findLogicFunctionAndApplicationOrThrow({
@@ -367,6 +370,7 @@ export class LogicFunctionFromSourceService {
       logicFunctionId: id,
       workspaceId,
       payload,
+      triggeredBy,
       executionMode: LogicFunctionExecutionMode.LIVE,
     });
 

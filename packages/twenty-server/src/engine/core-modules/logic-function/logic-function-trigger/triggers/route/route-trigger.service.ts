@@ -20,6 +20,8 @@ import {
   RouteTriggerException,
   RouteTriggerExceptionCode,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception';
+import { type ApplicationTriggeredBy } from 'src/engine/core-modules/auth/types/application-triggered-by.type';
+import { buildApplicationTriggeredBy } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-application-triggered-by.util';
 import { LogicFunctionTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/logic-function-trigger.service';
 import { type RouteTriggerResponse } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
 import { sanitizeRouteTriggerPath } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/sanitize-route-trigger-path.util';
@@ -287,6 +289,7 @@ export class RouteTriggerService {
 
     let userWorkspaceId: string | null = null;
     let userId: string | null = null;
+    let triggeredBy: ApplicationTriggeredBy | undefined = undefined;
 
     if (httpRouteSettings?.isAuthRequired) {
       const routeAuthenticationContext =
@@ -309,6 +312,7 @@ export class RouteTriggerService {
 
       userWorkspaceId = routeAuthenticationContext.userWorkspaceId ?? null;
       userId = routeAuthenticationContext.user?.id ?? null;
+      triggeredBy = buildApplicationTriggeredBy({ userId, userWorkspaceId });
     }
 
     let outcome;
@@ -323,6 +327,7 @@ export class RouteTriggerService {
         forwardAllHeaders: isIsolatedOrigin,
         userId,
         userWorkspaceId,
+        triggeredBy,
       });
     } catch (error) {
       if (error instanceof RouteTriggerException) {
