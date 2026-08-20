@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type FullNameMetadata } from 'twenty-shared/types';
 import { isWorkspaceProvisioned } from 'twenty-shared/workspace';
-import { Brackets, ILike, In, IsNull, Repository } from 'typeorm';
+import { Brackets, In, IsNull, Repository } from 'typeorm';
 
 import { type AdminPanelRecentUserDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-recent-user.dto';
 import { type AdminPanelTopWorkspaceDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-top-workspace.dto';
@@ -18,6 +18,8 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 const RECENT_USERS_LIMIT = 10;
 const TOP_WORKSPACES_LIMIT = 10;
+// Names live in a different table, so search is done in memory over a wider pool.
+const RECENT_USERS_SEARCH_CANDIDATE_LIMIT = 200;
 
 @Injectable()
 export class AdminPanelStatisticsService {
@@ -35,6 +37,7 @@ export class AdminPanelStatisticsService {
     searchTerm?: string,
   ): Promise<AdminPanelRecentUserDTO[]> {
     const trimmedSearch = searchTerm?.trim();
+    const hasSearch = isNonEmptyString(trimmedSearch);
 
     const queryBuilder = this.userRepository
       .createQueryBuilder('user')
@@ -51,22 +54,9 @@ export class AdminPanelStatisticsService {
       .where({ deletedAt: IsNull() })
       .orderBy('user.createdAt', 'DESC')
       .addOrderBy('userWorkspace.createdAt', 'DESC')
-      .take(RECENT_USERS_LIMIT);
-
-    if (trimmedSearch && trimmedSearch.length > 0) {
-      const like = `%${trimmedSearch}%`;
-
-      queryBuilder.andWhere(
-        new Brackets((qb) => {
-          qb.where({ email: ILike(like) })
-            .orWhere(
-              `CONCAT("user"."firstName", ' ', "user"."lastName") ILIKE :like`,
-              { like },
-            )
-            .orWhere('"user"."id"::text ILIKE :like', { like });
-        }),
+      .take(
+        hasSearch ? RECENT_USERS_SEARCH_CANDIDATE_LIMIT : RECENT_USERS_LIMIT,
       );
-    }
 
     const users = await queryBuilder.getMany();
 
@@ -76,7 +66,7 @@ export class AdminPanelStatisticsService {
         this.buildWorkspaceMemberNamesByUserId(users),
       ]);
 
-    return Promise.all(
+    const recentUsers = await Promise.all(
       users.map(async (user) => {
         const displayWorkspace = user.userWorkspaces[0]?.workspace;
         // name is sourced from workspaceMember, not user
@@ -96,6 +86,24 @@ export class AdminPanelStatisticsService {
         };
       }),
     );
+
+    if (!hasSearch) {
+      return recentUsers;
+    }
+
+    const lowerCaseSearch = trimmedSearch.toLowerCase();
+
+    return recentUsers
+      .filter((user) => {
+        const fullName = `${user.firstName ?? ''} ${user.lastName ?? ''}`;
+
+        return (
+          user.email.toLowerCase().includes(lowerCaseSearch) ||
+          user.id.toLowerCase().includes(lowerCaseSearch) ||
+          fullName.toLowerCase().includes(lowerCaseSearch)
+        );
+      })
+      .slice(0, RECENT_USERS_LIMIT);
   }
 
   async getTopWorkspaces(
