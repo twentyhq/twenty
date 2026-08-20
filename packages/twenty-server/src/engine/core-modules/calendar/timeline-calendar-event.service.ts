@@ -54,9 +54,10 @@ export class TimelineCalendarEventService {
       async () => {
         const offset = (page - 1) * pageSize;
 
-        // Runs under a system auth context: the timeline loads participants
-        // (person, workspaceMember) the caller's role may not be able to read,
-        // then redacts each event itself through `visibility` below.
+        // Runs under a system auth context, which resolves no role, so without
+        // this the participant relations (person, workspaceMember) are read with
+        // empty permissions and denied for everyone. Channel-level redaction of
+        // title and description below is what gates the caller's access.
         const calendarEventRepository =
           await this.globalWorkspaceOrmManager.getRepository<CalendarEventWorkspaceEntity>(
             workspaceId,
@@ -118,7 +119,6 @@ export class TimelineCalendarEventService {
           await this.globalWorkspaceOrmManager.getRepository<CallRecordingWorkspaceEntity>(
             workspaceId,
             'callRecording',
-            { shouldBypassPermissionChecks: true },
           );
 
         const callRecordings = await callRecordingRepository.find({
