@@ -90,6 +90,19 @@ describe('ThemeProvider token resolution', () => {
     return null;
   };
 
+  const mockResolvedTokens = (resolvedTokens: Record<string, string>) => {
+    jest.spyOn(window, 'getComputedStyle').mockReturnValue({
+      getPropertyValue: (property: string) => resolvedTokens[property] ?? '',
+    } as CSSStyleDeclaration);
+  };
+
+  const renderThemeSpy = () =>
+    render(
+      <ThemeProvider colorScheme="light">
+        <ThemeSpy />
+      </ThemeProvider>,
+    );
+
   beforeEach(() => {
     latestTheme = undefined;
   });
@@ -98,16 +111,10 @@ describe('ThemeProvider token resolution', () => {
     jest.restoreAllMocks();
   });
 
-  // jsdom never applies theme-light.css / theme-dark.css (CSS imports are
-  // mocked out in Jest), so getComputedStyle().getPropertyValue('--t-...')
-  // returns '' for every design token here, the same failure mode as the
-  // front-component sandbox described in issue #24052.
-  it('falls back to the original CSS variable reference when a token cannot be resolved', () => {
-    render(
-      <ThemeProvider colorScheme="light">
-        <ThemeSpy />
-      </ThemeProvider>,
-    );
+  it('should keep the CSS variable reference when no custom property resolves', () => {
+    mockResolvedTokens({});
+
+    renderThemeSpy();
 
     expect(latestTheme?.icon.size.md).toBe(themeCssVariables.icon.size.md);
     expect(latestTheme?.font.color.primary).toBe(
@@ -115,19 +122,24 @@ describe('ThemeProvider token resolution', () => {
     );
   });
 
-  it('still resolves numeric CSS variables that are readable, alongside unresolved ones', () => {
-    jest.spyOn(window, 'getComputedStyle').mockReturnValue({
-      getPropertyValue: (property: string) =>
-        property === '--t-icon-size-md' ? '16' : '',
-    } as CSSStyleDeclaration);
+  it('should resolve numeric custom properties and keep the reference for the rest', () => {
+    mockResolvedTokens({ '--t-icon-size-md': '16' });
 
-    render(
-      <ThemeProvider colorScheme="light">
-        <ThemeSpy />
-      </ThemeProvider>,
-    );
+    renderThemeSpy();
 
     expect(latestTheme?.icon.size.md).toBe(16);
     expect(latestTheme?.icon.size.sm).toBe(themeCssVariables.icon.size.sm);
+  });
+
+  it('should resolve string custom properties to their computed value', () => {
+    mockResolvedTokens({
+      '--t-font-color-primary': '#181d27',
+      '--t-border-radius-sm': '4px',
+    });
+
+    renderThemeSpy();
+
+    expect(latestTheme?.font.color.primary).toBe('#181d27');
+    expect(latestTheme?.border.radius.sm).toBe('4px');
   });
 });
