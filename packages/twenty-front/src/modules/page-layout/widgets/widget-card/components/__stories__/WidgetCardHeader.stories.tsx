@@ -31,7 +31,7 @@ const WidgetCardHeaderStory = ({
       <WidgetHeaderCountEffect count={count} />
       <WidgetCardHeader
         widgetId={widgetId}
-        variant="dashboard"
+        variant="framed"
         isInEditMode={isInEditMode}
         title={title}
       />
@@ -100,7 +100,7 @@ const UnmountingContentStory = () => {
         {isContentMounted && <WidgetHeaderCountEffect count={42} />}
         <WidgetCardHeader
           widgetId={`${WIDGET_ID}-unmount`}
-          variant="dashboard"
+          variant="framed"
           isInEditMode={false}
           title="Call recordings"
         />
@@ -138,7 +138,7 @@ export const CountEffectNoOpsOutsideWidget: Story = {
       >
         <WidgetCardHeader
           widgetId={`${WIDGET_ID}-outside`}
-          variant="dashboard"
+          variant="framed"
           isInEditMode={false}
           title="Call recordings"
         />

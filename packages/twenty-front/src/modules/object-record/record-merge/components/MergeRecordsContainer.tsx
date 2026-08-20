@@ -1,4 +1,6 @@
 import { styled } from '@linaria/react';
+import { useEffect, useRef } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
@@ -34,6 +36,8 @@ const StyledTabListContainer = styled.div`
 
 const StyledContentContainer = styled.div`
   background: ${themeCssVariables.background.primary};
+  container-name: tab-viewport;
+  container-type: size;
   flex: 1;
   overflow-y: auto;
 `;
@@ -57,6 +61,14 @@ export const MergeRecordsContainer = ({
     instanceId,
   );
 
+  const contentContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isDefined(contentContainerRef.current)) {
+      contentContainerRef.current.scrollTop = 0;
+    }
+  }, [activeTabId]);
+
   return (
     <SidePanelProvider value={{ isInSidePanel: true }}>
       <ShowPageContainer>
@@ -72,7 +84,7 @@ export const MergeRecordsContainer = ({
               />
             </StyledTabListContainer>
           </TabListComponentInstanceContext.Provider>
-          <StyledContentContainer>
+          <StyledContentContainer ref={contentContainerRef}>
             {activeTabId === MergeRecordsTabId.MERGE_PREVIEW && (
               <MergePreviewTab objectNameSingular={objectNameSingular} />
             )}

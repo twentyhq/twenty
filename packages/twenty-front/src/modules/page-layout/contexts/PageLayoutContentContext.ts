@@ -5,7 +5,7 @@ import { createRequiredContext } from '~/utils/createRequiredContext';
 export type PageLayoutContentContextType = {
   tabId: string;
   layoutMode: PageLayoutTabLayoutMode;
-  presentation: TabPresentation;
+  presentation?: TabPresentation;
 };
 
 export const [PageLayoutContentProvider, usePageLayoutContentContext] =
