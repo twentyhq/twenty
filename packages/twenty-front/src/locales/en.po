@@ -1658,6 +1658,7 @@ msgstr "Administrators"
 
 #. js-lingui-id: sxkWRg
 #: src/modules/navigation/components/SettingsNavigationDrawer.tsx
+#: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/ui/layout/dropdown/components/DropdownAdvancedSectionHeader.tsx
 #: src/modules/ui/layout/dropdown/components/DropdownAdvancedSectionMenuItem.tsx
 msgid "Advanced"
@@ -4740,6 +4741,11 @@ msgstr "Context size"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Context window"
 msgstr "Context window"
+
+#. js-lingui-id: uKvqU1
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "Context window must be a positive integer"
+msgstr "Context window must be a positive integer"
 
 #. js-lingui-id: xGVfLh
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
@@ -11817,6 +11823,11 @@ msgstr "Max import capacity: {formatSpreadsheetMaxRecordImportCapacity} records.
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Max output"
 msgstr "Max output"
+
+#. js-lingui-id: D0Z4Jd
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "Max output must be a positive integer"
+msgstr "Max output must be a positive integer"
 
 #. js-lingui-id: 2ICF9k
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
