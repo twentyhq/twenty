@@ -106,13 +106,15 @@ describe('fetchLiveMarketplacePartners', () => {
     ],
   ])(
     'throws when the payload breaks the ranking contract on %s',
-    async (_field, override) => {
+    async (field, override) => {
       mockedFetch.mockResolvedValue({
         ok: true,
         partners: [{ ...rankablePartner, ...override }],
       });
 
-      await expect(fetchLiveMarketplacePartners()).rejects.toThrow('acme');
+      await expect(fetchLiveMarketplacePartners()).rejects.toThrow(
+        new RegExp(`${field}.*acme`),
+      );
     },
   );
 
