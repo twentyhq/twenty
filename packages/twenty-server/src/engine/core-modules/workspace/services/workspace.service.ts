@@ -101,6 +101,8 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 // takes, so a genuinely in-progress activation is never reclaimed.
 const WORKSPACE_ACTIVATION_STALE_LOCK_TIMEOUT_MS = 5 * 60 * 1000;
 const WORKSPACE_APPLICATION_UNINSTALL_RETRY_LIMIT = 3;
+const WORKSPACE_APPLICATION_UNINSTALL_LOCK_WAIT_ATTEMPTS = 10;
+const WORKSPACE_APPLICATION_UNINSTALL_LOCK_WAIT_DELAY_MS = 5_000;
 
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
@@ -714,24 +716,40 @@ export class WorkspaceService {
 
     const workspaceDeletedAt = workspace.deletedAt;
 
-    const advisoryLockResult =
-      await this.postgresAdvisoryLockService.tryWithLock(
-        getWorkspaceApplicationUninstallLockName(workspace.id),
-        async () => {
-          await this.applicationUninstallService.runUninstallHooksForWorkspaceDeletionBestEffort(
-            {
-              workspaceId: workspace.id,
-              workspaceDeletedAt,
-            },
-          );
-        },
-      );
+    for (
+      let attempt = 0;
+      attempt < WORKSPACE_APPLICATION_UNINSTALL_LOCK_WAIT_ATTEMPTS;
+      attempt++
+    ) {
+      const advisoryLockResult =
+        await this.postgresAdvisoryLockService.tryWithLock(
+          getWorkspaceApplicationUninstallLockName(workspace.id),
+          async () => {
+            await this.applicationUninstallService.runUninstallHooksForWorkspaceDeletionBestEffort(
+              {
+                workspaceId: workspace.id,
+                workspaceDeletedAt,
+              },
+            );
+          },
+        );
 
-    if (!advisoryLockResult.acquired) {
-      this.logger.warn(
-        `Proceeding with workspace ${workspace.id} hard deletion while application uninstall is running elsewhere`,
+      if (advisoryLockResult.acquired) {
+        return;
+      }
+
+      // A queued uninstall job holds the lock and is executing hooks right
+      // now; erasing the workspace would destroy the resources those hooks
+      // are still using, so wait for the job to release the lock. The lock
+      // is session scoped, so a crashed holder releases it automatically.
+      await new Promise((resolve) =>
+        setTimeout(resolve, WORKSPACE_APPLICATION_UNINSTALL_LOCK_WAIT_DELAY_MS),
       );
     }
+
+    this.logger.warn(
+      `Proceeding with workspace ${workspace.id} hard deletion without waiting further for the running application uninstall`,
+    );
   }
 
   private async deleteWorkspaceSyncableMetadataEntities(
