@@ -10203,6 +10203,11 @@ msgstr "Questo file è già stato caricato."
 msgid "This file upload has already been finalized."
 msgstr "Il caricamento di questo file è già stato finalizzato."
 
+#. js-lingui-id: bHna44
+#: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
+msgid "This HTTP method is not allowed on this server route."
+msgstr "Questo metodo HTTP non è consentito su questa route del server."
+
 #. js-lingui-id: cvWDSJ
 #: src/engine/metadata-modules/metadata-side-effect/utils/map-system-side-effect-collision-to-failure.util.ts
 msgid "This identifier is reserved by the system"

@@ -10203,6 +10203,11 @@ msgstr "이 파일은 이미 업로드되었습니다."
 msgid "This file upload has already been finalized."
 msgstr "이 파일 업로드는 이미 완료되었습니다."
 
+#. js-lingui-id: bHna44
+#: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
+msgid "This HTTP method is not allowed on this server route."
+msgstr "이 HTTP 메서드는 이 서버 경로에서 허용되지 않습니다."
+
 #. js-lingui-id: cvWDSJ
 #: src/engine/metadata-modules/metadata-side-effect/utils/map-system-side-effect-collision-to-failure.util.ts
 msgid "This identifier is reserved by the system"
