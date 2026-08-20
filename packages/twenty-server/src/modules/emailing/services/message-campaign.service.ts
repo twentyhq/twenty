@@ -57,6 +57,7 @@ import { buildCampaignMessageId } from 'src/modules/emailing/utils/build-campaig
 import { collectCampaignVariableNamesFromTemplates } from 'src/modules/emailing/utils/collect-campaign-variable-names-from-templates.util';
 import { compileCampaignEmailContent } from 'src/modules/emailing/utils/compile-campaign-email-content.util';
 import { renderCampaignTemplate } from 'src/modules/emailing/utils/render-campaign-template.util';
+import { computeCampaignTerminalStatus } from 'src/modules/emailing/utils/compute-campaign-terminal-status.util';
 import { sendableDraftCampaignSchema } from 'src/modules/emailing/zod-schemas/sendable-draft-campaign.zod-schema';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
@@ -825,28 +826,24 @@ export class MessageCampaignService {
     workspaceId: string,
     campaignId: string,
   ): Promise<void> {
-    const messageRepository = await this.getSystemRepository(
-      workspaceId,
-      MessageWorkspaceEntity,
-    );
+    const countByDeliveryStatus =
+      await this.messageCampaignStatisticsService.countMessagesByDeliveryStatus(
+        { workspaceId, campaignId },
+      );
 
-    const queuedCount = await messageRepository.count({
-      where: {
-        messageCampaignId: campaignId,
-        deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED,
-      },
+    const terminalStatus = computeCampaignTerminalStatus({
+      queuedCount:
+        countByDeliveryStatus.get(CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED) ?? 0,
+      failedCount:
+        countByDeliveryStatus.get(CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED) ?? 0,
+      skippedCount:
+        countByDeliveryStatus.get(CAMPAIGN_MESSAGE_DELIVERY_STATUS.SKIPPED) ??
+        0,
     });
 
-    if (queuedCount > 0) {
+    if (!isDefined(terminalStatus)) {
       return;
     }
-
-    const failedCount = await messageRepository.count({
-      where: {
-        messageCampaignId: campaignId,
-        deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED,
-      },
-    });
 
     const campaignRepository = await this.getSystemRepository(
       workspaceId,
@@ -854,14 +851,14 @@ export class MessageCampaignService {
     );
 
     await campaignRepository.update(
-      { id: campaignId, status: MessageCampaignStatus.SENDING },
       {
-        status:
-          failedCount > 0
-            ? MessageCampaignStatus.SENT_WITH_ERRORS
-            : MessageCampaignStatus.SENT,
-        sentAt: new Date(),
+        id: campaignId,
+        status: In([
+          MessageCampaignStatus.SENDING,
+          MessageCampaignStatus.SENT_WITH_ERRORS,
+        ]),
       },
+      { status: terminalStatus, sentAt: new Date() },
     );
 
     await this.scheduleCampaignStatsRefresh({

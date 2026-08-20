@@ -459,6 +459,26 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         defaultValue: 0,
       },
     }),
+    skippedCount: createStandardFieldFlatMetadata({
+      ...base,
+      context: {
+        fieldName: 'skippedCount',
+        type: FieldMetadataType.NUMBER,
+        label: i18nLabel(
+          msg({ message: `Skipped count`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Number of recipients skipped without being emailed`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconMailOff',
+        isNullable: false,
+        isUIEditable: false,
+        defaultValue: 0,
+      },
+    }),
     unsubscribeTopicId: createStandardFieldFlatMetadata({
       ...base,
       context: {
