@@ -53,9 +53,46 @@ describe('listAvailablePartners', () => {
               },
               partnerContents: {
                 edges: [
-                  { node: { contentType: ['CASE_STUDY'], status: 'APPROVED' } },
-                  { node: { contentType: ['CASE_STUDY'], status: 'IN_REVIEW' } },
-                  { node: { contentType: ['BLOG'], status: 'APPROVED' } },
+                  {
+                    node: {
+                      contentType: ['CASE_STUDY'],
+                      status: 'APPROVED',
+                      coverImageUrl: 'https://cdn.example.com/cover.png',
+                      coverImage: [],
+                    },
+                  },
+                  {
+                    node: {
+                      contentType: ['CASE_STUDY'],
+                      status: 'APPROVED',
+                      coverImageUrl: '',
+                      coverImage: [{ url: 'https://cdn.example.com/file.png' }],
+                    },
+                  },
+                  {
+                    node: {
+                      contentType: ['CASE_STUDY'],
+                      status: 'APPROVED',
+                      coverImageUrl: '   ',
+                      coverImage: [],
+                    },
+                  },
+                  {
+                    node: {
+                      contentType: ['CASE_STUDY'],
+                      status: 'IN_REVIEW',
+                      coverImageUrl: 'https://cdn.example.com/draft.png',
+                      coverImage: [],
+                    },
+                  },
+                  {
+                    node: {
+                      contentType: ['BLOG'],
+                      status: 'APPROVED',
+                      coverImageUrl: 'https://cdn.example.com/blog.png',
+                      coverImage: [],
+                    },
+                  },
                 ],
               },
             },
@@ -72,7 +109,8 @@ describe('listAvailablePartners', () => {
     expect(result.partners[0]).toMatchObject({
       partnerTier: 'ADVANCED',
       serviceCount: 2,
-      approvedCaseStudyCount: 1,
+      approvedCaseStudyCount: 3,
+      approvedCaseStudyWithCoverCount: 2,
     });
     expect(result.partners[0].rotationKey).toMatch(/^[a-f0-9]{64}$/);
     expect(result.partners[0].rotationKey).not.toContain('partner-1');

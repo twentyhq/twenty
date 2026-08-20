@@ -98,6 +98,9 @@ describe('list-available-partners handler', () => {
     );
     expect(partner.serviceCount).toBeGreaterThanOrEqual(0);
     expect(partner.approvedCaseStudyCount).toBeGreaterThanOrEqual(0);
+    expect(partner.approvedCaseStudyWithCoverCount).toBeLessThanOrEqual(
+      partner.approvedCaseStudyCount,
+    );
     expect(partner.rotationKey).toMatch(/^[a-f0-9]{64}$/);
     expect('projectBudgetTypical' in partner).toBe(false);
     expect('profileLinks' in partner).toBe(false);

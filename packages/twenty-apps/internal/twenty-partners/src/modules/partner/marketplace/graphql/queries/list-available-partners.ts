@@ -47,6 +47,8 @@ export const queryAvailablePartners = (client: CoreApiClient) =>
               node: {
                 contentType: true,
                 status: true,
+                coverImage: { url: true },
+                coverImageUrl: true,
               },
             },
           },
