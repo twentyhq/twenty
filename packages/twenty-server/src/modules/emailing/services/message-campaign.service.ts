@@ -87,6 +87,17 @@ type SendCampaignTestArgs = {
   unsubscribeTopicId?: string;
 };
 
+type CancelCampaignArgs = {
+  workspaceId: string;
+  userWorkspaceId: string;
+  campaignId: string;
+};
+
+type CancelCampaignResult = {
+  campaignId: string;
+  notSentCount: number;
+};
+
 type SendCampaignResult = {
   campaignId: string;
   queuedCount: number;
@@ -335,6 +346,60 @@ export class MessageCampaignService {
     );
   }
 
+  async cancelSending({
+    workspaceId,
+    userWorkspaceId,
+    campaignId,
+  }: CancelCampaignArgs): Promise<CancelCampaignResult> {
+    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
+      workspaceId,
+      userWorkspaceId,
+    });
+
+    const notSentCount =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        async () => {
+          const campaignRepository = await this.getRoleScopedRepository(
+            workspaceId,
+            MessageCampaignWorkspaceEntity,
+            roleId,
+          );
+
+          const { affected } = await campaignRepository.update(
+            { id: campaignId, status: MessageCampaignStatus.SENDING },
+            { status: MessageCampaignStatus.CANCELED },
+          );
+
+          if (affected !== 1) {
+            throw new EmailingDomainException(
+              `Campaign ${campaignId} is not sending`,
+              EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_CANCELABLE,
+            );
+          }
+
+          const messageRepository = await this.getSystemRepository(
+            workspaceId,
+            MessageWorkspaceEntity,
+          );
+
+          const { affected: skippedMessageCount } =
+            await messageRepository.update(
+              {
+                messageCampaignId: campaignId,
+                deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED,
+              },
+              { deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SKIPPED },
+            );
+
+          return skippedMessageCount ?? 0;
+        },
+      );
+
+    await this.scheduleCampaignStatsRefresh({ workspaceId, campaignId });
+
+    return { campaignId, notSentCount };
+  }
+
   private async findSendReadyEmailingDomainOrThrow(
     workspaceId: string,
     fromAddress: string,
@@ -444,7 +509,7 @@ export class MessageCampaignService {
         );
       }
 
-      await this.finalizeCampaignIfComplete(workspaceId, campaignId);
+      await this.finalizeCampaignIfComplete({ workspaceId, campaignId });
     }, buildSystemAuthContext(workspaceId));
   }
 
@@ -485,7 +550,10 @@ export class MessageCampaignService {
         where: { id: campaignId },
       });
 
-      if (!isDefined(campaign)) {
+      if (
+        !isDefined(campaign) ||
+        campaign.status === MessageCampaignStatus.CANCELED
+      ) {
         return;
       }
 
@@ -604,7 +672,7 @@ export class MessageCampaignService {
           },
         );
       } finally {
-        await this.finalizeCampaignIfComplete(workspaceId, campaignId);
+        await this.finalizeCampaignIfComplete({ workspaceId, campaignId });
       }
     }, buildSystemAuthContext(workspaceId));
   }
@@ -822,10 +890,13 @@ export class MessageCampaignService {
     );
   }
 
-  private async finalizeCampaignIfComplete(
-    workspaceId: string,
-    campaignId: string,
-  ): Promise<void> {
+  async finalizeCampaignIfComplete({
+    workspaceId,
+    campaignId,
+  }: {
+    workspaceId: string;
+    campaignId: string;
+  }): Promise<void> {
     const countByDeliveryStatus =
       await this.messageCampaignStatisticsService.countMessagesByDeliveryStatus(
         { workspaceId, campaignId },

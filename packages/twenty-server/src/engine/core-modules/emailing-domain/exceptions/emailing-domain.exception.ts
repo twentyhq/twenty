@@ -11,6 +11,7 @@ export enum EmailingDomainExceptionCode {
   MESSAGE_SUPPRESSION_NOT_REMOVABLE = 'MESSAGE_SUPPRESSION_NOT_REMOVABLE',
   MESSAGE_CAMPAIGN_NOT_FOUND = 'MESSAGE_CAMPAIGN_NOT_FOUND',
   MESSAGE_CAMPAIGN_NOT_SENDABLE = 'MESSAGE_CAMPAIGN_NOT_SENDABLE',
+  MESSAGE_CAMPAIGN_NOT_CANCELABLE = 'MESSAGE_CAMPAIGN_NOT_CANCELABLE',
 }
 
 const getEmailingDomainExceptionUserFriendlyMessage = (
@@ -29,6 +30,8 @@ const getEmailingDomainExceptionUserFriendlyMessage = (
       return msg`This campaign no longer exists.`;
     case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE:
       return msg`This campaign cannot be sent. It may be missing a sender, subject or recipient list, or it was already sent.`;
+    case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_CANCELABLE:
+      return msg`Only a campaign that is currently sending can be canceled.`;
     default:
       assertUnreachable(code);
   }

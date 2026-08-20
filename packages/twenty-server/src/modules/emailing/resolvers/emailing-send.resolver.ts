@@ -6,6 +6,8 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { CampaignAudiencePreviewDTO } from 'src/engine/core-modules/emailing-domain/dtos/campaign-audience-preview.dto';
+import { CancelMessageCampaignInput } from 'src/engine/core-modules/emailing-domain/dtos/cancel-message-campaign.input';
+import { CancelMessageCampaignOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/cancel-message-campaign-output.dto';
 import { EmailGroupAccessGraphqlApiExceptionFilter } from 'src/engine/core-modules/emailing-domain/filters/email-group-access-graphql-api-exception.filter';
 import { EmailingDomainGraphqlApiExceptionFilter } from 'src/engine/core-modules/emailing-domain/filters/emailing-domain-graphql-api-exception.filter';
 import { PreviewMessageCampaignAudienceInput } from 'src/engine/core-modules/emailing-domain/dtos/preview-message-campaign-audience.input';
@@ -87,6 +89,22 @@ export class EmailingSendResolver {
     );
 
     return this.messageCampaignService.send({
+      workspaceId: currentWorkspace.id,
+      userWorkspaceId,
+      campaignId: input.campaignId,
+    });
+  }
+
+  @Mutation(() => CancelMessageCampaignOutputDTO)
+  @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
+  async cancelMessageCampaign(
+    @Args('input') input: CancelMessageCampaignInput,
+    @AuthWorkspace() currentWorkspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<CancelMessageCampaignOutputDTO> {
+    this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
+
+    return this.messageCampaignService.cancelSending({
       workspaceId: currentWorkspace.id,
       userWorkspaceId,
       campaignId: input.campaignId,

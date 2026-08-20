@@ -356,6 +356,15 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
             position: 4,
             color: 'orange',
           },
+          {
+            id: '3f0d9c41-6a52-4e88-9b74-5c2ad83f1e60',
+            value: 'CANCELED',
+            label: i18nLabel(
+              msg({ message: `Canceled`, context: 'fieldMetadata.label' }),
+            ),
+            position: 5,
+            color: 'red',
+          },
         ],
       },
     }),
