@@ -90,7 +90,9 @@ export const createStandardFieldFlatMetadata = <
     isUIEditable,
     writability:
       name in PARTIAL_SYSTEM_FLAT_FIELD_METADATAS
-        ? PARTIAL_SYSTEM_FLAT_FIELD_METADATAS[name].writability
+        ? PARTIAL_SYSTEM_FLAT_FIELD_METADATAS[
+            name as keyof typeof PARTIAL_SYSTEM_FLAT_FIELD_METADATAS
+          ].writability
         : MetadataWritability.OPEN,
     isLabelSyncedWithName: false,
     overrides: null,
