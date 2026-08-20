@@ -35,10 +35,6 @@ import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-f
 import { ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
 import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
 import { ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/view-group.dto';
-import { CreateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-permission.guard';
-import { DeleteViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-permission.guard';
-import { DestroyViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/destroy-view-permission.guard';
-import { UpdateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-permission.guard';
 import { ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
 import { CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
@@ -48,6 +44,8 @@ import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.
 import { ViewWidgetUpsertService } from 'src/engine/metadata-modules/view/services/view-widget-upsert.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
+import { ViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/view-permission.guard';
+import { CreateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-permission.guard';
 
 @MetadataResolver(() => ViewDTO)
 @UseFilters(ViewGraphqlApiExceptionFilter)
@@ -186,7 +184,7 @@ export class ViewResolver {
   }
 
   @Mutation(() => ViewDTO)
-  @UseGuards(UpdateViewPermissionGuard)
+  @UseGuards(ViewPermissionGuard)
   async updateView(
     @Args('id', { type: () => String }) id: string,
     @Args('input') input: UpdateViewInput,
@@ -202,7 +200,7 @@ export class ViewResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(DeleteViewPermissionGuard)
+  @UseGuards(ViewPermissionGuard)
   async deleteView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -216,7 +214,7 @@ export class ViewResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(DestroyViewPermissionGuard)
+  @UseGuards(ViewPermissionGuard)
   async destroyView(
     @Args('id', { type: () => String }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
