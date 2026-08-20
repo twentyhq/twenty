@@ -5,6 +5,14 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
+import {
+  LOG_EMAILING_DRIVER_SEND_LATENCY_MS,
+  LOG_EMAILING_DRIVER_THROTTLE_FAILURE_RATIO,
+} from 'src/engine/core-modules/emailing-domain/drivers/log/constants/log-emailing-driver.constant';
+import {
+  EmailingDomainDriverException,
+  EmailingDomainDriverExceptionCode,
+} from 'src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception';
 import { UNSUBSCRIBE_HOSTNAME_PREFIX } from 'src/engine/core-modules/emailing-domain/constants/unsubscribe-hostname-prefix.constant';
 import {
   type EmailingDomainDriverInterface,
@@ -106,9 +114,26 @@ export class LogEmailingDomainDriver implements EmailingDomainDriverInterface {
     this.logger.log(`[log-driver] cleanupDomain(${input.domain})`);
   }
 
+  private async simulateProviderCall(): Promise<void> {
+    if (LOG_EMAILING_DRIVER_SEND_LATENCY_MS > 0) {
+      await new Promise((resolve) =>
+        setTimeout(resolve, LOG_EMAILING_DRIVER_SEND_LATENCY_MS),
+      );
+    }
+
+    if (Math.random() < LOG_EMAILING_DRIVER_THROTTLE_FAILURE_RATIO) {
+      throw new EmailingDomainDriverException(
+        '[log-driver] simulated provider throttling',
+        EmailingDomainDriverExceptionCode.TEMPORARY_ERROR,
+      );
+    }
+  }
+
   async sendEmail(
     input: EmailingDomainSendEmailRequest,
   ): Promise<EmailingDomainSendEmailResult> {
+    await this.simulateProviderCall();
+
     const unsubscribeBaseUrl = await this.getUnsubscribeBaseUrl(
       input.workspaceId,
     );

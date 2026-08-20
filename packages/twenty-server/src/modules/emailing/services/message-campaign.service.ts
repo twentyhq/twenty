@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { z } from 'zod';
 
-import { MATERIALIZE_CAMPAIGN_JOB } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
+import {
+  CAMPAIGN_SEND_RETRY_BACKOFF,
+  CAMPAIGN_SEND_RETRY_LIMIT,
+  MATERIALIZE_CAMPAIGN_JOB,
+} from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { buildUnsubscribeHostnameNotReadyMessage } from 'src/engine/core-modules/emailing-domain/drivers/utils/build-unsubscribe-hostname-not-ready-message.util';
 import { isUnsubscribeHostnameReady } from 'src/engine/core-modules/emailing-domain/drivers/utils/is-unsubscribe-hostname-ready.util';
@@ -49,7 +53,7 @@ export class MessageCampaignService {
     private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    @InjectMessageQueue(MessageQueue.emailQueue)
+    @InjectMessageQueue(MessageQueue.campaignQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly messageChannelMetadataService: MessageChannelMetadataService,
     private readonly userRoleService: UserRoleService,
@@ -131,7 +135,10 @@ export class MessageCampaignService {
           emailingDomainId: emailingDomain.id,
           recipients,
         },
-        { retryLimit: 3 },
+        {
+          retryLimit: CAMPAIGN_SEND_RETRY_LIMIT,
+          backoff: CAMPAIGN_SEND_RETRY_BACKOFF,
+        },
       )
       .catch(async (error) => {
         await this.messageCampaignLifecycleService.transitionCampaignStatus({

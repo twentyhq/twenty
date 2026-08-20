@@ -1,15 +1,18 @@
+import { type QueueJobBackoffOptions } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
+
 export const CAMPAIGN_MESSAGE_DELIVERY_STATUS = {
   QUEUED: 'QUEUED',
   SENDING: 'SENDING',
   SENT: 'SENT',
+  DELIVERED: 'DELIVERED',
   FAILED: 'FAILED',
+  REJECTED: 'REJECTED',
+  RENDERING_FAILED: 'RENDERING_FAILED',
+  SOFT_BOUNCED: 'SOFT_BOUNCED',
   BOUNCED: 'BOUNCED',
   COMPLAINED: 'COMPLAINED',
   SKIPPED: 'SKIPPED',
 } as const;
-
-export type CampaignMessageDeliveryStatus =
-  (typeof CAMPAIGN_MESSAGE_DELIVERY_STATUS)[keyof typeof CAMPAIGN_MESSAGE_DELIVERY_STATUS];
 
 export const MATERIALIZE_CAMPAIGN_JOB = 'MaterializeCampaignJob';
 export const SEND_CAMPAIGN_EMAIL_JOB = 'SendCampaignEmailJob';
@@ -28,3 +31,11 @@ export const CAMPAIGN_MESSAGE_CLAIM_STALE_THRESHOLD_MS = 15 * 60 * 1000;
 
 export const CAMPAIGN_MESSAGE_ID_NAMESPACE =
   '0c4b9e7a-3f2d-4b6c-9e1a-7d8f5a2c3b4e';
+
+export const CAMPAIGN_SEND_RETRY_LIMIT = 3;
+
+export const CAMPAIGN_SEND_RETRY_BACKOFF: QueueJobBackoffOptions = {
+  strategy: 'exponential',
+  initialDelayMilliseconds: 5_000,
+  jitter: 0.5,
+};

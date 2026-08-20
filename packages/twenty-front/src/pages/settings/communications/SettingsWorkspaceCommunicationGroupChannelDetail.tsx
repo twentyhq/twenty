@@ -247,7 +247,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
           <Section>
             <H2Title
               title={t`Sending domain`}
-              description={t`Outbound mail from this channel is sent through this domain. It must be verified before email can be delivered.`}
+              description={t`Outbound mail from this channel is sent through this domain. It must be verified before email can be delivered. The bounce subdomain must carry this MX record and no other one, otherwise verification will never complete.`}
               adornment={
                 <StyledSendingDomainAdornment>
                   <Status

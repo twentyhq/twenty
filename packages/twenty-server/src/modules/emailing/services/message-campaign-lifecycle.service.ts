@@ -9,8 +9,8 @@ import {
   CAMPAIGN_MESSAGE_DELIVERY_STATUS,
   CAMPAIGN_STATS_REFRESH_DELAY_MS,
   REFRESH_CAMPAIGN_STATS_JOB,
-  type CampaignMessageDeliveryStatus,
 } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
+import { type CampaignMessageDeliveryStatus } from 'src/engine/core-modules/emailing-domain/types/campaign-message-delivery-status.type';
 import {
   EmailingDomainException,
   EmailingDomainExceptionCode,
@@ -47,7 +47,7 @@ export class MessageCampaignLifecycleService {
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly userRoleService: UserRoleService,
     private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
-    @InjectMessageQueue(MessageQueue.emailQueue)
+    @InjectMessageQueue(MessageQueue.campaignQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleEmailing)
     private readonly cacheStorageService: CacheStorageService,

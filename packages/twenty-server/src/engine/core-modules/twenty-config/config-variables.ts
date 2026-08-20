@@ -2099,8 +2099,11 @@ export class ConfigVariables {
     description: 'AWS region',
     type: ConfigVariableType.STRING,
   })
+  @ValidateIf(
+    (env) => env.EMAILING_DOMAIN_DRIVER === EmailingDomainDriver.AWS_SES,
+  )
   @IsAWSRegion()
-  @IsOptional()
+  @IsNotEmpty()
   AWS_SES_REGION: AwsRegion;
 
   @ConfigVariablesMetadata({
@@ -2135,7 +2138,11 @@ export class ConfigVariables {
     description: 'AWS Account ID for SES ARN construction',
     type: ConfigVariableType.STRING,
   })
-  @IsOptional()
+  @ValidateIf(
+    (env) => env.EMAILING_DOMAIN_DRIVER === EmailingDomainDriver.AWS_SES,
+  )
+  @IsString()
+  @IsNotEmpty()
   AWS_SES_ACCOUNT_ID: string;
 
   @ConfigVariablesMetadata({
@@ -2150,11 +2157,25 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.AWS_SES_SETTINGS,
     description:
-      'Comma-separated list of SNS topic ARNs accepted by the inbound-email webhook (e.g. arn:aws:sns:us-east-1:123:my-inbound).',
+      'Comma-separated list of SNS topic ARNs accepted by the inbound-email and outbound-event webhooks (e.g. arn:aws:sns:us-east-1:123:my-inbound). Every SNS payload whose topic is absent from this list is rejected.',
+    type: ConfigVariableType.STRING,
+  })
+  @ValidateIf(
+    (env) => env.EMAILING_DOMAIN_DRIVER === EmailingDomainDriver.AWS_SES,
+  )
+  @IsString()
+  @IsNotEmpty()
+  SES_SNS_TOPIC_ARN_ALLOWLIST: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AWS_SES_SETTINGS,
+    description:
+      'SNS topic ARN that receives SES bounce and complaint events. An SNS event destination pointing at it is added to each workspace SES configuration set, and the topic must be subscribed to /webhooks/messaging/ses/outbound.',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
-  SES_SNS_TOPIC_ARN_ALLOWLIST: string;
+  @IsString()
+  SES_OUTBOUND_SNS_TOPIC_ARN: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.AWS_SES_SETTINGS,

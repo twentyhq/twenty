@@ -4,8 +4,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { DnsManagerModule } from 'src/engine/core-modules/dns-manager/dns-manager.module';
+import { CheckEmailingDomainVerificationCronCommand } from 'src/engine/core-modules/emailing-domain/crons/commands/check-emailing-domain-verification.cron.command';
+import { CheckEmailingDomainVerificationCronJob } from 'src/engine/core-modules/emailing-domain/crons/jobs/check-emailing-domain-verification.cron.job';
 import { AwsSesClientProvider } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/providers/aws-ses-client.provider';
+import { AwsSesAccountService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-account.service';
 import { AwsSesObservabilityService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-observability.service';
+import { AwsSesOutboundEventDestinationService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-outbound-event-destination.service';
 import { AwsSesRegisterDomainService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-register-domain.service';
 import { AwsSesHandleErrorService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-handle-error.service';
 import { AwsSesSendEmailService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-send-email.service';
@@ -24,6 +28,7 @@ import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
@@ -38,6 +43,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     SecretEncryptionModule,
     BillingModule,
     EnterpriseModule,
+    ThrottlerModule,
   ],
   exports: [
     EmailingDomainService,
@@ -45,8 +51,11 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     EmailingDomainDriverFactory,
     UnsubscribeTokenService,
     EmailGroupAccessService,
+    CheckEmailingDomainVerificationCronCommand,
   ],
   providers: [
+    CheckEmailingDomainVerificationCronCommand,
+    CheckEmailingDomainVerificationCronJob,
     EmailGroupAccessService,
     EmailingDomainService,
     EmailingDomainTenantStatusService,
@@ -57,8 +66,10 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     EmailingDomainDriverFactory,
     EmailingDomainWorkspaceCleanupJob,
     AwsSesClientProvider,
+    AwsSesAccountService,
     AwsSesHandleErrorService,
     AwsSesObservabilityService,
+    AwsSesOutboundEventDestinationService,
     AwsSesRegisterDomainService,
     AwsSesSendEmailService,
     LogEmailingDomainDriver,

@@ -6,6 +6,8 @@ import { v4 } from 'uuid';
 import {
   CAMPAIGN_MATERIALIZATION_CHUNK_SIZE,
   CAMPAIGN_MESSAGE_DELIVERY_STATUS,
+  CAMPAIGN_SEND_RETRY_BACKOFF,
+  CAMPAIGN_SEND_RETRY_LIMIT,
   SEND_CAMPAIGN_EMAIL_JOB,
 } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
 import { type MaterializeCampaignJobData } from 'src/engine/core-modules/emailing-domain/types/materialize-campaign-job-data.type';
@@ -49,7 +51,7 @@ export class MessageCampaignMaterializationService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
-    @InjectMessageQueue(MessageQueue.emailQueue)
+    @InjectMessageQueue(MessageQueue.campaignQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
@@ -220,7 +222,10 @@ export class MessageCampaignMaterializationService {
         recipientEmail: recipient.email,
         emailingDomainId,
       })),
-      { retryLimit: 3 },
+      {
+        retryLimit: CAMPAIGN_SEND_RETRY_LIMIT,
+        backoff: CAMPAIGN_SEND_RETRY_BACKOFF,
+      },
     );
   }
 

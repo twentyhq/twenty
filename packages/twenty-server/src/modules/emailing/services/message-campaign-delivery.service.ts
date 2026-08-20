@@ -4,8 +4,12 @@ import { In } from 'typeorm';
 
 import {
   CAMPAIGN_MESSAGE_DELIVERY_STATUS,
-  type CampaignMessageDeliveryStatus,
+  SEND_CAMPAIGN_EMAIL_JOB,
 } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
+import { type CampaignMessageDeliveryStatus } from 'src/engine/core-modules/emailing-domain/types/campaign-message-delivery-status.type';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
   EmailingDomainDriverException,
   EmailingDomainDriverExceptionCode,
@@ -44,6 +48,8 @@ export class MessageCampaignDeliveryService {
     private readonly emailBillingService: EmailBillingService,
     private readonly campaignVariableService: CampaignVariableService,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
+    @InjectMessageQueue(MessageQueue.campaignQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   async processSendJob(data: SendCampaignEmailJobData): Promise<void> {
@@ -299,6 +305,7 @@ export class MessageCampaignDeliveryService {
       case EmailingDomainDriverExceptionCode.INSUFFICIENT_PERMISSIONS:
       case EmailingDomainDriverExceptionCode.CONFIGURATION_ERROR:
       case EmailingDomainDriverExceptionCode.SENDING_SUSPENDED:
+      case EmailingDomainDriverExceptionCode.SANDBOX_ACCOUNT:
       case EmailingDomainDriverExceptionCode.UNSUBSCRIBE_NOT_READY:
         return {
           deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED,
