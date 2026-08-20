@@ -1,6 +1,6 @@
 import { Injectable, Logger, type Type } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
 import { z } from 'zod';
 import { In, type ObjectLiteral } from 'typeorm';
@@ -95,7 +95,7 @@ type CancelCampaignArgs = {
 
 type CancelCampaignResult = {
   campaignId: string;
-  notSentCount: number;
+  canceledMessageCount: number;
 };
 
 type SendCampaignResult = {
@@ -356,7 +356,7 @@ export class MessageCampaignService {
       userWorkspaceId,
     });
 
-    const notSentCount =
+    const canceledMessageCount =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () =>
         this.globalWorkspaceOrmManager.runInWorkspaceTransaction(
           async (transactionScope) => {
@@ -402,7 +402,7 @@ export class MessageCampaignService {
 
     await this.scheduleCampaignStatsRefresh({ workspaceId, campaignId });
 
-    return { campaignId, notSentCount };
+    return { campaignId, canceledMessageCount };
   }
 
   private async findSendReadyEmailingDomainOrThrow(
@@ -896,6 +896,93 @@ export class MessageCampaignService {
     );
   }
 
+  async resumeStalledSendJobs({
+    workspaceId,
+    campaignId,
+  }: {
+    workspaceId: string;
+    campaignId: string;
+  }): Promise<number> {
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const campaignRepository = await this.getSystemRepository(
+          workspaceId,
+          MessageCampaignWorkspaceEntity,
+        );
+
+        const campaign = await campaignRepository.findOne({
+          where: { id: campaignId },
+        });
+
+        if (
+          !isDefined(campaign) ||
+          campaign.status !== MessageCampaignStatus.SENDING
+        ) {
+          return 0;
+        }
+
+        const messageRepository = await this.getSystemRepository(
+          workspaceId,
+          MessageWorkspaceEntity,
+        );
+
+        const queuedMessages = await messageRepository.find({
+          where: {
+            messageCampaignId: campaignId,
+            deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED,
+          },
+          select: { id: true },
+        });
+
+        if (!isNonEmptyArray(queuedMessages)) {
+          return 0;
+        }
+
+        const participantRepository = await this.getSystemRepository(
+          workspaceId,
+          MessageParticipantWorkspaceEntity,
+        );
+
+        const recipients = await participantRepository.find({
+          where: {
+            messageId: In(queuedMessages.map((message) => message.id)),
+            role: MessageParticipantRole.TO,
+          },
+          select: { messageId: true, handle: true, personId: true },
+        });
+
+        const emailingDomain = await this.findSendReadyEmailingDomainOrThrow(
+          workspaceId,
+          campaign.fromAddress?.primaryEmail ?? '',
+        );
+
+        const jobs = recipients.flatMap((recipient) =>
+          isNonEmptyString(recipient.handle) && isDefined(recipient.personId)
+            ? [
+                {
+                  workspaceId,
+                  campaignId,
+                  messageId: recipient.messageId,
+                  personId: recipient.personId,
+                  recipientEmail: recipient.handle,
+                  emailingDomainId: emailingDomain.id,
+                },
+              ]
+            : [],
+        );
+
+        await this.messageQueueService.bulkAdd<SendCampaignEmailJobData>(
+          SEND_CAMPAIGN_EMAIL_JOB,
+          jobs,
+          { retryLimit: 3 },
+        );
+
+        return jobs.length;
+      },
+      buildSystemAuthContext(workspaceId),
+    );
+  }
+
   async finalizeCampaignIfComplete({
     workspaceId,
     campaignId,
@@ -909,6 +996,10 @@ export class MessageCampaignService {
       );
 
     const terminalStatus = computeCampaignTerminalStatus({
+      totalCount: [...countByDeliveryStatus.values()].reduce(
+        (total, count) => total + count,
+        0,
+      ),
       queuedCount:
         countByDeliveryStatus.get(CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED) ?? 0,
       failedCount:

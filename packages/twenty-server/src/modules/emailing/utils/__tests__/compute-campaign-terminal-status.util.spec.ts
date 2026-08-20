@@ -13,6 +13,7 @@ describe('computeCampaignTerminalStatus', () => {
     ({ failedCount, skippedCount }) => {
       expect(
         computeCampaignTerminalStatus({
+          totalCount: 10,
           queuedCount: 1,
           failedCount,
           skippedCount,
@@ -24,6 +25,7 @@ describe('computeCampaignTerminalStatus', () => {
   it('should return SENT when every message succeeded', () => {
     expect(
       computeCampaignTerminalStatus({
+        totalCount: 10,
         queuedCount: 0,
         failedCount: 0,
         skippedCount: 0,
@@ -34,6 +36,7 @@ describe('computeCampaignTerminalStatus', () => {
   it('should return SENT_WITH_ERRORS when a message failed', () => {
     expect(
       computeCampaignTerminalStatus({
+        totalCount: 10,
         queuedCount: 0,
         failedCount: 3,
         skippedCount: 0,
@@ -44,6 +47,7 @@ describe('computeCampaignTerminalStatus', () => {
   it('should return SENT_WITH_ERRORS when a message was skipped', () => {
     expect(
       computeCampaignTerminalStatus({
+        totalCount: 10,
         queuedCount: 0,
         failedCount: 0,
         skippedCount: 3,
@@ -54,6 +58,7 @@ describe('computeCampaignTerminalStatus', () => {
   it('should return SENT_WITH_ERRORS when messages both failed and were skipped', () => {
     expect(
       computeCampaignTerminalStatus({
+        totalCount: 10,
         queuedCount: 0,
         failedCount: 2,
         skippedCount: 5,
@@ -64,10 +69,22 @@ describe('computeCampaignTerminalStatus', () => {
   it('should return SENT when the campaign has no message at all', () => {
     expect(
       computeCampaignTerminalStatus({
+        totalCount: 10,
         queuedCount: 0,
         failedCount: 0,
         skippedCount: 0,
       }),
     ).toBe(MessageCampaignStatus.SENT);
+  });
+
+  it('should not report a clean send when every recipient was filtered out before materialization', () => {
+    expect(
+      computeCampaignTerminalStatus({
+        totalCount: 0,
+        queuedCount: 0,
+        failedCount: 0,
+        skippedCount: 0,
+      }),
+    ).toBe(MessageCampaignStatus.SENT_WITH_ERRORS);
   });
 });
