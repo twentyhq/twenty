@@ -1,7 +1,7 @@
 import path from 'path';
 import { type Manifest, OUTPUT_DIR } from 'twenty-shared/application';
 import { type MetadataValidationErrorResponse } from 'twenty-shared/metadata';
-import { isPlainObject } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
 import {
@@ -13,6 +13,7 @@ import { promptForReauthentication } from '@/cli/utilities/auth/reauth-helper';
 import { buildApplication } from '@/cli/utilities/build/common/build-application';
 import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
 import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
+import { compileApplicationTranslations } from '@/cli/utilities/translations/compile-application-translations';
 import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest-update-checksums';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { ClientService } from '@/cli/utilities/client/client-service';
@@ -202,10 +203,17 @@ const innerAppDevOnce = async (
     };
   }
 
-  const manifest: Manifest = manifestUpdateChecksums({
+  const translations = await compileApplicationTranslations(appPath);
+
+  const manifestWithChecksums: Manifest = manifestUpdateChecksums({
     manifest: manifestResult.manifest,
     builtFileInfos: buildResult.builtFileInfos,
   });
+  // Carried through the dev sync too: the server prunes the locales a manifest
+  // does not list, so syncing without them would drop what the app published.
+  const manifest: Manifest = isDefined(translations)
+    ? { ...manifestWithChecksums, translations }
+    : manifestWithChecksums;
 
   await writeManifestToOutput(appPath, manifest);
 
