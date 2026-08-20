@@ -4,9 +4,7 @@
 # See https://crowdin.github.io/crowdin-cli/configuration for more information
 #
 
-project_id: 1
 preserve_hierarchy: true
-base_url: 'https://twenty.api.crowdin.com'
 base_path: ..
 
 files:

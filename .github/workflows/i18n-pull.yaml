@@ -55,13 +55,6 @@ jobs:
           git add .
           git stash
 
-      - name: Pre-translate untranslated strings
-        if: inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-        uses: ./.github/actions/crowdin-pre-translate
-        with:
-          config: .github/crowdin-app.yml
-          token: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
-
       - name: Pull translations from Crowdin
         if: inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         uses: crowdin/github-action@8868a33591d21088edfc398968173a3b98d51706 # v2
