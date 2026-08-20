@@ -70,24 +70,60 @@ describe('createMediaQueryEnvironmentSource', () => {
     const { environmentSource } = setupEnvironmentSource();
 
     expect(environmentSource.readEnvironment()).toEqual({
-      viewportWidth: 0,
-      viewportHeight: 0,
+      componentWidth: 0,
+      componentHeight: 0,
       devicePixelRatio: 1,
       colorScheme: 'light',
     });
   });
 
-  it('should notify on a viewport size change', () => {
+  it('should measure the component box rather than the host browser window', () => {
+    const { environmentSource, pushViewportSnapshot } =
+      setupEnvironmentSource();
+
+    pushViewportSnapshot({
+      innerWidth: 1440,
+      innerHeight: 900,
+      rootContainerClientWidth: 350,
+      rootContainerClientHeight: 600,
+    });
+
+    expect(environmentSource.readEnvironment()).toEqual({
+      componentWidth: 350,
+      componentHeight: 600,
+      devicePixelRatio: 1,
+      colorScheme: 'light',
+    });
+  });
+
+  it('should pass the updated environment to its listeners', () => {
     const { environmentSource, pushViewportSnapshot } =
       setupEnvironmentSource();
     const environmentUpdateListener = jest.fn();
 
     environmentSource.subscribeToEnvironmentUpdates(environmentUpdateListener);
 
-    pushViewportSnapshot({ innerWidth: 1024 });
+    pushViewportSnapshot({ rootContainerClientWidth: 1024 });
+
+    expect(environmentUpdateListener).toHaveBeenCalledWith({
+      componentWidth: 1024,
+      componentHeight: 0,
+      devicePixelRatio: 1,
+      colorScheme: 'light',
+    });
+  });
+
+  it('should notify on a component size change', () => {
+    const { environmentSource, pushViewportSnapshot } =
+      setupEnvironmentSource();
+    const environmentUpdateListener = jest.fn();
+
+    environmentSource.subscribeToEnvironmentUpdates(environmentUpdateListener);
+
+    pushViewportSnapshot({ rootContainerClientWidth: 1024 });
 
     expect(environmentUpdateListener).toHaveBeenCalledTimes(1);
-    expect(environmentSource.readEnvironment().viewportWidth).toBe(1024);
+    expect(environmentSource.readEnvironment().componentWidth).toBe(1024);
   });
 
   it('should not notify on scroll-only viewport updates', () => {
@@ -97,7 +133,7 @@ describe('createMediaQueryEnvironmentSource', () => {
 
     environmentSource.subscribeToEnvironmentUpdates(environmentUpdateListener);
 
-    pushViewportSnapshot({ innerWidth: 1024 });
+    pushViewportSnapshot({ rootContainerClientWidth: 1024 });
     pushViewportSnapshot({ scrollY: 200 });
     pushViewportSnapshot({ scrollY: 400, rootContainerY: 50 });
 
@@ -138,11 +174,11 @@ describe('createMediaQueryEnvironmentSource', () => {
       setupEnvironmentSource();
     const environmentUpdateListener = jest.fn();
 
-    pushViewportSnapshot({ innerWidth: 1024 });
+    pushViewportSnapshot({ rootContainerClientWidth: 1024 });
 
     environmentSource.subscribeToEnvironmentUpdates(environmentUpdateListener);
 
-    pushViewportSnapshot({ innerWidth: 0 });
+    pushViewportSnapshot({ rootContainerClientWidth: 0 });
 
     expect(environmentUpdateListener).toHaveBeenCalledTimes(1);
   });
@@ -156,9 +192,9 @@ describe('createMediaQueryEnvironmentSource', () => {
       environmentUpdateListener,
     );
 
-    pushViewportSnapshot({ innerWidth: 1024 });
+    pushViewportSnapshot({ rootContainerClientWidth: 1024 });
     unsubscribe();
-    pushViewportSnapshot({ innerWidth: 1200 });
+    pushViewportSnapshot({ rootContainerClientWidth: 1200 });
 
     expect(environmentUpdateListener).toHaveBeenCalledTimes(1);
   });

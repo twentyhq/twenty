@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MEDIA_QUERY_LENGTH_UNIT_TO_PIXELS } from '@/polyfills/media-query/constants/MediaQueryLengthUnitToPixels';
@@ -14,7 +15,7 @@ export const parseMediaQueryLengthToPixels = (
 
   const { numericValue, unit } = lengthParts;
 
-  if (unit === '') {
+  if (!isNonEmptyString(unit)) {
     const isZeroLength = numericValue === 0;
 
     return isZeroLength ? 0 : null;

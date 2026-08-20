@@ -1,138 +1,197 @@
-import { isFunction } from '@sniptt/guards';
+import { isFunction, isObject } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type MediaQueryEnvironment } from '@/polyfills/media-query/types/MediaQueryEnvironment';
+import { type MediaQueryEnvironmentListener } from '@/polyfills/media-query/types/MediaQueryEnvironmentListener';
 import { type WorkerMediaQueryList } from '@/polyfills/media-query/types/WorkerMediaQueryList';
-import { type WorkerMediaQueryListEvent } from '@/polyfills/media-query/types/WorkerMediaQueryListEvent';
 import { type WorkerMediaQueryListener } from '@/polyfills/media-query/types/WorkerMediaQueryListener';
+import { createWorkerMediaQueryListEvent } from '@/polyfills/media-query/utils/createWorkerMediaQueryListEvent';
 
 const CHANGE_EVENT_TYPE = 'change';
 
 type CreateWorkerMediaQueryListInput = {
   media: string;
-  evaluateMatches: () => boolean;
-  subscribeToEnvironmentUpdates: (listener: () => void) => () => void;
-  reportListenerError: (error: unknown) => void;
+  readEnvironment: () => MediaQueryEnvironment;
+  evaluateMatches: (environment: MediaQueryEnvironment) => boolean;
+  subscribeToEnvironmentUpdates: (
+    listener: MediaQueryEnvironmentListener,
+  ) => () => void;
 };
 
-export const createWorkerMediaQueryList = ({
-  media,
-  evaluateMatches,
-  subscribeToEnvironmentUpdates,
-  reportListenerError,
-}: CreateWorkerMediaQueryListInput): WorkerMediaQueryList => {
-  const changeListeners = new Set<WorkerMediaQueryListener>();
+const resolveListenerOptions = (
+  options?: AddEventListenerOptions | boolean,
+): AddEventListenerOptions => (isObject(options) ? options : {});
 
-  let onchangeListener: WorkerMediaQueryListener | null = null;
-  let lastNotifiedMatches: boolean | null = null;
-  let unsubscribeFromEnvironmentUpdates: (() => void) | null = null;
+class WorkerMediaQueryListImplementation extends EventTarget {
+  readonly media: string;
 
-  const handleEnvironmentUpdate = () => {
-    const nextMatches = evaluateMatches();
+  #readEnvironment: () => MediaQueryEnvironment;
+  #evaluateMatches: (environment: MediaQueryEnvironment) => boolean;
+  #subscribeToEnvironmentUpdates: (
+    listener: MediaQueryEnvironmentListener,
+  ) => () => void;
 
-    if (nextMatches === lastNotifiedMatches) {
-      return;
-    }
+  #registeredChangeListeners = new Set<EventListenerOrEventListenerObject>();
+  #onchangeListener: WorkerMediaQueryListener | null = null;
+  #lastNotifiedMatches: boolean | null = null;
+  #unsubscribeFromEnvironmentUpdates: (() => void) | null = null;
 
-    lastNotifiedMatches = nextMatches;
-
-    const changeEvent: WorkerMediaQueryListEvent = {
-      type: CHANGE_EVENT_TYPE,
-      media,
-      matches: nextMatches,
-    };
-
-    const notifyListener = (listenerToNotify: WorkerMediaQueryListener) => {
-      try {
-        listenerToNotify(changeEvent);
-      } catch (error) {
-        reportListenerError(error);
-      }
-    };
-
-    for (const changeListener of [...changeListeners]) {
-      if (!changeListeners.has(changeListener)) {
-        continue;
-      }
-
-      notifyListener(changeListener);
-    }
-
-    if (isDefined(onchangeListener)) {
-      notifyListener(onchangeListener);
-    }
-  };
-
-  const ensureEnvironmentSubscription = () => {
-    if (isDefined(unsubscribeFromEnvironmentUpdates)) {
-      return;
-    }
-
-    lastNotifiedMatches = evaluateMatches();
-    unsubscribeFromEnvironmentUpdates = subscribeToEnvironmentUpdates(
-      handleEnvironmentUpdate,
-    );
-  };
-
-  const releaseEnvironmentSubscriptionIfUnused = () => {
-    if (changeListeners.size > 0 || isDefined(onchangeListener)) {
-      return;
-    }
-
-    if (!isDefined(unsubscribeFromEnvironmentUpdates)) {
-      return;
-    }
-
-    unsubscribeFromEnvironmentUpdates();
-    unsubscribeFromEnvironmentUpdates = null;
-  };
-
-  const addChangeListener = (listener: WorkerMediaQueryListener) => {
-    if (!isFunction(listener)) {
-      return;
-    }
-
-    ensureEnvironmentSubscription();
-    changeListeners.add(listener);
-  };
-
-  const removeChangeListener = (listener: WorkerMediaQueryListener) => {
-    changeListeners.delete(listener);
-    releaseEnvironmentSubscriptionIfUnused();
-  };
-
-  return {
+  constructor({
     media,
-    get matches() {
-      return evaluateMatches();
-    },
-    get onchange() {
-      return onchangeListener;
-    },
-    set onchange(listener: WorkerMediaQueryListener | null) {
-      onchangeListener = isFunction(listener) ? listener : null;
+    readEnvironment,
+    evaluateMatches,
+    subscribeToEnvironmentUpdates,
+  }: CreateWorkerMediaQueryListInput) {
+    super();
 
-      if (isDefined(onchangeListener)) {
-        ensureEnvironmentSubscription();
-        return;
-      }
+    this.media = media;
+    this.#readEnvironment = readEnvironment;
+    this.#evaluateMatches = evaluateMatches;
+    this.#subscribeToEnvironmentUpdates = subscribeToEnvironmentUpdates;
+  }
 
-      releaseEnvironmentSubscriptionIfUnused();
-    },
-    addEventListener: (type: string, listener: WorkerMediaQueryListener) => {
-      if (type !== CHANGE_EVENT_TYPE) {
-        return;
-      }
+  get matches(): boolean {
+    return this.#evaluateMatches(this.#readEnvironment());
+  }
 
-      addChangeListener(listener);
-    },
-    removeEventListener: (type: string, listener: WorkerMediaQueryListener) => {
-      if (type !== CHANGE_EVENT_TYPE) {
-        return;
-      }
+  get onchange(): WorkerMediaQueryListener | null {
+    return this.#onchangeListener;
+  }
 
-      removeChangeListener(listener);
-    },
-    addListener: addChangeListener,
-    removeListener: removeChangeListener,
-  };
-};
+  set onchange(listener: WorkerMediaQueryListener | null) {
+    if (isDefined(this.#onchangeListener)) {
+      this.removeEventListener(
+        CHANGE_EVENT_TYPE,
+        this.#onchangeListener as EventListener,
+      );
+    }
+
+    this.#onchangeListener = isFunction(listener) ? listener : null;
+
+    if (isDefined(this.#onchangeListener)) {
+      this.addEventListener(
+        CHANGE_EVENT_TYPE,
+        this.#onchangeListener as EventListener,
+      );
+    }
+  }
+
+  override addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject | null,
+    options?: AddEventListenerOptions | boolean,
+  ): void {
+    super.addEventListener(type, listener, options);
+
+    if (type !== CHANGE_EVENT_TYPE || !isDefined(listener)) {
+      return;
+    }
+
+    this.#trackChangeListener(listener, resolveListenerOptions(options));
+  }
+
+  override removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject | null,
+    options?: EventListenerOptions | boolean,
+  ): void {
+    super.removeEventListener(type, listener, options);
+
+    if (type !== CHANGE_EVENT_TYPE || !isDefined(listener)) {
+      return;
+    }
+
+    this.#untrackChangeListener(listener);
+  }
+
+  addListener(listener: WorkerMediaQueryListener): void {
+    this.addEventListener(CHANGE_EVENT_TYPE, listener as EventListener);
+  }
+
+  removeListener(listener: WorkerMediaQueryListener): void {
+    this.removeEventListener(CHANGE_EVENT_TYPE, listener as EventListener);
+  }
+
+  #trackChangeListener(
+    listener: EventListenerOrEventListenerObject,
+    { once, signal }: AddEventListenerOptions,
+  ): void {
+    if (signal?.aborted === true) {
+      return;
+    }
+
+    if (this.#registeredChangeListeners.has(listener)) {
+      return;
+    }
+
+    this.#registeredChangeListeners.add(listener);
+    this.#ensureEnvironmentSubscription();
+
+    const untrackListener = () => {
+      this.#untrackChangeListener(listener);
+    };
+
+    if (once === true) {
+      super.addEventListener(CHANGE_EVENT_TYPE, untrackListener, {
+        once: true,
+        signal,
+      });
+    }
+
+    signal?.addEventListener('abort', untrackListener, { once: true });
+  }
+
+  #untrackChangeListener(listener: EventListenerOrEventListenerObject): void {
+    if (!this.#registeredChangeListeners.delete(listener)) {
+      return;
+    }
+
+    this.#releaseEnvironmentSubscriptionIfUnused();
+  }
+
+  #ensureEnvironmentSubscription(): void {
+    if (isDefined(this.#unsubscribeFromEnvironmentUpdates)) {
+      return;
+    }
+
+    this.#lastNotifiedMatches = this.matches;
+    this.#unsubscribeFromEnvironmentUpdates =
+      this.#subscribeToEnvironmentUpdates((environment) => {
+        this.#handleEnvironmentUpdate(environment);
+      });
+  }
+
+  #releaseEnvironmentSubscriptionIfUnused(): void {
+    if (this.#registeredChangeListeners.size > 0) {
+      return;
+    }
+
+    if (!isDefined(this.#unsubscribeFromEnvironmentUpdates)) {
+      return;
+    }
+
+    this.#unsubscribeFromEnvironmentUpdates();
+    this.#unsubscribeFromEnvironmentUpdates = null;
+  }
+
+  #handleEnvironmentUpdate(environment: MediaQueryEnvironment): void {
+    const nextMatches = this.#evaluateMatches(environment);
+
+    if (nextMatches === this.#lastNotifiedMatches) {
+      return;
+    }
+
+    this.#lastNotifiedMatches = nextMatches;
+
+    this.dispatchEvent(
+      createWorkerMediaQueryListEvent({
+        media: this.media,
+        matches: nextMatches,
+      }),
+    );
+  }
+}
+
+export const createWorkerMediaQueryList = (
+  input: CreateWorkerMediaQueryListInput,
+): WorkerMediaQueryList => new WorkerMediaQueryListImplementation(input);

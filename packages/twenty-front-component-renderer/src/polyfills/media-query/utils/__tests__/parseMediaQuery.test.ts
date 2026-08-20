@@ -1,12 +1,9 @@
 import { parseMediaQuery } from '../parseMediaQuery';
 
 describe('parseMediaQuery', () => {
-  it('should parse an empty query as matching everything', () => {
-    expect(parseMediaQuery('')).toEqual({
-      isNegated: false,
-      matchesMediaType: true,
-      conditions: [],
-    });
+  it('should reject an empty query, which only a whole query list may be', () => {
+    expect(parseMediaQuery('')).toBeNull();
+    expect(parseMediaQuery('   ')).toBeNull();
   });
 
   it('should parse a min-width condition in pixels', () => {
@@ -16,7 +13,7 @@ describe('parseMediaQuery', () => {
       conditions: [
         {
           kind: 'numeric',
-          source: 'viewportWidth',
+          source: 'componentWidth',
           comparison: 'min',
           value: 600,
         },
@@ -28,7 +25,7 @@ describe('parseMediaQuery', () => {
     expect(parseMediaQuery('(max-width: 40em)')?.conditions).toEqual([
       {
         kind: 'numeric',
-        source: 'viewportWidth',
+        source: 'componentWidth',
         comparison: 'max',
         value: 640,
       },
@@ -36,7 +33,7 @@ describe('parseMediaQuery', () => {
     expect(parseMediaQuery('(min-height: 10rem)')?.conditions).toEqual([
       {
         kind: 'numeric',
-        source: 'viewportHeight',
+        source: 'componentHeight',
         comparison: 'min',
         value: 160,
       },
@@ -52,13 +49,13 @@ describe('parseMediaQuery', () => {
       conditions: [
         {
           kind: 'numeric',
-          source: 'viewportWidth',
+          source: 'componentWidth',
           comparison: 'min',
           value: 600,
         },
         {
           kind: 'numeric',
-          source: 'viewportWidth',
+          source: 'componentWidth',
           comparison: 'max',
           value: 900,
         },
@@ -106,6 +103,16 @@ describe('parseMediaQuery', () => {
     ]);
   });
 
+  it('should parse orientation values', () => {
+    expect(parseMediaQuery('(orientation: portrait)')?.conditions).toEqual([
+      { kind: 'orientation', value: 'portrait' },
+    ]);
+    expect(parseMediaQuery('(orientation: landscape)')?.conditions).toEqual([
+      { kind: 'orientation', value: 'landscape' },
+    ]);
+    expect(parseMediaQuery('(orientation: sideways)')).toBeNull();
+  });
+
   it('should parse prefers-color-scheme values', () => {
     expect(parseMediaQuery('(prefers-color-scheme: dark)')?.conditions).toEqual(
       [{ kind: 'color-scheme', value: 'dark' }],
@@ -113,7 +120,6 @@ describe('parseMediaQuery', () => {
   });
 
   it('should reject unknown features, malformed queries, and unitless lengths', () => {
-    expect(parseMediaQuery('(orientation: portrait)')).toBeNull();
     expect(parseMediaQuery('(min-width: 600)')).toBeNull();
     expect(parseMediaQuery('(min-width >= 600px)')).toBeNull();
     expect(parseMediaQuery('(min-width: 600vw)')).toBeNull();
@@ -143,7 +149,12 @@ describe('parseMediaQuery', () => {
       },
     ]);
     expect(parseMediaQuery('(min-width: .5em)')?.conditions).toEqual([
-      { kind: 'numeric', source: 'viewportWidth', comparison: 'min', value: 8 },
+      {
+        kind: 'numeric',
+        source: 'componentWidth',
+        comparison: 'min',
+        value: 8,
+      },
     ]);
     expect(parseMediaQuery('(min-resolution: .5dppx)')?.conditions).toEqual([
       {
@@ -157,7 +168,12 @@ describe('parseMediaQuery', () => {
 
   it('should accept a zero length without a unit', () => {
     expect(parseMediaQuery('(min-width: 0)')?.conditions).toEqual([
-      { kind: 'numeric', source: 'viewportWidth', comparison: 'min', value: 0 },
+      {
+        kind: 'numeric',
+        source: 'componentWidth',
+        comparison: 'min',
+        value: 0,
+      },
     ]);
   });
 });

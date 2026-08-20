@@ -1,5 +1,6 @@
 import { type MediaQueryEnvironment } from '@/polyfills/media-query/types/MediaQueryEnvironment';
 import { type ParsedMediaQueryCondition } from '@/polyfills/media-query/types/ParsedMediaQueryCondition';
+import { resolveMediaQueryOrientation } from '@/polyfills/media-query/utils/resolveMediaQueryOrientation';
 
 type EvaluateParsedMediaQueryConditionInput = {
   condition: ParsedMediaQueryCondition;
@@ -12,6 +13,10 @@ export const evaluateParsedMediaQueryCondition = ({
 }: EvaluateParsedMediaQueryConditionInput): boolean => {
   if (condition.kind === 'color-scheme') {
     return condition.value === environment.colorScheme;
+  }
+
+  if (condition.kind === 'orientation') {
+    return condition.value === resolveMediaQueryOrientation(environment);
   }
 
   const environmentValue = environment[condition.source];

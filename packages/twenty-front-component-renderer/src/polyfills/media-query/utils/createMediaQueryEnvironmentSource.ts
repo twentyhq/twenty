@@ -1,6 +1,8 @@
 import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeometryStore';
 import { type MediaQueryEnvironment } from '@/polyfills/media-query/types/MediaQueryEnvironment';
+import { type MediaQueryEnvironmentListener } from '@/polyfills/media-query/types/MediaQueryEnvironmentListener';
 import { type MediaQueryEnvironmentSource } from '@/polyfills/media-query/types/MediaQueryEnvironmentSource';
+import { areMediaQueryEnvironmentsEqual } from '@/polyfills/media-query/utils/areMediaQueryEnvironmentsEqual';
 
 type CreateMediaQueryEnvironmentSourceInput = {
   geometryStore: WorkerGeometryStore;
@@ -8,28 +10,19 @@ type CreateMediaQueryEnvironmentSourceInput = {
   subscribeToColorSchemeUpdates: (listener: () => void) => () => void;
 };
 
-const areMediaQueryEnvironmentsEqual = (
-  firstEnvironment: MediaQueryEnvironment,
-  secondEnvironment: MediaQueryEnvironment,
-): boolean =>
-  firstEnvironment.viewportWidth === secondEnvironment.viewportWidth &&
-  firstEnvironment.viewportHeight === secondEnvironment.viewportHeight &&
-  firstEnvironment.devicePixelRatio === secondEnvironment.devicePixelRatio &&
-  firstEnvironment.colorScheme === secondEnvironment.colorScheme;
-
 export const createMediaQueryEnvironmentSource = ({
   geometryStore,
   getColorScheme,
   subscribeToColorSchemeUpdates,
 }: CreateMediaQueryEnvironmentSourceInput): MediaQueryEnvironmentSource => {
-  const environmentUpdateListeners = new Set<() => void>();
+  const environmentUpdateListeners = new Set<MediaQueryEnvironmentListener>();
 
   const readEnvironment = (): MediaQueryEnvironment => {
     const viewportSnapshot = geometryStore.getViewportSnapshot();
 
     return {
-      viewportWidth: viewportSnapshot?.innerWidth ?? 0,
-      viewportHeight: viewportSnapshot?.innerHeight ?? 0,
+      componentWidth: viewportSnapshot?.rootContainerClientWidth ?? 0,
+      componentHeight: viewportSnapshot?.rootContainerClientHeight ?? 0,
       devicePixelRatio: viewportSnapshot?.devicePixelRatio ?? 1,
       colorScheme: getColorScheme(),
     };
@@ -53,7 +46,7 @@ export const createMediaQueryEnvironmentSource = ({
     lastNotifiedEnvironment = nextEnvironment;
 
     for (const environmentUpdateListener of [...environmentUpdateListeners]) {
-      environmentUpdateListener();
+      environmentUpdateListener(nextEnvironment);
     }
   };
 
@@ -62,7 +55,9 @@ export const createMediaQueryEnvironmentSource = ({
 
   return {
     readEnvironment,
-    subscribeToEnvironmentUpdates: (listener: () => void) => {
+    subscribeToEnvironmentUpdates: (
+      listener: MediaQueryEnvironmentListener,
+    ) => {
       if (environmentUpdateListeners.size === 0) {
         lastNotifiedEnvironment = readEnvironment();
       }

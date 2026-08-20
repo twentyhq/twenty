@@ -14,6 +14,8 @@ import { buildFrontComponentStorageSnapshots } from '@/host/storage/utils/buildF
 import { FRONT_COMPONENT_SANDBOX_DOCUMENT } from '@/remote/sandbox/generated/frontComponentSandboxDocument';
 import { createFrontComponentSandboxIframe } from '@/remote/sandbox/utils/createFrontComponentSandboxIframe';
 import { createFrontComponentSandboxMessageHandler } from '@/remote/sandbox/utils/createFrontComponentSandboxMessageHandler';
+import { type FrontComponentExecutionContext } from 'twenty-sdk/front-component';
+
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
 import { buildAuthorizationHeadersFromAccessToken } from '@/host/component-source/utils/buildAuthorizationHeadersFromAccessToken';
@@ -29,6 +31,7 @@ type FrontComponentWorkerEffectProps = {
   sharedDependenciesUrl?: string;
   applicationVariables?: Record<string, string>;
   storageNamespace?: string;
+  executionContext: FrontComponentExecutionContext;
   geometryTracker: GeometryTracker;
   mediaSessionHost?: FrontComponentMediaSessionHost;
   setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
@@ -45,6 +48,7 @@ export const FrontComponentWorkerEffect = ({
   sharedDependenciesUrl,
   applicationVariables,
   storageNamespace,
+  executionContext,
   geometryTracker,
   mediaSessionHost,
   setReceiver,
@@ -52,6 +56,11 @@ export const FrontComponentWorkerEffect = ({
   setError,
 }: FrontComponentWorkerEffectProps) => {
   const isInitializedRef = useRef(false);
+  const latestExecutionContextRef = useRef(executionContext);
+
+  useEffect(() => {
+    latestExecutionContextRef.current = executionContext;
+  }, [executionContext]);
 
   useEffect(() => {
     if (isInitializedRef.current) {
@@ -147,6 +156,7 @@ export const FrontComponentWorkerEffect = ({
           hostFetchOrigins: hostFetchPolicy.allowedOrigins,
           applicationVariables,
           initialViewportGeometry: geometryTracker.getViewportGeometry(),
+          initialExecutionContext: latestExecutionContextRef.current,
           storageSnapshots,
           mediaRecorderCapabilities:
             mediaSessionHost?.getRecorderCapabilities(),

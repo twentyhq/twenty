@@ -84,6 +84,7 @@ export const FrontComponentRenderer = ({
           sharedDependenciesUrl={sharedDependenciesUrl}
           applicationVariables={applicationVariables}
           storageNamespace={storageNamespace}
+          executionContext={executionContext}
           geometryTracker={geometryTracker}
           mediaSessionHost={mediaSessionHost}
           setReceiver={setReceiver}

@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { parseMediaQueryNumericValueParts } from '@/polyfills/media-query/utils/parseMediaQueryNumericValueParts';
@@ -7,7 +8,7 @@ export const parseMediaQueryDevicePixelRatioValue = (
 ): number | null => {
   const valueParts = parseMediaQueryNumericValueParts(featureValue);
 
-  if (!isDefined(valueParts) || valueParts.unit !== '') {
+  if (!isDefined(valueParts) || isNonEmptyString(valueParts.unit)) {
     return null;
   }
 

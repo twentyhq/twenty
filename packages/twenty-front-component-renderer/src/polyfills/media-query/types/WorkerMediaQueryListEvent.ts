@@ -1,5 +1,4 @@
-export type WorkerMediaQueryListEvent = {
-  type: 'change';
+export type WorkerMediaQueryListEvent = Event & {
   media: string;
   matches: boolean;
 };

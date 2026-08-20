@@ -1,6 +1,6 @@
 export type MediaQueryEnvironment = {
-  viewportWidth: number;
-  viewportHeight: number;
+  componentWidth: number;
+  componentHeight: number;
   devicePixelRatio: number;
   colorScheme: 'light' | 'dark';
 };
