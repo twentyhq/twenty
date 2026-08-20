@@ -209,9 +209,9 @@ export type ThemeType = {
       xxl: string;
     };
     weight: {
-      regular: string;
-      medium: string;
-      semiBold: string;
+      regular: number;
+      medium: number;
+      semiBold: number;
     };
     family: string;
   };

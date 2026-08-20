@@ -38,9 +38,9 @@ export const FONT_TOKENS = {
     xxl: token('1.85rem'),
   },
   weight: {
-    regular: token('400'),
-    medium: token('500'),
-    semiBold: token('600'),
+    regular: token('400', { unit: 'number' }),
+    medium: token('500', { unit: 'number' }),
+    semiBold: token('600', { unit: 'number' }),
   },
   family: token('Inter, sans-serif'),
 };

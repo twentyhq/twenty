@@ -1,0 +1,32 @@
+import { token } from '../token';
+
+export const MAIN_COLOR_TOKENS = {
+  red: token('color(display-p3 0.83 0.329 0.324)'),
+  ruby: token('color(display-p3 0.83 0.323 0.408)'),
+  crimson: token('color(display-p3 0.843 0.298 0.507)'),
+  tomato: token('color(display-p3 0.831 0.345 0.231)'),
+  orange: token('color(display-p3 0.9 0.45 0.2)'),
+  amber: token('color(display-p3 1 0.77 0.26)'),
+  yellow: token('color(display-p3 1 0.92 0.22)'),
+  lime: token('color(display-p3 0.78 0.928 0.466)'),
+  grass: token('color(display-p3 0.38 0.647 0.378)'),
+  green: token('color(display-p3 0.332 0.634 0.442)'),
+  jade: token('color(display-p3 0.319 0.63 0.521)'),
+  mint: token('color(display-p3 0.62 0.908 0.834)'),
+  turquoise: token('color(display-p3 0.297 0.637 0.581)'),
+  cyan: token('color(display-p3 0.282 0.627 0.765)'),
+  sky: token('color(display-p3 0.585 0.877 0.983)'),
+  blue: token('color(display-p3 0.276 0.384 0.837)'),
+  iris: token('color(display-p3 0.357 0.357 0.81)'),
+  violet: token('color(display-p3 0.417 0.341 0.784)'),
+  purple: token('color(display-p3 0.523 0.318 0.751)'),
+  plum: token('color(display-p3 0.624 0.313 0.708)'),
+  pink: token('color(display-p3 0.775 0.297 0.61)'),
+  bronze: token('color(display-p3 0.611 0.507 0.455)'),
+  gold: token('color(display-p3 0.579 0.517 0.41)'),
+  brown: token('color(display-p3 0.651 0.505 0.368)'),
+  gray: token({
+    light: 'color(display-p3 0.6 0.6 0.6)',
+    dark: 'color(display-p3 0.298 0.298 0.298)',
+  }),
+};

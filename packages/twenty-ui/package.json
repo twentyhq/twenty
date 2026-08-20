@@ -73,7 +73,6 @@
   "dependencies": {
     "@base-ui/react": "^1.5.0",
     "@monaco-editor/react": "^4.7.0",
-    "@radix-ui/colors": "^3.0.0",
     "@sniptt/guards": "^0.2.0",
     "@tabler/icons-react": "^3.31.0",
     "clsx": "^2.1.1",
@@ -175,11 +174,6 @@
       "import": "./dist/theme-constants.mjs",
       "require": "./dist/theme-constants.cjs"
     },
-    "./tokens": {
-      "types": "./dist/tokens/index.d.ts",
-      "import": "./dist/tokens.mjs",
-      "require": "./dist/tokens.cjs"
-    },
     "./typography": {
       "types": "./dist/typography/index.d.ts",
       "import": "./dist/typography.mjs",
@@ -234,9 +228,6 @@
       ],
       "theme-constants": [
         "dist/theme-constants/index.d.ts"
-      ],
-      "tokens": [
-        "dist/tokens/index.d.ts"
       ],
       "typography": [
         "dist/typography/index.d.ts"

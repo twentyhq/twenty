@@ -71,11 +71,6 @@
     "limit": "25 kB"
   },
   {
-    "name": "tokens",
-    "path": "dist/tokens.mjs",
-    "limit": "60 kB"
-  },
-  {
     "name": "theme-constants",
     "path": "dist/theme-constants.mjs",
     "limit": "12 kB"

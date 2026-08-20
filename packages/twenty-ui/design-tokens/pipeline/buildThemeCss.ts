@@ -1,8 +1,6 @@
 import { SQUIRCLE_DOUBLED_RADIUS_TOKENS } from '../squircleDoubledRadiusTokens';
 import { type CollectedTokenLeaf } from '../types/CollectedTokenLeaf';
-
-const GENERATED_HEADER = `/* Generated from design-tokens by scripts/generateThemeTokens.ts.
-   Do not edit manually. Regenerate with: npx nx generateTokens twenty-ui. */`;
+import { GENERATED_CSS_HEADER } from './generatedCssHeader';
 
 const SQUIRCLE_COMMENT = `/* Squircle corners: progressive enhancement for browsers supporting
    corner-shape (Chromium 139+). A squircle needs ~2x the radius of a round
@@ -34,10 +32,13 @@ const extractSquircleBasePx = (leaf: CollectedTokenLeaf): number => {
   return Number(match[1]);
 };
 
-export const buildThemeCss = (
-  leaves: CollectedTokenLeaf[],
-  scheme: 'light' | 'dark',
-): string => {
+export const buildThemeCss = ({
+  leaves,
+  scheme,
+}: {
+  leaves: CollectedTokenLeaf[];
+  scheme: 'light' | 'dark';
+}): string => {
   const declarations = leaves
     .map(
       (leaf) =>
@@ -45,10 +46,12 @@ export const buildThemeCss = (
     )
     .join('\n');
 
+  const leafByVarName = new Map(leaves.map((leaf) => [leaf.varName, leaf]));
+
   const doubledDeclarations = SQUIRCLE_DOUBLED_RADIUS_TOKENS.map(
     (radiusToken) => {
       const varName = `--t-border-radius-${radiusToken}`;
-      const leaf = leaves.find((candidate) => candidate.varName === varName);
+      const leaf = leafByVarName.get(varName);
       if (leaf === undefined) {
         throw new Error(
           `Missing radius token "${varName}" for the squircle block.`,
@@ -58,7 +61,7 @@ export const buildThemeCss = (
     },
   ).join('\n');
 
-  return `${GENERATED_HEADER}
+  return `${GENERATED_CSS_HEADER}
 
 .${scheme} {
 ${declarations}

@@ -1,10 +1,13 @@
 import { type CollectedTokenLeaf } from '../types/CollectedTokenLeaf';
 import { type SerializableTree } from '../types/SerializableTree';
 
-export const buildLeafTree = (
-  leaves: CollectedTokenLeaf[],
-  leafValue: (leaf: CollectedTokenLeaf) => string,
-): SerializableTree => {
+export const buildLeafTree = ({
+  leaves,
+  leafValue,
+}: {
+  leaves: CollectedTokenLeaf[];
+  leafValue: (leaf: CollectedTokenLeaf) => string;
+}): SerializableTree => {
   const tree: SerializableTree = {};
   for (const leaf of leaves) {
     let node = tree;

@@ -1,5 +1,6 @@
+import { ACCENT_TOKENS } from './accent';
 import { token } from './token';
 
 export const BUTTONS_TOKENS = {
-  secondaryTextColor: token('color(display-p3 0.63 0.69 1)'),
+  secondaryTextColor: token(ACCENT_TOKENS.accent11.dark),
 };

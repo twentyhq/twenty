@@ -4,4 +4,5 @@ export type CollectedTokenLeaf = {
   light: string;
   dark: string;
   unit?: 'number';
+  jsValue?: 'cssVariable';
 };

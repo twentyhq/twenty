@@ -1,10 +1,5 @@
-export const ANIMATION = {
-  duration: {
-    instant: 0.075,
-    fast: 0.15,
-    normal: 0.3,
-    slow: 1.5,
-  },
-};
+import { THEME_LIGHT } from './ThemeLight';
+
+export const ANIMATION = THEME_LIGHT.animation;
 
 export type AnimationDuration = keyof typeof ANIMATION.duration;

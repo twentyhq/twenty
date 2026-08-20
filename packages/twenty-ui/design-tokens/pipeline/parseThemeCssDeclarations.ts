@@ -1,7 +1,10 @@
-export const parseThemeCssDeclarations = (
-  css: string,
-  scheme: 'light' | 'dark',
-): { name: string; value: string }[] => {
+export const parseThemeCssDeclarations = ({
+  css,
+  scheme,
+}: {
+  css: string;
+  scheme: 'light' | 'dark';
+}): { name: string; value: string }[] => {
   const lines = css.split('\n');
   const openIndex = lines.indexOf(`.${scheme} {`);
   if (openIndex === -1) {
