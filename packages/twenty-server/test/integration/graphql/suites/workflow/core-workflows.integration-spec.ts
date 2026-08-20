@@ -15,13 +15,23 @@ const graphql = (query: string, variables?: object) =>
 
 const CORE_WORKFLOWS_QUERY = `
   query CoreWorkflows {
-    coreWorkflows {
-      id
-      name
-      statuses
-      applicationId
-      workspaceWorkflowId
-      updatedAt
+    coreWorkflows(first: 200) {
+      edges {
+        node {
+          id
+          name
+          statuses
+          applicationId
+          workspaceWorkflowId
+          updatedAt
+        }
+        cursor
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+      totalCount
     }
   }
 `;
@@ -45,9 +55,9 @@ describe('coreWorkflows (e2e)', () => {
 
     expect(response.body.errors).toBeUndefined();
 
-    return (response.body.data.coreWorkflows as CoreWorkflow[]).find(
-      (workflow) => workflow.workspaceWorkflowId === workflowId,
-    );
+    return (response.body.data.coreWorkflows.edges as { node: CoreWorkflow }[])
+      .map((edge) => edge.node)
+      .find((workflow) => workflow.workspaceWorkflowId === workflowId);
   };
 
   // the core mirror and the statuses update are async listeners, so the row
@@ -196,6 +206,64 @@ describe('coreWorkflows (e2e)', () => {
     );
 
     expect(coreWorkflow?.statuses).toEqual(['DEACTIVATED']);
+  });
+
+  it('should paginate with a stable keyset cursor', async () => {
+    const firstPageResponse = await graphql(`
+      query {
+        coreWorkflows(first: 1, orderBy: NAME, orderByDirection: ASC) {
+          edges {
+            node {
+              id
+            }
+            cursor
+          }
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
+          totalCount
+        }
+      }
+    `);
+
+    expect(firstPageResponse.body.errors).toBeUndefined();
+
+    const firstPage = firstPageResponse.body.data.coreWorkflows;
+
+    expect(firstPage.edges).toHaveLength(1);
+    expect(firstPage.totalCount).toBeGreaterThanOrEqual(1);
+
+    if (!firstPage.pageInfo.hasNextPage) {
+      return;
+    }
+
+    const secondPageResponse = await graphql(
+      `
+        query SecondPage($after: String!) {
+          coreWorkflows(
+            first: 1
+            after: $after
+            orderBy: NAME
+            orderByDirection: ASC
+          ) {
+            edges {
+              node {
+                id
+              }
+              cursor
+            }
+          }
+        }
+      `,
+      { after: firstPage.pageInfo.endCursor },
+    );
+
+    expect(secondPageResponse.body.errors).toBeUndefined();
+
+    const secondPage = secondPageResponse.body.data.coreWorkflows;
+
+    expect(secondPage.edges[0].node.id).not.toBe(firstPage.edges[0].node.id);
   });
 
   it('should not list the workflow once it is destroyed', async () => {

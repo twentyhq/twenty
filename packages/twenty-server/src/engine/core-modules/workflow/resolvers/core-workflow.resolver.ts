@@ -1,12 +1,13 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Query } from '@nestjs/graphql';
+import { Args, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { CoreWorkflowDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow.dto';
+import { CoreWorkflowConnectionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-connection.dto';
+import { CoreWorkflowsArgs } from 'src/engine/core-modules/workflow/dtos/core-workflows.input';
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -31,10 +32,14 @@ export class CoreWorkflowResolver {
     private readonly coreWorkflowListService: CoreWorkflowListService,
   ) {}
 
-  @Query(() => [CoreWorkflowDTO])
+  @Query(() => CoreWorkflowConnectionDTO)
   async coreWorkflows(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<CoreWorkflowDTO[]> {
-    return this.coreWorkflowListService.findManyByWorkspaceId(workspaceId);
+    @Args() coreWorkflowsArgs: CoreWorkflowsArgs,
+  ): Promise<CoreWorkflowConnectionDTO> {
+    return this.coreWorkflowListService.findManyByWorkspaceId(
+      workspaceId,
+      coreWorkflowsArgs,
+    );
   }
 }

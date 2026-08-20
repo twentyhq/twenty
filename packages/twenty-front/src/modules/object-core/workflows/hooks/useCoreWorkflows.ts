@@ -1,15 +1,86 @@
 import { useQuery } from '@apollo/client/react';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { GetCoreWorkflowsDocument } from '~/generated/graphql';
+import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
+import { type TableSortValue } from '@/ui/layout/table/types/TableSortValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import {
+  CoreWorkflowOrderByDirection,
+  CoreWorkflowOrderByField,
+  GetCoreWorkflowsDocument,
+} from '~/generated/graphql';
+
+export const CORE_WORKFLOWS_TABLE_ID = 'workflowCore';
+export const CORE_WORKFLOWS_PAGE_SIZE = 60;
+
+export const CORE_WORKFLOWS_INITIAL_SORT: TableSortValue = {
+  fieldName: 'updatedAt',
+  orderBy: 'DescNullsLast',
+};
+
+const ORDER_BY_FIELD_BY_FIELD_NAME: Record<string, CoreWorkflowOrderByField> = {
+  name: CoreWorkflowOrderByField.NAME,
+  updatedAt: CoreWorkflowOrderByField.UPDATED_AT,
+};
 
 export const useCoreWorkflows = () => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const { data, loading, error } = useQuery(GetCoreWorkflowsDocument, {
-    client: apolloCoreClient,
-    fetchPolicy: 'cache-and-network',
-  });
+  const sortedFieldByTable = useAtomFamilyStateValue(
+    sortedFieldByTableFamilyState,
+    { tableId: CORE_WORKFLOWS_TABLE_ID },
+  );
 
-  return { coreWorkflows: data?.coreWorkflows ?? [], loading, error };
+  const sortValue = sortedFieldByTable ?? CORE_WORKFLOWS_INITIAL_SORT;
+
+  const orderBy =
+    ORDER_BY_FIELD_BY_FIELD_NAME[sortValue.fieldName] ??
+    CoreWorkflowOrderByField.UPDATED_AT;
+  const orderByDirection = sortValue.orderBy.startsWith('Asc')
+    ? CoreWorkflowOrderByDirection.ASC
+    : CoreWorkflowOrderByDirection.DESC;
+
+  const { data, loading, error, fetchMore } = useQuery(
+    GetCoreWorkflowsDocument,
+    {
+      client: apolloCoreClient,
+      fetchPolicy: 'cache-and-network',
+      variables: {
+        first: CORE_WORKFLOWS_PAGE_SIZE,
+        orderBy,
+        orderByDirection,
+      },
+    },
+  );
+
+  const connection = data?.coreWorkflows;
+
+  const fetchNextPage = async () => {
+    if (connection?.pageInfo.hasNextPage !== true) {
+      return;
+    }
+
+    await fetchMore({
+      variables: { after: connection.pageInfo.endCursor },
+      updateQuery: (previousResult, { fetchMoreResult }) => ({
+        ...fetchMoreResult,
+        coreWorkflows: {
+          ...fetchMoreResult.coreWorkflows,
+          edges: [
+            ...previousResult.coreWorkflows.edges,
+            ...fetchMoreResult.coreWorkflows.edges,
+          ],
+        },
+      }),
+    });
+  };
+
+  return {
+    coreWorkflows: connection?.edges.map((edge) => edge.node) ?? [],
+    totalCount: connection?.totalCount ?? 0,
+    hasNextPage: connection?.pageInfo.hasNextPage ?? false,
+    fetchNextPage,
+    loading,
+    error,
+  };
 };

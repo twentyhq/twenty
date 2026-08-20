@@ -4,7 +4,11 @@ import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { CoreObjectTable } from '@/object-core/components/CoreObjectTable';
 import { WORKFLOW_CORE_TABLE_COLUMNS } from '@/object-core/workflows/constants/WorkflowCoreTableColumns';
-import { useCoreWorkflows } from '@/object-core/workflows/hooks/useCoreWorkflows';
+import {
+  CORE_WORKFLOWS_INITIAL_SORT,
+  CORE_WORKFLOWS_TABLE_ID,
+  useCoreWorkflows,
+} from '@/object-core/workflows/hooks/useCoreWorkflows';
 import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -48,12 +52,12 @@ export const WorkflowCoreIndexPage = () => {
       >
         <StyledTableContainer>
           <CoreObjectTable
-            tableId="workflowCore"
+            tableId={CORE_WORKFLOWS_TABLE_ID}
             columns={WORKFLOW_CORE_TABLE_COLUMNS}
             items={coreWorkflows}
             getItemKey={(workflow) => workflow.id}
             getItemLink={getCoreWorkflowLink}
-            initialSort={{ fieldName: 'updatedAt', orderBy: 'DescNullsLast' }}
+            initialSort={CORE_WORKFLOWS_INITIAL_SORT}
           />
         </StyledTableContainer>
       </PageCardLayout>

@@ -9,7 +9,6 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableHeaderText } from '@/ui/layout/table/components/TableHeaderText';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { type TableFieldMetadata } from '@/ui/layout/table/types/TableFieldMetadata';
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
 
@@ -37,17 +36,9 @@ export const CoreObjectTable = <TItem,>({
 }: CoreObjectTableProps<TItem>) => {
   const { t } = useLingui();
 
-  const tableMetadata: TableMetadata<TItem> = {
-    tableId,
-    fields: columns.filter(isSortableColumn),
-    initialSort,
-  };
-
   const gridTemplateColumns = columns
     .map((column) => column.gridTrack)
     .join(' ');
-
-  const sortedItems = useSortedArray(items, tableMetadata);
 
   return (
     <Table>
@@ -72,7 +63,7 @@ export const CoreObjectTable = <TItem,>({
         )}
       </TableRow>
       <TableBody>
-        {sortedItems.map((item) => (
+        {items.map((item) => (
           <TableRow
             key={getItemKey(item)}
             gridTemplateColumns={gridTemplateColumns}
