@@ -325,7 +325,9 @@ describe('PageLayoutVerticalList', () => {
     );
   });
 
-  it('never allows page scroll for a fit-content widget', () => {
+  it('lets the page scroll over a workflow in a multi-widget Canvas tab', () => {
+    mockLayoutMode = PageLayoutTabLayoutMode.CANVAS;
+
     render(
       <PageLayoutVerticalList
         isInEditMode={false}
@@ -333,6 +335,20 @@ describe('PageLayoutVerticalList', () => {
           makeWidget('fields', WidgetType.FIELDS),
           makeWidget('workflow', WidgetType.WORKFLOW),
         ]}
+      />,
+    );
+
+    expect(screen.getByTestId('workflow')).toHaveAttribute(
+      'data-allow-page-scroll',
+      'true',
+    );
+  });
+
+  it('keeps page scroll disabled when the list cannot scroll', () => {
+    render(
+      <PageLayoutVerticalList
+        isInEditMode={false}
+        widgets={[makeWidget('fields', WidgetType.FIELDS)]}
       />,
     );
 
