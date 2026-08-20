@@ -41,6 +41,7 @@ import {
   FileWorkspaceFolderDeletionJob,
   type FileWorkspaceFolderDeletionJobData,
 } from 'src/engine/core-modules/file/jobs/file-workspace-folder-deletion.job';
+import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -674,6 +675,7 @@ export class WorkspaceService {
       {
         id: `${WorkspaceDeletionApplicationUninstallJob.name}-${workspaceId}`,
         retryLimit: WORKSPACE_APPLICATION_UNINSTALL_RETRY_LIMIT,
+        backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
       },
     );
   }
@@ -695,6 +697,7 @@ export class WorkspaceService {
       {
         id: `${WorkspaceSuspensionApplicationUninstallJob.name}-${workspaceId}-${workspaceSuspensionUninstallRequestedAt.toISOString()}`,
         retryLimit: WORKSPACE_APPLICATION_UNINSTALL_RETRY_LIMIT,
+        backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
       },
     );
   }
