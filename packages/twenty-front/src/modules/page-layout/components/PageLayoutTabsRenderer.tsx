@@ -1,5 +1,6 @@
 import { PageLayoutWidgetDndProvider } from '@/page-layout/components/dnd/PageLayoutWidgetDndProvider';
 import { PageLayoutLeftPanel } from '@/page-layout/components/PageLayoutLeftPanel';
+import { PageLayoutScrollResetEffect } from '@/page-layout/components/PageLayoutScrollResetEffect';
 import { PageLayoutTabList } from '@/page-layout/components/PageLayoutTabList';
 import { PageLayoutTabListEffect } from '@/page-layout/components/PageLayoutTabListEffect';
 import { PAGE_LAYOUT_LEFT_PANEL_CONTAINER_WIDTH } from '@/page-layout/constants/PageLayoutLeftPanelContainerWidth';
@@ -15,12 +16,10 @@ import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
-import { useEffect } from 'react';
 
 const StyledContainer = styled.div<{ hasPinnedTab: boolean }>`
   display: grid;
@@ -116,18 +115,6 @@ export const PageLayoutTabsRenderer = () => {
       scrollWrapperArea: 'tab-content',
     });
 
-  const { getScrollWrapperElement } = useScrollWrapperHTMLElement(
-    scrollWrapperInstanceId,
-  );
-
-  useEffect(() => {
-    const { scrollWrapperElement } = getScrollWrapperElement();
-
-    if (isDefined(scrollWrapperElement)) {
-      scrollWrapperElement.scrollTop = 0;
-    }
-  }, [activeTabId, getScrollWrapperElement, targetRecordIdentifier?.id]);
-
   const tabListInstanceId = getTabListInstanceIdFromPageLayoutAndRecord({
     pageLayoutId: currentPageLayout.id,
     layoutType,
@@ -154,6 +141,11 @@ export const PageLayoutTabsRenderer = () => {
 
   return (
     <PageLayoutWidgetDndProvider>
+      <PageLayoutScrollResetEffect
+        pageLayoutTabId={activeTabId}
+        scrollWrapperInstanceId={scrollWrapperInstanceId}
+        targetRecordId={targetRecordIdentifier?.id}
+      />
       <StyledContainer hasPinnedTab={isDefined(pinnedLeftTab)}>
         {isDefined(pinnedLeftTab) && (
           <PageLayoutLeftPanel

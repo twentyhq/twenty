@@ -1,5 +1,6 @@
 import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
 import { PageLayoutContent } from '@/page-layout/components/PageLayoutContent';
+import { PageLayoutScrollResetEffect } from '@/page-layout/components/PageLayoutScrollResetEffect';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/usePageLayoutTabWithVisibleWidgetsOrThrow';
@@ -8,10 +9,7 @@ import { getTabLayoutMode } from '@/page-layout/utils/getTabLayoutMode';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { styled } from '@linaria/react';
-import { useEffect } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -57,18 +55,6 @@ export const PageLayoutLeftPanel = ({
       scrollWrapperArea: 'left-panel',
       pageLayoutTabId: pinnedLeftTabId,
     });
-  const { getScrollWrapperElement } = useScrollWrapperHTMLElement(
-    scrollWrapperInstanceId,
-  );
-
-  useEffect(() => {
-    const { scrollWrapperElement } = getScrollWrapperElement();
-
-    if (isDefined(scrollWrapperElement)) {
-      scrollWrapperElement.scrollTop = 0;
-    }
-  }, [getScrollWrapperElement, targetRecordIdentifier.id]);
-
   if (currentPageLayout?.type !== PageLayoutType.RECORD_PAGE) {
     return null;
   }
@@ -80,6 +66,11 @@ export const PageLayoutLeftPanel = ({
 
   return (
     <StyledContainer>
+      <PageLayoutScrollResetEffect
+        pageLayoutTabId={pinnedLeftTabId}
+        scrollWrapperInstanceId={scrollWrapperInstanceId}
+        targetRecordId={targetRecordIdentifier.id}
+      />
       <SummaryCard
         objectNameSingular={targetRecordIdentifier.targetObjectNameSingular}
         objectRecordId={targetRecordIdentifier.id}
