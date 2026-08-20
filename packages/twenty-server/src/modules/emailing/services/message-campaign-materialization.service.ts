@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
-import { type ObjectLiteral } from 'typeorm';
 import { v4 } from 'uuid';
 
 import {
@@ -19,6 +18,8 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { type CampaignMessageRecipient } from 'src/modules/emailing/types/campaign-message-recipient.type';
+import { type CampaignMessageRow } from 'src/modules/emailing/types/campaign-message-row.type';
+import { buildCampaignMessageInsertPayloads } from 'src/modules/emailing/utils/build-campaign-message-insert-payloads.util';
 import { buildCampaignMessageId } from 'src/modules/emailing/utils/build-campaign-message-id.util';
 import { compileCampaignEmailContent } from 'src/modules/emailing/utils/compile-campaign-email-content.util';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
@@ -31,13 +32,6 @@ import {
   MessageParticipantRole,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-
-type CampaignMessageRow = {
-  recipient: CampaignMessageRecipient;
-  messageId: string;
-  threadId: string;
-  temporaryExternalId: string;
-};
 
 type MaterializeMessagesArgs = {
   workspaceId: string;
@@ -230,15 +224,7 @@ export class MessageCampaignMaterializationService {
     );
   }
 
-  private async insertChunk({
-    campaignId,
-    messageChannelId,
-    fromAddress,
-    subjectTemplate,
-    text,
-    now,
-    rows,
-  }: {
+  private async insertChunk(payloadArgs: {
     campaignId: string;
     messageChannelId: string;
     fromAddress: string;
@@ -247,64 +233,33 @@ export class MessageCampaignMaterializationService {
     now: Date;
     rows: CampaignMessageRow[];
   }): Promise<void> {
+    const { messageThreads, messages, channelAssociations, participants } =
+      buildCampaignMessageInsertPayloads(payloadArgs);
+
     await this.globalWorkspaceOrmManager.runInWorkspaceTransaction(
       async (transactionScope) => {
-        const repositoryOf = <T extends ObjectLiteral>(
-          objectMetadataName: string,
-        ) =>
-          transactionScope.getRepository<T>(objectMetadataName, {
+        await transactionScope
+          .getRepository<MessageThreadWorkspaceEntity>('messageThread', {
             shouldBypassPermissionChecks: true,
-          });
-
-        await repositoryOf<MessageThreadWorkspaceEntity>(
-          'messageThread',
-        ).insert(rows.map((row) => ({ id: row.threadId })));
-        await repositoryOf<MessageWorkspaceEntity>('message').insert(
-          rows.map((row) => ({
-            id: row.messageId,
-            headerMessageId: row.temporaryExternalId,
-            subject: subjectTemplate,
-            text,
-            receivedAt: now,
-            messageThreadId: row.threadId,
-            messageCampaignId: campaignId,
-            deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED,
-          })),
-        );
-        await repositoryOf<MessageChannelMessageAssociationWorkspaceEntity>(
-          'messageChannelMessageAssociation',
-        ).insert(
-          rows.map((row) => ({
-            id: v4(),
-            messageId: row.messageId,
-            messageChannelId,
-            messageExternalId: row.temporaryExternalId,
-            messageThreadExternalId: row.temporaryExternalId,
-            direction: MessageDirection.OUTGOING,
-          })),
-        );
-        await repositoryOf<MessageParticipantWorkspaceEntity>(
-          'messageParticipant',
-        ).insert(
-          rows.flatMap((row) => [
-            {
-              id: v4(),
-              messageId: row.messageId,
-              role: MessageParticipantRole.FROM,
-              handle: fromAddress,
-              displayName: fromAddress,
-            },
-            {
-              id: v4(),
-              messageId: row.messageId,
-              role: MessageParticipantRole.TO,
-              handle: row.recipient.email,
-              displayName: row.recipient.email,
-              personId: row.recipient.personId,
-              messageCampaignId: campaignId,
-            },
-          ]),
-        );
+          })
+          .insert(messageThreads);
+        await transactionScope
+          .getRepository<MessageWorkspaceEntity>('message', {
+            shouldBypassPermissionChecks: true,
+          })
+          .insert(messages);
+        await transactionScope
+          .getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+            'messageChannelMessageAssociation',
+            { shouldBypassPermissionChecks: true },
+          )
+          .insert(channelAssociations);
+        await transactionScope
+          .getRepository<MessageParticipantWorkspaceEntity>(
+            'messageParticipant',
+            { shouldBypassPermissionChecks: true },
+          )
+          .insert(participants);
       },
     );
   }

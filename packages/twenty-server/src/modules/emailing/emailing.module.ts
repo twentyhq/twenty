@@ -17,8 +17,8 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { UnsubscribeController } from 'src/modules/emailing/controllers/unsubscribe.controller';
-import { SweepStuckMessageCampaignsCronCommand } from 'src/modules/emailing/crons/commands/sweep-stuck-message-campaigns.cron.command';
-import { SweepStuckMessageCampaignsCronJob } from 'src/modules/emailing/crons/jobs/sweep-stuck-message-campaigns.cron.job';
+import { EmailingOngoingStaleCronCommand } from 'src/modules/emailing/crons/commands/emailing-ongoing-stale.cron.command';
+import { EmailingOngoingStaleCronJob } from 'src/modules/emailing/crons/jobs/emailing-ongoing-stale.cron.job';
 import { EmailingSendResolver } from 'src/modules/emailing/resolvers/emailing-send.resolver';
 import { MessageSuppressionResolver } from 'src/modules/emailing/resolvers/message-suppression.resolver';
 import { UnsubscribeTopicResolver } from 'src/modules/emailing/resolvers/unsubscribe-topic.resolver';
@@ -29,6 +29,7 @@ import { MessageCampaignDraftService } from 'src/modules/emailing/services/messa
 import { MessageCampaignRecoveryService } from 'src/modules/emailing/services/message-campaign-recovery.service';
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { MessageCampaignAudienceService } from 'src/modules/emailing/services/message-campaign-audience.service';
+import { MessageCampaignDeliveryFeedbackService } from 'src/modules/emailing/services/message-campaign-delivery-feedback.service';
 import { MessageCampaignDeliveryService } from 'src/modules/emailing/services/message-campaign-delivery.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageCampaignMaterializationService } from 'src/modules/emailing/services/message-campaign-materialization.service';
@@ -63,6 +64,7 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     MessageCampaignService,
     MessageCampaignAudienceService,
     MessageCampaignDeliveryService,
+    MessageCampaignDeliveryFeedbackService,
     MessageCampaignLifecycleService,
     MessageCampaignMaterializationService,
     MessageCampaignDraftService,
@@ -78,20 +80,21 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     provideWorkspaceScopedRepository(EmailingDomainEntity),
     provideWorkspaceScopedRepository(MessageSuppressionEntity),
     provideWorkspaceScopedRepository(UnsubscribeTopicEntity),
-    SweepStuckMessageCampaignsCronCommand,
-    SweepStuckMessageCampaignsCronJob,
+    EmailingOngoingStaleCronCommand,
+    EmailingOngoingStaleCronJob,
   ],
   exports: [
     EmailingDomainSenderService,
     MessageCampaignService,
     MessageCampaignDeliveryService,
+    MessageCampaignDeliveryFeedbackService,
     MessageCampaignMaterializationService,
     MessageCampaignDraftService,
     MessageCampaignStatisticsService,
     MessageSuppressionService,
     UnsubscribeTopicService,
     SaveCampaignTool,
-    SweepStuckMessageCampaignsCronCommand,
+    EmailingOngoingStaleCronCommand,
   ],
 })
 export class EmailingModule {}

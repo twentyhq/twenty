@@ -1,8 +1,15 @@
-import { Injectable, Logger, type Type } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
-import { In, type ObjectLiteral } from 'typeorm';
+import { In } from 'typeorm';
 
-import { CAMPAIGN_MESSAGE_DELIVERY_STATUS } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
+import {
+  CAMPAIGN_MESSAGE_DELIVERY_STATUS,
+  type CampaignMessageDeliveryStatus,
+} from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
+import {
+  EmailingDomainDriverException,
+  EmailingDomainDriverExceptionCode,
+} from 'src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
 import { type SendCampaignEmailJobData } from 'src/engine/core-modules/emailing-domain/types/send-campaign-email-job-data.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -14,12 +21,11 @@ import { EmailingDomainSenderService } from 'src/modules/emailing/services/email
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { renderCampaignEmail } from 'src/modules/emailing/utils/render-campaign-email.util';
-import { resolveCampaignSendFailure } from 'src/modules/emailing/utils/resolve-campaign-send-failure.util';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { MessageCampaignStatus } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 type MessageRepository = WorkspaceRepository<MessageWorkspaceEntity>;
 
@@ -40,23 +46,16 @@ export class MessageCampaignDeliveryService {
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
   ) {}
 
-  private getSystemRepository<T extends ObjectLiteral>(
-    workspaceId: string,
-    entity: Type<T>,
-  ) {
-    return this.globalWorkspaceOrmManager.getRepository(workspaceId, entity, {
-      shouldBypassPermissionChecks: true,
-    });
-  }
-
   async processSendJob(data: SendCampaignEmailJobData): Promise<void> {
     const { workspaceId, campaignId } = data;
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageRepository = await this.getSystemRepository(
-        workspaceId,
-        MessageWorkspaceEntity,
-      );
+      const messageRepository =
+        await this.globalWorkspaceOrmManager.getRepository(
+          workspaceId,
+          MessageWorkspaceEntity,
+          { shouldBypassPermissionChecks: true },
+        );
 
       const sendContext = await this.loadSendContext({
         data,
@@ -87,10 +86,12 @@ export class MessageCampaignDeliveryService {
   }): Promise<SendContext | null> {
     const { workspaceId, campaignId, messageId, personId } = data;
 
-    const campaignRepository = await this.getSystemRepository(
-      workspaceId,
-      MessageCampaignWorkspaceEntity,
-    );
+    const campaignRepository =
+      await this.globalWorkspaceOrmManager.getRepository(
+        workspaceId,
+        MessageCampaignWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+      );
 
     const campaign = await campaignRepository.findOne({
       where: { id: campaignId },
@@ -112,9 +113,10 @@ export class MessageCampaignDeliveryService {
       return null;
     }
 
-    const personRepository = await this.getSystemRepository(
+    const personRepository = await this.globalWorkspaceOrmManager.getRepository(
       workspaceId,
       PersonWorkspaceEntity,
+      { shouldBypassPermissionChecks: true },
     );
 
     return {
@@ -182,7 +184,7 @@ export class MessageCampaignDeliveryService {
         },
       );
     } catch (error) {
-      const { deliveryStatus, shouldRetry } = resolveCampaignSendFailure(error);
+      const { deliveryStatus, shouldRetry } = this.resolveSendFailure(error);
 
       await messageRepository.update(
         {
@@ -222,7 +224,7 @@ export class MessageCampaignDeliveryService {
 
     if (affected !== 1) {
       this.logger.warn(
-        `Campaign ${campaignId} delivered message ${messageId} after the sweeper reclaimed it, so it is not recorded or billed against the finalized campaign`,
+        `Campaign ${campaignId} delivered message ${messageId} after the recovery job reclaimed it, so it is not recorded or billed against the finalized campaign`,
       );
 
       return;
@@ -233,10 +235,12 @@ export class MessageCampaignDeliveryService {
       sentEmailCount: 1,
     });
 
-    const associationRepository = await this.getSystemRepository(
-      workspaceId,
-      MessageChannelMessageAssociationWorkspaceEntity,
-    );
+    const associationRepository =
+      await this.globalWorkspaceOrmManager.getRepository(
+        workspaceId,
+        MessageChannelMessageAssociationWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+      );
 
     await associationRepository.update(
       { messageId },
@@ -245,46 +249,6 @@ export class MessageCampaignDeliveryService {
         messageThreadExternalId: result.messageId,
       },
     );
-  }
-
-  async recordDeliveryFailureByProviderMessageId({
-    workspaceId,
-    providerMessageId,
-    deliveryStatus,
-  }: {
-    workspaceId: string;
-    providerMessageId: string;
-    deliveryStatus: string;
-  }): Promise<void> {
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageRepository = await this.getSystemRepository(
-        workspaceId,
-        MessageWorkspaceEntity,
-      );
-
-      const message = await messageRepository.findOne({
-        where: { headerMessageId: providerMessageId },
-      });
-
-      if (!isDefined(message) || !isDefined(message.messageCampaignId)) {
-        return;
-      }
-
-      const isAlreadyTerminal =
-        message.deliveryStatus === CAMPAIGN_MESSAGE_DELIVERY_STATUS.BOUNCED ||
-        message.deliveryStatus === CAMPAIGN_MESSAGE_DELIVERY_STATUS.COMPLAINED;
-
-      if (isAlreadyTerminal) {
-        return;
-      }
-
-      await messageRepository.update(message.id, { deliveryStatus });
-
-      await this.messageCampaignLifecycleService.scheduleStatsRefresh({
-        workspaceId,
-        campaignId: message.messageCampaignId,
-      });
-    }, buildSystemAuthContext(workspaceId));
   }
 
   private async claimMessageForSending({
@@ -306,5 +270,42 @@ export class MessageCampaignDeliveryService {
     );
 
     return affected === 1;
+  }
+
+  private resolveSendFailure(error: unknown): {
+    deliveryStatus: CampaignMessageDeliveryStatus;
+    shouldRetry: boolean;
+  } {
+    if (!(error instanceof EmailingDomainDriverException)) {
+      return {
+        deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED,
+        shouldRetry: true,
+      };
+    }
+
+    switch (error.code) {
+      case EmailingDomainDriverExceptionCode.ALL_RECIPIENTS_SUPPRESSED:
+        return {
+          deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SKIPPED,
+          shouldRetry: false,
+        };
+      case EmailingDomainDriverExceptionCode.TEMPORARY_ERROR:
+      case EmailingDomainDriverExceptionCode.UNKNOWN:
+        return {
+          deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED,
+          shouldRetry: true,
+        };
+      case EmailingDomainDriverExceptionCode.NOT_FOUND:
+      case EmailingDomainDriverExceptionCode.INSUFFICIENT_PERMISSIONS:
+      case EmailingDomainDriverExceptionCode.CONFIGURATION_ERROR:
+      case EmailingDomainDriverExceptionCode.SENDING_SUSPENDED:
+      case EmailingDomainDriverExceptionCode.UNSUBSCRIBE_NOT_READY:
+        return {
+          deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED,
+          shouldRetry: false,
+        };
+      default:
+        return assertUnreachable(error.code);
+    }
   }
 }

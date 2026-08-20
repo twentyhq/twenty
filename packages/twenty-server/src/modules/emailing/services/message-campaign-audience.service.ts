@@ -1,7 +1,7 @@
-import { Injectable, type Type } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { In, type ObjectLiteral } from 'typeorm';
+import { In } from 'typeorm';
 
 import { MAX_CAMPAIGN_RECIPIENTS } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
 import { type CampaignSkippedBreakdown } from 'src/engine/core-modules/emailing-domain/types/campaign-skipped-breakdown.type';
@@ -43,16 +43,6 @@ export class MessageCampaignAudienceService {
     private readonly messageSuppressionService: MessageSuppressionService,
     private readonly userRoleService: UserRoleService,
   ) {}
-
-  private getRoleScopedRepository<T extends ObjectLiteral>(
-    workspaceId: string,
-    entity: Type<T>,
-    roleId: string,
-  ) {
-    return this.globalWorkspaceOrmManager.getRepository(workspaceId, entity, {
-      unionOf: [roleId],
-    });
-  }
 
   async resolveNormalizedAudience({
     workspaceId,
@@ -160,11 +150,12 @@ export class MessageCampaignAudienceService {
     listId: string;
     roleId: string;
   }): Promise<RawCampaignRecipient[]> {
-    const listMemberRepository = await this.getRoleScopedRepository(
-      workspaceId,
-      MessageListMemberWorkspaceEntity,
-      roleId,
-    );
+    const listMemberRepository =
+      await this.globalWorkspaceOrmManager.getRepository(
+        workspaceId,
+        MessageListMemberWorkspaceEntity,
+        { unionOf: [roleId] },
+      );
 
     const members = await listMemberRepository.find({ where: { listId } });
     const personIds = members.map((member) => member.personId);
@@ -173,10 +164,10 @@ export class MessageCampaignAudienceService {
       return [];
     }
 
-    const personRepository = await this.getRoleScopedRepository(
+    const personRepository = await this.globalWorkspaceOrmManager.getRepository(
       workspaceId,
       PersonWorkspaceEntity,
-      roleId,
+      { unionOf: [roleId] },
     );
 
     const people = await personRepository.find({

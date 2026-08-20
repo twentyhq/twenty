@@ -1,7 +1,6 @@
-import { Injectable, type Type } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { z } from 'zod';
-import { type ObjectLiteral } from 'typeorm';
 
 import { MATERIALIZE_CAMPAIGN_JOB } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
@@ -237,11 +236,12 @@ export class MessageCampaignService {
     campaignId: string;
     roleId: string;
   }): Promise<SendableDraftCampaign> {
-    const campaignRepository = await this.getRoleScopedRepository(
-      workspaceId,
-      MessageCampaignWorkspaceEntity,
-      roleId,
-    );
+    const campaignRepository =
+      await this.globalWorkspaceOrmManager.getRepository(
+        workspaceId,
+        MessageCampaignWorkspaceEntity,
+        { unionOf: [roleId] },
+      );
 
     const campaign = await campaignRepository.findOne({
       where: { id: campaignId },
@@ -274,15 +274,5 @@ export class MessageCampaignService {
     );
 
     return sendableCampaign.data;
-  }
-
-  private getRoleScopedRepository<T extends ObjectLiteral>(
-    workspaceId: string,
-    entity: Type<T>,
-    roleId: string,
-  ) {
-    return this.globalWorkspaceOrmManager.getRepository(workspaceId, entity, {
-      unionOf: [roleId],
-    });
   }
 }

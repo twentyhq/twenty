@@ -11,11 +11,11 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { MessageCampaignRecoveryService } from 'src/modules/emailing/services/message-campaign-recovery.service';
 
-export const SWEEP_STUCK_MESSAGE_CAMPAIGNS_CRON_PATTERN = '0 * * * *';
+export const EMAILING_ONGOING_STALE_CRON_PATTERN = '0 * * * *';
 
 @Processor(MessageQueue.cronQueue)
-export class SweepStuckMessageCampaignsCronJob {
-  private readonly logger = new Logger(SweepStuckMessageCampaignsCronJob.name);
+export class EmailingOngoingStaleCronJob {
+  private readonly logger = new Logger(EmailingOngoingStaleCronJob.name);
 
   constructor(
     @InjectRepository(WorkspaceEntity)
@@ -23,10 +23,10 @@ export class SweepStuckMessageCampaignsCronJob {
     private readonly messageCampaignRecoveryService: MessageCampaignRecoveryService,
   ) {}
 
-  @Process(SweepStuckMessageCampaignsCronJob.name)
+  @Process(EmailingOngoingStaleCronJob.name)
   @SentryCronMonitor(
-    SweepStuckMessageCampaignsCronJob.name,
-    SWEEP_STUCK_MESSAGE_CAMPAIGNS_CRON_PATTERN,
+    EmailingOngoingStaleCronJob.name,
+    EMAILING_ONGOING_STALE_CRON_PATTERN,
   )
   async handle(): Promise<void> {
     const workspaces = await this.workspaceRepository.find({
@@ -36,10 +36,10 @@ export class SweepStuckMessageCampaignsCronJob {
 
     for (const workspace of workspaces) {
       await this.messageCampaignRecoveryService
-        .sweepStuckSendingCampaigns({ workspaceId: workspace.id })
+        .recoverOngoingStaleCampaigns({ workspaceId: workspace.id })
         .catch((error) => {
           this.logger.error(
-            `[${SweepStuckMessageCampaignsCronJob.name}] Cannot sweep campaigns of workspace ${workspace.id}: ${
+            `[${EmailingOngoingStaleCronJob.name}] Cannot recover ongoing stale campaigns of workspace ${workspace.id}: ${
               error instanceof Error ? error.message : String(error)
             }`,
           );

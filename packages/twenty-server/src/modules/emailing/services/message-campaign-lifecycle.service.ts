@@ -1,8 +1,8 @@
-import { Injectable, type Type } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
-import { In, LessThan, type ObjectLiteral } from 'typeorm';
+import { In, LessThan } from 'typeorm';
 
 import {
   CAMPAIGN_MESSAGE_CLAIM_STALE_THRESHOLD_MS,
@@ -53,20 +53,6 @@ export class MessageCampaignLifecycleService {
     private readonly cacheStorageService: CacheStorageService,
   ) {}
 
-  private getRepository<T extends ObjectLiteral>(
-    workspaceId: string,
-    entity: Type<T>,
-    roleId?: string,
-  ) {
-    return this.globalWorkspaceOrmManager.getRepository(
-      workspaceId,
-      entity,
-      isDefined(roleId)
-        ? { unionOf: [roleId] }
-        : { shouldBypassPermissionChecks: true },
-    );
-  }
-
   async transitionCampaignStatus({
     workspaceId,
     campaignId,
@@ -76,11 +62,14 @@ export class MessageCampaignLifecycleService {
   }: CampaignStatusTransition): Promise<boolean> {
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const campaignRepository = await this.getRepository(
-          workspaceId,
-          MessageCampaignWorkspaceEntity,
-          roleId,
-        );
+        const campaignRepository =
+          await this.globalWorkspaceOrmManager.getRepository(
+            workspaceId,
+            MessageCampaignWorkspaceEntity,
+            isDefined(roleId)
+              ? { unionOf: [roleId] }
+              : { shouldBypassPermissionChecks: true },
+          );
 
         const { affected } = await campaignRepository.update(
           { id: campaignId, status: from },
@@ -176,10 +165,12 @@ export class MessageCampaignLifecycleService {
   }): Promise<number> {
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const messageRepository = await this.getRepository(
-          workspaceId,
-          MessageWorkspaceEntity,
-        );
+        const messageRepository =
+          await this.globalWorkspaceOrmManager.getRepository(
+            workspaceId,
+            MessageWorkspaceEntity,
+            { shouldBypassPermissionChecks: true },
+          );
 
         const settleableCriteria = {
           messageCampaignId: campaignId,
@@ -234,10 +225,12 @@ export class MessageCampaignLifecycleService {
       return;
     }
 
-    const campaignRepository = await this.getRepository(
-      workspaceId,
-      MessageCampaignWorkspaceEntity,
-    );
+    const campaignRepository =
+      await this.globalWorkspaceOrmManager.getRepository(
+        workspaceId,
+        MessageCampaignWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+      );
 
     const correctableStatuses =
       terminalStatus === MessageCampaignStatus.SENT

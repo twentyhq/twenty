@@ -21,7 +21,7 @@ export class MessageCampaignRecoveryService {
     private readonly messageCampaignStatisticsService: MessageCampaignStatisticsService,
   ) {}
 
-  async sweepStuckSendingCampaigns({
+  async recoverOngoingStaleCampaigns({
     workspaceId,
   }: {
     workspaceId: string;
@@ -34,7 +34,11 @@ export class MessageCampaignRecoveryService {
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const campaignRepository =
-            await this.getCampaignRepository(workspaceId);
+            await this.globalWorkspaceOrmManager.getRepository(
+              workspaceId,
+              MessageCampaignWorkspaceEntity,
+              { shouldBypassPermissionChecks: true },
+            );
 
           return campaignRepository.find({
             where: {
@@ -154,14 +158,6 @@ export class MessageCampaignRecoveryService {
 
     this.logger.warn(
       `Campaign ${campaignId} of workspace ${workspaceId} materialized no message and was released back to draft`,
-    );
-  }
-
-  private async getCampaignRepository(workspaceId: string) {
-    return this.globalWorkspaceOrmManager.getRepository(
-      workspaceId,
-      MessageCampaignWorkspaceEntity,
-      { shouldBypassPermissionChecks: true },
     );
   }
 }
