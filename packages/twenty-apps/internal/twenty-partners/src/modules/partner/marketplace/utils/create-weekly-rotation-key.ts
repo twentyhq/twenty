@@ -10,9 +10,11 @@ const getUtcWeekStart = (date: Date): string => {
   return weekStart.toISOString().slice(0, 10);
 };
 
+// The date is required: a caller reading the clock per partner would mix keys
+// from two weeks whenever a request crosses the UTC Monday boundary.
 export const createWeeklyRotationKey = (
   partnerId: string,
-  date = new Date(),
+  date: Date,
 ): string =>
   createHash('sha256')
     .update(`${partnerId}:${getUtcWeekStart(date)}`)
