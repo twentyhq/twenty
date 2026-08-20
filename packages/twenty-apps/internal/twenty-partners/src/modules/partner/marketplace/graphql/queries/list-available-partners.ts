@@ -39,14 +39,15 @@ export const queryAvailablePartners = (client: CoreApiClient) =>
           skills: true,
           city: true,
           country: true,
+          // The server ignores nested relation arguments and caps every
+          // relation read at QUERY_MAX_RECORDS_FROM_RELATION (60), unordered.
+          // A partner holding more than 60 contents would report a truncated
+          // case-study count. Read these at the root and group by partner if
+          // any partner ever approaches that.
           partnerServices: {
             edges: { node: { id: true } },
           },
           partnerContents: {
-            __args: {
-              filter: { status: { eq: 'APPROVED' } },
-              first: 200,
-            },
             edges: {
               node: {
                 contentType: true,

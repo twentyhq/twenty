@@ -27,6 +27,7 @@ export type ListAvailablePartnersResult =
 
 const mapListPartner = (
   node: AvailablePartnerRaw,
+  rotationDate: Date,
 ): MarketplaceRankedListPartner => {
   const mapped = mapPartnerForMarketplace(node, 'list');
 
@@ -49,7 +50,7 @@ const mapListPartner = (
       ({ node: content }) =>
         resolveCoverUrl(content.coverImageUrl, content.coverImage) !== null,
     ).length,
-    rotationKey: createWeeklyRotationKey(node.id),
+    rotationKey: createWeeklyRotationKey(node.id, rotationDate),
   };
 };
 
@@ -57,8 +58,11 @@ export const listAvailablePartners = async (): Promise<ListAvailablePartnersResu
   try {
     const client = new CoreApiClient();
     const result = await queryAvailablePartners(client);
+    // One clock read for the whole response: a request that straddles the UTC
+    // Monday boundary would otherwise mix keys from two weeks in one sort.
+    const rotationDate = new Date();
     const partners = (result.partners?.edges ?? []).map(({ node }) =>
-      mapListPartner(node),
+      mapListPartner(node, rotationDate),
     );
 
     return { ok: true, count: partners.length, partners };
