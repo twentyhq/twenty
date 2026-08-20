@@ -795,8 +795,6 @@ export class SearchService {
     loaders: IDataloaders;
     locale: keyof typeof APP_LOCALES | undefined;
   }): Promise<SearchResultConnectionDTO> {
-    // Resolved per object rather than per record: the catalog loader is
-    // batched, and a search page holds few objects but many records.
     const objectLabelSingularByObjectMetadataId = new Map(
       await Promise.all(
         recordsWithObjectMetadataItems.map(
