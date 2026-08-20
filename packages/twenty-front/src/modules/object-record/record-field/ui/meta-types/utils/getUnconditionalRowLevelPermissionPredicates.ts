@@ -15,12 +15,15 @@ const isPredicateInsideOrGroup = ({
   predicateGroupById: Map<string, RowLevelPermissionPredicateGroup>;
 }): boolean => {
   let groupId = predicate.rowLevelPermissionPredicateGroupId;
+  const visitedGroupIds = new Set<string>();
 
-  while (isDefined(groupId)) {
+  while (isDefined(groupId) && !visitedGroupIds.has(groupId)) {
+    visitedGroupIds.add(groupId);
+
     const group = predicateGroupById.get(groupId);
 
     if (!isDefined(group)) {
-      return false;
+      return true;
     }
 
     if (

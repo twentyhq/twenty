@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import {
   type RowLevelPermissionPredicate,
   type RowLevelPermissionPredicateGroup,
@@ -145,7 +147,7 @@ describe('getUnconditionalRowLevelPermissionPredicates', () => {
     ).toEqual([predicate]);
   });
 
-  it('keeps predicates whose group is missing from the group list', () => {
+  it('drops predicates whose group is missing from the group list', () => {
     const predicate = createPredicate({
       id: 'predicate-id',
       rowLevelPermissionPredicateGroupId: 'unknown-group-id',
@@ -156,7 +158,81 @@ describe('getUnconditionalRowLevelPermissionPredicates', () => {
         predicates: [predicate],
         predicateGroups: [],
       }),
+    ).toEqual([]);
+  });
+
+  it('terminates on a group that is its own parent', () => {
+    const predicate = createPredicate({
+      id: 'predicate-id',
+      rowLevelPermissionPredicateGroupId: 'self-parented-group-id',
+    });
+
+    expect(
+      getUnconditionalRowLevelPermissionPredicates({
+        predicates: [predicate],
+        predicateGroups: [
+          createGroup({
+            id: 'self-parented-group-id',
+            logicalOperator:
+              RowLevelPermissionPredicateGroupLogicalOperator.AND,
+            parentRowLevelPermissionPredicateGroupId: 'self-parented-group-id',
+          }),
+        ],
+      }),
     ).toEqual([predicate]);
+  });
+
+  it('terminates on a two-group parent cycle', () => {
+    const predicate = createPredicate({
+      id: 'predicate-id',
+      rowLevelPermissionPredicateGroupId: 'first-group-id',
+    });
+
+    expect(
+      getUnconditionalRowLevelPermissionPredicates({
+        predicates: [predicate],
+        predicateGroups: [
+          createGroup({
+            id: 'first-group-id',
+            logicalOperator:
+              RowLevelPermissionPredicateGroupLogicalOperator.AND,
+            parentRowLevelPermissionPredicateGroupId: 'second-group-id',
+          }),
+          createGroup({
+            id: 'second-group-id',
+            logicalOperator:
+              RowLevelPermissionPredicateGroupLogicalOperator.AND,
+            parentRowLevelPermissionPredicateGroupId: 'first-group-id',
+          }),
+        ],
+      }),
+    ).toEqual([predicate]);
+  });
+
+  it('finds an OR ancestor before a cycle closes', () => {
+    const predicate = createPredicate({
+      id: 'predicate-id',
+      rowLevelPermissionPredicateGroupId: 'and-group-id',
+    });
+
+    expect(
+      getUnconditionalRowLevelPermissionPredicates({
+        predicates: [predicate],
+        predicateGroups: [
+          createGroup({
+            id: 'and-group-id',
+            logicalOperator:
+              RowLevelPermissionPredicateGroupLogicalOperator.AND,
+            parentRowLevelPermissionPredicateGroupId: 'or-group-id',
+          }),
+          createGroup({
+            id: 'or-group-id',
+            logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
+            parentRowLevelPermissionPredicateGroupId: 'and-group-id',
+          }),
+        ],
+      }),
+    ).toEqual([]);
   });
 
   it('keeps only the predicates outside OR groups in a mixed rule', () => {
