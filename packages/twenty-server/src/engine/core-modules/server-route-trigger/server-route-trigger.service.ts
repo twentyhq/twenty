@@ -68,6 +68,20 @@ export class ServerRouteTriggerService {
       );
     }
 
+    // Compared against POST rather than GET because Express dispatches HEAD to
+    // the GET handler, so a GET-only comparison would let HEAD reach a resolver
+    // that never opted in. Rejected before the resolver runs, since these are
+    // the methods crawlers and link unfurlers send unprompted.
+    if (
+      request.method !== 'POST' &&
+      resolver.serverRouteTriggerSettings?.isGetAllowed !== true
+    ) {
+      throw new ServerRouteTriggerException(
+        `Server resolver function ${resolverLogicFunctionUniversalIdentifier} does not accept ${request.method} requests`,
+        ServerRouteTriggerExceptionCode.METHOD_NOT_ALLOWED,
+      );
+    }
+
     if (resolver.httpRouteTriggerSettings?.isAuthRequired === true) {
       throw new ServerRouteTriggerException(
         `Server resolver function ${resolverLogicFunctionUniversalIdentifier} requires authentication and cannot be dispatched through the public server route`,

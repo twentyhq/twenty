@@ -25,6 +25,8 @@ const TARGET_FUNCTION_UNIVERSAL_IDENTIFIER =
   '4d4f983f-5c1a-4c60-a3c8-7d0e2a4a44d4';
 const HANDSHAKE_RESOLVER_UNIVERSAL_IDENTIFIER =
   '5e5f983f-5c1a-4c60-a3c8-7d0e2a4a55e5';
+const GET_HANDSHAKE_RESOLVER_UNIVERSAL_IDENTIFIER =
+  '6f6f983f-5c1a-4c60-a3c8-7d0e2a4a66f6';
 
 const TARGET_FUNCTION_RESPONSE = { greeting: 'hello from target function' };
 
@@ -43,6 +45,16 @@ const HANDSHAKE_RESOLVER_BUILT_HANDLER_CODE = `export const main = async (event)
 });
 `;
 
+// Mirrors how a provider verifies a webhook: the challenge arrives in the query
+// string of a GET, and the answer must be the bare value, not JSON.
+const GET_HANDSHAKE_RESOLVER_BUILT_HANDLER_CODE = `export const main = async (event) => ({
+  ${LOGIC_FUNCTION_HTTP_RESPONSE_MARKER}: true,
+  status: 200,
+  headers: { 'content-type': 'text/plain' },
+  body: event.queryStringParameters['hub.challenge'],
+});
+`;
+
 const TARGET_BUILT_HANDLER_CODE = `export const main = async () => (${JSON.stringify(
   TARGET_FUNCTION_RESPONSE,
 )});
@@ -53,11 +65,13 @@ const buildLogicFunctionManifest = ({
   name,
   serverRouteExposed,
   authRequired,
+  getAllowed = false,
 }: {
   universalIdentifier: string;
   name: string;
   serverRouteExposed: boolean;
   authRequired: boolean;
+  getAllowed?: boolean;
 }): LogicFunctionManifest => ({
   universalIdentifier,
   name,
@@ -75,7 +89,12 @@ const buildLogicFunctionManifest = ({
       }
     : {}),
   ...(serverRouteExposed
-    ? { serverRouteTriggerSettings: { forwardedRequestHeaders: [] } }
+    ? {
+        serverRouteTriggerSettings: {
+          forwardedRequestHeaders: [],
+          ...(getAllowed ? { isGetAllowed: true } : {}),
+        },
+      }
     : {}),
 });
 
@@ -123,6 +142,11 @@ describe('ServerRouteTrigger authorization (integration)', () => {
     });
 
     await uploadBuiltHandlerFile({
+      builtHandlerPath: 'dist/get-handshake-resolver.mjs',
+      builtHandlerCode: GET_HANDSHAKE_RESOLVER_BUILT_HANDLER_CODE,
+    });
+
+    await uploadBuiltHandlerFile({
       builtHandlerPath: 'dist/target-function.mjs',
       builtHandlerCode: TARGET_BUILT_HANDLER_CODE,
     });
@@ -156,6 +180,14 @@ describe('ServerRouteTrigger authorization (integration)', () => {
               name: 'handshake-resolver',
               serverRouteExposed: true,
               authRequired: false,
+            }),
+            buildLogicFunctionManifest({
+              universalIdentifier:
+                GET_HANDSHAKE_RESOLVER_UNIVERSAL_IDENTIFIER,
+              name: 'get-handshake-resolver',
+              serverRouteExposed: true,
+              authRequired: false,
+              getAllowed: true,
             }),
             buildLogicFunctionManifest({
               universalIdentifier: TARGET_FUNCTION_UNIVERSAL_IDENTIFIER,
@@ -217,6 +249,57 @@ describe('ServerRouteTrigger authorization (integration)', () => {
         status: response.status,
         body: response.body,
       });
+    });
+  });
+
+  describe('GET /webhooks/server/:universalIdentifier (public, unauthenticated)', () => {
+    it('rejects a GET on a resolver that did not opt in to it', async () => {
+      const response = await request(baseUrl).get(
+        `/webhooks/server/${EXPOSED_RESOLVER_UNIVERSAL_IDENTIFIER}`,
+      );
+
+      expect(response.status).toBe(405);
+      expect(response.body.code).toBe('METHOD_NOT_ALLOWED');
+    });
+
+    // Express dispatches HEAD to the GET handler, so the gate has to cover it.
+    it('rejects a HEAD on a resolver that did not opt in', async () => {
+      const response = await request(baseUrl).head(
+        `/webhooks/server/${EXPOSED_RESOLVER_UNIVERSAL_IDENTIFIER}`,
+      );
+
+      expect(response.status).toBe(405);
+    });
+
+    it('answers the verification challenge of a resolver that opted in', async () => {
+      const response = await request(baseUrl)
+        .get(`/webhooks/server/${GET_HANDSHAKE_RESOLVER_UNIVERSAL_IDENTIFIER}`)
+        .query({
+          'hub.mode': 'subscribe',
+          'hub.challenge': 'challenge-abc123',
+          'hub.verify_token': 'a-token',
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.headers['content-type']).toContain('text/plain');
+      expect(response.text).toBe('challenge-abc123');
+    }, 60000);
+
+    it('still dispatches a POST on a resolver that opted in to GET', async () => {
+      const response = await request(baseUrl)
+        .post(`/webhooks/server/${GET_HANDSHAKE_RESOLVER_UNIVERSAL_IDENTIFIER}`)
+        .send({ any: 'payload' });
+
+      expect(response.status).toBe(200);
+    }, 60000);
+
+    it('answers 404, not 405, for an identifier that resolves to nothing', async () => {
+      const response = await request(baseUrl).get(
+        `/webhooks/server/${NON_EXPOSED_FUNCTION_UNIVERSAL_IDENTIFIER}`,
+      );
+
+      expect(response.status).toBe(404);
+      expect(response.body.code).toBe('LOGIC_FUNCTION_NOT_FOUND');
     });
   });
 });
