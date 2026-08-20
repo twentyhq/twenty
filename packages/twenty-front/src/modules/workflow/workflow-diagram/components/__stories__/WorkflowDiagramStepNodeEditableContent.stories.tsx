@@ -7,7 +7,7 @@ import { WorkflowDiagramStepNodeEditableContent } from '@/workflow/workflow-diag
 import '@xyflow/react/dist/style.css';
 import { useStore } from 'jotai';
 import { useEffect } from 'react';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
 import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
@@ -48,6 +48,10 @@ const meta: Meta<typeof WorkflowDiagramStepNodeEditableContent> = {
 export default meta;
 
 type Story = StoryObj<typeof WorkflowDiagramStepNodeEditableContent>;
+
+const onChangeNode = fn();
+const onDuplicateNode = fn();
+const onDelete = fn();
 
 const ALL_STEPS = [
   {
@@ -148,9 +152,9 @@ export const Catalog: CatalogStory<
     id: 'story-node',
     data: ALL_STEPS[0],
     selected: false,
-    onChangeNode: fn(),
-    onDuplicateNode: fn(),
-    onDelete: fn(),
+    onChangeNode,
+    onDuplicateNode,
+    onDelete,
   },
   parameters: {
     pseudo: { hover: ['.hover'] },
@@ -165,7 +169,11 @@ export const Catalog: CatalogStory<
         {
           name: 'step type',
           values: ALL_STEPS,
-          props: (data: WorkflowDiagramStepNodeData) => ({ data }),
+          props: (data: WorkflowDiagramStepNodeData) => ({
+            data,
+            onDuplicateNode:
+              data.nodeType === 'action' ? onDuplicateNode : undefined,
+          }),
         },
         {
           name: 'selected',
@@ -202,13 +210,35 @@ export const Catalog: CatalogStory<
 
     expect(optionsButtons).toHaveLength(ALL_STEPS.length);
 
-    await userEvent.click(optionsButtons[0]);
-
     const canvasBody = within(canvasElement.ownerDocument.body);
-    const duplicateNodeMenuItem = await canvasBody.findByText('Duplicate node');
 
-    await userEvent.click(duplicateNodeMenuItem);
+    const triggerOptionsButton = optionsButtons[0];
 
-    expect(args.onDuplicateNode).toHaveBeenCalledTimes(1);
+    await userEvent.click(triggerOptionsButton);
+
+    await canvasBody.findByText('Change node');
+    expect(canvasBody.queryByText('Duplicate node')).not.toBeInTheDocument();
+
+    await userEvent.click(triggerOptionsButton);
+
+    await waitFor(() => {
+      expect(canvasBody.queryByText('Change node')).not.toBeInTheDocument();
+    });
+
+    const firstActionStepIndex = ALL_STEPS.findIndex(
+      (step) => step.nodeType === 'action',
+    );
+
+    await userEvent.click(optionsButtons[firstActionStepIndex]);
+
+    await canvasBody.findByText('Duplicate node');
+
+    await userEvent.keyboard('{ArrowDown}{Enter}');
+
+    await waitFor(() => {
+      expect(args.onDuplicateNode).toHaveBeenCalledTimes(1);
+    });
+    expect(args.onChangeNode).not.toHaveBeenCalled();
+    expect(args.onDelete).not.toHaveBeenCalled();
   },
 };
