@@ -1,3 +1,5 @@
+# Separate from ci-utils.yaml, which runs on pull_request_target with write
+# permissions and must not execute code from the pull request.
 name: CI Utils Test
 
 permissions:

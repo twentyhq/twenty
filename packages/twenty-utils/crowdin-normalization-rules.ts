@@ -31,6 +31,9 @@ function hasEscapedTagInInlineCode(text: string): boolean {
   return inlineCodeSpans(text).some((span) => ESCAPED_TAG_REGEX.test(span));
 }
 
+// Scoped to inline-code spans on purpose: an angle bracket escaped anywhere else
+// is how MDX carries a literal `<` in prose, and unescaping it would turn
+// documentation content into markup and break the very build we are protecting.
 function unescapeTagsInInlineCode(text: string): string {
   return text.replace(INLINE_CODE_SPAN_REGEX, (span) =>
     span
