@@ -1,5 +1,6 @@
 import { FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { IF_ELSE_BRANCH_POSITION_OFFSETS } from 'twenty-shared/workflow';
 import { type EntityManager } from 'typeorm';
 import { v5 } from 'uuid';
 
@@ -476,7 +477,7 @@ export const prefillWorkflows = async (
       type: 'CODE',
       valid: false,
       position: {
-        x: 227.25,
+        x: 0,
         y: 130,
       },
       settings: {
@@ -512,7 +513,7 @@ export const prefillWorkflows = async (
       type: 'FILTER',
       valid: false,
       position: {
-        x: 249.25,
+        x: 0,
         y: 260,
       },
       settings: {
@@ -556,7 +557,7 @@ export const prefillWorkflows = async (
       type: 'CODE',
       valid: false,
       position: {
-        x: 219.75,
+        x: 0,
         y: 390,
       },
       settings: {
@@ -600,7 +601,7 @@ export const prefillWorkflows = async (
       type: 'FIND_RECORDS',
       valid: false,
       position: {
-        x: 247.75,
+        x: 0,
         y: 520,
       },
       settings: {
@@ -648,7 +649,7 @@ export const prefillWorkflows = async (
       type: 'CODE',
       valid: false,
       position: {
-        x: 247.75,
+        x: 0,
         y: 650,
       },
       settings: {
@@ -691,7 +692,7 @@ export const prefillWorkflows = async (
       type: 'IF_ELSE',
       valid: false,
       position: {
-        x: 216.25,
+        x: 0,
         y: 780,
       },
       settings: {
@@ -745,7 +746,7 @@ export const prefillWorkflows = async (
       type: 'UPDATE_RECORD',
       valid: false,
       position: {
-        x: 0,
+        x: IF_ELSE_BRANCH_POSITION_OFFSETS.IF.x,
         y: 910,
       },
       settings: {
@@ -775,7 +776,7 @@ export const prefillWorkflows = async (
       type: 'CREATE_RECORD',
       valid: false,
       position: {
-        x: 440,
+        x: IF_ELSE_BRANCH_POSITION_OFFSETS.ELSE.x,
         y: 910,
       },
       settings: {
@@ -809,7 +810,7 @@ export const prefillWorkflows = async (
       type: 'UPDATE_RECORD',
       valid: false,
       position: {
-        x: 420.5,
+        x: IF_ELSE_BRANCH_POSITION_OFFSETS.ELSE.x,
         y: 1040,
       },
       settings: {
