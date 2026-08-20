@@ -1,4 +1,5 @@
 import { getTimelineActivityScopeFilter } from '@/activities/timeline-activities/utils/getTimelineActivityScopeFilter';
+import { TIMELINE_ACTIVITY_ACTIONS } from 'twenty-shared/timeline';
 
 describe('getTimelineActivityScopeFilter', () => {
   it('should not constrain the query when the scope is all', () => {
@@ -17,14 +18,14 @@ describe('getTimelineActivityScopeFilter', () => {
     });
   });
 
-  it('should split every action across the two scopes without overlap', () => {
-    const activityActions =
-      getTimelineActivityScopeFilter('activity').action?.in ?? [];
-    const historyActions =
-      getTimelineActivityScopeFilter('history').action?.in ?? [];
+  it('should account for every known action across the two scopes exactly once', () => {
+    const scopedActions = [
+      ...(getTimelineActivityScopeFilter('activity').action?.in ?? []),
+      ...(getTimelineActivityScopeFilter('history').action?.in ?? []),
+    ];
 
-    expect(
-      activityActions.filter((action) => historyActions.includes(action)),
-    ).toEqual([]);
+    expect(scopedActions.toSorted()).toEqual(
+      TIMELINE_ACTIVITY_ACTIONS.toSorted(),
+    );
   });
 });

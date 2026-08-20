@@ -1,6 +1,9 @@
 import { type TimelineActivityScope } from '@/activities/timeline-activities/types/TimelineActivityScope';
 import { type TimelineActivityAction } from 'twenty-shared/timeline';
-import { type RecordGqlOperationFilter } from 'twenty-shared/types';
+
+export type TimelineActivityScopeFilter = {
+  action?: { in: TimelineActivityAction[] };
+};
 
 const SCOPE_ACTIONS: Record<
   Exclude<TimelineActivityScope, 'all'>,
@@ -15,5 +18,5 @@ const SCOPE_ACTIONS: Record<
 // unbackfilled carry no action and only appear under the unfiltered scope.
 export const getTimelineActivityScopeFilter = (
   scope: TimelineActivityScope,
-): RecordGqlOperationFilter =>
+): TimelineActivityScopeFilter =>
   scope === 'all' ? {} : { action: { in: SCOPE_ACTIONS[scope] } };
