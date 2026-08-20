@@ -15,9 +15,11 @@ import { v4 as uuidv4 } from 'uuid';
 
 // Type-only imports for container-resolved providers: value imports would pull
 // the ESM-only file-type chain that the integration jest config cannot transform.
+import { type PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { type ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { type LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { type WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { getWorkspaceApplicationUninstallLockName } from 'src/engine/core-modules/workspace/utils/get-workspace-application-uninstall-lock-name.util';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 
 const buildManifestWithUninstallHook = ({
@@ -223,6 +225,77 @@ describe('Workspace deletion runs application uninstall hooks', () => {
       );
 
     expect(workspaceIdsWithPendingUninstallHooks.size).toBe(0);
+
+    const [workspaceMembershipBeforeDeferredHardDeletion] =
+      await globalThis.testDataSource.query(
+        `SELECT
+           "userWorkspace".id AS "userWorkspaceId",
+           "userWorkspace"."deletedAt" AS "userWorkspaceDeletedAt",
+           "user".id AS "userId",
+           "user"."deletedAt" AS "userDeletedAt"
+         FROM core."userWorkspace" "userWorkspace"
+         JOIN core."user" "user" ON "user".id = "userWorkspace"."userId"
+         WHERE "userWorkspace"."workspaceId" = $1`,
+        [workspaceId],
+      );
+
+    const postgresAdvisoryLockService =
+      getAppProviderByClassName<PostgresAdvisoryLockService>(
+        'PostgresAdvisoryLockService',
+      );
+    let releaseWorkspaceUninstallLock = () => {};
+    let notifyWorkspaceUninstallLockAcquired = () => {};
+    const workspaceUninstallLockAcquired = new Promise<void>((resolve) => {
+      notifyWorkspaceUninstallLockAcquired = resolve;
+    });
+    const workspaceUninstallLockReleased = new Promise<void>((resolve) => {
+      releaseWorkspaceUninstallLock = resolve;
+    });
+    const heldWorkspaceUninstallLock = postgresAdvisoryLockService.tryWithLock(
+      getWorkspaceApplicationUninstallLockName(workspaceId),
+      async () => {
+        notifyWorkspaceUninstallLockAcquired();
+        await workspaceUninstallLockReleased;
+      },
+    );
+
+    await workspaceUninstallLockAcquired;
+
+    try {
+      await expect(
+        workspaceService.deleteWorkspace(workspaceId),
+      ).rejects.toThrow(
+        `Cannot hard delete workspace ${workspaceId} while application uninstall is running`,
+      );
+    } finally {
+      releaseWorkspaceUninstallLock();
+      await heldWorkspaceUninstallLock;
+    }
+
+    const [workspaceAfterDeferredHardDeletion] =
+      await globalThis.testDataSource.query(
+        'SELECT id FROM core."workspace" WHERE id = $1',
+        [workspaceId],
+      );
+
+    expect(workspaceAfterDeferredHardDeletion.id).toBe(workspaceId);
+
+    const [workspaceMembershipAfterDeferredHardDeletion] =
+      await globalThis.testDataSource.query(
+        `SELECT
+           "userWorkspace".id AS "userWorkspaceId",
+           "userWorkspace"."deletedAt" AS "userWorkspaceDeletedAt",
+           "user".id AS "userId",
+           "user"."deletedAt" AS "userDeletedAt"
+         FROM core."userWorkspace" "userWorkspace"
+         JOIN core."user" "user" ON "user".id = "userWorkspace"."userId"
+         WHERE "userWorkspace"."workspaceId" = $1`,
+        [workspaceId],
+      );
+
+    expect(workspaceMembershipAfterDeferredHardDeletion).toEqual(
+      workspaceMembershipBeforeDeferredHardDeletion,
+    );
 
     await workspaceService.deleteWorkspace(workspaceId);
 

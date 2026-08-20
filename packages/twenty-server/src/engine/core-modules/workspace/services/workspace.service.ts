@@ -585,6 +585,10 @@ export class WorkspaceService {
 
     assert(workspace, 'Workspace not found');
 
+    if (!softDelete) {
+      return this.hardDeleteWorkspaceWithApplicationUninstallLock(workspace);
+    }
+
     const userWorkspaces = await this.userWorkspaceRepository.find({
       where: {
         workspaceId: id,
@@ -593,77 +597,117 @@ export class WorkspaceService {
     });
 
     for (const userWorkspace of userWorkspaces) {
-      await this.handleRemoveWorkspaceMember(
-        id,
-        userWorkspace.userId,
-        softDelete,
-      );
+      await this.handleRemoveWorkspaceMember(id, userWorkspace.userId, true);
     }
     this.logger.log(`workspace ${id} user workspaces deleted`);
 
     this.logger.log(`workspace ${id} cache flushed`);
 
-    if (softDelete) {
-      if (this.billingService.isBillingEnabled()) {
-        await this.billingSubscriptionService.cancelSubscription(workspace.id);
-      }
-
-      await this.workspaceRepository.softDelete({ id, deletedAt: IsNull() });
-      await this.coreEntityCacheService.invalidate('workspaceEntity', id);
-      await this.enqueueWorkspaceDeletionApplicationUninstall(id);
-
-      this.logger.log(`workspace ${id} soft deleted`);
-
-      return workspace;
-    }
-
     if (this.billingService.isBillingEnabled()) {
-      await this.billingSubscriptionService.assertSubscriptionCanceledOrNone(
-        workspace.id,
-      );
+      await this.billingSubscriptionService.cancelSubscription(workspace.id);
     }
 
-    await this.runPendingApplicationUninstallHooksBeforeHardDelete(workspace);
-
-    await this.deleteWorkspaceSyncableMetadataEntities(workspace);
-
-    await this.workspaceDataSourceService.deleteWorkspaceDBSchema(workspace.id);
-
-    await this.workspaceCacheStorageService.flush(workspace.id);
-    await this.flatEntityMapsCacheService.flushFlatEntityMaps({
-      workspaceId: workspace.id,
-    });
-
-    await this.messageQueueService.add<FileWorkspaceFolderDeletionJobData>(
-      FileWorkspaceFolderDeletionJob.name,
-      { workspaceId: id },
-    );
-
-    const emailingDomains = await this.coreDataSource
-      .getRepository(EmailingDomainEntity)
-      .find({ where: { workspaceId: id } });
-
-    await this.messageQueueService.add<EmailingDomainWorkspaceCleanupJobData>(
-      EmailingDomainWorkspaceCleanupJob.name,
-      {
-        workspaceId: id,
-        domains: emailingDomains.map((emailingDomain) => emailingDomain.domain),
-      },
-    );
-
-    if (workspace.customDomain) {
-      await this.dnsManagerService.deleteHostnameSilently(
-        workspace.customDomain,
-      );
-      this.logger.log(`workspace ${id} custom domain deleted`);
-    }
-
-    await this.workspaceRepository.delete(id);
+    await this.workspaceRepository.softDelete({ id, deletedAt: IsNull() });
     await this.coreEntityCacheService.invalidate('workspaceEntity', id);
+    await this.enqueueWorkspaceDeletionApplicationUninstall(id);
 
-    this.logger.log(`workspace ${id} hard deleted`);
+    this.logger.log(`workspace ${id} soft deleted`);
 
     return workspace;
+  }
+
+  private async hardDeleteWorkspaceWithApplicationUninstallLock(
+    workspace: WorkspaceEntity,
+  ): Promise<WorkspaceEntity> {
+    const advisoryLockResult =
+      await this.postgresAdvisoryLockService.tryWithLock(
+        getWorkspaceApplicationUninstallLockName(workspace.id),
+        async () => {
+          const userWorkspaces = await this.userWorkspaceRepository.find({
+            where: {
+              workspaceId: workspace.id,
+            },
+            withDeleted: true,
+          });
+
+          for (const userWorkspace of userWorkspaces) {
+            await this.handleRemoveWorkspaceMember(
+              workspace.id,
+              userWorkspace.userId,
+              false,
+            );
+          }
+          this.logger.log(`workspace ${workspace.id} user workspaces deleted`);
+
+          this.logger.log(`workspace ${workspace.id} cache flushed`);
+
+          if (this.billingService.isBillingEnabled()) {
+            await this.billingSubscriptionService.assertSubscriptionCanceledOrNone(
+              workspace.id,
+            );
+          }
+
+          await this.runPendingApplicationUninstallHooksBeforeHardDelete(
+            workspace,
+          );
+
+          await this.deleteWorkspaceSyncableMetadataEntities(workspace);
+
+          await this.workspaceDataSourceService.deleteWorkspaceDBSchema(
+            workspace.id,
+          );
+
+          await this.workspaceCacheStorageService.flush(workspace.id);
+          await this.flatEntityMapsCacheService.flushFlatEntityMaps({
+            workspaceId: workspace.id,
+          });
+
+          await this.messageQueueService.add<FileWorkspaceFolderDeletionJobData>(
+            FileWorkspaceFolderDeletionJob.name,
+            { workspaceId: workspace.id },
+          );
+
+          const emailingDomains = await this.coreDataSource
+            .getRepository(EmailingDomainEntity)
+            .find({ where: { workspaceId: workspace.id } });
+
+          await this.messageQueueService.add<EmailingDomainWorkspaceCleanupJobData>(
+            EmailingDomainWorkspaceCleanupJob.name,
+            {
+              workspaceId: workspace.id,
+              domains: emailingDomains.map(
+                (emailingDomain) => emailingDomain.domain,
+              ),
+            },
+          );
+
+          if (workspace.customDomain) {
+            await this.dnsManagerService.deleteHostnameSilently(
+              workspace.customDomain,
+            );
+            this.logger.log(`workspace ${workspace.id} custom domain deleted`);
+          }
+
+          await this.workspaceRepository.delete(workspace.id);
+          await this.coreEntityCacheService.invalidate(
+            'workspaceEntity',
+            workspace.id,
+          );
+
+          this.logger.log(`workspace ${workspace.id} hard deleted`);
+
+          return workspace;
+        },
+      );
+
+    if (!advisoryLockResult.acquired) {
+      throw new WorkspaceException(
+        `Cannot hard delete workspace ${workspace.id} while application uninstall is running`,
+        WorkspaceExceptionCode.APPLICATION_UNINSTALL_IN_PROGRESS,
+      );
+    }
+
+    return advisoryLockResult.value;
   }
 
   async enqueueWorkspaceDeletionApplicationUninstall(
@@ -712,26 +756,12 @@ export class WorkspaceService {
       return;
     }
 
-    const workspaceDeletedAt = workspace.deletedAt;
-
-    const advisoryLockResult =
-      await this.postgresAdvisoryLockService.tryWithLock(
-        getWorkspaceApplicationUninstallLockName(workspace.id),
-        async () => {
-          await this.applicationUninstallService.runUninstallHooksForWorkspaceDeletionBestEffort(
-            {
-              workspaceId: workspace.id,
-              workspaceDeletedAt,
-            },
-          );
-        },
-      );
-
-    if (!advisoryLockResult.acquired) {
-      this.logger.warn(
-        `Proceeding with workspace ${workspace.id} hard deletion while application uninstall is running elsewhere`,
-      );
-    }
+    await this.applicationUninstallService.runUninstallHooksForWorkspaceDeletionBestEffort(
+      {
+        workspaceId: workspace.id,
+        workspaceDeletedAt: workspace.deletedAt,
+      },
+    );
   }
 
   private async deleteWorkspaceSyncableMetadataEntities(
