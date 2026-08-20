@@ -20,6 +20,7 @@ import {
   EmailingDomainDriverExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
+import { isUnsubscribeHostnameReady } from 'src/engine/core-modules/emailing-domain/drivers/utils/is-unsubscribe-hostname-ready.util';
 import {
   EmailingDomainException,
   EmailingDomainExceptionCode,
@@ -184,7 +185,7 @@ export class MessageCampaignService {
         },
       );
 
-    const emailingDomain = await this.findVerifiedEmailingDomainOrThrow(
+    const emailingDomain = await this.findSendReadyEmailingDomainOrThrow(
       workspaceId,
       fromAddress,
     );
@@ -258,7 +259,7 @@ export class MessageCampaignService {
     fromAddress,
     unsubscribeTopicId,
   }: SendCampaignTestArgs): Promise<EmailingDomainSendEmailResult> {
-    const emailingDomain = await this.findVerifiedEmailingDomainOrThrow(
+    const emailingDomain = await this.findSendReadyEmailingDomainOrThrow(
       workspaceId,
       fromAddress,
     );
@@ -287,7 +288,7 @@ export class MessageCampaignService {
     );
   }
 
-  private async findVerifiedEmailingDomainOrThrow(
+  private async findSendReadyEmailingDomainOrThrow(
     workspaceId: string,
     fromAddress: string,
   ): Promise<EmailingDomainEntity> {
@@ -302,6 +303,13 @@ export class MessageCampaignService {
       throw new EmailingDomainException(
         `No verified emailing domain matches the from address ${fromAddress}`,
         EmailingDomainExceptionCode.EMAILING_DOMAIN_NOT_VERIFIED,
+      );
+    }
+
+    if (!isUnsubscribeHostnameReady(emailingDomain)) {
+      throw new EmailingDomainDriverException(
+        `Cannot send email for ${emailingDomain.domain}: unsubscribe domain is not active (status: ${emailingDomain.unsubscribeHostnameStatus})`,
+        EmailingDomainDriverExceptionCode.UNSUBSCRIBE_NOT_READY,
       );
     }
 
