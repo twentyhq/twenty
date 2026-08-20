@@ -1,13 +1,17 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
+import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
 
 export const resolveTriggeredByWorkspaceMemberId = ({
   userId,
   flatWorkspaceMemberMaps,
 }: {
   userId: string;
-  flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
+  flatWorkspaceMemberMaps: {
+    byId: Partial<Record<string, Pick<FlatWorkspaceMember, 'deletedAt'>>>;
+    idByUserId: FlatWorkspaceMemberMaps['idByUserId'];
+  };
 }): string | null => {
   const workspaceMemberId = flatWorkspaceMemberMaps.idByUserId[userId];
 
