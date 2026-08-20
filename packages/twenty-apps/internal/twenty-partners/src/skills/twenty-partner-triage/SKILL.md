@@ -102,9 +102,8 @@ Rules:
 
 - **Not a gate.** It never moves anyone to `REJECTED` or out of the funnel.
 - **Not a writer.** It never edits a record. Surfacing only.
-- **Not the production cron.** This is the dev surface for the chase-list. The score
-  `rank.py` computes stays local to a run — it is never written back onto a record. The
-  judgment pass stays here, for the runs where a human is in the loop.
+- **Not a background job.** Nothing here is scheduled. The judgment pass stays here, for
+  the runs where a human is in the loop.
 
 ## Self-check
 
