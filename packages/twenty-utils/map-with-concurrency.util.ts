@@ -1,4 +1,3 @@
-// At most `limit` handlers run at once; results stay in input order.
 export async function mapWithConcurrency<TItem, TResult>({
   items,
   limit,

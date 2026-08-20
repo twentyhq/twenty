@@ -1,19 +1,3 @@
-// Repairs translations that the translation step (MT / AI / human) corrupted
-// mechanically, directly in Crowdin so the fix survives every later pull and is
-// what translators see in the UI. Each corruption class is a NormalizationRule
-// in crowdin-normalization-rules.ts rather than a script of its own.
-//
-// The scan strategy follows from the selected rules: when every one of them
-// declares a sourceFilter only the matching source strings are fetched, which is
-// far cheaper than paging every translation of every language.
-//
-// Usage:
-//   CROWDIN_PERSONAL_TOKEN=xxx npx tsx packages/twenty-utils/normalize-crowdin-translations.ts \
-//     --project=2 --rules=escaped-inline-code-tags [--apply]
-//
-// Without --apply the run is a read-only dry-run.
-// Token: https://twenty.crowdin.com/u/settings#api-key
-
 import {
   addTranslation,
   deleteTranslation,
@@ -50,8 +34,6 @@ function getArgumentValue(name: string): string | undefined {
     ?.split('=')[1];
 }
 
-// No default: the run deletes and re-adds translations, so the project it acts on
-// is never inferred.
 function parseProjectIdOrThrow(): number {
   const rawProjectId = getArgumentValue('project');
   const projectId = Number(rawProjectId);
@@ -65,8 +47,6 @@ function parseProjectIdOrThrow(): number {
   return projectId;
 }
 
-// No default either: which rules run decides what gets rewritten, and a rule that
-// is safe on one project can damage another.
 function selectRulesOrThrow(): NormalizationRule[] {
   const requestedNames = (getArgumentValue('rules') ?? '')
     .split(',')
@@ -187,8 +167,6 @@ async function repairOne(
   finding: NormalizationFinding,
 ): Promise<boolean> {
   try {
-    // Add before delete: the newly added translation becomes the exported one,
-    // so a failed re-add can never leave the string without a translation.
     await addTranslation(context, {
       stringId: finding.stringId,
       languageId: finding.languageId,
@@ -270,8 +248,6 @@ async function main() {
     `Repaired ${findings.length - failed} translation(s) in Crowdin.`,
   );
 
-  // Surface failures loudly: a silent partial run leaves a language unbuildable
-  // and every one of its pages stale until someone notices.
   if (failed > 0) {
     throw new Error(`${failed} translation(s) could not be normalized`);
   }
