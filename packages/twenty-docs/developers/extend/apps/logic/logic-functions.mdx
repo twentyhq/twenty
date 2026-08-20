@@ -636,6 +636,14 @@ const handler = async () => {
 
 `invokingUserHasPermissionFlag` checks the invoking user's role server-side and returns `false` when there is none. The identity it checks is the one the server recorded when it started the run, carried by the app access token. Your function never passes it in, so the answer cannot be steered from inside the runtime. Use it to gate privileged operations inside your own logic: your function's data operations always run with the app's own access, so this is how you decide whether the person who triggered the function is allowed to make the function act.
 
+<Accordion title="Valid PermissionFlagType values">
+
+Settings permissions: `API_KEYS_AND_WEBHOOKS`, `WORKSPACE`, `WORKSPACE_MEMBERS`, `ROLES`, `DATA_MODEL`, `SECURITY`, `WORKFLOWS`, `IMPERSONATE`, `SSO_BYPASS`, `APPLICATIONS`, `MARKETPLACE_APPS`, `LAYOUTS`, `BILLING`, `AI_SETTINGS`.
+
+Feature and tool permissions: `AI`, `VIEWS`, `UPLOAD_FILE`, `DOWNLOAD_FILE`, `SEND_EMAIL_TOOL`, `CREATE_CALENDAR_EVENT_TOOL`, `HTTP_REQUEST_TOOL`, `CODE_INTERPRETER_TOOL`, `IMPORT_CSV`, `EXPORT_CSV`, `CONNECTED_ACCOUNTS`, `PROFILE_INFORMATION`.
+
+</Accordion>
+
 ## Typed API clients (twenty-client-sdk)
 
 The `twenty-client-sdk` package provides two typed GraphQL clients for interacting with the Twenty API from your logic functions and front components.
