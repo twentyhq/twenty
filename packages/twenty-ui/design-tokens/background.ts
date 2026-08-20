@@ -1,5 +1,6 @@
+import { COLOR_TOKENS } from './color';
+import { GRAY_SCALE_TOKENS } from './grayScale';
 import { token } from './token';
-
 export const BACKGROUND_TOKENS = {
   noisy: token(
     {
@@ -9,34 +10,13 @@ export const BACKGROUND_TOKENS = {
     },
     { jsValue: 'cssVariable' },
   ),
-  primary: token({
-    light: 'color(display-p3 1 1 1)',
-    dark: 'color(display-p3 0.09 0.09 0.09)',
-  }),
-  secondary: token({
-    light: 'color(display-p3 0.988 0.988 0.988)',
-    dark: 'color(display-p3 0.106 0.106 0.106)',
-  }),
-  tertiary: token({
-    light: 'color(display-p3 0.945 0.945 0.945)',
-    dark: 'color(display-p3 0.114 0.114 0.114)',
-  }),
-  quaternary: token({
-    light: 'color(display-p3 0.922 0.922 0.922)',
-    dark: 'color(display-p3 0.133 0.133 0.133)',
-  }),
-  invertedPrimary: token({
-    light: 'color(display-p3 0.2 0.2 0.2)',
-    dark: 'color(display-p3 0.922 0.922 0.922)',
-  }),
-  invertedSecondary: token({
-    light: 'color(display-p3 0.4 0.4 0.4)',
-    dark: 'color(display-p3 0.702 0.702 0.702)',
-  }),
-  danger: token({
-    light: 'color(display-p3 0.985 0.925 0.925)',
-    dark: 'color(display-p3 0.211 0.081 0.099)',
-  }),
+  primary: GRAY_SCALE_TOKENS.gray1,
+  secondary: GRAY_SCALE_TOKENS.gray2,
+  tertiary: GRAY_SCALE_TOKENS.gray4,
+  quaternary: GRAY_SCALE_TOKENS.gray5,
+  invertedPrimary: GRAY_SCALE_TOKENS.gray12,
+  invertedSecondary: GRAY_SCALE_TOKENS.gray11,
+  danger: COLOR_TOKENS.red3,
   transparent: {
     primary: token({
       light: 'color(display-p3 1 1 1 / 0.5)',
@@ -46,23 +26,11 @@ export const BACKGROUND_TOKENS = {
       light: 'color(display-p3 1 1 1 / 0.4)',
       dark: 'color(display-p3 0 0 0 / 0.4)',
     }),
-    strong: token({
-      light: 'color(display-p3 0 0 0 / 0.161)',
-      dark: 'color(display-p3 1 1 1 / 0.141)',
-    }),
-    medium: token({
-      light: 'color(display-p3 0 0 0 / 0.078)',
-      dark: 'color(display-p3 1 1 1 / 0.102)',
-    }),
-    light: token({
-      light: 'color(display-p3 0 0 0 / 0.039)',
-      dark: 'color(display-p3 1 1 1 / 0.059)',
-    }),
-    lighter: token({
-      light: 'color(display-p3 0 0 0 / 0.02)',
-      dark: 'color(display-p3 1 1 1 / 0.031)',
-    }),
-    danger: token({ light: '#f3000d14', dark: '#ff173f2d' }),
+    strong: COLOR_TOKENS.transparent.gray7,
+    medium: COLOR_TOKENS.transparent.gray5,
+    light: COLOR_TOKENS.transparent.gray2,
+    lighter: COLOR_TOKENS.transparent.gray1,
+    danger: COLOR_TOKENS.transparent.red3,
     blue: token({ light: '#0047f112', dark: '#3566ff57' }),
     orange: token({ light: '#ff9c0029', dark: '#ff590039' }),
     success: token({ light: '#00a43319', dark: '#11ff992d' }),
@@ -89,12 +57,6 @@ export const BACKGROUND_TOKENS = {
       'radial-gradient(76.32% 95.59% at 50% 0%, color(display-p3 0.514 0.514 0.514) 0%, color(display-p3 0.4 0.4 0.4) 100%)',
     dark: 'radial-gradient(76.32% 95.59% at 50% 0%, color(display-p3 0.482 0.482 0.482) 0%, color(display-p3 0.702 0.702 0.702) 100%)',
   }),
-  primaryInverted: token({
-    light: 'color(display-p3 0.2 0.2 0.2)',
-    dark: 'color(display-p3 0.922 0.922 0.922)',
-  }),
-  primaryInvertedHover: token({
-    light: 'color(display-p3 0.4 0.4 0.4)',
-    dark: 'color(display-p3 0.702 0.702 0.702)',
-  }),
+  primaryInverted: GRAY_SCALE_TOKENS.gray12,
+  primaryInvertedHover: GRAY_SCALE_TOKENS.gray11,
 };

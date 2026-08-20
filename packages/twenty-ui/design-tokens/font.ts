@@ -1,32 +1,15 @@
+import { COLOR_TOKENS } from './color';
+import { GRAY_SCALE_TOKENS } from './grayScale';
 import { token } from './token';
-
 export const FONT_TOKENS = {
   color: {
-    primary: token({
-      light: 'color(display-p3 0.2 0.2 0.2)',
-      dark: 'color(display-p3 0.922 0.922 0.922)',
-    }),
-    secondary: token({
-      light: 'color(display-p3 0.4 0.4 0.4)',
-      dark: 'color(display-p3 0.702 0.702 0.702)',
-    }),
-    tertiary: token({
-      light: 'color(display-p3 0.6 0.6 0.6)',
-      dark: 'color(display-p3 0.506 0.506 0.506)',
-    }),
-    light: token({
-      light: 'color(display-p3 0.702 0.702 0.702)',
-      dark: 'color(display-p3 0.4 0.4 0.4)',
-    }),
-    extraLight: token({
-      light: 'color(display-p3 0.8 0.8 0.8)',
-      dark: 'color(display-p3 0.298 0.298 0.298)',
-    }),
-    inverted: token({
-      light: 'color(display-p3 1 1 1)',
-      dark: 'color(display-p3 0.09 0.09 0.09)',
-    }),
-    danger: token('color(display-p3 0.83 0.329 0.324)'),
+    primary: GRAY_SCALE_TOKENS.gray12,
+    secondary: GRAY_SCALE_TOKENS.gray11,
+    tertiary: GRAY_SCALE_TOKENS.gray9,
+    light: GRAY_SCALE_TOKENS.gray8,
+    extraLight: GRAY_SCALE_TOKENS.gray7,
+    inverted: GRAY_SCALE_TOKENS.gray1,
+    danger: COLOR_TOKENS.red,
   },
   size: {
     xxs: token('0.625rem'),

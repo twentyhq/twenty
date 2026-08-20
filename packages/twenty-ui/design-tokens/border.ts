@@ -1,39 +1,16 @@
+import { COLOR_TOKENS } from './color';
+import { GRAY_SCALE_TOKENS } from './grayScale';
 import { token } from './token';
-
 export const BORDER_TOKENS = {
   color: {
-    strong: token({
-      light: 'color(display-p3 0.839 0.839 0.839)',
-      dark: 'color(display-p3 0.282 0.282 0.282)',
-    }),
-    medium: token({
-      light: 'color(display-p3 0.922 0.922 0.922)',
-      dark: 'color(display-p3 0.133 0.133 0.133)',
-    }),
-    light: token({
-      light: 'color(display-p3 0.945 0.945 0.945)',
-      dark: 'color(display-p3 0.114 0.114 0.114)',
-    }),
-    secondaryInverted: token({
-      light: 'color(display-p3 0.4 0.4 0.4)',
-      dark: 'color(display-p3 0.702 0.702 0.702)',
-    }),
-    inverted: token({
-      light: 'color(display-p3 0.2 0.2 0.2)',
-      dark: 'color(display-p3 0.922 0.922 0.922)',
-    }),
-    danger: token({
-      light: 'color(display-p3 0.984 0.812 0.811)',
-      dark: 'color(display-p3 0.348 0.11 0.142)',
-    }),
-    blue: token({
-      light: 'color(display-p3 0.685 0.74 0.957)',
-      dark: 'color(display-p3 0.245 0.309 0.575)',
-    }),
-    transparentStrong: token({
-      light: 'color(display-p3 0 0 0 / 0.071)',
-      dark: 'color(display-p3 1 1 1 / 0.071)',
-    }),
+    strong: GRAY_SCALE_TOKENS.gray6,
+    medium: GRAY_SCALE_TOKENS.gray5,
+    light: GRAY_SCALE_TOKENS.gray4,
+    secondaryInverted: GRAY_SCALE_TOKENS.gray11,
+    inverted: GRAY_SCALE_TOKENS.gray12,
+    danger: COLOR_TOKENS.red5,
+    blue: COLOR_TOKENS.blue7,
+    transparentStrong: COLOR_TOKENS.transparent.gray4,
   },
   radius: {
     xs: token('2px'),
