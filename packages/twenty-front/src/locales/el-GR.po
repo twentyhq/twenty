@@ -3244,6 +3244,11 @@ msgstr "Ανάλυση ανά μοντέλο AI."
 msgid "Brief explanation of this output field"
 msgstr "Σύντομη εξήγηση αυτού του πεδίου εξόδου"
 
+#. js-lingui-id: IjfaX/
+#: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterFieldSelect.tsx
+msgid "Broken field reference. Select the field again to fix this condition."
+msgstr ""
+
 #. js-lingui-id: CSDv65
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Bronze"
