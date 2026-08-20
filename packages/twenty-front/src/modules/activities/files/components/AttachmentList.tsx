@@ -45,16 +45,10 @@ const StyledContainer = styled.div`
   align-self: stretch;
   display: flex;
   flex-direction: column;
-  height: 100%;
-  justify-content: center;
-  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[6]}
-    ${themeCssVariables.spacing[6]};
-  width: calc(100% - ${themeCssVariables.spacing[12]});
+  width: 100%;
 `;
 
 const StyledDropZoneContainer = styled.div`
-  height: 100%;
-  overflow: auto;
   width: 100%;
 `;
 

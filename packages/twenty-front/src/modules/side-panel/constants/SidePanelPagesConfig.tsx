@@ -15,6 +15,7 @@ import { SidePanelRecordPageFieldsSettings } from '@/side-panel/pages/page-layou
 import { SidePanelPageLayoutDashboardWidgetTypeSelect } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect';
 import { SidePanelPageLayoutRecordPageWidgetTypeSelect } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect';
 import { SidePanelPageLayoutTabSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutTabSettings';
+import { SidePanelPageLayoutWidgetSettings } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutWidgetSettings';
 import { SidePanelMergeRecordPage } from '@/side-panel/pages/record-page/components/SidePanelMergeRecordPage';
 import { SidePanelRecordsPage } from '@/side-panel/pages/records-page/components/SidePanelRecordsPage';
 import { SidePanelRecordPage } from '@/side-panel/pages/record-page/components/SidePanelRecordPage';
@@ -64,6 +65,10 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<SidePanelPages, React.ReactNode>(
       <SidePanelDashboardIframeSettings />,
     ],
     [SidePanelPages.PageLayoutTabSettings, <SidePanelPageLayoutTabSettings />],
+    [
+      SidePanelPages.PageLayoutWidgetSettings,
+      <SidePanelPageLayoutWidgetSettings />,
+    ],
     [
       SidePanelPages.DashboardRecordTableSettings,
       <SidePanelDashboardRecordTableSettings />,

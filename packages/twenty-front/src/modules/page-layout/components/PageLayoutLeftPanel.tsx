@@ -7,12 +7,17 @@ import { getTabLayoutMode } from '@/page-layout/utils/getTabLayoutMode';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { styled } from '@linaria/react';
+import { useEffect } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
-  background: ${themeCssVariables.background.secondary};
+  --record-card-background-color: ${themeCssVariables.background.secondary};
+
+  background: var(--record-card-background-color);
   border-bottom-left-radius: 8px;
   border-right: 1px solid ${themeCssVariables.border.color.medium};
   border-top-left-radius: 8px;
@@ -21,6 +26,11 @@ const StyledContainer = styled.div`
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto 1fr;
   height: 100%;
+
+  .page-layout-scroll-wrapper {
+    container-name: tab-viewport;
+    container-type: size;
+  }
 `;
 
 type PageLayoutLeftPanelProps = {
@@ -34,6 +44,19 @@ export const PageLayoutLeftPanel = ({
   const targetRecordIdentifier = useTargetRecord();
   const { isInSidePanel } = useLayoutRenderingContext();
   const pinnedTab = usePageLayoutTabWithVisibleWidgetsOrThrow(pinnedLeftTabId);
+
+  const scrollWrapperInstanceId = `page-layout-left-panel-${pinnedLeftTabId}`;
+  const { getScrollWrapperElement } = useScrollWrapperHTMLElement(
+    scrollWrapperInstanceId,
+  );
+
+  useEffect(() => {
+    const { scrollWrapperElement } = getScrollWrapperElement();
+
+    if (isDefined(scrollWrapperElement)) {
+      scrollWrapperElement.scrollTop = 0;
+    }
+  }, [getScrollWrapperElement, targetRecordIdentifier.id]);
 
   if (currentPageLayout?.type !== PageLayoutType.RECORD_PAGE) {
     return null;
@@ -52,17 +75,15 @@ export const PageLayoutLeftPanel = ({
         isInSidePanel={isInSidePanel}
       />
 
-      {/* The pinned left panel is always a column of cards, even with a single
-          widget: solo presentation is a main-tab-area concept. */}
       <PageLayoutContentProvider
         value={{
           tabId: pinnedLeftTabId,
           layoutMode,
-          presentation: 'stack',
         }}
       >
         <ScrollWrapper
-          componentInstanceId={`page-layout-left-panel-${pinnedLeftTabId}`}
+          className="page-layout-scroll-wrapper"
+          componentInstanceId={scrollWrapperInstanceId}
           defaultEnableXScroll={false}
           defaultEnableYScroll={true}
         >

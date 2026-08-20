@@ -7,6 +7,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 let mockActiveTabId = 'hidden-transcript-tab-id';
+let mockTargetRecordId = 'calendar-event-id';
 const mockSetActiveTabId = jest.fn();
 
 const homeTab = {
@@ -74,7 +75,7 @@ jest.mock('@/ui/layout/contexts/LayoutRenderingContext', () => ({
     isInSidePanel: false,
     layoutType: 'record-page',
     targetRecordIdentifier: {
-      id: 'calendar-event-id',
+      id: mockTargetRecordId,
       targetObjectNameSingular: 'calendarEvent',
     },
   }),
@@ -96,11 +97,25 @@ jest.mock('@/ui/utilities/responsive/hooks/useIsMobile', () => ({
 }));
 
 jest.mock('@/ui/utilities/scroll/components/ScrollWrapper', () => ({
-  ScrollWrapper: ({ children }: { children: ReactNode }) => <>{children}</>,
+  ScrollWrapper: ({
+    children,
+    componentInstanceId,
+  }: {
+    children: ReactNode;
+    componentInstanceId: string;
+  }) => (
+    <div
+      id={`scroll-wrapper-${componentInstanceId}`}
+      data-testid="scroll-wrapper"
+    >
+      {children}
+    </div>
+  ),
 }));
 
 describe('PageLayoutTabsRenderer', () => {
   beforeEach(() => {
+    mockTargetRecordId = 'calendar-event-id';
     mockSetActiveTabId.mockClear();
   });
 
@@ -119,5 +134,20 @@ describe('PageLayoutTabsRenderer', () => {
     render(<PageLayoutTabsRenderer />);
 
     expect(screen.getByText('Rendered tab: home-tab-id')).toBeVisible();
+  });
+
+  it('resets the scroll position when the target record changes', () => {
+    mockActiveTabId = 'home-tab-id';
+
+    const { rerender } = render(<PageLayoutTabsRenderer />);
+
+    const scrollWrapper = screen.getByTestId('scroll-wrapper');
+
+    scrollWrapper.scrollTop = 200;
+    mockTargetRecordId = 'another-calendar-event-id';
+
+    rerender(<PageLayoutTabsRenderer />);
+
+    expect(scrollWrapper.scrollTop).toBe(0);
   });
 });

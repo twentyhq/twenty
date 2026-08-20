@@ -15,10 +15,12 @@ import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useEffect } from 'react';
 
 const StyledContainer = styled.div<{ hasPinnedTab: boolean }>`
   display: grid;
@@ -32,6 +34,23 @@ const StyledContainer = styled.div<{ hasPinnedTab: boolean }>`
     display: block;
     height: auto;
     width: 100%;
+
+    .page-layout-scroll-wrapper {
+      container-name: none !important;
+      container-type: normal !important;
+    }
+
+    .page-layout-tab-viewport-slot {
+      --widget-height: auto !important;
+
+      height: auto !important;
+      min-height: 0 !important;
+      overflow: visible !important;
+
+      .widget-card-header {
+        position: static !important;
+      }
+    }
   }
 `;
 
@@ -53,6 +72,11 @@ const StyledTabsAndDashboardContainer = styled.div`
 const StyledScrollWrapperContainer = styled.div`
   flex: 1;
   min-height: 0;
+
+  .page-layout-scroll-wrapper {
+    container-name: tab-viewport;
+    container-type: size;
+  }
 
   // The mobile navigation bar floats over the page, so the content reserves its
   // footprint to stay readable once scrolled to the end.
@@ -82,6 +106,22 @@ export const PageLayoutTabsRenderer = () => {
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
   const activeTabId = useAtomComponentStateValue(activeTabIdComponentState);
+
+  const scrollWrapperInstanceId = getScrollWrapperInstanceIdFromPageLayoutId(
+    currentPageLayout.id,
+  );
+
+  const { getScrollWrapperElement } = useScrollWrapperHTMLElement(
+    scrollWrapperInstanceId,
+  );
+
+  useEffect(() => {
+    const { scrollWrapperElement } = getScrollWrapperElement();
+
+    if (isDefined(scrollWrapperElement)) {
+      scrollWrapperElement.scrollTop = 0;
+    }
+  }, [activeTabId, getScrollWrapperElement, targetRecordIdentifier?.id]);
 
   const tabListInstanceId = getTabListInstanceIdFromPageLayoutAndRecord({
     pageLayoutId: currentPageLayout.id,
@@ -139,9 +179,7 @@ export const PageLayoutTabsRenderer = () => {
           <StyledScrollWrapperContainer>
             <ScrollWrapper
               className="page-layout-scroll-wrapper"
-              componentInstanceId={getScrollWrapperInstanceIdFromPageLayoutId(
-                currentPageLayout.id,
-              )}
+              componentInstanceId={scrollWrapperInstanceId}
               defaultEnableXScroll={false}
             >
               {isDefined(activeTabId) && activeTabExistsInRenderableTabs && (

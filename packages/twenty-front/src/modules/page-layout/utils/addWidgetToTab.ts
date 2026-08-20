@@ -1,5 +1,7 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { reindexWidgetsToVerticalListPositions } from '@/page-layout/utils/reindexWidgetsToVerticalListPositions';
+import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 export const addWidgetToTab = (
   tabs: PageLayoutTab[],
@@ -8,9 +10,14 @@ export const addWidgetToTab = (
 ): PageLayoutTab[] => {
   return tabs.map((tab) => {
     if (tab.id === activeTabId) {
+      const widgets = [...(tab.widgets ?? []), newWidget];
+
       return {
         ...tab,
-        widgets: [...(tab?.widgets ?? []), newWidget],
+        widgets:
+          tab.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST
+            ? reindexWidgetsToVerticalListPositions(widgets)
+            : widgets,
       };
     }
     return tab;

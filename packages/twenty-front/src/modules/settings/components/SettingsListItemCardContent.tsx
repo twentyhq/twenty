@@ -7,7 +7,7 @@ import { CardContent } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRowContainer = styled.div`
-  > * {
+  > div {
     align-items: center;
     box-sizing: border-box;
     display: flex;

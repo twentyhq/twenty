@@ -1,6 +1,7 @@
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { sortWidgetsByVerticalListPosition } from '@/page-layout/utils/sortWidgetsByVerticalListPosition';
+import { getWidgetLayoutBehavior } from '@/page-layout/widgets/utils/getWidgetLayoutBehavior';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
@@ -31,6 +32,14 @@ export const useCanMovePageLayoutWidgetUp = (
       );
 
       if (!tab || tab.layoutMode !== PageLayoutTabLayoutMode.VERTICAL_LIST) {
+        return false;
+      }
+
+      const widget = tab.widgets.find(
+        (candidateWidget) => candidateWidget.id === widgetId,
+      );
+
+      if (!widget || getWidgetLayoutBehavior(widget.type) === 'TAB_VIEWPORT') {
         return false;
       }
 

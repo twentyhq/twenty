@@ -1,6 +1,6 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { NonRecordPageWidgetRenderer } from '@/page-layout/widgets/components/NonRecordPageWidgetRenderer';
 import { RecordPageWidgetRenderer } from '@/page-layout/widgets/components/RecordPageWidgetRenderer';
+import { WidgetRendererContent } from '@/page-layout/widgets/components/WidgetRendererContent';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
@@ -15,5 +15,5 @@ export const WidgetRenderer = ({ widget }: WidgetRendererProps) => {
     return <RecordPageWidgetRenderer widget={widget} />;
   }
 
-  return <NonRecordPageWidgetRenderer widget={widget} />;
+  return <WidgetRendererContent widget={widget} />;
 };

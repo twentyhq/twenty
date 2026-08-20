@@ -2,37 +2,32 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { WidgetCardShell } from '@/page-layout/widgets/components/WidgetCardShell';
 import { useWidgetRendererState } from '@/page-layout/widgets/hooks/useWidgetRendererState';
 
-type NonRecordPageWidgetRendererProps = {
+type WidgetRendererContentProps = {
   widget: PageLayoutWidget;
 };
 
-export const NonRecordPageWidgetRenderer = ({
+export const WidgetRendererContent = ({
   widget,
-}: NonRecordPageWidgetRendererProps) => {
+}: WidgetRendererContentProps) => {
   const state = useWidgetRendererState(widget);
 
-  const isSoloVariant = state.variant === 'solo';
+  const isWidgetEditable = state.isPageLayoutInEditMode;
 
   return (
     <WidgetCardShell
       widget={widget}
       variant={state.variant}
-      isEditable={state.isPageLayoutInEditMode}
+      isEditable={isWidgetEditable}
       isEditing={state.isEditing}
       isDragging={state.isDragging}
       isResizing={state.isResizing}
-      isLastWidget={state.isLastWidget}
       showHeader={state.showHeader}
       hasAccess={state.hasAccess}
       restriction={state.restriction}
-      isInVerticalListTab={state.isInVerticalListTab}
-      isMobile={state.isMobile}
-      isReorderEnabled={true}
-      isDeletingWidgetEnabled={true}
-      onClick={state.isPageLayoutInEditMode ? state.handleClick : undefined}
+      onClick={isWidgetEditable ? state.handleClick : undefined}
       onRemove={state.handleRemove}
-      onMouseEnter={isSoloVariant ? undefined : state.handleMouseEnter}
-      onMouseLeave={isSoloVariant ? undefined : state.handleMouseLeave}
+      onMouseEnter={state.handleMouseEnter}
+      onMouseLeave={state.handleMouseLeave}
     />
   );
 };

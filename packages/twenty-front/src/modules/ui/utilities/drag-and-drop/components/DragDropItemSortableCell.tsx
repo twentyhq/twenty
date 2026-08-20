@@ -56,6 +56,7 @@ const StyledSortableRoot = styled.div<{
 
 type DragDropItemSortableCellProps = {
   accept?: string;
+  allowNativeDragWhenDisabled?: boolean;
   children: ReactNode;
   data?: Record<string, unknown>;
   disabled?: boolean;
@@ -75,6 +76,7 @@ type DragDropItemSortableCellProps = {
 
 export const DragDropItemSortableCell = ({
   accept,
+  allowNativeDragWhenDisabled = false,
   children,
   data,
   disabled = false,
@@ -122,7 +124,11 @@ export const DragDropItemSortableCell = ({
         $fill={fill}
         $isDragSourceFaded={fadeSourceWhileDragging && isDragSource}
         $isDraggingHighlighted={highlightWhileDragging && isDragging}
-        onDragStart={preventNativeDragStart}
+        onDragStart={
+          disabled && allowNativeDragWhenDisabled
+            ? undefined
+            : preventNativeDragStart
+        }
       >
         {children}
       </StyledSortableRoot>
