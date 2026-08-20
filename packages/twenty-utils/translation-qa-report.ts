@@ -196,7 +196,7 @@ These are the most critical - placeholders must match exactly:
 
 *To auto-fix encoding issues, run:*
 \`\`\`
-CROWDIN_PERSONAL_TOKEN=xxx npx tsx packages/twenty-utils/normalize-crowdin-translations.ts --project=1 --apply --rules=escaped-unicode
+CROWDIN_PERSONAL_TOKEN=xxx npx tsx packages/twenty-utils/crowdin-normalizer/normalize-crowdin-translations.ts --project=1 --apply --rules=escaped-unicode
 \`\`\`
 `;
 

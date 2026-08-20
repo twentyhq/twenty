@@ -1,4 +1,4 @@
-import { mapWithConcurrency } from './map-with-concurrency.util';
+import { mapWithConcurrency } from '../map-with-concurrency.util';
 
 describe('mapWithConcurrency', () => {
   it('keeps results in input order regardless of completion order', async () => {

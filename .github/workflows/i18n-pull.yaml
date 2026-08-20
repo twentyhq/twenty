@@ -101,7 +101,7 @@ jobs:
 
       # Fix encoding issues (escaped Unicode like \u62db -> 招) and push fixes back to Crowdin
       - name: Normalize translations in Crowdin
-        run: npx tsx packages/twenty-utils/normalize-crowdin-translations.ts --project=1 --apply --rules=escaped-unicode || echo "::warning::translation normalization failed (non-blocking)"
+        run: npx tsx packages/twenty-utils/crowdin-normalizer/normalize-crowdin-translations.ts --project=1 --apply --rules=escaped-unicode || echo "::warning::translation normalization failed (non-blocking)"
         env:
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 

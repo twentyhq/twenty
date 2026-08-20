@@ -83,7 +83,7 @@ jobs:
 
       - name: Normalize translations in Crowdin
         if: github.event_name != 'pull_request' && (inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
-        run: npx tsx packages/twenty-utils/normalize-crowdin-translations.ts --project=2 --apply --rules=escaped-inline-code-tags || echo "::warning::translation normalization failed (non-blocking)"
+        run: npx tsx packages/twenty-utils/crowdin-normalizer/normalize-crowdin-translations.ts --project=2 --apply --rules=escaped-inline-code-tags || echo "::warning::translation normalization failed (non-blocking)"
         env:
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 

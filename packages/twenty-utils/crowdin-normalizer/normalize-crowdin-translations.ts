@@ -1,19 +1,15 @@
-import {
-  addTranslation,
-  deleteTranslation,
-  fetchLanguageTranslations,
-  fetchSourceStringsById,
-  fetchTargetLanguageIds,
-  getCrowdinTokenOrThrow,
-  type CrowdinContext,
-  type CrowdinTranslation,
-} from './crowdin-api';
-import {
-  evaluateRules,
-  NORMALIZATION_RULES,
-  type NormalizationRule,
-} from './crowdin-normalization-rules';
-import { mapWithConcurrency } from './map-with-concurrency.util';
+import { NORMALIZATION_RULES } from './constants/normalization-rules.constant';
+import { type CrowdinContext } from './types/crowdin-context.type';
+import { type CrowdinTranslation } from './types/crowdin-translation.type';
+import { type NormalizationRule } from './types/normalization-rule.type';
+import { addTranslation } from './utils/add-translation.util';
+import { deleteTranslation } from './utils/delete-translation.util';
+import { evaluateRules } from './utils/evaluate-rules.util';
+import { fetchLanguageTranslations } from './utils/fetch-language-translations.util';
+import { fetchSourceStringsById } from './utils/fetch-source-strings-by-id.util';
+import { fetchTargetLanguageIds } from './utils/fetch-target-language-ids.util';
+import { getCrowdinTokenOrThrow } from './utils/get-crowdin-token-or-throw.util';
+import { mapWithConcurrency } from './utils/map-with-concurrency.util';
 
 const FETCH_CONCURRENCY = 10;
 const MAX_PREVIEWED_FINDINGS = 15;
