@@ -6,8 +6,6 @@ import { serializeTree } from './serializeTree';
 const SPACING_TOKEN_KEY = 'spacing';
 const SPACING_BINDING = 'themeSpacing';
 
-// The spacing scale is a function in the static themes, not 35 literals, so the
-// whole subtree collapses to a single node bound to the themeSpacing helper.
 const collapseSpacingScale = (
   leaves: CollectedTokenLeaf[],
 ): CollectedTokenLeaf[] => {

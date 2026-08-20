@@ -1,7 +1,5 @@
 import { type CollectedTokenLeaf } from '../types/CollectedTokenLeaf';
 
-// A top-level subtree belongs to THEME_COMMON exactly when none of its leaves
-// differ between the two schemes.
 export const schemeInvariantRootKeys = (
   leaves: CollectedTokenLeaf[],
 ): string[] => {

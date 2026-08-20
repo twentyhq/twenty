@@ -4,9 +4,8 @@ import { GENERATED_TYPESCRIPT_HEADER } from './generatedTypeScriptHeader';
 import { renderStaticTokenValue } from './renderStaticTokenValue';
 import { serializeTree } from './serializeTree';
 
-// Emitted standalone rather than as a reference into THEME_LIGHT/THEME_DARK:
-// bundlers cannot drop unused properties of a referenced object literal, so
-// deriving these from the full theme would retain all 994 tokens.
+// Bundlers cannot drop unused properties of a referenced object literal, so
+// slicing these out of THEME_LIGHT would retain all 994 tokens.
 export const buildThemeSubtreeConstant = ({
   leaves,
   rootKey,

@@ -92,9 +92,8 @@ for (const { path, content } of sourceOutputs) {
   writeFileSync(path, content, 'utf-8');
 }
 
-// oxfmt owns the final bytes of every artifact, CSS included: it rewraps long
-// declarations at printWidth, so the committed files are its output, not the
-// builders'.
+// oxfmt reformats CSS as well as TypeScript, so the committed artifacts are its
+// output rather than the builders'.
 const formatResult = spawnSync(
   'npx',
   ['oxfmt', ...sourceOutputs.map(({ path }) => path)],
