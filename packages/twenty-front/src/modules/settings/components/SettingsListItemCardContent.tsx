@@ -91,14 +91,15 @@ export const SettingsListItemCardContent = ({
   to,
 }: SettingsListItemCardContentProps) => {
   const { theme } = useContext(ThemeContext);
+  const isInteractive = isDefined(onClick) || isDefined(to);
 
   const content = (
     <StyledRowContainer>
       <CardContent
         onClick={onClick}
         divider={divider}
-        isClickable={!!onClick || !!to}
-        hasHoverHighlight={!!to}
+        isClickable={isInteractive}
+        hasHoverHighlight={isInteractive}
       >
         {!!LeftIcon && (
           <LeftIcon

@@ -4,15 +4,17 @@ import { useIsSideColumnContext } from '@/page-layout/hooks/useIsSideColumnConte
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { type PageLayoutWidgetDragData } from '@/page-layout/types/PageLayoutWidgetDragData';
 import { type PageLayoutWidgetListDropData } from '@/page-layout/types/PageLayoutWidgetListDropData';
+import { canVerticalListAcceptWidgetDrag } from '@/page-layout/utils/canVerticalListAcceptWidgetDrag';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
 import { isViewportFillingWidgetType } from '@/page-layout/widgets/utils/isViewportFillingWidgetType';
 import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
 import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
+import { type Draggable } from '@dnd-kit/abstract';
 import { pointerIntersection } from '@dnd-kit/collision';
 import { useDroppable } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { type ReactNode, useCallback } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
@@ -118,15 +120,30 @@ export const PageLayoutVerticalList = ({
   const { isInPinnedTab } = useIsInPinnedTab();
   const isSideColumnContext = useIsSideColumnContext();
 
+  const shouldUseSoloCanvasPresentation =
+    layoutMode === PageLayoutTabLayoutMode.CANVAS &&
+    widgets.length === 1 &&
+    !isInEditMode &&
+    !isInPinnedTab;
+
   const endDropData: PageLayoutWidgetListDropData = {
     type: 'widget-list',
     tabId,
     itemCount: widgets.length,
   };
 
+  const canAcceptWidgetDrag = useCallback(
+    (source: Draggable) =>
+      canVerticalListAcceptWidgetDrag({
+        destinationWidgets: widgets,
+        source,
+      }),
+    [widgets],
+  );
+
   const { ref: endDropZoneRef } = useDroppable({
     id: `page-layout-widget-list-${tabId}`,
-    accept: PAGE_LAYOUT_WIDGET_DND_TYPE,
+    accept: canAcceptWidgetDrag,
     collisionDetector: pointerIntersection,
     data: endDropData,
     disabled: !isInEditMode,
@@ -140,12 +157,14 @@ export const PageLayoutVerticalList = ({
     >
       {widgets.map((widget, index) => {
         const fillsViewport =
-          layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST &&
-          isViewportFillingWidgetType(widget.type);
+          shouldUseSoloCanvasPresentation ||
+          (layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST &&
+            isViewportFillingWidgetType(widget.type));
 
         const widgetDragData: PageLayoutWidgetDragData = {
           type: 'widget',
           widgetId: widget.id,
+          widgetType: widget.type,
           tabId,
           index,
         };
@@ -173,7 +192,7 @@ export const PageLayoutVerticalList = ({
               group={tabId}
               data={widgetDragData}
               type={PAGE_LAYOUT_WIDGET_DND_TYPE}
-              accept={PAGE_LAYOUT_WIDGET_DND_TYPE}
+              accept={canAcceptWidgetDrag}
               allowNativeDragWhenDisabled
               disabled={!isInEditMode}
               hasTransition={false}
