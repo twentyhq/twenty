@@ -131,6 +131,7 @@
         "src/engine/metadata-modules/utils/resolve-effective-entity-property.util.ts",
         "src/engine/metadata-modules/utils/__tests__/**",
         "src/engine/core-modules/i18n/utils/__tests__/**",
+        "src/engine/workspace-manager/twenty-standard-application/__tests__/**",
         "test/**"
       ],
       "rules": {

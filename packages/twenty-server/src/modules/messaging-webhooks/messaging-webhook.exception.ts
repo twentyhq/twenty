@@ -15,6 +15,7 @@ const getMessagingWebhookExceptionUserFriendlyMessage = (
       return msg`The webhook request could not be processed.`;
     case MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_FORBIDDEN_TOPIC:
     case MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_INVALID_SIGNATURE:
+    case MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_NOT_CONFIGURED:
       return msg`The webhook request could not be authenticated.`;
     case MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_SUBSCRIPTION_CONFIRMATION_FAILED:
     case MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_UNHANDLED_ERROR:

@@ -16,7 +16,10 @@ export const NAVIGATION_COMMAND_UUID_NAMESPACE =
 // The stored label is the source message; the target object's label stays a
 // placeholder filled at read time for the reader's locale.
 export const NAVIGATION_INTERPOLATED_LABEL = i18nLabel(
-  msg`Go to {objectLabelPlural}`,
+  msg({
+    message: `Go to {objectLabelPlural}`,
+    context: 'commandMenuItem.label',
+  }),
 );
 export const NAVIGATION_INTERPOLATED_SHORT_LABEL =
   getMetadataLabelPlaceholder('objectLabelPlural');
