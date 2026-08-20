@@ -34,6 +34,7 @@ describe('fetchLiveMarketplacePartners', () => {
           partnerTier: 'ADVANCED',
           serviceCount: 2,
           approvedCaseStudyCount: 3,
+          approvedCaseStudyWithCoverCount: 2,
           rotationKey: 'weekly-key',
         },
       ],
@@ -66,6 +67,7 @@ describe('fetchLiveMarketplacePartners', () => {
         partnerTier: 'ADVANCED',
         serviceCount: 2,
         approvedCaseStudyCount: 3,
+        approvedCaseStudyWithCoverCount: 2,
         rotationKey: 'weekly-key',
       },
     ]);

@@ -29,6 +29,7 @@ const base: RankedMarketplacePartner = {
   partnerTier: null,
   serviceCount: 0,
   approvedCaseStudyCount: 0,
+  approvedCaseStudyWithCoverCount: 0,
   rotationKey: 'b',
 };
 
@@ -51,6 +52,40 @@ test('awards two points per approved case study with a six-point cap', () => {
   expect(completenessScore({ ...base, approvedCaseStudyCount: 1 })).toBe(2);
   expect(completenessScore({ ...base, approvedCaseStudyCount: 3 })).toBe(6);
   expect(completenessScore({ ...base, approvedCaseStudyCount: 4 })).toBe(6);
+});
+
+test('awards one extra point per approved case study that has a cover', () => {
+  expect(
+    completenessScore({
+      ...base,
+      approvedCaseStudyCount: 1,
+      approvedCaseStudyWithCoverCount: 1,
+    }),
+  ).toBe(3);
+  expect(
+    completenessScore({
+      ...base,
+      approvedCaseStudyCount: 3,
+      approvedCaseStudyWithCoverCount: 3,
+    }),
+  ).toBe(9);
+  expect(
+    completenessScore({
+      ...base,
+      approvedCaseStudyCount: 3,
+      approvedCaseStudyWithCoverCount: 1,
+    }),
+  ).toBe(7);
+});
+
+test('caps the cover bonus at the three counted case studies', () => {
+  expect(
+    completenessScore({
+      ...base,
+      approvedCaseStudyCount: 5,
+      approvedCaseStudyWithCoverCount: 5,
+    }),
+  ).toBe(9);
 });
 
 test('completeness wins over partner tier', () => {

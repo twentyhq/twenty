@@ -6,6 +6,7 @@ export const DUMMY_PARTNERS: RankedMarketplacePartner[] = [
     partnerTier: null,
     serviceCount: 4,
     approvedCaseStudyCount: 3,
+    approvedCaseStudyWithCoverCount: 1,
     rotationKey: 'atelier-sigma',
     name: 'Atelier Sigma',
     description: `**Senior CRM partner for venture-backed teams, with Twenty at the core.**
@@ -154,6 +155,7 @@ Twenty is the foundation. Around it we build modular GTM stacks that are structu
     partnerTier: null,
     serviceCount: 1,
     approvedCaseStudyCount: 1,
+    approvedCaseStudyWithCoverCount: 1,
     rotationKey: 'northbeam-studio',
     name: 'Northbeam Studio',
     description:
@@ -205,6 +207,7 @@ Twenty is the foundation. Around it we build modular GTM stacks that are structu
     partnerTier: null,
     serviceCount: 2,
     approvedCaseStudyCount: 1,
+    approvedCaseStudyWithCoverCount: 1,
     rotationKey: '9-dots-ventures',
     name: '9 Dots Ventures',
     description:
@@ -264,6 +267,7 @@ Twenty is the foundation. Around it we build modular GTM stacks that are structu
     partnerTier: null,
     serviceCount: 2,
     approvedCaseStudyCount: 0,
+    approvedCaseStudyWithCoverCount: 0,
     rotationKey: 'halden-roe',
     name: 'Halden & Roe',
     description:
@@ -304,6 +308,7 @@ Twenty is the foundation. Around it we build modular GTM stacks that are structu
     partnerTier: null,
     serviceCount: 2,
     approvedCaseStudyCount: 0,
+    approvedCaseStudyWithCoverCount: 0,
     rotationKey: 'verza-collective',
     name: 'Verza Collective',
     description:
@@ -350,6 +355,7 @@ Twenty is the foundation. Around it we build modular GTM stacks that are structu
     partnerTier: null,
     serviceCount: 1,
     approvedCaseStudyCount: 0,
+    approvedCaseStudyWithCoverCount: 0,
     rotationKey: 'kioko-labs',
     name: 'Kioko Labs',
     description:
@@ -385,6 +391,7 @@ Twenty is the foundation. Around it we build modular GTM stacks that are structu
     partnerTier: null,
     serviceCount: 0,
     approvedCaseStudyCount: 0,
+    approvedCaseStudyWithCoverCount: 0,
     rotationKey: 'tomas-brandt',
     name: 'Tomas Brandt',
     description:
@@ -414,6 +421,7 @@ Twenty is the foundation. Around it we build modular GTM stacks that are structu
     partnerTier: null,
     serviceCount: 0,
     approvedCaseStudyCount: 0,
+    approvedCaseStudyWithCoverCount: 0,
     rotationKey: 'benjamin-reynolds',
     name: 'Benjamin Reynolds',
     description: '',

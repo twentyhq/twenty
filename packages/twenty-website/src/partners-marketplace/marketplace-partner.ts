@@ -46,5 +46,6 @@ export type RankedMarketplacePartner = MarketplacePartner & {
   partnerTier: PartnerTier | null;
   serviceCount: number;
   approvedCaseStudyCount: number;
+  approvedCaseStudyWithCoverCount: number;
   rotationKey: string;
 };

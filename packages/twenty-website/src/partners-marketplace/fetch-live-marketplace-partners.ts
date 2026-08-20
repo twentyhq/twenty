@@ -26,6 +26,7 @@ type ApiPartner = {
   partnerTier: RankedMarketplacePartner['partnerTier'];
   serviceCount: number;
   approvedCaseStudyCount: number;
+  approvedCaseStudyWithCoverCount: number;
   rotationKey: string;
 };
 
@@ -72,6 +73,8 @@ export async function fetchLiveMarketplacePartners(): Promise<
       partnerTier: apiPartner.partnerTier,
       serviceCount: apiPartner.serviceCount,
       approvedCaseStudyCount: apiPartner.approvedCaseStudyCount,
+      approvedCaseStudyWithCoverCount:
+        apiPartner.approvedCaseStudyWithCoverCount,
       rotationKey: apiPartner.rotationKey,
     }));
   } catch (error) {
