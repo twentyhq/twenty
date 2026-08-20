@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const StyledEventRowContainer = styled.div`
   align-items: center;
@@ -14,14 +14,6 @@ export const StyledEventRowContent = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
   overflow: hidden;
-`;
-
-export const StyledEventRowDate = styled.div`
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    display: none;
-  }
-  color: ${themeCssVariables.font.color.tertiary};
-  padding: 0 ${themeCssVariables.spacing[1]};
 `;
 
 export const StyledEventRowLinkedRecord = styled.span`

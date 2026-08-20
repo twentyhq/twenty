@@ -557,20 +557,36 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
     return [compiled.text, compiled.values];
   }
 
+  private materializeEntities<T extends Record<string, unknown>>(
+    rows: Record<string, unknown>[],
+  ): T[] {
+    const columnNameByResultAlias = this.buildColumnNameByResultAlias();
+
+    return rows.map((row) => mapRowToEntity<T>(row, columnNameByResultAlias));
+  }
+
   async getMany<T extends Record<string, unknown>>(options?: {
     noFormatting?: boolean;
   }): Promise<T[]> {
-    const rows = await this.executeSelect();
-    const columnNameByResultAlias = this.buildColumnNameByResultAlias();
-    const entities = rows.map((row) =>
-      mapRowToEntity<T>(row, columnNameByResultAlias),
-    );
+    const entities = this.materializeEntities<T>(await this.executeSelect());
 
     if (options?.noFormatting) {
       return entities;
     }
 
     return this.context.formatResult<T[]>(entities);
+  }
+
+  async getRawAndEntities<T extends Record<string, unknown>>(): Promise<{
+    entities: T[];
+    raw: Record<string, unknown>[];
+  }> {
+    const rows = await this.executeSelect();
+
+    return {
+      raw: rows,
+      entities: this.context.formatResult<T[]>(this.materializeEntities(rows)),
+    };
   }
 
   async getOne<T extends Record<string, unknown>>(options?: {
@@ -592,10 +608,7 @@ export class WorkspaceSelectQueryBuilderV2 implements WhereExpressionLike {
       return null;
     }
 
-    const entity = mapRowToEntity<T>(
-      rows[0],
-      this.buildColumnNameByResultAlias(),
-    );
+    const [entity] = this.materializeEntities<T>([rows[0]]);
 
     if (options?.noFormatting) {
       return entity;

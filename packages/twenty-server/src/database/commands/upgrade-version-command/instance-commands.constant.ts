@@ -145,6 +145,9 @@ import { BackfillCreditBalanceIntoGrantsSlowInstanceCommand } from 'src/database
 import { AddPreviousPeriodStartToBillingSubscriptionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-fast-1786532184002-add-previous-period-start-to-billing-subscription';
 import { AddIsDeprecatedToApplicationVariablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-fast-1786533439000-add-is-deprecated-to-application-variables';
 import { EncryptEmptyApplicationVariablesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-31/2-31-instance-command-slow-1786533438000-encrypt-empty-application-variables';
+import { AddWritabilityToMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-32/2-32-instance-command-fast-1786713600000-add-writability-to-metadata';
+import { AddUninstallLogicFunctionIdToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-32/2-32-instance-command-fast-1786959731000-add-uninstall-logic-function-id-to-application';
+import { BackfillUninstallLogicFunctionIdOnApplicationSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-32/2-32-instance-command-slow-1786959731001-backfill-uninstall-logic-function-id-on-application';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -292,4 +295,7 @@ export const INSTANCE_COMMANDS = [
   AddPreviousPeriodStartToBillingSubscriptionFastInstanceCommand,
   AddIsDeprecatedToApplicationVariablesFastInstanceCommand,
   EncryptEmptyApplicationVariablesSlowInstanceCommand,
+  AddWritabilityToMetadataFastInstanceCommand,
+  AddUninstallLogicFunctionIdToApplicationFastInstanceCommand,
+  BackfillUninstallLogicFunctionIdOnApplicationSlowInstanceCommand,
 ];

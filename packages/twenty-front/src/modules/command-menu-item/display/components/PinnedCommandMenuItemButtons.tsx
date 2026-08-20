@@ -63,14 +63,9 @@ export const PinnedCommandMenuItemButtons = ({
   const isSidePanelFooter =
     containerType === CommandMenuItemContainerType.SidePanelFooter;
 
-  // A record header keeps its breadcrumb on mobile, so its actions stay icons
-  // and leave the record name room. Index and standalone headers drop their
-  // title there, which frees the width for one label.
-  const isRecordPageHeader =
-    containerType === CommandMenuItemContainerType.ShowPageHeader;
-
-  const shouldLabelSingleCommandMenuItem =
-    isSidePanelFooter || (isMobile && !isRecordPageHeader);
+  // Every header keeps its title on mobile, so its actions stay icon-only and
+  // leave the title room. The side panel footer has a full row to itself.
+  const shouldLabelSingleCommandMenuItem = isSidePanelFooter;
 
   const pinnedCommandMenuItems = useMemo(
     () => commandMenuItems.filter((item) => item.isPinned === true),
@@ -82,7 +77,7 @@ export const PinnedCommandMenuItemButtons = ({
     : null;
 
   const shouldHideCommandMenuItemLabel = (commandMenuItemId: string) =>
-    (isMobile && isRecordPageHeader) ||
+    (isMobile && !isSidePanelFooter) ||
     (shouldLabelSingleCommandMenuItem &&
       commandMenuItemId !== labelledCommandMenuItemId);
 

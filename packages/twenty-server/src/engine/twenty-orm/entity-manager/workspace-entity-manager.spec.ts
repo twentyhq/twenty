@@ -1,7 +1,8 @@
 import {
+  MetadataWritability,
+  ObjectOpenRecordIn,
   type FieldMetadataType,
   type ObjectsPermissions,
-  ObjectOpenRecordIn,
 } from 'twenty-shared/types';
 import { EntityManager } from 'typeorm';
 import { EntityPersistExecutor } from 'typeorm/persistence/EntityPersistExecutor';
@@ -125,6 +126,7 @@ describe('WorkspaceEntityManager', () => {
       isLabelSyncedWithName: false,
       isUIEditable: true,
       isUICreatable: true,
+      writability: MetadataWritability.OPEN,
       openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
       duplicateCriteria: null,
       createdAt: new Date().toISOString(),
@@ -162,6 +164,7 @@ describe('WorkspaceEntityManager', () => {
       isActive: true,
       isSystem: false,
       isUIEditable: true,
+      writability: MetadataWritability.OPEN,
       isUnique: false,
       options: null,
       settings: null,
@@ -250,6 +253,7 @@ describe('WorkspaceEntityManager', () => {
         IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED: false,
         IS_SETTINGS_DISCOVERY_HERO_ENABLED: false,
         IS_WORKFLOW_VERSION_IN_CORE_ENABLED: false,
+        IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED: false,
         IS_WORKFLOW_DISPATCH_FROM_CORE_ENABLED: false,
         IS_NATIVE_CALL_RECORDING_TABS_ENABLED: false,
         IS_ORM_V2_READ_PATH_ENABLED: false,
@@ -475,6 +479,7 @@ describe('WorkspaceEntityManager', () => {
         selectedColumns: [],
         allFieldsSelected: false,
         updatedColumns: [],
+        authContext: mockWorkspaceContext.authContext,
       });
     });
 
@@ -584,6 +589,7 @@ describe('WorkspaceEntityManager', () => {
         selectedColumns: [],
         allFieldsSelected: false,
         updatedColumns: [],
+        authContext: mockWorkspaceContext.authContext,
       });
     });
   });

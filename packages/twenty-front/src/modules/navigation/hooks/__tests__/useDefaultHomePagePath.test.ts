@@ -14,7 +14,6 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import {
   type NavigationMenuItem,
   NavigationMenuItemType,
-  ViewOpenRecordIn,
   ViewType,
   ViewVisibility,
 } from '~/generated-metadata/graphql';
@@ -146,7 +145,6 @@ const renderHooks = ({
               type: ViewType.TABLE,
               key: null,
               isCompact: false,
-              openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
               viewFields: [],
               viewFieldGroups: [],
               viewGroups: [],
