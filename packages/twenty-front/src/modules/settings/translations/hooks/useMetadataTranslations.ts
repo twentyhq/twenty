@@ -16,7 +16,7 @@ export const useMetadataTranslations = (
 ) => {
   const { data, loading, refetch } = useQuery(MetadataTranslationsDocument, {
     variables: { input: input ?? {} },
-    skip: input === null,
+    skip: !isDefined(input),
     fetchPolicy: 'cache-and-network',
   });
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
