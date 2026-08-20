@@ -5,6 +5,8 @@ import { getClaimedWorkspaceId } from 'src/logic-functions/recall-api/get-claime
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
 import { listScheduledRecallBotsBeforeRequestCutoff } from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
 
+const RECALL_BOT_CANCELLATION_CONCURRENCY = 5;
+
 export type CancelWorkspaceRecallBotsResult = {
   scannedBotCount: number;
   canceledExternalBotIds: string[];
@@ -27,35 +29,61 @@ export const cancelWorkspaceRecallBots = async ({
   const failedExternalBotIds: string[] = [];
   let cutoffReached = false;
 
-  const cancelBotOncePerCleanup = async (externalBotId: string) => {
-    if (attemptedCancellationExternalBotIds.has(externalBotId)) {
-      return;
+  const cancelBotsUntilCutoff = async (
+    externalBotIds: string[],
+  ): Promise<boolean> => {
+    const unattemptedExternalBotIds = [...new Set(externalBotIds)].filter(
+      (externalBotId) =>
+        !attemptedCancellationExternalBotIds.has(externalBotId),
+    );
+
+    if (unattemptedExternalBotIds.length === 0) {
+      return Date.now() >= cancellationCutoffEpochMs;
     }
 
-    attemptedCancellationExternalBotIds.add(externalBotId);
-    const recallBotCancellationResult = await cancelRecallBot({
-      externalBotId,
-    });
+    for (
+      let batchStartIndex = 0;
+      batchStartIndex < unattemptedExternalBotIds.length;
+      batchStartIndex += RECALL_BOT_CANCELLATION_CONCURRENCY
+    ) {
+      if (Date.now() >= cancellationCutoffEpochMs) {
+        return true;
+      }
 
-    if (recallBotCancellationResult.ok) {
-      canceledExternalBotIds.push(externalBotId);
-    } else {
-      console.warn(
-        `[call-recorder] uninstall bot cleanup incomplete: failed to cancel Recall bot ${externalBotId}: ${recallBotCancellationResult.errorMessage}`,
+      const externalBotIdBatch = unattemptedExternalBotIds.slice(
+        batchStartIndex,
+        batchStartIndex + RECALL_BOT_CANCELLATION_CONCURRENCY,
       );
-      failedExternalBotIds.push(externalBotId);
+
+      externalBotIdBatch.forEach((externalBotId) =>
+        attemptedCancellationExternalBotIds.add(externalBotId),
+      );
+
+      const recallBotCancellationResults = await Promise.all(
+        externalBotIdBatch.map(async (externalBotId) => ({
+          externalBotId,
+          result: await cancelRecallBot({ externalBotId }),
+        })),
+      );
+
+      for (const recallBotCancellationResult of recallBotCancellationResults) {
+        if (recallBotCancellationResult.result.ok) {
+          canceledExternalBotIds.push(
+            recallBotCancellationResult.externalBotId,
+          );
+        } else {
+          console.warn(
+            `[call-recorder] uninstall bot cleanup incomplete: failed to cancel Recall bot ${recallBotCancellationResult.externalBotId}: ${recallBotCancellationResult.result.errorMessage}`,
+          );
+          failedExternalBotIds.push(recallBotCancellationResult.externalBotId);
+        }
+      }
     }
+
+    return false;
   };
 
-  for (const externalBotId of knownExternalBotIds) {
-    if (Date.now() >= cancellationCutoffEpochMs) {
-      cutoffReached = true;
-
-      break;
-    }
-
-    await cancelBotOncePerCleanup(externalBotId);
-  }
+  cutoffReached = await cancelBotsUntilCutoff(knownExternalBotIds);
 
   if (cutoffReached) {
     console.warn(
@@ -105,6 +133,7 @@ export const cancelWorkspaceRecallBots = async ({
     await listScheduledRecallBotsBeforeRequestCutoff({
       joinAtAfter,
       metadata: { twentyWorkspaceId: currentWorkspaceId },
+      statuses: ['ready'],
       requestStartCutoffEpochMs: cancellationCutoffEpochMs,
     });
 
@@ -122,23 +151,13 @@ export const cancelWorkspaceRecallBots = async ({
     };
   }
 
-  if (Date.now() >= cancellationCutoffEpochMs) {
-    cutoffReached = true;
-  }
-
-  for (const scheduledRecallBot of scheduledRecallBotsResult.bots) {
-    if (getClaimedWorkspaceId(scheduledRecallBot) !== currentWorkspaceId) {
-      continue;
-    }
-
-    if (Date.now() >= cancellationCutoffEpochMs) {
-      cutoffReached = true;
-
-      break;
-    }
-
-    await cancelBotOncePerCleanup(scheduledRecallBot.id);
-  }
+  cutoffReached = await cancelBotsUntilCutoff(
+    scheduledRecallBotsResult.bots.flatMap((scheduledRecallBot) =>
+      getClaimedWorkspaceId(scheduledRecallBot) === currentWorkspaceId
+        ? [scheduledRecallBot.id]
+        : [],
+    ),
+  );
 
   if (cutoffReached) {
     console.warn(

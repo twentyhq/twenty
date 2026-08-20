@@ -137,6 +137,49 @@ describe('cancelWorkspaceRecallBots', () => {
     expect(listRequestParameters.get('metadata__twentyWorkspaceId')).toBe(
       CURRENT_WORKSPACE_ID,
     );
+    expect(listRequestParameters.getAll('status')).toEqual(['ready']);
+  });
+
+  it('cancels known bots five at a time', async () => {
+    let releaseRecallBotCancellations: () => void = () => {};
+    const recallBotCancellationsReleased = new Promise<void>((resolve) => {
+      releaseRecallBotCancellations = resolve;
+    });
+    fetchMock.mockImplementation(
+      async (_url: string, requestInitialization: RequestInit) => {
+        if (requestInitialization.method === 'DELETE') {
+          await recallBotCancellationsReleased;
+
+          return buildJsonResponse(204);
+        }
+
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({ next: null, results: [] }),
+        };
+      },
+    );
+    const knownExternalBotIds = Array.from(
+      { length: 6 },
+      (_, index) => `known-bot-${index + 1}`,
+    );
+
+    const workspaceRecallBotCleanupPromise = cancelWorkspaceRecallBots({
+      knownExternalBotIds,
+      joinAtAfter: JOIN_AT_AFTER,
+      cancellationCutoffEpochMs: CANCELLATION_CUTOFF_EPOCH_MS,
+    });
+
+    expect(getCallsByMethod('DELETE')).toHaveLength(5);
+    releaseRecallBotCancellations();
+    const workspaceRecallBotCleanupResult =
+      await workspaceRecallBotCleanupPromise;
+
+    expect(getCallsByMethod('DELETE')).toHaveLength(6);
+    expect(workspaceRecallBotCleanupResult.canceledExternalBotIds).toEqual(
+      knownExternalBotIds,
+    );
   });
 
   it('does not cancel a known bot twice when the safety list also returns it', async () => {
@@ -247,18 +290,22 @@ describe('cancelWorkspaceRecallBots', () => {
   it('stops starting Recall calls at the cancellation cutoff', async () => {
     stubRecallApi({ bots: [] });
     vi.spyOn(Date, 'now').mockReturnValueOnce(0).mockReturnValueOnce(1);
+    const knownExternalBotIds = Array.from(
+      { length: 6 },
+      (_, index) => `known-bot-${index + 1}`,
+    );
 
     const workspaceRecallBotCleanupResult = await cancelWorkspaceRecallBots({
-      knownExternalBotIds: ['first-bot', 'second-bot'],
+      knownExternalBotIds,
       joinAtAfter: JOIN_AT_AFTER,
       cancellationCutoffEpochMs: 1,
     });
 
-    expect(workspaceRecallBotCleanupResult.canceledExternalBotIds).toEqual([
-      'first-bot',
-    ]);
+    expect(workspaceRecallBotCleanupResult.canceledExternalBotIds).toEqual(
+      knownExternalBotIds.slice(0, 5),
+    );
     expect(workspaceRecallBotCleanupResult.cutoffReached).toBe(true);
-    expect(getCallsByMethod('DELETE')).toHaveLength(1);
+    expect(getCallsByMethod('DELETE')).toHaveLength(5);
     expect(getCallsByMethod('GET')).toHaveLength(0);
   });
 

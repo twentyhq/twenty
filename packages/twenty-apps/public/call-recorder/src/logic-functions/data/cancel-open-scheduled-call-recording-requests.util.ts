@@ -8,6 +8,7 @@ const CALL_RECORDING_UPDATE_BATCH_SIZE = 200;
 export const cancelOpenScheduledCallRecordingRequests = async (
   coreApiClient: CoreApiClient,
   callRecordingIds: string[],
+  shouldStartBatchRequest: () => boolean,
 ): Promise<number> => {
   const uniqueCallRecordingIds = [...new Set(callRecordingIds)];
   let canceledCallRecordingRequestCount = 0;
@@ -18,6 +19,16 @@ export const cancelOpenScheduledCallRecordingRequests = async (
     batchStartIndex < uniqueCallRecordingIds.length;
     batchStartIndex += CALL_RECORDING_UPDATE_BATCH_SIZE
   ) {
+    if (!shouldStartBatchRequest()) {
+      batchErrors.push(
+        new Error(
+          'call recording update request cutoff reached before all batches were attempted',
+        ),
+      );
+
+      break;
+    }
+
     const callRecordingIdBatch = uniqueCallRecordingIds.slice(
       batchStartIndex,
       batchStartIndex + CALL_RECORDING_UPDATE_BATCH_SIZE,
