@@ -10,6 +10,10 @@ import {
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { ViewType, ViewVisibility } from 'twenty-shared/types';
+import {
+  hasObjectMetadataLabelPlaceholder,
+  type MetadataLabelPlaceholderValues,
+} from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -24,7 +28,8 @@ import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
+import { buildViewNameObjectLabels } from 'src/engine/metadata-modules/view/utils/build-view-name-object-labels.util';
+import { resolveViewName } from 'src/engine/metadata-modules/view/utils/resolve-view-name.util';
 import { ViewFieldGroupDTO } from 'src/engine/metadata-modules/view-field-group/dtos/view-field-group.dto';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 import { ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-group/dtos/view-filter-group.dto';
@@ -60,54 +65,63 @@ export class ViewResolver {
     @Context() context: { loaders: IDataloaders } & I18nContext,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<string> {
-    if (view.name.includes('{objectLabelPlural}')) {
-      const objectMetadata = await context.loaders.objectMetadataLoader.load({
-        objectMetadataId: view.objectMetadataId,
+    const i18nContext = await this.i18nService.buildEffectiveEntityI18nContext({
+      applicationId: view.applicationId,
+      loaders: context.loaders,
+      locale: context.req.locale,
+      workspaceId: workspace.id,
+    });
+
+    return resolveViewName({
+      view,
+      objectLabelPlaceholderValues:
+        await this.resolveObjectLabelPlaceholderValues({
+          view,
+          context,
+          workspace,
+        }),
+      i18nContext,
+    });
+  }
+
+  // The object label is resolved against the object's own application, which is
+  // not necessarily the view's -- a workspace-custom view can point at a
+  // standard object.
+  private async resolveObjectLabelPlaceholderValues({
+    view,
+    context,
+    workspace,
+  }: {
+    view: ViewDTO;
+    context: { loaders: IDataloaders } & I18nContext;
+    workspace: WorkspaceEntity;
+  }): Promise<MetadataLabelPlaceholderValues | undefined> {
+    if (!hasObjectMetadataLabelPlaceholder(view.name)) {
+      return undefined;
+    }
+
+    const objectMetadata = await context.loaders.objectMetadataLoader.load({
+      objectMetadataId: view.objectMetadataId,
+      workspaceId: workspace.id,
+    });
+
+    if (!isDefined(objectMetadata)) {
+      return undefined;
+    }
+
+    const objectI18nContext =
+      await this.i18nService.buildEffectiveEntityI18nContext({
+        applicationId: objectMetadata.applicationId,
+        loaders: context.loaders,
+        locale: context.req.locale,
         workspaceId: workspace.id,
       });
 
-      if (isDefined(objectMetadata)) {
-        const i18n = this.i18nService.getI18nInstance(context.req.locale);
-        const standardApplicationId =
-          await context.loaders.standardApplicationIdLoader.load({
-            workspaceId: workspace.id,
-          });
-        const isStandardApp =
-          objectMetadata.applicationId === standardApplicationId;
-        const applicationCatalog =
-          await context.loaders.applicationTranslationCatalogLoader.load({
-            applicationId: objectMetadata.applicationId,
-            workspaceId: workspace.id,
-            locale: context.req.locale,
-          });
-        const translatedObjectLabel = resolveEffectiveEntityProperty({
-          metadataName: 'objectMetadata',
-          baseValue: objectMetadata.labelPlural,
-          overrides: objectMetadata.overrides ?? undefined,
-          property: 'labelPlural',
-          i18nContext: {
-            locale: context.req.locale,
-            i18nInstance: i18n,
-            isStandardApp,
-            applicationCatalog,
-          },
-        });
-
-        return this.viewService.processViewNameWithTemplate(
-          view.name,
-          view.isCustom,
-          translatedObjectLabel,
-          context.req.locale,
-        );
-      }
-    }
-
-    return this.viewService.processViewNameWithTemplate(
-      view.name,
-      view.isCustom,
-      undefined,
-      context.req.locale,
-    );
+    return buildViewNameObjectLabels({
+      viewName: view.name,
+      objectMetadata,
+      i18nContext: objectI18nContext,
+    });
   }
 
   @Query(() => [ViewDTO])

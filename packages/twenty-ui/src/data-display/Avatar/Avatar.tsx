@@ -1,15 +1,16 @@
-import { isNonEmptyString, isNull, isUndefined } from '@sniptt/guards';
+import { isNonEmptyString, isNull } from '@sniptt/guards';
 import { clsx } from 'clsx';
 import { useState } from 'react';
 
 import { handleClickableElementKeyDown } from '@ui/accessibility/utils/handleClickableElementKeyDown';
-import { AvatarImageLoadErrorEffect } from '@ui/data-display/Avatar/components/AvatarImageLoadErrorEffect';
+import { AvatarImageLoadErrorEffect } from '@ui/data-display/Avatar/internal/AvatarImageLoadErrorEffect';
 import { type AvatarSize } from '@ui/data-display/Avatar/types/AvatarSize';
 import { type AvatarType } from '@ui/data-display/Avatar/types/AvatarType';
 import { type IconComponent } from '@ui/icon/types/IconComponent';
 import { useTheme } from '@ui/theme-constants';
 import { stringToThemeColorP3String } from '@ui/utilities';
 import { type Nullable } from '@ui/utilities/types/Nullable';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Avatar.module.scss';
 
@@ -110,27 +111,30 @@ export const Avatar = ({
       : {}),
   } as React.CSSProperties;
 
+  const avatarClassName = clsx(
+    styles.root,
+    styles[size],
+    pulsing && styles.pulsing,
+    className,
+  );
+
+  const isClickable = isDefined(onClick);
+
+  const clickableAriaLabel = isNonEmptyString(placeholder)
+    ? placeholder
+    : 'Avatar';
+
   return (
+    // oxlint-disable-next-line jsx-a11y/no-static-element-interactions
     <div
-      className={clsx(
-        styles.root,
-        styles[size],
-        pulsing && styles.pulsing,
-        className,
-      )}
+      className={avatarClassName}
       data-type={type ?? undefined}
-      data-clickable={!isUndefined(onClick) ? true : undefined}
-      role={!isUndefined(onClick) ? 'button' : undefined}
-      tabIndex={!isUndefined(onClick) ? 0 : undefined}
-      aria-label={
-        !isUndefined(onClick)
-          ? isNonEmptyString(placeholder)
-            ? placeholder
-            : 'Avatar'
-          : undefined
-      }
+      data-clickable={isClickable || undefined}
+      role={isClickable ? 'button' : undefined}
+      tabIndex={isClickable ? 0 : undefined}
+      aria-label={isClickable ? clickableAriaLabel : undefined}
       onClick={onClick}
-      onKeyDown={handleClickableElementKeyDown}
+      onKeyDown={isClickable ? handleClickableElementKeyDown : undefined}
       style={avatarStyle}
     >
       {isNonEmptyString(avatarImageURI) && (

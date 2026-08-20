@@ -212,15 +212,16 @@ export const createLinearIssueHandler = async (input: {
 
 Fiecare conexiune are:
 
-| Câmp              | Descriere                                                                                                                                |
-| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `id`              | ID unic al înregistrării; pasează-l la `getConnection(id)` pentru a reobține acea înregistrare                                           |
-| `visibility`      | `'user'` (privată pentru un membru al spațiului de lucru) sau `'workspace'` (partajată cu toți membrii)                                  |
-| `scopes`          | Permisiunile OAuth acordate de furnizorul upstream (distincte de `visibility` — nu au legătură)                                          |
-| `userWorkspaceId` | ID-ul userWorkspace al deținătorului — util pentru a alege "conexiunea utilizatorului care face cererea" în declanșatoarele de rută HTTP |
-| `accessToken`     | Token de acces OAuth proaspăt (reîmprospătat automat dacă a expirat)                                                                     |
-| `name` / `handle` | Numele afișat al conexiunii (derivat automat la callback-ul OAuth, poate fi redenumit de utilizator)                                     |
-| `authFailedAt`    | Setat când cea mai recentă reîmprospătare a eșuat; utilizatorul trebuie să se reconecteze                                                |
+| Câmp              | Descriere                                                                                                                                                                                                                                    |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`              | ID unic al înregistrării; pasează-l la `getConnection(id)` pentru a reobține acea înregistrare                                                                                                                                               |
+| `visibility`      | `'user'` (privată pentru un membru al spațiului de lucru) sau `'workspace'` (partajată cu toți membrii)                                                                                                                                      |
+| `scopes`          | Permisiunile OAuth acordate de furnizorul upstream (distincte de `visibility` — nu au legătură)                                                                                                                                              |
+| `userWorkspaceId` | ID-ul userWorkspace al deținătorului — util pentru a alege "conexiunea utilizatorului care face cererea" în declanșatoarele de rută HTTP                                                                                                     |
+| `accessToken`     | Token de acces OAuth proaspăt (reîmprospătat automat dacă a expirat)                                                                                                                                                                         |
+| `name`            | Numele afișat al conexiunii (derivat automat la callback-ul OAuth, poate fi redenumit de utilizator)                                                                                                                                         |
+| `handle`          | Emailul contului din amonte conectat, actualizat la fiecare reconectare; rezolvat din `id_token` OIDC a revenit la schimbul tokenului, revenind la e-mailul de conectare a douăzeci de utilizatori atunci când furnizorul nu returnează unul |
+| `authFailedAt`    | Setat când cea mai recentă reîmprospătare a eșuat; utilizatorul trebuie să se reconecteze                                                                                                                                                    |
 
 Puncte cheie:
 

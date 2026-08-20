@@ -24,7 +24,7 @@ import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/compani
 import { mockedTaskRecords } from '~/testing/mock-data/generated/data/tasks/mock-tasks-data';
 import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/metadata/objects/mock-objects-metadata';
 import { mockedRoles } from '~/testing/mock-data/generated/metadata/roles/mock-roles-data';
-import { mockedBackendCommandMenuItems } from '~/testing/mock-data/command-menu-items';
+import { mockedCommandMenuItems } from '~/testing/mock-data/generated/metadata/command-menu-items/mock-command-menu-items-data';
 
 import { type Task } from '@/activities/types/Task';
 import { FIND_MINIMAL_METADATA } from '@/metadata-store/graphql/queries/findMinimalMetadata';
@@ -221,7 +221,7 @@ export const graphqlMocks = {
     }),
     metadataGraphql.query('FindManyCommandMenuItems', () => {
       return HttpResponse.json({
-        data: { commandMenuItems: mockedBackendCommandMenuItems },
+        data: { commandMenuItems: mockedCommandMenuItems },
       });
     }),
     graphql.query('SearchPeople', () => {

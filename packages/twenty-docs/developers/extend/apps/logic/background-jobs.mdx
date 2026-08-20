@@ -38,7 +38,7 @@ The target function receives `payload` as its handler argument, exactly like any
 
 | Option | Default | Range | What it does |
 |--------|---------|-------|--------------|
-| `retryLimit` | `0` | `0`–`10` | Extra attempts if the run throws. Only raise this for handlers that are safe to run twice. |
+| `retryLimit` | `0` | `0`–`10` | Overall extra queue attempts. Application-requested retries are capped at `3`. Only raise this for handlers that are safe to run twice. |
 | `delayMs` | `0` | `0`–`604800000` (7 days) | Wait this long before the run becomes eligible. |
 
 ```ts
@@ -55,6 +55,40 @@ await enqueueJob({
 </Note>
 
 The queued run inherits the acting user of the function that enqueued it, so it acts with the same permissions.
+
+## Retry a transient failure
+
+Twenty does not retry every exception from application code. An ordinary thrown error is treated as a permanent failure. For a transient failure, a queued logic function can request up to three retries by throwing `RetryableLogicFunctionError`.
+
+```ts
+import {
+  type LogicFunctionExecutionContext,
+  RetryableLogicFunctionError,
+} from 'twenty-sdk/logic-function';
+
+export const handler = async (
+  _payload: unknown,
+  { retryCount, maxRetries }: LogicFunctionExecutionContext,
+) => {
+  const response = await fetch('https://api.example.com/contacts');
+
+  if (response.status === 429 || response.status >= 500) {
+    throw new RetryableLogicFunctionError(
+      `The contacts API is temporarily unavailable (${response.status}); retry ${retryCount} of ${maxRetries}`,
+    );
+  }
+};
+```
+
+Throw `RetryableLogicFunctionError` directly when possible. If you extend it, do not replace its `name`: Twenty recognizes the serialized name `RetryableLogicFunctionError` across execution runtimes.
+
+`retryCount` is `0` for the initial execution and increases only when application code requests a retry. `maxRetries` is at most `3` and can be lower when the queued job has a smaller overall retry limit. Platform failures do not increase `retryCount`, although they still consume the queue's overall safety budget.
+
+The queue delays retry attempts with exponential backoff and jitter. The exact delay is intentionally not guaranteed, so application code should not depend on a retry happening at a precise time. Once `maxRetries` is reached, another `RetryableLogicFunctionError` is recorded as the final application failure without another execution.
+
+<Warning>
+Retries re-run the whole handler and may happen after some side effects succeeded. Make the handler idempotent before requesting retries.
+</Warning>
 
 ## Use it: page through a long sync
 
@@ -159,7 +193,3 @@ What makes this hold up:
 - **Persist progress before enqueuing the next run,** so a failed link restarts from the last completed chunk instead of the beginning.
 - **Keep each chunk idempotent.** Reprocessing one chunk after a retry must not double-write — key writes on the record or external id you are processing.
 - **Prefer a chunked chain over one giant fan-out** when the work hits a rate-limited third party: a chain with `delayMs` paces itself, whereas thousands of jobs enqueued at once all become eligible immediately.
-
-<Warning>
-Retries re-run the whole handler. Keep enqueued handlers idempotent before setting `retryLimit` above `0`.
-</Warning>

@@ -4,12 +4,22 @@ import {
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
-import { Args, Mutation, Query } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+} from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -26,6 +36,7 @@ import { PageLayoutResetService } from 'src/engine/metadata-modules/page-layout/
 import { PageLayoutUpdateService } from 'src/engine/metadata-modules/page-layout/services/page-layout-update.service';
 import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
 import { PageLayoutGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/page-layout/utils/page-layout-graphql-api-exception.filter';
+import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 
 @MetadataResolver(() => PageLayoutDTO)
@@ -38,7 +49,33 @@ export class PageLayoutResolver {
     private readonly pageLayoutService: PageLayoutService,
     private readonly pageLayoutUpdateService: PageLayoutUpdateService,
     private readonly pageLayoutResetService: PageLayoutResetService,
+    private readonly i18nService: I18nService,
   ) {}
+
+  @ResolveField(() => String)
+  async name(
+    @Parent() pageLayout: PageLayoutDTO,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<string> {
+    const i18nContext = await this.i18nService.buildEffectiveEntityI18nContext({
+      applicationId: pageLayout.applicationId,
+      loaders: context.loaders,
+      locale: context.req.locale,
+      workspaceId: workspace.id,
+    });
+
+    return resolveEffectiveEntityProperty({
+      metadataName: 'pageLayout',
+      baseValue: pageLayout.name,
+      // pageLayout is not an overridable entity: a workspace renaming a layout
+      // edits the row itself, so there is no standard value left to translate
+      // and no override to arbitrate against.
+      overrides: undefined,
+      property: 'name',
+      i18nContext,
+    });
+  }
 
   @Query(() => [PageLayoutDTO])
   @UseGuards(NoPermissionGuard)

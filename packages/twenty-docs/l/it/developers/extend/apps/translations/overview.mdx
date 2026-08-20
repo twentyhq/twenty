@@ -76,6 +76,12 @@ t({ message: 'Open', context: 'window' });
 <Trans context="card-title">Untitled</Trans>
 ```
 
+Le stringhe contestuali compaiono nei cataloghi delle impostazioni locali come un gruppo indicizzato dal loro
+contesto: `"\<context>": { "\<message>": "\<translation>" }`. Le etichette del manifest sono
+contestuali per costruzione — ognuna porta con sé il ruolo di metadato che svolge
+(`objectMetadata.labelSingular`, `fieldMetadata.label`, `view.name`, …), quindi
+la stessa parola può essere tradotta in modo diverso come nome di oggetto e come nome di vista.
+
 ## Estrazione e traduzione
 
 Esegui il comando di estrazione dalla directory della tua app:
@@ -94,9 +100,18 @@ stringa sorgente. Compila le traduzioni:
 {
   "Loading postcard…": "Chargement de la carte…",
   "Hi {name}": "Bonjour {name}",
-  "Saved {count} cards": "{count} cartes enregistrées"
+  "Saved {count} cards": "{count} cartes enregistrées",
+  "door": {
+    "Open": "Ouvrir"
+  },
+  "objectMetadata.labelSingular": {
+    "Postcard": "Carte postale"
+  }
 }
 ```
+
+Le stringhe prive di contesto sono voci piatte; le stringhe contestuali — inclusa ogni
+etichetta del manifest — sono annidate sotto la loro chiave di contesto.
 
 I segnaposto come `{name}` vengono sostituiti a runtime — mantienili nella
 traduzione. Qualsiasi stringa lasciata vuota fa fallback al testo sorgente.

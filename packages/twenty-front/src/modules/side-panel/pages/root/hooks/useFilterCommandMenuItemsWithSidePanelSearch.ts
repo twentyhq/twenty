@@ -1,7 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
+import { interpolateCommandMenuItemPlaceholders } from 'twenty-shared/i18n';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
-import { interpolateCommandMenuItemTemplate } from 'twenty-shared/utils';
+import { getCommandMenuItemPlaceholderValues } from '@/command-menu-item/utils/getCommandMenuItemPlaceholderValues';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
@@ -19,11 +20,10 @@ const checkInLabels = (
   search: string,
   commandMenuContextApi: CommandMenuContextApi,
 ) => {
-  const label =
-    interpolateCommandMenuItemTemplate({
-      label: commandMenuItem.label,
-      context: commandMenuContextApi,
-    }) ?? commandMenuItem.label;
+  const label = interpolateCommandMenuItemPlaceholders(
+    commandMenuItem.label,
+    getCommandMenuItemPlaceholderValues(commandMenuContextApi),
+  );
 
   if (isNonEmptyString(label)) {
     const searchNormalized = normalizeSearchText(search);

@@ -36,10 +36,10 @@ await enqueueJob({
 
 ## 작업 옵션
 
-| 옵션           | 기본값 | 범위                       | 하는 일                                                           |
-| ------------ | --- | ------------------------ | -------------------------------------------------------------- |
-| `retryLimit` | `0` | `0`–`10`                 | 실행이 예외를 던졌을 때의 추가 재시도 횟수입니다. 두 번 실행해도 안전한 핸들러에 대해서만 이 값을 올리세요. |
-| `delayMs`    | `0` | `0`–`604800000` (7 days) | 실행이 가능해지기 전까지 이만큼 대기합니다.                                       |
+| 옵션           | 기본값 | 범위                       | 하는 일                                                                            |
+| ------------ | --- | ------------------------ | ------------------------------------------------------------------------------- |
+| `retryLimit` | `0` | `0`–`10`                 | 전체 추가 큐 시도 횟수. 애플리케이션에서 요청한 재시도는 `3`회로 제한됩니다. 두 번 실행해도 안전한 핸들러에 대해서만 이 값을 올리세요. |
+| `delayMs`    | `0` | `0`–`604800000` (7 days) | 실행이 가능해지기 전까지 이만큼 대기합니다.                                                        |
 
 ```ts
 await enqueueJob({
@@ -55,6 +55,40 @@ await enqueueJob({
 </Note>
 
 대기열에 추가된 실행은 이를 대기열에 추가한 함수의 실행 사용자를 상속하므로, 동일한 권한으로 동작합니다.
+
+## 일시적 실패 재시도하기
+
+Twenty는 애플리케이션 코드의 모든 예외를 재시도하지 않습니다. 일반 오류가 throw되면 영구적 실패로 처리됩니다. 일시적 실패의 경우, 큐에 대기 중인 로직 함수는 `RetryableLogicFunctionError`를 throw하여 최대 세 번의 재시도를 요청할 수 있습니다.
+
+```ts
+import {
+  type LogicFunctionExecutionContext,
+  RetryableLogicFunctionError,
+} from 'twenty-sdk/logic-function';
+
+export const handler = async (
+  _payload: unknown,
+  { retryCount, maxRetries }: LogicFunctionExecutionContext,
+) => {
+  const response = await fetch('https://api.example.com/contacts');
+
+  if (response.status === 429 || response.status >= 500) {
+    throw new RetryableLogicFunctionError(
+      `The contacts API is temporarily unavailable (${response.status}); retry ${retryCount} of ${maxRetries}`,
+    );
+  }
+};
+```
+
+가능한 경우 `RetryableLogicFunctionError`를 직접 throw하세요. 이를 확장하는 경우 `name`을 바꾸지 마세요. Twenty는 실행 런타임 전반에서 직렬화된 이름 `RetryableLogicFunctionError`를 인식합니다.
+
+`retryCount`는 최초 실행 시 `0`이며, 애플리케이션 코드가 재시도를 요청할 때만 증가합니다. `maxRetries`는 최대 `3`이며, 큐에 대기 중인 작업의 전체 재시도 한도가 더 작으면 더 낮을 수 있습니다. 플랫폼 실패는 큐의 전체 안전 예산을 계속 소모하지만 `retryCount`를 증가시키지는 않습니다.
+
+큐는 지수 백오프와 지터를 사용하여 재시도 시도를 지연합니다. 정확한 지연 시간은 의도적으로 보장되지 않으므로, 애플리케이션 코드는 정확한 시간에 재시도가 발생하는 것에 의존해서는 안 됩니다. `maxRetries`에 도달하면, 또 다른 `RetryableLogicFunctionError`는 추가 실행 없이 최종 애플리케이션 실패로 기록됩니다.
+
+<Warning>
+재시도는 전체 핸들러를 다시 실행하며, 일부 부수 효과가 성공한 후 발생할 수 있습니다. 재시도를 요청하기 전에 핸들러를 멱등적으로 만드세요.
+</Warning>
 
 ## 사용 예: 긴 동기화를 페이지 단위로 처리하기
 
@@ -159,7 +193,3 @@ export default defineLogicFunction({
 * **다음 실행을 대기열에 추가하기 전에 진행 상태를 저장**해서, 실패한 링크가 처음부터가 아니라 마지막으로 완료된 청크부터 다시 시작하도록 하세요.
 * **각 청크는 멱등성을 유지하세요.** 재시도 후에 하나의 청크를 다시 처리하더라도 중복 기록이 발생하지 않도록, 처리 중인 레코드나 외부 ID를 기준으로 쓰기를 수행해야 합니다.
 * **거대한 한 번의 팬아웃보다 청크 단위 체인을 우선적으로 사용**하세요. 작업이 호출 한도(rate limit)가 있는 서드파티에 도달하는 경우, `delayMs`가 있는 체인은 스스로 속도를 조절하지만, 수천 개의 작업을 한 번에 대기열에 추가하면 모두 즉시 실행 가능 상태가 됩니다.
-
-<Warning>
-재시도가 발생하면 전체 핸들러가 다시 실행됩니다. `retryLimit`을 `0`보다 크게 설정하기 전에, 대기열에 추가되는 핸들러가 멱등성을 갖추도록 유지하세요.
-</Warning>

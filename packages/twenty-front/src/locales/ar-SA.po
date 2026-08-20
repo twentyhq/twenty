@@ -1283,8 +1283,8 @@ msgid "Add Field"
 msgstr "إضافة حقل"
 
 #. js-lingui-id: T7RGT6
-#: src/modules/activities/files/components/FilesCard.tsx
-#: src/modules/activities/files/components/FilesCard.tsx
+#: src/modules/activities/files/components/FilesCardContent.tsx
+#: src/modules/page-layout/widgets/files/components/WidgetActionFileAttach.tsx
 msgid "Add file"
 msgstr "إضافة ملف"
 
@@ -2034,7 +2034,7 @@ msgid "All system objects are already in the sidebar"
 msgstr "جميع كائنات النظام موجودة بالفعل في الشريط الجانبي"
 
 #. js-lingui-id: p+lpde
-#: src/modules/activities/tasks/components/TaskGroups.tsx
+#: src/modules/activities/tasks/components/TaskGroupsContent.tsx
 msgid "All tasks addressed. Maintain the momentum."
 msgstr "تم التعامل مع جميع المهام. حافظ على الزخم."
 
@@ -2266,6 +2266,11 @@ msgstr "و"
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
 msgid "Annual"
 msgstr "سنوي"
+
+#. js-lingui-id: GqCA/t
+#: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
+msgid "Answered"
+msgstr ""
 
 #. js-lingui-id: +qygei
 #: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
@@ -4356,7 +4361,7 @@ msgid "Component name"
 msgstr "اسم المكوّن"
 
 #. js-lingui-id: QOhkyl
-#: src/modules/activities/emails/components/EmailsCard.tsx
+#: src/modules/page-layout/widgets/emails/components/WidgetActionEmailCompose.tsx
 msgid "Compose"
 msgstr ""
 
@@ -6269,6 +6274,7 @@ msgid "Delete group"
 msgstr "حذف المجموعة"
 
 #. js-lingui-id: Wk+A9S
+#: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeDeleteButton.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 msgid "Delete node"
 msgstr "حذف العقدة"
@@ -8329,7 +8335,7 @@ msgid "Failed to delete unsubscribe topic."
 msgstr "فشل حذف موضوع إلغاء الاشتراك."
 
 #. js-lingui-id: NUmmdc
-#: src/modules/command-menu-item/engine-command/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
+#: src/modules/dashboards/hooks/useDuplicateDashboard.ts
 msgid "Failed to duplicate dashboard"
 msgstr "فشل في تكرار لوحة القيادة"
 
@@ -12061,7 +12067,7 @@ msgid "Missing email draft permission."
 msgstr "إذن صياغة رسائل البريد الإلكتروني غير متاح."
 
 #. js-lingui-id: mibKsa
-#: src/modules/activities/tasks/components/TaskGroups.tsx
+#: src/modules/activities/tasks/components/TaskGroupsContent.tsx
 msgid "Mission accomplished!"
 msgstr "تم إنجاز المهمة!"
 
@@ -12283,6 +12289,11 @@ msgstr "ادفع العمل قدمًا عبر الفرق والوكلاء"
 #. js-lingui-id: XXzjfC
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
 msgid "Msgs"
+msgstr ""
+
+#. js-lingui-id: cT1jbf
+#: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
+msgid "Multiple answers"
 msgstr ""
 
 #. js-lingui-id: asWVA5
@@ -12621,8 +12632,8 @@ msgid "New Model"
 msgstr "نموذج جديد"
 
 #. js-lingui-id: zPPcuu
-#: src/modules/activities/notes/components/NotesCard.tsx
-#: src/modules/activities/notes/components/NotesCard.tsx
+#: src/modules/activities/notes/components/NotesCardContent.tsx
+#: src/modules/page-layout/widgets/notes/components/WidgetActionNoteCreate.tsx
 msgid "New note"
 msgstr "ملاحظة جديدة"
 
@@ -12671,8 +12682,8 @@ msgid "New Tab"
 msgstr "علامة تبويب جديدة"
 
 #. js-lingui-id: wl18ST
-#: src/modules/activities/tasks/components/TaskGroups.tsx
-#: src/modules/activities/tasks/components/TaskGroups.tsx
+#: src/modules/activities/tasks/components/TaskGroupsContent.tsx
+#: src/modules/page-layout/widgets/tasks/components/WidgetActionTaskCreate.tsx
 msgid "New task"
 msgstr "مهمة جديدة"
 
@@ -13052,12 +13063,12 @@ msgid "No event logs found"
 msgstr "لم يتم العثور على سجلات الأحداث"
 
 #. js-lingui-id: l7y8S8
-#: src/modules/activities/calendar/components/CalendarEventsCard.tsx
+#: src/modules/activities/calendar/components/CalendarEventsCardContent.tsx
 msgid "No Events"
 msgstr "لا توجد أحداث"
 
 #. js-lingui-id: wY82y3
-#: src/modules/activities/calendar/components/CalendarEventsCard.tsx
+#: src/modules/activities/calendar/components/CalendarEventsCardContent.tsx
 msgid "No events have been scheduled with this {objectName} yet."
 msgstr "لم يتم تحديد أي أحداث مع {objectName} بعد."
 
@@ -13082,7 +13093,7 @@ msgid "No fields to display"
 msgstr "لا توجد حقول لعرضها"
 
 #. js-lingui-id: 23Rceg
-#: src/modules/activities/files/components/FilesCard.tsx
+#: src/modules/activities/files/components/FilesCardContent.tsx
 msgid "No Files"
 msgstr "لا توجد ملفات"
 
@@ -13196,7 +13207,7 @@ msgid "No models available. Please configure AI models in your workspace setting
 msgstr "لا توجد نماذج متاحة. يرجى تهيئة نماذج الذكاء الاصطناعي في إعدادات مكان العمل الخاص بك."
 
 #. js-lingui-id: 9VrTfZ
-#: src/modules/activities/notes/components/NotesCard.tsx
+#: src/modules/activities/notes/components/NotesCardContent.tsx
 msgid "No notes"
 msgstr "لا توجد ملاحظات"
 
@@ -14234,6 +14245,7 @@ msgstr "تنظيم"
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
@@ -15174,6 +15186,11 @@ msgstr "أرباع"
 msgid "Queries that relied on it will fall back to a sequential scan. You can recreate it later."
 msgstr "الاستعلامات التي كانت تعتمد عليه ستعود لاستخدام الفحص التسلسلي. يمكنك إعادة إنشائه لاحقًا."
 
+#. js-lingui-id: enzGAL
+#: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
+msgid "Questions"
+msgstr ""
+
 #. js-lingui-id: /IUt/5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerHealthStatus.tsx
 msgid "Queue information is not available because the worker is down"
@@ -15353,6 +15370,7 @@ msgstr ""
 
 #. js-lingui-id: WEYdDv
 #: src/modules/ai/components/AiChatQuestionCard.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
 msgid "Recommended"
 msgstr "مُوصى به"
 
@@ -17596,6 +17614,11 @@ msgstr "تخطي إنشاء حقل الاسم "
 msgid "Skip the junction object (similar to many-to-many relations)"
 msgstr "تخطي عنصر الربط (مشابه لعلاقات متعدد إلى متعدد)"
 
+#. js-lingui-id: 9NyAH9
+#: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
+msgid "Skipped"
+msgstr ""
+
 #. js-lingui-id: BIZl8w
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Sky"
@@ -18730,12 +18753,12 @@ msgid "then"
 msgstr "ثم"
 
 #. js-lingui-id: l2fWLK
-#: src/modules/activities/files/components/FilesCard.tsx
+#: src/modules/activities/files/components/FilesCardContent.tsx
 msgid "There are no associated files with this record."
 msgstr "لا توجد ملفات مرتبطة بهذا السجل."
 
 #. js-lingui-id: 6g0c8y
-#: src/modules/activities/notes/components/NotesCard.tsx
+#: src/modules/activities/notes/components/NotesCardContent.tsx
 msgid "There are no associated notes with this record."
 msgstr "لا توجد ملاحظات مرتبطة بهذا السجل."
 
@@ -19701,6 +19724,11 @@ msgstr "تعذر تحميل تفاصيل التطبيق. يرجى المحاول
 #: src/modules/client-config/components/ClientConfigProvider.tsx
 msgid "Unable to Reach Back-end"
 msgstr "غير قادر على الوصول إلى الخلفية"
+
+#. js-lingui-id: 2lF8Zj
+#: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
+msgid "Unanswered"
+msgstr ""
 
 #. js-lingui-id: 5JOLV9
 #: src/modules/ai/components/AiChatThreadItemMenu.tsx

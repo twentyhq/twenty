@@ -1,6 +1,6 @@
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 
-import { EllipsisDisplay } from './EllipsisDisplay';
+import { EllipsisDisplay } from 'twenty-ui/data-display';
 
 type MoneyDisplayProps = {
   value: number | null;

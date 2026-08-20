@@ -27,7 +27,7 @@ import { UpsertFieldsWidgetInput } from 'src/engine/metadata-modules/view-field-
 import { ViewFieldGroupDTO } from 'src/engine/metadata-modules/view-field-group/dtos/view-field-group.dto';
 import { FieldsWidgetUpsertService } from 'src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service';
 import { ViewFieldGroupService } from 'src/engine/metadata-modules/view-field-group/services/view-field-group.service';
-import { resolveViewFieldGroupName } from 'src/engine/metadata-modules/view-field-group/utils/resolve-view-field-group-name.util';
+import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
@@ -49,27 +49,19 @@ export class ViewFieldGroupResolver {
     @Context() context: { loaders: IDataloaders } & I18nContext,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<string> {
-    const i18n = this.i18nService.getI18nInstance(context.req.locale);
-
-    const standardApplicationId =
-      await context.loaders.standardApplicationIdLoader.load({
-        workspaceId: workspace.id,
-      });
-
-    const applicationCatalog =
-      await context.loaders.applicationTranslationCatalogLoader.load({
-        applicationId: viewFieldGroup.applicationId,
-        workspaceId: workspace.id,
-        locale: context.req.locale,
-      });
-
-    return resolveViewFieldGroupName({
-      name: viewFieldGroup.name,
+    const i18nContext = await this.i18nService.buildEffectiveEntityI18nContext({
       applicationId: viewFieldGroup.applicationId,
-      twentyStandardApplicationId: standardApplicationId,
+      loaders: context.loaders,
+      locale: context.req.locale,
+      workspaceId: workspace.id,
+    });
+
+    return resolveEffectiveEntityProperty({
+      metadataName: 'viewFieldGroup',
+      baseValue: viewFieldGroup.name,
       overrides: viewFieldGroup.overrides,
-      i18nInstance: i18n,
-      applicationCatalog,
+      property: 'name',
+      i18nContext,
     });
   }
 

@@ -70,7 +70,6 @@ export const Default: Story = {
   },
   render: (args) => (
     <div className={styles.container}>
-      {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
       <Banner {...args}>
         <div className={styles.bannerContent}>
           Sync lost with mailbox hello@twenty.com. Please reconnect for updates:
@@ -96,7 +95,6 @@ export const Catalog: CatalogStory<Story, typeof Banner> = {
     variant: { control: false },
   },
   render: (args) => (
-    // oxlint-disable-next-line react/jsx-props-no-spreading
     <Banner {...args}>
       <div className={styles.bannerContent}>
         Sync lost with mailbox hello@twenty.com. Please reconnect for updates:

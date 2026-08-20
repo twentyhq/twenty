@@ -212,15 +212,16 @@ export const createLinearIssueHandler = async (input: {
 
 Chaque connexion comporte :
 
-| Champ             | Description                                                                                                                                     |
-| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| `id`              | ID de ligne unique ; à passer à `getConnection(id)` pour en récupérer une seule                                                                 |
-| `visibility`      | `'user'` (réservée à un membre de l'espace de travail) ou `'workspace'` (partagée avec tous les membres)                                        |
-| `scopes`          | Autorisations OAuth accordées par le fournisseur en amont (distinctes de `visibility` — sans rapport)                                           |
-| `userWorkspaceId` | L'ID userWorkspace du propriétaire — utile pour sélectionner "la connexion de l'utilisateur de la requête" dans les déclencheurs de routes HTTP |
-| `accessToken`     | Jeton d'accès OAuth à jour (actualisé automatiquement s'il a expiré)                                                                            |
-| `name` / `handle` | Le nom d'affichage de la connexion (déduit automatiquement lors du callback OAuth, renommable par l'utilisateur)                                |
-| `authFailedAt`    | Défini lorsque le rafraîchissement le plus récent a échoué ; l'utilisateur doit se reconnecter                                                  |
+| Champ             | Description                                                                                                                                                                                                                             |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`              | ID de ligne unique ; à passer à `getConnection(id)` pour en récupérer une seule                                                                                                                                                         |
+| `visibility`      | `'user'` (réservée à un membre de l'espace de travail) ou `'workspace'` (partagée avec tous les membres)                                                                                                                                |
+| `scopes`          | Autorisations OAuth accordées par le fournisseur en amont (distinctes de `visibility` — sans rapport)                                                                                                                                   |
+| `userWorkspaceId` | L'ID userWorkspace du propriétaire — utile pour sélectionner "la connexion de l'utilisateur de la requête" dans les déclencheurs de routes HTTP                                                                                         |
+| `accessToken`     | Jeton d'accès OAuth à jour (actualisé automatiquement s'il a expiré)                                                                                                                                                                    |
+| `nom`             | Le nom d'affichage de la connexion (déduit automatiquement lors du callback OAuth, renommable par l'utilisateur)                                                                                                                        |
+| `handle`          | L'e-mail du compte amont connecté, actualisé à chaque reconnexion; résolu à partir du `id_token` OIDC a retourné lors de l'échange de jetons, tombant à l'email de 20 utilisateurs de connexion quand le fournisseur ne retourne pas un |
+| `authFailedAt`    | Défini lorsque le rafraîchissement le plus récent a échoué ; l'utilisateur doit se reconnecter                                                                                                                                          |
 
 Points clés :
 

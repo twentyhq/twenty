@@ -212,15 +212,16 @@ export const createLinearIssueHandler = async (input: {
 
 Her bağlantı şunlara sahiptir:
 
-| Alan              | Açıklama                                                                                                                     |
-| ----------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `id`              | Tekil satır kimliği; tek bir tanesini yeniden getirmek için `getConnection(id)` işlevine iletin                              |
-| `visibility`      | `'user'` (bir çalışma alanı üyesine özel) veya `'workspace'` (tüm üyelerle paylaşılan)                                       |
-| `scopes`          | Üst sağlayıcı tarafından verilen OAuth izinleri (`visibility` ile karıştırılmamalıdır — bunlar ilişkili değildir)            |
-| `userWorkspaceId` | Sahibinin userWorkspace kimliği — HTTP rota tetikleyicilerinde "istek kullanıcısının bağlantısını" seçmek için kullanışlıdır |
-| `accessToken`     | Yeni OAuth erişim belirteci (süresi dolmuşsa otomatik olarak yenilenir)                                                      |
-| `name` / `handle` | Bağlantının görünen adı (OAuth geri çağrısında otomatik türetilir, kullanıcı tarafından yeniden adlandırılabilir)            |
-| `authFailedAt`    | En son yenileme başarısız olduğunda ayarlanır; kullanıcı yeniden bağlanmalıdır                                               |
+| Alan              | Açıklama                                                                                                                                                                                                                             |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `id`              | Tekil satır kimliği; tek bir tanesini yeniden getirmek için `getConnection(id)` işlevine iletin                                                                                                                                      |
+| `visibility`      | `'user'` (bir çalışma alanı üyesine özel) veya `'workspace'` (tüm üyelerle paylaşılan)                                                                                                                                               |
+| `scopes`          | Üst sağlayıcı tarafından verilen OAuth izinleri (`visibility` ile karıştırılmamalıdır — bunlar ilişkili değildir)                                                                                                                    |
+| `userWorkspaceId` | Sahibinin userWorkspace kimliği — HTTP rota tetikleyicilerinde "istek kullanıcısının bağlantısını" seçmek için kullanışlıdır                                                                                                         |
+| `accessToken`     | Yeni OAuth erişim belirteci (süresi dolmuşsa otomatik olarak yenilenir)                                                                                                                                                              |
+| `name`            | Bağlantının görünen adı (OAuth geri çağrısında otomatik türetilir, kullanıcı tarafından yeniden adlandırılabilir)                                                                                                                    |
+| `tanıtıcı`        | Bağlı yukarı akış hesabının e-postası, her yeniden bağlanmada yenilenir; jeton değişiminde döndürülen OIDC `id_token` içinden belirlenir ve sağlayıcı bir e-posta döndürmezse bağlanan Twenty kullanıcısının e-postasına geri düşer. |
+| `authFailedAt`    | En son yenileme başarısız olduğunda ayarlanır; kullanıcı yeniden bağlanmalıdır                                                                                                                                                       |
 
 Önemli noktalar:
 

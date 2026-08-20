@@ -1,33 +1,9 @@
-import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
-import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
-import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
-import { NoteList } from '@/activities/notes/components/NoteList';
+import { useCreateActivityForTargetRecord } from '@/activities/hooks/useCreateActivityForTargetRecord';
+import { NotesCardContent } from '@/activities/notes/components/NotesCardContent';
 import { useNotes } from '@/activities/notes/hooks/useNotes';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import { usePublishWidgetHeaderInfo } from '@/page-layout/widgets/hooks/usePublishWidgetHeaderInfo';
+import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { useMemo } from 'react';
-import { IconPlus } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-} from 'twenty-ui/feedback';
-
-const StyledNotesContainer = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  height: 100%;
-  overflow: auto;
-`;
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 export const NotesCard = () => {
   const targetRecord = useTargetRecord();
@@ -40,79 +16,21 @@ export const NotesCard = () => {
     }
   };
 
-  const openCreateActivity = useOpenCreateActivityDrawer({
-    activityObjectNameSingular: CoreObjectNameSingular.Note,
-  });
-
-  const isNotesEmpty = notes.length === 0;
-
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: targetRecord.targetObjectNameSingular,
-  });
-
-  const objectPermissions = useObjectPermissionsForObject(
-    objectMetadataItem.id,
-  );
-
-  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
-
-  const newNoteAction = useMemo(
-    () =>
-      hasObjectUpdatePermissions
-        ? {
-            Icon: IconPlus,
-            label: t`New note`,
-            onClick: () =>
-              openCreateActivity({ targetableObjects: [targetRecord] }),
-          }
-        : undefined,
-    [hasObjectUpdatePermissions, openCreateActivity, targetRecord],
-  );
-
-  usePublishWidgetHeaderInfo({
-    count: totalCountNotes,
-    primaryAction: newNoteAction,
-  });
-
-  if (loading && isNotesEmpty) {
-    return <SkeletonLoader />;
-  }
-
-  if (isNotesEmpty) {
-    return (
-      <AnimatedPlaceholderEmptyContainer>
-        <AnimatedPlaceholder type="noNote" />
-        <AnimatedPlaceholderEmptyTextContainer>
-          <AnimatedPlaceholderEmptyTitle>
-            {t`No notes`}
-          </AnimatedPlaceholderEmptyTitle>
-          <AnimatedPlaceholderEmptySubTitle>
-            {t`There are no associated notes with this record.`}
-          </AnimatedPlaceholderEmptySubTitle>
-        </AnimatedPlaceholderEmptyTextContainer>
-        {hasObjectUpdatePermissions && (
-          <Button
-            Icon={IconPlus}
-            title={t`New note`}
-            variant="secondary"
-            onClick={() =>
-              openCreateActivity({
-                targetableObjects: [targetRecord],
-              })
-            }
-          />
-        )}
-      </AnimatedPlaceholderEmptyContainer>
-    );
-  }
+  const { canCreateActivity, createActivity } =
+    useCreateActivityForTargetRecord({
+      targetRecord,
+      activityObjectNameSingular: CoreObjectNameSingular.Note,
+    });
 
   return (
-    <StyledNotesContainer>
-      <NoteList notes={notes} />
-      <CustomResolverFetchMoreLoader
+    <>
+      <WidgetHeaderCountEffect count={totalCountNotes} />
+      <NotesCardContent
         loading={loading}
+        notes={notes}
+        onCreateNote={canCreateActivity ? createActivity : undefined}
         onLastRowVisible={handleLastRowVisible}
       />
-    </StyledNotesContainer>
+    </>
   );
 };

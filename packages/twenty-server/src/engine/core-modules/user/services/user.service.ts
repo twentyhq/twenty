@@ -427,6 +427,7 @@ export class UserService {
 
     await this.userWorkspaceService.deleteUserWorkspace({
       userWorkspaceId,
+      workspaceId,
     });
   }
 

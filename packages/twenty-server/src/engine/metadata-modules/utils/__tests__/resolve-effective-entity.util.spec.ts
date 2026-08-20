@@ -57,8 +57,11 @@ const frozenResolveObjectOverride = (
     return objectMetadata.overrides[labelKey] ?? '';
   }
 
+  // S5 keys metadata entries per role; the frozen resolvers carry the same
+  // context so the corpus keeps pinning precedence, not the old keying.
   return translateStandardLabel({
     sourceValue: objectMetadata[labelKey] ?? '',
+    context: `objectMetadata.${labelKey}`,
     isStandardApp,
     applicationCatalog,
     i18nInstance,
@@ -98,6 +101,7 @@ const frozenResolveFieldOverride = (
 
   return translateStandardLabel({
     sourceValue: fieldMetadata[labelKey] ?? '',
+    context: `fieldMetadata.${labelKey}`,
     isStandardApp,
     applicationCatalog,
     i18nInstance,
@@ -288,5 +292,131 @@ describe('resolveEffectiveEntity (parity with legacy flat spread)', () => {
         frozenResolveFlat(flatEntity),
       );
     }
+  });
+});
+
+// Frozen reference implementation of the three per-entity resolvers that
+// existed before this unification (resolve-view-field-group-name,
+// resolve-page-layout-tab-title, resolve-page-layout-widget-title). All three
+// were the same nine lines with a different property name.
+const frozenResolveBespokeProperty = (
+  baseValue: string,
+  overrides: AnyOverrides,
+  property: string,
+  metadataLabelContext: string,
+  isStandardApp: boolean,
+  i18nInstance: I18n,
+  applicationCatalog?: Record<string, string>,
+): string => {
+  if (isDefined(overrides?.[property])) {
+    return baseValue;
+  }
+
+  return translateStandardLabel({
+    sourceValue: baseValue,
+    context: metadataLabelContext,
+    isStandardApp,
+    applicationCatalog,
+    i18nInstance,
+  });
+};
+
+// The DTO mappers spread overrides onto the base value before a resolver sees
+// it, so an overridden entity arrives with base === overrides[property]. The
+// corpus mirrors that rather than inventing states production cannot produce.
+const BESPOKE_CORPUS: { base: string; overrides: AnyOverrides }[] = [
+  { base: 'Details', overrides: undefined },
+  { base: 'Details', overrides: null },
+  { base: 'Details', overrides: {} },
+  { base: 'Renamed', overrides: { name: 'Renamed', title: 'Renamed' } },
+  { base: '', overrides: { name: '', title: '' } },
+  { base: 'Details', overrides: { position: 2 } },
+];
+
+// Each per-entity resolver ran the frozen shape above against its own
+// property. The generic is instantiated per entity rather than over a union,
+// because a union of metadata names collapses the allowed property names to
+// their intersection.
+const expectParityFor = (
+  resolve: (
+    base: string,
+    overrides: AnyOverrides,
+    context: AnyOverrides,
+  ) => string,
+  property: string,
+  metadataLabelContext: string,
+) => {
+  for (const { base, overrides } of BESPOKE_CORPUS) {
+    for (const locale of LOCALES) {
+      for (const isStandardApp of BOOLS) {
+        for (const applicationCatalog of CATALOGS) {
+          const expected = frozenResolveBespokeProperty(
+            base,
+            overrides,
+            property,
+            metadataLabelContext,
+            isStandardApp,
+            mockI18n,
+            applicationCatalog,
+          );
+
+          const actual = resolve(base, overrides, {
+            locale,
+            i18nInstance: mockI18n,
+            isStandardApp,
+            applicationCatalog,
+          });
+
+          expect(actual).toBe(expected);
+        }
+      }
+    }
+  }
+};
+
+describe('resolveEffectiveEntityProperty (parity with the per-entity resolvers)', () => {
+  it('matches the frozen viewFieldGroup resolver across the corpus', () => {
+    expectParityFor(
+      (baseValue, overrides, i18nContext) =>
+        resolveEffectiveEntityProperty({
+          metadataName: 'viewFieldGroup',
+          baseValue,
+          overrides,
+          property: 'name',
+          i18nContext,
+        }),
+      'name',
+      'viewFieldGroup.name',
+    );
+  });
+
+  it('matches the frozen pageLayoutTab resolver across the corpus', () => {
+    expectParityFor(
+      (baseValue, overrides, i18nContext) =>
+        resolveEffectiveEntityProperty({
+          metadataName: 'pageLayoutTab',
+          baseValue,
+          overrides,
+          property: 'title',
+          i18nContext,
+        }),
+      'title',
+      'pageLayoutTab.title',
+    );
+  });
+
+  it('matches the frozen pageLayoutWidget resolver across the corpus', () => {
+    expectParityFor(
+      (baseValue, overrides, i18nContext) =>
+        resolveEffectiveEntityProperty({
+          metadataName: 'pageLayoutWidget',
+          baseValue,
+          overrides,
+          property: 'title',
+          i18nContext,
+        }),
+      'title',
+      'pageLayoutWidget.title',
+    );
   });
 });

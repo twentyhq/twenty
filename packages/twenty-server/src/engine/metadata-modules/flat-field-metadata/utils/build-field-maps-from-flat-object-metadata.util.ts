@@ -12,10 +12,26 @@ export type FieldMapsForObject = {
   fieldIdByJoinColumnName: Record<string, string>;
 };
 
+// Flat metadata snapshots are immutable and cached per workspace metadata
+// version, so the maps derived from a given (fieldMaps, objectMetadata) pair can
+// be memoized by identity: several helpers rebuild them per request otherwise
+// (order parsing, cursor encoding per record, cursor conditions per key).
+const fieldMapsCache = new WeakMap<
+  FlatEntityMaps<FlatFieldMetadata>,
+  WeakMap<FlatObjectMetadata, FieldMapsForObject>
+>();
+
 export const buildFieldMapsFromFlatObjectMetadata = (
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
   flatObjectMetadata: FlatObjectMetadata,
 ): FieldMapsForObject => {
+  const cachedByObjectMetadata = fieldMapsCache.get(flatFieldMetadataMaps);
+  const cachedFieldMaps = cachedByObjectMetadata?.get(flatObjectMetadata);
+
+  if (cachedFieldMaps) {
+    return cachedFieldMaps;
+  }
+
   const fieldIdByName: Record<string, string> = {};
   const fieldIdByJoinColumnName: Record<string, string> = {};
 
@@ -40,8 +56,17 @@ export const buildFieldMapsFromFlatObjectMetadata = (
     }
   }
 
-  return {
+  const fieldMaps = {
     fieldIdByName,
     fieldIdByJoinColumnName,
   };
+
+  const cacheForFieldMaps =
+    cachedByObjectMetadata ??
+    new WeakMap<FlatObjectMetadata, FieldMapsForObject>();
+
+  cacheForFieldMaps.set(flatObjectMetadata, fieldMaps);
+  fieldMapsCache.set(flatFieldMetadataMaps, cacheForFieldMaps);
+
+  return fieldMaps;
 };

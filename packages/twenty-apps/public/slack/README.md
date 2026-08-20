@@ -45,4 +45,4 @@ The assistant still runs on your workspace AI credits, billed on the model's tok
 
 ## 📌 Heads up
 
-You need to create a Slack app and connect it — see [SETUP.md](./SETUP.md). The assistant needs a few extra steps (signing secret and event subscriptions) on top of the base connection.
+You need to create a Slack app and connect it — see [SETUP.md](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/public/slack/SETUP.md). The assistant needs a few extra steps (signing secret and event subscriptions) on top of the base connection.

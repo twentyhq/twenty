@@ -32,8 +32,10 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
-      label: i18nLabel(msg`Id`),
-      description: i18nLabel(msg`Id`),
+      label: i18nLabel(msg({ message: `Id`, context: 'fieldMetadata.label' })),
+      description: i18nLabel(
+        msg({ message: `Id`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'Icon123',
       isSystem: true,
       isNullable: false,
@@ -51,8 +53,12 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'createdAt',
       type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(msg`Creation date`),
-      description: i18nLabel(msg`Creation date`),
+      label: i18nLabel(
+        msg({ message: `Creation date`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({ message: `Creation date`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'IconCalendar',
       isSystem: true,
       isNullable: false,
@@ -73,8 +79,15 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'updatedAt',
       type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(msg`Last update`),
-      description: i18nLabel(msg`Last time the record was changed`),
+      label: i18nLabel(
+        msg({ message: `Last update`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Last time the record was changed`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconCalendarClock',
       isSystem: true,
       isNullable: false,
@@ -95,8 +108,15 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'deletedAt',
       type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(msg`Deleted at`),
-      description: i18nLabel(msg`Date when the record was deleted`),
+      label: i18nLabel(
+        msg({ message: `Deleted at`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Date when the record was deleted`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconCalendarMinus',
       isSystem: true,
       isNullable: true,
@@ -117,8 +137,15 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'name',
       type: FieldMetadataType.TEXT,
-      label: i18nLabel(msg`Name`),
-      description: i18nLabel(msg`The company name`),
+      label: i18nLabel(
+        msg({ message: `Name`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `The company name`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconBuildingSkyscraper',
       isNullable: true,
     },
@@ -133,9 +160,14 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'domainName',
       type: FieldMetadataType.LINKS,
-      label: i18nLabel(msg`Domain Name`),
+      label: i18nLabel(
+        msg({ message: `Domain Name`, context: 'fieldMetadata.label' }),
+      ),
       description: i18nLabel(
-        msg`The company website URL. We use this url to fetch the company icon`,
+        msg({
+          message: `The company website URL. We use this url to fetch the company icon`,
+          context: 'fieldMetadata.description',
+        }),
       ),
       icon: 'IconLink',
       isNullable: true,
@@ -155,8 +187,15 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'address',
       type: FieldMetadataType.ADDRESS,
-      label: i18nLabel(msg`Address`),
-      description: i18nLabel(msg`Address of the company`),
+      label: i18nLabel(
+        msg({ message: `Address`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Address of the company`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconMap',
       isNullable: true,
     },
@@ -171,8 +210,15 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'linkedinLink',
       type: FieldMetadataType.LINKS,
-      label: i18nLabel(msg`Linkedin`),
-      description: i18nLabel(msg`The company Linkedin account`),
+      label: i18nLabel(
+        msg({ message: `Linkedin`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `The company Linkedin account`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconBrandLinkedin',
       isNullable: true,
     },
@@ -187,8 +233,15 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'annualRevenue',
       type: FieldMetadataType.CURRENCY,
-      label: i18nLabel(msg`Annual Revenue`),
-      description: i18nLabel(msg`The company's total annual revenue`),
+      label: i18nLabel(
+        msg({ message: `Annual Revenue`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `The company's total annual revenue`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconMoneybag',
       isNullable: true,
     },
@@ -203,8 +256,15 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'position',
       type: FieldMetadataType.POSITION,
-      label: i18nLabel(msg`Position`),
-      description: i18nLabel(msg`Company record position`),
+      label: i18nLabel(
+        msg({ message: `Position`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Company record position`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconHierarchy2',
       isSystem: true,
       isNullable: false,
@@ -221,8 +281,15 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'createdBy',
       type: FieldMetadataType.ACTOR,
-      label: i18nLabel(msg`Created by`),
-      description: i18nLabel(msg`The creator of the record`),
+      label: i18nLabel(
+        msg({ message: `Created by`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `The creator of the record`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconCreativeCommonsSa',
       isSystem: true,
       isUIEditable: false,
@@ -244,9 +311,14 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'updatedBy',
       type: FieldMetadataType.ACTOR,
-      label: i18nLabel(msg`Updated by`),
+      label: i18nLabel(
+        msg({ message: `Updated by`, context: 'fieldMetadata.label' }),
+      ),
       description: i18nLabel(
-        msg`The workspace member who last updated the record`,
+        msg({
+          message: `The workspace member who last updated the record`,
+          context: 'fieldMetadata.description',
+        }),
       ),
       icon: 'IconUserCircle',
       isSystem: true,
@@ -269,8 +341,15 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'searchVector',
       type: FieldMetadataType.TS_VECTOR,
-      label: i18nLabel(msg`Search vector`),
-      description: i18nLabel(msg`Field used for full-text search`),
+      label: i18nLabel(
+        msg({ message: `Search vector`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Field used for full-text search`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
@@ -288,8 +367,15 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'people',
-      label: i18nLabel(msg`People`),
-      description: i18nLabel(msg`People linked to the company.`),
+      label: i18nLabel(
+        msg({ message: `People`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `People linked to the company.`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconUsers',
       isNullable: true,
       targetObjectName: 'person',
@@ -310,9 +396,14 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'accountOwner',
-      label: i18nLabel(msg`Account Owner`),
+      label: i18nLabel(
+        msg({ message: `Account Owner`, context: 'fieldMetadata.label' }),
+      ),
       description: i18nLabel(
-        msg`Your team member responsible for managing the company account`,
+        msg({
+          message: `Your team member responsible for managing the company account`,
+          context: 'fieldMetadata.description',
+        }),
       ),
       icon: 'IconUserCircle',
       isNullable: true,
@@ -340,7 +431,12 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       label: i18nLabel(
         STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.taskTarget.label,
       ),
-      description: i18nLabel(msg`Tasks tied to the company`),
+      description: i18nLabel(
+        msg({
+          message: `Tasks tied to the company`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.taskTarget
         .icon,
       isUIEditable: false,
@@ -367,7 +463,12 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       label: i18nLabel(
         STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.noteTarget.label,
       ),
-      description: i18nLabel(msg`Notes tied to the company`),
+      description: i18nLabel(
+        msg({
+          message: `Notes tied to the company`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.noteTarget
         .icon,
       isUIEditable: false,
@@ -390,8 +491,15 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'opportunities',
-      label: i18nLabel(msg`Opportunities`),
-      description: i18nLabel(msg`Opportunities linked to the company.`),
+      label: i18nLabel(
+        msg({ message: `Opportunities`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Opportunities linked to the company.`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconTargetArrow',
       isNullable: true,
       targetObjectName: 'opportunity',
@@ -416,7 +524,12 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       label: i18nLabel(
         STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.attachment.label,
       ),
-      description: i18nLabel(msg`Attachments linked to the company`),
+      description: i18nLabel(
+        msg({
+          message: `Attachments linked to the company`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.attachment
         .icon,
       isNullable: true,
@@ -443,7 +556,12 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
         STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.timelineActivity
           .label,
       ),
-      description: i18nLabel(msg`Timeline Activities linked to the company`),
+      description: i18nLabel(
+        msg({
+          message: `Timeline Activities linked to the company`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT
         .timelineActivity.icon,
       isNullable: true,

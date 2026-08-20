@@ -26,27 +26,42 @@ const ColorSchemeSegment = ({
 }: ColorSchemeSegmentProps) => {
   const grayScale = variant === 'Dark' ? GRAY_SCALE_DARK : GRAY_SCALE_LIGHT;
 
+  const segmentClassName = clsx(styles.colorSchemeBackground, className);
+  const segmentStyle = {
+    '--color-scheme-card-background': grayScale.gray4,
+    '--color-scheme-card-border-color': grayScale.gray5,
+    '--color-scheme-card-content-background': grayScale.gray1,
+    '--color-scheme-card-content-color': grayScale.gray12,
+    ...style,
+  } as React.CSSProperties;
+  const segmentContent = <div className={styles.colorSchemeContent}>Aa</div>;
+
+  if (isDefined(onClick)) {
+    return (
+      <div
+        className={segmentClassName}
+        style={segmentStyle}
+        role="button"
+        tabIndex={0}
+        aria-label={variant}
+        onClick={onClick}
+        onKeyDown={handleClickableElementKeyDown}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+      >
+        {segmentContent}
+      </div>
+    );
+  }
+
   return (
     <div
-      className={clsx(styles.colorSchemeBackground, className)}
-      style={
-        {
-          '--color-scheme-card-background': grayScale.gray4,
-          '--color-scheme-card-border-color': grayScale.gray5,
-          '--color-scheme-card-content-background': grayScale.gray1,
-          '--color-scheme-card-content-color': grayScale.gray12,
-          ...style,
-        } as React.CSSProperties
-      }
-      role={isDefined(onClick) ? 'button' : undefined}
-      tabIndex={isDefined(onClick) ? 0 : undefined}
-      aria-label={isDefined(onClick) ? variant : undefined}
-      onClick={onClick}
-      onKeyDown={handleClickableElementKeyDown}
+      className={segmentClassName}
+      style={segmentStyle}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      <div className={styles.colorSchemeContent}>Aa</div>
+      {segmentContent}
     </div>
   );
 };
@@ -62,26 +77,36 @@ export const ColorSchemeCard = ({
   onClick,
   className,
 }: ColorSchemeCardProps) => {
+  const mixedSegments = (
+    <>
+      <ColorSchemeSegment
+        style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
+        variant="Light"
+      />
+      <ColorSchemeSegment
+        style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
+        variant="Dark"
+      />
+    </>
+  );
+
   if (variant === 'System') {
     return (
       <div className={clsx(styles.container, className)}>
-        <div
-          className={styles.mixedColorSchemeSegment}
-          role={isDefined(onClick) ? 'button' : undefined}
-          tabIndex={isDefined(onClick) ? 0 : undefined}
-          aria-label={isDefined(onClick) ? variant : undefined}
-          onClick={onClick}
-          onKeyDown={handleClickableElementKeyDown}
-        >
-          <ColorSchemeSegment
-            style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
-            variant="Light"
-          />
-          <ColorSchemeSegment
-            style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
-            variant="Dark"
-          />
-        </div>
+        {isDefined(onClick) ? (
+          <div
+            className={styles.mixedColorSchemeSegment}
+            role="button"
+            tabIndex={0}
+            aria-label={variant}
+            onClick={onClick}
+            onKeyDown={handleClickableElementKeyDown}
+          >
+            {mixedSegments}
+          </div>
+        ) : (
+          <div className={styles.mixedColorSchemeSegment}>{mixedSegments}</div>
+        )}
         <div
           className={styles.checkmarkContainer}
           data-selected={selected || undefined}

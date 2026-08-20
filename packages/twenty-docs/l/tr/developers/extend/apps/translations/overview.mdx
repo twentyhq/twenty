@@ -69,6 +69,8 @@ t({ message: 'Open', context: 'window' });
 <Trans context="card-title">Untitled</Trans>
 ```
 
+Bağlamsal dizeler, yerel ayar kataloglarında bağlamlarına göre anahtarlanmış bir grup olarak görünür: `"\<context>": { "\<message>": "\<translation>" }`. Manifest etiketleri, tasarım gereği bağlamsaldır — her biri, oynadığı meta veri rolünü taşır (`objectMetadata.labelSingular`, `fieldMetadata.label`, `view.name`, …); dolayısıyla aynı kelime, bir nesne adı olarak ve bir görünüm adı olarak farklı şekilde çevrilebilir.
+
 ## Çıkarma ve çeviri
 
 extract komutunu uygulama dizininizden çalıştırın:
@@ -86,9 +88,17 @@ dizelerini, kaynak dizeyi anahtar olarak kullanarak `locales/\<locale>.json` iç
 {
   "Loading postcard…": "Chargement de la carte…",
   "Hi {name}": "Bonjour {name}",
-  "Saved {count} cards": "{count} cartes enregistrées"
+  "Saved {count} cards": "{count} cartes enregistrées",
+  "door": {
+    "Open": "Ouvrir"
+  },
+  "objectMetadata.labelSingular": {
+    "Postcard": "Carte postale"
+  }
 }
 ```
+
+Bağlamdan bağımsız dizeler düz girdilerdir; bağlamsal dizeler — her bir manifest etiketi de dahil olmak üzere — bağlam anahtarlarının altında iç içe yerleştirilir.
 
 `{name}` gibi yer tutucular çalışma zamanında değiştirilir — bunları çeviride koruyun. Boş bırakılan herhangi bir dize, kaynak metne geri döner.
 

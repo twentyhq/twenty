@@ -76,6 +76,12 @@ t({ message: 'Open', context: 'window' });
 <Trans context="card-title">Untitled</Trans>
 ```
 
+Контекстные строки отображаются в каталогах локалей в виде группы, индексируемой
+по их контексту: `"\<context>": { "\<message>": "\<translation>" }`. Манифестные метки являются
+контекстными по своей природе — каждая из них несёт метаданные о своей роли
+(`objectMetadata.labelSingular`, `fieldMetadata.label`, `view.name`, …), поэтому
+одно и то же слово может переводиться по‑разному как имя объекта и как имя представления.
+
 ## Извлечение и перевод
 
 Выполнить команду извлечения из вашей папки приложения:
@@ -94,9 +100,18 @@ twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 {
   "Loading postcard…": "Chargement de la carte…",
   "Hi {name}": "Bonjour {name}",
-  "Saved {count} cards": "{count} cartes enregistrées"
+  "Saved {count} cards": "{count} cartes enregistrées",
+  "door": {
+    "Open": "Ouvrir"
+  },
+  "objectMetadata.labelSingular": {
+    "Postcard": "Carte postale"
+  }
 }
 ```
+
+Строки без контекста являются плоскими записями; контекстные строки — включая каждую
+метку манифеста — вложены под своим ключом контекста.
 
 Такие держатели, как `{name}`, заменяются во время выполнения — сохраняйте их в переводе
 . Любая оставленная строка пуста возвращается к исходному тексту.

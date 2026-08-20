@@ -5,15 +5,19 @@ import {
   destroyDashboardWithGraphQL,
 } from 'test/integration/metadata/suites/dashboard/utils/dashboard-graphql.util';
 import { duplicateOneDashboard } from 'test/integration/metadata/suites/dashboard/utils/duplicate-one-dashboard.util';
+import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { createOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/create-one-page-layout-tab.util';
 import { createOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/create-one-page-layout-widget.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
   type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
+import { AggregateOperations, ViewFilterOperand } from 'twenty-shared/types';
 
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 
@@ -156,4 +160,120 @@ describe('Dashboard duplication should succeed', () => {
       expect(data.duplicateDashboard.title).toContain('(Copy)');
     },
   );
+
+  // Regression test for #24285
+  it('should duplicate a dashboard with a chart widget filtering through a relation target field', async () => {
+    currentTestContextId = 'e7b2f7d1-4c3a-4f5e-9b8d-1a2b3c4d5e6f';
+
+    const { objects } = await findManyObjectMetadata({
+      expectToFail: false,
+      input: {
+        filter: {},
+        paging: { first: 100 },
+      },
+      gqlFields: `
+        id
+        nameSingular
+        fieldsList {
+          id
+          name
+        }
+      `,
+    });
+
+    const companyObject = objects.find(
+      (object) => object.nameSingular === 'company',
+    );
+    const opportunityObject = objects.find(
+      (object) => object.nameSingular === 'opportunity',
+    );
+
+    jestExpectToBeDefined(companyObject);
+    jestExpectToBeDefined(opportunityObject);
+
+    const companyEmployeesField = companyObject.fieldsList?.find(
+      (field) => field.name === 'employees',
+    );
+    const companyOpportunitiesField = companyObject.fieldsList?.find(
+      (field) => field.name === 'opportunities',
+    );
+    const opportunityNameField = opportunityObject.fieldsList?.find(
+      (field) => field.name === 'name',
+    );
+
+    jestExpectToBeDefined(companyEmployeesField);
+    jestExpectToBeDefined(companyOpportunitiesField);
+    jestExpectToBeDefined(opportunityNameField);
+
+    const { data: pageLayoutData } = await createOnePageLayout({
+      expectToFail: false,
+      input: {
+        name: 'Page Layout with relation-traversal chart filter',
+        type: PageLayoutType.DASHBOARD,
+      },
+    });
+
+    testPageLayoutId = pageLayoutData.createPageLayout.id;
+
+    const { data: tabData } = await createOnePageLayoutTab({
+      expectToFail: false,
+      input: {
+        title: 'Test Tab',
+        pageLayoutId: testPageLayoutId,
+      },
+    });
+
+    testPageLayoutTabId = tabData.createPageLayoutTab.id;
+
+    await createOnePageLayoutWidget({
+      expectToFail: false,
+      input: {
+        title: 'Companies without lost opportunities',
+        type: WidgetType.GRAPH,
+        objectMetadataId: companyObject.id,
+        pageLayoutTabId: testPageLayoutTabId,
+        gridPosition: {
+          row: 0,
+          column: 0,
+          rowSpan: 1,
+          columnSpan: 1,
+        },
+        configuration: {
+          configurationType: WidgetConfigurationType.AGGREGATE_CHART,
+          aggregateFieldMetadataId: companyEmployeesField.id,
+          aggregateOperation: AggregateOperations.SUM,
+          filter: {
+            recordFilters: [
+              {
+                fieldMetadataId: companyOpportunitiesField.id,
+                relationTargetFieldMetadataId: opportunityNameField.id,
+                operand: ViewFilterOperand.DOES_NOT_CONTAIN,
+                value: 'lost',
+              },
+            ],
+          },
+        },
+      },
+    });
+
+    const dashboard = await createTestDashboardWithGraphQL({
+      id: currentTestContextId,
+      title: 'Dashboard with relation-traversal chart filter',
+      pageLayoutId: testPageLayoutId,
+    });
+
+    testDashboardId = dashboard.id;
+
+    const { data, errors } = await duplicateOneDashboard({
+      expectToFail: false,
+      input: { id: testDashboardId },
+    });
+
+    expect(errors).toBeUndefined();
+
+    duplicatedDashboardId = data.duplicateDashboard.id;
+
+    expect(data.duplicateDashboard.id).not.toBe(testDashboardId);
+    expect(data.duplicateDashboard.title).toContain('(Copy)');
+  });
 });

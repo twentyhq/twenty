@@ -15,6 +15,7 @@ import {
   TwentyOrmV2Exception,
   TwentyOrmV2ExceptionCode,
 } from 'src/engine/twenty-orm-v2/exceptions/twenty-orm-v2.exception';
+import { runInRollbackSafeTransaction } from 'src/engine/twenty-orm-v2/datasource/utils/run-in-rollback-safe-transaction.util';
 import { WorkspaceRepositoryV2 } from 'src/engine/twenty-orm-v2/repository/workspace-repository-v2';
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm-v2/table-shape/types/workspace-table-shape.type';
 import { buildWorkspaceTableShape } from 'src/engine/twenty-orm-v2/table-shape/utils/build-workspace-table-shape.util';
@@ -91,23 +92,10 @@ export class WorkspaceDataSourceV2 {
   private async runInClientTransaction<T>(
     work: (executor: QueryExecutorV2) => Promise<T>,
   ): Promise<T> {
-    const client = await this.pool.connect();
-
-    try {
-      await client.query('BEGIN');
-
-      const result = await work(new ClientQueryExecutor({ client }));
-
-      await client.query('COMMIT');
-
-      return result;
-    } catch (error) {
-      await client.query('ROLLBACK');
-
-      throw error;
-    } finally {
-      client.release();
-    }
+    return runInRollbackSafeTransaction({
+      pool: this.pool,
+      work: (client) => work(new ClientQueryExecutor({ client })),
+    });
   }
 
   private buildRepository({

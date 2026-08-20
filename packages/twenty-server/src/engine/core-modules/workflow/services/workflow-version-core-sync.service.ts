@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -44,16 +44,25 @@ export class WorkflowVersionCoreSyncService {
 
     const applicationId = await this.getCustomApplicationIdOrThrow(workspaceId);
 
+    const linkedCoreVersionIds = await this.resolveOwnedCoreVersionIds(
+      workspaceId,
+      workflowVersions,
+    );
+
     const coreVersionIdByWorkspaceRecordId = new Map<string, string>();
 
     const coreRows = workflowVersions.map((workflowVersion) => {
-      const coreWorkflowVersionId = isNonEmptyString(
-        workflowVersion.coreWorkflowVersionId,
-      )
-        ? workflowVersion.coreWorkflowVersionId
-        : uuidv4();
+      const candidateCoreVersionId = workflowVersion.coreWorkflowVersionId;
 
-      if (!isNonEmptyString(workflowVersion.coreWorkflowVersionId)) {
+      const linkedCoreVersionId =
+        isNonEmptyString(candidateCoreVersionId) &&
+        linkedCoreVersionIds.has(candidateCoreVersionId)
+          ? candidateCoreVersionId
+          : null;
+
+      const coreWorkflowVersionId = linkedCoreVersionId ?? uuidv4();
+
+      if (!isDefined(linkedCoreVersionId)) {
         coreVersionIdByWorkspaceRecordId.set(
           workflowVersion.id,
           coreWorkflowVersionId,
@@ -83,6 +92,30 @@ export class WorkflowVersionCoreSyncService {
     );
 
     await this.invalidateAutomatedTriggerMaps(workspaceId);
+  }
+
+  // Same caller-writable column as coreWorkflowId, see WorkflowCoreSyncService.
+  private async resolveOwnedCoreVersionIds(
+    workspaceId: string,
+    workflowVersions: WorkflowVersionWorkspaceEntity[],
+  ): Promise<Set<string>> {
+    const candidateIds = workflowVersions
+      .map((workflowVersion) => workflowVersion.coreWorkflowVersionId)
+      .filter(isNonEmptyString);
+
+    if (candidateIds.length === 0) {
+      return new Set();
+    }
+
+    const ownedRows = await this.coreWorkflowVersionRepository.find(
+      workspaceId,
+      {
+        where: { id: In(candidateIds) },
+        select: { id: true },
+      },
+    );
+
+    return new Set(ownedRows.map((row) => row.id));
   }
 
   async deleteFromCore(
@@ -131,13 +164,24 @@ export class WorkflowVersionCoreSyncService {
     const resolvedApplicationId =
       applicationId ?? (await this.getCustomApplicationIdOrThrow(workspaceId));
 
-    const isNewLink = !isNonEmptyString(workflowVersion.coreWorkflowVersionId);
-    const coreWorkflowVersionId = isNonEmptyString(
-      workflowVersion.coreWorkflowVersionId,
-    )
-      ? workflowVersion.coreWorkflowVersionId
-      : uuidv4();
+    const candidateCoreVersionId = workflowVersion.coreWorkflowVersionId;
 
+    const linkedCoreVersionId =
+      isNonEmptyString(candidateCoreVersionId) &&
+      (await this.isCoreVersionOwnedByWorkspace({
+        coreWorkflowVersionId: candidateCoreVersionId,
+        workspaceId,
+        transactionScope,
+      }))
+        ? candidateCoreVersionId
+        : null;
+
+    const isNewLink = !isDefined(linkedCoreVersionId);
+    const coreWorkflowVersionId = linkedCoreVersionId ?? uuidv4();
+
+    // The conflict target is the primary key alone, so without the workspaceId
+    // predicate a core row owned by another workspace would have its triggers
+    // and steps overwritten.
     await transactionScope.executeRawQuery(
       `INSERT INTO core."workflowVersion"
          ("id", "workspaceId", "workflowId", "triggers", "steps", "status", "universalIdentifier", "applicationId")
@@ -145,7 +189,8 @@ export class WorkflowVersionCoreSyncService {
        ON CONFLICT ("id") DO UPDATE SET
          "triggers" = EXCLUDED."triggers",
          "steps" = EXCLUDED."steps",
-         "status" = EXCLUDED."status"`,
+         "status" = EXCLUDED."status"
+       WHERE core."workflowVersion"."workspaceId" = EXCLUDED."workspaceId"`,
       [
         coreWorkflowVersionId,
         workspaceId,
@@ -171,6 +216,25 @@ export class WorkflowVersionCoreSyncService {
     }
 
     return { coreWorkflowVersionId };
+  }
+
+  // Must run inside the caller's transaction so the ownership answer cannot go
+  // stale before the insert below uses it.
+  private async isCoreVersionOwnedByWorkspace({
+    coreWorkflowVersionId,
+    workspaceId,
+    transactionScope,
+  }: {
+    coreWorkflowVersionId: string;
+    workspaceId: string;
+    transactionScope: WorkspaceTransactionScope;
+  }): Promise<boolean> {
+    const rows = await transactionScope.executeRawQuery(
+      `SELECT 1 FROM core."workflowVersion" WHERE "id" = $1 AND "workspaceId" = $2`,
+      [coreWorkflowVersionId, workspaceId],
+    );
+
+    return isNonEmptyArray(rows);
   }
 
   async mirrorWorkflowVersionWrites({

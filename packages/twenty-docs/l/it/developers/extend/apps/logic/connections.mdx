@@ -212,15 +212,16 @@ export const createLinearIssueHandler = async (input: {
 
 Ogni connessione ha:
 
-| Campo             | Descrizione                                                                                                                        |
-| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `id`              | ID di riga univoco; passalo a `getConnection(id)` per recuperarne una singola connessione                                          |
-| `visibility`      | `'user'` (privata per un membro dello spazio di lavoro) oppure `'workspace'` (condivisa con tutti i membri)                        |
-| `scopes`          | Autorizzazioni OAuth concesse dal provider a monte (distinte da `visibility` — non sono correlate)                                 |
-| `userWorkspaceId` | L'id userWorkspace del proprietario — utile per selezionare "la connessione dell'utente della richiesta" nei trigger di route HTTP |
-| `accessToken`     | Token di accesso OAuth aggiornato (rinnovato automaticamente se scaduto)                                                           |
-| `name` / `handle` | Il nome visualizzato della connessione (derivato automaticamente al callback OAuth, rinominabile dall'utente)                      |
-| `authFailedAt`    | Impostato quando l'aggiornamento più recente non è riuscito; l'utente deve riconnettersi                                           |
+| Campo             | Descrizione                                                                                                                                                                                                                                   |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`              | ID di riga univoco; passalo a `getConnection(id)` per recuperarne una singola connessione                                                                                                                                                     |
+| `visibility`      | `'user'` (privata per un membro dello spazio di lavoro) oppure `'workspace'` (condivisa con tutti i membri)                                                                                                                                   |
+| `scopes`          | Autorizzazioni OAuth concesse dal provider a monte (distinte da `visibility` — non sono correlate)                                                                                                                                            |
+| `userWorkspaceId` | L'id userWorkspace del proprietario — utile per selezionare "la connessione dell'utente della richiesta" nei trigger di route HTTP                                                                                                            |
+| `accessToken`     | Token di accesso OAuth aggiornato (rinnovato automaticamente se scaduto)                                                                                                                                                                      |
+| `name`            | Il nome visualizzato della connessione (derivato automaticamente al callback OAuth, rinominabile dall'utente)                                                                                                                                 |
+| `handle`          | L'email dell'account upstream connesso, aggiornata su ogni riconnessione; risolto dal file `id_token` di OIDC restituito al token exchange, tornando all'email dell'utente di Twenty di connessione quando il provider non ne restituisce una |
+| `authFailedAt`    | Impostato quando l'aggiornamento più recente non è riuscito; l'utente deve riconnettersi                                                                                                                                                      |
 
 Punti chiave:
 

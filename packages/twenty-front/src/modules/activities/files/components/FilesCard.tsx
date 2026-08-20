@@ -1,168 +1,30 @@
-import { styled } from '@linaria/react';
-import { type ChangeEvent, useMemo, useRef, useState } from 'react';
-
-import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
-import { AttachmentList } from '@/activities/files/components/AttachmentList';
-import { DropZone } from '@/activities/files/components/DropZone';
+import { FilesCardContent } from '@/activities/files/components/FilesCardContent';
 import { useAttachments } from '@/activities/files/hooks/useAttachments';
-import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import { usePublishWidgetHeaderInfo } from '@/page-layout/widgets/hooks/usePublishWidgetHeaderInfo';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useCanUploadAttachmentFiles } from '@/activities/files/hooks/useCanUploadAttachmentFiles';
+import { useUploadAttachmentFiles } from '@/activities/files/hooks/useUploadAttachmentFiles';
+import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import { Trans, useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
-import { IconPlus } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-} from 'twenty-ui/feedback';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
-
-const StyledAttachmentsContainer = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  height: 100%;
-  overflow: auto;
-`;
-
-const StyledFileInput = styled.input`
-  display: none;
-`;
-
-const StyledDropZoneContainer = styled.div`
-  height: 100%;
-`;
 
 export const FilesCard = () => {
   const targetRecord = useTargetRecord();
-  const inputFileRef = useRef<HTMLInputElement>(null);
   const { attachments, loading, totalCountAttachments } =
     useAttachments(targetRecord);
-  const { uploadAttachmentFile } = useUploadAttachmentFile();
+  const { uploadAttachmentFiles } = useUploadAttachmentFiles();
+  const { canUploadFiles } = useCanUploadAttachmentFiles(targetRecord);
 
-  const [isDraggingFile, setIsDraggingFile] = useState(false);
-
-  const { t } = useLingui();
-
-  const onUploadFile = async (file: File) => {
-    await uploadAttachmentFile(file, targetRecord);
-  };
-
-  const onUploadFiles = async (files: File[]) => {
-    for (const file of files) {
-      await onUploadFile(file);
-    }
-  };
-
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (isDefined(e.target.files)) {
-      onUploadFiles(Array.from(e.target.files));
-    }
-  };
-
-  const handleUploadFileClick = () => {
-    inputFileRef?.current?.click?.();
-  };
-
-  const isAttachmentsEmpty = attachments.length === 0;
-
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: targetRecord.targetObjectNameSingular,
-  });
-
-  const objectPermissions = useObjectPermissionsForObject(
-    objectMetadataItem.id,
-  );
-
-  const hasObjectUpdatePermissions = objectPermissions.canUpdateObjectRecords;
-
-  const hasUploadPermission = useHasPermissionFlag(
-    PermissionFlagType.UPLOAD_FILE,
-  );
-
-  const canUploadFiles = hasObjectUpdatePermissions && hasUploadPermission;
-
-  const addFileAction = useMemo(
-    () =>
-      canUploadFiles
-        ? {
-            Icon: IconPlus,
-            label: t`Add file`,
-            onClick: () => inputFileRef?.current?.click?.(),
-          }
-        : undefined,
-    [canUploadFiles, t],
-  );
-
-  usePublishWidgetHeaderInfo({
-    count: totalCountAttachments,
-    primaryAction: addFileAction,
-  });
-
-  if (loading && isAttachmentsEmpty) {
-    return <SkeletonLoader />;
-  }
-
-  if (isAttachmentsEmpty) {
-    return (
-      <StyledDropZoneContainer
-        onDragEnter={() => canUploadFiles && setIsDraggingFile(true)}
-      >
-        {isDraggingFile && canUploadFiles ? (
-          <DropZone
-            setIsDraggingFile={setIsDraggingFile}
-            onUploadFiles={onUploadFiles}
-          />
-        ) : (
-          <AnimatedPlaceholderEmptyContainer>
-            <AnimatedPlaceholder type="noFile" />
-            <AnimatedPlaceholderEmptyTextContainer>
-              <AnimatedPlaceholderEmptyTitle>
-                <Trans>No Files</Trans>
-              </AnimatedPlaceholderEmptyTitle>
-              <AnimatedPlaceholderEmptySubTitle>
-                <Trans>There are no associated files with this record.</Trans>
-              </AnimatedPlaceholderEmptySubTitle>
-            </AnimatedPlaceholderEmptyTextContainer>
-            <StyledFileInput
-              ref={inputFileRef}
-              onChange={handleFileChange}
-              type="file"
-              multiple
-            />
-            {canUploadFiles && (
-              <Button
-                Icon={IconPlus}
-                title={t`Add file`}
-                variant="secondary"
-                onClick={handleUploadFileClick}
-              />
-            )}
-          </AnimatedPlaceholderEmptyContainer>
-        )}
-      </StyledDropZoneContainer>
-    );
-  }
+  const handleUploadFiles = (files: File[]) =>
+    uploadAttachmentFiles({ files, targetableObject: targetRecord });
 
   return (
-    <StyledAttachmentsContainer>
-      <StyledFileInput
-        ref={inputFileRef}
-        onChange={handleFileChange}
-        type="file"
-        multiple
+    <>
+      <WidgetHeaderCountEffect count={totalCountAttachments} />
+      <FilesCardContent
+        attachments={attachments}
+        canUploadFiles={canUploadFiles}
+        loading={loading}
+        onUploadFiles={handleUploadFiles}
+        targetRecord={targetRecord}
       />
-      <AttachmentList
-        targetableObject={targetRecord}
-        attachments={attachments ?? []}
-      />
-    </StyledAttachmentsContainer>
+    </>
   );
 };

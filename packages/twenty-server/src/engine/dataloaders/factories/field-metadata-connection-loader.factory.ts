@@ -3,11 +3,9 @@ import { Injectable } from '@nestjs/common';
 import DataLoader from 'dataloader';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
-import { ApplicationTranslationCacheService } from 'src/engine/core-modules/application/application-translation/application-translation-cache.service';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
-import { loadApplicationCatalogsByRegistrationId } from 'src/engine/dataloaders/utils/load-application-catalogs-by-registration-id.util';
 import {
   FIELD_FILTER_COLUMN_BY_FILTER_FIELD,
   type FieldFilterInput,
@@ -42,7 +40,7 @@ export class FieldMetadataConnectionLoaderFactory {
   constructor(
     private readonly i18nService: I18nService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly applicationTranslationCacheService: ApplicationTranslationCacheService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
   create(): DataLoader<
@@ -57,19 +55,11 @@ export class FieldMetadataConnectionLoaderFactory {
       const safeLocale = locale ?? SOURCE_LOCALE;
       const i18nInstance = this.i18nService.getI18nInstance(safeLocale);
       const workspaceId = dataLoaderParams[0].workspaceId;
-      const {
-        flatFieldMetadataMaps,
-        flatObjectMetadataMaps,
-        flatApplicationMaps,
-      } =
+      const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
         await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
           {
             workspaceId,
-            flatMapsKeys: [
-              'flatFieldMetadataMaps',
-              'flatObjectMetadataMaps',
-              'flatApplicationMaps',
-            ],
+            flatMapsKeys: ['flatFieldMetadataMaps', 'flatObjectMetadataMaps'],
           },
         );
 
@@ -99,27 +89,22 @@ export class FieldMetadataConnectionLoaderFactory {
       const selectedFlatFieldMetadatas = connections.flatMap((connection) =>
         connection.edges.map(({ node }) => node),
       );
-      const applicationCatalogByRegistrationId =
-        await loadApplicationCatalogsByRegistrationId({
+      const { catalogByApplicationId: applicationCatalogByApplicationId } =
+        await this.applicationTranslationCatalogService.getCatalogs({
           applicationIds: selectedFlatFieldMetadatas.map(
             (flatFieldMetadata) => flatFieldMetadata.applicationId,
           ),
-          flatApplicationMaps,
           locale: safeLocale,
-          applicationTranslationCacheService:
-            this.applicationTranslationCacheService,
+          workspaceId,
         });
 
       return connections.map((connection) => ({
         ...connection,
         edges: connection.edges.map((edge) => {
           const flatFieldMetadata = edge.node;
-          const applicationRegistrationId =
-            flatApplicationMaps.byId[flatFieldMetadata.applicationId]
-              ?.applicationRegistrationId;
-          const applicationCatalog = isDefined(applicationRegistrationId)
-            ? applicationCatalogByRegistrationId.get(applicationRegistrationId)
-            : undefined;
+          const applicationCatalog = applicationCatalogByApplicationId.get(
+            flatFieldMetadata.applicationId,
+          );
           const overrides = flatFieldMetadata.overrides ?? undefined;
           const i18nContext = {
             locale,

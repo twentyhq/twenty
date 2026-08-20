@@ -89,6 +89,7 @@ export class WorkspaceMemberDeleteOnePostQueryHook implements WorkspacePostQuery
 
     await this.userWorkspaceService.deleteUserWorkspace({
       userWorkspaceId: userWorkspace.id,
+      workspaceId: workspace.id,
     });
   }
 }

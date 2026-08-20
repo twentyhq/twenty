@@ -10,6 +10,7 @@ import {
   FeatureFlagException,
   FeatureFlagExceptionCode,
 } from 'src/engine/core-modules/feature-flag/feature-flag.exception';
+import { getFeatureFlagCacheKeysToInvalidate } from 'src/engine/core-modules/feature-flag/utils/get-feature-flag-cache-keys-to-invalidate.util';
 import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/feature-flag.validate';
 import { publicFeatureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/is-public-feature-flag.validate';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -72,9 +73,10 @@ export class FeatureFlagService {
         },
       );
 
-      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-        'featureFlagsMap',
-      ]);
+      await this.workspaceCacheService.invalidateAndRecompute(
+        workspaceId,
+        getFeatureFlagCacheKeysToInvalidate(keys),
+      );
     }
   }
 
@@ -112,18 +114,20 @@ export class FeatureFlagService {
       { where: { key: featureFlag } },
     );
 
-    const featureFlagToSave = existingFeatureFlag
-      ? { ...existingFeatureFlag, value }
-      : { key: featureFlag, value };
+    if (existingFeatureFlag?.value === value) {
+      return existingFeatureFlag;
+    }
 
-    const result = await this.featureFlagRepository.save(
+    const result = await this.featureFlagRepository.upsertAndReturnOne(
       workspaceId,
-      featureFlagToSave,
+      { key: featureFlag, value },
+      ['workspaceId', 'key'],
     );
 
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'featureFlagsMap',
-    ]);
+    await this.workspaceCacheService.invalidateAndRecompute(
+      workspaceId,
+      getFeatureFlagCacheKeysToInvalidate([featureFlag]),
+    );
 
     return result;
   }

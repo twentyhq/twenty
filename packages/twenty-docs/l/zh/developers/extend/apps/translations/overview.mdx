@@ -67,6 +67,8 @@ t({ message: 'Open', context: 'window' });
 <Trans context="card-title">Untitled</Trans>
 ```
 
+在区域设置目录中，上下文字符串会作为一组内容出现，其键为对应的上下文：`"\<context>": { "\<message>": "\<translation>" }`。 清单（Manifest）标签在结构上就是带有上下文的——每个标签都携带其所扮演的元数据角色（`objectMetadata.labelSingular`、`fieldMetadata.label`、`view.name` 等），因此同一个词在作为对象名称和作为视图名称时，可以有不同的翻译。
+
 ## 提取和翻译
 
 在你的应用目录中运行提取命令：
@@ -83,9 +85,17 @@ twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 {
   "Loading postcard…": "Chargement de la carte…",
   "Hi {name}": "Bonjour {name}",
-  "Saved {count} cards": "{count} cartes enregistrées"
+  "Saved {count} cards": "{count} cartes enregistrées",
+  "door": {
+    "Open": "Ouvrir"
+  },
+  "objectMetadata.labelSingular": {
+    "Postcard": "Carte postale"
+  }
 }
 ```
+
+无上下文字符串是扁平条目；有上下文字符串——包括每个清单标签——都嵌套在其上下文键下。
 
 像 `{name}` 这样的占位符会在运行时被替换——请在翻译中保留它们。 任何留空的字符串都会回退到源文本。
 

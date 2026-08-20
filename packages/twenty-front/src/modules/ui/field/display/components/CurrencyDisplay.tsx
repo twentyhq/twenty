@@ -12,7 +12,7 @@ import {
   type FieldCurrencyValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
-import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
+import { EllipsisDisplay } from 'twenty-ui/data-display';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 

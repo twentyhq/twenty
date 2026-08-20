@@ -76,6 +76,8 @@ t({ message: 'Open', context: 'window' });
 <Trans context="card-title">Untitled</Trans>
 ```
 
+Kontextbezogene Zeichenketten erscheinen in Gebietsschema-Katalogen als Gruppe, die über ihren Kontext geschlüsselt ist: `"\<context>": { "\<message>": "\<translation>" }`. Manifestbeschriftungen sind ihrer Konstruktion nach kontextabhängig – jede von ihnen trägt die Rolle, die sie in den Metadaten spielt (`objectMetadata.labelSingular`, `fieldMetadata.label`, `view.name`, …), sodass dasselbe Wort sich als Objektname und als Ansichtsname unterschiedlich übersetzen kann.
+
 ## Extrahieren und Übersetzen
 
 Führen Sie den Extract-Befehl aus Ihrem App-Verzeichnis aus:
@@ -93,9 +95,17 @@ Zeichenketten aus Ihrem Front-Komponenten-Quellcode in `locales/\<locale>.json`,
 {
   "Loading postcard…": "Chargement de la carte…",
   "Hi {name}": "Bonjour {name}",
-  "Saved {count} cards": "{count} cartes enregistrées"
+  "Saved {count} cards": "{count} cartes enregistrées",
+  "door": {
+    "Open": "Ouvrir"
+  },
+  "objectMetadata.labelSingular": {
+    "Postcard": "Carte postale"
+  }
 }
 ```
+
+Kontextfreie Zeichenketten sind flache Einträge; kontextbezogene Zeichenketten – einschließlich jeder Manifestbeschriftung – sind unter ihrem Kontextschlüssel verschachtelt.
 
 Platzhalter wie `{name}` werden zur Laufzeit ersetzt – behalten Sie sie in der
 Übersetzung bei. Jede Zeichenkette, die leer bleibt, fällt auf den Quelltext zurück.

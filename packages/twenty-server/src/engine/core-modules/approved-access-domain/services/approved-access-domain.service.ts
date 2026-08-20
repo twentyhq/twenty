@@ -230,10 +230,13 @@ export class ApprovedAccessDomainService {
       );
     }
 
-    return this.approvedAccessDomainRepository.save(
+    await this.approvedAccessDomainRepository.update(
       approvedAccessDomain.workspaceId,
-      { ...approvedAccessDomain, isValidated: true },
+      { id: approvedAccessDomain.id },
+      { isValidated: true },
     );
+
+    return { ...approvedAccessDomain, isValidated: true };
   }
 
   async createApprovedAccessDomain(
@@ -264,10 +267,11 @@ export class ApprovedAccessDomainService {
       );
     }
 
-    const approvedAccessDomain = await this.approvedAccessDomainRepository.save(
-      inWorkspace.id,
-      { domain },
-    );
+    const approvedAccessDomain =
+      await this.approvedAccessDomainRepository.insertAndReturnOne(
+        inWorkspace.id,
+        { domain },
+      );
 
     await this.sendApprovedAccessDomainValidationEmail(
       fromWorkspaceMember,

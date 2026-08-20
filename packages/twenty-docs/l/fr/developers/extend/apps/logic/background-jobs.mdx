@@ -36,10 +36,10 @@ La fonction cible reçoit `payload` comme argument de son gestionnaire, exacteme
 
 ## Options du job
 
-| Option       | Par défaut | Plage                     | Ce que cela fait                                                                                                                                                         |
-| ------------ | ---------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `retryLimit` | `0`        | `0`–`10`                  | Tentatives supplémentaires si l’exécution lève une exception. N’augmentez cette valeur que pour les gestionnaires qui peuvent être exécutés deux fois en toute sécurité. |
-| `delayMs`    | `0`        | `0`–`604800000` (7 jours) | Attendez ce délai avant que l’exécution devienne éligible.                                                                                                               |
+| Option       | Par défaut | Plage                     | Ce que cela fait                                                                                                                                                                                                                                        |
+| ------------ | ---------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `retryLimit` | `0`        | `0`–`10`                  | Nombre total de tentatives supplémentaires dans la file d'attente. Les nouvelles tentatives demandées par l'application sont limitées à `3`. N’augmentez cette valeur que pour les gestionnaires qui peuvent être exécutés deux fois en toute sécurité. |
+| `delayMs`    | `0`        | `0`–`604800000` (7 jours) | Attendez ce délai avant que l’exécution devienne éligible.                                                                                                                                                                                              |
 
 ```ts
 await enqueueJob({
@@ -55,6 +55,40 @@ await enqueueJob({
 </Note>
 
 L’exécution mise en file d’attente hérite de l’utilisateur exécutant la fonction qui l’a mise en file d’attente, elle agit donc avec les mêmes autorisations.
+
+## Réessayer après un échec transitoire.
+
+Twenty ne réessaie pas toutes les exceptions du code d'application. Une erreur ordinaire levée est traitée comme un échec permanent. En cas d'échec transitoire, une fonction logique mise en file d'attente peut demander jusqu'à trois nouvelles tentatives en levant `RetryableLogicFunctionError`.
+
+```ts
+import {
+  type LogicFunctionExecutionContext,
+  RetryableLogicFunctionError,
+} from 'twenty-sdk/logic-function';
+
+export const handler = async (
+  _payload: unknown,
+  { retryCount, maxRetries }: LogicFunctionExecutionContext,
+) => {
+  const response = await fetch('https://api.example.com/contacts');
+
+  if (response.status === 429 || response.status >= 500) {
+    throw new RetryableLogicFunctionError(
+      `The contacts API is temporarily unavailable (${response.status}); retry ${retryCount} of ${maxRetries}`,
+    );
+  }
+};
+```
+
+Levez directement `RetryableLogicFunctionError` lorsque cela est possible. Si vous l'étendez, ne remplacez pas son `name` : Twenty reconnaît le nom sérialisé `RetryableLogicFunctionError` dans les environnements d'exécution.
+
+`retryCount` est égal à `0` lors de l'exécution initiale et n'augmente que lorsque le code d'application demande une nouvelle tentative. `maxRetries` est au maximum de `3` et peut être inférieur lorsque la tâche mise en file d'attente a une limite globale de nouvelles tentatives plus faible. Les défaillances de la plateforme n'augmentent pas `retryCount`, bien qu'elles consomment toujours le budget de sécurité global de la file d'attente.
+
+La file d'attente retarde les tentatives avec un délai exponentiel et une gigue. Le délai exact n'est intentionnellement pas garanti, le code d'application ne doit donc pas dépendre d'une nouvelle tentative à un moment précis. Une fois `maxRetries` atteint, un autre `RetryableLogicFunctionError` est enregistré comme échec final de l'application sans nouvelle exécution.
+
+<Warning>
+Les nouvelles tentatives réexécutent l'intégralité du gestionnaire et peuvent survenir après la réussite de certains effets secondaires. Rendez le gestionnaire idempotent avant de demander des nouvelles tentatives.
+</Warning>
 
 ## Utilisation : paginer une longue synchronisation
 
@@ -159,7 +193,3 @@ Ce qui rend cette approche robuste :
 * **Conservez la progression avant de mettre en file d’attente l’exécution suivante,** afin qu’un maillon ayant échoué redémarre au dernier bloc terminé plutôt qu’au début.
 * **Gardez chaque bloc idempotent.** Le retraitement d’un bloc après une nouvelle tentative ne doit pas provoquer une double écriture — indexez les écritures sur l’enregistrement ou l’identifiant externe que vous traitez.
 * **Préférez une chaîne par blocs à un énorme déploiement parallèle** lorsque le travail touche un tiers soumis à des limitations de débit : une chaîne avec `delayMs` se régule elle-même, alors que des milliers de jobs mis en file d’attente d’un coup deviennent tous éligibles immédiatement.
-
-<Warning>
-Les nouvelles tentatives réexécutent tout le gestionnaire. Gardez les gestionnaires mis en file d’attente idempotents avant de définir `retryLimit` au-dessus de `0`.
-</Warning>

@@ -29,7 +29,6 @@ export const StyledTabButton = forwardRef<HTMLElement, StyledTabButtonProps>(
         className={clsx(styles.tabButton, className)}
         data-active={active || undefined}
         data-disabled={disabled || undefined}
-        // oxlint-disable-next-line react/jsx-props-no-spreading
         {...rest}
       >
         {children}
@@ -54,7 +53,6 @@ export const StyledTabContainer = forwardRef<
     className={clsx(styles.tabContainer, className)}
     data-active={active || undefined}
     data-disabled={disabled || undefined}
-    // oxlint-disable-next-line react/jsx-props-no-spreading
     {...rest}
   >
     {children}
@@ -73,7 +71,6 @@ export const StyledTabHover = forwardRef<HTMLSpanElement, StyledTabHoverProps>(
       ref={ref}
       className={clsx(styles.tabHover, className)}
       data-content-size={contentSize}
-      // oxlint-disable-next-line react/jsx-props-no-spreading
       {...rest}
     >
       {children}

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ResendApiClientService } from 'src/engine/core-modules/emailing-domain/drivers/resend/services/resend-api-client.service';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -9,6 +10,7 @@ import { InboundEmailS3ClientProvider } from 'src/modules/messaging/message-impo
 import { InboundEmailParserService } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/services/inbound-email-parser.service';
 import { InboundEmailStorageService } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/services/inbound-email-storage.service';
 import { InboundEmailMessageSourceResolverService } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/sources/inbound-email-message-source-resolver.service';
+import { ResendInboundEmailMessageSourceService } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/sources/resend-inbound-email-message-source.service';
 import { SesS3InboundEmailMessageSourceService } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/sources/ses-s3-inbound-email-message-source.service';
 
 @Module({
@@ -22,6 +24,8 @@ import { SesS3InboundEmailMessageSourceService } from 'src/modules/messaging/mes
     InboundEmailStorageService,
     InboundEmailParserService,
     SesS3InboundEmailMessageSourceService,
+    ResendApiClientService,
+    ResendInboundEmailMessageSourceService,
     InboundEmailMessageSourceResolverService,
   ],
   exports: [

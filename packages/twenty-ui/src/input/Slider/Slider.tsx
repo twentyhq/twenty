@@ -92,7 +92,6 @@ export const Slider = ({
         step={step}
         type="range"
         value={value}
-        // oxlint-disable-next-line react/jsx-props-no-spreading
         {...props}
       />
     </div>

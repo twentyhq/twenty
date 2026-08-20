@@ -9,8 +9,23 @@ describe('ask_questions tool', () => {
     expect(ASK_QUESTIONS_TOOL_NAME).toBe('ask_questions');
   });
 
+  it('drops the obvious-default guidance on workspace setup threads', () => {
+    const standardTool = createAskQuestionsTool({
+      isWorkspaceSetupThread: false,
+    });
+    const setupTool = createAskQuestionsTool({ isWorkspaceSetupThread: true });
+
+    expect(standardTool.description).toContain(
+      'trivial choices with an obvious default',
+    );
+    expect(setupTool.description).not.toContain('obvious default');
+    expect(setupTool.description).toContain(
+      'information you could look up with another tool',
+    );
+  });
+
   it('execute echoes the questions with a pending status', async () => {
-    const tool = createAskQuestionsTool();
+    const tool = createAskQuestionsTool({ isWorkspaceSetupThread: false });
     const questions = [
       {
         header: 'Email type',

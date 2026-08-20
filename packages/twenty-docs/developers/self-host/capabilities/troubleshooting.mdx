@@ -222,6 +222,10 @@ If you're running Twenty behind a reverse proxy and experiencing connection issu
 
 Switching the data folder ownership on the host from root to another user and group resolves this problem.
 
+#### 'File Not Found' error while testing Logic function in workflow
+
+Run `yarn command:prod application:rebuild-default-deps` command in your twenty-server container to fix missing dependencies issue.
+
 ## Getting Help
 
 If you encounter issues not covered in this guide:

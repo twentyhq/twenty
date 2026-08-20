@@ -154,6 +154,22 @@ export class WorkspaceRepositoryV2 {
     );
   }
 
+  // TypeORM drops undefined properties before it validates or writes anything;
+  // strip them here so they neither throw on an unknown field nor bind as NULL
+  private formatWriteData(
+    data: Partial<ObjectRecord>,
+  ): Record<string, unknown> {
+    const definedData = Object.fromEntries(
+      Object.entries(data).filter(([, value]) => value !== undefined),
+    );
+
+    return formatData(
+      definedData,
+      this.options.flatObjectMetadata,
+      this.options.internalContext.flatFieldMetadataMaps,
+    );
+  }
+
   applyWriteRowLevelPermissions(
     queryBuilder: WorkspaceSelectQueryBuilderV2,
   ): void {
@@ -972,10 +988,8 @@ export class WorkspaceRepositoryV2 {
     }
 
     for (const [index, input] of inputs.entries()) {
-      const { id: _id, ...setColumns } = formatData(
+      const { id: _id, ...setColumns } = this.formatWriteData(
         dataByInputIndex[index],
-        this.options.flatObjectMetadata,
-        this.options.internalContext.flatFieldMetadataMaps,
       );
 
       this.validateWriteIsPermitted({
@@ -1039,11 +1053,7 @@ export class WorkspaceRepositoryV2 {
     formattedRecords: Record<string, unknown>[];
   } {
     const formattedRecords = records.map((record) =>
-      formatData(
-        record,
-        this.options.flatObjectMetadata,
-        this.options.internalContext.flatFieldMetadataMaps,
-      ),
+      this.formatWriteData(record),
     );
 
     const columnNameSet = new Set<string>();
@@ -1218,11 +1228,7 @@ export class WorkspaceRepositoryV2 {
 
     const setColumns =
       kind === 'update' && isDefined(dataToWrite)
-        ? formatData(
-            dataToWrite,
-            this.options.flatObjectMetadata,
-            this.options.internalContext.flatFieldMetadataMaps,
-          )
+        ? this.formatWriteData(dataToWrite)
         : undefined;
 
     this.validateWriteIsPermitted({

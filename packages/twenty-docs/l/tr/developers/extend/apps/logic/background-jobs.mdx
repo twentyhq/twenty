@@ -36,10 +36,10 @@ Hedef fonksiyon, tıpkı diğer tetikleyicilerde olduğu gibi işleyici argüman
 
 ## İş seçenekleri
 
-| Seçenek      | Varsayılan | Aralık                  | Ne yapar                                                                                                                         |
-| ------------ | ---------- | ----------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `retryLimit` | `0`        | `0`–`10`                | Çalıştırma bir hata fırlatırsa ekstra deneme sayısı. Bunu yalnızca iki kez çalıştırılması güvenli olan işleyiciler için artırın. |
-| `delayMs`    | `0`        | `0`–`604800000` (7 gün) | Çalıştırma uygun hale gelmeden önce bu kadar süre bekleyin.                                                                      |
+| Seçenek      | Varsayılan | Aralık                  | Ne yapar                                                                                                                                                                            |
+| ------------ | ---------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `retryLimit` | `0`        | `0`–`10`                | Toplam ek kuyruk denemeleri. Uygulama tarafından istenen yeniden denemeler `3` ile sınırlandırılmıştır. Bunu yalnızca iki kez çalıştırılması güvenli olan işleyiciler için artırın. |
+| `delayMs`    | `0`        | `0`–`604800000` (7 gün) | Çalıştırma uygun hale gelmeden önce bu kadar süre bekleyin.                                                                                                                         |
 
 ```ts
 await enqueueJob({
@@ -55,6 +55,40 @@ await enqueueJob({
 </Note>
 
 Kuyruğa alınan çalıştırma, onu kuyruğa alan fonksiyonun etkin kullanıcı bilgisini devralır; böylece aynı izinlerle hareket eder.
+
+## Geçici bir hatayı yeniden dene.
+
+Twenty, uygulama kodundan kaynaklanan her özel durumu yeniden denemez. Normal şekilde fırlatılan bir hata kalıcı hata olarak değerlendirilir. Geçici bir hata için, kuyruktaki bir mantık işlevi `RetryableLogicFunctionError` fırlatarak en fazla üç yeniden deneme isteyebilir.
+
+```ts
+import {
+  type LogicFunctionExecutionContext,
+  RetryableLogicFunctionError,
+} from 'twenty-sdk/logic-function';
+
+export const handler = async (
+  _payload: unknown,
+  { retryCount, maxRetries }: LogicFunctionExecutionContext,
+) => {
+  const response = await fetch('https://api.example.com/contacts');
+
+  if (response.status === 429 || response.status >= 500) {
+    throw new RetryableLogicFunctionError(
+      `The contacts API is temporarily unavailable (${response.status}); retry ${retryCount} of ${maxRetries}`,
+    );
+  }
+};
+```
+
+Mümkün olduğunda doğrudan `RetryableLogicFunctionError` fırlatın. Bunu genişletirseniz `name` değerini değiştirmeyin: Twenty, serileştirilmiş `RetryableLogicFunctionError` adını yürütme çalışma zamanları arasında tanır.
+
+`retryCount`, ilk yürütme için `0` değerindedir ve yalnızca uygulama kodu yeniden deneme istediğinde artar. `maxRetries` en fazla `3` değerindedir ve kuyruktaki işin genel yeniden deneme sınırı daha düşük olduğunda daha düşük olabilir. Platform hataları, kuyruğun genel güvenlik bütçesini tüketmeye devam etse de `retryCount` değerini artırmaz.
+
+Kuyruk, yeniden deneme girişimlerini üstel geri çekilme ve titreşimle geciktirir. Kesin gecikme kasıtlı olarak garanti edilmez; bu nedenle uygulama kodu, yeniden denemenin kesin bir zamanda gerçekleşmesine bağlı olmamalıdır. `maxRetries` değerine ulaşıldığında, başka bir yürütme olmadan başka bir `RetryableLogicFunctionError` nihai uygulama hatası olarak kaydedilir.
+
+<Warning>
+Yeniden denemeler tüm işleyiciyi yeniden çalıştırır ve bazı yan etkiler başarılı olduktan sonra gerçekleşebilir. Yeniden deneme istemeden önce işleyiciyi idempotent hale getirin.
+</Warning>
 
 ## Kullanım örneği: uzun bir eşitleme boyunca sayfalama yapma
 
@@ -159,7 +193,3 @@ Bunu işe yarar kılanlar:
 * **Sonraki çalıştırmayı kuyruğa almadan önce ilerlemeyi kalıcı hale getirin,** böylece başarısız olan bir halka baştan başlamak yerine son tamamlanan parçadan yeniden başlar.
 * **Her parçayı idempotent tutun.** Bir yeniden denemeden sonra aynı parçanın yeniden işlenmesi, iki kez yazma yapmamalıdır — yazma işlemlerini, işlediğiniz kayıt veya harici kimlik üzerinde anahtarlandırın.
 * **Oran sınırlamalı bir üçüncü tarafla çalışırken, tek bir dev fan-out yerine parçalara bölünmüş bir zinciri tercih edin;** `delayMs` içeren bir zincir kendi hızını ayarlar, oysa binlerce işi bir kerede kuyruğa almak, hepsinin aynı anda uygun hale gelmesine neden olur.
-
-<Warning>
-Yeniden denemeler tüm işleyiciyi yeniden çalıştırır. `retryLimit` değerini `0`’ın üzerine çıkarmadan önce kuyruğa alınan işleyicileri idempotent tutun.
-</Warning>

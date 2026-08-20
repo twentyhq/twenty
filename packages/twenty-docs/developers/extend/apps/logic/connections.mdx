@@ -219,7 +219,8 @@ Each connection has:
 | `scopes`          | OAuth permissions granted by the upstream provider (distinct from `visibility` — those are unrelated)    |
 | `userWorkspaceId` | The owner's userWorkspace id — useful for picking "the request user's connection" in HTTP-route triggers |
 | `accessToken`     | Fresh OAuth access token (refreshed automatically if expired)                                            |
-| `name` / `handle` | The connection's display name (auto-derived at OAuth callback, user-renameable)                          |
+| `name`            | The connection's display name (auto-derived at OAuth callback, user-renameable)                          |
+| `handle`          | The connected upstream account's email, refreshed on each reconnect; resolved from the OIDC `id_token` returned at token exchange, falling back to the connecting Twenty user's email when the provider doesn't return one |
 | `authFailedAt`    | Set when the most recent refresh failed; the user must reconnect                                         |
 
 Key points:

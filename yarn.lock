@@ -50260,6 +50260,7 @@ __metadata:
     "@babel/preset-typescript": "npm:^7.24.6"
     "@dagrejs/dagre": "npm:^1.1.8"
     "@lingui/core": "npm:^5.9.5"
+    "@noble/hashes": "npm:^1.8.0"
     "@prettier/sync": "npm:^0.5.2"
     "@sniptt/guards": "npm:^0.2.0"
     "@swc/core": "npm:^1.15.11"

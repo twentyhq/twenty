@@ -785,6 +785,7 @@ export class WorkspaceService {
     if (isDefined(userWorkspaceOfRemovedWorkspaceMember)) {
       await this.userWorkspaceService.deleteUserWorkspace({
         userWorkspaceId: userWorkspaceOfRemovedWorkspaceMember.id,
+        workspaceId,
         softDelete,
       });
       await this.coreEntityCacheService.invalidate(

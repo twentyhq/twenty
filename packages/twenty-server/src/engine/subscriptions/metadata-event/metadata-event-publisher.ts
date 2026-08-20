@@ -1,18 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
-import { ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-overridable-properties-by-metadata-name.constant';
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
-import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
-import { enrichCommandMenuItemEventWithResolvedNavigation } from 'src/engine/subscriptions/metadata-event/utils/enrich-command-menu-item-event-with-resolved-navigation.util';
 import { enrichFieldMetadataEventWithRelations } from 'src/engine/subscriptions/metadata-event/utils/enrich-field-metadata-event-with-relations.util';
-import { resolveOverridableEntityEventBatchOverrides } from 'src/engine/subscriptions/metadata-event/utils/sanitize-overridable-entity-event-batch.util';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 
 @Injectable()
@@ -21,7 +15,6 @@ export class MetadataEventPublisher {
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly navigationMenuItemRecordIdentifierService: NavigationMenuItemRecordIdentifierService,
-    private readonly i18nService: I18nService,
   ) {}
 
   async publish(metadataEventBatch: MetadataEventBatch): Promise<void> {
@@ -79,16 +72,8 @@ export class MetadataEventPublisher {
         return this.enrichNavigationMenuItemEventsWithTargetRecordIdentifier(
           metadataEventBatch as MetadataEventBatch<'navigationMenuItem'>,
         );
-      case 'commandMenuItem':
-        return this.enrichCommandMenuItemEventsWithResolvedNavigation(
-          metadataEventBatch as MetadataEventBatch<'commandMenuItem'>,
-        );
-      case 'objectMetadata':
-        return this.resolveObjectMetadataOverrides(
-          metadataEventBatch as MetadataEventBatch<'objectMetadata'>,
-        );
       default:
-        return resolveOverridableEntityEventBatchOverrides(metadataEventBatch);
+        return metadataEventBatch;
     }
   }
 
@@ -107,74 +92,19 @@ export class MetadataEventPublisher {
       const enrichedProperties = { ...event.properties };
 
       if (
-        'before' in enrichedProperties &&
-        isDefined(enrichedProperties.before)
-      ) {
-        enrichedProperties.before = this.applyOverridesToMetadataRecord(
-          enrichedProperties.before as Record<string, unknown>,
-          ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME.fieldMetadata,
-        ) as typeof enrichedProperties.before;
-      }
-
-      if (
         'after' in enrichedProperties &&
         isDefined(enrichedProperties.after)
       ) {
-        const enrichedAfter = enrichFieldMetadataEventWithRelations({
+        enrichedProperties.after = enrichFieldMetadataEventWithRelations({
           record: enrichedProperties.after as Record<string, unknown>,
           flatFieldMetadataMaps,
           flatObjectMetadataMaps,
-        });
-
-        enrichedProperties.after = this.applyOverridesToMetadataRecord(
-          enrichedAfter,
-          ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME.fieldMetadata,
-        ) as typeof enrichedProperties.after;
+        }) as typeof enrichedProperties.after;
       }
 
       return {
         ...event,
         properties: enrichedProperties,
-      } as typeof event;
-    });
-
-    return { ...metadataEventBatch, events: enrichedEvents };
-  }
-
-  private async enrichCommandMenuItemEventsWithResolvedNavigation(
-    metadataEventBatch: MetadataEventBatch<'commandMenuItem'>,
-  ): Promise<MetadataEventBatch<'commandMenuItem'>> {
-    const { flatObjectMetadataMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId: metadataEventBatch.workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps'],
-        },
-      );
-
-    const i18nInstance = this.i18nService.getI18nInstance(SOURCE_LOCALE);
-
-    const enrichedEvents = metadataEventBatch.events.map((event) => {
-      if (
-        !('after' in event.properties) ||
-        !isDefined(event.properties.after)
-      ) {
-        return event;
-      }
-
-      const enrichedAfter = enrichCommandMenuItemEventWithResolvedNavigation({
-        record: event.properties.after as FlatCommandMenuItem,
-        flatObjectMetadataMaps,
-        locale: SOURCE_LOCALE,
-        i18nInstance,
-      });
-
-      return {
-        ...event,
-        properties: {
-          ...event.properties,
-          after: enrichedAfter,
-        },
       } as typeof event;
     });
 
@@ -228,61 +158,5 @@ export class MetadataEventPublisher {
     );
 
     return { ...metadataEventBatch, events: enrichedEvents };
-  }
-
-  private resolveObjectMetadataOverrides(
-    metadataEventBatch: MetadataEventBatch<'objectMetadata'>,
-  ): MetadataEventBatch<'objectMetadata'> {
-    const enrichedEvents = metadataEventBatch.events.map((event) => {
-      const enrichedProperties = { ...event.properties };
-
-      if (
-        'before' in enrichedProperties &&
-        isDefined(enrichedProperties.before)
-      ) {
-        enrichedProperties.before = this.applyOverridesToMetadataRecord(
-          enrichedProperties.before as Record<string, unknown>,
-          ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME.objectMetadata,
-        ) as typeof enrichedProperties.before;
-      }
-
-      if (
-        'after' in enrichedProperties &&
-        isDefined(enrichedProperties.after)
-      ) {
-        enrichedProperties.after = this.applyOverridesToMetadataRecord(
-          enrichedProperties.after as Record<string, unknown>,
-          ALL_OVERRIDABLE_PROPERTIES_BY_METADATA_NAME.objectMetadata,
-        ) as typeof enrichedProperties.after;
-      }
-
-      return { ...event, properties: enrichedProperties } as typeof event;
-    });
-
-    return { ...metadataEventBatch, events: enrichedEvents };
-  }
-
-  private applyOverridesToMetadataRecord(
-    record: Record<string, unknown>,
-    overridableProperties: readonly string[],
-  ): Record<string, unknown> {
-    const overrides = record.overrides as
-      | Record<string, unknown>
-      | null
-      | undefined;
-
-    if (!isDefined(overrides)) {
-      return record;
-    }
-
-    const resolved = { ...record };
-
-    for (const key of overridableProperties) {
-      if (isDefined(overrides[key])) {
-        resolved[key] = overrides[key];
-      }
-    }
-
-    return resolved;
   }
 }

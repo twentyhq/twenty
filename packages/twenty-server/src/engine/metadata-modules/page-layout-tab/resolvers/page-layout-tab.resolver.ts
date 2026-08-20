@@ -29,7 +29,7 @@ import { CreatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layou
 import { UpdatePageLayoutTabInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/update-page-layout-tab.input';
 import { PageLayoutTabDTO } from 'src/engine/metadata-modules/page-layout-tab/dtos/page-layout-tab.dto';
 import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout-tab/services/page-layout-tab.service';
-import { resolvePageLayoutTabTitle } from 'src/engine/metadata-modules/page-layout-tab/utils/resolve-page-layout-tab-title.util';
+import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 import { PageLayoutGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/page-layout/utils/page-layout-graphql-api-exception.filter';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 
@@ -50,27 +50,19 @@ export class PageLayoutTabResolver {
     @Context() context: { loaders: IDataloaders } & I18nContext,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<string> {
-    const i18n = this.i18nService.getI18nInstance(context.req.locale);
-
-    const standardApplicationId =
-      await context.loaders.standardApplicationIdLoader.load({
-        workspaceId: workspace.id,
-      });
-
-    const applicationCatalog =
-      await context.loaders.applicationTranslationCatalogLoader.load({
-        applicationId: tab.applicationId,
-        workspaceId: workspace.id,
-        locale: context.req.locale,
-      });
-
-    return resolvePageLayoutTabTitle({
-      title: tab.title,
+    const i18nContext = await this.i18nService.buildEffectiveEntityI18nContext({
       applicationId: tab.applicationId,
-      twentyStandardApplicationId: standardApplicationId,
+      loaders: context.loaders,
+      locale: context.req.locale,
+      workspaceId: workspace.id,
+    });
+
+    return resolveEffectiveEntityProperty({
+      metadataName: 'pageLayoutTab',
+      baseValue: tab.title,
       overrides: tab.overrides,
-      i18nInstance: i18n,
-      applicationCatalog,
+      property: 'title',
+      i18nContext,
     });
   }
 

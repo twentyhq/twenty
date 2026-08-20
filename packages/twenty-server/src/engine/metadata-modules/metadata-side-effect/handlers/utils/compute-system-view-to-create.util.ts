@@ -11,6 +11,7 @@ import {
 } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
+import { INDEX_VIEW_NAME } from 'src/engine/metadata-modules/view/constants/index-view-name.constant';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 
@@ -24,7 +25,7 @@ type SystemViewObjectMetadata = Pick<
 const SYSTEM_VIEW_PROPERTIES_BY_VIEW_KEY = {
   [SYSTEM_VIEW_KEYS.INDEX]: {
     type: ViewType.TABLE,
-    computeName: () => 'All {objectLabelPlural}',
+    computeName: () => INDEX_VIEW_NAME,
   },
   [SYSTEM_VIEW_KEYS.FIELDS_WIDGET]: {
     type: ViewType.FIELDS_WIDGET,

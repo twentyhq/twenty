@@ -36,10 +36,10 @@ La funzione di destinazione riceve `payload` come argomento del suo handler, esa
 
 ## Opzioni del job
 
-| Opzione      | Predefinito | Intervallo                 | Cosa fa                                                                                                                                             |
-| ------------ | ----------- | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `retryLimit` | `0`         | `0`–`10`                   | Tentativi extra se l'esecuzione genera un'eccezione. Aumenta questo valore solo per gli handler che possono essere eseguiti due volte in sicurezza. |
-| `delayMs`    | `0`         | `0`–`604800000` (7 giorni) | Attendi questo intervallo prima che l'esecuzione diventi idonea.                                                                                    |
+| Opzione      | Predefinito | Intervallo                 | Cosa fa                                                                                                                                                                                                        |
+| ------------ | ----------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `retryLimit` | `0`         | `0`–`10`                   | Tentativi aggiuntivi complessivi nella coda. I nuovi tentativi richiesti dall'applicazione sono limitati a `3`. Aumenta questo valore solo per gli handler che possono essere eseguiti due volte in sicurezza. |
+| `delayMs`    | `0`         | `0`–`604800000` (7 giorni) | Attendi questo intervallo prima che l'esecuzione diventi idonea.                                                                                                                                               |
 
 ```ts
 await enqueueJob({
@@ -55,6 +55,40 @@ await enqueueJob({
 </Note>
 
 L'esecuzione in coda eredita l'utente attivo della funzione che l'ha messa in coda, quindi agisce con le stesse autorizzazioni.
+
+## Riprova un errore transitorio
+
+Twenty non ritenta ogni eccezione del codice applicativo. Un normale errore generato viene trattato come un errore permanente. In caso di errore transitorio, una funzione logica in coda può richiedere fino a tre tentativi generando `RetryableLogicFunctionError`.
+
+```ts
+import {
+  type LogicFunctionExecutionContext,
+  RetryableLogicFunctionError,
+} from 'twenty-sdk/logic-function';
+
+export const handler = async (
+  _payload: unknown,
+  { retryCount, maxRetries }: LogicFunctionExecutionContext,
+) => {
+  const response = await fetch('https://api.example.com/contacts');
+
+  if (response.status === 429 || response.status >= 500) {
+    throw new RetryableLogicFunctionError(
+      `The contacts API is temporarily unavailable (${response.status}); retry ${retryCount} of ${maxRetries}`,
+    );
+  }
+};
+```
+
+Genera direttamente `RetryableLogicFunctionError` quando possibile. Se la estendi, non sostituire il relativo `name`: Twenty riconosce il nome serializzato `RetryableLogicFunctionError` in tutti i runtime di esecuzione.
+
+`retryCount` è `0` per l'esecuzione iniziale e aumenta solo quando il codice applicativo richiede un nuovo tentativo. `maxRetries` è al massimo `3` e può essere inferiore quando il job in coda ha un limite complessivo di tentativi inferiore. Gli errori della piattaforma non aumentano `retryCount`, sebbene consumino comunque il budget di sicurezza complessivo della coda.
+
+La coda ritarda i tentativi con backoff esponenziale e jitter. Il ritardo esatto non è intenzionalmente garantito, quindi il codice applicativo non deve dipendere dal fatto che un nuovo tentativo avvenga in un momento preciso. Una volta raggiunto `maxRetries`, un ulteriore `RetryableLogicFunctionError` viene registrato come errore finale dell'applicazione senza un'altra esecuzione.
+
+<Warning>
+I nuovi tentativi rieseguono l'intero gestore e possono verificarsi dopo che alcuni effetti collaterali sono riusciti. Rendi idempotente il gestore prima di richiedere nuovi tentativi.
+</Warning>
 
 ## Usalo per scorrere una lunga sincronizzazione a pagine
 
@@ -159,7 +193,3 @@ Cosa rende tutto questo solido:
 * **Conserva i progressi prima di mettere in coda l'esecuzione successiva,** così un anello fallito riparte dall'ultimo blocco completato invece che dall'inizio.
 * **Mantieni ogni blocco idempotente.** Rielaborare un blocco dopo un ritentativo non deve causare scritture duplicate: usa chiavi di scrittura sul record o sull'id esterno che stai elaborando.
 * **Preferisci una catena a blocchi a un'unica enorme suddivisione parallela** quando il lavoro colpisce una terza parte con limitazione di velocità: una catena con `delayMs` si autoregola, mentre migliaia di job messi in coda in una volta sola diventano tutti idonei immediatamente.
-
-<Warning>
-I ritentativi rieseguono l'intero handler. Mantieni gli handler in coda idempotenti prima di impostare `retryLimit` sopra `0`.
-</Warning>

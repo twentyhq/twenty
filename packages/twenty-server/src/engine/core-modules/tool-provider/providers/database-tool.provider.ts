@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { camelToSnakeCase, isDefined } from 'twenty-shared/utils';
 import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
 
@@ -8,6 +9,7 @@ import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-pro
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { getCrudToolLabels } from 'src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util';
+import { resolveEffectiveFieldDescription } from 'src/engine/core-modules/tool-provider/utils/resolve-effective-field-description.util';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { generateCreateManyRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-many-record-input-schema.util';
@@ -125,6 +127,10 @@ export class DatabaseToolProvider implements ToolProvider {
       flatObjectMetadataMaps.byUniversalIdentifier,
     );
 
+    const i18nInstance = this.i18nService.getI18nInstance(
+      context.locale ?? SOURCE_LOCALE,
+    );
+
     for (const flatObject of allFlatObjects) {
       const permission = objectPermissions[flatObject.id];
       const explicitPermission = explicitPermissionByObjectId.get(
@@ -159,7 +165,17 @@ export class DatabaseToolProvider implements ToolProvider {
       }
 
       const fields = includeSchemas
-        ? getFlatFieldsFromFlatObjectMetadata(flatObject, flatFieldMetadataMaps)
+        ? getFlatFieldsFromFlatObjectMetadata(
+            flatObject,
+            flatFieldMetadataMaps,
+          ).map((flatFieldMetadata) => ({
+            ...flatFieldMetadata,
+            description: resolveEffectiveFieldDescription({
+              flatFieldMetadata,
+              locale: context.locale,
+              i18nInstance,
+            }),
+          }))
         : [];
 
       const objectMetadata = { ...flatObject, fields };
