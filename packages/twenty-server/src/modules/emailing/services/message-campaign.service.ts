@@ -357,13 +357,13 @@ export class MessageCampaignService {
     });
 
     const notSentCount =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const campaignRepository = await this.getRoleScopedRepository(
-            workspaceId,
-            MessageCampaignWorkspaceEntity,
-            roleId,
-          );
+      await this.globalWorkspaceOrmManager.runInWorkspaceTransaction(
+        async (transactionScope) => {
+          const campaignRepository =
+            transactionScope.getRepository<MessageCampaignWorkspaceEntity>(
+              'messageCampaign',
+              { unionOf: [roleId] },
+            );
 
           const { affected } = await campaignRepository.update(
             { id: campaignId, status: MessageCampaignStatus.SENDING },
@@ -377,10 +377,10 @@ export class MessageCampaignService {
             );
           }
 
-          const messageRepository = await this.getSystemRepository(
-            workspaceId,
-            MessageWorkspaceEntity,
-          );
+          const messageRepository =
+            transactionScope.getRepository<MessageWorkspaceEntity>('message', {
+              shouldBypassPermissionChecks: true,
+            });
 
           const { affected: skippedMessageCount } =
             await messageRepository.update(
@@ -447,7 +447,10 @@ export class MessageCampaignService {
         where: { id: campaignId },
       });
 
-      if (!isDefined(campaign)) {
+      if (
+        !isDefined(campaign) ||
+        campaign.status !== MessageCampaignStatus.SENDING
+      ) {
         return;
       }
 
