@@ -1,6 +1,7 @@
 import { type ApiService } from '@/cli/utilities/api/api-service';
 import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest-update-checksums';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
+import { compileApplicationTranslations } from '@/cli/utilities/translations/compile-application-translations';
 import {
   type OrchestratorState,
   type OrchestratorStateBuiltFileInfo,
@@ -69,10 +70,15 @@ export class SyncApplicationOrchestratorStep {
 
     const events: OrchestratorStateStepEvent[] = [];
 
-    const manifest = manifestUpdateChecksums({
-      manifest: input.manifest,
-      builtFileInfos: input.builtFileInfos,
-    });
+    // Every sync states its translations, so the server can prune the locales
+    // an author removed instead of serving them forever.
+    const manifest = {
+      ...manifestUpdateChecksums({
+        manifest: input.manifest,
+        builtFileInfos: input.builtFileInfos,
+      }),
+      translations: await compileApplicationTranslations(input.appPath),
+    };
 
     events.push({ message: 'Manifest checksums set', status: 'info' });
 

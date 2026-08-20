@@ -130,9 +130,10 @@ Because catalogs are compiled at build time, updating a translation means
 re-running `twenty dev:build` (and redeploying), the same as any other change.
 
 <Note>
-Translations are compiled by `twenty dev:build` (and `twenty apply`). The
-continuous `twenty dev` watch shows source strings, so test localized output
-with a one-off build.
+Translations are compiled on every sync — `twenty dev:build`, `twenty apply`
+and the continuous `twenty dev` watch alike — so localized output can be
+tested without a one-off build. Front component catalogs are baked into the
+bundle at build time, so those still need a rebuild to change.
 </Note>
 
 `Trans` text children may span multiple lines — whitespace is collapsed the
