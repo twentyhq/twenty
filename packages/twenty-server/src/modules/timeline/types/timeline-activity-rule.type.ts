@@ -10,6 +10,13 @@ export type TimelineActivityRuleTargetJoinColumn = {
 export type TimelineActivityRuleTargetShape =
   | { kind: 'SELF' }
   | {
+      kind: 'MANY_TO_ONE';
+      // Field on the rule object whose diff carries the relation change
+      relationFieldName: string;
+      // Column on the rule object pointing at the record receiving the entry
+      targetJoinColumn: TimelineActivityRuleTargetJoinColumn;
+    }
+  | {
       kind: 'JUNCTION';
       junctionObjectMetadataId: string;
       junctionObjectNameSingular: string;

@@ -5,7 +5,6 @@ import { SettingsObjectTimelineRulesTable } from '@/settings/data-model/timeline
 import { useFindManyTimelineActivityRules } from '@/settings/data-model/timeline-rules/hooks/useFindManyTimelineActivityRules';
 import { useResetTimelineActivityRule } from '@/settings/data-model/timeline-rules/hooks/useResetTimelineActivityRule';
 import { useUpsertTimelineActivityRule } from '@/settings/data-model/timeline-rules/hooks/useUpsertTimelineActivityRule';
-import { getSettingsTimelineRuleCandidateRelations } from '@/settings/data-model/timeline-rules/utils/getSettingsTimelineRuleCandidateRelations';
 import {
   getSettingsTimelineRuleRows,
   type SettingsTimelineRuleRow,
@@ -63,16 +62,6 @@ export const SettingsObjectTimelineSection = ({
   const timelineRuleRows = useMemo(
     () =>
       getSettingsTimelineRuleRows({
-        timelineActivityRules,
-        objectMetadataItem,
-        objectMetadataItems,
-      }),
-    [timelineActivityRules, objectMetadataItem, objectMetadataItems],
-  );
-
-  const candidateRelations = useMemo(
-    () =>
-      getSettingsTimelineRuleCandidateRelations({
         timelineActivityRules,
         objectMetadataItem,
         objectMetadataItems,
@@ -148,7 +137,7 @@ export const SettingsObjectTimelineSection = ({
           />
         </Card>
       )}
-      {(timelineRuleRows.length > 0 || candidateRelations.length > 0) && (
+      {timelineRuleRows.length > 0 && (
         <>
           <SearchInput
             placeholder={t`Search a rule...`}
@@ -162,23 +151,23 @@ export const SettingsObjectTimelineSection = ({
             onToggleActive={handleToggleActive}
             onReset={handleReset}
           />
-          {!isReadOnly && candidateRelations.length > 0 && (
-            <StyledButtonContainer>
-              <UndecoratedLink
-                to={getSettingsPath(SettingsPath.ObjectNewTimelineRule, {
-                  objectNamePlural: objectMetadataItem.namePlural,
-                })}
-              >
-                <Button
-                  Icon={IconPlus}
-                  title={t`Add Rule`}
-                  size="small"
-                  variant="secondary"
-                />
-              </UndecoratedLink>
-            </StyledButtonContainer>
-          )}
         </>
+      )}
+      {!isReadOnly && (
+        <StyledButtonContainer>
+          <UndecoratedLink
+            to={getSettingsPath(SettingsPath.ObjectNewTimelineRule, {
+              objectNamePlural: objectMetadataItem.namePlural,
+            })}
+          >
+            <Button
+              Icon={IconPlus}
+              title={t`Add Rule`}
+              size="small"
+              variant="secondary"
+            />
+          </UndecoratedLink>
+        </StyledButtonContainer>
       )}
     </StyledContent>
   );

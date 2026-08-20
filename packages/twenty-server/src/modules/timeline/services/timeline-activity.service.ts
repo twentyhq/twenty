@@ -8,7 +8,7 @@ import { fromArrayToValuesByKeyRecord, isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
-import { type DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -132,13 +132,22 @@ export class TimelineActivityService {
 
           return Promise.all([
             ...sourceRules.map((rule) =>
-              this.buildPayloadsForSourceRule({
-                rule,
-                events: enrichedEvents,
-                action,
-                workspaceId,
-                flatFieldMetadataMaps,
-              }),
+              rule.targetShape.kind === 'MANY_TO_ONE'
+                ? Promise.resolve(
+                    this.buildPayloadsForManyToOneRule({
+                      rule,
+                      events: enrichedEvents,
+                      action,
+                      flatFieldMetadataMaps,
+                    }),
+                  )
+                : this.buildPayloadsForSourceRule({
+                    rule,
+                    events: enrichedEvents,
+                    action,
+                    workspaceId,
+                    flatFieldMetadataMaps,
+                  }),
             ),
             ...junctionRules.map((rule) =>
               this.buildPayloadsForJunctionRule({
@@ -270,6 +279,115 @@ export class TimelineActivityService {
         }),
       ),
     );
+  }
+
+  // A many-to-one rule reads its targets straight from the event: the join
+  // column on the source record points at the timeline receiving the entry.
+  // A lookup change unlinks the old target and links the new one; other source
+  // updates write an `updated` entry on the current target, trigger gated.
+  private buildPayloadsForManyToOneRule({
+    rule,
+    events,
+    action,
+    flatFieldMetadataMaps,
+  }: {
+    rule: TimelineActivityRule;
+    events: ObjectRecordBaseEvent[];
+    action: DatabaseEventAction;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  }): TimelineActivityPayload[] {
+    if (rule.targetShape.kind !== 'MANY_TO_ONE') {
+      return [];
+    }
+
+    const { relationFieldName, targetJoinColumn } = rule.targetShape;
+    const { joinColumnName, targetObjectNameSingular } = targetJoinColumn;
+
+    return events.flatMap((event) => {
+      const after = event.properties.after as ObjectRecord | undefined;
+      const before = event.properties.before as ObjectRecord | undefined;
+
+      const buildPayload = (
+        targetRecordId: string,
+        ruleAction: TimelineActivityAction,
+      ): TimelineActivityPayload =>
+        buildLinkedPayload({
+          rule,
+          action,
+          ruleAction,
+          target: { targetObjectNameSingular, targetRecordId },
+          workspaceMemberId: event.workspaceMemberId,
+          linkedRecordId: event.recordId,
+          linkedRecordCachedName: resolveLinkedRecordCachedName({
+            rule,
+            record: after ?? before,
+            flatFieldMetadataMaps,
+          }),
+          properties: ruleAction === 'updated' ? event.properties : {},
+        });
+
+      switch (action) {
+        case DatabaseEventAction.CREATED:
+        case DatabaseEventAction.RESTORED: {
+          const targetRecordId = after?.[joinColumnName];
+
+          return rule.actions.includes('linked') &&
+            isNonEmptyString(targetRecordId)
+            ? [buildPayload(targetRecordId, 'linked')]
+            : [];
+        }
+        case DatabaseEventAction.DELETED: {
+          const targetRecordId =
+            after?.[joinColumnName] ?? before?.[joinColumnName];
+
+          return rule.actions.includes('unlinked') &&
+            isNonEmptyString(targetRecordId)
+            ? [buildPayload(targetRecordId, 'unlinked')]
+            : [];
+        }
+        case DatabaseEventAction.UPDATED: {
+          const relationDiff = (
+            event.properties.diff as
+              | Record<
+                  string,
+                  {
+                    before?: { id?: string | null };
+                    after?: { id?: string | null };
+                  }
+                >
+              | undefined
+          )?.[relationFieldName];
+
+          if (isDefined(relationDiff)) {
+            const previousTargetRecordId = relationDiff.before?.id;
+            const nextTargetRecordId = relationDiff.after?.id;
+
+            return [
+              ...(rule.actions.includes('unlinked') &&
+              isNonEmptyString(previousTargetRecordId)
+                ? [buildPayload(previousTargetRecordId, 'unlinked')]
+                : []),
+              ...(rule.actions.includes('linked') &&
+              isNonEmptyString(nextTargetRecordId)
+                ? [buildPayload(nextTargetRecordId, 'linked')]
+                : []),
+            ];
+          }
+
+          const targetRecordId = after?.[joinColumnName];
+
+          return this.ruleMatchesEvent({
+            rule,
+            ruleAction: 'updated',
+            event,
+          }) && isNonEmptyString(targetRecordId)
+            ? [buildPayload(targetRecordId, 'updated')]
+            : [];
+        }
+        default:
+          return [];
+      }
+    });
   }
 
   private async buildPayloadsForJunctionRule({

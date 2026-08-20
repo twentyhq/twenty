@@ -12,6 +12,7 @@ import { type FlatTimelineActivityRule } from 'src/engine/metadata-modules/flat-
 import { findSelfOverrideFlatTimelineActivityRule } from 'src/engine/metadata-modules/timeline-activity-rule/utils/find-self-override-flat-timeline-activity-rule.util';
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
 import { buildJunctionTargetShape } from 'src/modules/timeline/utils/build-junction-target-shape.util';
+import { buildManyToOneTargetShape } from 'src/modules/timeline/utils/build-many-to-one-target-shape.util';
 import { deriveDefaultTimelineActivityRule } from 'src/modules/timeline/utils/derive-default-timeline-activity-rule.util';
 
 type TimelineActivityRulesForEventBatch = {
@@ -189,11 +190,16 @@ export class TimelineActivityRuleResolverService {
       return undefined;
     }
 
-    const targetShape = buildJunctionTargetShape({
-      relationFlatFieldMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-    });
+    const targetShape =
+      buildJunctionTargetShape({
+        relationFlatFieldMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      }) ??
+      buildManyToOneTargetShape({
+        relationFlatFieldMetadata,
+        flatObjectMetadataMaps,
+      });
 
     if (!isDefined(targetShape)) {
       return undefined;

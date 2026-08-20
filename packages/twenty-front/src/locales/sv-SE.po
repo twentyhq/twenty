@@ -8116,6 +8116,11 @@ msgstr "varje timme"
 msgid "every minute"
 msgstr "varje minut"
 
+#. js-lingui-id: RpqZDu
+#: src/pages/settings/data-model/timeline-rules/SettingsObjectNewTimelineRule.tsx
+msgid "Every relation that can carry a timeline rule already has one. Create a relation between {objectLabelSingular} and another object to route its events here."
+msgstr ""
+
 #. js-lingui-id: PsQmAw
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 msgid "Everyone"

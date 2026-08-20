@@ -8,6 +8,7 @@ import {
   getSettingsTimelineRuleCandidateRelations,
   type SettingsTimelineRuleCandidateRelation,
 } from '@/settings/data-model/timeline-rules/utils/getSettingsTimelineRuleCandidateRelations';
+import { styled } from '@linaria/react';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -28,6 +29,11 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const NEW_TIMELINE_RULE_TABLE_GRID_TEMPLATE_COLUMNS =
   'minmax(0, 1fr) minmax(0, 1fr) 120px';
+
+const StyledEmptyState = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+`;
 
 export const SettingsObjectNewTimelineRule = () => {
   const { t } = useLingui();
@@ -111,55 +117,62 @@ export const SettingsObjectNewTimelineRule = () => {
             title={t`Select a relation`}
             description={t`Events on the related record will write to the ${objectLabelSingular} timeline. A rule on a junction relation is shared by every object the junction reaches.`}
           />
-          <Table>
-            <TableRow
-              gridTemplateColumns={
-                NEW_TIMELINE_RULE_TABLE_GRID_TEMPLATE_COLUMNS
-              }
-            >
-              <TableHeader>{t`Object`}</TableHeader>
-              <TableHeader>{t`Relation`}</TableHeader>
-              <TableHeader></TableHeader>
-            </TableRow>
-            <TableBody>
-              {candidateRelations.map((candidate) => {
-                const Icon = getIcon(candidate.sourceObjectMetadataItem.icon);
+          {candidateRelations.length === 0 && (
+            <StyledEmptyState>
+              {t`Every relation that can carry a timeline rule already has one. Create a relation between ${objectLabelSingular} and another object to route its events here.`}
+            </StyledEmptyState>
+          )}
+          {candidateRelations.length > 0 && (
+            <Table>
+              <TableRow
+                gridTemplateColumns={
+                  NEW_TIMELINE_RULE_TABLE_GRID_TEMPLATE_COLUMNS
+                }
+              >
+                <TableHeader>{t`Object`}</TableHeader>
+                <TableHeader>{t`Relation`}</TableHeader>
+                <TableHeader></TableHeader>
+              </TableRow>
+              <TableBody>
+                {candidateRelations.map((candidate) => {
+                  const Icon = getIcon(candidate.sourceObjectMetadataItem.icon);
 
-                return (
-                  <TableRow
-                    key={candidate.relationFieldMetadataItem.id}
-                    gridTemplateColumns={
-                      NEW_TIMELINE_RULE_TABLE_GRID_TEMPLATE_COLUMNS
-                    }
-                  >
-                    <TableCell
-                      color={themeCssVariables.font.color.primary}
-                      gap={themeCssVariables.spacing[2]}
+                  return (
+                    <TableRow
+                      key={candidate.relationFieldMetadataItem.id}
+                      gridTemplateColumns={
+                        NEW_TIMELINE_RULE_TABLE_GRID_TEMPLATE_COLUMNS
+                      }
                     >
-                      <Icon
-                        style={{ minWidth: theme.icon.size.md }}
-                        size={theme.icon.size.md}
-                        stroke={theme.icon.stroke.sm}
-                      />
-                      {candidate.sourceObjectMetadataItem.labelPlural}
-                    </TableCell>
-                    <TableCell>
-                      {candidate.relationFieldMetadataItem.label}
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        title={t`Create rule`}
-                        size="small"
-                        variant="secondary"
-                        disabled={isCreating}
-                        onClick={() => handleCreate(candidate)}
-                      />
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
+                      <TableCell
+                        color={themeCssVariables.font.color.primary}
+                        gap={themeCssVariables.spacing[2]}
+                      >
+                        <Icon
+                          style={{ minWidth: theme.icon.size.md }}
+                          size={theme.icon.size.md}
+                          stroke={theme.icon.stroke.sm}
+                        />
+                        {candidate.sourceObjectMetadataItem.labelPlural}
+                      </TableCell>
+                      <TableCell>
+                        {candidate.relationFieldMetadataItem.label}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          title={t`Create rule`}
+                          size="small"
+                          variant="secondary"
+                          disabled={isCreating}
+                          onClick={() => handleCreate(candidate)}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          )}
         </Section>
       </SettingsPageContainer>
     </SettingsPageLayout>

@@ -95,11 +95,34 @@ const noteObjectMetadataItem = buildObjectMetadataItem({
   ] as unknown as EnrichedObjectMetadataItem['fields'],
 });
 
+const PROJECT_OBJECT_ID = 'project-object-id';
+const PROJECT_COMPANY_FIELD_ID = 'project-company-field-id';
+
+const projectObjectMetadataItem = buildObjectMetadataItem({
+  id: PROJECT_OBJECT_ID,
+  universalIdentifier: 'project-universal-identifier',
+  nameSingular: 'project',
+  labelPlural: 'Projects',
+  fields: [
+    {
+      id: PROJECT_COMPANY_FIELD_ID,
+      name: 'company',
+      label: 'Company',
+      type: FieldMetadataType.RELATION,
+      relation: {
+        type: RelationType.MANY_TO_ONE,
+        targetObjectMetadata: { id: COMPANY_OBJECT_ID },
+      },
+    },
+  ] as unknown as EnrichedObjectMetadataItem['fields'],
+});
+
 const objectMetadataItems = [
   companyObjectMetadataItem,
   personObjectMetadataItem,
   noteObjectMetadataItem,
   noteTargetObjectMetadataItem,
+  projectObjectMetadataItem,
 ];
 
 const noteTimelineActivityRule: TimelineActivityRule = {
@@ -171,6 +194,31 @@ describe('getSettingsTimelineRuleRows', () => {
     expect(rows).toHaveLength(0);
   });
 
+  it('should build a row for a many-to-one rule on the pointed-at object', () => {
+    const projectCompanyRule: TimelineActivityRule = {
+      __typename: 'TimelineActivityRule',
+      id: 'project-company-rule-id',
+      objectMetadataId: PROJECT_OBJECT_ID,
+      relationFieldMetadataId: PROJECT_COMPANY_FIELD_ID,
+      resolution: 'MATERIALIZED',
+      actions: ['linked', 'unlinked'],
+      triggerFieldMetadataIds: null,
+      isActive: true,
+      isStandard: false,
+      isOverridden: false,
+    };
+
+    const rows = getSettingsTimelineRuleRows({
+      timelineActivityRules: [projectCompanyRule],
+      objectMetadataItem: companyObjectMetadataItem,
+      objectMetadataItems,
+    });
+
+    expect(rows).toHaveLength(1);
+    expect(rows[0].sourceObjectMetadataItem.nameSingular).toBe('project');
+    expect(rows[0].viaFieldMetadataItem?.name).toBe('company');
+  });
+
   it('should add the non configurable participant rows on person only', () => {
     const messageObjectMetadataItem = buildObjectMetadataItem({
       id: 'message-object-id',
@@ -211,9 +259,21 @@ describe('getSettingsTimelineRuleCandidateRelations', () => {
       objectMetadataItems,
     });
 
+    expect(
+      candidates.map((candidate) => candidate.relationFieldMetadataItem.name),
+    ).toEqual(['noteTargets', 'company']);
+  });
+
+  it('should offer a many-to-one lookup pointing at the object', () => {
+    const candidates = getSettingsTimelineRuleCandidateRelations({
+      timelineActivityRules: [noteTimelineActivityRule],
+      objectMetadataItem: companyObjectMetadataItem,
+      objectMetadataItems,
+    });
+
     expect(candidates).toHaveLength(1);
-    expect(candidates[0].sourceObjectMetadataItem.nameSingular).toBe('note');
-    expect(candidates[0].relationFieldMetadataItem.name).toBe('noteTargets');
+    expect(candidates[0].sourceObjectMetadataItem.nameSingular).toBe('project');
+    expect(candidates[0].relationFieldMetadataItem.name).toBe('company');
   });
 
   it('should not offer a relation that already has a rule', () => {
@@ -223,6 +283,11 @@ describe('getSettingsTimelineRuleCandidateRelations', () => {
       objectMetadataItems,
     });
 
-    expect(candidates).toHaveLength(0);
+    expect(
+      candidates.some(
+        (candidate) =>
+          candidate.relationFieldMetadataItem.id === NOTE_TARGETS_FIELD_ID,
+      ),
+    ).toBe(false);
   });
 });

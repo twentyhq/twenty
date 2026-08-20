@@ -1,7 +1,10 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type TimelineActivityRule } from '@/settings/data-model/timeline-rules/hooks/useFindManyTimelineActivityRules';
-import { junctionRelationReachesObject } from '@/settings/data-model/timeline-rules/utils/junctionRelationReachesObject';
+import {
+  junctionRelationReachesObject,
+  manyToOneRelationReachesObject,
+} from '@/settings/data-model/timeline-rules/utils/junctionRelationReachesObject';
 import { isDefined } from 'twenty-shared/utils';
 
 export type SettingsTimelineRuleCandidateRelation = {
@@ -15,9 +18,9 @@ type GetSettingsTimelineRuleCandidateRelationsArgs = {
   objectMetadataItems: EnrichedObjectMetadataItem[];
 };
 
-// Junction relations whose target morph reaches this object and that no rule
-// walks yet. The write engine only fans out along junctions, so these are the
-// only relations a new emission rule can be created on.
+// Relations a new emission rule can be created on: junction relations whose
+// target morph reaches this object, and many-to-one lookups on other objects
+// pointing at it, when no rule walks them yet.
 export const getSettingsTimelineRuleCandidateRelations = ({
   timelineActivityRules,
   objectMetadataItem,
@@ -42,11 +45,17 @@ export const getSettingsTimelineRuleCandidateRelations = ({
       .filter(
         (field) =>
           !ruledRelationFieldMetadataIds.has(field.id) &&
-          junctionRelationReachesObject({
+          field.isActive !== false &&
+          field.isSystem !== true &&
+          (junctionRelationReachesObject({
             relationFieldMetadataItem: field,
             objectMetadataItem,
             objectMetadataItems,
-          }),
+          }) ||
+            manyToOneRelationReachesObject({
+              relationFieldMetadataItem: field,
+              objectMetadataItem,
+            })),
       )
       .map((relationFieldMetadataItem) => ({
         sourceObjectMetadataItem,
