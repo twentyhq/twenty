@@ -3,6 +3,8 @@ import { useCallback, useMemo } from 'react';
 import { useLinkedObjectsTitle } from '@/activities/timeline-activities/hooks/useLinkedObjectsTitle';
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { getTimelineActivityRecordGqlFields } from '@/activities/timeline-activities/utils/getTimelineActivityRecordGqlFields';
+import { type TimelineActivityScope } from '@/activities/timeline-activities/types/TimelineActivityScope';
+import { getTimelineActivityScopeFilter } from '@/activities/timeline-activities/utils/getTimelineActivityScopeFilter';
 import { getTimelineActivityTargetObjectMetadataList } from '@/activities/timeline-activities/utils/getTimelineActivityTargetObjectMetadataList';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
@@ -19,6 +21,7 @@ import { capitalize, isDefined } from 'twenty-shared/utils';
 
 export const useTimelineActivities = (
   targetableObject: ActivityTargetableObject,
+  scope: TimelineActivityScope = 'all',
 ) => {
   const targetableObjectFieldIdName = `target${capitalize(targetableObject.targetObjectNameSingular)}Id`;
 
@@ -27,8 +30,9 @@ export const useTimelineActivities = (
       [targetableObjectFieldIdName]: {
         eq: targetableObject.id,
       },
+      ...getTimelineActivityScopeFilter(scope),
     }),
-    [targetableObjectFieldIdName, targetableObject.id],
+    [targetableObjectFieldIdName, targetableObject.id, scope],
   );
 
   const { objectMetadataItem: timelineActivityMetadata } =
@@ -96,7 +100,7 @@ export const useTimelineActivities = (
   );
 
   useListenToEventsForQuery({
-    queryId: `timeline-activities-${targetableObject.targetObjectNameSingular}-${targetableObject.id}`,
+    queryId: `timeline-activities-${targetableObject.targetObjectNameSingular}-${targetableObject.id}-${scope}`,
     operationSignature,
     skip: !hasTimelineActivityField,
   });

@@ -1,9 +1,12 @@
 import { styled } from '@linaria/react';
+import { useState } from 'react';
 
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { EventList } from '@/activities/timeline-activities/components/EventList';
+import { TimelineScopeFilter } from '@/activities/timeline-activities/components/TimelineScopeFilter';
 import { useTimelineActivities } from '@/activities/timeline-activities/hooks/useTimelineActivities';
+import { type TimelineActivityScope } from '@/activities/timeline-activities/types/TimelineActivityScope';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { t } from '@lingui/core/macro';
@@ -47,12 +50,13 @@ const StyledSidePanelPlaceholderWrapper = styled.div`
 export const TimelineCard = () => {
   const targetRecord = useTargetRecord();
   const { isInSidePanel } = useLayoutRenderingContext();
+  const [scope, setScope] = useState<TimelineActivityScope>('all');
   const {
     timelineActivities,
     firstQueryLoading,
     loadingMore,
     fetchMoreRecords,
-  } = useTimelineActivities(targetRecord);
+  } = useTimelineActivities(targetRecord, scope);
 
   const isTimelineActivitiesEmpty = timelineActivities.length === 0;
 
@@ -60,7 +64,9 @@ export const TimelineCard = () => {
     return <SkeletonLoader withSubSections />;
   }
 
-  if (isTimelineActivitiesEmpty) {
+  // An unfiltered empty timeline has nothing to offer, but a filtered one has
+  // to keep the control on screen or the filter cannot be cleared.
+  if (isTimelineActivitiesEmpty && scope === 'all') {
     const placeholderContent = (
       <AnimatedPlaceholderEmptyContainer>
         <AnimatedPlaceholder type="emptyTimeline" />
@@ -86,15 +92,28 @@ export const TimelineCard = () => {
 
   return (
     <StyledMainContainer>
-      <EventList
-        targetableObject={targetRecord}
-        title={t`All`}
-        events={timelineActivities ?? []}
-      />
-      <CustomResolverFetchMoreLoader
-        loading={loadingMore}
-        onLastRowVisible={fetchMoreRecords}
-      />
+      <TimelineScopeFilter scope={scope} onChange={setScope} />
+      {isTimelineActivitiesEmpty ? (
+        <AnimatedPlaceholderEmptyTextContainer>
+          <AnimatedPlaceholderEmptySubTitle>
+            {scope === 'activity'
+              ? t`No linked activity on this record.`
+              : t`No field changes recorded on this record.`}
+          </AnimatedPlaceholderEmptySubTitle>
+        </AnimatedPlaceholderEmptyTextContainer>
+      ) : (
+        <>
+          <EventList
+            targetableObject={targetRecord}
+            title={t`All`}
+            events={timelineActivities ?? []}
+          />
+          <CustomResolverFetchMoreLoader
+            loading={loadingMore}
+            onLastRowVisible={fetchMoreRecords}
+          />
+        </>
+      )}
     </StyledMainContainer>
   );
 };
