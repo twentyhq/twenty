@@ -23,7 +23,6 @@ describe('CleanSuspendedWorkspacesJob', () => {
   };
   const workspaceService = {
     enqueueWorkspaceDeletionApplicationUninstall: jest.fn(),
-    enqueueWorkspaceSuspensionApplicationUninstall: jest.fn(),
   };
   const applicationUninstallService = {
     findWorkspaceIdsWithPendingUninstallHooks: jest.fn(),
@@ -80,7 +79,7 @@ describe('CleanSuspendedWorkspacesJob', () => {
     await createJob().handle();
 
     expect(workspaceRepository.find).toHaveBeenNthCalledWith(1, {
-      select: ['id', 'deletedAt', 'suspendedAt'],
+      select: ['id'],
       where: {
         activationStatus: 'SUSPENDED',
       },
@@ -93,19 +92,12 @@ describe('CleanSuspendedWorkspacesJob', () => {
     });
   });
 
-  it('should re-enqueue lifecycle hooks when uninstall hooks are still pending', async () => {
-    const workspaceSuspendedAt = new Date('2026-08-18T11:00:00.000Z');
+  it('should re-enqueue deletion hooks when uninstall hooks are still pending', async () => {
     const workspaceDeletedAt = new Date('2026-08-18T12:00:00.000Z');
 
     workspaceRepository.find.mockReset();
     workspaceRepository.find
-      .mockResolvedValueOnce([
-        {
-          id: 'suspended-workspace-id',
-          deletedAt: null,
-          suspendedAt: workspaceSuspendedAt,
-        },
-      ])
+      .mockResolvedValueOnce([{ id: 'suspended-workspace-id' }])
       .mockResolvedValueOnce([
         { id: 'deleted-workspace-id', deletedAt: workspaceDeletedAt },
       ]);
@@ -128,20 +120,10 @@ describe('CleanSuspendedWorkspacesJob', () => {
         workspaceId: 'deleted-workspace-id',
         uninstallRequestedAt: workspaceDeletedAt,
       },
-      {
-        workspaceId: 'suspended-workspace-id',
-        uninstallRequestedAt: workspaceSuspendedAt,
-      },
     ]);
     expect(
       workspaceService.enqueueWorkspaceDeletionApplicationUninstall,
     ).toHaveBeenCalledWith('deleted-workspace-id');
-    expect(
-      workspaceService.enqueueWorkspaceSuspensionApplicationUninstall,
-    ).toHaveBeenCalledWith({
-      workspaceId: 'suspended-workspace-id',
-      workspaceSuspensionUninstallRequestedAt: workspaceSuspendedAt,
-    });
   });
 
   it('should not re-enqueue workspaces whose uninstall hooks already completed', async () => {
@@ -150,13 +132,7 @@ describe('CleanSuspendedWorkspacesJob', () => {
     );
     workspaceRepository.find.mockReset();
     workspaceRepository.find
-      .mockResolvedValueOnce([
-        {
-          id: 'suspended-workspace-id',
-          deletedAt: null,
-          suspendedAt: new Date('2026-08-18T11:00:00.000Z'),
-        },
-      ])
+      .mockResolvedValueOnce([{ id: 'suspended-workspace-id' }])
       .mockResolvedValueOnce([
         {
           id: 'deleted-workspace-id',
@@ -174,9 +150,6 @@ describe('CleanSuspendedWorkspacesJob', () => {
 
     expect(
       workspaceService.enqueueWorkspaceDeletionApplicationUninstall,
-    ).not.toHaveBeenCalled();
-    expect(
-      workspaceService.enqueueWorkspaceSuspensionApplicationUninstall,
     ).not.toHaveBeenCalled();
   });
 });

@@ -42,7 +42,7 @@ export class CleanSuspendedWorkspacesJob {
         CLEAN_SUSPENDED_WORKSPACES_LOCK_NAME,
         async () => {
           const suspendedWorkspaces = await this.workspaceRepository.find({
-            select: ['id', 'deletedAt', 'suspendedAt'],
+            select: ['id'],
             where: {
               activationStatus: WorkspaceActivationStatus.SUSPENDED,
             },
@@ -65,24 +65,9 @@ export class CleanSuspendedWorkspacesJob {
                   ]
                 : [],
             );
-          const workspaceSuspensionUninstallRequests =
-            suspendedWorkspaces.flatMap((workspace) =>
-              !isDefined(workspace.deletedAt) &&
-              isDefined(workspace.suspendedAt)
-                ? [
-                    {
-                      workspaceId: workspace.id,
-                      uninstallRequestedAt: workspace.suspendedAt,
-                    },
-                  ]
-                : [],
-            );
           const workspaceIdsWithPendingUninstallHooks =
             await this.applicationUninstallService.findWorkspaceIdsWithPendingUninstallHooks(
-              [
-                ...workspaceDeletionUninstallRequests,
-                ...workspaceSuspensionUninstallRequests,
-              ],
+              workspaceDeletionUninstallRequests,
             );
 
           for (const request of workspaceDeletionUninstallRequests) {
@@ -91,20 +76,6 @@ export class CleanSuspendedWorkspacesJob {
             ) {
               await this.workspaceService.enqueueWorkspaceDeletionApplicationUninstall(
                 request.workspaceId,
-              );
-            }
-          }
-
-          for (const request of workspaceSuspensionUninstallRequests) {
-            if (
-              workspaceIdsWithPendingUninstallHooks.has(request.workspaceId)
-            ) {
-              await this.workspaceService.enqueueWorkspaceSuspensionApplicationUninstall(
-                {
-                  workspaceId: request.workspaceId,
-                  workspaceSuspensionUninstallRequestedAt:
-                    request.uninstallRequestedAt,
-                },
               );
             }
           }

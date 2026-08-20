@@ -57,10 +57,6 @@ import {
   WorkspaceDeletionApplicationUninstallJob,
   type WorkspaceDeletionApplicationUninstallJobData,
 } from 'src/engine/core-modules/workspace/jobs/workspace-deletion-application-uninstall.job';
-import {
-  WorkspaceSuspensionApplicationUninstallJob,
-  type WorkspaceSuspensionApplicationUninstallJobData,
-} from 'src/engine/core-modules/workspace/jobs/workspace-suspension-application-uninstall.job';
 import { getWorkspaceApplicationUninstallLockName } from 'src/engine/core-modules/workspace/utils/get-workspace-application-uninstall-lock-name.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
@@ -163,7 +159,9 @@ export class WorkspaceService {
     private readonly fileCorePictureService: FileCorePictureService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
-    private readonly messageQueueService: MessageQueueService,
+    private readonly deleteCascadeMessageQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.logicFunctionQueue)
+    private readonly logicFunctionMessageQueueService: MessageQueueService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     private readonly coreEntityCacheService: CoreEntityCacheService,
@@ -528,10 +526,6 @@ export class WorkspaceService {
 
     if (hasBeenSuspended) {
       await this.coreEntityCacheService.invalidate('workspaceEntity', id);
-      await this.enqueueWorkspaceSuspensionApplicationUninstall({
-        workspaceId: id,
-        workspaceSuspensionUninstallRequestedAt: workspaceSuspendedAt,
-      });
     }
 
     return hasBeenSuspended;
@@ -662,7 +656,7 @@ export class WorkspaceService {
             workspaceId: workspace.id,
           });
 
-          await this.messageQueueService.add<FileWorkspaceFolderDeletionJobData>(
+          await this.deleteCascadeMessageQueueService.add<FileWorkspaceFolderDeletionJobData>(
             FileWorkspaceFolderDeletionJob.name,
             { workspaceId: workspace.id },
           );
@@ -671,7 +665,7 @@ export class WorkspaceService {
             .getRepository(EmailingDomainEntity)
             .find({ where: { workspaceId: workspace.id } });
 
-          await this.messageQueueService.add<EmailingDomainWorkspaceCleanupJobData>(
+          await this.deleteCascadeMessageQueueService.add<EmailingDomainWorkspaceCleanupJobData>(
             EmailingDomainWorkspaceCleanupJob.name,
             {
               workspaceId: workspace.id,
@@ -713,33 +707,11 @@ export class WorkspaceService {
   async enqueueWorkspaceDeletionApplicationUninstall(
     workspaceId: string,
   ): Promise<void> {
-    await this.messageQueueService.add<WorkspaceDeletionApplicationUninstallJobData>(
+    await this.logicFunctionMessageQueueService.add<WorkspaceDeletionApplicationUninstallJobData>(
       WorkspaceDeletionApplicationUninstallJob.name,
       { workspaceId },
       {
         id: `${WorkspaceDeletionApplicationUninstallJob.name}-${workspaceId}`,
-        retryLimit: WORKSPACE_APPLICATION_UNINSTALL_RETRY_LIMIT,
-        backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
-      },
-    );
-  }
-
-  async enqueueWorkspaceSuspensionApplicationUninstall({
-    workspaceId,
-    workspaceSuspensionUninstallRequestedAt,
-  }: {
-    workspaceId: string;
-    workspaceSuspensionUninstallRequestedAt: Date;
-  }): Promise<void> {
-    await this.messageQueueService.add<WorkspaceSuspensionApplicationUninstallJobData>(
-      WorkspaceSuspensionApplicationUninstallJob.name,
-      {
-        workspaceId,
-        workspaceSuspensionUninstallRequestedAt:
-          workspaceSuspensionUninstallRequestedAt.toISOString(),
-      },
-      {
-        id: `${WorkspaceSuspensionApplicationUninstallJob.name}-${workspaceId}-${workspaceSuspensionUninstallRequestedAt.toISOString()}`,
         retryLimit: WORKSPACE_APPLICATION_UNINSTALL_RETRY_LIMIT,
         backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
       },

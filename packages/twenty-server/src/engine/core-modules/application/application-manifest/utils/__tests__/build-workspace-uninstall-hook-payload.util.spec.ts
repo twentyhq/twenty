@@ -8,28 +8,11 @@ describe('buildWorkspaceUninstallHookPayload', () => {
         applicationUniversalIdentifier: 'application-universal-identifier',
         workspaceId: 'workspace-id',
         uninstallRequestedAt: new Date('2026-08-18T10:00:00.000Z'),
-        workspaceUninstallHookRequestType: 'workspace-deletion',
       }),
     ).toEqual({
       version: '1.0.0',
       idempotencyKey:
         'workspace-deletion:workspace-id:2026-08-18T10:00:00.000Z:application-universal-identifier',
-    });
-  });
-
-  it('should build a suspension-scoped idempotency key when suspending a workspace', () => {
-    expect(
-      buildWorkspaceUninstallHookPayload({
-        applicationVersion: null,
-        applicationUniversalIdentifier: 'application-universal-identifier',
-        workspaceId: 'workspace-id',
-        uninstallRequestedAt: new Date('2026-08-18T11:00:00.000Z'),
-        workspaceUninstallHookRequestType: 'workspace-suspension',
-      }),
-    ).toEqual({
-      version: undefined,
-      idempotencyKey:
-        'workspace-suspension:workspace-id:2026-08-18T11:00:00.000Z:application-universal-identifier',
     });
   });
 });

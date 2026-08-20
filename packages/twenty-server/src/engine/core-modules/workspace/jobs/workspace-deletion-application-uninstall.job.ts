@@ -19,7 +19,7 @@ export type WorkspaceDeletionApplicationUninstallJobData = {
   workspaceId: string;
 };
 
-@Processor(MessageQueue.deleteCascadeQueue)
+@Processor(MessageQueue.logicFunctionQueue)
 export class WorkspaceDeletionApplicationUninstallJob {
   constructor(
     @InjectRepository(WorkspaceEntity)

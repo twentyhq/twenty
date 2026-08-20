@@ -89,19 +89,39 @@ describe('ApplicationUninstallService', () => {
     expect(logicFunctionExecutorService.execute).toHaveBeenCalledTimes(2);
   });
 
-  it('should reuse the idempotency key when retrying the same workspace request', async () => {
+  it('should reuse the idempotency key when retrying a failed workspace deletion request', async () => {
     const workspaceDeletedAt = new Date('2026-08-18T10:00:00.000Z');
 
     applicationService.findManyApplications.mockResolvedValue([
       createApplication({ id: 'retried' }),
     ]);
+    logicFunctionExecutorService.execute
+      .mockResolvedValueOnce({
+        data: null,
+        duration: 1,
+        logs: '',
+        status: LogicFunctionExecutionStatus.ERROR,
+        error: {
+          errorType: 'Error',
+          errorMessage: 'cleanup failed',
+          stackTrace: '',
+        },
+      })
+      .mockResolvedValueOnce({
+        data: null,
+        duration: 1,
+        logs: '',
+        status: LogicFunctionExecutionStatus.SUCCESS,
+      });
 
     const applicationUninstallService = createService();
 
-    await applicationUninstallService.runUninstallHooksForWorkspaceDeletion({
-      workspaceId: 'workspace-id',
-      workspaceDeletedAt,
-    });
+    await expect(
+      applicationUninstallService.runUninstallHooksForWorkspaceDeletion({
+        workspaceId: 'workspace-id',
+        workspaceDeletedAt,
+      }),
+    ).rejects.toThrow('cleanup failed');
     await applicationUninstallService.runUninstallHooksForWorkspaceDeletion({
       workspaceId: 'workspace-id',
       workspaceDeletedAt,
@@ -117,6 +137,7 @@ describe('ApplicationUninstallService', () => {
         }),
       }),
     );
+    expect(applicationRepository.update).toHaveBeenCalledTimes(1);
     expect(logicFunctionExecutorService.execute).toHaveBeenNthCalledWith(
       2,
       expect.objectContaining({
@@ -213,28 +234,5 @@ describe('ApplicationUninstallService', () => {
       ]),
     ).resolves.toEqual(new Set(['pending-workspace-id']));
     expect(applicationRepository.find).toHaveBeenCalledTimes(1);
-  });
-
-  it('should omit deletion credentials when handling workspace suspension', async () => {
-    const workspaceSuspendedAt = new Date('2026-08-18T10:00:00.000Z');
-
-    applicationService.findManyApplications.mockResolvedValue([
-      createApplication({ id: 'suspended' }),
-    ]);
-
-    await createService().runUninstallHooksForWorkspaceSuspension({
-      workspaceId: 'workspace-id',
-      workspaceSuspendedAt,
-    });
-
-    expect(logicFunctionExecutorService.execute).toHaveBeenCalledWith({
-      logicFunctionId: 'logic-function-suspended',
-      workspaceId: 'workspace-id',
-      payload: {
-        version: '1.0.0',
-        idempotencyKey:
-          'workspace-suspension:workspace-id:2026-08-18T10:00:00.000Z:application-suspended',
-      },
-    });
   });
 });
