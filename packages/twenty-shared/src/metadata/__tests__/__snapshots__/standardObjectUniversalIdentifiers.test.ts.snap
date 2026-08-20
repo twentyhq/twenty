@@ -2664,6 +2664,12 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "dashboardIdIndex": {
         "universalIdentifier": "e8821da9-728d-470a-bf5b-5a981fff7880",
       },
+      "messageCampaignIdIndex": {
+        "universalIdentifier": "a6ee9f9a-5ac9-40b6-8046-1ebaa6bb82ff",
+      },
+      "messageListIdIndex": {
+        "universalIdentifier": "78615a19-fb94-4a4e-bc5b-b43754e17cea",
+      },
       "noteIdIndex": {
         "universalIdentifier": "995db1d8-0d3e-40f7-b0eb-5e6897bc9966",
       },
