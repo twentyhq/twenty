@@ -630,7 +630,6 @@ const handler = async () => {
   if (!(await invokingUserHasPermissionFlag(PermissionFlagType.WORKSPACE_MEMBERS))) {
     throw new Error('Only admins can approve links');
   }
-  // proceed with the privileged operation
 };
 ```
 
