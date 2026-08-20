@@ -392,6 +392,8 @@ export class LogicFunctionExecutorService {
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
       select: { subdomain: true },
+      // Uninstall hooks execute against soft-deleted workspaces
+      withDeleted: true,
     });
 
     if (!isDefined(workspace)) {
