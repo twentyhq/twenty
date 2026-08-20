@@ -1,7 +1,8 @@
 import { PageLayoutVerticalList } from '@/page-layout/components/PageLayoutVerticalList';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { WorkflowDiagramAllowPageScrollContext } from '@/workflow/workflow-diagram/contexts/WorkflowDiagramAllowPageScrollContext';
 import { render, screen } from '@testing-library/react';
-import { type ReactNode } from 'react';
+import { type ReactNode, useContext } from 'react';
 import {
   PageLayoutTabLayoutMode,
   type WidgetConfigurationType,
@@ -28,9 +29,16 @@ jest.mock('@/page-layout/widgets/hooks/useIsInPinnedTab', () => ({
 }));
 
 jest.mock('@/page-layout/widgets/components/WidgetRenderer', () => ({
-  WidgetRenderer: ({ widget }: { widget: PageLayoutWidget }) => (
-    <div data-testid={widget.id} />
-  ),
+  WidgetRenderer: ({ widget }: { widget: PageLayoutWidget }) => {
+    const allowPageScroll = useContext(WorkflowDiagramAllowPageScrollContext);
+
+    return (
+      <div
+        data-allow-page-scroll={String(allowPageScroll)}
+        data-testid={widget.id}
+      />
+    );
+  },
 }));
 
 jest.mock(
@@ -282,6 +290,54 @@ describe('PageLayoutVerticalList', () => {
 
     expect(screen.getByTestId('front-component-sortable-cell')).toHaveAttribute(
       'data-fill',
+      'false',
+    );
+  });
+
+  it('keeps the wheel on a workflow canvas that is alone in its tab', () => {
+    render(
+      <PageLayoutVerticalList
+        isInEditMode={false}
+        widgets={[makeWidget('workflow', WidgetType.WORKFLOW)]}
+      />,
+    );
+
+    expect(screen.getByTestId('workflow')).toHaveAttribute(
+      'data-allow-page-scroll',
+      'false',
+    );
+  });
+
+  it('lets the page scroll over a workflow canvas that shares its tab', () => {
+    render(
+      <PageLayoutVerticalList
+        isInEditMode={false}
+        widgets={[
+          makeWidget('fields', WidgetType.FIELDS),
+          makeWidget('workflow', WidgetType.WORKFLOW),
+        ]}
+      />,
+    );
+
+    expect(screen.getByTestId('workflow')).toHaveAttribute(
+      'data-allow-page-scroll',
+      'true',
+    );
+  });
+
+  it('never allows page scroll for a fit-content widget', () => {
+    render(
+      <PageLayoutVerticalList
+        isInEditMode={false}
+        widgets={[
+          makeWidget('fields', WidgetType.FIELDS),
+          makeWidget('workflow', WidgetType.WORKFLOW),
+        ]}
+      />,
+    );
+
+    expect(screen.getByTestId('fields')).toHaveAttribute(
+      'data-allow-page-scroll',
       'false',
     );
   });

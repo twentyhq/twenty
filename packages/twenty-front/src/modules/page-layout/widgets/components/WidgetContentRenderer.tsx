@@ -20,17 +20,14 @@ import { WorkflowRunWidget } from '@/page-layout/widgets/workflow/components/Wor
 import { WorkflowVersionWidget } from '@/page-layout/widgets/workflow/components/WorkflowVersionWidget';
 import { RecordTableWidgetRenderer } from '@/page-layout/widgets/record-table/components/RecordTableWidgetRenderer';
 import { WorkflowWidget } from '@/page-layout/widgets/workflow/components/WorkflowWidget';
-import { WorkflowDiagramAllowPageScrollContext } from '@/workflow/workflow-diagram/contexts/WorkflowDiagramAllowPageScrollContext';
 import { WidgetType } from '~/generated-metadata/graphql';
 
 type WidgetContentRendererProps = {
   widget: PageLayoutWidget;
-  fillsViewport: boolean;
 };
 
 export const WidgetContentRenderer = ({
   widget,
-  fillsViewport,
 }: WidgetContentRendererProps) => {
   switch (widget.type) {
     case WidgetType.GRAPH:
@@ -67,25 +64,13 @@ export const WidgetContentRenderer = ({
       return <CalendarWidget widget={widget} />;
 
     case WidgetType.WORKFLOW:
-      return (
-        <WorkflowDiagramAllowPageScrollContext.Provider value={fillsViewport}>
-          <WorkflowWidget />
-        </WorkflowDiagramAllowPageScrollContext.Provider>
-      );
+      return <WorkflowWidget />;
 
     case WidgetType.WORKFLOW_VERSION:
-      return (
-        <WorkflowDiagramAllowPageScrollContext.Provider value={fillsViewport}>
-          <WorkflowVersionWidget />
-        </WorkflowDiagramAllowPageScrollContext.Provider>
-      );
+      return <WorkflowVersionWidget />;
 
     case WidgetType.WORKFLOW_RUN:
-      return (
-        <WorkflowDiagramAllowPageScrollContext.Provider value={fillsViewport}>
-          <WorkflowRunWidget />
-        </WorkflowDiagramAllowPageScrollContext.Provider>
-      );
+      return <WorkflowRunWidget />;
 
     case WidgetType.STANDALONE_RICH_TEXT:
       return <StandaloneRichTextWidgetRenderer widget={widget} />;

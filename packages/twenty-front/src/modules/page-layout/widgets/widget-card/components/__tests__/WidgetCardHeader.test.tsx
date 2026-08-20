@@ -48,9 +48,16 @@ describe('WidgetCardHeader', () => {
     const grip = container.querySelector('.drag-handle');
 
     expect(grip).not.toBeNull();
-    fireEvent.mouseDown(grip as Element, { clientX: 10, clientY: 10 });
-    fireEvent.mouseMove(grip as Element, { clientX: 30, clientY: 10 });
-    fireEvent.mouseUp(grip as Element, { clientX: 30, clientY: 10 });
+    // jsdom has no PointerEvent, so fireEvent.pointerDown drops the
+    // coordinates a real browser puts on it.
+    fireEvent(
+      grip as Element,
+      new MouseEvent('pointerdown', {
+        bubbles: true,
+        clientX: 10,
+        clientY: 10,
+      }),
+    );
     fireEvent.click(grip as Element, { clientX: 30, clientY: 10 });
 
     expect(onClick).not.toHaveBeenCalled();

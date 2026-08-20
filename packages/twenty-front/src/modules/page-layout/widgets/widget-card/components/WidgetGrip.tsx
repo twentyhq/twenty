@@ -39,12 +39,14 @@ type WidgetGripProps = {
 
 export const WidgetGrip = ({ className }: WidgetGripProps) => {
   const { theme } = useContext(ThemeContext);
+  // Only pointerdown is tracked: the compatibility mousedown that touch fires
+  // afterwards reports the release point, which would hide every drag.
   const [pointerDownPosition, setPointerDownPosition] = useState<{
     x: number;
     y: number;
   } | null>(null);
 
-  const handlePressStart = (event: ReactMouseEvent | ReactPointerEvent) => {
+  const handlePointerDown = (event: ReactPointerEvent) => {
     setPointerDownPosition({
       x: event.clientX,
       y: event.clientY,
@@ -69,8 +71,7 @@ export const WidgetGrip = ({ className }: WidgetGripProps) => {
     <StyledGripContainer
       layout
       className={className}
-      onPointerDown={handlePressStart}
-      onMouseDown={handlePressStart}
+      onPointerDown={handlePointerDown}
       onClick={handleClick}
       initial={{ width: 0, opacity: 0 }}
       animate={{ width: 20, opacity: 1 }}

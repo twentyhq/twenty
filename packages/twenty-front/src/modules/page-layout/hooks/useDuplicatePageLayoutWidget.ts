@@ -135,16 +135,16 @@ export const useDuplicatePageLayoutWidget = (
       setPageLayoutEditingWidgetId(newWidgetId);
 
       requestAnimationFrame(() => {
-        const widgetElement = document.querySelector(
-          `[data-widget-id="${newWidgetId}"]`,
-        );
-
-        if (isDefined(widgetElement)) {
-          widgetElement.scrollIntoView({
-            behavior: 'smooth',
-            block: 'nearest',
+        // The same page layout can be mounted in the main view and a side panel
+        // at once, so every render of the new widget is brought into view.
+        document
+          .querySelectorAll(`[data-widget-id="${newWidgetId}"]`)
+          .forEach((widgetElement) => {
+            widgetElement.scrollIntoView({
+              behavior: 'smooth',
+              block: 'nearest',
+            });
           });
-        }
       });
 
       return newWidgetId;

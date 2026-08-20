@@ -10,6 +10,7 @@ import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
 import { isViewportFillingWidgetType } from '@/page-layout/widgets/utils/isViewportFillingWidgetType';
 import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
 import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
+import { WorkflowDiagramAllowPageScrollContext } from '@/workflow/workflow-diagram/contexts/WorkflowDiagramAllowPageScrollContext';
 import { type Draggable } from '@dnd-kit/abstract';
 import { pointerIntersection } from '@dnd-kit/collision';
 import { useDroppable } from '@dnd-kit/react';
@@ -126,6 +127,11 @@ export const PageLayoutVerticalList = ({
     !isInEditMode &&
     !isInPinnedTab;
 
+  // A viewport-filling slot is exactly one viewport tall, so the list only
+  // overflows when something else shares it. Widgets that capture the wheel
+  // (workflow canvases) must keep it when there is no page scroll to reach.
+  const hasPageScroll = isInEditMode || widgets.length > 1;
+
   const endDropData: PageLayoutWidgetListDropData = {
     type: 'widget-list',
     tabId,
@@ -200,7 +206,11 @@ export const PageLayoutVerticalList = ({
               orientation="horizontal"
               fill={fillsViewport}
             >
-              <WidgetRenderer widget={widget} />
+              <WorkflowDiagramAllowPageScrollContext.Provider
+                value={fillsViewport && hasPageScroll}
+              >
+                <WidgetRenderer widget={widget} />
+              </WorkflowDiagramAllowPageScrollContext.Provider>
             </DragDropItemSortableCell>
           </StyledWidgetSlot>
         );

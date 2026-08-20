@@ -11,12 +11,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 jest.mock('@/page-layout/widgets/components/WidgetContentRenderer', () => ({
-  WidgetContentRenderer: ({ fillsViewport }: { fillsViewport: boolean }) => (
-    <div
-      data-fills-viewport={String(fillsViewport)}
-      data-testid="widget-content"
-    />
-  ),
+  WidgetContentRenderer: () => <div data-testid="widget-content" />,
 }));
 
 const mockWidgetCardContent = jest.fn();
@@ -101,13 +96,10 @@ describe('WidgetCardShell layout behavior', () => {
     mockWidgetCardContent.mockClear();
   });
 
-  it('forwards intrinsic FILL_VIEWPORT sizing for Timeline', () => {
+  it('renders the widget content', () => {
     renderWidgetCardShell({ widgetType: WidgetType.TIMELINE });
 
-    expect(screen.getByTestId('widget-content')).toHaveAttribute(
-      'data-fills-viewport',
-      'true',
-    );
+    expect(screen.getByTestId('widget-content')).toBeInTheDocument();
   });
 
   it('keeps the iframe fixed-height treatment', () => {
