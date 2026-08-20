@@ -205,8 +205,6 @@ const innerAppDevOnce = async (
 
   const translations = await compileApplicationTranslations(appPath);
 
-  // Compiled here too, so a developer can see their translations applied
-  // without a full build and publish.
   const manifest: Manifest = {
     ...manifestUpdateChecksums({
       manifest: manifestResult.manifest,

@@ -27,12 +27,9 @@ export class ApplicationTranslationSyncService {
     applicationRegistrationId: string;
     translations: TranslationsManifest | undefined;
   }): Promise<void> {
-    // A manifest without a translations key carries no information about
-    // translations -- only one built by a toolchain that compiles them does.
-    // Treating that absence as "no locales" would let a sync from any other
-    // path (a dev sync, an older CLI) delete the locales an app published,
-    // for every workspace that installed it. An explicit empty object still
-    // means "this app has no translations" and prunes.
+    // Absence says nothing about translations, so it must not prune: this
+    // table is cross-workspace, and a sync from a toolchain that does not
+    // compile them would drop the locales an app published, everywhere.
     if (!isDefined(translations)) {
       return;
     }

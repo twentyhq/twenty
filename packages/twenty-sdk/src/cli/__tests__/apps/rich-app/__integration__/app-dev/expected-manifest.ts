@@ -59,8 +59,6 @@ export const EXPECTED_MANIFEST: Manifest = {
     },
   ],
   skills: [],
-  // An app with no locale files still states that it has none, so a sync
-  // prunes translations its author removed.
   translations: {},
   agents: [],
   application: {

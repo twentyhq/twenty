@@ -42,8 +42,6 @@ describe('computeApplicationTranslationSyncPlan', () => {
     ]);
   });
 
-  // An author removing every locale file compiles to {}, which has to reach
-  // the stored rows -- otherwise translations they deleted keep being served.
   it('prunes every locale when the manifest declares none', () => {
     expect(
       computeApplicationTranslationSyncPlan({

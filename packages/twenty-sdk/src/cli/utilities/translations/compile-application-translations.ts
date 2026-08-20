@@ -19,9 +19,6 @@ export const compileApplicationTranslations = async (
 ): Promise<TranslationsManifest> => {
   const localesDir = path.join(appPath, LOCALES_DIR);
 
-  // An empty result is a statement, not a missing one: it tells the server
-  // this app ships no translations, which is what lets it prune locales the
-  // author removed. Only a caller that never compiles omits the key.
   if (!(await pathExists(localesDir))) {
     return {};
   }

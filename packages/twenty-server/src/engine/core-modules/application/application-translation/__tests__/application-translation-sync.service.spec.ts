@@ -7,9 +7,6 @@ import { ApplicationTranslationEntity } from 'src/engine/core-modules/applicatio
 
 const APPLICATION_REGISTRATION_ID = '20202020-0000-0000-0000-000000000001';
 
-// What the plan says to do is covered by the util spec; what matters here is
-// the one decision the service owns: a manifest that says nothing about
-// translations must not reach the stored rows at all.
 describe('ApplicationTranslationSyncService', () => {
   let service: ApplicationTranslationSyncService;
 

@@ -70,8 +70,6 @@ export class SyncApplicationOrchestratorStep {
 
     const events: OrchestratorStateStepEvent[] = [];
 
-    // Every sync states its translations, so the server can prune the locales
-    // an author removed instead of serving them forever.
     const manifest = {
       ...manifestUpdateChecksums({
         manifest: input.manifest,
