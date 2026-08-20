@@ -1,3 +1,5 @@
+import { useRef } from 'react';
+
 import { useQuery } from '@apollo/client/react';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -40,6 +42,8 @@ export const useCoreWorkflows = () => {
     ? CoreWorkflowOrderByDirection.ASC
     : CoreWorkflowOrderByDirection.DESC;
 
+  const isFetchingMoreRef = useRef(false);
+
   const { data, loading, error, fetchMore } = useQuery(
     GetCoreWorkflowsDocument,
     {
@@ -56,9 +60,14 @@ export const useCoreWorkflows = () => {
   const connection = data?.coreWorkflows;
 
   const fetchNextPage = async () => {
-    if (connection?.pageInfo.hasNextPage !== true) {
+    if (
+      connection?.pageInfo.hasNextPage !== true ||
+      isFetchingMoreRef.current
+    ) {
       return;
     }
+
+    isFetchingMoreRef.current = true;
 
     await fetchMore({
       variables: { after: connection.pageInfo.endCursor },
@@ -72,6 +81,8 @@ export const useCoreWorkflows = () => {
           ],
         },
       }),
+    }).finally(() => {
+      isFetchingMoreRef.current = false;
     });
   };
 

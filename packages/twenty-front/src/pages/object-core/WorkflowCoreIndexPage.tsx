@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import { styled } from '@linaria/react';
+import { useInView } from 'react-intersection-observer';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
@@ -22,6 +24,10 @@ const StyledTableContainer = styled.div`
   width: 100%;
 `;
 
+const StyledFetchMoreSentinel = styled.div`
+  height: 1px;
+`;
+
 const getCoreWorkflowLink = (workflow: CoreWorkflow) =>
   isDefined(workflow.workspaceWorkflowId)
     ? getAppPath(AppPath.RecordShowPage, {
@@ -35,7 +41,16 @@ export const WorkflowCoreIndexPage = () => {
     objectNameSingular: CoreObjectNameSingular.Workflow,
   });
 
-  const { coreWorkflows } = useCoreWorkflows();
+  const { coreWorkflows, hasNextPage, loading, fetchNextPage } =
+    useCoreWorkflows();
+
+  const { ref: fetchMoreRef, inView } = useInView();
+
+  useEffect(() => {
+    if (inView && hasNextPage && !loading) {
+      void fetchNextPage();
+    }
+  }, [inView, hasNextPage, loading, fetchNextPage]);
 
   return (
     <>
@@ -59,6 +74,7 @@ export const WorkflowCoreIndexPage = () => {
             getItemLink={getCoreWorkflowLink}
             initialSort={CORE_WORKFLOWS_INITIAL_SORT}
           />
+          {hasNextPage && <StyledFetchMoreSentinel ref={fetchMoreRef} />}
         </StyledTableContainer>
       </PageCardLayout>
     </>

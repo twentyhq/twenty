@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import { CoreWorkflowDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow.dto';
 
@@ -28,6 +28,6 @@ export class CoreWorkflowConnectionDTO {
   @Field(() => CoreWorkflowPageInfoDTO)
   pageInfo: CoreWorkflowPageInfoDTO;
 
-  @Field(() => Number)
+  @Field(() => Int)
   totalCount: number;
 }

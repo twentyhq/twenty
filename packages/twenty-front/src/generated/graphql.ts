@@ -52,7 +52,7 @@ export type CoreWorkflowConnection = {
   __typename?: 'CoreWorkflowConnection';
   edges: Array<CoreWorkflowEdge>;
   pageInfo: CoreWorkflowPageInfo;
-  totalCount: Scalars['Float']['output'];
+  totalCount: Scalars['Int']['output'];
 };
 
 export type CoreWorkflowDto = {

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import {
@@ -19,7 +20,7 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 
 type CoreWorkflowRow = {
   id: string;
-  sortValue: string;
+  cursorSortValue: string | null;
   name: string | null;
   applicationId: string | null;
   workspaceWorkflowId: string | null;
@@ -30,14 +31,29 @@ type CoreWorkflowRow = {
 };
 
 type CoreWorkflowCursor = {
-  sortValue: string;
+  sortValue: string | null;
   id: string;
 };
 
-// nulls are coalesced away so the keyset comparison never meets a NULL
-const SORT_EXPRESSION_BY_FIELD: Record<CoreWorkflowOrderByField, string> = {
-  [CoreWorkflowOrderByField.NAME]: `coalesce(c.name, '')`,
-  [CoreWorkflowOrderByField.UPDATED_AT]: `to_char(c."updatedAt" at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US')`,
+// sorting and the keyset comparison stay on the raw columns so a btree index
+// can serve them; only the cursor value is rendered to text
+const SORT_COLUMN_BY_FIELD: Record<
+  CoreWorkflowOrderByField,
+  { column: string; cursorExpression: string; nullable: boolean; cast: string }
+> = {
+  [CoreWorkflowOrderByField.NAME]: {
+    column: 'c.name',
+    cursorExpression: 'c.name',
+    nullable: true,
+    cast: '',
+  },
+  [CoreWorkflowOrderByField.UPDATED_AT]: {
+    column: 'c."updatedAt"',
+    // microsecond-precise text so the cursor round-trips exactly
+    cursorExpression: `to_char(c."updatedAt" at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"')`,
+    nullable: false,
+    cast: '::timestamptz',
+  },
 };
 
 @Injectable()
@@ -52,26 +68,39 @@ export class CoreWorkflowListService {
     { first, after, orderBy, orderByDirection }: CoreWorkflowsArgs,
   ): Promise<CoreWorkflowConnectionDTO> {
     const schemaName = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
-    const sortExpression = SORT_EXPRESSION_BY_FIELD[orderBy];
-    const comparator =
-      orderByDirection === CoreWorkflowOrderByDirection.ASC ? '>' : '<';
-    const direction =
-      orderByDirection === CoreWorkflowOrderByDirection.ASC ? 'ASC' : 'DESC';
+    const { column, cursorExpression, nullable, cast } =
+      SORT_COLUMN_BY_FIELD[orderBy];
+    const isAscending = orderByDirection === CoreWorkflowOrderByDirection.ASC;
+    const comparator = isAscending ? '>' : '<';
+    const direction = isAscending ? 'ASC' : 'DESC';
+    const nullsClause = nullable ? ' NULLS LAST' : '';
 
     const parameters: unknown[] = [workspaceId];
     let keysetCondition = '';
 
-    if (after !== undefined) {
+    if (isDefined(after)) {
       const cursor = decodeCursor<CoreWorkflowCursor>(after);
 
-      parameters.push(cursor.sortValue, cursor.id);
-      keysetCondition = `AND (${sortExpression}, c.id::text) ${comparator} ($2, $3)`;
+      if (cursor.sortValue === null) {
+        parameters.push(cursor.id);
+        keysetCondition = `AND (${column} IS NULL AND c.id ${comparator} $2::uuid)`;
+      } else {
+        parameters.push(cursor.sortValue, cursor.id);
+        keysetCondition = nullable
+          ? `AND (${column} ${comparator} $2${cast}
+               OR (${column} = $2${cast} AND c.id ${comparator} $3::uuid)
+               OR ${column} IS NULL)`
+          : `AND (${column}, c.id) ${comparator} ($2${cast}, $3::uuid)`;
+      }
     }
+
+    parameters.push(first + 1);
+    const limitParameter = `$${parameters.length}`;
 
     const rows: CoreWorkflowRow[] = await this.coreDataSource.query(
       `SELECT
          c.id,
-         ${sortExpression} AS "sortValue",
+         ${cursorExpression} AS "cursorSortValue",
          c.name,
          c."applicationId",
          min(wf.id::text) AS "workspaceWorkflowId",
@@ -87,8 +116,8 @@ export class CoreWorkflowListService {
        WHERE c."workspaceId" = $1
        ${keysetCondition}
        GROUP BY c.id, c.name, c."applicationId", c."updatedAt"
-       ORDER BY ${sortExpression} ${direction}, c.id::text ${direction}
-       LIMIT ${first + 1}`,
+       ORDER BY ${column} ${direction}${nullsClause}, c.id ${direction}
+       LIMIT ${limitParameter}`,
       parameters,
     );
 
@@ -117,7 +146,7 @@ export class CoreWorkflowListService {
         updatedAt: row.updatedAt.toISOString(),
       },
       cursor: encodeCursorData({
-        sortValue: row.sortValue,
+        sortValue: row.cursorSortValue,
         id: row.id,
       } satisfies CoreWorkflowCursor),
     }));
