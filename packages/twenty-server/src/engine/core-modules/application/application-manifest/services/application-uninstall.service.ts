@@ -231,7 +231,7 @@ export class ApplicationUninstallService {
         applicationVersion: application.version,
         applicationUniversalIdentifier: application.universalIdentifier,
         workspaceId,
-        workspaceRequestAt: workspaceUninstallHookRequest.requestedAt,
+        uninstallRequestedAt: workspaceUninstallHookRequest.requestedAt,
         workspaceUninstallHookRequestType: workspaceUninstallHookRequest.type,
       }),
     });

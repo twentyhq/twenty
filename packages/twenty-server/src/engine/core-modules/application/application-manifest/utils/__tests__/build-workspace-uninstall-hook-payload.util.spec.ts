@@ -7,7 +7,7 @@ describe('buildWorkspaceUninstallHookPayload', () => {
         applicationVersion: '1.0.0',
         applicationUniversalIdentifier: 'application-universal-identifier',
         workspaceId: 'workspace-id',
-        workspaceRequestAt: new Date('2026-08-18T10:00:00.000Z'),
+        uninstallRequestedAt: new Date('2026-08-18T10:00:00.000Z'),
         workspaceUninstallHookRequestType: 'workspace-deletion',
       }),
     ).toEqual({
@@ -23,7 +23,7 @@ describe('buildWorkspaceUninstallHookPayload', () => {
         applicationVersion: null,
         applicationUniversalIdentifier: 'application-universal-identifier',
         workspaceId: 'workspace-id',
-        workspaceRequestAt: new Date('2026-08-18T11:00:00.000Z'),
+        uninstallRequestedAt: new Date('2026-08-18T11:00:00.000Z'),
         workspaceUninstallHookRequestType: 'workspace-suspension',
       }),
     ).toEqual({

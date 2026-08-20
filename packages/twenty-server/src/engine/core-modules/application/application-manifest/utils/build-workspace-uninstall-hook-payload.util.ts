@@ -6,15 +6,15 @@ export const buildWorkspaceUninstallHookPayload = ({
   applicationVersion,
   applicationUniversalIdentifier,
   workspaceId,
-  workspaceRequestAt,
+  uninstallRequestedAt,
   workspaceUninstallHookRequestType,
 }: {
   applicationVersion: string | null;
   applicationUniversalIdentifier: string;
   workspaceId: string;
-  workspaceRequestAt: Date;
+  uninstallRequestedAt: Date;
   workspaceUninstallHookRequestType: WorkspaceUninstallHookRequestType;
 }) => ({
   version: applicationVersion ?? undefined,
-  idempotencyKey: `${workspaceUninstallHookRequestType}:${workspaceId}:${workspaceRequestAt.toISOString()}:${applicationUniversalIdentifier}`,
+  idempotencyKey: `${workspaceUninstallHookRequestType}:${workspaceId}:${uninstallRequestedAt.toISOString()}:${applicationUniversalIdentifier}`,
 });
