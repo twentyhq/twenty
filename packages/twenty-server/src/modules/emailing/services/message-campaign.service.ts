@@ -1,13 +1,14 @@
 import { Injectable, Logger, type Type } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import chunk from 'lodash.chunk';
 import { z } from 'zod';
 import { In, type ObjectLiteral } from 'typeorm';
-import { v4, v5 } from 'uuid';
+import { v4 } from 'uuid';
 
 import {
+  CAMPAIGN_MATERIALIZATION_CHUNK_SIZE,
   CAMPAIGN_MESSAGE_DELIVERY_STATUS,
-  CAMPAIGN_MESSAGE_ID_NAMESPACE,
   CAMPAIGN_STATS_REFRESH_DELAY_MS,
   MATERIALIZE_CAMPAIGN_JOB,
   MAX_CAMPAIGN_RECIPIENTS,
@@ -51,6 +52,7 @@ import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
+import { buildCampaignMessageId } from 'src/modules/emailing/utils/build-campaign-message-id.util';
 import { collectCampaignVariableNamesFromTemplates } from 'src/modules/emailing/utils/collect-campaign-variable-names-from-templates.util';
 import { compileCampaignEmailContent } from 'src/modules/emailing/utils/compile-campaign-email-content.util';
 import { renderCampaignTemplate } from 'src/modules/emailing/utils/render-campaign-template.util';
@@ -99,6 +101,13 @@ type CampaignAudiencePreview = {
 };
 
 type CampaignMessageRecipient = CampaignRecipient & { messageId: string };
+
+type CampaignMessageRow = {
+  recipient: CampaignMessageRecipient;
+  messageId: string;
+  threadId: string;
+  temporaryExternalId: string;
+};
 
 type SendableDraftCampaign = z.infer<typeof sendableDraftCampaignSchema>;
 
@@ -200,7 +209,6 @@ export class MessageCampaignService {
             roleId,
           );
 
-          // Conditional update so two concurrent sends cannot both enqueue
           const { affected } = await campaignRepository.update(
             { id: campaignId, status: MessageCampaignStatus.DRAFT },
             { status: MessageCampaignStatus.SENDING },
@@ -326,10 +334,10 @@ export class MessageCampaignService {
       const recipientsByMessageId = new Map<string, CampaignMessageRecipient>();
 
       for (const recipient of recipients) {
-        const messageId = this.campaignMessageId(
+        const messageId = buildCampaignMessageId({
           campaignId,
-          recipient.personId,
-        );
+          personId: recipient.personId,
+        });
 
         if (!recipientsByMessageId.has(messageId)) {
           recipientsByMessageId.set(messageId, { ...recipient, messageId });
@@ -658,6 +666,36 @@ export class MessageCampaignService {
       temporaryExternalId: v4(),
     }));
 
+    for (const rowsChunk of chunk(rows, CAMPAIGN_MATERIALIZATION_CHUNK_SIZE)) {
+      await this.insertCampaignMessageChunk({
+        campaignId,
+        messageChannelId,
+        fromAddress,
+        subjectTemplate,
+        text,
+        now,
+        rows: rowsChunk,
+      });
+    }
+  }
+
+  private async insertCampaignMessageChunk({
+    campaignId,
+    messageChannelId,
+    fromAddress,
+    subjectTemplate,
+    text,
+    now,
+    rows,
+  }: {
+    campaignId: string;
+    messageChannelId: string;
+    fromAddress: string;
+    subjectTemplate: string;
+    text: string;
+    now: Date;
+    rows: CampaignMessageRow[];
+  }): Promise<void> {
     await this.globalWorkspaceOrmManager.runInWorkspaceTransaction(
       async (transactionScope) => {
         const messageThreadRepository =
@@ -916,9 +954,5 @@ export class MessageCampaignService {
     });
 
     return people.map(toRawRecipient);
-  }
-
-  private campaignMessageId(campaignId: string, personId: string): string {
-    return v5(`${campaignId}:${personId}`, CAMPAIGN_MESSAGE_ID_NAMESPACE);
   }
 }
