@@ -31,7 +31,7 @@ type FrontComponentWorkerEffectProps = {
   sharedDependenciesUrl?: string;
   applicationVariables?: Record<string, string>;
   storageNamespace?: string;
-  executionContext: FrontComponentExecutionContext;
+  initialExecutionContext: FrontComponentExecutionContext;
   geometryTracker: GeometryTracker;
   mediaSessionHost?: FrontComponentMediaSessionHost;
   setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
@@ -48,7 +48,7 @@ export const FrontComponentWorkerEffect = ({
   sharedDependenciesUrl,
   applicationVariables,
   storageNamespace,
-  executionContext,
+  initialExecutionContext,
   geometryTracker,
   mediaSessionHost,
   setReceiver,
@@ -56,11 +56,6 @@ export const FrontComponentWorkerEffect = ({
   setError,
 }: FrontComponentWorkerEffectProps) => {
   const isInitializedRef = useRef(false);
-  const latestExecutionContextRef = useRef(executionContext);
-
-  useEffect(() => {
-    latestExecutionContextRef.current = executionContext;
-  }, [executionContext]);
 
   useEffect(() => {
     if (isInitializedRef.current) {
@@ -156,7 +151,7 @@ export const FrontComponentWorkerEffect = ({
           hostFetchOrigins: hostFetchPolicy.allowedOrigins,
           applicationVariables,
           initialViewportGeometry: geometryTracker.getViewportGeometry(),
-          initialExecutionContext: latestExecutionContextRef.current,
+          initialExecutionContext,
           storageSnapshots,
           mediaRecorderCapabilities:
             mediaSessionHost?.getRecorderCapabilities(),
@@ -190,6 +185,7 @@ export const FrontComponentWorkerEffect = ({
     sharedDependenciesUrl,
     applicationVariables,
     storageNamespace,
+    initialExecutionContext,
     geometryTracker,
     mediaSessionHost,
     setError,
