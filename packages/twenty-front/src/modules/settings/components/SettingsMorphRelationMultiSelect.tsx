@@ -11,7 +11,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { isAdvancedRelationTargetObjectMetadata } from '@/object-metadata/utils/isAdvancedRelationTargetObjectMetadata';
-import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
+import { isObjectMetadataEligibleAsRelationTarget } from '@/object-metadata/utils/isObjectMetadataEligibleAsRelationTarget';
 import { MultiSelectControl } from '@/ui/input/components/MultiSelectControl';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -113,7 +113,7 @@ export const SettingsMorphRelationMultiSelect = ({
     useState<string[]>(selectedObjectMetadataIds);
 
   const options = activeObjectMetadataItems
-    .filter(isObjectMetadataAvailableForRelation)
+    .filter(isObjectMetadataEligibleAsRelationTarget)
     .sort((item1, item2) =>
       item1.labelSingular.localeCompare(item2.labelSingular),
     )

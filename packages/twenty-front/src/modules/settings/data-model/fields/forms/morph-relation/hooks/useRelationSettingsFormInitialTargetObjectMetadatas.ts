@@ -2,7 +2,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isAdvancedRelationTargetObjectMetadata } from '@/object-metadata/utils/isAdvancedRelationTargetObjectMetadata';
-import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
+import { isObjectMetadataEligibleAsRelationTarget } from '@/object-metadata/utils/isObjectMetadataEligibleAsRelationTarget';
 import { fieldMetadataItemHasMorphRelations } from '@/settings/data-model/fields/forms/morph-relation/utils/fieldMetadataItemHasMorphRelations';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -41,7 +41,7 @@ export const useRelationSettingsFormInitialTargetObjectMetadatas = ({
   }
 
   const availableItems = activeObjectMetadataItems
-    .filter(isObjectMetadataAvailableForRelation)
+    .filter(isObjectMetadataEligibleAsRelationTarget)
     .filter((item) => item.id !== sourceObjectMetadataId)
     .sort((a, b) => {
       const aIsAdvanced = isAdvancedRelationTargetObjectMetadata(a);
