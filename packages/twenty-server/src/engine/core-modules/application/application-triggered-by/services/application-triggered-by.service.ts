@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { type LogicFunctionTriggeredBy } from 'twenty-shared/application';
-import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { type PermissionFlagType } from 'twenty-shared/constants';
 
+import { getGrantedPermissionFlags } from 'src/engine/core-modules/application/application-triggered-by/utils/get-granted-permission-flags.util';
+import { resolveTriggeredByWorkspaceMemberId } from 'src/engine/core-modules/application/application-triggered-by/utils/resolve-triggered-by-workspace-member-id.util';
 import { type ApplicationTriggeredBy } from 'src/engine/core-modules/auth/types/application-triggered-by.type';
 import {
   PermissionsException,
@@ -26,11 +27,10 @@ export class ApplicationTriggeredByService {
     triggeredBy: ApplicationTriggeredBy;
     workspaceId: string;
   }): Promise<LogicFunctionTriggeredBy> {
-    const [workspaceMemberId, permissionFlags] = await Promise.all([
-      this.resolveWorkspaceMemberId({
-        userId: triggeredBy.userId,
-        workspaceId,
-      }),
+    const [{ flatWorkspaceMemberMaps }, permissionFlags] = await Promise.all([
+      this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]),
       this.resolvePermissionFlags({
         userWorkspaceId: triggeredBy.userWorkspaceId,
         workspaceId,
@@ -40,32 +40,12 @@ export class ApplicationTriggeredByService {
     return {
       userId: triggeredBy.userId,
       userWorkspaceId: triggeredBy.userWorkspaceId,
-      workspaceMemberId,
+      workspaceMemberId: resolveTriggeredByWorkspaceMemberId({
+        userId: triggeredBy.userId,
+        flatWorkspaceMemberMaps,
+      }),
       permissionFlags,
     };
-  }
-
-  private async resolveWorkspaceMemberId({
-    userId,
-    workspaceId,
-  }: {
-    userId: string;
-    workspaceId: string;
-  }): Promise<string | null> {
-    const { flatWorkspaceMemberMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatWorkspaceMemberMaps',
-      ]);
-
-    const workspaceMemberId = flatWorkspaceMemberMaps.idByUserId[userId];
-
-    if (!isDefined(workspaceMemberId)) {
-      return null;
-    }
-
-    const workspaceMember = flatWorkspaceMemberMaps.byId[workspaceMemberId];
-
-    return isDefined(workspaceMember?.deletedAt) ? null : workspaceMemberId;
   }
 
   private async resolvePermissionFlags({
@@ -82,9 +62,7 @@ export class ApplicationTriggeredByService {
           workspaceId,
         });
 
-      return Object.values(PermissionFlagType).filter(
-        (permissionFlag) => permissionFlags[permissionFlag],
-      );
+      return getGrantedPermissionFlags(permissionFlags);
     } catch (error) {
       // Losing every role is a legitimate state, and the honest answer to
       // "what may this person do" is then "nothing", not an error.
