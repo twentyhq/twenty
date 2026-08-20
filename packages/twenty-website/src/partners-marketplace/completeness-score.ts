@@ -9,7 +9,7 @@ export const completenessScore = (
   if (partner.serviceCount >= 1) s += 2;
   const countedCaseStudies = Math.min(partner.approvedCaseStudyCount, 3);
   s +=
-    countedCaseStudies * 2 +
+    countedCaseStudies * 4 +
     Math.min(partner.approvedCaseStudyWithCoverCount, countedCaseStudies);
   if (partner.calendarLink) s += 1;
   if (partner.hourlyRateUsd !== null || partner.projectBudgetMinUsd !== null) {

@@ -47,11 +47,25 @@ test('ghost detected, thin is not', () => {
   ).toBe(false);
 });
 
-test('awards two points per approved case study with a six-point cap', () => {
+test('awards four points per approved case study with a twelve-point cap', () => {
   expect(completenessScore({ ...base, approvedCaseStudyCount: 0 })).toBe(0);
-  expect(completenessScore({ ...base, approvedCaseStudyCount: 1 })).toBe(2);
-  expect(completenessScore({ ...base, approvedCaseStudyCount: 3 })).toBe(6);
-  expect(completenessScore({ ...base, approvedCaseStudyCount: 4 })).toBe(6);
+  expect(completenessScore({ ...base, approvedCaseStudyCount: 1 })).toBe(4);
+  expect(completenessScore({ ...base, approvedCaseStudyCount: 3 })).toBe(12);
+  expect(completenessScore({ ...base, approvedCaseStudyCount: 4 })).toBe(12);
+});
+
+test('one approved case study outweighs picture, calendar and rate together', () => {
+  const evidence = { ...base, approvedCaseStudyCount: 1 };
+  const cheapFields = {
+    ...base,
+    profilePictureUrl: 'https://cdn.example.com/face.png',
+    calendarLink: 'https://cal.example.com/slot',
+    hourlyRateUsd: 200,
+  };
+
+  expect(completenessScore(evidence)).toBeGreaterThan(
+    completenessScore(cheapFields),
+  );
 });
 
 test('awards one extra point per approved case study that has a cover', () => {
@@ -61,21 +75,21 @@ test('awards one extra point per approved case study that has a cover', () => {
       approvedCaseStudyCount: 1,
       approvedCaseStudyWithCoverCount: 1,
     }),
-  ).toBe(3);
+  ).toBe(5);
   expect(
     completenessScore({
       ...base,
       approvedCaseStudyCount: 3,
       approvedCaseStudyWithCoverCount: 3,
     }),
-  ).toBe(9);
+  ).toBe(15);
   expect(
     completenessScore({
       ...base,
       approvedCaseStudyCount: 3,
       approvedCaseStudyWithCoverCount: 1,
     }),
-  ).toBe(7);
+  ).toBe(13);
 });
 
 test('caps the cover bonus at the three counted case studies', () => {
@@ -85,7 +99,7 @@ test('caps the cover bonus at the three counted case studies', () => {
       approvedCaseStudyCount: 5,
       approvedCaseStudyWithCoverCount: 5,
     }),
-  ).toBe(9);
+  ).toBe(15);
 });
 
 test('completeness wins over partner tier', () => {
