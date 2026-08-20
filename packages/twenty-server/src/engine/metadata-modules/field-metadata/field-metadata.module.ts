@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+
+import { MetadataPresentationModule } from 'src/engine/metadata-modules/metadata-presentation/metadata-presentation.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
@@ -29,6 +31,7 @@ import { FieldMetadataEntity } from './field-metadata.entity';
 
 @Module({
   imports: [
+    MetadataPresentationModule,
     TypeOrmModule.forFeature([FieldMetadataEntity, ObjectMetadataEntity]),
     ApplicationModule,
     ApplicationTranslationModule,

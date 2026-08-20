@@ -46,6 +46,9 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { fromObjectMetadataEntityToObjectMetadataDto } from 'src/engine/metadata-modules/object-metadata/utils/from-object-metadata-entity-to-object-metadata-dto.util';
+import { MetadataPresentationService } from 'src/engine/metadata-modules/metadata-presentation/services/metadata-presentation.service';
+import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
+import { type APP_LOCALES } from 'twenty-shared/translations';
 import {
   toLegacyObjectMetadataCreateResponse,
   toLegacyObjectMetadataDeleteResponse,
@@ -77,12 +80,14 @@ export class ObjectMetadataController {
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly uniqueFieldMetadataIdsService: UniqueFieldMetadataIdsService,
+    private readonly metadataPresentationService: MetadataPresentationService,
   ) {}
 
   @Get()
   async findMany(
     @Req() request: AuthenticatedRequest,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
   ) {
     const { items, pageInfo, totalCount } = await paginateByIdCursor({
       repository: this.objectMetadataRepository,
@@ -98,11 +103,15 @@ export class ObjectMetadataController {
       this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId),
     ]);
 
-    const data = items.map((object) =>
-      this.toObjectWithFieldsDto(
-        object,
-        fields.get(object.id) ?? [],
-        uniqueFieldMetadataIds,
+    const data = await Promise.all(
+      items.map((object) =>
+        this.toObjectWithFieldsDto({
+          object,
+          fields: fields.get(object.id) ?? [],
+          uniqueFieldMetadataIds,
+          locale,
+          workspaceId,
+        }),
       ),
     );
 
@@ -121,6 +130,7 @@ export class ObjectMetadataController {
   async findOne(
     @Param('id', new ParseUUIDPipe()) id: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
   ) {
     const object = await this.objectMetadataRepository.findOne({
       where: { id, workspaceId },
@@ -140,11 +150,13 @@ export class ObjectMetadataController {
       this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId),
     ]);
 
-    const result = this.toObjectWithFieldsDto(
+    const result = await this.toObjectWithFieldsDto({
       object,
       fields,
       uniqueFieldMetadataIds,
-    );
+      locale,
+      workspaceId,
+    });
 
     return (await this.isNewMetadataFormat(workspaceId))
       ? result
@@ -288,19 +300,60 @@ export class ObjectMetadataController {
     return grouped;
   }
 
-  private toObjectWithFieldsDto(
-    object: ObjectMetadataEntity,
-    fields: FieldMetadataEntity[],
-    uniqueFieldMetadataIds: ReadonlySet<string>,
-  ): ObjectMetadataWithFieldsDTO {
+  // REST returns the same labels the app renders: resolved for the caller's
+  // locale, through the one resolver the GraphQL read path uses.
+  private async toObjectWithFieldsDto({
+    object,
+    fields,
+    uniqueFieldMetadataIds,
+    locale,
+    workspaceId,
+  }: {
+    object: ObjectMetadataEntity;
+    fields: FieldMetadataEntity[];
+    uniqueFieldMetadataIds: ReadonlySet<string>;
+    locale: keyof typeof APP_LOCALES | undefined;
+    workspaceId: string;
+  }): Promise<ObjectMetadataWithFieldsDTO> {
+    const [[presentedObjectProperties], presentedFieldProperties] =
+      await Promise.all([
+        this.metadataPresentationService.resolvePresentedProperties({
+          metadataName: 'objectMetadata',
+          entities: [object],
+          locale,
+          workspaceId,
+        }),
+        this.metadataPresentationService.resolvePresentedProperties({
+          metadataName: 'fieldMetadata',
+          entities: fields,
+          locale,
+          workspaceId,
+        }),
+      ]);
+
+    const objectDto = fromObjectMetadataEntityToObjectMetadataDto(object);
+
     return {
-      ...fromObjectMetadataEntityToObjectMetadataDto(object),
-      fields: fields.map((field) =>
-        fromFieldMetadataEntityToFieldMetadataDto(
+      ...objectDto,
+      labelSingular:
+        presentedObjectProperties.labelSingular ?? objectDto.labelSingular,
+      labelPlural:
+        presentedObjectProperties.labelPlural ?? objectDto.labelPlural,
+      description:
+        presentedObjectProperties.description ?? objectDto.description,
+      fields: fields.map((field, index) => {
+        const fieldDto = fromFieldMetadataEntityToFieldMetadataDto(
           field,
           uniqueFieldMetadataIds,
-        ),
-      ),
+        );
+
+        return {
+          ...fieldDto,
+          label: presentedFieldProperties[index].label ?? fieldDto.label,
+          description:
+            presentedFieldProperties[index].description ?? fieldDto.description,
+        };
+      }),
     };
   }
 }
