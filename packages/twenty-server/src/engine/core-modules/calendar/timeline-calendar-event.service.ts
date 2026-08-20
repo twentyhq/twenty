@@ -58,9 +58,10 @@ export class TimelineCalendarEventService {
         // this the participant relations (person, workspaceMember) are read with
         // empty permissions and denied for everyone. Channel-level redaction of
         // title and description below is what gates the caller's access.
-        // TODO: run under the caller's role via resolveRolePermissionConfig
-        // instead of bypassing, once roles that cannot read person degrade to a
-        // redacted timeline rather than a denied one.
+        // TODO run under the caller's role via resolveRolePermissionConfig instead
+        // of bypassing, once roles that cannot read person degrade to a redacted
+        // timeline rather than a denied one
+        // https://github.com/twentyhq/core-team-issues/issues/2777
         const calendarEventRepository =
           await this.globalWorkspaceOrmManager.getRepository<CalendarEventWorkspaceEntity>(
             workspaceId,
