@@ -40,7 +40,9 @@ export type MarketplacePartner = {
   clients: readonly PartnerClient[];
 };
 
-export type PartnerTier = 'ADVANCED' | 'INTERMEDIATE' | 'NEW';
+export const PARTNER_TIERS = ['ADVANCED', 'INTERMEDIATE', 'NEW'] as const;
+
+export type PartnerTier = (typeof PARTNER_TIERS)[number];
 
 export type RankedMarketplacePartner = MarketplacePartner & {
   partnerTier: PartnerTier | null;

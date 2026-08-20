@@ -121,18 +121,27 @@ test('completeness wins over partner tier', () => {
 });
 
 test('partner tier wins when completeness is equal', () => {
+  // Rotation keys run against the tier order, so this fails if the comparator
+  // ever puts rotation before tier.
   const advanced = {
     ...base,
     slug: 'advanced',
     partnerTier: 'ADVANCED' as const,
+    rotationKey: 'z',
   };
   const intermediate = {
     ...base,
     slug: 'intermediate',
     partnerTier: 'INTERMEDIATE' as const,
+    rotationKey: 'y',
   };
-  const newPartner = { ...base, slug: 'new', partnerTier: 'NEW' as const };
-  const unranked = { ...base, slug: 'unranked' };
+  const newPartner = {
+    ...base,
+    slug: 'new',
+    partnerTier: 'NEW' as const,
+    rotationKey: 'x',
+  };
+  const unranked = { ...base, slug: 'unranked', rotationKey: 'a' };
 
   expect(
     rankPartners([unranked, newPartner, advanced, intermediate]).map(
@@ -158,4 +167,54 @@ test('weekly rotation wins when completeness and tier are equal', () => {
   expect(
     rankPartners([hashName, ordinaryName]).map(({ slug }) => slug),
   ).toEqual(['ordinary-name', 'hash-name']);
+});
+
+test('a full profile scores twenty-three points', () => {
+  expect(
+    completenessScore({
+      ...base,
+      description: 'x'.repeat(120),
+      profilePictureUrl: 'https://cdn.example.com/face.png',
+      serviceCount: 4,
+      approvedCaseStudyCount: 3,
+      approvedCaseStudyWithCoverCount: 3,
+      calendarLink: 'https://cal.example.com/slot',
+      hourlyRateUsd: 200,
+      partnerScope: ['SOLUTIONING'],
+    }),
+  ).toBe(23);
+});
+
+test('each signal contributes its documented weight', () => {
+  expect(completenessScore(base)).toBe(0);
+  expect(completenessScore({ ...base, description: 'x'.repeat(120) })).toBe(2);
+  expect(completenessScore({ ...base, serviceCount: 1 })).toBe(2);
+  expect(
+    completenessScore({ ...base, profilePictureUrl: 'https://x.example/p' }),
+  ).toBe(1);
+  expect(
+    completenessScore({ ...base, calendarLink: 'https://cal.example/s' }),
+  ).toBe(1);
+  expect(completenessScore({ ...base, hourlyRateUsd: 200 })).toBe(1);
+  expect(completenessScore({ ...base, projectBudgetMinUsd: 5000 })).toBe(1);
+  expect(completenessScore({ ...base, partnerScope: ['SOLUTIONING'] })).toBe(1);
+});
+
+test('unused portfolio and client arrays no longer score', () => {
+  const withLegacyArrays = {
+    ...base,
+    portfolio: [
+      {
+        client: 'Acme',
+        title: 'A case study',
+        body: '',
+        imageUrl: null,
+        link: null,
+      },
+    ],
+    clients: [{ name: 'Acme', logoUrl: null }],
+    services: [{ title: 'Migration', description: 'We migrate' }],
+  };
+
+  expect(completenessScore(withLegacyArrays)).toBe(completenessScore(base));
 });
