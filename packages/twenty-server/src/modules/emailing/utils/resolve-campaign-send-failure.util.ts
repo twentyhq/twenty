@@ -1,5 +1,5 @@
-import { type CampaignMessageDeliveryStatus } from 'src/engine/core-modules/emailing-domain/types/campaign-message-delivery-status.type';
 import { CAMPAIGN_MESSAGE_DELIVERY_STATUS } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
+import { type CampaignMessageDeliveryStatus } from 'src/engine/core-modules/emailing-domain/types/campaign-message-delivery-status.type';
 import {
   EmailingDomainDriverException,
   EmailingDomainDriverExceptionCode,
@@ -36,6 +36,7 @@ export const resolveCampaignSendFailure = (
     case EmailingDomainDriverExceptionCode.NOT_FOUND:
     case EmailingDomainDriverExceptionCode.INSUFFICIENT_PERMISSIONS:
     case EmailingDomainDriverExceptionCode.CONFIGURATION_ERROR:
+    case EmailingDomainDriverExceptionCode.SANDBOX_ACCOUNT:
       return {
         deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED,
         shouldRetry: false,

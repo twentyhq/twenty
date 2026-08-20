@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { IsNull } from 'typeorm';
+import { In } from 'typeorm';
 
-import { CAMPAIGN_MESSAGE_DELIVERY_STATUS } from 'src/engine/core-modules/emailing-domain/constants/campaign.constant';
+import { type CampaignMessageDeliveryStatus } from 'src/engine/core-modules/emailing-domain/types/campaign-message-delivery-status.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { listDeliveryStatusesOverridableBy } from 'src/modules/emailing/utils/list-delivery-statuses-overridable-by.util';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { isDefined } from 'twenty-shared/utils';
@@ -16,14 +17,14 @@ export class MessageCampaignDeliveryFeedbackService {
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
   ) {}
 
-  async recordDeliveryFailureByProviderMessageId({
+  async recordDeliveryStatusByProviderMessageId({
     workspaceId,
     providerMessageId,
     deliveryStatus,
   }: {
     workspaceId: string;
     providerMessageId: string;
-    deliveryStatus: string;
+    deliveryStatus: CampaignMessageDeliveryStatus;
   }): Promise<void> {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageRepository =
@@ -41,21 +42,11 @@ export class MessageCampaignDeliveryFeedbackService {
         return;
       }
 
-      const isAlreadyTerminal =
-        message.deliveryStatus === CAMPAIGN_MESSAGE_DELIVERY_STATUS.BOUNCED ||
-        message.deliveryStatus === CAMPAIGN_MESSAGE_DELIVERY_STATUS.COMPLAINED;
-
-      if (isAlreadyTerminal) {
-        return;
-      }
+      const overridableDeliveryStatuses =
+        listDeliveryStatusesOverridableBy(deliveryStatus);
 
       const { affected } = await messageRepository.update(
-        {
-          id: message.id,
-          deliveryStatus: isDefined(message.deliveryStatus)
-            ? message.deliveryStatus
-            : IsNull(),
-        },
+        { id: message.id, deliveryStatus: In(overridableDeliveryStatuses) },
         { deliveryStatus },
       );
 
