@@ -7,6 +7,7 @@ import { CustomException } from 'src/utils/custom-exception';
 export enum EmailingDomainExceptionCode {
   EMAILING_DOMAIN_ALREADY_REGISTERED = 'EMAILING_DOMAIN_ALREADY_REGISTERED',
   EMAILING_DOMAIN_NOT_VERIFIED = 'EMAILING_DOMAIN_NOT_VERIFIED',
+  EMAILING_DOMAIN_UNSUBSCRIBE_NOT_READY = 'EMAILING_DOMAIN_UNSUBSCRIBE_NOT_READY',
   MESSAGE_SUPPRESSION_NOT_FOUND = 'MESSAGE_SUPPRESSION_NOT_FOUND',
   MESSAGE_SUPPRESSION_NOT_REMOVABLE = 'MESSAGE_SUPPRESSION_NOT_REMOVABLE',
   MESSAGE_CAMPAIGN_NOT_FOUND = 'MESSAGE_CAMPAIGN_NOT_FOUND',
@@ -20,6 +21,8 @@ const getEmailingDomainExceptionUserFriendlyMessage = (
   switch (code) {
     case EmailingDomainExceptionCode.EMAILING_DOMAIN_ALREADY_REGISTERED:
       return msg`This domain is already registered.`;
+    case EmailingDomainExceptionCode.EMAILING_DOMAIN_UNSUBSCRIBE_NOT_READY:
+      return msg`Marketing sending is on hold until the unsubscribe domain is verified.`;
     case EmailingDomainExceptionCode.EMAILING_DOMAIN_NOT_VERIFIED:
       return msg`No verified sending domain matches this from address.`;
     case EmailingDomainExceptionCode.MESSAGE_SUPPRESSION_NOT_FOUND:

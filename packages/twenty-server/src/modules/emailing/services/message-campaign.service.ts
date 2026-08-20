@@ -357,42 +357,47 @@ export class MessageCampaignService {
     });
 
     const notSentCount =
-      await this.globalWorkspaceOrmManager.runInWorkspaceTransaction(
-        async (transactionScope) => {
-          const campaignRepository =
-            transactionScope.getRepository<MessageCampaignWorkspaceEntity>(
-              'messageCampaign',
-              { unionOf: [roleId] },
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () =>
+        this.globalWorkspaceOrmManager.runInWorkspaceTransaction(
+          async (transactionScope) => {
+            const campaignRepository =
+              transactionScope.getRepository<MessageCampaignWorkspaceEntity>(
+                'messageCampaign',
+                { unionOf: [roleId] },
+              );
+
+            const { affected } = await campaignRepository.update(
+              { id: campaignId, status: MessageCampaignStatus.SENDING },
+              { status: MessageCampaignStatus.CANCELED },
             );
 
-          const { affected } = await campaignRepository.update(
-            { id: campaignId, status: MessageCampaignStatus.SENDING },
-            { status: MessageCampaignStatus.CANCELED },
-          );
+            if (affected !== 1) {
+              throw new EmailingDomainException(
+                `Campaign ${campaignId} is not sending`,
+                EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_CANCELABLE,
+              );
+            }
 
-          if (affected !== 1) {
-            throw new EmailingDomainException(
-              `Campaign ${campaignId} is not sending`,
-              EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_CANCELABLE,
-            );
-          }
+            const messageRepository =
+              transactionScope.getRepository<MessageWorkspaceEntity>(
+                'message',
+                {
+                  shouldBypassPermissionChecks: true,
+                },
+              );
 
-          const messageRepository =
-            transactionScope.getRepository<MessageWorkspaceEntity>('message', {
-              shouldBypassPermissionChecks: true,
-            });
+            const { affected: skippedMessageCount } =
+              await messageRepository.update(
+                {
+                  messageCampaignId: campaignId,
+                  deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED,
+                },
+                { deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SKIPPED },
+              );
 
-          const { affected: skippedMessageCount } =
-            await messageRepository.update(
-              {
-                messageCampaignId: campaignId,
-                deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED,
-              },
-              { deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SKIPPED },
-            );
-
-          return skippedMessageCount ?? 0;
-        },
+            return skippedMessageCount ?? 0;
+          },
+        ),
       );
 
     await this.scheduleCampaignStatsRefresh({ workspaceId, campaignId });
@@ -419,9 +424,9 @@ export class MessageCampaignService {
     }
 
     if (!isUnsubscribeHostnameReady(emailingDomain)) {
-      throw new EmailingDomainDriverException(
+      throw new EmailingDomainException(
         `Cannot send email for ${emailingDomain.domain}: unsubscribe domain is not active (status: ${emailingDomain.unsubscribeHostnameStatus})`,
-        EmailingDomainDriverExceptionCode.UNSUBSCRIBE_NOT_READY,
+        EmailingDomainExceptionCode.EMAILING_DOMAIN_UNSUBSCRIBE_NOT_READY,
       );
     }
 
@@ -508,7 +513,7 @@ export class MessageCampaignService {
             recipientEmail: recipient.email,
             emailingDomainId,
           },
-          { retryLimit: 3 },
+          { id: recipient.messageId, retryLimit: 3 },
         );
       }
 
@@ -924,14 +929,16 @@ export class MessageCampaignService {
       MessageCampaignWorkspaceEntity,
     );
 
+    const correctableStatuses =
+      terminalStatus === MessageCampaignStatus.SENT
+        ? [
+            MessageCampaignStatus.SENDING,
+            MessageCampaignStatus.SENT_WITH_ERRORS,
+          ]
+        : [MessageCampaignStatus.SENDING];
+
     await campaignRepository.update(
-      {
-        id: campaignId,
-        status: In([
-          MessageCampaignStatus.SENDING,
-          MessageCampaignStatus.SENT_WITH_ERRORS,
-        ]),
-      },
+      { id: campaignId, status: In(correctableStatuses) },
       { status: terminalStatus, sentAt: new Date() },
     );
 
