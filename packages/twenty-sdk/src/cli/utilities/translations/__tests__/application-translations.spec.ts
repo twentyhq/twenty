@@ -154,9 +154,12 @@ describe('compileApplicationTranslations', () => {
     });
   });
 
-  it('returns undefined when there is no locales directory', async () => {
+  // An empty result is a statement the server acts on -- it prunes locales
+  // the author removed -- so compiling an app without locale files says "no
+  // translations" rather than saying nothing.
+  it('returns no locales when there is no locales directory', async () => {
     const appPath = await mkdtemp(join(tmpdir(), 'twenty-translations-empty-'));
 
-    expect(await compileApplicationTranslations(appPath)).toBeUndefined();
+    expect(await compileApplicationTranslations(appPath)).toEqual({});
   });
 });

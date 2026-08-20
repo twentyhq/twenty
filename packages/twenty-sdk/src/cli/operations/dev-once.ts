@@ -205,8 +205,8 @@ const innerAppDevOnce = async (
 
   const translations = await compileApplicationTranslations(appPath);
 
-  // Carried through the dev sync too: the server prunes the locales a manifest
-  // lists none of, so syncing without them would drop what the app published.
+  // Compiled here too, so a developer can see their translations applied
+  // without a full build and publish.
   const manifest: Manifest = {
     ...manifestUpdateChecksums({
       manifest: manifestResult.manifest,
