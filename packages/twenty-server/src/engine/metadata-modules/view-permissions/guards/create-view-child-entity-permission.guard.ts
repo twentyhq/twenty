@@ -6,6 +6,7 @@ import {
 import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { ViewAccessService } from 'src/engine/metadata-modules/view-permissions/services/view-access.service';
+import { resolveViewChildEntityViewId } from 'src/engine/metadata-modules/view-permissions/utils/resolve-view-child-entity-view-id.util';
 
 @Injectable()
 export class CreateViewChildEntityPermissionGuard implements CanActivate {
@@ -16,14 +17,7 @@ export class CreateViewChildEntityPermissionGuard implements CanActivate {
     const request = gqlContext.getContext().req;
     const args = gqlContext.getArgs();
 
-    const viewId =
-      (typeof args?.input?.viewId === 'string'
-        ? args.input.viewId
-        : undefined) ??
-      (Array.isArray(args?.inputs) && typeof args.inputs[0]?.viewId === 'string'
-        ? args.inputs[0].viewId
-        : undefined) ??
-      (typeof request.body?.viewId === 'string' ? request.body.viewId : null);
+    const viewId = resolveViewChildEntityViewId({ args, body: request.body });
 
     return this.viewAccessService.canUserModifyViewByChildEntity(
       viewId,
