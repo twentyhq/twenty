@@ -1,34 +1,15 @@
-import gql from 'graphql-tag';
-import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
-import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import {
+  createRecord,
+  findTimelineEntriesOnCompany,
+  RESET_TIMELINE_ACTIVITY_RULE,
+  UPSERT_TIMELINE_ACTIVITY_RULE,
+} from 'test/integration/metadata/suites/timeline-activity-rule/utils/timeline-activity-rule-test.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
-import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-
-const UPSERT_TIMELINE_ACTIVITY_RULE = gql`
-  mutation UpsertTimelineActivityRule($input: UpsertTimelineActivityRuleInput!) {
-    upsertTimelineActivityRule(input: $input) {
-      id
-      objectMetadataId
-      relationFieldMetadataId
-      actions
-      isStandard
-    }
-  }
-`;
-
-const RESET_TIMELINE_ACTIVITY_RULE = gql`
-  mutation ResetTimelineActivityRule($input: ResetTimelineActivityRuleInput!) {
-    resetTimelineActivityRule(input: $input) {
-      id
-    }
-  }
-`;
 
 // Random per run so the suite stays re-runnable without a database reset.
 const COMPANY_A_ID = v4();
@@ -39,53 +20,6 @@ const PERSON_RENAMED_ID = v4();
 
 let personObjectMetadataId = '';
 let companyFieldMetadataId = '';
-
-const findEntriesOnCompany = async ({
-  companyId,
-  name,
-}: {
-  companyId: string;
-  name: string;
-}): Promise<{ name: string; action: string | null }[]> => {
-  await waitForAllJobsToFinish();
-
-  const response = await makeGraphqlAPIRequest(
-    findManyOperationFactory({
-      objectMetadataSingularName: 'timelineActivity',
-      objectMetadataPluralName: 'timelineActivities',
-      gqlFields: 'id name action',
-      filter: {
-        targetCompanyId: { eq: companyId },
-        name: { eq: name },
-      },
-      first: 10,
-    }),
-  );
-
-  expect(response.body.errors).toBeUndefined();
-
-  return response.body.data.timelineActivities.edges.map(
-    (edge: { node: { name: string; action: string | null } }) => edge.node,
-  );
-};
-
-const createRecord = async ({
-  objectMetadataSingularName,
-  data,
-}: {
-  objectMetadataSingularName: string;
-  data: object;
-}): Promise<void> => {
-  const response = await makeGraphqlAPIRequest(
-    createOneOperationFactory({
-      objectMetadataSingularName,
-      gqlFields: 'id',
-      data,
-    }),
-  );
-
-  expect(response.body.errors).toBeUndefined();
-};
 
 describe('timeline activity rule on a many-to-one lookup (integration)', () => {
   beforeAll(async () => {
@@ -149,10 +83,7 @@ describe('timeline activity rule on a many-to-one lookup (integration)', () => {
   });
 
   afterAll(async () => {
-    if (
-      !isDefined(personObjectMetadataId) ||
-      !isDefined(companyFieldMetadataId)
-    ) {
+    if (personObjectMetadataId === '' || companyFieldMetadataId === '') {
       return;
     }
 
@@ -177,7 +108,7 @@ describe('timeline activity rule on a many-to-one lookup (integration)', () => {
       },
     });
 
-    const entries = await findEntriesOnCompany({
+    const entries = await findTimelineEntriesOnCompany({
       companyId: COMPANY_A_ID,
       name: 'linked-person.created',
     });
@@ -198,11 +129,11 @@ describe('timeline activity rule on a many-to-one lookup (integration)', () => {
 
     expect(response.body.errors).toBeUndefined();
 
-    const oldCompanyEntries = await findEntriesOnCompany({
+    const oldCompanyEntries = await findTimelineEntriesOnCompany({
       companyId: COMPANY_A_ID,
       name: 'linked-person.updated',
     });
-    const newCompanyEntries = await findEntriesOnCompany({
+    const newCompanyEntries = await findTimelineEntriesOnCompany({
       companyId: COMPANY_B_ID,
       name: 'linked-person.updated',
     });
@@ -234,7 +165,7 @@ describe('timeline activity rule on a many-to-one lookup (integration)', () => {
 
     expect(renameResponse.body.errors).toBeUndefined();
 
-    const entries = await findEntriesOnCompany({
+    const entries = await findTimelineEntriesOnCompany({
       companyId: COMPANY_C_ID,
       name: 'linked-person.updated',
     });
@@ -254,7 +185,7 @@ describe('timeline activity rule on a many-to-one lookup (integration)', () => {
 
     expect(response.body.errors).toBeUndefined();
 
-    const entries = await findEntriesOnCompany({
+    const entries = await findTimelineEntriesOnCompany({
       companyId: COMPANY_C_ID,
       name: 'linked-person.deleted',
     });

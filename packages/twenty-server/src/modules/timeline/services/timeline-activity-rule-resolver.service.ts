@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { isFieldMetadataSettingsOfType } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
@@ -11,8 +13,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type FlatTimelineActivityRule } from 'src/engine/metadata-modules/flat-timeline-activity-rule/types/flat-timeline-activity-rule.type';
 import { findSelfOverrideFlatTimelineActivityRule } from 'src/engine/metadata-modules/timeline-activity-rule/utils/find-self-override-flat-timeline-activity-rule.util';
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
-import { buildJunctionTargetShape } from 'src/modules/timeline/utils/build-junction-target-shape.util';
-import { buildManyToOneTargetShape } from 'src/modules/timeline/utils/build-many-to-one-target-shape.util';
+import { buildRelationTargetShape } from 'src/modules/timeline/utils/build-relation-target-shape.util';
 import { deriveDefaultTimelineActivityRule } from 'src/modules/timeline/utils/derive-default-timeline-activity-rule.util';
 
 type TimelineActivityRulesForEventBatch = {
@@ -81,9 +82,17 @@ export class TimelineActivityRuleResolverService {
             })
           : undefined;
 
+        // Only a junction rule can match a batch on its relation target: a
+        // many-to-one rule fires from its source object alone.
         return (
-          relationFlatFieldMetadata?.relationTargetObjectMetadataId ===
-          flatObjectMetadata.id
+          isDefined(relationFlatFieldMetadata) &&
+          isFieldMetadataSettingsOfType(
+            relationFlatFieldMetadata.settings,
+            FieldMetadataType.RELATION,
+          ) &&
+          isDefined(relationFlatFieldMetadata.settings.junctionTargetFieldId) &&
+          relationFlatFieldMetadata.relationTargetObjectMetadataId ===
+            flatObjectMetadata.id
         );
       })
       .map((flatRule) =>
@@ -190,16 +199,11 @@ export class TimelineActivityRuleResolverService {
       return undefined;
     }
 
-    const targetShape =
-      buildJunctionTargetShape({
-        relationFlatFieldMetadata,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-      }) ??
-      buildManyToOneTargetShape({
-        relationFlatFieldMetadata,
-        flatObjectMetadataMaps,
-      });
+    const targetShape = buildRelationTargetShape({
+      relationFlatFieldMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    });
 
     if (!isDefined(targetShape)) {
       return undefined;

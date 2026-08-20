@@ -9,10 +9,8 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { findAllOthersMorphRelationFlatFieldMetadatasOrThrow } from 'src/engine/metadata-modules/flat-field-metadata/utils/find-all-others-morph-relation-flat-field-metadatas-or-throw.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import {
-  type TimelineActivityRuleTargetJoinColumn,
-  type TimelineActivityRuleTargetShape,
-} from 'src/modules/timeline/types/timeline-activity-rule.type';
+import { type TimelineActivityRuleTargetShape } from 'src/modules/timeline/types/timeline-activity-rule.type';
+import { buildTargetJoinColumn } from 'src/modules/timeline/utils/build-target-join-column.util';
 
 type BuildJunctionTargetShapeArgs = {
   relationFlatFieldMetadata: FlatFieldMetadata;
@@ -104,30 +102,8 @@ export const buildJunctionTargetShape = ({
     : [junctionTargetFlatFieldMetadata];
 
   const junctionTargetJoinColumns = junctionTargetFlatFieldMetadatas
-    .map(
-      (flatFieldMetadata): TimelineActivityRuleTargetJoinColumn | undefined => {
-        const targetObjectMetadataId =
-          flatFieldMetadata.relationTargetObjectMetadataId;
-
-        if (!isDefined(targetObjectMetadataId)) {
-          return undefined;
-        }
-
-        const targetFlatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: targetObjectMetadataId,
-          flatEntityMaps: flatObjectMetadataMaps,
-        });
-
-        if (!isDefined(targetFlatObjectMetadata)) {
-          return undefined;
-        }
-
-        return {
-          joinColumnName:
-            getJoinColumnNameForRelationFlatFieldMetadata(flatFieldMetadata),
-          targetObjectNameSingular: targetFlatObjectMetadata.nameSingular,
-        };
-      },
+    .map((flatFieldMetadata) =>
+      buildTargetJoinColumn({ flatFieldMetadata, flatObjectMetadataMaps }),
     )
     .filter(isDefined);
 

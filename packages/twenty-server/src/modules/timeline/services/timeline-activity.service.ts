@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { type ObjectRecordBaseEvent } from 'twenty-shared/database-events';
+import {
+  type ObjectRecordBaseEvent,
+  type ObjectRecordDiff,
+} from 'twenty-shared/database-events';
 import { type TimelineActivityAction } from 'twenty-shared/timeline';
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -8,6 +11,7 @@ import { fromArrayToValuesByKeyRecord, isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
+import { type RelationFieldChangeValue } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -26,7 +30,10 @@ import {
 } from 'src/modules/timeline/services/timeline-activity-target-resolver.service';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload';
-import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
+import {
+  type TimelineActivityRule,
+  type TimelineActivityRuleTargetShape,
+} from 'src/modules/timeline/types/timeline-activity-rule.type';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 // An event on the junction object is a change to the link, not to the linked
@@ -47,6 +54,17 @@ const SOURCE_EVENT_ACTIONS: Partial<
   updated: 'updated',
   deleted: 'deleted',
   restored: 'restored',
+};
+
+// A lookup event is a change to the link seen from the source record. The
+// `updated` case is diff-driven and handled apart: a repointed lookup unlinks
+// the old target and links the new one.
+const MANY_TO_ONE_EVENT_ACTIONS: Partial<
+  Record<DatabaseEventAction, TimelineActivityAction>
+> = {
+  created: 'linked',
+  restored: 'linked',
+  deleted: 'unlinked',
 };
 
 // Both event streams write the same row shape; only the linked record, its
@@ -132,22 +150,13 @@ export class TimelineActivityService {
 
           return Promise.all([
             ...sourceRules.map((rule) =>
-              rule.targetShape.kind === 'MANY_TO_ONE'
-                ? Promise.resolve(
-                    this.buildPayloadsForManyToOneRule({
-                      rule,
-                      events: enrichedEvents,
-                      action,
-                      flatFieldMetadataMaps,
-                    }),
-                  )
-                : this.buildPayloadsForSourceRule({
-                    rule,
-                    events: enrichedEvents,
-                    action,
-                    workspaceId,
-                    flatFieldMetadataMaps,
-                  }),
+              this.buildPayloadsForSourceRule({
+                rule,
+                events: enrichedEvents,
+                action,
+                workspaceId,
+                flatFieldMetadataMaps,
+              }),
             ),
             ...junctionRules.map((rule) =>
               this.buildPayloadsForJunctionRule({
@@ -223,6 +232,16 @@ export class TimelineActivityService {
     workspaceId: string;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   }): Promise<TimelineActivityPayload[]> {
+    if (rule.targetShape.kind === 'MANY_TO_ONE') {
+      return this.buildPayloadsForManyToOneRule({
+        rule,
+        targetShape: rule.targetShape,
+        events,
+        action,
+        flatFieldMetadataMaps,
+      });
+    }
+
     const ruleAction = SOURCE_EVENT_ACTIONS[action];
 
     if (!isDefined(ruleAction)) {
@@ -283,110 +302,80 @@ export class TimelineActivityService {
 
   // A many-to-one rule reads its targets straight from the event: the join
   // column on the source record points at the timeline receiving the entry.
-  // A lookup change unlinks the old target and links the new one; other source
-  // updates write an `updated` entry on the current target, trigger gated.
   private buildPayloadsForManyToOneRule({
     rule,
+    targetShape,
     events,
     action,
     flatFieldMetadataMaps,
   }: {
     rule: TimelineActivityRule;
+    targetShape: Extract<
+      TimelineActivityRuleTargetShape,
+      { kind: 'MANY_TO_ONE' }
+    >;
     events: ObjectRecordBaseEvent[];
     action: DatabaseEventAction;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   }): TimelineActivityPayload[] {
-    if (rule.targetShape.kind !== 'MANY_TO_ONE') {
-      return [];
-    }
-
-    const { relationFieldName, targetJoinColumn } = rule.targetShape;
+    const { relationFieldName, targetJoinColumn } = targetShape;
     const { joinColumnName, targetObjectNameSingular } = targetJoinColumn;
 
     return events.flatMap((event) => {
       const after = event.properties.after as ObjectRecord | undefined;
       const before = event.properties.before as ObjectRecord | undefined;
 
-      const buildPayload = (
-        targetRecordId: string,
+      const payloadsFor = (
+        targetRecordId: unknown,
         ruleAction: TimelineActivityAction,
-      ): TimelineActivityPayload =>
-        buildLinkedPayload({
-          rule,
-          action,
-          ruleAction,
-          target: { targetObjectNameSingular, targetRecordId },
-          workspaceMemberId: event.workspaceMemberId,
-          linkedRecordId: event.recordId,
-          linkedRecordCachedName: resolveLinkedRecordCachedName({
-            rule,
-            record: after ?? before,
-            flatFieldMetadataMaps,
-          }),
-          properties: ruleAction === 'updated' ? event.properties : {},
-        });
+      ): TimelineActivityPayload[] =>
+        this.ruleMatchesEvent({ rule, ruleAction, event }) &&
+        isNonEmptyString(targetRecordId)
+          ? [
+              buildLinkedPayload({
+                rule,
+                action,
+                ruleAction,
+                target: { targetObjectNameSingular, targetRecordId },
+                workspaceMemberId: event.workspaceMemberId,
+                linkedRecordId: event.recordId,
+                linkedRecordCachedName: resolveLinkedRecordCachedName({
+                  rule,
+                  record: after ?? before,
+                  flatFieldMetadataMaps,
+                }),
+                properties: ruleAction === 'updated' ? event.properties : {},
+              }),
+            ]
+          : [];
 
-      switch (action) {
-        case DatabaseEventAction.CREATED:
-        case DatabaseEventAction.RESTORED: {
-          const targetRecordId = after?.[joinColumnName];
+      const linkRuleAction = MANY_TO_ONE_EVENT_ACTIONS[action];
 
-          return rule.actions.includes('linked') &&
-            isNonEmptyString(targetRecordId)
-            ? [buildPayload(targetRecordId, 'linked')]
-            : [];
-        }
-        case DatabaseEventAction.DELETED: {
-          const targetRecordId =
-            after?.[joinColumnName] ?? before?.[joinColumnName];
-
-          return rule.actions.includes('unlinked') &&
-            isNonEmptyString(targetRecordId)
-            ? [buildPayload(targetRecordId, 'unlinked')]
-            : [];
-        }
-        case DatabaseEventAction.UPDATED: {
-          const relationDiff = (
-            event.properties.diff as
-              | Record<
-                  string,
-                  {
-                    before?: { id?: string | null };
-                    after?: { id?: string | null };
-                  }
-                >
-              | undefined
-          )?.[relationFieldName];
-
-          if (isDefined(relationDiff)) {
-            const previousTargetRecordId = relationDiff.before?.id;
-            const nextTargetRecordId = relationDiff.after?.id;
-
-            return [
-              ...(rule.actions.includes('unlinked') &&
-              isNonEmptyString(previousTargetRecordId)
-                ? [buildPayload(previousTargetRecordId, 'unlinked')]
-                : []),
-              ...(rule.actions.includes('linked') &&
-              isNonEmptyString(nextTargetRecordId)
-                ? [buildPayload(nextTargetRecordId, 'linked')]
-                : []),
-            ];
-          }
-
-          const targetRecordId = after?.[joinColumnName];
-
-          return this.ruleMatchesEvent({
-            rule,
-            ruleAction: 'updated',
-            event,
-          }) && isNonEmptyString(targetRecordId)
-            ? [buildPayload(targetRecordId, 'updated')]
-            : [];
-        }
-        default:
-          return [];
+      if (isDefined(linkRuleAction)) {
+        return payloadsFor(
+          after?.[joinColumnName] ?? before?.[joinColumnName],
+          linkRuleAction,
+        );
       }
+
+      if (action !== DatabaseEventAction.UPDATED) {
+        return [];
+      }
+
+      const relationFieldDiff = (
+        event.properties.diff as
+          | Partial<ObjectRecordDiff<Record<string, RelationFieldChangeValue>>>
+          | undefined
+      )?.[relationFieldName];
+
+      if (isDefined(relationFieldDiff)) {
+        return [
+          ...payloadsFor(relationFieldDiff.before?.id, 'unlinked'),
+          ...payloadsFor(relationFieldDiff.after?.id, 'linked'),
+        ];
+      }
+
+      return payloadsFor(after?.[joinColumnName], 'updated');
     });
   }
 

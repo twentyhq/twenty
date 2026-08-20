@@ -139,7 +139,9 @@ export class FlatTimelineActivityRuleValidatorService {
       junctionTargetFieldUniversalIdentifier?: string | null;
     } | null;
 
+    // Morph lookups wait on morph diff support in the write engine.
     const isManyToOne =
+      flatRelationFieldMetadata.type === FieldMetadataType.RELATION &&
       relationSettings?.relationType === RelationType.MANY_TO_ONE;
     const isJunctionOneToMany =
       relationSettings?.relationType === RelationType.ONE_TO_MANY &&

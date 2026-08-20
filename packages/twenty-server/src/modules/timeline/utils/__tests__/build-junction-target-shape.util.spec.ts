@@ -1,30 +1,9 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { buildFlatEntityMapsFixture } from 'src/modules/timeline/utils/__tests__/build-flat-entity-maps.fixture';
 import { buildJunctionTargetShape } from 'src/modules/timeline/utils/build-junction-target-shape.util';
-
-type FlatEntityFixture = { id: string; universalIdentifier: string };
-
-const buildFlatEntityMaps = <T extends FlatEntityFixture>(
-  flatEntities: T[],
-): FlatEntityMaps<never> =>
-  ({
-    byUniversalIdentifier: Object.fromEntries(
-      flatEntities.map((flatEntity) => [
-        flatEntity.universalIdentifier,
-        flatEntity,
-      ]),
-    ),
-    universalIdentifierById: Object.fromEntries(
-      flatEntities.map((flatEntity) => [
-        flatEntity.id,
-        flatEntity.universalIdentifier,
-      ]),
-    ),
-    universalIdentifiersByApplicationId: {},
-  }) as unknown as FlatEntityMaps<never>;
 
 const NOTE_OBJECT = {
   id: 'note-object',
@@ -133,19 +112,19 @@ const NON_MORPH_JUNCTION_TARGET_FIELD = {
   },
 };
 
-const flatObjectMetadataMaps = buildFlatEntityMaps([
+const flatObjectMetadataMaps = buildFlatEntityMapsFixture<FlatObjectMetadata>([
   NOTE_OBJECT,
   NOTE_TARGET_OBJECT,
   PERSON_OBJECT,
   COMPANY_OBJECT,
-]) as unknown as FlatEntityMaps<FlatObjectMetadata>;
+]);
 
-const flatFieldMetadataMaps = buildFlatEntityMaps([
+const flatFieldMetadataMaps = buildFlatEntityMapsFixture<FlatFieldMetadata>([
   NOTE_TARGETS_FIELD,
   NOTE_TARGET_NOTE_FIELD,
   NOTE_TARGET_PERSON_FIELD,
   NOTE_TARGET_COMPANY_FIELD,
-]) as unknown as FlatEntityMaps<FlatFieldMetadata>;
+]);
 
 const buildShape = (relationFlatFieldMetadata: object) =>
   buildJunctionTargetShape({
@@ -198,11 +177,11 @@ describe('buildJunctionTargetShape', () => {
         },
       } as unknown as FlatFieldMetadata,
       flatObjectMetadataMaps,
-      flatFieldMetadataMaps: buildFlatEntityMaps([
+      flatFieldMetadataMaps: buildFlatEntityMapsFixture<FlatFieldMetadata>([
         NOTE_TARGETS_FIELD,
         NOTE_TARGET_NOTE_FIELD,
         NON_MORPH_JUNCTION_TARGET_FIELD,
-      ]) as unknown as FlatEntityMaps<FlatFieldMetadata>,
+      ]),
     });
 
     expect(shape).toEqual({

@@ -1,10 +1,7 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type TimelineActivityRule } from '@/settings/data-model/timeline-rules/hooks/useFindManyTimelineActivityRules';
-import {
-  junctionRelationReachesObject,
-  manyToOneRelationReachesObject,
-} from '@/settings/data-model/timeline-rules/utils/junctionRelationReachesObject';
+import { relationRuleReachesObject } from '@/settings/data-model/timeline-rules/utils/relationRuleReachesObject';
 import { isDefined } from 'twenty-shared/utils';
 
 export type SettingsTimelineRuleCandidateRelation = {
@@ -47,15 +44,11 @@ export const getSettingsTimelineRuleCandidateRelations = ({
           !ruledRelationFieldMetadataIds.has(field.id) &&
           field.isActive !== false &&
           field.isSystem !== true &&
-          (junctionRelationReachesObject({
+          relationRuleReachesObject({
             relationFieldMetadataItem: field,
             objectMetadataItem,
             objectMetadataItems,
-          }) ||
-            manyToOneRelationReachesObject({
-              relationFieldMetadataItem: field,
-              objectMetadataItem,
-            })),
+          }),
       )
       .map((relationFieldMetadataItem) => ({
         sourceObjectMetadataItem,

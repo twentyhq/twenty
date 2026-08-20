@@ -1,7 +1,7 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type TimelineActivityRule } from '@/settings/data-model/timeline-rules/hooks/useFindManyTimelineActivityRules';
-import { relationRuleReachesObject } from '@/settings/data-model/timeline-rules/utils/junctionRelationReachesObject';
+import { relationRuleReachesObject } from '@/settings/data-model/timeline-rules/utils/relationRuleReachesObject';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 

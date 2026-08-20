@@ -1,60 +1,15 @@
-import gql from 'graphql-tag';
-import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
-import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import {
+  createRecord,
+  findTimelineEntriesOnCompany,
+  FIND_TIMELINE_ACTIVITY_RULES,
+  RESET_TIMELINE_ACTIVITY_RULE,
+  type TimelineActivityRuleResponse,
+  UPSERT_TIMELINE_ACTIVITY_RULE,
+} from 'test/integration/metadata/suites/timeline-activity-rule/utils/timeline-activity-rule-test.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-
-const RULE_GQL_FIELDS = `
-  id
-  objectMetadataId
-  relationFieldMetadataId
-  resolution
-  actions
-  triggerFieldMetadataIds
-  isActive
-  isStandard
-  isOverridden
-`;
-
-const FIND_TIMELINE_ACTIVITY_RULES = gql`
-  query TimelineActivityRules {
-    timelineActivityRules {
-      ${RULE_GQL_FIELDS}
-    }
-  }
-`;
-
-const UPSERT_TIMELINE_ACTIVITY_RULE = gql`
-  mutation UpsertTimelineActivityRule($input: UpsertTimelineActivityRuleInput!) {
-    upsertTimelineActivityRule(input: $input) {
-      ${RULE_GQL_FIELDS}
-    }
-  }
-`;
-
-const RESET_TIMELINE_ACTIVITY_RULE = gql`
-  mutation ResetTimelineActivityRule($input: ResetTimelineActivityRuleInput!) {
-    resetTimelineActivityRule(input: $input) {
-      ${RULE_GQL_FIELDS}
-    }
-  }
-`;
-
-type TimelineActivityRuleResponse = {
-  id: string | null;
-  objectMetadataId: string;
-  relationFieldMetadataId: string | null;
-  resolution: string;
-  actions: string[];
-  triggerFieldMetadataIds: string[] | null;
-  isActive: boolean;
-  isStandard: boolean;
-  isOverridden: boolean;
-};
 
 // Random per run so the suite stays re-runnable without a database reset.
 const COMPANY_A_ID = v4();
@@ -101,47 +56,6 @@ const findNoteRule = async (): Promise<TimelineActivityRuleResponse> => {
   expect(noteRule).toBeDefined();
 
   return noteRule as TimelineActivityRuleResponse;
-};
-
-const createRecord = async ({
-  objectMetadataSingularName,
-  data,
-}: {
-  objectMetadataSingularName: string;
-  data: object;
-}): Promise<void> => {
-  const response = await makeGraphqlAPIRequest(
-    createOneOperationFactory({
-      objectMetadataSingularName,
-      gqlFields: 'id',
-      data,
-    }),
-  );
-
-  expect(response.body.errors).toBeUndefined();
-};
-
-const countLinkedEntriesOnCompany = async (
-  companyId: string,
-): Promise<number> => {
-  await waitForAllJobsToFinish();
-
-  const response = await makeGraphqlAPIRequest(
-    findManyOperationFactory({
-      objectMetadataSingularName: 'timelineActivity',
-      objectMetadataPluralName: 'timelineActivities',
-      gqlFields: 'id name',
-      filter: {
-        targetCompanyId: { eq: companyId },
-        name: { eq: 'linked-note.created' },
-      },
-      first: 10,
-    }),
-  );
-
-  expect(response.body.errors).toBeUndefined();
-
-  return response.body.data.timelineActivities.edges.length;
 };
 
 describe('timeline activity rule metadata API (integration)', () => {
@@ -244,7 +158,12 @@ describe('timeline activity rule metadata API (integration)', () => {
       },
     });
 
-    expect(await countLinkedEntriesOnCompany(COMPANY_A_ID)).toBe(0);
+    expect(
+      await findTimelineEntriesOnCompany({
+        companyId: COMPANY_A_ID,
+        name: 'linked-note.created',
+      }),
+    ).toHaveLength(0);
 
     const resetResponse = await makeMetadataAPIRequest({
       query: RESET_TIMELINE_ACTIVITY_RULE,
@@ -281,7 +200,12 @@ describe('timeline activity rule metadata API (integration)', () => {
       },
     });
 
-    expect(await countLinkedEntriesOnCompany(COMPANY_B_ID)).toBe(1);
+    expect(
+      await findTimelineEntriesOnCompany({
+        companyId: COMPANY_B_ID,
+        name: 'linked-note.created',
+      }),
+    ).toHaveLength(1);
   });
 
   it('should materialize a self rule override and delete it on reset', async () => {

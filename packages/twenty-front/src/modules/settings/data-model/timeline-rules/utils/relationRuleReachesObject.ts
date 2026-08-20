@@ -1,8 +1,9 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { getTargetObjectMetadataIdsFromField } from '@/object-record/record-field/ui/utils/junction/getTargetObjectMetadataIdsFromField';
 import { hasJunctionTargetFieldId } from '@/object-record/record-field/ui/utils/junction/hasJunctionTargetFieldId';
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 // A morph group is served as a single field carrying one member's id, so the
@@ -88,10 +89,10 @@ export const manyToOneRelationReachesObject = ({
   relationFieldMetadataItem: FieldMetadataItem;
   objectMetadataItem: EnrichedObjectMetadataItem;
 }): boolean =>
-  relationFieldMetadataItem.type === FieldMetadataType.RELATION &&
-  relationFieldMetadataItem.relation?.type === RelationType.MANY_TO_ONE &&
-  relationFieldMetadataItem.relation.targetObjectMetadata.id ===
-    objectMetadataItem.id;
+  isManyToOneRelationField(relationFieldMetadataItem) &&
+  getTargetObjectMetadataIdsFromField(relationFieldMetadataItem).includes(
+    objectMetadataItem.id,
+  );
 
 export const relationRuleReachesObject = ({
   relationFieldMetadataItem,
