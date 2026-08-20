@@ -5,6 +5,7 @@ import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdat
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { computeUpdatedNavigationMemorizedUrlAfterObjectNamePluralChange } from '@/settings/data-model/object-details/utils/computeUpdatedNavigationMemorizedUrlAfterObjectNamePluralChange';
 import { type SettingsDataModelObjectAboutFormValues } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
+import { isEditingThroughTranslation } from '@/settings/translations/utils/isEditingThroughTranslation';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -104,14 +105,30 @@ export const useSaveUpdateDataModelObjectAboutForm = ({
 
   const saveAsRename = async (
     formValues: SettingsDataModelObjectAboutFormValues,
+    { clearTranslationsForCurrentLocale = false } = {},
   ) => {
     const objectNamePluralForRedirection =
       formValues.namePlural ?? objectMetadataItem.namePlural;
 
+    // Renaming from behind a translation has to drop that translation, or it
+    // would keep shadowing the new canonical value and the rename would look
+    // like it did nothing. Only the viewer's locale is cleared: the other
+    // languages keep translations the rename says nothing about.
+    const translations = clearTranslationsForCurrentLocale
+      ? pickDirtyTranslatableProperties().map((property) => ({
+          locale: currentLocale,
+          property,
+          value: null,
+        }))
+      : [];
+
     setUpdatedObjectNamePlural(objectNamePluralForRedirection);
     const updateResult = await updateOneObjectMetadataItem({
       idToUpdate: objectMetadataItem.id,
-      updatePayload: pickDirtyValues(formValues),
+      updatePayload: {
+        ...pickDirtyValues(formValues),
+        ...(translations.length > 0 ? { translations } : {}),
+      },
     });
 
     if (updateResult.status === 'failed') {
@@ -193,17 +210,12 @@ export const useSaveUpdateDataModelObjectAboutForm = ({
         fetchPolicy: 'network-only',
       });
 
-      const isEditingThroughTranslation = dirtyTranslatableProperties.some(
-        (property) => {
-          const row = data?.metadataTranslations.find(
-            (translation) => translation.property === property,
-          );
-
-          return isDefined(row) && row.value !== row.canonicalValue;
-        },
-      );
-
-      if (isEditingThroughTranslation) {
+      if (
+        isEditingThroughTranslation({
+          dirtyTranslatableProperties,
+          translationRows: data?.metadataTranslations ?? [],
+        })
+      ) {
         setPendingFormValues(formValues);
         openModal(TRANSLATION_INTENT_MODAL_ID);
         return;
@@ -270,7 +282,7 @@ export const useSaveUpdateDataModelObjectAboutForm = ({
 
     closeModal(TRANSLATION_INTENT_MODAL_ID);
     setPendingFormValues(null);
-    await saveAsRename(formValues);
+    await saveAsRename(formValues, { clearTranslationsForCurrentLocale: true });
   };
 
   const cancelPendingSave = () => {
