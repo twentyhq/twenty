@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { clsx } from 'clsx';
 import { createContext, useLayoutEffect, useRef, useState } from 'react';
 
@@ -13,6 +14,19 @@ export type ThemeContextType = {
 };
 
 export type ThemeOverrides = Record<string, string | number>;
+
+const resolveTokenValue = (
+  cssVariableReference: string,
+  computedValue: string,
+): string | number => {
+  if (!isNonEmptyString(computedValue)) {
+    return cssVariableReference;
+  }
+
+  const numericValue = Number(computedValue);
+
+  return Number.isNaN(numericValue) ? computedValue : numericValue;
+};
 
 const computeThemeFromCss = (sourceElement?: HTMLElement): ThemeType => {
   if (
@@ -34,9 +48,11 @@ const computeThemeFromCss = (sourceElement?: HTMLElement): ThemeType => {
 
       if (typeof value === 'string' && value.startsWith('var(')) {
         const varName = value.slice(4, -1);
-        const raw = computedStyle.getPropertyValue(varName).trim();
-        const num = Number(raw);
-        result[key] = raw !== '' && !isNaN(num) ? num : raw;
+
+        result[key] = resolveTokenValue(
+          value,
+          computedStyle.getPropertyValue(varName).trim(),
+        );
       } else if (typeof value === 'object' && value !== null) {
         result[key] = resolve(value as Record<string, unknown>);
       } else {

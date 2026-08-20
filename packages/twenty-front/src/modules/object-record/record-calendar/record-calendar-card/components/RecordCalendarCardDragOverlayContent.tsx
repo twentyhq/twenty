@@ -2,7 +2,7 @@ import { type Draggable } from '@dnd-kit/dom';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RecordCalendarMonthContextProvider } from '@/object-record/record-calendar/month/contexts/RecordCalendarMonthContext';
-import { RecordCalendarCardComponentInstanceContext } from '@/object-record/record-calendar/record-calendar-card/states/contexts/RecordCalendarCardComponentInstanceContext';
+import { RECORD_CALENDAR_CARD_DRAG_OVERLAY_CALENDAR_DAY } from '@/object-record/record-calendar/record-calendar-card/constants/RecordCalendarCardDragOverlayCalendarDay';
 import { RecordCalendarCard } from '@/object-record/record-calendar/record-calendar-card/components/RecordCalendarCard';
 import { useRecordCalendarMonthDaysRange } from '@/object-record/record-calendar/month/hooks/useRecordCalendarMonthDaysRange';
 import { getRecordIdFromRecordCalendarCardDraggableId } from '@/object-record/record-calendar/record-calendar-card/utils/getRecordCalendarCardDraggableId';
@@ -50,12 +50,12 @@ export const RecordCalendarCardDragOverlayContent = ({
         weekStartsOnDayIndex,
       }}
     >
-      <RecordCalendarCardComponentInstanceContext.Provider
-        value={{ instanceId: recordId }}
-      >
-        <RecordCalendarCard recordId={recordId} isDragOverlay />
-        <RecordCalendarCardMultiDragPreview recordId={recordId} />
-      </RecordCalendarCardComponentInstanceContext.Provider>
+      <RecordCalendarCard
+        recordId={recordId}
+        calendarDay={RECORD_CALENDAR_CARD_DRAG_OVERLAY_CALENDAR_DAY}
+        isDragOverlay
+      />
+      <RecordCalendarCardMultiDragPreview recordId={recordId} />
     </RecordCalendarMonthContextProvider>
   );
 };

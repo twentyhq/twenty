@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
-import { interpolateMessagePlaceholders } from 'twenty-shared/i18n';
+import { interpolateCommandMenuItemPlaceholders } from 'twenty-shared/i18n';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 import { getCommandMenuItemPlaceholderValues } from '@/command-menu-item/utils/getCommandMenuItemPlaceholderValues';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
@@ -20,7 +20,7 @@ const checkInLabels = (
   search: string,
   commandMenuContextApi: CommandMenuContextApi,
 ) => {
-  const label = interpolateMessagePlaceholders(
+  const label = interpolateCommandMenuItemPlaceholders(
     commandMenuItem.label,
     getCommandMenuItemPlaceholderValues(commandMenuContextApi),
   );

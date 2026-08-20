@@ -214,6 +214,38 @@ describe('defineLogicFunction', () => {
     expect(result.config.serverRouteTriggerSettings).toBeDefined();
   });
 
+  it('accepts a serverRouteTriggerSettings resolver declaring GET and POST', () => {
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'Answer the provider verification challenge',
+      serverRouteTriggerSettings: { httpMethods: ['GET', 'POST'] },
+      handler: async () => ({
+        workspaceId: 'ws-1',
+        targetLogicFunctionUniversalIdentifier: 'target-uid',
+      }),
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+
+  it('rejects a serverRouteTriggerSettings resolver declaring a method the server route does not serve', () => {
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'Unroutable method',
+      serverRouteTriggerSettings: { httpMethods: ['PUT'] },
+      handler: async () => ({
+        workspaceId: 'ws-1',
+        targetLogicFunctionUniversalIdentifier: 'target-uid',
+      }),
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Server route trigger only supports the GET and POST http methods',
+    );
+  });
+
   it('compile-time rejects a serverRouteTriggerSettings resolver returning the wrong shape', () => {
     // @ts-expect-error — handler must return { workspaceId: string;
     // targetLogicFunctionUniversalIdentifier: string } when
