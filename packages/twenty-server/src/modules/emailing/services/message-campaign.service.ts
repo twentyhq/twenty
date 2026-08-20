@@ -2,6 +2,7 @@ import { Injectable, Logger, type Type } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { z } from 'zod';
 import { In, type ObjectLiteral } from 'typeorm';
 import { v4 } from 'uuid';
@@ -357,49 +358,32 @@ export class MessageCampaignService {
       userWorkspaceId,
     });
 
-    const canceledMessageCount =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () =>
-        this.globalWorkspaceOrmManager.runInWorkspaceTransaction(
-          async (transactionScope) => {
-            const campaignRepository =
-              transactionScope.getRepository<MessageCampaignWorkspaceEntity>(
-                'messageCampaign',
-                { unionOf: [roleId] },
-              );
-
-            const { affected } = await campaignRepository.update(
-              { id: campaignId, status: MessageCampaignStatus.SENDING },
-              { status: MessageCampaignStatus.CANCELED },
-            );
-
-            if (affected !== 1) {
-              throw new EmailingDomainException(
-                `Campaign ${campaignId} is not sending`,
-                EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_CANCELABLE,
-              );
-            }
-
-            const messageRepository =
-              transactionScope.getRepository<MessageWorkspaceEntity>(
-                'message',
-                {
-                  shouldBypassPermissionChecks: true,
-                },
-              );
-
-            const { affected: skippedMessageCount } =
-              await messageRepository.update(
-                {
-                  messageCampaignId: campaignId,
-                  deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED,
-                },
-                { deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SKIPPED },
-              );
-
-            return skippedMessageCount ?? 0;
-          },
-        ),
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const campaignRepository = await this.getRoleScopedRepository(
+        workspaceId,
+        MessageCampaignWorkspaceEntity,
+        roleId,
       );
+
+      const { affected } = await campaignRepository.update(
+        { id: campaignId, status: MessageCampaignStatus.SENDING },
+        { status: MessageCampaignStatus.CANCELED },
+      );
+
+      if (affected !== 1) {
+        throw new EmailingDomainException(
+          `Campaign ${campaignId} is not sending`,
+          EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_CANCELABLE,
+        );
+      }
+    });
+
+    // The campaign is CANCELED before its messages are, so a send job that runs in between
+    // refuses on the campaign rather than delivering.
+    const canceledMessageCount = await this.skipQueuedMessages({
+      workspaceId,
+      campaignId,
+    });
 
     await this.scheduleCampaignStatsRefresh({ workspaceId, campaignId });
 
@@ -901,6 +885,51 @@ export class MessageCampaignService {
     );
   }
 
+  private async skipQueuedMessages({
+    workspaceId,
+    campaignId,
+    deliveryStatus,
+  }: {
+    workspaceId: string;
+    campaignId: string;
+    deliveryStatus?: string;
+  }): Promise<number> {
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const messageRepository = await this.getSystemRepository(
+          workspaceId,
+          MessageWorkspaceEntity,
+        );
+
+        const queuedMessages = await messageRepository.find({
+          where: {
+            messageCampaignId: campaignId,
+            deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED,
+          },
+          select: { id: true },
+        });
+
+        // A workspace update reads back every row it touches to emit events and refuses beyond
+        // QUERY_MAX_RECORDS, so a campaign-sized set has to be walked in batches.
+        for (const idsChunk of chunk(
+          queuedMessages.map((message) => message.id),
+          QUERY_MAX_RECORDS,
+        )) {
+          await messageRepository.update(
+            { id: In(idsChunk) },
+            {
+              deliveryStatus:
+                deliveryStatus ?? CAMPAIGN_MESSAGE_DELIVERY_STATUS.SKIPPED,
+            },
+          );
+        }
+
+        return queuedMessages.length;
+      },
+      buildSystemAuthContext(workspaceId),
+    );
+  }
+
   async failStalledQueuedMessages({
     workspaceId,
     campaignId,
@@ -908,23 +937,14 @@ export class MessageCampaignService {
     workspaceId: string;
     campaignId: string;
   }): Promise<number> {
-    const messageRepository = await this.getSystemRepository(
-      workspaceId,
-      MessageWorkspaceEntity,
-    );
-
     // Reached only for a campaign that has made no progress for an hour, so these messages have no
     // live job behind them. They are failed rather than re-enqueued because a message that does
     // still have a job would then be sent twice, and a duplicate cannot be taken back.
-    const { affected } = await messageRepository.update(
-      {
-        messageCampaignId: campaignId,
-        deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED,
-      },
-      { deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED },
-    );
-
-    return affected ?? 0;
+    return this.skipQueuedMessages({
+      workspaceId,
+      campaignId,
+      deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED,
+    });
   }
 
   async finalizeCampaignIfComplete({
