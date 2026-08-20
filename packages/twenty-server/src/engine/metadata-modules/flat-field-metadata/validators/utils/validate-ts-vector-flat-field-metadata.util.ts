@@ -33,8 +33,6 @@ export const validateTsVectorFlatFieldMetadata = ({
     });
   }
 
-  // Updates that leave writability untouched must stay valid on workspaces
-  // where the 2.33 command has not yet flipped stored search vectors to SYSTEM
   const isUpdateLeavingWritabilityUntouched =
     isDefined(update) && !('writability' in update);
 
