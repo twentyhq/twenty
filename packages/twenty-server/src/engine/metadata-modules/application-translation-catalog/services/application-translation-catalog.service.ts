@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
-import { type APP_LOCALES } from 'twenty-shared/translations';
+import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationTranslationCacheService } from 'src/engine/core-modules/application/application-translation/application-translation-cache.service';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { resolveRegistrationIdByApplicationId } from 'src/engine/metadata-modules/application-translation-catalog/utils/resolve-registration-id-by-application-id.util';
+import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/utils/effective-entity-i18n-context.type';
 import { getTwentyStandardApplicationIdOrThrow } from 'src/engine/metadata-modules/utils/get-twenty-standard-application-id-or-throw.util';
 
 export type ApplicationCatalogs = {
@@ -18,6 +21,7 @@ export class ApplicationTranslationCatalogService {
   constructor(
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationTranslationCacheService: ApplicationTranslationCacheService,
+    private readonly i18nService: I18nService,
   ) {}
 
   async getStandardApplicationId({
@@ -85,6 +89,40 @@ export class ApplicationTranslationCatalogService {
     }
 
     return { standardApplicationId, catalogByApplicationId };
+  }
+
+  // Every REST controller needs the same thing the GraphQL resolvers get from
+  // buildEffectiveEntityI18nContext, minus the per-request dataloaders that
+  // only exist in a GraphQL context: one context per application, batched.
+  async getI18nContextByApplicationId({
+    applicationIds,
+    locale,
+    workspaceId,
+  }: {
+    applicationIds: (string | undefined)[];
+    locale: keyof typeof APP_LOCALES | undefined;
+    workspaceId: string;
+  }): Promise<
+    (applicationId: string | undefined) => EffectiveEntityI18nContext
+  > {
+    const safeLocale = locale ?? SOURCE_LOCALE;
+
+    const { standardApplicationId, catalogByApplicationId } =
+      await this.getCatalogs({
+        applicationIds,
+        locale: safeLocale,
+        workspaceId,
+      });
+    const i18nInstance = this.i18nService.getI18nInstance(safeLocale);
+
+    return (applicationId) => ({
+      locale,
+      i18nInstance,
+      isStandardApp: applicationId === standardApplicationId,
+      applicationCatalog: isDefined(applicationId)
+        ? catalogByApplicationId.get(applicationId)
+        : undefined,
+    });
   }
 
   private async getFlatApplicationMaps({

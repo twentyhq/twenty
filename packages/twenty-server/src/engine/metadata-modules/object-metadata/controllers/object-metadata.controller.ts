@@ -46,7 +46,8 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/object-metadata.exception';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { fromObjectMetadataEntityToObjectMetadataDto } from 'src/engine/metadata-modules/object-metadata/utils/from-object-metadata-entity-to-object-metadata-dto.util';
-import { MetadataPresentationService } from 'src/engine/metadata-modules/metadata-presentation/services/metadata-presentation.service';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
+import { resolveTranslatableProperties } from 'src/engine/metadata-modules/application-translation-catalog/utils/resolve-translatable-properties.util';
 import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import {
@@ -80,7 +81,7 @@ export class ObjectMetadataController {
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly uniqueFieldMetadataIdsService: UniqueFieldMetadataIdsService,
-    private readonly metadataPresentationService: MetadataPresentationService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
   @Get()
@@ -317,51 +318,45 @@ export class ObjectMetadataController {
       (object) => fieldsByObjectId.get(object.id) ?? [],
     );
 
-    const [presentedObjectProperties, presentedFieldProperties] =
-      await Promise.all([
-        this.metadataPresentationService.resolvePresentedProperties({
-          metadataName: 'objectMetadata',
-          entities: objects,
+    const getI18nContext =
+      await this.applicationTranslationCatalogService.getI18nContextByApplicationId(
+        {
+          applicationIds: [...objects, ...allFields].map(
+            (entity) => entity.applicationId,
+          ),
           locale,
           workspaceId,
-        }),
-        this.metadataPresentationService.resolvePresentedProperties({
-          metadataName: 'fieldMetadata',
-          entities: allFields,
-          locale,
-          workspaceId,
-        }),
-      ]);
+        },
+      );
 
-    const presentedFieldPropertiesByFieldId = new Map(
-      allFields.map((field, index) => [
-        field.id,
-        presentedFieldProperties[index],
-      ]),
-    );
-
-    return objects.map((object, index) => {
+    return objects.map((object) => {
       const objectDto = fromObjectMetadataEntityToObjectMetadataDto(object);
-      const presentedObject = presentedObjectProperties[index];
+      const resolvedObject = resolveTranslatableProperties({
+        metadataName: 'objectMetadata',
+        entity: object,
+        i18nContext: getI18nContext(object.applicationId ?? undefined),
+      });
 
       return {
         ...objectDto,
-        labelSingular: presentedObject.labelSingular ?? objectDto.labelSingular,
-        labelPlural: presentedObject.labelPlural ?? objectDto.labelPlural,
-        description: presentedObject.description ?? objectDto.description,
+        labelSingular: resolvedObject.labelSingular ?? objectDto.labelSingular,
+        labelPlural: resolvedObject.labelPlural ?? objectDto.labelPlural,
+        description: resolvedObject.description ?? objectDto.description,
         fields: (fieldsByObjectId.get(object.id) ?? []).map((field) => {
           const fieldDto = fromFieldMetadataEntityToFieldMetadataDto(
             field,
             uniqueFieldMetadataIds,
           );
-          const presentedField = presentedFieldPropertiesByFieldId.get(
-            field.id,
-          );
+          const resolvedField = resolveTranslatableProperties({
+            metadataName: 'fieldMetadata',
+            entity: field,
+            i18nContext: getI18nContext(field.applicationId ?? undefined),
+          });
 
           return {
             ...fieldDto,
-            label: presentedField?.label ?? fieldDto.label,
-            description: presentedField?.description ?? fieldDto.description,
+            label: resolvedField.label ?? fieldDto.label,
+            description: resolvedField.description ?? fieldDto.description,
           };
         }),
       };

@@ -41,7 +41,8 @@ import {
 import { FieldMetadataRestApiExceptionFilter } from 'src/engine/metadata-modules/field-metadata/filters/field-metadata-rest-api-exception.filter';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-field-metadata-entity-to-field-metadata-dto.util';
-import { MetadataPresentationService } from 'src/engine/metadata-modules/metadata-presentation/services/metadata-presentation.service';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
+import { resolveTranslatableProperties } from 'src/engine/metadata-modules/application-translation-catalog/utils/resolve-translatable-properties.util';
 import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import {
@@ -76,7 +77,7 @@ export class FieldMetadataController {
     private readonly fieldMetadataService: FieldMetadataService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly uniqueFieldMetadataIdsService: UniqueFieldMetadataIdsService,
-    private readonly metadataPresentationService: MetadataPresentationService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
   // REST returns the same labels the app renders: resolved for the caller's
@@ -92,24 +93,30 @@ export class FieldMetadataController {
     locale: keyof typeof APP_LOCALES | undefined;
     workspaceId: string;
   }): Promise<FieldMetadataDTO[]> {
-    const presentedProperties =
-      await this.metadataPresentationService.resolvePresentedProperties({
-        metadataName: 'fieldMetadata',
-        entities: fields,
-        locale,
-        workspaceId,
-      });
+    const getI18nContext =
+      await this.applicationTranslationCatalogService.getI18nContextByApplicationId(
+        {
+          applicationIds: fields.map((field) => field.applicationId),
+          locale,
+          workspaceId,
+        },
+      );
 
-    return fields.map((field, index) => {
+    return fields.map((field) => {
       const dto = fromFieldMetadataEntityToFieldMetadataDto(
         field,
         uniqueFieldMetadataIds,
       );
+      const resolved = resolveTranslatableProperties({
+        metadataName: 'fieldMetadata',
+        entity: field,
+        i18nContext: getI18nContext(field.applicationId ?? undefined),
+      });
 
       return {
         ...dto,
-        label: presentedProperties[index].label ?? dto.label,
-        description: presentedProperties[index].description ?? dto.description,
+        label: resolved.label ?? dto.label,
+        description: resolved.description ?? dto.description,
       };
     });
   }
