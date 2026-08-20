@@ -30,5 +30,5 @@ runs:
         crowdin pre-translate --method tm --translate-with-perfect-match-only $COMMON || echo "::warning::TM pre-translate failed (non-blocking)"
         echo "=== MT pre-translate (engine 2: Crowdin Translate) ==="
         crowdin pre-translate --method mt --engine-id 2 $COMMON || echo "::warning::MT pre-translate failed (non-blocking)"
-        echo "=== AI pre-translate (prompt 1; covers ko/tr + markup MT skips) ==="
+        echo "=== AI pre-translate (prompt 1; covers what TM and MT could not fill) ==="
         crowdin pre-translate --method ai --ai-prompt 1 $COMMON || echo "::warning::AI pre-translate failed (non-blocking)"
