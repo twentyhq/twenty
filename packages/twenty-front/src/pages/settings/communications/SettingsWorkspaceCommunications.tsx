@@ -94,8 +94,6 @@ export const SettingsWorkspaceCommunications = () => {
           />
         </Section>
         <SettingsWorkspaceEmailGroupSection />
-        <SettingsWorkspaceEmailSyncSection />
-        <SettingsWorkspaceBlocklistSection />
         <Section>
           <H2Title
             title={t`Unsubscribe`}
@@ -114,6 +112,8 @@ export const SettingsWorkspaceCommunications = () => {
             />
           </StyledCardsColumn>
         </Section>
+        <SettingsWorkspaceEmailSyncSection />
+        <SettingsWorkspaceBlocklistSection />
       </SettingsPageContainer>
     </SettingsPageLayout>
   );
