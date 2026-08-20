@@ -20,6 +20,8 @@
 //   yarn rls:configure          # against .env.local
 //   yarn rls:configure:prod     # against .env.prod
 
+import { createHash } from 'node:crypto';
+
 import { config } from 'dotenv';
 config({ path: process.env.ENV_FILE ?? '.env.local' });
 
@@ -43,12 +45,25 @@ const SIMPLE_TARGET_OBJECTS = [
 ] as const;
 type SimpleTargetObject = (typeof SIMPLE_TARGET_OBJECTS)[number];
 
+// A UUIDv5-shaped id derived from a seed: stable across re-runs, distinct per workspace.
+const deriveUuid = (seed: string): string => {
+  const hex = createHash('sha1').update(seed).digest('hex');
+  const version = `5${hex.slice(13, 16)}`;
+  const variant = ((parseInt(hex.slice(16, 18), 16) & 0x3f) | 0x80)
+    .toString(16)
+    .padStart(2, '0');
+
+  return [
+    hex.slice(0, 8),
+    hex.slice(8, 12),
+    version,
+    variant + hex.slice(18, 20),
+    hex.slice(20, 32),
+  ].join('-');
+};
+
 // opportunity uses an OR group (handled separately), but still needs an existence check.
 const ALL_TARGET_OBJECTS = [...SIMPLE_TARGET_OBJECTS, 'opportunity'] as const;
-
-// Stable id for the OR predicate group — re-runs upsert in place instead of creating
-// a duplicate group.
-const OPPORTUNITY_RLS_OR_GROUP_ID = 'b7e7f3a0-4c5d-4e8f-9a1b-2c3d4e5f6789';
 
 // Opportunity fields that must NOT be locked: system columns and updatedBy/position
 // (server-managed — locking them breaks every update; see src/roles/partner.role.ts).
@@ -362,6 +377,12 @@ async function main() {
     'id',
   );
 
+  const workspaceData = await metadataFetch<{
+    currentWorkspace: { id: string };
+  }>(metadataUrl, apiKey, `{ currentWorkspace { id } }`);
+
+  const workspaceId = workspaceData.currentWorkspace.id;
+
   // ── 3. Resolve Partner role id and fetch field permissions in one request ──────
   //
   // getRoles returns a flat array (not a connection) and does NOT expose
@@ -499,13 +520,20 @@ async function main() {
 
   // Opportunity: (partnerUser IS me) OR (isListed = true) — listed briefs visible to all partners.
   {
+    // Predicate-group ids are unique across the whole metadata schema, not per workspace,
+    // so a hardcoded id collides on a server that hosts more than one workspace.
+    // getRoles does not return existing groups, so derive a stable id instead of reading one.
+    const opportunityGroupId = deriveUuid(
+      `${workspaceId}:opportunity-rls-or-group`,
+    );
+
     const oppPredicates = await upsertPredicates(
       {
         roleId: partnerRole.id,
         objectMetadataId: opportunityObjectId,
         predicateGroups: [
           {
-            id: OPPORTUNITY_RLS_OR_GROUP_ID,
+            id: opportunityGroupId,
             objectMetadataId: opportunityObjectId,
             logicalOperator: 'OR',
             parentRowLevelPermissionPredicateGroupId: null,
@@ -516,14 +544,14 @@ async function main() {
             fieldMetadataId: opportunityPartnerUserFieldId,
             operand: 'IS',
             workspaceMemberFieldMetadataId: workspaceMemberIdFieldId,
-            rowLevelPermissionPredicateGroupId: OPPORTUNITY_RLS_OR_GROUP_ID,
+            rowLevelPermissionPredicateGroupId: opportunityGroupId,
             positionInRowLevelPermissionPredicateGroup: 0,
           },
           {
             fieldMetadataId: opportunityIsListedFieldId,
             operand: 'IS',
             value: true,
-            rowLevelPermissionPredicateGroupId: OPPORTUNITY_RLS_OR_GROUP_ID,
+            rowLevelPermissionPredicateGroupId: opportunityGroupId,
             positionInRowLevelPermissionPredicateGroup: 1,
           },
         ],
@@ -542,7 +570,7 @@ async function main() {
     }
 
     console.log(
-      `[rls:configure] ✓ opportunity: OR group id=${OPPORTUNITY_RLS_OR_GROUP_ID} ` +
+      `[rls:configure] ✓ opportunity: OR group id=${opportunityGroupId} ` +
         `(${oppPredicates.length} predicates: partnerUser IS me OR isListed = true)`,
     );
   }
