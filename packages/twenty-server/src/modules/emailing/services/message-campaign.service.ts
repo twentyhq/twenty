@@ -502,20 +502,18 @@ export class MessageCampaignService {
         });
       }
 
-      for (const recipient of allRecipients) {
-        await this.messageQueueService.add<SendCampaignEmailJobData>(
-          SEND_CAMPAIGN_EMAIL_JOB,
-          {
-            workspaceId,
-            campaignId,
-            messageId: recipient.messageId,
-            personId: recipient.personId,
-            recipientEmail: recipient.email,
-            emailingDomainId,
-          },
-          { id: recipient.messageId, retryLimit: 3 },
-        );
-      }
+      await this.messageQueueService.bulkAdd<SendCampaignEmailJobData>(
+        SEND_CAMPAIGN_EMAIL_JOB,
+        allRecipients.map((recipient) => ({
+          workspaceId,
+          campaignId,
+          messageId: recipient.messageId,
+          personId: recipient.personId,
+          recipientEmail: recipient.email,
+          emailingDomainId,
+        })),
+        { retryLimit: 3 },
+      );
 
       await this.finalizeCampaignIfComplete({ workspaceId, campaignId });
     }, buildSystemAuthContext(workspaceId));
