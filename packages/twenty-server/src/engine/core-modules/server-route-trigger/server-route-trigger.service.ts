@@ -24,6 +24,7 @@ import {
   buildRouteTriggerResponse,
   type RouteTriggerResponse,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
+import { DEFAULT_SERVER_ROUTE_HTTP_METHODS } from 'src/engine/core-modules/server-route-trigger/constants/default-server-route-http-methods.constant';
 import {
   ServerRouteTriggerException,
   ServerRouteTriggerExceptionCode,
@@ -68,13 +69,12 @@ export class ServerRouteTriggerService {
       );
     }
 
-    // Compared against POST rather than GET because Express dispatches HEAD to
-    // the GET handler, so a GET-only comparison would let HEAD reach a resolver
-    // that never opted in. Rejected before the resolver runs, since these are
-    // the methods crawlers and link unfurlers send unprompted.
+    const allowedHttpMethods =
+      resolver.serverRouteTriggerSettings?.httpMethods ??
+      DEFAULT_SERVER_ROUTE_HTTP_METHODS;
+
     if (
-      request.method !== 'POST' &&
-      resolver.serverRouteTriggerSettings?.isGetAllowed !== true
+      !allowedHttpMethods.some((httpMethod) => httpMethod === request.method)
     ) {
       throw new ServerRouteTriggerException(
         `Server resolver function ${resolverLogicFunctionUniversalIdentifier} does not accept ${request.method} requests`,

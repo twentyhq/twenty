@@ -26,12 +26,10 @@ export class ServerRouteTriggerController {
     private readonly serverRouteTriggerService: ServerRouteTriggerService,
   ) {}
 
-  @Post(':resolverLogicFunctionUniversalIdentifier')
-  async post(
-    @Param('resolverLogicFunctionUniversalIdentifier')
+  private async handleRequest(
     resolverLogicFunctionUniversalIdentifier: string,
-    @Req() request: Request,
-    @Res() response: Response,
+    request: Request,
+    response: Response,
   ) {
     sendRouteTriggerResponse(
       response,
@@ -42,10 +40,6 @@ export class ServerRouteTriggerController {
     );
   }
 
-  // Providers verify a webhook endpoint with a GET carrying a challenge, sent to
-  // the same URL they later POST events to, and accept no second URL — hence the
-  // shared path and service. Which resolvers may be reached this way is gated in
-  // the service.
   @Get(':resolverLogicFunctionUniversalIdentifier')
   async get(
     @Param('resolverLogicFunctionUniversalIdentifier')
@@ -53,12 +47,24 @@ export class ServerRouteTriggerController {
     @Req() request: Request,
     @Res() response: Response,
   ) {
-    sendRouteTriggerResponse(
+    await this.handleRequest(
+      resolverLogicFunctionUniversalIdentifier,
+      request,
       response,
-      await this.serverRouteTriggerService.handle({
-        request,
-        resolverLogicFunctionUniversalIdentifier,
-      }),
+    );
+  }
+
+  @Post(':resolverLogicFunctionUniversalIdentifier')
+  async post(
+    @Param('resolverLogicFunctionUniversalIdentifier')
+    resolverLogicFunctionUniversalIdentifier: string,
+    @Req() request: Request,
+    @Res() response: Response,
+  ) {
+    await this.handleRequest(
+      resolverLogicFunctionUniversalIdentifier,
+      request,
+      response,
     );
   }
 }
