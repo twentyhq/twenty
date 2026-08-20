@@ -61,9 +61,9 @@ export const computeWorkflowLayout = ({
   return nodes.map((node) => {
     const layoutedNode = graph.node(node.id);
 
-    const x = layoutedNode.x; // Dagre gives the center, keep it as the center (see nodeOrigin in WorkflowDiagramCanvasBase)
-    const y = layoutedNode.y;
-
-    return { id: node.id, position: { x, y } };
+    return {
+      id: node.id,
+      position: { x: layoutedNode.x, y: layoutedNode.y },
+    };
   });
 };
