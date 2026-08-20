@@ -10206,7 +10206,7 @@ msgstr "Ово отпремање датотеке је већ финализо�
 #. js-lingui-id: bHna44
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This HTTP method is not allowed on this server route."
-msgstr ""
+msgstr "Овај HTTP метод није дозвољен на овој путањи сервера."
 
 #. js-lingui-id: cvWDSJ
 #: src/engine/metadata-modules/metadata-side-effect/utils/map-system-side-effect-collision-to-failure.util.ts
