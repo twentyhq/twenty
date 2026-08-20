@@ -24,6 +24,7 @@ export {
   buildObjectMetadataLabelPlaceholderValues,
   hasObjectMetadataLabelPlaceholder,
 } from './metadata-label-placeholder';
+export { rewriteLegacyMetadataLabelTemplate } from './rewrite-legacy-metadata-label-template';
 export type {
   TranslatableMetadataName,
   TranslatablePropertyName,

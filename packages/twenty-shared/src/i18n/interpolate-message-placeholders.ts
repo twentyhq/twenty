@@ -1,3 +1,4 @@
+import { rewriteLegacyMetadataLabelTemplate } from './rewrite-legacy-metadata-label-template';
 import { isDefined } from '../utils/validation/isDefined';
 
 const PLACEHOLDER_REGEX = /\{(\w+)\}/g;
@@ -13,9 +14,17 @@ export const interpolateMessagePlaceholders = (
     return message;
   }
 
-  return message.replace(PLACEHOLDER_REGEX, (placeholder, name: string) => {
-    const value = values[name];
+  // DEPRECATED shim: stored labels provisioned before the 2.33 upgrade command
+  // still carry the template syntax this replaced, and would otherwise render
+  // as the raw expression.
+  const interpolatableMessage = rewriteLegacyMetadataLabelTemplate(message);
 
-    return isDefined(value) ? String(value) : placeholder;
-  });
+  return interpolatableMessage.replace(
+    PLACEHOLDER_REGEX,
+    (placeholder, name: string) => {
+      const value = values[name];
+
+      return isDefined(value) ? String(value) : placeholder;
+    },
+  );
 };
