@@ -116,8 +116,8 @@ Rules:
 - Read the partner's **notes** (`noteTargets` filtered by `targetPartnerId`) when there are
   any. A `Partner call recap:` note carries what was actually said on a call, which beats
   self-written copy. About 5 partners have one.
-- `partnerTier` and `ranking` are the user's own past judgements. Report them where set;
-  never let them reorder the list.
+- `partnerTier` is the user's own past judgement. Report it where set; never let it
+  reorder the list.
 
 Head the output with the lead's budget line from the criteria file, usually "not stated".
 Show each partner's rate next to it. Do not compute a verdict from the comparison.

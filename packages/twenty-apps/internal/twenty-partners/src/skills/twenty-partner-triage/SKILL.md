@@ -102,11 +102,9 @@ Rules:
 
 - **Not a gate.** It never moves anyone to `REJECTED` or out of the funnel.
 - **Not a writer.** It never edits a record. Surfacing only.
-- **Not the production cron.** This is the dev surface for the ranking. Once the chase-list is
-  trustworthy, `rank.py` is what gets ported to a daily logic-function cron that writes
-  `ranking` and a tier onto each record so the workspace view sorts itself. The judgment pass
-  stays here, for the runs where a human is in the loop. Build the skill, trust it, port the
-  cheap part. Don't build both.
+- **Not the production cron.** This is the dev surface. The score `rank.py` computes stays
+  local to a run — it is never written back onto a record. The judgment pass stays here, for
+  the runs where a human is in the loop.
 
 ## Self-check
 
