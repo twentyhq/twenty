@@ -462,7 +462,9 @@ jobs:
         if: steps.validate-schemas.outputs.valid == 'true'
         run: |
           echo "=== INSTALLING GRAPHQL INSPECTOR CLI ==="
-          npm install -g @graphql-inspector/cli
+          # Pinned: cli@7.0.0 depends on @graphql-inspector/coverage-command@^7.0.0,
+          # which upstream never published, so an unpinned install fails ETARGET.
+          npm install -g @graphql-inspector/cli@6.0.8
 
           echo "=== GENERATING GRAPHQL DIFF REPORTS ==="
 
