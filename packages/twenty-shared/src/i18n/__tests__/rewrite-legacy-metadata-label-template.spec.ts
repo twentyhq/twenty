@@ -1,3 +1,4 @@
+import { interpolateCommandMenuItemPlaceholders } from '../interpolate-command-menu-item-placeholders';
 import { interpolateMessagePlaceholders } from '../interpolate-message-placeholders';
 import { rewriteLegacyMetadataLabelTemplate } from '../rewrite-legacy-metadata-label-template';
 
@@ -34,9 +35,9 @@ describe('rewriteLegacyMetadataLabelTemplate', () => {
     );
   });
 
-  it('fills a legacy label through the placeholder interpolator', () => {
+  it('fills a legacy label through the command menu item interpolator', () => {
     expect(
-      interpolateMessagePlaceholders(
+      interpolateCommandMenuItemPlaceholders(
         'New ${capitalize(objectMetadataItem.labelSingular)}',
         { objectLabelSingular: 'Person' },
       ),
@@ -45,10 +46,21 @@ describe('rewriteLegacyMetadataLabelTemplate', () => {
 
   it('keeps a legacy placeholder the caller cannot fill', () => {
     expect(
-      interpolateMessagePlaceholders(
+      interpolateCommandMenuItemPlaceholders(
         'New ${capitalize(objectMetadataItem.labelSingular)}',
         {},
       ),
     ).toBe('New {objectLabelSingular}');
+  });
+
+  // A view name is text a person typed: it must survive verbatim even when it
+  // happens to look like the syntax command menu item labels once used.
+  it('leaves a user-authored name alone through the generic interpolator', () => {
+    expect(
+      interpolateMessagePlaceholders(
+        'New ${capitalize(objectMetadataItem.labelSingular)}',
+        { objectLabelSingular: 'Person' },
+      ),
+    ).toBe('New ${capitalize(objectMetadataItem.labelSingular)}');
   });
 });

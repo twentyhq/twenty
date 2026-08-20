@@ -1,4 +1,5 @@
 import { type MetadataLabelPlaceholderName } from './metadata-label-placeholder';
+import { isDefined } from '../utils/validation/isDefined';
 
 // DEPRECATED — remove once every workspace has run the 2.33 command
 // `upgrade:2-33:migrate-command-menu-item-labels-to-placeholders`, which
@@ -43,9 +44,9 @@ export const rewriteLegacyMetadataLabelTemplate = (message: string): string => {
           capitalizedName ?? bareName ?? ''
         ];
 
-      return placeholderName === undefined
-        ? legacyExpression
-        : `{${placeholderName}}`;
+      return isDefined(placeholderName)
+        ? `{${placeholderName}}`
+        : legacyExpression;
     },
   );
 };
