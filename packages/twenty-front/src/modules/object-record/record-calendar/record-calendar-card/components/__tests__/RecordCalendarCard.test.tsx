@@ -97,7 +97,9 @@ describe('RecordCalendarCard', () => {
       currentView: { isCompact: false },
     });
 
-    render(<RecordCalendarCard recordId="record-id" />);
+    render(
+      <RecordCalendarCard recordId="record-id" calendarDay="2024-01-01" />,
+    );
 
     expect(screen.getByTestId('card-header')).toBeInTheDocument();
     expect(screen.getByTestId('card-body')).toBeInTheDocument();
@@ -112,7 +114,9 @@ describe('RecordCalendarCard', () => {
       currentView: { isCompact: true },
     });
 
-    render(<RecordCalendarCard recordId="record-id" />);
+    render(
+      <RecordCalendarCard recordId="record-id" calendarDay="2024-01-01" />,
+    );
 
     expect(screen.getByTestId('card-header')).toBeInTheDocument();
     expect(screen.queryByTestId('card-body')).not.toBeInTheDocument();
