@@ -169,6 +169,15 @@ test('weekly rotation wins when completeness and tier are equal', () => {
   ).toEqual(['ordinary-name', 'hash-name']);
 });
 
+test('the description threshold sits at one hundred and twenty characters', () => {
+  expect(completenessScore({ ...base, description: 'x'.repeat(119) })).toBe(0);
+  expect(completenessScore({ ...base, description: 'x'.repeat(120) })).toBe(2);
+});
+
+test('whitespace alone never earns the description points', () => {
+  expect(completenessScore({ ...base, description: ' '.repeat(200) })).toBe(0);
+});
+
 test('a full profile scores twenty-three points', () => {
   expect(
     completenessScore({

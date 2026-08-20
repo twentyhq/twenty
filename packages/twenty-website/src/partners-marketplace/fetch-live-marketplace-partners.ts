@@ -54,7 +54,7 @@ const assertRankingContract = (apiPartner: ApiPartner): void => {
     apiPartner.rotationKey.length === 0
   ) {
     throw new Error(
-      `partners API returned no rotationKey for "${apiPartner.slug}"`,
+      `partners API returned no rotationKey for "${apiPartner.slug}" (${JSON.stringify(apiPartner.rotationKey)})`,
     );
   }
 
@@ -64,7 +64,7 @@ const assertRankingContract = (apiPartner: ApiPartner): void => {
 
   if (invalidCount !== undefined) {
     throw new Error(
-      `partners API returned an invalid ${invalidCount} for "${apiPartner.slug}"`,
+      `partners API returned an invalid ${invalidCount} for "${apiPartner.slug}" (${JSON.stringify(apiPartner[invalidCount])})`,
     );
   }
 };
