@@ -470,6 +470,7 @@ export class ChatExecutionService {
       model: registeredModel.model,
       messages: [systemMessage, ...modelMessages],
       tools: activeTools,
+      // Every step of the kickoff turn is forced so it cannot end in prose; stopWhen ends it at the first ask_questions.
       toolChoice: isWorkspaceSetupKickoffTurn ? 'required' : 'auto',
       abortSignal,
       stopWhen: (step) =>
