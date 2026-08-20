@@ -73,26 +73,31 @@ export class MessageCampaignRecoveryService {
       );
 
     if (countByDeliveryStatus.size > 0) {
-      // Materialization commits chunk by chunk but only enqueues once it has finished, so a run
-      // that died partway leaves persisted messages no send job will ever pick up.
-      const resumedCount =
-        await this.messageCampaignService.resumeStalledSendJobs({
-          workspaceId,
-          campaignId,
-        });
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        async () => {
+          // Materialization commits chunk by chunk but only enqueues once every chunk has landed,
+          // so a run that died partway leaves messages no send job will ever pick up. Nothing has
+          // progressed for an hour, so they are failed to let the campaign reach a terminal state
+          // rather than sitting in SENDING forever.
+          const failedCount =
+            await this.messageCampaignService.failStalledQueuedMessages({
+              workspaceId,
+              campaignId,
+            });
 
-      if (resumedCount > 0) {
-        this.logger.warn(
-          `Campaign ${campaignId} of workspace ${workspaceId} had ${resumedCount} queued message(s) with no send job and was resumed`,
-        );
+          if (failedCount > 0) {
+            this.logger.warn(
+              `Campaign ${campaignId} of workspace ${workspaceId} had ${failedCount} message(s) stalled in queued and they were failed`,
+            );
+          }
 
-        return;
-      }
-
-      await this.messageCampaignService.finalizeCampaignIfComplete({
-        workspaceId,
-        campaignId,
-      });
+          await this.messageCampaignService.finalizeCampaignIfComplete({
+            workspaceId,
+            campaignId,
+          });
+        },
+        buildSystemAuthContext(workspaceId),
+      );
 
       return;
     }

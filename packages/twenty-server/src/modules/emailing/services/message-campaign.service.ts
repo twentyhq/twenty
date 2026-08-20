@@ -1,6 +1,6 @@
 import { Injectable, Logger, type Type } from '@nestjs/common';
 
-import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
 import { z } from 'zod';
 import { In, type ObjectLiteral } from 'typeorm';
@@ -901,91 +901,30 @@ export class MessageCampaignService {
     );
   }
 
-  async resumeStalledSendJobs({
+  async failStalledQueuedMessages({
     workspaceId,
     campaignId,
   }: {
     workspaceId: string;
     campaignId: string;
   }): Promise<number> {
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const campaignRepository = await this.getSystemRepository(
-          workspaceId,
-          MessageCampaignWorkspaceEntity,
-        );
-
-        const campaign = await campaignRepository.findOne({
-          where: { id: campaignId },
-        });
-
-        if (
-          !isDefined(campaign) ||
-          campaign.status !== MessageCampaignStatus.SENDING
-        ) {
-          return 0;
-        }
-
-        const messageRepository = await this.getSystemRepository(
-          workspaceId,
-          MessageWorkspaceEntity,
-        );
-
-        const queuedMessages = await messageRepository.find({
-          where: {
-            messageCampaignId: campaignId,
-            deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED,
-          },
-          select: { id: true },
-        });
-
-        if (!isNonEmptyArray(queuedMessages)) {
-          return 0;
-        }
-
-        const participantRepository = await this.getSystemRepository(
-          workspaceId,
-          MessageParticipantWorkspaceEntity,
-        );
-
-        const recipients = await participantRepository.find({
-          where: {
-            messageId: In(queuedMessages.map((message) => message.id)),
-            role: MessageParticipantRole.TO,
-          },
-          select: { messageId: true, handle: true, personId: true },
-        });
-
-        const emailingDomain = await this.findSendReadyEmailingDomainOrThrow(
-          workspaceId,
-          campaign.fromAddress?.primaryEmail ?? '',
-        );
-
-        const jobs = recipients.flatMap((recipient) =>
-          isNonEmptyString(recipient.handle) && isDefined(recipient.personId)
-            ? [
-                {
-                  workspaceId,
-                  campaignId,
-                  messageId: recipient.messageId,
-                  personId: recipient.personId,
-                  recipientEmail: recipient.handle,
-                  emailingDomainId: emailingDomain.id,
-                },
-              ]
-            : [],
-        );
-
-        await this.messageQueueService.bulkAdd<SendCampaignEmailJobData>(
-          SEND_CAMPAIGN_EMAIL_JOB,
-          jobs,
-          { retryLimit: 3 },
-        );
-
-        return jobs.length;
-      },
-      buildSystemAuthContext(workspaceId),
+    const messageRepository = await this.getSystemRepository(
+      workspaceId,
+      MessageWorkspaceEntity,
     );
+
+    // Reached only for a campaign that has made no progress for an hour, so these messages have no
+    // live job behind them. They are failed rather than re-enqueued because a message that does
+    // still have a job would then be sent twice, and a duplicate cannot be taken back.
+    const { affected } = await messageRepository.update(
+      {
+        messageCampaignId: campaignId,
+        deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED,
+      },
+      { deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED },
+    );
+
+    return affected ?? 0;
   }
 
   async finalizeCampaignIfComplete({
