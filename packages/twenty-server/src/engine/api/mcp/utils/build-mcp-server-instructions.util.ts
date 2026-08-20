@@ -1,8 +1,17 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
+import { buildWorkspaceInstructionsSection } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-instructions-section.util';
+
 export const buildMcpServerInstructions = (
   objectNames: string,
   skillNames?: string,
-): string =>
-  [
+  workspaceInstructions?: string,
+): string => {
+  const workspaceInstructionsSection = buildWorkspaceInstructionsSection(
+    workspaceInstructions ?? '',
+  );
+
+  return [
     `You are an AI assistant for a Twenty CRM workspace.`,
     `Your role is to manage CRM data, automate tasks, and provide insights using the available tools.`,
     ``,
@@ -75,4 +84,8 @@ export const buildMcpServerInstructions = (
     `On tool failure: read the error message, do not retry silently, report to user.`,
     `Present results as readable summaries, not raw JSON.`,
     `For large result sets, show count + first N records and offer to paginate.`,
+    ...(isNonEmptyString(workspaceInstructionsSection)
+      ? [workspaceInstructionsSection]
+      : []),
   ].join('\n');
+};

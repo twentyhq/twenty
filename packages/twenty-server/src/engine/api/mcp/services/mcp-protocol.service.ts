@@ -98,9 +98,9 @@ export class McpProtocolService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  async handleInitialize(requestId: string | number, workspaceId: string) {
+  async handleInitialize(requestId: string | number, workspace: FlatWorkspace) {
     const instructions =
-      await this.mcpInstructionBuilderService.buildInstructions(workspaceId);
+      await this.mcpInstructionBuilderService.buildInstructions(workspace);
 
     return wrapJsonRpcResponse(requestId, {
       result: {
@@ -300,7 +300,7 @@ export class McpProtocolService {
       }
 
       if (method === 'initialize') {
-        return this.handleInitialize(id, workspace.id);
+        return this.handleInitialize(id, workspace);
       }
 
       if (method === 'ping') {
