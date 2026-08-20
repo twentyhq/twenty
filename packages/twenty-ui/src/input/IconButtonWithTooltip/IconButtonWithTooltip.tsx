@@ -5,7 +5,10 @@ import {
 import { AppTooltip, TooltipDelay, TooltipPosition } from '@ui/surfaces';
 import { useId } from 'react';
 
-export type IconButtonWithTooltipProps = IconButtonProps & {
+export type IconButtonWithTooltipProps = Pick<
+  IconButtonProps,
+  'Icon' | 'ariaLabel' | 'onClick' | 'size' | 'variant'
+> & {
   tooltipContent: string;
   tooltipPlace?: TooltipPosition;
   tooltipDelay?: TooltipDelay;
@@ -17,18 +20,27 @@ export const IconButtonWithTooltip = ({
   tooltipPlace = TooltipPosition.Bottom,
   tooltipDelay = TooltipDelay.longDelay,
   tooltipOffset = 5,
-  ...iconButtonProps
+  Icon,
+  ariaLabel,
+  onClick,
+  size,
+  variant,
 }: IconButtonWithTooltipProps) => {
   const tooltipId = useId();
 
   return (
     <>
       <div data-tooltip-id={tooltipId}>
-        {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
-        <IconButton {...iconButtonProps} />
+        <IconButton
+          Icon={Icon}
+          ariaLabel={ariaLabel}
+          onClick={onClick}
+          size={size}
+          variant={variant}
+        />
       </div>
       <AppTooltip
-        anchorSelect={`[data-tooltip-id='${tooltipId}']`}
+        anchorSelect={`[data-tooltip-id='${tooltipId}'] > button`}
         content={tooltipContent}
         delay={tooltipDelay}
         place={tooltipPlace}

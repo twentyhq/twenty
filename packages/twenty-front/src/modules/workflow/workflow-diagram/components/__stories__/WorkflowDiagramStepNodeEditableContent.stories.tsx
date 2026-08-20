@@ -7,7 +7,7 @@ import { WorkflowDiagramStepNodeEditableContent } from '@/workflow/workflow-diag
 import '@xyflow/react/dist/style.css';
 import { useStore } from 'jotai';
 import { useEffect } from 'react';
-import { fn } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
 import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
@@ -194,4 +194,21 @@ export const Catalog: CatalogStory<
     CatalogDecorator,
     ReactflowDecorator,
   ],
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const optionsButtons = await canvas.findAllByRole('button', {
+      name: 'Node options',
+    });
+
+    expect(optionsButtons).toHaveLength(ALL_STEPS.length);
+
+    await userEvent.click(optionsButtons[0]);
+
+    const canvasBody = within(canvasElement.ownerDocument.body);
+    const duplicateNodeMenuItem = await canvasBody.findByText('Duplicate node');
+
+    await userEvent.click(duplicateNodeMenuItem);
+
+    expect(args.onDuplicateNode).toHaveBeenCalledTimes(1);
+  },
 };

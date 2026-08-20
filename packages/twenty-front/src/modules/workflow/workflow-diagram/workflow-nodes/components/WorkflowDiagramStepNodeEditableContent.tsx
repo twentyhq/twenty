@@ -132,7 +132,7 @@ export const WorkflowDiagramStepNodeEditableContent = ({
           </WorkflowNodeTitle>
         </WorkflowNodeRightPart>
 
-        {selected && (
+        {id !== EMPTY_NODE_ID && selected && (
           <WorkflowDiagramStepNodeOptionsDropdown
             onChangeNode={onChangeNode}
             onDuplicateNode={onDuplicateNode}

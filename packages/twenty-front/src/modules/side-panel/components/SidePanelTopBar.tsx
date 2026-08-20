@@ -1,6 +1,7 @@
 import { SidePanelBackButton } from '@/side-panel/components/SidePanelBackButton';
 import { SidePanelCloseButton } from '@/side-panel/components/SidePanelCloseButton';
 import { SidePanelPageInfo } from '@/side-panel/components/SidePanelPageInfo';
+import { SidePanelTopBarEscapeHotkeyEffect } from '@/side-panel/components/SidePanelTopBarEscapeHotkeyEffect';
 import { SidePanelTopBarInputFocusEffect } from '@/side-panel/components/SidePanelTopBarInputFocusEffect';
 import { SidePanelExpandButton } from '@/side-panel/components/SidePanelExpandButton';
 import { SidePanelTopBarRightCornerIcon } from '@/side-panel/components/SidePanelTopBarRightCornerIcon';
@@ -17,7 +18,6 @@ import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -114,13 +114,6 @@ export const SidePanelTopBar = () => {
   const handleSidePanelBackspace = useHandleSidePanelBackspace();
   const handleSidePanelEscape = useHandleSidePanelEscape();
 
-  useGlobalHotkeys({
-    keys: [Key.Escape],
-    callback: handleSidePanelEscape,
-    containsModifier: false,
-    dependencies: [handleSidePanelEscape],
-  });
-
   const handleInputFocus = () => {
     pushFocusItemToFocusStack({
       focusId: SIDE_PANEL_FOCUS_ID,
@@ -186,6 +179,10 @@ export const SidePanelTopBar = () => {
 
   return (
     <StyledInputContainer isMobile={isMobile}>
+      <SidePanelTopBarEscapeHotkeyEffect
+        inputRef={inputRef}
+        onEscape={handleSidePanelEscape}
+      />
       <StyledContentContainer>
         <AnimatePresence>
           {shouldShowBackButton && (
