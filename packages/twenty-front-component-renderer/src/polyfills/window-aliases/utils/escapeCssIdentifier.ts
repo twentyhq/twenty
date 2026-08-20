@@ -22,7 +22,11 @@ const escapeAsHexCodePoint = (character: string): string =>
 
 export const escapeCssIdentifier = (value: unknown): string => {
   const identifier = String(value);
-  const isLoneHyphen = identifier === '-';
+
+  if (identifier === '-') {
+    return '\\-';
+  }
+
   const startsWithHyphen = identifier.startsWith('-');
   let escapedIdentifier = '';
 
@@ -44,7 +48,7 @@ export const escapeCssIdentifier = (value: unknown): string => {
       continue;
     }
 
-    if (isLoneHyphen || !isSafeIdentifierCharacter(character)) {
+    if (!isSafeIdentifierCharacter(character)) {
       escapedIdentifier += `\\${character}`;
       continue;
     }

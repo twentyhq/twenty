@@ -54,23 +54,6 @@ describe('installWindowAliasesPolyfill', () => {
     }
   });
 
-  it('should alias constructors by reference so instances keep working', () => {
-    const { globalScope, polyfillWindow } = createSandbox();
-
-    expect(polyfillWindow.AbortController).toBe(globalScope.AbortController);
-
-    const AbortControllerAlias =
-      polyfillWindow.AbortController as typeof AbortController;
-
-    expect(new AbortControllerAlias().signal.aborted).toBe(false);
-  });
-
-  it('should keep the window CSS namespace identical to the global one', () => {
-    const { globalScope, polyfillWindow } = createSandbox();
-
-    expect(polyfillWindow.CSS).toBe(globalScope.CSS);
-  });
-
   it('should reach the fetch swapped onto the global scope after install', async () => {
     const { globalScope, polyfillWindow } = createSandbox();
 

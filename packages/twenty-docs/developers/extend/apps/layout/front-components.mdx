@@ -794,10 +794,14 @@ Elements can measure themselves: the host mirrors geometry into the sandbox, so 
 Positioning from `getBoundingClientRect` now works, but anything watching size changes through `ResizeObserver` (recharts `ResponsiveContainer`, Floating UI's `autoUpdate`) still does not. Prefer CSS for layout anyway: your stylesheet reaches the real page, so flexbox, grid, `aspect-ratio`, `clamp()` and `@container` behave normally, with no frame lag.
 
 <Note>
-`requestAnimationFrame`, `fetch`, `setTimeout` and `queueMicrotask` work, with or without the `window.` prefix, and so do `console`, `crypto`, `performance`, `structuredClone`, `btoa`/`atob`, `URL`, `AbortController`, `Headers`/`Request`/`Response`, `Blob`, `FormData` and `TextEncoder`/`TextDecoder`.
+`requestAnimationFrame` works, with or without the `window.` prefix.
+</Note>
+
+### Global scope
+
+The worker's own natives are also aliased onto `window`, so they work with or without the `window.` prefix: `fetch`, `setTimeout`/`clearTimeout`, `setInterval`/`clearInterval`, `queueMicrotask`, `console`, `crypto`, `performance`, `structuredClone`, `btoa`/`atob`, `URL`/`URLSearchParams`, `AbortController`/`AbortSignal`, `Headers`/`Request`/`Response`, `Blob`, `File`, `FormData` and `TextEncoder`/`TextDecoder`.
 
 `requestIdleCallback` is backed by a timer rather than real idle detection: the callback runs almost immediately and its deadline advertises a small fixed budget, so treat it as "soon", not as "when the thread is free". A `timeout` option is honoured.
-</Note>
 
 ### DOM access
 
@@ -846,5 +850,5 @@ Component CSS, whether from `import './styles.css'`, CSS-in-JS or a `style` elem
 
 - **File contents.** An `input` of type `file` gives your handler file metadata only, not the bytes, so `FileReader` is not available. To upload a `Blob` your code already holds — e.g. one produced by `MediaRecorder` — use the `uploadFile` host function.
 - **Drag-and-drop payloads.** Drag events fire, but `event.dataTransfer` is `undefined`.
-- **Node built-ins.** `fs`, `path` and `node:crypto` fail the build, so move that work into a [logic function](/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` and `URL` are available.
+- **Node built-ins.** `fs`, `path` and `node:crypto` fail the build, so move that work into a [logic function](/developers/extend/apps/logic/logic-functions). Their web equivalents are available, see [global scope](#global-scope).
 - **`iframe`** is always re-sandboxed without `allow-same-origin`, so an embed relying on its own session renders logged out. It has no `onLoad` either.

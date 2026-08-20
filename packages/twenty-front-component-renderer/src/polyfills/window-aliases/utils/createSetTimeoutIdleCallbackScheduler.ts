@@ -26,6 +26,9 @@ export const createSetTimeoutIdleCallbackScheduler =
   (): IdleCallbackScheduler => ({
     request: (callback, options) => {
       const requestedTimeout = options?.timeout;
+      const didTimeout =
+        isDefined(requestedTimeout) &&
+        requestedTimeout <= IDLE_CALLBACK_SCHEDULE_DELAY_MS;
       const scheduleDelayMs = isDefined(requestedTimeout)
         ? Math.min(IDLE_CALLBACK_SCHEDULE_DELAY_MS, requestedTimeout)
         : IDLE_CALLBACK_SCHEDULE_DELAY_MS;
@@ -34,9 +37,7 @@ export const createSetTimeoutIdleCallbackScheduler =
         callback(
           createIdleDeadline({
             idleStartTimestamp: performance.now(),
-            didTimeout:
-              isDefined(requestedTimeout) &&
-              requestedTimeout <= scheduleDelayMs,
+            didTimeout,
           }),
         );
       }, scheduleDelayMs);

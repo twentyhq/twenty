@@ -1,7 +1,7 @@
 import { isFunction } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { resolveGlobalScopeInstallTargets } from '@/polyfills/utils/resolveGlobalScopeInstallTargets';
+import { defineAbsentGlobalScopeValues } from '@/polyfills/utils/defineAbsentGlobalScopeValues';
 import { NATIVE_FUNCTION_WINDOW_ALIAS_NAMES } from '@/polyfills/window-aliases/constants/NativeFunctionWindowAliasNames';
 import { NATIVE_VALUE_WINDOW_ALIAS_NAMES } from '@/polyfills/window-aliases/constants/NativeValueWindowAliasNames';
 
@@ -26,13 +26,5 @@ export const installNativeWindowAliases = (
     }
   }
 
-  for (const installTarget of resolveGlobalScopeInstallTargets(globalScope)) {
-    for (const [aliasName, nativeAlias] of Object.entries(nativeAliases)) {
-      if (aliasName in installTarget) {
-        continue;
-      }
-
-      installTarget[aliasName] = nativeAlias;
-    }
-  }
+  defineAbsentGlobalScopeValues({ globalScope, values: nativeAliases });
 };

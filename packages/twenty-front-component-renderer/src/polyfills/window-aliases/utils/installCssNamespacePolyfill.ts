@@ -1,10 +1,10 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { resolveGlobalScopeInstallTargets } from '@/polyfills/utils/resolveGlobalScopeInstallTargets';
+import { defineAbsentGlobalScopeValues } from '@/polyfills/utils/defineAbsentGlobalScopeValues';
 import { escapeCssIdentifier } from '@/polyfills/window-aliases/utils/escapeCssIdentifier';
 import { evaluateCssSupportsQuery } from '@/polyfills/window-aliases/utils/evaluateCssSupportsQuery';
 
-const createCssNamespacePolyfill = () => ({
+const CSS_NAMESPACE_POLYFILL = {
   escape: (...escapeArguments: unknown[]) => {
     if (escapeArguments.length === 0) {
       throw new TypeError('CSS.escape requires an argument');
@@ -23,7 +23,7 @@ const createCssNamespacePolyfill = () => ({
       return false;
     }
   },
-});
+};
 
 export const installCssNamespacePolyfill = (
   globalScope: Record<string, unknown>,
@@ -35,11 +35,7 @@ export const installCssNamespacePolyfill = (
   // than no polyfill at all.
   const cssNamespace = isDefined(nativeCssNamespace)
     ? nativeCssNamespace
-    : createCssNamespacePolyfill();
+    : CSS_NAMESPACE_POLYFILL;
 
-  for (const installTarget of resolveGlobalScopeInstallTargets(globalScope)) {
-    if (!('CSS' in installTarget)) {
-      installTarget.CSS = cssNamespace;
-    }
-  }
+  defineAbsentGlobalScopeValues({ globalScope, values: { CSS: cssNamespace } });
 };
