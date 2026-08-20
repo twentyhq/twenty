@@ -16,6 +16,7 @@ export enum SidePanelPages {
   AskAI = 'ask-ai',
   PageLayoutDashboardWidgetTypeSelect = 'page-layout-dashboard-widget-type-select',
   PageLayoutTabSettings = 'page-layout-tab-settings',
+  PageLayoutWidgetSettings = 'page-layout-widget-settings',
   DashboardChartSettings = 'dashboard-chart-settings',
   DashboardIframeSettings = 'dashboard-iframe-settings',
   DashboardRecordTableSettings = 'dashboard-record-table-settings',
