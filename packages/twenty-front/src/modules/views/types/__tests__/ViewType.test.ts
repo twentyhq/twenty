@@ -7,6 +7,7 @@ import {
 import {
   IconCalendar,
   IconLayoutKanban,
+  IconList,
   IconListDetails,
   IconTable,
 } from 'twenty-ui/icon';
@@ -16,9 +17,11 @@ describe('view type icon mapping', () => {
     [ViewType.TABLE, IconTable, 'IconTable'],
     [ViewType.KANBAN, IconLayoutKanban, 'IconLayoutKanban'],
     [ViewType.CALENDAR, IconCalendar, 'IconCalendar'],
+    [ViewType.LIST, IconList, 'IconList'],
     [ViewType.FIELDS_WIDGET, IconListDetails, 'IconListDetails'],
     [ViewType.TABLE_WIDGET, IconTable, 'IconTable'],
     [ViewType.KANBAN_WIDGET, IconLayoutKanban, 'IconLayoutKanban'],
+    [ViewType.LIST_WIDGET, IconList, 'IconList'],
     [ViewType.CALENDAR_WIDGET, IconCalendar, 'IconCalendar'],
   ])(
     'maps %s to its canonical icon component and key',

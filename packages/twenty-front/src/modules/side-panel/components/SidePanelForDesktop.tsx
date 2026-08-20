@@ -4,7 +4,6 @@ import { SidePanelRouter } from '@/side-panel/components/SidePanelRouter';
 import { SidePanelWidthEffect } from '@/side-panel/components/SidePanelWidthEffect';
 import { SIDE_PANEL_CLICK_OUTSIDE_ID } from '@/side-panel/constants/SidePanelClickOutsideId';
 import { SIDE_PANEL_CONSTRAINTS } from '@/side-panel/constants/SidePanelConstraints';
-import { useShouldShrinkSidePanelFromFullWidth } from '@/side-panel/hooks/useShouldShrinkSidePanelFromFullWidth';
 import { useSidePanelCloseAnimationCompleteCleanup } from '@/side-panel/hooks/useSidePanelCloseAnimationCompleteCleanup';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
@@ -20,6 +19,7 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
+import { useReducedMotion } from 'framer-motion';
 import { useStore } from 'jotai';
 import { type AnimationEvent, useCallback, useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -79,7 +79,7 @@ export const SidePanelForDesktop = () => {
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { sidePanelCloseAnimationCompleteCleanup } =
     useSidePanelCloseAnimationCompleteCleanup();
-  const shouldShrinkFromFullWidth = useShouldShrinkSidePanelFromFullWidth();
+  const shouldReduceMotion = useReducedMotion();
 
   const [modalContainer, setModalContainer] = useState<HTMLDivElement | null>(
     null,
@@ -87,9 +87,16 @@ export const SidePanelForDesktop = () => {
   const [isResizing, setIsResizing] = useState(false);
   const [shouldRenderContent, setShouldRenderContent] =
     useState(isSidePanelOpened);
-  const [isShrinkingFromFullWidth, setIsShrinkingFromFullWidth] = useState(
-    shouldShrinkFromFullWidth,
-  );
+  const [isShrinkingFromFullWidth, setIsShrinkingFromFullWidth] =
+    useState(false);
+
+  const handleContinueChatFromFullWidth = useCallback(() => {
+    if (shouldReduceMotion === true) {
+      return;
+    }
+
+    setIsShrinkingFromFullWidth(true);
+  }, [shouldReduceMotion]);
 
   const setTableWidthResizeIsActive = useSetAtomState(
     tableWidthResizeIsActiveState,
@@ -152,7 +159,9 @@ export const SidePanelForDesktop = () => {
   return (
     <>
       <SidePanelWidthEffect />
-      <SidePanelAskAiHandoffEffect />
+      <SidePanelAskAiHandoffEffect
+        onContinueChatFromFullWidth={handleContinueChatFromFullWidth}
+      />
       <ResizablePanelGap
         side="left"
         constraints={SIDE_PANEL_CONSTRAINTS}

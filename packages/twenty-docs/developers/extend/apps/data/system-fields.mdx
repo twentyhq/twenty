@@ -146,23 +146,26 @@ As with scalar system fields, the resolved id works anywhere a `fieldMetadataUni
   2.26 or later.
 </Note>
 
-The server also provisions a **system view** on every object: the main list view (`All {objectLabelPlural}`, keyed on `ViewKey.INDEX`), with one column per displayable field. Like system relation fields, their identifiers are derived **name-free**, so renaming an object or a field never changes them.
+The server also provisions a **system view** on every object: the main list view (`All {objectLabelPlural}`, keyed on `ViewKey.INDEX` (derived with `SYSTEM_VIEW_KEYS.INDEX`)), with one column per displayable field. Like system relation fields, their identifiers are derived **name-free**, so renaming an object or a field never changes them.
 
 Use `getSystemViewUniversalIdentifier` to resolve the view:
 
 ```ts
-import { getSystemViewUniversalIdentifier, ViewKey } from 'twenty-sdk/define';
+import {
+  getSystemViewUniversalIdentifier,
+  SYSTEM_VIEW_KEYS,
+} from 'twenty-sdk/define';
 
 const rocketIndexViewId = getSystemViewUniversalIdentifier({
   objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
-  viewKey: ViewKey.INDEX,
+  viewKey: SYSTEM_VIEW_KEYS.INDEX,
 });
 ```
 
 - `objectMetadataApplicationUniversalIdentifier` is the application owning the **object**, which is what the view is namespaced by.
 - `objectUniversalIdentifier` is the object the view lists.
-- `viewKey` is the system view key, `ViewKey.INDEX` today.
+- `viewKey` is the system view discriminator: `SYSTEM_VIEW_KEYS.INDEX` for the main list view, `SYSTEM_VIEW_KEYS.FIELDS_WIDGET` for the record-page fields widget view. It keys the derivation; only `INDEX` is also stored on the view row.
 
 The resolved id works anywhere a `viewUniversalIdentifier` is expected, such as a [`NavigationMenuItemType.VIEW`](/developers/extend/apps/layout/navigation-menu-items) sidebar entry. To simply open an object's main list, prefer `NavigationMenuItemType.OBJECT` with `targetObjectUniversalIdentifier`: it needs no derivation.
 

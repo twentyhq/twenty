@@ -72,7 +72,8 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
           await updateCurrentView(updateCurrentViewParams);
           return;
         }
-        case ViewType.TABLE: {
+        case ViewType.TABLE:
+        case ViewType.LIST: {
           if (shouldChangeIcon(currentView.icon, currentView.type)) {
             updateCurrentViewParams.icon = viewTypeIconKeyMapping(viewType);
           }
@@ -113,6 +114,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
         }
         case ViewType.TABLE_WIDGET:
         case ViewType.KANBAN_WIDGET:
+        case ViewType.LIST_WIDGET:
         case ViewType.CALENDAR_WIDGET:
         case ViewType.FIELDS_WIDGET: {
           return;
@@ -152,6 +154,12 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
     if (
       oldViewType === ViewType.CALENDAR &&
       oldIcon === viewTypeIconKeyMapping(ViewType.CALENDAR)
+    ) {
+      return true;
+    }
+    if (
+      oldViewType === ViewType.LIST &&
+      oldIcon === viewTypeIconKeyMapping(ViewType.LIST)
     ) {
       return true;
     }

@@ -1,4 +1,5 @@
 import { lazy, useMemo } from 'react';
+
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -26,6 +27,12 @@ import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import { MainAppLayoutWithSidePanel } from '@/ui/layout/page/components/MainAppLayoutWithSidePanel';
 import { Verify } from '~/pages/onboarding/Verify';
 import { lazyWithPreload } from '~/utils/lazyWithPreload';
+
+const WorkflowCoreIndexPage = lazy(() =>
+  import('~/pages/object-core/WorkflowCoreIndexPage').then((module) => ({
+    default: module.WorkflowCoreIndexPage,
+  })),
+);
 
 const RecordIndexPage = lazy(() =>
   import('~/pages/object-record/RecordIndexPage').then((module) => ({
@@ -111,9 +118,15 @@ const StandalonePageLayoutPage = lazy(() =>
   })),
 );
 
-const WorkspaceSetup = lazyWithPreload(() =>
-  import('~/pages/onboarding/WorkspaceSetup').then((module) => ({
-    default: module.WorkspaceSetup,
+const AiChatPage = lazy(() =>
+  import('~/pages/ai-chat/AiChatPage').then((module) => ({
+    default: module.AiChatPage,
+  })),
+);
+
+const MobileHomePage = lazy(() =>
+  import('~/pages/mobile-home/MobileHomePage').then((module) => ({
+    default: module.MobileHomePage,
   })),
 );
 
@@ -131,15 +144,21 @@ const preloadOnboardingPages = () => {
   InviteTeam.preload();
   BookCall.preload();
   ChooseYourPlan.preload();
-  WorkspaceSetup.preload();
 
   return null;
 };
 
-const createWorkspaceAppRouter = (
-  isFunctionSettingsEnabled?: boolean,
-  isAdminPageEnabled?: boolean,
-) =>
+type CreateWorkspaceAppRouterArgs = {
+  isFunctionSettingsEnabled?: boolean;
+  isAdminPageEnabled?: boolean;
+  isWorkflowCoreIndexPageEnabled?: boolean;
+};
+
+const createWorkspaceAppRouter = ({
+  isFunctionSettingsEnabled,
+  isAdminPageEnabled,
+  isWorkflowCoreIndexPageEnabled,
+}: CreateWorkspaceAppRouterArgs) =>
   createBrowserRouter(
     createRoutesFromElements(
       <Route
@@ -148,15 +167,17 @@ const createWorkspaceAppRouter = (
       >
         <Route element={<MinimalMetadataGate />}>
           <Route element={<DefaultLayout />}>
-            <Route
-              path={AppPath.WorkspaceSetup}
-              element={
-                <LazyRoute fallback={null}>
-                  <WorkspaceSetup />
-                </LazyRoute>
-              }
-            />
             <Route element={<MainAppLayoutWithSidePanel />}>
+              {isWorkflowCoreIndexPageEnabled && (
+                <Route
+                  path={AppPath.WorkflowCoreIndexPage}
+                  element={
+                    <LazyRoute>
+                      <WorkflowCoreIndexPage />
+                    </LazyRoute>
+                  }
+                />
+              )}
               <Route
                 path={indexAppPath.getIndexAppPath()}
                 element={<RecordIndexSkeletonLoader />}
@@ -182,6 +203,22 @@ const createWorkspaceAppRouter = (
                 element={
                   <LazyRoute>
                     <StandalonePageLayoutPage />
+                  </LazyRoute>
+                }
+              />
+              <Route
+                path={AppPath.AiChat}
+                element={
+                  <LazyRoute>
+                    <AiChatPage />
+                  </LazyRoute>
+                }
+              />
+              <Route
+                path={AppPath.Home}
+                element={
+                  <LazyRoute>
+                    <MobileHomePage />
                   </LazyRoute>
                 }
               />
@@ -335,12 +372,21 @@ const createWorkspaceAppRouter = (
     ),
   );
 
-export const useCreateWorkspaceAppRouter = (
-  isFunctionSettingsEnabled?: boolean,
-  isAdminPageEnabled?: boolean,
-) =>
+export const useCreateWorkspaceAppRouter = ({
+  isFunctionSettingsEnabled,
+  isAdminPageEnabled,
+  isWorkflowCoreIndexPageEnabled,
+}: CreateWorkspaceAppRouterArgs) =>
   useMemo(
     () =>
-      createWorkspaceAppRouter(isFunctionSettingsEnabled, isAdminPageEnabled),
-    [isFunctionSettingsEnabled, isAdminPageEnabled],
+      createWorkspaceAppRouter({
+        isFunctionSettingsEnabled,
+        isAdminPageEnabled,
+        isWorkflowCoreIndexPageEnabled,
+      }),
+    [
+      isFunctionSettingsEnabled,
+      isAdminPageEnabled,
+      isWorkflowCoreIndexPageEnabled,
+    ],
   );

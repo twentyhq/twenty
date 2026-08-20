@@ -19,7 +19,7 @@ import { useQuery } from '@apollo/client/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useLocation, useParams } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, getAppPath } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
   FindOnePageLayoutTypeDocument,
@@ -85,7 +85,7 @@ export const usePageChangeEffectNavigateLocation = () => {
     shouldOpenAiChatAfterOnboardingState,
   );
   const onboardingCompletedPath = shouldOpenAiChatAfterOnboarding
-    ? AppPath.WorkspaceSetup
+    ? getAppPath(AppPath.AiChat, { threadId: null })
     : defaultHomePagePath;
 
   const isOnboardingCheckoutPending = useAtomStateValue(

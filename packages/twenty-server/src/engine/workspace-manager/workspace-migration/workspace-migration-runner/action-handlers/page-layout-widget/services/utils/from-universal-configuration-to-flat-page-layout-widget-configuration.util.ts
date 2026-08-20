@@ -56,12 +56,25 @@ const convertUniversalFilterToChartFilter = ({
   return {
     ...filter,
     recordFilters: filter.recordFilters?.map(
-      ({ fieldMetadataUniversalIdentifier, ...rest }) => ({
+      ({
+        fieldMetadataUniversalIdentifier,
+        relationTargetFieldMetadataUniversalIdentifier,
+        ...rest
+      }) => ({
         ...rest,
         fieldMetadataId: resolveFieldMetadataIdOrThrow({
           fieldMetadataUniversalIdentifier,
           flatFieldMetadataMaps,
         }),
+        ...(isDefined(relationTargetFieldMetadataUniversalIdentifier)
+          ? {
+              relationTargetFieldMetadataId: resolveFieldMetadataIdOrThrow({
+                fieldMetadataUniversalIdentifier:
+                  relationTargetFieldMetadataUniversalIdentifier,
+                flatFieldMetadataMaps,
+              }),
+            }
+          : {}),
       }),
     ),
   };
@@ -378,6 +391,8 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
     case WidgetConfigurationType.IFRAME:
     case WidgetConfigurationType.STANDALONE_RICH_TEXT:
     case WidgetConfigurationType.EMAIL_THREAD:
+    case WidgetConfigurationType.CALL_RECORDING_SUMMARY:
+    case WidgetConfigurationType.CALL_RECORDING_TRANSCRIPT:
     case WidgetConfigurationType.MESSAGE_CAMPAIGN_BODY:
     case WidgetConfigurationType.MESSAGE_CAMPAIGN_DETAILS:
       return universalConfiguration;

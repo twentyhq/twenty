@@ -99,13 +99,23 @@ export class ApplicationAuthorizationService {
   // Inner join, so an application that has been soft-deleted takes its
   // authorizations off the list rather than surfacing them with nothing to
   // name them.
-  async findActiveAuthorizationsForUser(
-    userId: string,
-  ): Promise<ApplicationAuthorizationEntity[]> {
+  // Scoped to one workspace: an authorization grants an application access to
+  // this workspace's data, so it is this workspace's to list and revoke. The
+  // same person's grants elsewhere are not visible from here.
+  async findActiveAuthorizationsForUserWorkspace({
+    userId,
+    workspaceId,
+  }: {
+    userId: string;
+    workspaceId: string;
+  }): Promise<ApplicationAuthorizationEntity[]> {
     return await this.applicationAuthorizationRepository
       .createQueryBuilder('applicationAuthorization')
       .innerJoinAndSelect('applicationAuthorization.application', 'application')
       .where('applicationAuthorization.userId = :userId', { userId })
+      .andWhere('applicationAuthorization.workspaceId = :workspaceId', {
+        workspaceId,
+      })
       .andWhere('applicationAuthorization.revokedAt IS NULL')
       .orderBy('applicationAuthorization.lastUsedAt', 'DESC')
       .getMany();
@@ -118,18 +128,22 @@ export class ApplicationAuthorizationService {
     );
   }
 
-  // Scoped by userId in the UPDATE itself rather than read-then-write, so one
-  // user can never revoke another user's authorization by guessing an id.
-  async revokeAuthorizationById({
+  // Scoped in the UPDATE itself rather than read-then-write, so one user can
+  // never revoke another user's authorization, or their own in another
+  // workspace, by guessing an id.
+  async revokeAuthorizationByIdForUserWorkspace({
     authorizationId,
     userId,
+    workspaceId,
   }: {
     authorizationId: string;
     userId: string;
+    workspaceId: string;
   }): Promise<boolean> {
     return await this.revokeMatching({
       id: authorizationId,
       userId,
+      workspaceId,
     });
   }
 
@@ -148,7 +162,7 @@ export class ApplicationAuthorizationService {
   // rules out an empty criteria object, which would revoke every row.
   private async revokeMatching(
     criteria:
-      | { id: string; userId: string }
+      | { id: string; userId: string; workspaceId: string }
       | { userId: string; applicationId: string },
   ): Promise<boolean> {
     const { affected } = await this.applicationAuthorizationRepository.update(

@@ -608,7 +608,6 @@ describe('relation connect in workspace createOne/createMany resolvers  (e2e)', 
     const TEST_PET_ID = TEST_PET_ID_1;
     const TEST_SURVEY_RESULT_ID = TEST_SURVEY_RESULT_1_ID;
 
-    // Create the survey result record first
     await makeGraphqlAPIRequest(
       createOneOperationFactory({
         objectMetadataSingularName: SURVEY_RESULT_OBJECT_NAME,

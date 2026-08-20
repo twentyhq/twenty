@@ -53,6 +53,19 @@ describe('sanitizeHtmlPreview', () => {
     ).toContain('data:image/png');
   });
 
+  it('should remove templates instead of leaving their handlers unreachable', () => {
+    expect(
+      sanitizeHtmlPreview(
+        '<template><img src=x onerror="alert(1)"></template>',
+      ),
+    ).toBe('');
+    expect(
+      sanitizeHtmlPreview(
+        '<div><template><img src=x onerror="alert(1)"></template></div>',
+      ),
+    ).toBe('<div></div>');
+  });
+
   it('should strip srcdoc and formaction attributes', () => {
     expect(
       sanitizeHtmlPreview('<div srcdoc="<script>x</script>">a</div>'),

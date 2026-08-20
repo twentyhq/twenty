@@ -13,6 +13,7 @@ import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo } from 'react';
 import {
@@ -28,10 +29,13 @@ const FIELD_WIDGET_RELATION_TABLE_MAX_HEIGHT_IN_PX =
   RECORD_TABLE_ROW_HEIGHT;
 
 const StyledContainer = styled.div`
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   flex-direction: column;
   max-height: ${FIELD_WIDGET_RELATION_TABLE_MAX_HEIGHT_IN_PX}px;
   min-height: 0;
+  overflow: hidden;
 `;
 
 type FieldWidgetRelationTableProps = {

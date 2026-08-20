@@ -30,6 +30,7 @@
       "inputs": [
         "{projectRoot}/scripts/remote-dom/**/*",
         "{projectRoot}/src/constants/**/*",
+        "{projectRoot}/src/types/**/*",
         "{workspaceRoot}/packages/twenty-ui/src/**/index.ts",
         "{workspaceRoot}/packages/twenty-ui/src/**/*.tsx"
       ],
@@ -71,7 +72,8 @@
         "!{projectRoot}/src/remote/sandbox/generated/**/*",
         "{projectRoot}/src/constants/**/*",
         "{projectRoot}/src/polyfills/**/*",
-        "{projectRoot}/src/types/**/*"
+        "{projectRoot}/src/types/**/*",
+        "{projectRoot}/src/utils/**/*"
       ],
       "outputs": [
         "{projectRoot}/src/remote/sandbox/generated/frontComponentSandboxDocument.ts"

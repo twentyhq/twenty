@@ -47,6 +47,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-registry-tool-categories.const';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentToolLoadingStrategy } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-tool-loading-strategy.type';
+import { buildAgentRolePermissionConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-role-permission-config.util';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { STRUCTURED_OUTPUT_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/structured-output-system-prompt.const';
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -61,7 +62,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/merge-language-model-usage.util';
 import { getCallLevelProviderOptions } from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
-import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
+import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { NativeToolBinderService } from 'src/engine/metadata-modules/ai/ai-models/services/native-tool-binder.service';
@@ -144,11 +145,13 @@ export class AgentAsyncExecutorService {
   private async buildPreloadedRegistryTools({
     agent,
     agentRoleId,
+    runAsRoleId,
     authContext,
     actorContext,
   }: {
     agent: AgentEntity;
     agentRoleId: string;
+    runAsRoleId?: string;
     authContext?: WorkspaceAuthContext;
     actorContext?: ActorMetadata;
   }): Promise<ToolSet> {
@@ -157,7 +160,10 @@ export class AgentAsyncExecutorService {
     const toolProviderContext: ToolProviderContext = {
       workspaceId: agent.workspaceId,
       roleId: agentRoleId,
-      rolePermissionConfig: { intersectionOf: [agentRoleId] },
+      rolePermissionConfig: buildAgentRolePermissionConfig({
+        agentRoleId,
+        runAsRoleId,
+      }),
       requireExplicitObjectGrants: true,
       authContext,
       actorContext,
@@ -179,19 +185,26 @@ export class AgentAsyncExecutorService {
   private async buildLazyRegistryTools({
     agent,
     agentRoleId,
+    runAsRoleId,
     authContext,
     actorContext,
   }: {
     agent: AgentEntity;
     agentRoleId: string;
+    runAsRoleId?: string;
     authContext?: WorkspaceAuthContext;
     actorContext?: ActorMetadata;
   }): Promise<{ tools: ToolSet; catalogSection: string }> {
     const { userId, userWorkspaceId } = this.resolveUserIdentity(authContext);
 
+    const rolePermissionConfig = isDefined(runAsRoleId)
+      ? buildAgentRolePermissionConfig({ agentRoleId, runAsRoleId })
+      : undefined;
+
     const toolContext: ToolContext = {
       workspaceId: agent.workspaceId,
       roleId: agentRoleId,
+      rolePermissionConfig,
       authContext,
       actorContext,
       userId,
@@ -201,7 +214,7 @@ export class AgentAsyncExecutorService {
     const fullCatalog = await this.toolRegistry.buildToolIndex(
       agent.workspaceId,
       agentRoleId,
-      { userId, userWorkspaceId },
+      { userId, userWorkspaceId, rolePermissionConfig },
     );
 
     const allowedCategories = new Set(WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES);
@@ -244,6 +257,7 @@ export class AgentAsyncExecutorService {
     authContext,
     workspaceId,
     userWorkspaceId,
+    runAsRoleId,
     operationType = UsageOperationType.AI_WORKFLOW_TOKEN,
     toolLoadingStrategy = 'preload',
   }: {
@@ -254,6 +268,7 @@ export class AgentAsyncExecutorService {
     authContext?: WorkspaceAuthContext;
     workspaceId: string;
     userWorkspaceId?: string | null;
+    runAsRoleId?: string;
     operationType?: UsageOperationType;
     toolLoadingStrategy?: AgentToolLoadingStrategy;
   }): Promise<AgentExecutionResult> {
@@ -317,6 +332,7 @@ export class AgentAsyncExecutorService {
             const lazyToolset = await this.buildLazyRegistryTools({
               agent,
               agentRoleId,
+              runAsRoleId,
               authContext,
               actorContext,
             });
@@ -327,6 +343,7 @@ export class AgentAsyncExecutorService {
             registryTools = await this.buildPreloadedRegistryTools({
               agent,
               agentRoleId,
+              runAsRoleId,
               authContext,
               actorContext,
             });
@@ -371,7 +388,12 @@ export class AgentAsyncExecutorService {
           stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) ||
           hasNoMoreAvailableCredits,
         providerOptions,
-        experimental_telemetry: AI_TELEMETRY_CONFIG,
+        experimental_telemetry: buildAiTelemetry({
+          functionId: 'agent-execution',
+          workspaceId,
+          userWorkspaceId,
+          agentId: agent?.id,
+        }),
         experimental_onToolCallFinish: (event) => {
           this.metricsService.recordHistogram({
             key: MetricsKeys.WorkflowAgentToolExecutionDurationMs,
@@ -481,7 +503,12 @@ export class AgentAsyncExecutorService {
             providerOptions: undefined,
             promptCacheKey: agent?.id,
           }),
-          experimental_telemetry: AI_TELEMETRY_CONFIG,
+          experimental_telemetry: buildAiTelemetry({
+            functionId: 'agent-structured-output',
+            workspaceId,
+            userWorkspaceId,
+            agentId: agent?.id,
+          }),
           onStepFinish: async (step) => {
             const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
               await this.aiBillingService.decrementAndCheckAvailableCredits(

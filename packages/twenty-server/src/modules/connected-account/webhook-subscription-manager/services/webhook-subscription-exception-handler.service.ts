@@ -4,6 +4,10 @@ import { type WebhookSubscriptionChannelType } from 'twenty-shared/types';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import {
+  ConnectedAccountRefreshAccessTokenException,
+  ConnectedAccountRefreshAccessTokenExceptionCode,
+} from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
+import {
   WebhookSubscriptionDriverException,
   WebhookSubscriptionDriverExceptionCode,
 } from 'src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception';
@@ -67,6 +71,32 @@ export class WebhookSubscriptionExceptionHandlerService {
       }
     }
 
+    if (exception instanceof ConnectedAccountRefreshAccessTokenException) {
+      switch (exception.code) {
+        case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
+        case ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN:
+          return await this.handleInsufficientPermissionsException(
+            channelType,
+            channel,
+          );
+        case ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR:
+          return await this.handleTemporaryException(
+            exception,
+            channelType,
+            channel,
+          );
+        case ConnectedAccountRefreshAccessTokenExceptionCode.ACCESS_TOKEN_NOT_FOUND:
+        case ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED:
+        default:
+          return await this.handleUnknownException(
+            exception,
+            channelType,
+            channel,
+            workspaceId,
+          );
+      }
+    }
+
     return await this.handleUnknownException(
       exception,
       channelType,
@@ -112,7 +142,9 @@ export class WebhookSubscriptionExceptionHandlerService {
   }
 
   private async handleTemporaryException(
-    exception: WebhookSubscriptionDriverException,
+    exception:
+      | WebhookSubscriptionDriverException
+      | ConnectedAccountRefreshAccessTokenException,
     channelType: WebhookSubscriptionChannelType,
     channel: WebhookSubscribableChannelReference,
   ): Promise<WebhookSubscriptionRecoveryAction> {

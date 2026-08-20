@@ -53,7 +53,6 @@ export class CompositeFieldMetadataGqlObjectTypeGenerator {
         throw new Error('Relation fields are not supported in composite types');
       }
 
-      // Skip hidden fields
       if (property.hidden === true || property.hidden === 'output') {
         continue;
       }

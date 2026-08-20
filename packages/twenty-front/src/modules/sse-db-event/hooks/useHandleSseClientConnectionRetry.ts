@@ -23,6 +23,13 @@ const destroyStream = async (
   store.set(sseClientState.atom, null);
 };
 
+// The session cookie is httpOnly, so a cookie-mode client cannot inspect its own
+// credential. clearSession drops both credentials together, so their joint
+// absence is what "signed out" looks like from here.
+const hasCredential = (store: ReturnType<typeof useStore>): boolean =>
+  store.get(isCookieAuthActiveState.atom) ||
+  isDefined(store.get(tokenPairState.atom)?.accessOrWorkspaceAgnosticToken);
+
 export const useHandleSseClientConnectionRetry = () => {
   const store = useStore();
 
@@ -42,19 +49,23 @@ export const useHandleSseClientConnectionRetry = () => {
         return;
       }
 
-      // In cookie mode the session cookie is the credential: there is no token
-      // pair to find missing and nothing to renew, so an absent one must not
-      // be read as a lost credential.
+      // Without this the loop is unbounded: graphql-sse resets its retry count
+      // whenever a result arrives, so retryCount alone never trips on a stream
+      // that keeps reconnecting. A signed-out client has to stop here.
+      if (!hasCredential(store)) {
+        await destroyStream(store, sseClient);
+        return;
+      }
+
       if (!store.get(isCookieAuthActiveState.atom)) {
-        const tokenPair = store.get(tokenPairState.atom);
-        const accessToken = tokenPair?.accessOrWorkspaceAgnosticToken;
+        const accessToken = store.get(
+          tokenPairState.atom,
+        )?.accessOrWorkspaceAgnosticToken;
 
-        if (!isDefined(accessToken)) {
-          await destroyStream(store, sseClient);
-          return;
-        }
-
-        if (new Date(accessToken.expiresAt) <= new Date()) {
+        if (
+          isDefined(accessToken) &&
+          new Date(accessToken.expiresAt) <= new Date()
+        ) {
           const renewed = await ensureTokenRenewed(store);
 
           if (!renewed) {

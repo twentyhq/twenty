@@ -5,6 +5,7 @@ import { ScrollWrapperComponentInstanceContext } from '@/ui/utilities/scroll/sta
 import { scrollWrapperScrollBottomComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollBottomComponentState';
 import { scrollWrapperScrollLeftComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollLeftComponentState';
 import { scrollWrapperScrollTopComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollTopComponentState';
+import { getScrollBottomInPx } from '@/ui/utilities/scroll/utils/getScrollBottomInPx';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 const StyledScrollWrapper = styled.div<{ autoHeight?: boolean }>`
@@ -56,9 +57,7 @@ export const ScrollWrapper = ({
     const target = event.currentTarget;
     setScrollWrapperScrollTop(target.scrollTop);
     setScrollWrapperScrollLeft(target.scrollLeft);
-    setScrollWrapperScrollBottom(
-      target.scrollHeight - target.clientHeight - target.scrollTop,
-    );
+    setScrollWrapperScrollBottom(getScrollBottomInPx(target));
   };
 
   return (

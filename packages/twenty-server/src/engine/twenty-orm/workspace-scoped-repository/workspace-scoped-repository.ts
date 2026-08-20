@@ -6,8 +6,8 @@ import {
   type FindOneOptions,
   type FindOptionsWhere,
   type InsertResult,
+  Not,
   type Repository,
-  type SaveOptions,
   type SelectQueryBuilder,
   type UpdateResult,
 } from 'typeorm';
@@ -17,7 +17,6 @@ import { type UpsertOptions } from 'typeorm/repository/UpsertOptions';
 
 import { type WorkspaceScopedEntity } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-entity.type';
 
-// Wraps a TypeORM Repository to scope every operation by workspaceId.
 // For workspace-data entities, use WorkspaceRepository instead.
 export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
   constructor(private readonly repository: Repository<T>) {}
@@ -179,13 +178,13 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     );
   }
 
-  // softRemove / recover / remove are intentionally absent.
+  // save / saveMany / softRemove / recover / remove are intentionally absent.
   // TypeORM's entity-based methods use only the primary key in the WHERE
-  // clause — stamping workspaceId on the entity object does not add an
-  // AND workspace_id = ? guard to the SQL. A leaked entity id could
-  // therefore act on a row from a different workspace.
-  // Use softDelete / delete (criteria-based) instead — they always include
-  // workspaceId in the WHERE clause.
+  // clause, so stamping workspaceId on the entity object does not add an
+  // AND workspace_id = ? guard to the SQL. A leaked entity id could act on a
+  // row from a different workspace and silently reassign its workspaceId.
+  // The criteria-based methods either cannot target an existing row or
+  // always carry workspaceId in the WHERE clause.
 
   insert(
     workspaceId: string,
@@ -198,12 +197,47 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     );
   }
 
-  upsert(
+  async insertAndReturnOne(
+    workspaceId: string,
+    entity: QueryDeepPartialEntity<T>,
+  ): Promise<T> {
+    this.assertWorkspaceId(workspaceId);
+
+    const { raw } = await this.repository
+      .createQueryBuilder()
+      .insert()
+      .values(
+        this.stampWorkspaceIdOnEntities(
+          workspaceId,
+          entity,
+        ) as QueryDeepPartialEntity<T>,
+      )
+      .returning('*')
+      .execute();
+
+    const [persistedRow] = raw as DeepPartial<T>[];
+
+    if (!isDefined(persistedRow)) {
+      throw new Error(
+        'WorkspaceScopedRepository.insertAndReturnOne: insert returned no row.',
+      );
+    }
+
+    return this.repository.create(persistedRow);
+  }
+
+  async upsert(
     workspaceId: string,
     entity: QueryDeepPartialEntity<T> | QueryDeepPartialEntity<T>[],
     conflictPathsOrOptions: string[] | UpsertOptions<T>,
   ): Promise<InsertResult> {
     this.assertWorkspaceId(workspaceId);
+
+    await this.assertConflictTargetsBelongToWorkspace(
+      workspaceId,
+      entity,
+      conflictPathsOrOptions,
+    );
 
     return this.repository.upsert(
       this.stampWorkspaceIdOnEntities(workspaceId, entity),
@@ -211,52 +245,33 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     );
   }
 
-  upsertAndReturnOne(
+  async upsertAndReturnOne(
     workspaceId: string,
     entity: QueryDeepPartialEntity<T>,
     conflictPaths: string[],
   ): Promise<T> {
     this.assertWorkspaceId(workspaceId);
 
-    return this.repository
-      .upsert(this.stampWorkspaceIdOnEntities(workspaceId, entity), {
-        conflictPaths,
-        returning: '*',
-      })
-      .then(({ generatedMaps }) => {
-        const [persistedRow] = generatedMaps;
-
-        if (!isDefined(persistedRow)) {
-          throw new Error(
-            'WorkspaceScopedRepository.upsertAndReturnOne: upsert returned no row.',
-          );
-        }
-
-        return this.repository.create(persistedRow as DeepPartial<T>);
-      });
-  }
-
-  save<E extends DeepPartial<T>>(
-    workspaceId: string,
-    entity: E,
-    options?: SaveOptions,
-  ): Promise<E & T> {
-    this.assertWorkspaceId(workspaceId);
-
-    return this.repository.save({ ...entity, workspaceId } as E, options);
-  }
-
-  saveMany<E extends DeepPartial<T>>(
-    workspaceId: string,
-    entities: E[],
-    options?: SaveOptions,
-  ): Promise<(E & T)[]> {
-    this.assertWorkspaceId(workspaceId);
-
-    return this.repository.save(
-      entities.map((entity) => ({ ...entity, workspaceId }) as E),
-      options,
+    await this.assertConflictTargetsBelongToWorkspace(
+      workspaceId,
+      entity,
+      conflictPaths,
     );
+
+    const { generatedMaps } = await this.repository.upsert(
+      this.stampWorkspaceIdOnEntities(workspaceId, entity),
+      { conflictPaths, returning: '*' },
+    );
+
+    const [persistedRow] = generatedMaps;
+
+    if (!isDefined(persistedRow)) {
+      throw new Error(
+        'WorkspaceScopedRepository.upsertAndReturnOne: upsert returned no row.',
+      );
+    }
+
+    return this.repository.create(persistedRow as DeepPartial<T>);
   }
 
   // Escape hatch. Caller MUST add the workspaceId predicate themselves.
@@ -264,7 +279,6 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     return this.repository.createQueryBuilder(alias);
   }
 
-  // Returns a wrapper bound to the given EntityManager (transactions).
   withManager(manager: EntityManager): WorkspaceScopedRepository<T> {
     return new WorkspaceScopedRepository<T>(
       manager.getRepository(this.repository.target),
@@ -272,7 +286,7 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
   }
 
   // TypeORM drops `undefined` values from WHERE, which would emit an
-  // unscoped query. Reject falsy workspaceId at the boundary.
+  // unscoped query.
   private assertWorkspaceId(workspaceId: string): void {
     if (
       workspaceId === undefined ||
@@ -320,6 +334,64 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     }
 
     return { workspaceId, ...clause } as FindOptionsWhere<T>;
+  }
+
+  // ON CONFLICT matches on the conflict target alone. When that target does
+  // not contain workspaceId, a row from another workspace can satisfy it and
+  // the DO UPDATE would overwrite that row and reassign its workspaceId.
+  private async assertConflictTargetsBelongToWorkspace(
+    workspaceId: string,
+    entity: QueryDeepPartialEntity<T> | QueryDeepPartialEntity<T>[],
+    conflictPathsOrOptions: string[] | UpsertOptions<T>,
+  ): Promise<void> {
+    const conflictPaths = Array.isArray(conflictPathsOrOptions)
+      ? conflictPathsOrOptions
+      : (conflictPathsOrOptions.conflictPaths ?? []);
+
+    const conflictPathNames = Array.isArray(conflictPaths)
+      ? conflictPaths
+      : Object.keys(conflictPaths);
+
+    if (
+      conflictPathNames.length === 0 ||
+      conflictPathNames.includes('workspaceId')
+    ) {
+      return;
+    }
+
+    const entities = Array.isArray(entity) ? entity : [entity];
+
+    const conflictTargets = entities
+      .map((item) =>
+        conflictPathNames.reduce<FindOptionsWhere<T>>(
+          (target, path) => ({
+            ...target,
+            [path]: (item as Record<string, unknown>)[path],
+          }),
+          {} as FindOptionsWhere<T>,
+        ),
+      )
+      .filter((target) =>
+        Object.values(target).every((value) => isDefined(value)),
+      );
+
+    if (conflictTargets.length === 0) {
+      return;
+    }
+
+    const foreignRow = await this.repository.findOne({
+      where: conflictTargets.map((target) => ({
+        ...target,
+        workspaceId: Not(workspaceId),
+      })),
+      withDeleted: true,
+    });
+
+    if (isDefined(foreignRow)) {
+      throw new Error(
+        `WorkspaceScopedRepository: upsert conflict target (${conflictPathNames.join(', ')}) matches a row owned by another workspace.`,
+      );
+    }
   }
 
   private stampWorkspaceIdOnEntities(

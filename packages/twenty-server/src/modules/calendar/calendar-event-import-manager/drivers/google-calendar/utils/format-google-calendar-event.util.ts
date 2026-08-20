@@ -26,7 +26,6 @@ const formatGoogleCalendarEvent = (
     }
   };
 
-  // Create the event object
   const calendarEvent: FetchedCalendarEvent = {
     title: event.summary ?? '',
     isCanceled: event.status === 'cancelled',

@@ -76,4 +76,4 @@ Generatorul de schelete fixează versiunile `twenty-sdk` și `twenty-client-sdk`
 
 Păstrarea oricărui pachet sub `dependencies` îl include în bundle-ul de runtime al aplicației instalate, unde reprezintă o încărcătură inutilă. `twenty dev:build` emite un avertisment atunci când oricare dintre ele este încă listat sub `dependencies`.
 
-Adaugă dependențele de runtime proprii ale aplicației tale (bibliotecile pe care funcțiile tale de logică chiar le importă la runtime) sub `dependencies`, ca de obicei.
+Adaugă dependențele de runtime proprii ale aplicației tale (bibliotecile pe care funcțiile tale de logică chiar le importă la runtime) sub `dependencies`, ca de obicei. Menține arborele suplu: `dependencies` sunt instalate într-un strat de execuție limitat la 250 MB necomprimat, iar o operațiune de sync sau install eșuează cu o eroare privind dimensiunea dependințelor dacă se depășește această limită — bibliotecile de UI și uneltele de dezvoltare trebuie să fie în `devDependencies`.

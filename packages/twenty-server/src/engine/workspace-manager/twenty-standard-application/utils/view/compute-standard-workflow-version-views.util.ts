@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import { ViewType, ViewKey } from 'twenty-shared/types';
 
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
@@ -16,7 +18,7 @@ export const computeStandardWorkflowVersionViews = (
       objectName: 'workflowVersion',
       context: {
         viewName: 'allWorkflowVersions',
-        name: 'Versions',
+        name: i18nLabel(msg({ message: `Versions`, context: 'view.name' })),
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
         position: 0,

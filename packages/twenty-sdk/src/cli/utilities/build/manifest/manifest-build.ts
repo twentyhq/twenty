@@ -9,6 +9,7 @@ import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest
 import { addMissingFieldOptionIds } from '@/cli/utilities/build/manifest/utils/add-missing-field-option-ids';
 import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/utils/from-role-config-to-role-manifest';
 import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
+import { extractFrontComponentSharedDependencies } from '@/cli/utilities/build/manifest/utils/extract-front-component-shared-dependencies';
 import { validateConditionalAvailabilityUsage } from '@/cli/utilities/build/manifest/utils/validate-conditional-availability-usage';
 import { validateViewFilterOperands } from '@/cli/utilities/build/manifest/utils/validate-view-filter-operands';
 import { getEngineVersionRange } from '@/cli/utilities/version/get-engine-version-range';
@@ -55,7 +56,7 @@ import {
   getInputSchemaFromSourceCode,
   jsonSchemaToInputSchema,
 } from 'twenty-shared/logic-function';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {
@@ -563,20 +564,23 @@ export const buildManifest = async (
   }
 
   if (uninstallLogicFunctions.length > 1) {
-    errors.push(
-      'Only one uninstall logic function is allowed per application',
-    );
+    errors.push('Only one uninstall logic function is allowed per application');
   }
 
   if (settingsFrontComponentUniversalIdentifiers.length > 1) {
-    errors.push(
-      'Only one settings front component is allowed per application',
-    );
+    errors.push('Only one settings front component is allowed per application');
   }
 
   if (applicationRoleUniversalIdentifiers.length > 1) {
     errors.push('Only one defineApplicationRole is allowed per application');
   }
+
+  const {
+    sharedDependencies,
+    errors: sharedDependenciesErrors,
+  } = await extractFrontComponentSharedDependencies(appPath);
+
+  errors.push(...sharedDependenciesErrors);
 
   const resolvedDefaultRoleUniversalIdentifier =
     applicationConfig?.defaultRoleUniversalIdentifier ??
@@ -633,6 +637,9 @@ export const buildManifest = async (
                       settingsFrontComponentUniversalIdentifiers[0],
                   },
                 }
+              : {}),
+            ...(isDefined(sharedDependencies)
+              ? { frontComponentSharedDependencies: sharedDependencies }
               : {}),
           };
         })()

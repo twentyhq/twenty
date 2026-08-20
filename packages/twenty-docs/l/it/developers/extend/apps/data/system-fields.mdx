@@ -146,23 +146,26 @@ Come per i campi di sistema scalari, l'id risolto funziona ovunque ci si aspetti
   dalla versione 2.26 o successiva.
 </Note>
 
-Il server predispone anche una **vista di sistema** su ogni oggetto: la vista elenco principale (`All {objectLabelPlural}`, con chiave `ViewKey.INDEX`), con una colonna per ogni campo visualizzabile. Come per i campi di relazione di sistema, i loro identificatori sono derivati senza dipendere dai nomi, quindi rinominare un oggetto o un campo non li modifica mai.
+Il server predispone anche una **vista di sistema** su ogni oggetto: la vista elenco principale (`All {objectLabelPlural}`, con chiave `ViewKey.INDEX` (derivata con `SYSTEM_VIEW_KEYS.INDEX`)), con una colonna per ogni campo visualizzabile. Come per i campi di relazione di sistema, i loro identificatori sono derivati senza dipendere dai nomi, quindi rinominare un oggetto o un campo non li modifica mai.
 
 Usa `getSystemViewUniversalIdentifier` per risolvere la vista:
 
 ```ts
-import { getSystemViewUniversalIdentifier, ViewKey } from 'twenty-sdk/define';
+import {
+  getSystemViewUniversalIdentifier,
+  SYSTEM_VIEW_KEYS,
+} from 'twenty-sdk/define';
 
 const rocketIndexViewId = getSystemViewUniversalIdentifier({
   objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
-  viewKey: ViewKey.INDEX,
+  viewKey: SYSTEM_VIEW_KEYS.INDEX,
 });
 ```
 
 * `objectMetadataApplicationUniversalIdentifier` è l’applicazione proprietaria dell’**oggetto**, che è ciò in base a cui viene definito lo spazio dei nomi della vista.
 * `objectUniversalIdentifier` è l’oggetto che la vista elenca.
-* `viewKey` è la chiave della vista di sistema, oggi `ViewKey.INDEX`.
+* `viewKey` è il discriminatore della vista di sistema: `SYSTEM_VIEW_KEYS.INDEX` per la vista elenco principale, `SYSTEM_VIEW_KEYS.FIELDS_WIDGET` per la vista del widget dei campi della pagina del record. Determina la derivazione; solo `INDEX` è anche memorizzato sulla riga della vista.
 
 L’id risolto funziona ovunque ci si aspetti un `viewUniversalIdentifier`, ad esempio in una voce della sidebar [`NavigationMenuItemType.VIEW`](/l/it/developers/extend/apps/layout/navigation-menu-items). Per aprire semplicemente la lista principale di un oggetto, è preferibile usare `NavigationMenuItemType.OBJECT` con `targetObjectUniversalIdentifier`: non richiede alcuna derivazione.
 

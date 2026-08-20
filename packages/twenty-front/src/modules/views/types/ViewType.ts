@@ -4,6 +4,7 @@ import {
   IconCalendar,
   type IconComponent,
   IconLayoutKanban,
+  IconList,
   IconListDetails,
   IconTable,
 } from 'twenty-ui/icon';
@@ -18,9 +19,11 @@ export const VIEW_TYPE_LABELS = {
   [ViewType.TABLE]: msg`Table`,
   [ViewType.KANBAN]: msg`Kanban`,
   [ViewType.CALENDAR]: msg`Calendar`,
+  [ViewType.LIST]: msg`List`,
   [ViewType.FIELDS_WIDGET]: msg`Fields widget`,
   [ViewType.TABLE_WIDGET]: msg`Table widget`,
   [ViewType.KANBAN_WIDGET]: msg`Kanban widget`,
+  [ViewType.LIST_WIDGET]: msg`List widget`,
   [ViewType.CALENDAR_WIDGET]: msg`Calendar widget`,
 } satisfies Record<ViewTypeLabelKey, MessageDescriptor>;
 
@@ -35,6 +38,7 @@ type ViewTypeIconKey =
 const VIEW_TYPE_ICON_COMPONENTS = {
   IconCalendar,
   IconLayoutKanban,
+  IconList,
   IconListDetails,
   IconTable,
 } satisfies Record<ViewTypeIconKey, IconComponent>;

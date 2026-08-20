@@ -19,7 +19,7 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 
 @Injectable()
-@WorkspaceCache('flatViewSortMaps')
+@WorkspaceCache('flatViewSortMaps', { packingPonderation: 1 })
 export class WorkspaceFlatViewSortMapCacheService extends WorkspaceCacheProvider<FlatViewSortMaps> {
   constructor(
     @InjectWorkspaceScopedRepository(ViewSortEntity)

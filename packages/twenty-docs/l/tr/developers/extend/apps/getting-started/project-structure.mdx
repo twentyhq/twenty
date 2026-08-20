@@ -76,4 +76,4 @@ Her iki Twenty SDK paketi de `dependencies` değil, `devDependencies` altında o
 
 `dependencies` altında bu paketlerden herhangi birinin tutulması, onu kurulu uygulamanın çalışma zamanı paketine dahil eder ve orada gereksiz yük haline getirir. `twenty dev:build`, bunlardan herhangi biri hâlâ `dependencies` altında listelendiğinde bir uyarı verir.
 
-Uygulamanızın kendi çalışma zamanı bağımlılıklarını (mantık fonksiyonlarınızın çalışma zamanında gerçekten içe aktardığı kütüphaneler) her zamanki gibi `dependencies` altına ekleyin.
+Uygulamanızın kendi çalışma zamanı bağımlılıklarını (mantık fonksiyonlarınızın çalışma zamanında gerçekten içe aktardığı kütüphaneler) her zamanki gibi `dependencies` altına ekleyin. Ağacı sade tutun: `dependencies`, açılmış hali 250 MB ile sınırlandırılmış bir çalışma zamanı katmanına kurulur ve bu sınırın ötesinde bağımlılık boyutu hatasıyla senkronizasyon veya kurulum başarısız olur — UI kütüphaneleri ve geliştirme araçları `devDependencies` içinde yer almalıdır.

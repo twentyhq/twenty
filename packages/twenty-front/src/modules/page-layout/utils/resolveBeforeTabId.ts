@@ -7,7 +7,6 @@ import { resolveDropFromPointer } from '@/ui/utilities/drag-and-drop/utils/resol
 
 type DragEndEvent = DragDropProviderDragEndEvent<PageLayoutWidgetDndData>;
 
-// Resolves the tab a dragged tab should be inserted before.
 export const resolveBeforeTabId = (
   event: DragEndEvent,
   targetData: PageLayoutWidgetDndData,
