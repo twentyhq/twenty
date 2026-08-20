@@ -14,6 +14,12 @@ type PresentableEntity = {
   overrides?: unknown;
 };
 
+// The registry decides which property to read, so this is the one place a
+// dynamic property name meets a concrete entity. Entities are classes, so an
+// index signature on PresentableEntity would exclude every caller.
+const readProperty = (entity: PresentableEntity, property: string): unknown =>
+  (entity as unknown as Record<string, unknown>)[property];
+
 // The GraphQL resolvers resolve labels through per-request dataloaders, which
 // only exist inside a GraphQL context. REST controllers need the same answer,
 // so the batching lives here instead: one catalog fetch per application, for
@@ -70,7 +76,7 @@ export class MetadataPresentationService {
       return Object.fromEntries(
         translatableProperties
           .map((property) => {
-            const baseValue = (entity as Record<string, unknown>)[property];
+            const baseValue = readProperty(entity, property);
 
             return isDefined(baseValue)
               ? [

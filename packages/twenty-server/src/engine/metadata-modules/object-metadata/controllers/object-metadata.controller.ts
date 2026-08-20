@@ -103,17 +103,13 @@ export class ObjectMetadataController {
       this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId),
     ]);
 
-    const data = await Promise.all(
-      items.map((object) =>
-        this.toObjectWithFieldsDto({
-          object,
-          fields: fields.get(object.id) ?? [],
-          uniqueFieldMetadataIds,
-          locale,
-          workspaceId,
-        }),
-      ),
-    );
+    const data = await this.toObjectWithFieldsDtos({
+      objects: items,
+      fieldsByObjectId: fields,
+      uniqueFieldMetadataIds,
+      locale,
+      workspaceId,
+    });
 
     const result: {
       data: ObjectMetadataWithFieldsDTO[];
@@ -150,9 +146,9 @@ export class ObjectMetadataController {
       this.uniqueFieldMetadataIdsService.getForWorkspace(workspaceId),
     ]);
 
-    const result = await this.toObjectWithFieldsDto({
-      object,
-      fields,
+    const [result] = await this.toObjectWithFieldsDtos({
+      objects: [object],
+      fieldsByObjectId: new Map([[object.id, fields]]),
       uniqueFieldMetadataIds,
       locale,
       workspaceId,
@@ -301,59 +297,74 @@ export class ObjectMetadataController {
   }
 
   // REST returns the same labels the app renders: resolved for the caller's
-  // locale, through the one resolver the GraphQL read path uses.
-  private async toObjectWithFieldsDto({
-    object,
-    fields,
+  // locale, through the one resolver the GraphQL read path uses. Objects and
+  // every field across them resolve in one call each, so a page costs a fixed
+  // number of catalog reads rather than one per row.
+  private async toObjectWithFieldsDtos({
+    objects,
+    fieldsByObjectId,
     uniqueFieldMetadataIds,
     locale,
     workspaceId,
   }: {
-    object: ObjectMetadataEntity;
-    fields: FieldMetadataEntity[];
+    objects: ObjectMetadataEntity[];
+    fieldsByObjectId: Map<string, FieldMetadataEntity[]>;
     uniqueFieldMetadataIds: ReadonlySet<string>;
     locale: keyof typeof APP_LOCALES | undefined;
     workspaceId: string;
-  }): Promise<ObjectMetadataWithFieldsDTO> {
-    const [[presentedObjectProperties], presentedFieldProperties] =
+  }): Promise<ObjectMetadataWithFieldsDTO[]> {
+    const allFields = objects.flatMap(
+      (object) => fieldsByObjectId.get(object.id) ?? [],
+    );
+
+    const [presentedObjectProperties, presentedFieldProperties] =
       await Promise.all([
         this.metadataPresentationService.resolvePresentedProperties({
           metadataName: 'objectMetadata',
-          entities: [object],
+          entities: objects,
           locale,
           workspaceId,
         }),
         this.metadataPresentationService.resolvePresentedProperties({
           metadataName: 'fieldMetadata',
-          entities: fields,
+          entities: allFields,
           locale,
           workspaceId,
         }),
       ]);
 
-    const objectDto = fromObjectMetadataEntityToObjectMetadataDto(object);
+    const presentedFieldPropertiesByFieldId = new Map(
+      allFields.map((field, index) => [
+        field.id,
+        presentedFieldProperties[index],
+      ]),
+    );
 
-    return {
-      ...objectDto,
-      labelSingular:
-        presentedObjectProperties.labelSingular ?? objectDto.labelSingular,
-      labelPlural:
-        presentedObjectProperties.labelPlural ?? objectDto.labelPlural,
-      description:
-        presentedObjectProperties.description ?? objectDto.description,
-      fields: fields.map((field, index) => {
-        const fieldDto = fromFieldMetadataEntityToFieldMetadataDto(
-          field,
-          uniqueFieldMetadataIds,
-        );
+    return objects.map((object, index) => {
+      const objectDto = fromObjectMetadataEntityToObjectMetadataDto(object);
+      const presentedObject = presentedObjectProperties[index];
 
-        return {
-          ...fieldDto,
-          label: presentedFieldProperties[index].label ?? fieldDto.label,
-          description:
-            presentedFieldProperties[index].description ?? fieldDto.description,
-        };
-      }),
-    };
+      return {
+        ...objectDto,
+        labelSingular: presentedObject.labelSingular ?? objectDto.labelSingular,
+        labelPlural: presentedObject.labelPlural ?? objectDto.labelPlural,
+        description: presentedObject.description ?? objectDto.description,
+        fields: (fieldsByObjectId.get(object.id) ?? []).map((field) => {
+          const fieldDto = fromFieldMetadataEntityToFieldMetadataDto(
+            field,
+            uniqueFieldMetadataIds,
+          );
+          const presentedField = presentedFieldPropertiesByFieldId.get(
+            field.id,
+          );
+
+          return {
+            ...fieldDto,
+            label: presentedField?.label ?? fieldDto.label,
+            description: presentedField?.description ?? fieldDto.description,
+          };
+        }),
+      };
+    });
   }
 }
