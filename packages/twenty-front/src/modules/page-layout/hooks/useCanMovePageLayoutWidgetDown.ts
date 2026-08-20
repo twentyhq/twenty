@@ -1,11 +1,12 @@
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { getAdjacentExpandableWidgetIndex } from '@/page-layout/utils/getAdjacentExpandableWidgetIndex';
 import { sortWidgetsByVerticalListPosition } from '@/page-layout/utils/sortWidgetsByVerticalListPosition';
-import { getWidgetLayoutBehavior } from '@/page-layout/widgets/utils/getWidgetLayoutBehavior';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 export const useCanMovePageLayoutWidgetDown = (
@@ -35,28 +36,18 @@ export const useCanMovePageLayoutWidgetDown = (
         return false;
       }
 
-      const widget = tab.widgets.find(
-        (candidateWidget) => candidateWidget.id === widgetId,
-      );
-
-      if (!widget || getWidgetLayoutBehavior(widget.type) === 'TAB_VIEWPORT') {
-        return false;
-      }
-
       const sortedWidgets = sortWidgetsByVerticalListPosition(tab.widgets);
 
       const widgetIndex = sortedWidgets.findIndex(
         (widget) => widget.id === widgetId,
       );
 
-      return (
-        widgetIndex >= 0 &&
-        sortedWidgets
-          .slice(widgetIndex + 1)
-          .some(
-            (candidateWidget) =>
-              getWidgetLayoutBehavior(candidateWidget.type) === 'EXPANDABLE',
-          )
+      return isDefined(
+        getAdjacentExpandableWidgetIndex({
+          widgets: sortedWidgets,
+          widgetIndex,
+          direction: 'down',
+        }),
       );
     },
     [pageLayoutDraftState, store],

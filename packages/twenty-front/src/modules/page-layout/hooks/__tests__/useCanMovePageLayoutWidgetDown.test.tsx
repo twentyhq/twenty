@@ -163,4 +163,29 @@ describe('useCanMovePageLayoutWidgetDown', () => {
       false,
     );
   });
+
+  it('should ignore viewport widgets when resolving the expandable widget below', () => {
+    const store = createStore();
+    const wrapper = getWrapper(store);
+
+    const widgetA = makeWidget('widget-a', 0);
+    const timelineWidget = {
+      ...makeWidget('timeline-widget', 1),
+      type: WidgetType.TIMELINE,
+    };
+    const widgetB = makeWidget('widget-b', 2);
+
+    store.set(
+      getDraftAtom(),
+      makeDraft([makeTab('tab-1', [widgetA, timelineWidget, widgetB])]),
+    );
+
+    const { result } = renderHook(
+      () => useCanMovePageLayoutWidgetDown(PAGE_LAYOUT_TEST_INSTANCE_ID),
+      { wrapper },
+    );
+
+    expect(result.current.canMovePageLayoutWidgetDown('widget-a')).toBe(true);
+    expect(result.current.canMovePageLayoutWidgetDown('widget-b')).toBe(false);
+  });
 });
