@@ -1061,6 +1061,12 @@ export const STANDARD_OBJECTS = {
       dashboardIdIndex: {
         universalIdentifier: 'e8821da9-728d-470a-bf5b-5a981fff7880',
       },
+      messageListIdIndex: {
+        universalIdentifier: '78615a19-fb94-4a4e-bc5b-b43754e17cea',
+      },
+      messageCampaignIdIndex: {
+        universalIdentifier: 'a6ee9f9a-5ac9-40b6-8046-1ebaa6bb82ff',
+      },
     },
     views: {
       allTimelineActivities: buildStandardObjectIndexView({
