@@ -174,6 +174,13 @@ export default defineObject({
           position: 3,
           color: 'red',
         },
+        {
+          id: '3f0c8a17-6d2b-4e94-8c5a-71b9e0d4a268',
+          value: SLACK_ASSISTANT_REQUEST_STATUS.REFUSED,
+          label: 'Refused',
+          position: 4,
+          color: 'orange',
+        },
       ],
       name: 'status',
     },

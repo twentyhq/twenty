@@ -10,6 +10,7 @@ import {
   SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER,
   SLACK_ASSISTANT_WORKER_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
+import { SLACK_ASSISTANT_ACCESS_MODE } from 'src/logic-functions/constants/slack-assistant-access-mode';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { SLACK_ASSISTANT_WORKER_TIMEOUT_SECONDS } from 'src/logic-functions/constants/slack-assistant-worker-timeout-seconds';
 import { SLACK_MARKDOWN_BLOCK_MAX_LENGTH } from 'src/logic-functions/constants/slack-markdown-block-max-length';
@@ -24,7 +25,9 @@ import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agen
 import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slack-assistant-context';
 import { fetchWorkspaceBaseUrl } from 'src/logic-functions/utils/fetch-workspace-base-url';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
+import { getSlackAssistantAccessMode } from 'src/logic-functions/utils/get-slack-assistant-access-mode';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
+import { refuseUnlinkedSlackAssistantRequest } from 'src/logic-functions/utils/refuse-unlinked-slack-assistant-request';
 import { resolveSlackRunAsForRequest } from 'src/logic-functions/utils/resolve-slack-run-as-for-request';
 import { runSlackAssistantAgentWithStatus } from 'src/logic-functions/utils/run-slack-assistant-agent-with-status';
 import { setSlackAssistantThreadTitle } from 'src/logic-functions/utils/set-slack-assistant-thread-title';
@@ -119,6 +122,17 @@ export const slackAssistantWorkerHandler = async (
         id: record.id,
         workspaceMemberId: runAsWorkspaceMemberId,
       }).catch(() => undefined);
+    } else if (
+      getSlackAssistantAccessMode() ===
+      SLACK_ASSISTANT_ACCESS_MODE.LINKED_MEMBERS_ONLY
+    ) {
+      return await refuseUnlinkedSlackAssistantRequest({
+        client,
+        requestId: record.id,
+        slackChannelId,
+        slackUserId: record.slackUserId,
+        parentMessageTimestamp,
+      });
     }
 
     const agentResult = await runSlackAssistantAgentWithStatus({

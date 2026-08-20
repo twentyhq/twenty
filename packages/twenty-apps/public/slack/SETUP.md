@@ -88,6 +88,15 @@ The assistant reuses the same Slack connection — no second bot identity.
 
    Where a Slack account is linked to a workspace member, the bot also runs with that member's own permissions, so it can never do more than the person asking. Accounts with no link act with the Slack Assistant role alone, so keep it scoped to what you're comfortable exposing to anyone who can message the bot.
 
+6. **Who the assistant answers.** **Settings → Applications → Slack → Settings** carries an **Access** setting, editable by anyone with the Applications settings permission:
+
+   | Value | Behaviour |
+   | --- | --- |
+   | Anyone in Slack (default) | Everyone in the connected Slack workspace can use the bot. Requests it cannot attribute to a workspace member run with the Slack Assistant role alone. |
+   | Linked workspace members only | The bot only answers when it can match the requester to a workspace member. Everyone else gets a private reply explaining how to get linked, and the request is stored as **Refused**. |
+
+   The restricted value binds every answer to a real member's permissions, at the cost of turning the bot off for anyone whose Slack email does not match a workspace member (guests and Slack Connect users included). It fails closed: when the requester's identity cannot be verified, the bot refuses rather than falling back to its own role.
+
 ## Behaviour notes
 
 - **Suggested prompts.** With `app_home_opened` subscribed and the Agents feature enabled, opening the bot's Messages tab shows clickable example prompts, refreshed on every open.

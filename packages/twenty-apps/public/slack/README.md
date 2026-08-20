@@ -18,6 +18,8 @@ The bot runs with the **Slack Assistant** role, which by default can read, creat
 
 A link matched on email is re-verified on every request: the bot rechecks that the Slack account's current verified email still points at the same member, and follows the live match rather than the stored record if they disagree. The record is an audit trail, not the source of truth.
 
+**Admins choose who it answers.** **Settings → Applications → Slack → Settings** carries an **Access** setting. It ships as *Anyone in Slack*: everyone in the connected Slack workspace can use the bot, and requests it cannot attribute to a member run with the Slack Assistant role alone. Switch it to *Linked workspace members only* and the bot answers no one it cannot match to a workspace member: everyone else gets a private reply pointing them at an admin, and the request is stored as **Refused** so the attempt stays auditable. The restricted value fails closed: an unverifiable requester is refused rather than served with the app's own role.
+
 Only members of the Slack workspace that installed the app are matched automatically. Guests and Slack Connect users from another Slack workspace are not, because their email is vouched for by someone other than your admin. A link can be created by hand from **Slack User Links** with its source set to manual, but the bot does not act on manual links yet: any role with broad record access could write one, so until Twenty can restrict who creates them they are stored without borrowing anyone's permissions, and those users get the Slack Assistant role.
 
 One Slack workspace answers into one Twenty workspace.

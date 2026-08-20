@@ -1,13 +1,16 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { createSlackMessageTimestampSequence } from 'src/__tests__/utils/create-slack-message-timestamp-sequence.util';
 import { requireDefinedOrThrow } from 'src/__tests__/utils/require-defined-or-throw.util';
 import { setupSlackIntegrationTest } from 'src/__tests__/utils/setup-slack-integration-test.util';
+import { SLACK_ASSISTANT_ACCESS_ENV_VAR } from 'src/logic-functions/constants/slack-assistant-access-env-var';
+import { SLACK_ASSISTANT_ACCESS_MODE } from 'src/logic-functions/constants/slack-assistant-access-mode';
 import { SLACK_ASSISTANT_FAILURE_TEXT } from 'src/logic-functions/constants/slack-assistant-failure-text';
 import { SLACK_ASSISTANT_FEEDBACK_ACTION_ID } from 'src/logic-functions/constants/slack-assistant-feedback-action-id';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { SLACK_ASSISTANT_INITIAL_STATUS } from 'src/logic-functions/constants/slack-assistant-status-steps';
 import { SLACK_MARKDOWN_BLOCK_MAX_LENGTH } from 'src/logic-functions/constants/slack-markdown-block-max-length';
+import { SLACK_ASSISTANT_UNLINKED_USER_TEXT } from 'src/logic-functions/constants/slack-assistant-unlinked-user-text';
 import { slackAssistantWorkerHandler } from 'src/logic-functions/slack-assistant-worker';
 import { getSlackThreadKvKey } from 'src/logic-functions/utils/get-slack-thread-kv-key';
 
@@ -404,6 +407,62 @@ describe('Slack assistant worker', () => {
 
     expect(postedAnswer?.blocks).toBeUndefined();
     expect(postedAnswer?.markdownText).toContain(longResponse);
+  });
+
+  it('should refuse an unlinked requester when the workspace restricts the assistant to linked members', async () => {
+    vi.stubEnv(
+      SLACK_ASSISTANT_ACCESS_ENV_VAR,
+      SLACK_ASSISTANT_ACCESS_MODE.LINKED_MEMBERS_ONLY,
+    );
+
+    slack.addChannel({ id: CHANNEL_ID, name: 'sales' });
+    slack.addUser({ id: REQUESTER_USER_ID, displayName: 'Ada' });
+    const slackMessageTimestamp = nextMessageTimestamp();
+
+    slack.addMessage({
+      channelId: CHANNEL_ID,
+      timestamp: slackMessageTimestamp,
+      userId: REQUESTER_USER_ID,
+      text: 'how many open deals does Acme have?',
+    });
+
+    const request = await createRequestRecord({
+      slackChannelId: CHANNEL_ID,
+      slackMessageTimestamp,
+      requestText: 'how many open deals does Acme have?',
+    });
+
+    const result = await slackAssistantWorkerHandler(
+      buildRequestCreatedEvent({
+        ...request,
+        slackChannelId: CHANNEL_ID,
+        slackMessageTimestamp,
+        requestText: 'how many open deals does Acme have?',
+      }),
+    );
+
+    expect(result).toEqual({
+      refused: true,
+      reason: expect.any(String),
+    });
+    expect(appRuntime.agentRuns).toHaveLength(0);
+    expect(slack.assistantStatuses).toHaveLength(0);
+
+    const ephemeral = slack.ephemeralMessages[0];
+
+    expect(ephemeral).toMatchObject({
+      channelId: CHANNEL_ID,
+      recipientUserId: REQUESTER_USER_ID,
+      threadTimestamp: slackMessageTimestamp,
+    });
+    expect(ephemeral?.markdownText ?? ephemeral?.text).toBe(
+      SLACK_ASSISTANT_UNLINKED_USER_TEXT,
+    );
+
+    const storedRequest = await readRequest(request.id);
+
+    expect(storedRequest.status).toBe(SLACK_ASSISTANT_REQUEST_STATUS.REFUSED);
+    expect(storedRequest.responseText ?? '').toBe('');
   });
 
   it('should skip a request that another worker already picked up', async () => {
