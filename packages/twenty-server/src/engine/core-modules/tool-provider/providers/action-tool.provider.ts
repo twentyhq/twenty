@@ -33,6 +33,7 @@ import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool';
 
 @Injectable()
 export class ActionToolProvider implements ToolProvider {
@@ -50,6 +51,7 @@ export class ActionToolProvider implements ToolProvider {
     private readonly navigateAppTool: NavigateAppTool,
     private readonly extractJsonPathsTool: ExtractJsonPathsTool,
     private readonly searchOutputTool: SearchOutputTool,
+    private readonly saveCampaignTool: SaveCampaignTool,
     private readonly codeInterpreterService: CodeInterpreterService,
     private readonly permissionsService: PermissionsService,
     private readonly i18nService: I18nService,
@@ -64,6 +66,7 @@ export class ActionToolProvider implements ToolProvider {
       ['navigate_app', this.navigateAppTool],
       ['extract_json_paths', this.extractJsonPathsTool],
       ['search_output', this.searchOutputTool],
+      ['save_campaign', this.saveCampaignTool],
     ]);
   }
 
@@ -169,6 +172,15 @@ export class ActionToolProvider implements ToolProvider {
         'search_output',
         this.searchOutputTool,
         includeSchemas,
+      ),
+    );
+
+    descriptors.push(
+      this.buildDescriptor(
+        'save_campaign',
+        this.saveCampaignTool,
+        includeSchemas,
+        context.locale,
       ),
     );
 

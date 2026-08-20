@@ -22,7 +22,7 @@ config({
 const TEST_REGISTRATION_NAME_PREFIX = 'encrypt-app-reg-var-test-';
 const CHECK_CONSTRAINT_NAME =
   'CHK_applicationRegistrationVariable_encryptedValue_encrypted';
-const CHECK_CONSTRAINT_EXPR = `"encryptedValue" = '' OR "encryptedValue" LIKE '${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}%'`;
+const CHECK_CONSTRAINT_EXPR = `"encryptedValue" LIKE '${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}%'`;
 
 const dropCheckConstraint = (dataSource: DataSource): Promise<unknown> =>
   dataSource.query(

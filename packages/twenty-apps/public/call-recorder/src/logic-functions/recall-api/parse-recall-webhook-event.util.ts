@@ -16,6 +16,7 @@ export type RecallWebhookBody = {
 export type RecallWebhookEvent = {
   event: string;
   statusCode: string | undefined;
+  statusSubCode: string | undefined;
   statusTimestamp: string | undefined;
   externalBotId: string | undefined;
   externalRecordingId: string | undefined;
@@ -23,7 +24,6 @@ export type RecallWebhookEvent = {
   recordingStartedAt: string | undefined;
   recordingEndedAt: string | undefined;
   transcriptId: string | undefined;
-  transcriptFailureSubCode: string | undefined;
 };
 
 // The only reader of raw webhook payloads; Recall delivers several body shapes per event family.
@@ -46,6 +46,10 @@ export const parseRecallWebhookEvent = (
       getString(getRecordAtPath(data, ['data', 'code'])) ??
       getString(getRecordAtPath(bot, ['status', 'code'])) ??
       getStatusCodeFromEventName(event),
+    statusSubCode:
+      getString(getRecordAtPath(data, ['status', 'sub_code'])) ??
+      getString(getRecordAtPath(data, ['data', 'sub_code'])) ??
+      getString(getRecordAtPath(bot, ['status', 'sub_code'])),
     statusTimestamp: normalizeRecallTimestamp(
       getString(getRecordAtPath(data, ['status', 'created_at'])) ??
         getString(getRecordAtPath(data, ['data', 'updated_at'])) ??
@@ -71,9 +75,6 @@ export const parseRecallWebhookEvent = (
       getString(getRecordAtPath(data, ['recording', 'completed_at'])),
     ),
     transcriptId: getString(getRecordAtPath(data, ['transcript', 'id'])),
-    transcriptFailureSubCode: getString(
-      getRecordAtPath(data, ['status', 'sub_code']),
-    ),
   };
 };
 

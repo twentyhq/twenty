@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
 import { agentChatPrepromptState } from '@/ai/states/agentChatPrepromptState';
 import { dispatchAgentChatSendMessageEvent } from '@/ai/utils/dispatchAgentChatSendMessageEvent';
@@ -27,7 +28,7 @@ export const AgentChatPrepromptEffect = () => {
         });
       } else {
         dispatchBrowserEvent(AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
-          content: text,
+          content: serializePlainTextAsAdvancedTextEditorDocument(text),
         });
       }
 

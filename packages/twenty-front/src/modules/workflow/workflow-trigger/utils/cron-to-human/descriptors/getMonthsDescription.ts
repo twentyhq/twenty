@@ -33,7 +33,6 @@ export const getMonthsDescription = (
     return '';
   }
 
-  // Every month
   if (months === '*') {
     return '';
   }
@@ -88,7 +87,6 @@ export const getMonthsDescription = (
     return t`between ${startMonth} and ${endMonth}`;
   }
 
-  // List values (e.g., "1,6,12")
   if (isListValue(months)) {
     const values = months.split(',').map((v) => v.trim());
     const monthNames = values.map((month) => {
@@ -112,7 +110,6 @@ export const getMonthsDescription = (
     return t`only in ${remainingMonths} and ${lastMonth ?? ''}`;
   }
 
-  // Single month value
   const monthNum = parseInt(months, 10);
   if (!isNaN(monthNum)) {
     const monthName = getMonthName(

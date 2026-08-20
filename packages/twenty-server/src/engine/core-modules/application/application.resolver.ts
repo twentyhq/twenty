@@ -1,6 +1,7 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Parent, Query, ResolveField } from '@nestjs/graphql';
 
+import { ApiPath } from 'twenty-shared/types';
 import { isAbsoluteUrl, isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -80,6 +81,6 @@ export class ApplicationResolver {
 
     const serverUrl = this.twentyConfigService.get('SERVER_URL');
 
-    return `${serverUrl}/public-assets/${workspace.id}/${application.id}/${logo}`;
+    return `${serverUrl}/${ApiPath.PublicAssets}/${workspace.id}/${application.id}/${logo}`;
   }
 }

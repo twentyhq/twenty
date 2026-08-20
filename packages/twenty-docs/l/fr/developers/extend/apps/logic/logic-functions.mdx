@@ -172,6 +172,10 @@ Pour des raisons de sécurité, les en-têtes de réponse sont restreints à une
 Le code d’état doit être un code d’état HTTP valide (compris entre 100 et 599). Les noms des en-têtes de réponse sont comparés sans tenir compte de la casse.
 </Note>
 
+#### Réponses d’erreur de la plateforme
+
+Au-delà des réponses propres à votre gestionnaire, la plateforme répond directement aux appels de route dans certaines situations : `404` lorsque la route ou la fonction n’existe pas, `403` lorsque l’application est arrêtée, `429` lorsque la limite de débit d’exécution est atteinte, et `422` lorsque les `dependencies` de production de l’application sont trop volumineuses pour être installées — voir [limites de taille des dépendances](/l/fr/developers/extend/apps/getting-started/project-structure#dependencies).
+
 #### Déclencheur de route serveur
 
 `httpRouteTriggerSettings` expose une fonction sous `/s/` et résout l’espace de travail à partir de l’hôte de la requête — ce qui fonctionne lorsque chaque espace de travail a son propre domaine. Les fournisseurs tiers, en revanche, envoient les événements de chaque locataire vers **une** URL. Dans ce cas, utilisez `serverRouteTriggerSettings`.

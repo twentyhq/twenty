@@ -58,7 +58,6 @@ export const UploadStep = ({
               data: mappedWorkbook,
             });
           } else {
-            // Automatically select first row as header
             const trimmedData = mappedWorkbook.slice(1);
 
             const { importedRows: data, headerRow: headerValues } =

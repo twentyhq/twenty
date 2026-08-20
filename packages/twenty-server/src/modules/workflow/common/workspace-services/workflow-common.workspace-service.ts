@@ -414,72 +414,50 @@ export class WorkflowCommonWorkspaceService {
       return;
     }
 
-    const workflowRepository =
-      await this.globalWorkspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-        workspaceId,
-        'workflow',
-        { shouldBypassPermissionChecks: true },
-      );
-
     const workflowVersions = await workflowVersionRepository.find({
       where: { workflowId },
       withDeleted: true,
     });
 
-    const workspaceDataSource =
-      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
+    await this.globalWorkspaceOrmManager.runInWorkspaceTransaction(
+      async ({ getRepository }) => {
+        const workflowRepository = getRepository<WorkflowWorkspaceEntity>(
+          'workflow',
+          { shouldBypassPermissionChecks: true },
+        );
+        const transactionalWorkflowVersionRepository =
+          getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
+            shouldBypassPermissionChecks: true,
+          });
 
-    const queryRunner = workspaceDataSource.createQueryRunner();
-
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
-      const workflow = await workflowRepository.findOne(
-        {
+        const workflow = await workflowRepository.findOne({
           where: { id: workflowId },
           withDeleted: true,
-        },
-        queryRunner.manager,
-      );
+        });
 
-      if (workflow?.statuses?.includes(WorkflowStatus.ACTIVE)) {
-        const newStatuses = [
-          ...workflow.statuses.filter(
-            (status) => status !== WorkflowStatus.ACTIVE,
-          ),
-          WorkflowStatus.DEACTIVATED,
-        ];
+        if (workflow?.statuses?.includes(WorkflowStatus.ACTIVE)) {
+          const newStatuses = [
+            ...workflow.statuses.filter(
+              (status) => status !== WorkflowStatus.ACTIVE,
+            ),
+            WorkflowStatus.DEACTIVATED,
+          ];
 
-        await workflowRepository.update(
-          workflowId,
-          { statuses: newStatuses },
-          undefined,
-          queryRunner.manager,
-        );
-      }
-
-      for (const workflowVersion of workflowVersions) {
-        if (workflowVersion.status === WorkflowVersionStatus.ACTIVE) {
-          await workflowVersionRepository.update(
-            workflowVersion.id,
-            { status: WorkflowVersionStatus.DEACTIVATED },
-            undefined,
-            queryRunner.manager,
-          );
+          await workflowRepository.update(workflowId, {
+            statuses: newStatuses,
+          });
         }
-      }
 
-      await queryRunner.commitTransaction();
-    } catch (error) {
-      if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
-      }
-
-      throw error;
-    } finally {
-      await queryRunner.release();
-    }
+        for (const workflowVersion of workflowVersions) {
+          if (workflowVersion.status === WorkflowVersionStatus.ACTIVE) {
+            await transactionalWorkflowVersionRepository.update(
+              workflowVersion.id,
+              { status: WorkflowVersionStatus.DEACTIVATED },
+            );
+          }
+        }
+      },
+    );
 
     for (const workflowVersion of workflowVersions) {
       if (workflowVersion.status === WorkflowVersionStatus.ACTIVE) {

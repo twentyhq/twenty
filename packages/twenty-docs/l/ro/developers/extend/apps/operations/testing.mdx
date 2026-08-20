@@ -8,7 +8,7 @@ SDK-ul oferă API-uri programatice care vă permit să construiți, să distribu
 
 ## Utilizarea pachetelor npm
 
-Puteți instala și utiliza orice pachet npm în aplicația dvs. Atât funcțiile logice, cât și componentele frontend sunt împachetate cu [esbuild](https://esbuild.github.io/), care integrează toate dependențele în output — nu sunt necesare `node_modules` la rulare.
+Puteți instala și utiliza orice pachet npm în aplicația dvs. Atât funcţiile logice cât şi componentele frontale sunt grupate cu [esbuild](https://esbuild.github.io/), care înglobează dependențele lor la ieșire - nu sunt necesare `node_modules` în timpul rulării.
 
 ### Instalarea unui pachet
 
@@ -56,13 +56,15 @@ export default defineFrontComponent({
 
 ### Cum funcționează împachetarea
 
-Pasul de build folosește esbuild pentru a produce un singur fișier autonom pentru fiecare funcție logică și pentru fiecare componentă frontend. Toate pachetele importate sunt integrate în bundle.
+Pasul de build folosește esbuild pentru a produce un singur fișier autonom pentru fiecare funcție logică și pentru fiecare componentă frontend. Ambalajele importate sunt încorporate în pachet, cu excepţia celor enumerate mai jos.
 
 **Funcțiile logice** rulează într-un mediu Node.js. Modulele built-in Node (`fs`, `path`, `crypto`, `http` etc.) sunt disponibile și nu trebuie instalate.
 
 **Componentele frontend** rulează într-un Web Worker. Modulele built-in Node **nu** sunt disponibile — doar pachetele npm care funcționează într-un mediu de browser. Reține că sandbox-ul implementează un DOM *parțial*, astfel încât un pachet se poate construi fără erori, dar totuși poate eșua la execuție; vezi [Limitări curente](/l/ro/developers/extend/apps/layout/front-components#current-limitations).
 
 Ambele medii au `twenty-client-sdk/core` și `twenty-client-sdk/metadata` disponibile ca module pre-furnizate — acestea nu sunt incluse în bundle, ci sunt rezolvate la rulare de către server.
+
+Componentele frontului pot de asemenea partaja dependențe printr-un [pachet de dependențe partajate](/l/ro/developers/extend/apps/layout/front-components#sharing-dependencies-across-front-components). Pachete listate în câmpul `frontComponentSharedDependencies` din pachetul aplicației. Fiul este construit o dată într-un fișier separat și încărcat din el la rulare în loc să fie înglobat în fiecare componentă, astfel încât o componentă care importă numai pachete comune să nu aibă aproape niciun cod propriu de dependență.
 
 ## Configurare
 

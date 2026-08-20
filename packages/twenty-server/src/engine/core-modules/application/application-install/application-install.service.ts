@@ -33,6 +33,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
 import {
   LogicFunctionTriggerJob,
   type LogicFunctionTriggerJobData,
@@ -570,7 +571,10 @@ export class ApplicationInstallService {
           workspaceId,
           payload,
         },
-        { retryLimit: 3 },
+        {
+          retryLimit: 3,
+          backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+        },
       );
 
       return;

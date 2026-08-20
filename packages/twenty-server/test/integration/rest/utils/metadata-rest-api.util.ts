@@ -111,6 +111,7 @@ export const cleanupTestField = async (id: string): Promise<void> => {
 
 export type MetadataListPageInfo = {
   hasNextPage: boolean;
+  hasPreviousPage: boolean;
   startCursor: string | null;
   endCursor: string | null;
 };

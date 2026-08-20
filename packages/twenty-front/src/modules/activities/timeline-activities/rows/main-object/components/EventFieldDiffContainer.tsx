@@ -1,6 +1,7 @@
 import { EventFieldDiff } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiff';
 import { findFieldMetadataItemByDiffKey } from '@/activities/timeline-activities/utils/findFieldMetadataItemByDiffKey';
 import { isDefined } from 'twenty-shared/utils';
+import { ErrorBoundary } from 'react-error-boundary';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
 type EventFieldDiffContainerProps = {
@@ -30,12 +31,17 @@ export const EventFieldDiffContainer = ({
   const diffArtificialRecordStoreId = eventId + '--' + fieldMetadataItem.id;
 
   return (
-    <EventFieldDiff
-      key={diffArtificialRecordStoreId}
-      fieldDiff={fieldDiff}
-      fieldMetadataItem={fieldMetadataItem}
-      mainObjectMetadataItem={mainObjectMetadataItem}
-      diffArtificialRecordStoreId={diffArtificialRecordStoreId}
-    />
+    <ErrorBoundary
+      resetKeys={[diffArtificialRecordStoreId]}
+      fallbackRender={() => null}
+    >
+      <EventFieldDiff
+        key={diffArtificialRecordStoreId}
+        fieldDiff={fieldDiff}
+        fieldMetadataItem={fieldMetadataItem}
+        mainObjectMetadataItem={mainObjectMetadataItem}
+        diffArtificialRecordStoreId={diffArtificialRecordStoreId}
+      />
+    </ErrorBoundary>
   );
 };

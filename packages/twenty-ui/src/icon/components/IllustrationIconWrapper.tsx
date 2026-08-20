@@ -9,7 +9,6 @@ export const IllustrationIconWrapper = forwardRef<
   HTMLDivElement,
   React.ComponentPropsWithoutRef<'div'>
 >(({ className, ...props }, ref) => (
-  // oxlint-disable-next-line react/jsx-props-no-spreading
   <div ref={ref} className={clsx(styles.root, className)} {...props} />
 ));
 

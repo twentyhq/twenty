@@ -100,7 +100,7 @@ Poznámky ke schématu:
 </Accordion>
 <Accordion title="runAgent" description="Spuštění agenta z logické funkce">
 
-`runAgent()` umožňuje logické funkci spustit jednoho z agentů vaší aplikace (s jeho dovednostmi a nástroji). Identifikujte agenta pomocí `universalIdentifier`, který jste předali do `defineAgent()`:
+`runAgent()` umožňuje logické funkci spustit jednoho z agentů vaší aplikace (s jeho dovednostmi a nástroji). Identifikujte agenta pomocí `universalIdentifier`, který jste předali do `defineAgent()`. Předejte buď řetězec `prompt`, nebo historii konverzace `messages`, ale ne obojí zároveň:
 
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
@@ -111,7 +111,24 @@ const { result, error, success } = await runAgent({
 });
 ```
 
+U vícekrokových botů (Slack, Discord, Teams, …) předejte historii vlákna jako `messages` místo jednoho `prompt`:
+
+```ts src/logic-functions/reply-in-thread.ts
+import { runAgent } from 'twenty-sdk/logic-function';
+
+const { result, error, success } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  messages: [
+    { role: 'user', content: 'Who owns Acme?' },
+    { role: 'assistant', content: 'Sarah owns the Acme account.' },
+    { role: 'user', content: 'What was the last touchpoint?' },
+  ],
+});
+```
+
 Hlavní body:
+* Zadejte **přesně jednu** z možností: `prompt` (řetězec) nebo `messages` (1 až 100 položek
+  `{ role: 'user' | 'assistant', content: string }`).
 * Agent běží **synchronně** a může sám číst/aktualizovat záznamy pomocí vlastních nástrojů — `runAgent()` vrátí výsledek až po dokončení běhu.
 * Aplikace může spouštět pouze své vlastní agenty.
 * [Výchozí role](/l/cs/developers/extend/apps/config/roles) aplikace musí udělovat příznak oprávnění `AI` — přidejte `SystemPermissionFlag.AI` do `permissionFlagUniversalIdentifiers` (nebo nastavte `canAccessAllTools: true`).
@@ -132,6 +149,38 @@ export default defineApplicationRole({
 
 <Warning>
   **Vyhněte se smyčkám:** pokud voláte `runAgent()` z databázového triggeru `*.updated` a agent aktualizuje stejný záznam, omezte trigger pomocí `updatedFields` na pole, do kterého agent nikdy nezapisuje (např. zdrojovou URL), nebo před voláním `runAgent()` zkontrolujte, zda je některé cílové pole stále prázdné.
+</Warning>
+
+### Spuštění jménem člena pracovního prostoru
+
+Předejte `runAsWorkspaceMemberId`, když je spuštění vyvoláno osobou — například chatbotem odpovídajícím na zprávu — aby agent jednal jako tento člen, nikoli jako aplikace:
+
+```ts src/logic-functions/answer-question.ts
+const { result } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  prompt: 'How many open opportunities do we have?',
+  runAsWorkspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
+});
+```
+
+Spuštění pak jedná s **vlastní rolí člena**: může dělat vše, co může tento člen a nic navíc, záznamy, které vytváří, jsou mu připsány a uplatňují se na něj jeho oprávnění na úrovni řádků. Role agenta se toho neúčastní — je výchozí rolí aplikace pro spuštění, za nimiž nestojí žádný uživatel. Toto pole vynechejte u autonomních spuštění (plánované úlohy, spouštěče databázových událostí): ta si ponechají vlastní roli agenta. Aplikace, která jedná, zůstává kvůli doložení původu navázaná na kontext spuštění, aniž by zužovala oprávnění člena.
+
+Vaše aplikace je zodpovědná za mapování osoby, která spuštění vyvolala, na člena pracovního prostoru. Pojmenování člena vyžaduje přístupový token aplikace a to, koho může token
+pojmenovat, závisí na tom, zda je navázán na uživatele:
+
+* Token, který **nemá přiřazeného žádného uživatele**, může pojmenovat libovolného člena. Logická funkce běží
+  s takovým tokenem a totéž platí pro tokeny vytvořené prostřednictvím `client_credentials` nebo z
+  klíče API.
+* Token vydaný **jménem uživatele**, jaký obdrží front-endová komponenta, smí
+  pojmenovat pouze člena daného uživatele.
+
+Cokoli jiného — běžná uživatelská relace, API klíč bez tokenu aplikace — vůbec
+nesmí pojmenovat žádného člena.
+
+<Warning>
+  `runAgent()` vyvolá výjimku, pokud nelze člena pracovního prostoru určit — neznámý nebo odebraný člen, případně člen bez role. Nikdy se nevrací zpět k
+  vlastní roli agenta, protože to by udělilo více oprávnění, než o která volající
+  požádal.
 </Warning>
 
 </Accordion>

@@ -58,6 +58,28 @@ export default definePageLayout({
 * Fiecare `widget` dintr-o filă poate reda un [front component](/l/ro/developers/extend/apps/layout/front-components), o listă de relații sau alte tipuri de widgeturi integrate.
 * `position` pe file le controlează ordinea. Folosește valori mai mari (de ex., 50) pentru a plasa filele personalizate după cele integrate.
 
+### Widget-uri Câmp
+
+Un widget `FIELD` redă un câmp al înregistrării. Pentru câmpurile de relație, acesta poate încorpora și o listă de înregistrări asociate:
+
+```ts
+{
+  universalIdentifier: 'c1c2c3c4-c5c6-4000-8000-000000000003',
+  title: 'People → Opportunities',
+  type: 'FIELD',
+  configuration: {
+    configurationType: 'FIELD',
+    fieldMetadataId: PEOPLE_FIELD_UNIVERSAL_IDENTIFIER,
+    fieldDisplayMode: 'TABLE',
+    nestedRelationFieldMetadataId: OPPORTUNITIES_FIELD_UNIVERSAL_IDENTIFIER,
+  },
+}
+```
+
+* `fieldMetadataId` primește identificatorul universal al unui câmp de pe obiectul layout-ului.
+* `fieldDisplayMode` este unul dintre `'FIELD'`, `'CARD'`, `'EDITOR'`, `'VIEW'` sau `'TABLE'`. `TABLE` încorporează o vizualizare care listează înregistrările unui câmp de relație de tip unu-la-mulți.
+* `nestedRelationFieldMetadataId` este opțional și primește identificatorul universal al unui câmp de relație unu-la-mulți de pe obiectul țintă al relației, pentru a afișa în listă înregistrări aflate la două salturi de relație distanță (de ex., o pagină Company care afișează oportunitățile persoanelor companiei sau o pagină Person care afișează oportunitățile companiei persoanei). Primul salt poate fi un câmp de relație unu-la-mulți sau mulți-la-unu, al doilea trebuie să fie unu-la-mulți (relațiile de tip junction nu sunt acceptate) și necesită `fieldDisplayMode: 'TABLE'` — combinarea lui cu orice alt mod de afișare reprezintă o eroare de validare, deoarece un widget îmbricat este întotdeauna redat ca o vizualizare încorporată.
+
 ## definePageLayoutTab
 
 Folosește aceasta atunci când vrei doar să **adaugi** o filă la un layout existent — de exemplu, o filă de analize pe pagina standard Company sau o filă de rezumat AI atașată layoutului obiectului tău.

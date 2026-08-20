@@ -16,7 +16,7 @@ import {
   type WorkspaceMemberTimeFormatEnum,
   type WorkspaceMemberWorkspaceEntity,
 } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { FileFolder, type OpenRecordIn } from 'twenty-shared/types';
+import { FileFolder, OpenRecordIn } from 'twenty-shared/types';
 
 export type ToWorkspaceMemberDtoArgs = {
   workspaceMemberEntity: WorkspaceMemberWorkspaceEntity;
@@ -69,6 +69,7 @@ export class WorkspaceMemberTranspiler {
       name,
       userEmail,
       colorScheme,
+      uiScale,
       openRecordIn,
       locale,
       timeFormat,
@@ -99,7 +100,10 @@ export class WorkspaceMemberTranspiler {
       avatarUrl,
       userWorkspaceId: userWorkspace.id,
       colorScheme,
-      openRecordIn: openRecordIn as OpenRecordIn,
+      // Workspaces upgrade after the code rolls out, so these fields are
+      // absent until their workspace commands (2-27, 2-32) reach them.
+      openRecordIn: (openRecordIn as OpenRecordIn) ?? OpenRecordIn.SIDE_PANEL,
+      uiScale: uiScale ?? 'Default',
       dateFormat: dateFormat as WorkspaceMemberDateFormatEnum,
       locale,
       timeFormat: timeFormat as WorkspaceMemberTimeFormatEnum,

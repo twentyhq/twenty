@@ -20,7 +20,7 @@ import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 
 @Injectable()
-@WorkspaceCache('flatNavigationMenuItemMaps')
+@WorkspaceCache('flatNavigationMenuItemMaps', { packingPonderation: 1 })
 export class WorkspaceFlatNavigationMenuItemMapCacheService extends WorkspaceCacheProvider<FlatNavigationMenuItemMaps> {
   constructor(
     @InjectWorkspaceScopedRepository(NavigationMenuItemEntity)

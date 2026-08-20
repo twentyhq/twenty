@@ -6,6 +6,10 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useRecordTableWidgetFieldCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetFieldCallbacks';
 import { useRecordTableWidgetLayoutCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetLayoutCallbacks';
 import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
+import {
+  getRecordTableWidgetLayoutViewType,
+  RECORD_TABLE_WIDGET_LAYOUT_OPTIONS,
+} from '@/page-layout/widgets/record-table/types/RecordTableWidgetLayoutViewType';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
@@ -26,7 +30,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconArrowBarToDownDashed,
@@ -36,10 +40,8 @@ import {
   IconCalendarEvent,
   IconEyeOff,
   IconFilter,
-  IconLayoutKanban,
   IconLayoutList,
   IconListDetails,
-  IconTable,
 } from 'twenty-ui/icon';
 import {
   FeatureFlagKey,
@@ -62,6 +64,8 @@ const StyledSettingsContainer = styled.div`
 `;
 
 export const SidePanelDashboardRecordTableSettings = () => {
+  const { t } = useLingui();
+
   const { pageLayoutId } = usePageLayoutIdFromContextStore();
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
   const { navigateToSidePanelSubPage } = useSidePanelSubPageHistory();
@@ -131,13 +135,14 @@ export const SidePanelDashboardRecordTableSettings = () => {
     widgetView?.mainGroupByFieldMetadataId ?? null;
   const shouldHideEmptyGroups = widgetView?.shouldHideEmptyGroups ?? false;
 
-  const isKanbanLayout = widgetView?.type === ViewType.KANBAN_WIDGET;
-  const isCalendarLayout = widgetView?.type === ViewType.CALENDAR_WIDGET;
-  const currentLayoutViewType = isKanbanLayout
-    ? ViewType.KANBAN_WIDGET
-    : isCalendarLayout
-      ? ViewType.CALENDAR_WIDGET
-      : ViewType.TABLE_WIDGET;
+  const currentLayoutViewType = getRecordTableWidgetLayoutViewType(
+    widgetView?.type,
+  );
+  const isKanbanLayout = currentLayoutViewType === ViewType.KANBAN_WIDGET;
+  const isCalendarLayout = currentLayoutViewType === ViewType.CALENDAR_WIDGET;
+
+  const { Icon: CurrentLayoutIcon, label: currentLayoutLabel } =
+    RECORD_TABLE_WIDGET_LAYOUT_OPTIONS[currentLayoutViewType];
 
   const calendarFieldMetadataId = widgetView?.calendarFieldMetadataId ?? null;
 
@@ -239,13 +244,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
               </SelectableListItem>
               <SelectableListItem itemId="object-view-layout">
                 <CommandMenuItemDropdown
-                  Icon={
-                    isKanbanLayout
-                      ? IconLayoutKanban
-                      : isCalendarLayout
-                        ? IconCalendar
-                        : IconTable
-                  }
+                  Icon={CurrentLayoutIcon}
                   label={t`Layout`}
                   id="object-view-layout"
                   dropdownId="object-view-layout"
@@ -265,13 +264,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
                   }
                   dropdownPlacement="bottom-end"
                   hasSubMenu={hasViewId}
-                  description={
-                    isKanbanLayout
-                      ? t`Kanban`
-                      : isCalendarLayout
-                        ? t`Calendar`
-                        : t`Table`
-                  }
+                  description={t(currentLayoutLabel)}
                   disabled={!hasViewId}
                   contextualTextPosition="right"
                 />

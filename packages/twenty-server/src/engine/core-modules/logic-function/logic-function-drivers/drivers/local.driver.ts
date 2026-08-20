@@ -109,6 +109,7 @@ export class LocalDriver implements LogicFunctionDriver {
     flatApplication,
     applicationUniversalIdentifier,
     payload,
+    context,
     env,
     timeoutMs = 900_000,
     forceExecutionMode,
@@ -198,11 +199,12 @@ export class LocalDriver implements LogicFunctionDriver {
           handlerName: flatLogicFunction.handlerName,
         });
 
-        const { ok, result, error, stack, stdout, stderr } =
+        const { ok, result, errorType, error, stack, stdout, stderr } =
           await this.childProcessRunner.runChildWithEnv({
             runnerPath,
             env: env ?? {},
             payload,
+            context,
             timeoutMs,
           });
 
@@ -237,7 +239,7 @@ export class LocalDriver implements LogicFunctionDriver {
           logs,
           duration,
           error: {
-            errorType: 'UnhandledError',
+            errorType: errorType ?? 'UnhandledError',
             errorMessage: error || 'Unknown error',
             stackTrace: stack ? String(stack).split('\n') : [],
           },

@@ -5,6 +5,7 @@ import { usePageLayoutWidgetDragAndDrop } from '@/page-layout/hooks/usePageLayou
 import { type PageLayoutWidgetDndData } from '@/page-layout/types/PageLayoutWidgetDndData';
 import { DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION } from '@/ui/utilities/drag-and-drop/constants/DndKitProviderPluginsWithoutDropAnimation';
 import { DND_KIT_SENSORS } from '@/ui/utilities/drag-and-drop/constants/DndKitSensors';
+import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
 
 type PageLayoutWidgetDndProviderProps = {
   children: ReactNode;
@@ -17,16 +18,19 @@ type PageLayoutWidgetDndProviderProps = {
 export const PageLayoutWidgetDndProvider = ({
   children,
 }: PageLayoutWidgetDndProviderProps) => {
-  const { handlers } = usePageLayoutWidgetDragAndDrop();
+  const { contextValues, handlers } = usePageLayoutWidgetDragAndDrop();
 
   return (
-    <DragDropProvider<PageLayoutWidgetDndData>
-      sensors={DND_KIT_SENSORS}
-      plugins={DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION}
-      onDragStart={handlers.onDragStart}
-      onDragEnd={handlers.onDragEnd}
-    >
-      {children}
-    </DragDropProvider>
+    <DragDropItemDndContext.Provider value={contextValues}>
+      <DragDropProvider<PageLayoutWidgetDndData>
+        sensors={DND_KIT_SENSORS}
+        plugins={DND_KIT_PROVIDER_PLUGINS_WITHOUT_DROP_ANIMATION}
+        onDragStart={handlers.onDragStart}
+        onDragMove={handlers.onDragMove}
+        onDragEnd={handlers.onDragEnd}
+      >
+        {children}
+      </DragDropProvider>
+    </DragDropItemDndContext.Provider>
   );
 };

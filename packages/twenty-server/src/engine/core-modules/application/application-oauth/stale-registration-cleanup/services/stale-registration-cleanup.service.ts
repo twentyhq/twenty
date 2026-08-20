@@ -43,7 +43,6 @@ export class StaleRegistrationCleanupService {
         (registration) => registration.id,
       );
 
-      // Filter out registrations that have active (non-deleted) installations
       const registrationsWithInstallations = await this.applicationRepository
         .createQueryBuilder('application')
         .select('application.applicationRegistrationId')

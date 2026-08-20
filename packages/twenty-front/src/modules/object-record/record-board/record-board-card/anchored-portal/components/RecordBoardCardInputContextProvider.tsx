@@ -47,12 +47,18 @@ export const RecordBoardCardInputContextProvider = ({
     closeInlineCellAndResetEditModePosition();
   };
 
-  const handleSubmit: FieldInputEvent = ({ newValue, skipPersist }) => {
+  const handleSubmit: FieldInputEvent = ({
+    newValue,
+    skipPersist,
+    skipClose,
+  }) => {
     if (skipPersist !== true) {
       persistFieldFromFieldInputContext(newValue);
     }
 
-    closeInlineCellAndResetEditModePosition();
+    if (skipClose !== true) {
+      closeInlineCellAndResetEditModePosition();
+    }
   };
 
   const handleCancel = () => {

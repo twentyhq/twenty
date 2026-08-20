@@ -46,6 +46,9 @@ export const fromConnectionProviderManifestToUniversalFlatConnectionProvider =
       onConnectLogicFunctionUniversalIdentifier:
         connectionProviderManifest.onConnectLogicFunction
           ?.universalIdentifier ?? null,
+      onDisconnectLogicFunctionUniversalIdentifier:
+        connectionProviderManifest.onDisconnectLogicFunction
+          ?.universalIdentifier ?? null,
       createdAt: now,
       updatedAt: now,
     };

@@ -36,10 +36,8 @@ export const useTwoFactorVerificationForSettings = () => {
       message: t`Two-factor authentication setup completed successfully!`,
     });
 
-    // Reload current user to refresh 2FA status
     await loadCurrentUser();
 
-    // Navigate back to profile page
     navigate(SettingsPath.ProfilePage);
   };
 
@@ -64,7 +62,6 @@ export const useTwoFactorVerificationForSettings = () => {
   };
 
   const handleCancel = () => {
-    // Reset form and navigate back to profile page
     formConfig.reset();
     navigate(SettingsPath.ProfilePage);
   };

@@ -58,7 +58,6 @@ export const mapViewFieldsToColumnDefinitions = ({
     })
     .filter(isDefined);
 
-  // No label identifier set for this object
   if (!labelIdentifierFieldMetadataId) return columnDefinitionsFromViewFields;
 
   const labelIdentifierIndex = columnDefinitionsFromViewFields.findIndex(

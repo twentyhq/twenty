@@ -280,6 +280,7 @@ export default definePageLayout({
 
 `RICH_TEXT` フィールドには、エディタのブロック JSON と Markdown
 プロジェクションの両方が格納されます。 生成パイプラインはその Markdown プロジェクションを読み取るため、プレースホルダー、PDF、共有可能なウェブページはすべてそのまま問題なく動作します。詳しくは、[`template-record.page-layout.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/page-layouts/template-record.page-layout.ts) を参照してください。
+`FIELD` ウィジェットは、他にもさまざまな表示モードやオプションをサポートしています。たとえば、2 ホップ先の入れ子になったリレーションのレコードを一覧表示することもできます。詳しくは、[フィールドウィジェットリファレンス](/l/ja/developers/extend/apps/layout/page-layouts#field-widgets)を参照してください。
 編集者は適切なリッチテキストエディタでテンプレートを書き込むようになりました：
 
 <Frame caption="format@@0タブ:本文フィールドにバインドされている、Twentyのネイティブリッチテキストエディタ。">

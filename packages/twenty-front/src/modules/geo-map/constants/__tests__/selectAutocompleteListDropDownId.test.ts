@@ -20,14 +20,12 @@ describe('selectAutocompleteListDropDownId', () => {
   });
 
   it('should be a valid HTML ID', () => {
-    // HTML IDs should not contain spaces or special characters except hyphens
     expect(SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID).toMatch(
       /^[a-zA-Z][a-zA-Z0-9-]*$/,
     );
   });
 
   it('should be immutable', () => {
-    // This test ensures the constant cannot be reassigned
     const originalValue = SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID;
     expect(SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID).toBe(originalValue);
   });

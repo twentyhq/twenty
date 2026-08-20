@@ -311,6 +311,14 @@ export class LambdaExecutorManagerService {
         applicationUniversalIdentifier,
       });
     } catch (error) {
+      if (
+        error instanceof LogicFunctionException &&
+        error.code ===
+          LogicFunctionExceptionCode.LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED
+      ) {
+        throw error;
+      }
+
       this.logger.error(
         `Failed to get dependency layer for function ${flatLogicFunction.id}: ${error instanceof Error ? error.message : String(error)}`,
         error instanceof Error ? error.stack : undefined,

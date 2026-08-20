@@ -15,6 +15,7 @@ import { WebhookToolProvider } from 'src/engine/core-modules/tool-provider/provi
 import { WorkflowToolProvider } from 'src/engine/core-modules/tool-provider/providers/workflow-tool.provider';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
 import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
@@ -32,6 +33,7 @@ import { ViewSortModule } from 'src/engine/metadata-modules/view-sort/view-sort.
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WebhookModule } from 'src/engine/metadata-modules/webhook/webhook.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { EmailingModule } from 'src/modules/emailing/emailing.module';
 
 import { ToolIndexResolver } from './resolvers/tool-index.resolver';
 import { ToolRegistryService } from './services/tool-registry.service';
@@ -66,7 +68,8 @@ import { ToolRegistryService } from './services/tool-registry.service';
     WebhookModule,
     RoleModule,
     UserRoleModule,
-    TypeOrmModule.forFeature([UserEntity]),
+    EmailingModule,
+    TypeOrmModule.forFeature([UserEntity, UserWorkspaceEntity]),
   ],
   providers: [
     ToolIndexResolver,

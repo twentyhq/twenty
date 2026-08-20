@@ -70,10 +70,12 @@ describe('useIsPageLayoutInEditMode', () => {
         instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
       }),
       {
+        applicationId: 'application-id-mock',
         __typename: 'PageLayout',
         id: PAGE_LAYOUT_TEST_INSTANCE_ID,
         name: 'Record Page',
         type: PageLayoutType.RECORD_PAGE,
+        isSystemSideEffect: true,
         objectMetadataId: 'company-id',
         universalIdentifier: '20202020-0000-0000-0000-000000000001',
         createdAt: new Date().toISOString(),

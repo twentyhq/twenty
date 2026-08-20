@@ -15,6 +15,7 @@ import {
   LogicFunctionTriggerJob,
   type LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
+import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
 import { buildLogicFunctionEvent } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/build-logic-function-event.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -170,10 +171,13 @@ export class ServerRouteTriggerService {
         workspaceId,
         payload,
       },
-      { retryLimit: QUEUED_TARGET_RETRY_LIMIT },
+      {
+        retryLimit: QUEUED_TARGET_RETRY_LIMIT,
+        backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+      },
     );
 
-    return { statusCode: 202, headers: {}, body: { queued: true } };
+    return { statusCode: 200, headers: {}, body: { queued: true } };
   }
 
   private async findLogicFunctionOrFail({

@@ -3,6 +3,7 @@
 import { Controller, Post, Req, UseFilters, UseGuards } from '@nestjs/common';
 
 import { Request } from 'express';
+import { ApiPath } from 'twenty-shared/types';
 
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { CloudflareSecretMatchGuard } from 'src/engine/core-modules/cloudflare/guards/cloudflare-secret.guard';
@@ -20,7 +21,10 @@ export class DnsCloudflareController {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  @Post(['cloudflare/custom-hostname-webhooks', 'webhooks/cloudflare'])
+  @Post([
+    `${ApiPath.Cloudflare}/custom-hostname-webhooks`,
+    `${ApiPath.Webhooks}/cloudflare`,
+  ])
   @UseGuards(CloudflareSecretMatchGuard, PublicEndpointGuard, NoPermissionGuard)
   async customHostnameWebhooks(@Req() req: Request) {
     const hostname = req.body?.data?.data?.hostname;

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -11,7 +11,7 @@ export const VerifyLoginTokenEffect = () => {
   const [searchParams] = useSearchParams();
   const loginToken = searchParams.get('loginToken');
 
-  const hasAccessTokenPair = useHasAccessTokenPair();
+  const isLogged = useIsLogged();
   const navigate = useNavigateApp();
   const { verifyLoginToken } = useVerifyLogin();
 
@@ -27,7 +27,7 @@ export const VerifyLoginTokenEffect = () => {
 
     if (isDefined(loginToken)) {
       verifyLoginToken(loginToken);
-    } else if (!hasAccessTokenPair) {
+    } else if (!isLogged) {
       navigate(AppPath.SignInUp);
     }
     // oxlint-disable-next-line react-hooks/exhaustive-deps

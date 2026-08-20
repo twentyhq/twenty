@@ -1,5 +1,5 @@
 import { useStore } from 'jotai';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
@@ -9,14 +9,19 @@ import { type PageLayoutWidgetDndData } from '@/page-layout/types/PageLayoutWidg
 import { moveWidgetToTabInDraft } from '@/page-layout/utils/moveWidgetToTabInDraft';
 import { moveWidgetWithinTabInDraft } from '@/page-layout/utils/moveWidgetWithinTabInDraft';
 import { reorderTabInDraft } from '@/page-layout/utils/reorderTabInDraft';
+import { resolveBeforeTabId } from '@/page-layout/utils/resolveBeforeTabId';
+import { type DragDropItemDndContextValue } from '@/ui/utilities/drag-and-drop/context/DragDropItemDndContext';
 import { type DragDropProviderDragEndEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragEndEvent';
+import { type DragDropProviderDragMoveEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragMoveEvent';
 import { type DragDropProviderDragStartEvent } from '@/ui/utilities/drag-and-drop/types/DragDropProviderDragStartEvent';
 import { getDestinationIndex } from '@/ui/utilities/drag-and-drop/utils/getDestinationIndex';
+import { resolveDropFromPointer } from '@/ui/utilities/drag-and-drop/utils/resolveDropFromPointer';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
 type DragStartEvent = DragDropProviderDragStartEvent<PageLayoutWidgetDndData>;
+type DragMoveEvent = DragDropProviderDragMoveEvent<PageLayoutWidgetDndData>;
 type DragEndEvent = DragDropProviderDragEndEvent<PageLayoutWidgetDndData>;
 
 export const usePageLayoutWidgetDragAndDrop = (
@@ -39,17 +44,68 @@ export const usePageLayoutWidgetDragAndDrop = (
     pageLayoutId,
   );
 
+  const [activeDropTargetIndex, setActiveDropTargetIndex] = useState<
+    number | null
+  >(null);
+  const [activeDroppableId, setActiveDroppableId] = useState<string | null>(
+    null,
+  );
+
+  const clearWidgetDropTarget = useCallback(() => {
+    setActiveDropTargetIndex(null);
+    setActiveDroppableId(null);
+  }, []);
+
   const onDragStart = useCallback(
     (event: DragStartEvent) => {
       const sourceData = event.operation.source?.data as
         | PageLayoutWidgetDndData
         | undefined;
 
+      clearWidgetDropTarget();
+
       if (sourceData?.type === 'widget') {
         setPageLayoutDraggingWidgetId(sourceData.widgetId);
       }
     },
-    [setPageLayoutDraggingWidgetId],
+    [clearWidgetDropTarget, setPageLayoutDraggingWidgetId],
+  );
+
+  const onDragMove = useCallback(
+    (event: DragMoveEvent) => {
+      const sourceData = event.operation.source?.data as
+        | PageLayoutWidgetDndData
+        | undefined;
+      const targetData = event.operation.target?.data as
+        | PageLayoutWidgetDndData
+        | undefined;
+
+      if (sourceData?.type === 'widget' && targetData?.type === 'widget-list') {
+        setActiveDroppableId(targetData.tabId);
+        setActiveDropTargetIndex(targetData.itemCount);
+        return;
+      }
+
+      const isWidgetReorder =
+        sourceData?.type === 'widget' && targetData?.type === 'widget';
+      const isTabReorder =
+        sourceData?.type === 'tab' && targetData?.type === 'tab';
+
+      if (!isWidgetReorder && !isTabReorder) {
+        clearWidgetDropTarget();
+        return;
+      }
+
+      const resolvedDrop = resolveDropFromPointer({
+        target: event.operation.target,
+        pointer: event.operation.position.current,
+        getDroppableItemCount: () => 0,
+      });
+
+      setActiveDropTargetIndex(resolvedDrop?.dropTargetIndex ?? null);
+      setActiveDroppableId(resolvedDrop?.droppableId ?? null);
+    },
+    [clearWidgetDropTarget],
   );
 
   const onDragEnd = useCallback(
@@ -60,6 +116,8 @@ export const usePageLayoutWidgetDragAndDrop = (
       const targetData = event.operation.target?.data as
         | PageLayoutWidgetDndData
         | undefined;
+
+      clearWidgetDropTarget();
 
       if (
         !event.canceled &&
@@ -100,30 +158,36 @@ export const usePageLayoutWidgetDragAndDrop = (
             });
           });
         } else if (targetData.type === 'widget') {
-          // The drop line renders above the hovered widget, so the drop targets
-          // the slot before it; getDestinationIndex compensates for the source
-          // removal shifting same-tab downward moves by one.
           const destinationTabId = targetData.tabId;
-          const destinationIndex = getDestinationIndex({
-            dropTargetIndex: targetData.index,
-            sourceIndex,
-            sourceDroppableId: sourceTabId,
-            destinationDroppableId: destinationTabId,
+
+          const resolvedDrop = resolveDropFromPointer({
+            target: event.operation.target,
+            pointer: event.operation.position.current,
+            getDroppableItemCount: () => 0,
           });
 
-          store.set(pageLayoutDraftState, (prev) =>
-            destinationTabId === sourceTabId
-              ? moveWidgetWithinTabInDraft(prev, {
-                  tabId: sourceTabId,
-                  fromIndex: sourceIndex,
-                  toIndex: destinationIndex,
-                })
-              : moveWidgetToTabInDraft(prev, {
-                  widgetId,
-                  destinationTabId,
-                  destinationIndex,
-                }),
-          );
+          if (isDefined(resolvedDrop)) {
+            const destinationIndex = getDestinationIndex({
+              dropTargetIndex: resolvedDrop.dropTargetIndex,
+              sourceIndex,
+              sourceDroppableId: sourceTabId,
+              destinationDroppableId: destinationTabId,
+            });
+
+            store.set(pageLayoutDraftState, (prev) =>
+              destinationTabId === sourceTabId
+                ? moveWidgetWithinTabInDraft(prev, {
+                    tabId: sourceTabId,
+                    fromIndex: sourceIndex,
+                    toIndex: destinationIndex,
+                  })
+                : moveWidgetToTabInDraft(prev, {
+                    widgetId,
+                    destinationTabId,
+                    destinationIndex,
+                  }),
+            );
+          }
         }
       }
 
@@ -134,16 +198,7 @@ export const usePageLayoutWidgetDragAndDrop = (
       ) {
         const draggedTabId = sourceData.tabId;
 
-        // The drop line renders before the hovered tab, so tab targets insert
-        // the dragged tab before them; end zones and the more button append.
-        const beforeTabId =
-          targetData.type === 'tab'
-            ? targetData.tabId
-            : targetData.type === 'tab-list-end'
-              ? targetData.beforeTabId
-              : targetData.type === 'tab-more-button'
-                ? null
-                : undefined;
+        const beforeTabId = resolveBeforeTabId(event, targetData);
 
         if (beforeTabId !== undefined) {
           store.set(pageLayoutDraftState, (prev) =>
@@ -154,8 +209,18 @@ export const usePageLayoutWidgetDragAndDrop = (
 
       setPageLayoutDraggingWidgetId(null);
     },
-    [store, pageLayoutDraftState, setPageLayoutDraggingWidgetId],
+    [
+      store,
+      pageLayoutDraftState,
+      setPageLayoutDraggingWidgetId,
+      clearWidgetDropTarget,
+    ],
   );
 
-  return { handlers: { onDragStart, onDragEnd } };
+  const contextValues: DragDropItemDndContextValue = {
+    activeDropTargetIndex,
+    activeDroppableId,
+  };
+
+  return { contextValues, handlers: { onDragStart, onDragMove, onDragEnd } };
 };

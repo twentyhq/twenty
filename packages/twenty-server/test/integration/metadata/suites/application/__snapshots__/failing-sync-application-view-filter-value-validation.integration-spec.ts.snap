@@ -1,0 +1,246 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Sync application should fail on invalid view filter values when a BOOLEAN filter is neither true nor false 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "viewFilter": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_FILTER_DATA",
+              "message": "Value "yes" is not valid for operand "IS" on field type "BOOLEAN". Invalid option: expected one of "true"|"false"",
+              "userFriendlyMessage": "Filter value is not valid for this operand",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "viewFilter",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 viewFilter",
+    "summary": {
+      "totalErrors": 1,
+      "viewFilter": 1,
+    },
+    "userFriendlyMessage": "Filter value is not valid for this operand",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail on invalid view filter values when a DATE filter is not an ISO date 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "viewFilter": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_FILTER_DATA",
+              "message": "Value "31/01/2026" is not valid for operand "IS" on field type "DATE". Expected an ISO date, e.g. "2026-01-31"",
+              "userFriendlyMessage": "Filter value is not valid for this operand",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "viewFilter",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 viewFilter",
+    "summary": {
+      "totalErrors": 1,
+      "viewFilter": 1,
+    },
+    "userFriendlyMessage": "Filter value is not valid for this operand",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail on invalid view filter values when a NUMBER filter has trailing characters 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "viewFilter": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_FILTER_DATA",
+              "message": "Value "30abc" is not valid for operand "IS" on field type "NUMBER". Expected a number",
+              "userFriendlyMessage": "Filter value is not valid for this operand",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "viewFilter",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 viewFilter",
+    "summary": {
+      "totalErrors": 1,
+      "viewFilter": 1,
+    },
+    "userFriendlyMessage": "Filter value is not valid for this operand",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail on invalid view filter values when a NUMBER filter is not a number 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "viewFilter": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_FILTER_DATA",
+              "message": "Value "thirty" is not valid for operand "GREATER_THAN_OR_EQUAL" on field type "NUMBER". Expected a number",
+              "userFriendlyMessage": "Filter value is not valid for this operand",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "viewFilter",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 viewFilter",
+    "summary": {
+      "totalErrors": 1,
+      "viewFilter": 1,
+    },
+    "userFriendlyMessage": "Filter value is not valid for this operand",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail on invalid view filter values when a SELECT filter is an object rather than an array of options 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "viewFilter": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_FILTER_DATA",
+              "message": "Value "{"stage":"WON"}" is not valid for operand "IS" on field type "SELECT". Expected an array of option values",
+              "userFriendlyMessage": "Filter value is not valid for this operand",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "viewFilter",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 viewFilter",
+    "summary": {
+      "totalErrors": 1,
+      "viewFilter": 1,
+    },
+    "userFriendlyMessage": "Filter value is not valid for this operand",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail on invalid view filter values when an IS_RELATIVE filter has no amount 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "viewFilter": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_FILTER_DATA",
+              "message": "Value "NEXT__DAY" is not valid for operand "IS_RELATIVE" on field type "DATE". Expected a stringified relative date such as "NEXT_30_DAY".",
+              "userFriendlyMessage": "Filter value is not valid for this operand",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "viewFilter",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 viewFilter",
+    "summary": {
+      "totalErrors": 1,
+      "viewFilter": 1,
+    },
+    "userFriendlyMessage": "Filter value is not valid for this operand",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail on invalid view filter values when an IS_RELATIVE filter uses the relative date object form instead of its stringified form 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "viewFilter": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_VIEW_FILTER_DATA",
+              "message": "Value "{"direction":"NEXT","amount":30,"unit":"DAY"}" is not valid for operand "IS_RELATIVE" on field type "DATE". Expected a stringified relative date such as "NEXT_30_DAY".",
+              "userFriendlyMessage": "Filter value is not valid for this operand",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "viewFilter",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 viewFilter",
+    "summary": {
+      "totalErrors": 1,
+      "viewFilter": 1,
+    },
+    "userFriendlyMessage": "Filter value is not valid for this operand",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;

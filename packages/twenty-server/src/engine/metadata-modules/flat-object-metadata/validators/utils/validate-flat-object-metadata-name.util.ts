@@ -20,9 +20,7 @@ export const validateFlatObjectMetadataNames = ({
   ObjectMetadataMinimalInformation) => {
   const errors: FlatObjectMetadataValidationError[] = [];
 
-  // Validate both nameSingular and namePlural
   for (const name of [nameSingular, namePlural]) {
-    // Length too long check
     if (name.length > IDENTIFIER_MAX_CHAR_LENGTH) {
       errors.push({
         code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
@@ -32,7 +30,6 @@ export const validateFlatObjectMetadataNames = ({
       });
     }
 
-    // Length too short check
     if (name.length < IDENTIFIER_MIN_CHAR_LENGTH) {
       errors.push({
         code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
@@ -42,7 +39,6 @@ export const validateFlatObjectMetadataNames = ({
       });
     }
 
-    // Format check
     if (
       !name.match(
         STARTS_WITH_LOWER_CASE_AND_CONTAINS_ONLY_CAPS_AND_LOWER_LETTERS_AND_NUMBER_STRING_REGEX,
@@ -56,7 +52,6 @@ export const validateFlatObjectMetadataNames = ({
       });
     }
 
-    // Reserved keywords check
     if (RESERVED_METADATA_NAME_KEYWORDS.includes(name)) {
       errors.push({
         code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
@@ -67,7 +62,6 @@ export const validateFlatObjectMetadataNames = ({
     }
   }
 
-  // Check if names are identical
   const namesAreIdentical =
     namePlural.trim().toLowerCase() === nameSingular.trim().toLowerCase();
 

@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 
 import { Request, Response } from 'express';
-import { HTTPMethod } from 'twenty-shared/types';
+import { ApiPath, HTTPMethod } from 'twenty-shared/types';
 
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
@@ -20,7 +20,7 @@ import { RouteTriggerRestApiExceptionFilter } from 'src/engine/core-modules/logi
 import { RouteTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/route-trigger.service';
 import { sendRouteTriggerResponse } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
 
-@Controller('s')
+@Controller(ApiPath.RouteTrigger)
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
 @UseFilters(RouteTriggerRestApiExceptionFilter)
 export class RouteTriggerController {
