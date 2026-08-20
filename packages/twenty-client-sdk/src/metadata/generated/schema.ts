@@ -2768,6 +2768,9 @@ export interface AppKeyValue {
 }
 
 
+/** WORKSPACE entries are private to one workspace install of the application. SERVER entries are shared across every install: the value is always the claiming workspaceId and only that workspace can overwrite or delete the key. */
+export type AppKeyValueScope = 'WORKSPACE' | 'SERVER'
+
 export interface LogicFunctionTriggeredBy {
     userId: Scalars['UUID']
     userWorkspaceId: Scalars['UUID']
@@ -2775,10 +2778,6 @@ export interface LogicFunctionTriggeredBy {
     permissionFlags: PermissionFlagType[]
     __typename: 'LogicFunctionTriggeredBy'
 }
-
-
-/** WORKSPACE entries are private to one workspace install of the application. SERVER entries are shared across every install: the value is always the claiming workspaceId and only that workspace can overwrite or delete the key. */
-export type AppKeyValueScope = 'WORKSPACE' | 'SERVER'
 
 export interface CalendarChannel {
     id: Scalars['UUID']
@@ -2963,8 +2962,8 @@ export interface Query {
     myMessageFolders: MessageFolder[]
     myCalendarChannels: CalendarChannel[]
     minimalMetadata: MinimalMetadata
-    appKeyValue?: AppKeyValue
     logicFunctionTriggeredBy?: LogicFunctionTriggeredBy
+    appKeyValue?: AppKeyValue
     appConnections: AppConnection[]
     appConnection: AppConnection
     findWorkspaceAiStats: WorkspaceAiStats
@@ -6365,8 +6364,8 @@ export interface QueryGenqlSelection{
     myMessageFolders?: (MessageFolderGenqlSelection & { __args?: {messageChannelId?: (Scalars['UUID'] | null)} })
     myCalendarChannels?: (CalendarChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
     minimalMetadata?: MinimalMetadataGenqlSelection
-    appKeyValue?: (AppKeyValueGenqlSelection & { __args: {key: Scalars['String'], scope?: (AppKeyValueScope | null)} })
     logicFunctionTriggeredBy?: LogicFunctionTriggeredByGenqlSelection
+    appKeyValue?: (AppKeyValueGenqlSelection & { __args: {key: Scalars['String'], scope?: (AppKeyValueScope | null)} })
     appConnections?: (AppConnectionGenqlSelection & { __args?: {filter?: (ListAppConnectionsInput | null)} })
     appConnection?: (AppConnectionGenqlSelection & { __args: {id: Scalars['ID']} })
     findWorkspaceAiStats?: WorkspaceAiStatsGenqlSelection
@@ -9190,6 +9189,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isAppKeyValue = (obj?: { __typename?: any } | null): obj is AppKeyValue => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAppKeyValue"')
       return AppKeyValue_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const LogicFunctionTriggeredBy_possibleTypes: string[] = ['LogicFunctionTriggeredBy']
+    export const isLogicFunctionTriggeredBy = (obj?: { __typename?: any } | null): obj is LogicFunctionTriggeredBy => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isLogicFunctionTriggeredBy"')
+      return LogicFunctionTriggeredBy_possibleTypes.includes(obj.__typename)
     }
     
 

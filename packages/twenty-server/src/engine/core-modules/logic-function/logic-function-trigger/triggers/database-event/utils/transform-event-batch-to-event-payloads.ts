@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
-import { buildApplicationTriggeredBy } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-application-triggered-by.util';
+import { buildApplicationTriggeredBy } from 'src/engine/core-modules/auth/utils/build-application-triggered-by.util';
 import { type LogicFunctionTriggerJobData } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
 import { type LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import type { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';

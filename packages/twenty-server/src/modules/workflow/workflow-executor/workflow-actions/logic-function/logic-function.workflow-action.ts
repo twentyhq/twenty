@@ -4,6 +4,7 @@ import { isDefined, resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
+import { buildApplicationTriggeredByFromAuthContext } from 'src/engine/core-modules/auth/utils/build-application-triggered-by.util';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -13,6 +14,7 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
+import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { isWorkflowLogicFunctionAction } from 'src/modules/workflow/workflow-executor/workflow-actions/logic-function/guards/is-workflow-logic-function-action.guard';
 import { WorkflowLogicFunctionActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/logic-function/types/workflow-logic-function-action-input.type';
@@ -22,6 +24,7 @@ export class LogicFunctionWorkflowAction implements WorkflowAction {
   constructor(
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly workflowExecutionContextService: WorkflowExecutionContextService,
   ) {}
 
   async execute({
@@ -76,10 +79,14 @@ export class LogicFunctionWorkflowAction implements WorkflowAction {
       );
     }
 
+    const { authContext } =
+      await this.workflowExecutionContextService.getExecutionContext(runInfo);
+
     const result = await this.logicFunctionExecutorService.execute({
       logicFunctionId: workflowActionInput.logicFunctionId,
       workspaceId,
       payload: workflowActionInput.logicFunctionInput,
+      triggeredBy: buildApplicationTriggeredByFromAuthContext(authContext),
     });
 
     if (result.error) {

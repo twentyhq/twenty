@@ -21,7 +21,7 @@ import {
   RouteTriggerExceptionCode,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception';
 import { type ApplicationTriggeredBy } from 'src/engine/core-modules/auth/types/application-triggered-by.type';
-import { buildApplicationTriggeredBy } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-application-triggered-by.util';
+import { buildApplicationTriggeredBy } from 'src/engine/core-modules/auth/utils/build-application-triggered-by.util';
 import { LogicFunctionTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/logic-function-trigger.service';
 import { type RouteTriggerResponse } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
 import { sanitizeRouteTriggerPath } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/sanitize-route-trigger-path.util';

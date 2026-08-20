@@ -4685,8 +4685,8 @@ export type Query = {
   githubClaimAuthorizationUrl: Scalars['String']['output'];
   isApplicationStopped: Scalars['Boolean']['output'];
   lineChartData: LineChartData;
-  logicFunctionTriggeredBy?: Maybe<LogicFunctionTriggeredBy>;
   listPlans: Array<BillingPlan>;
+  logicFunctionTriggeredBy?: Maybe<LogicFunctionTriggeredBy>;
   messageSuppressions: MessageSuppressionList;
   metadataTranslations: Array<MetadataTranslation>;
   minimalMetadata: MinimalMetadata;

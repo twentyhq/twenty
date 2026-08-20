@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { type LogicFunctionTriggeredBy } from 'twenty-shared/application';
-import { type PermissionFlagType } from 'twenty-shared/constants';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ApplicationTriggeredBy } from 'src/engine/core-modules/auth/types/application-triggered-by.type';
@@ -82,8 +82,8 @@ export class ApplicationTriggeredByService {
           workspaceId,
         });
 
-      return (Object.keys(permissionFlags) as PermissionFlagType[]).filter(
-        (permissionFlag) => permissionFlags[permissionFlag] === true,
+      return Object.values(PermissionFlagType).filter(
+        (permissionFlag) => permissionFlags[permissionFlag],
       );
     } catch (error) {
       // Losing every role is a legitimate state, and the honest answer to
