@@ -194,10 +194,6 @@ export const useSaveUpdateDataModelObjectAboutForm = ({
 
     // Editing a label the viewer sees through a translation is ambiguous:
     // fix the translation, or rename the concept for every language? Ask.
-    // Asked for every locale, the source language included: a workspace can
-    // hold a translation for it too (an object authored in French carries an
-    // English one), and renaming behind such a translation would change the
-    // canonical value while the screen kept showing the translation.
     if (dirtyTranslatableProperties.length > 0) {
       const { data } = await apolloClient.query({
         query: MetadataTranslationsDocument,
