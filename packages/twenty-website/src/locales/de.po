@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-06-28 13:26\n"
+"PO-Revision-Date: 2026-08-20 10:17\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -32,7 +32,7 @@ msgstr "...mit KI, die Ihnen tatsächlich hilft, *schneller zu arbeiten*"
 #. placeholder {0}: app.name
 #: src/app/[locale]/(site)/apps/[slug]/page.tsx
 msgid "{0} — Twenty Apps"
-msgstr ""
+msgstr "{0} – Twenty‑Apps"
 
 #. js-lingui-id: Z6mKXu
 #. placeholder {0}: partner.name
@@ -50,7 +50,7 @@ msgstr "{0} Case Study"
 #. placeholder {0}: app.name
 #: src/apps-marketplace/AppDetail.tsx
 msgid "{0} screenshot"
-msgstr ""
+msgstr "{0}-Screenshot"
 
 #. js-lingui-id: jC5JCB
 #: src/sections/case-study-promo/CaseStudyPromo.tsx
@@ -103,7 +103,7 @@ msgstr "/Benutzer/Monat"
 #. js-lingui-id: 0XQjhY
 #: src/sections/pricing-plans/plans-data.ts
 msgid "/year"
-msgstr ""
+msgstr "/Jahr"
 
 #. js-lingui-id: UEDohT
 #: src/sections/footer/FooterBottom.tsx
@@ -139,7 +139,7 @@ msgstr "+5 $/Benutzer pro Monat"
 #. js-lingui-id: QO+kOi
 #: src/sections/compare/compare-data.ts
 msgid "+$7,200/yr"
-msgstr ""
+msgstr "+7.200 $/Jahr"
 
 #. js-lingui-id: JIwDAd
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -150,11 +150,9 @@ msgstr "+7000 $/Organisation pro Monat"
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"+$75/user per month\n"
+msgid "+$75/user per month\n"
 "Switch to enterprise!"
-msgstr ""
-"+75 $/Benutzer pro Monat\n"
+msgstr "+75 $/Benutzer pro Monat\n"
 "Wechseln Sie zu Enterprise!"
 
 #. js-lingui-id: iK+ikF
@@ -164,12 +162,10 @@ msgstr "+10 Tsd. andere"
 
 #. js-lingui-id: nRtVCK
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"+20% of net spend\n"
+msgid "+20% of net spend\n"
 "+$75/user per month\n"
 "Switch to enterprise!"
-msgstr ""
-"+20 % der Nettokosten\n"
+msgstr "+20 % der Nettokosten\n"
 "+75 $/Benutzer pro Monat\n"
 "Wechseln Sie zu Enterprise!"
 
@@ -177,7 +173,7 @@ msgstr ""
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "+30% of spend"
-msgstr ""
+msgstr "+30 % der Ausgaben"
 
 #. js-lingui-id: BmAWVq
 #: src/platform/releases/ReleaseNotes.tsx
@@ -197,47 +193,47 @@ msgstr "<0>Schneller Zugriff auf Datensätze</0>: Das Seitenpanel erlaubt es Ihn
 #. js-lingui-id: 9ymtak
 #: src/sections/compare/compare-data.ts
 msgid "≈ $125 per user per month"
-msgstr ""
+msgstr "≈ 125 $ pro Benutzer und Monat"
 
 #. js-lingui-id: 4rd87j
 #: src/sections/compare/compare-data.ts
 msgid "≈ $165 per user per month in year one"
-msgstr ""
+msgstr "≈ 165 $ pro Benutzer und Monat im ersten Jahr"
 
 #. js-lingui-id: q0hdAM
 #: src/sections/compare/compare-data.ts
 msgid "≈ $228 per user per month before add-ons"
-msgstr ""
+msgstr "≈ 228 $ pro Benutzer und Monat vor Add-ons"
 
 #. js-lingui-id: O8ZrTl
 #: src/sections/compare/compare-data.ts
 msgid "≈ $300 per user per month in year one"
-msgstr ""
+msgstr "≈ 300 $ pro Benutzer und Monat im ersten Jahr"
 
 #. js-lingui-id: jdJifG
 #: src/sections/compare/compare-data.ts
 msgid "≈ 12× less"
-msgstr ""
+msgstr "≈ 12× weniger"
 
 #. js-lingui-id: xSqWmB
 #: src/sections/compare/compare-data.ts
 msgid "≈ 15× less"
-msgstr ""
+msgstr "≈ 15× weniger"
 
 #. js-lingui-id: XEcaNi
 #: src/sections/compare/compare-data.ts
 msgid "≈ 4× less"
-msgstr ""
+msgstr "≈ 4× weniger"
 
 #. js-lingui-id: 7AGSOz
 #: src/sections/compare/compare-data.ts
 msgid "≈ 6× less"
-msgstr ""
+msgstr "≈ 6× weniger"
 
 #. js-lingui-id: rHH4Ef
 #: src/sections/compare/compare-data.ts
 msgid "≈ 8× less"
-msgstr ""
+msgstr "≈ 8× weniger"
 
 #. js-lingui-id: be30i9
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -249,16 +245,14 @@ msgstr "0 $"
 #. js-lingui-id: RVS9wF
 #: src/sections/compare/compare-data.ts
 msgid "$1,500 to $3,500"
-msgstr ""
+msgstr "1.500 bis 3.500 $"
 
 #. js-lingui-id: 6inRXo
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"$1/orchestration run/org\n"
+msgid "$1/orchestration run/org\n"
 "+$75/user per month\n"
 "Switch to enterprise!"
-msgstr ""
-"1 $/Orchestrierungslauf/Organisation\n"
+msgstr "1 $/Orchestrierungslauf/Organisation\n"
 "+75 $/Benutzer pro Monat\n"
 "Wechseln Sie zu Enterprise!"
 
@@ -266,59 +260,59 @@ msgstr ""
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$100/seat/mo"
-msgstr ""
+msgstr "100 $ pro Platz/Monat"
 
 #. js-lingui-id: RxZCTe
 #: src/sections/compare/compare-data.ts
 msgid "$105/user/mo"
-msgstr ""
+msgstr "105 $ pro Benutzer/Monat"
 
 #. js-lingui-id: iwVjw1
 #: src/sections/compare/compare-data.ts
 msgid "$10k to $100k+"
-msgstr ""
+msgstr "10.000 bis 100.000+ $"
 
 #. js-lingui-id: T0Wpr9
 #: src/sections/compare/compare-data.ts
 msgid "$11,760/yr"
-msgstr ""
+msgstr "11.760 $/Jahr"
 
 #. js-lingui-id: gwvlUn
 #: src/sections/compare/compare-data.ts
 msgid "$12,600/yr"
-msgstr ""
+msgstr "12.600 $/Jahr"
 
 #. js-lingui-id: i95Cip
 #: src/sections/compare/compare-data.ts
 msgid "$134/user/mo"
-msgstr ""
+msgstr "134 $ pro Benutzer/Monat"
 
 #. js-lingui-id: +v2oYY
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$150/seat/mo"
-msgstr ""
+msgstr "150 $ pro Platz/Monat"
 
 #. js-lingui-id: E9br9b
 #: src/sections/compare/compare-data.ts
 msgid "$150/user/mo"
-msgstr ""
+msgstr "150 $ pro Benutzer/Monat"
 
 #. js-lingui-id: no7TyB
 #: src/sections/compare/compare-data.ts
 msgid "$15k to $100k+"
-msgstr ""
+msgstr "15.000 bis 100.000+ $"
 
 #. js-lingui-id: NCPkk1
 #: src/sections/compare/compare-data.ts
 msgid "$175/user/mo"
-msgstr ""
+msgstr "175 $ pro Benutzer/Monat"
 
 #. js-lingui-id: F/xoOk
 #: src/sections/compare/compare-data.ts
 msgid "$18,960"
-msgstr ""
+msgstr "18.960 $"
 
 #. js-lingui-id: EkIZkY
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -329,7 +323,7 @@ msgstr "19 $"
 #. js-lingui-id: 3TfGqu
 #: src/sections/compare/compare-data.ts
 msgid "$19 per user per month, SSO included"
-msgstr ""
+msgstr "19 $ pro Benutzer und Monat, SSO inklusive"
 
 #. js-lingui-id: nEeXt3
 #: src/sections/compare/compare-data.ts
@@ -337,47 +331,47 @@ msgstr ""
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$19 per user per month, that's it"
-msgstr ""
+msgstr "19 $ pro Benutzer und Monat, das ist alles"
 
 #. js-lingui-id: buZDJK
 #: src/sections/compare/compare-data.ts
 msgid "$2/conversation"
-msgstr ""
+msgstr "2 $ pro Konversation"
 
 #. js-lingui-id: SipiNI
 #: src/sections/compare/compare-data.ts
 msgid "$20/user/mo"
-msgstr ""
+msgstr "20 $ pro Benutzer/Monat"
 
 #. js-lingui-id: 9TSE4w
 #: src/sections/compare/compare-data.ts
 msgid "$25,200/yr"
-msgstr ""
+msgstr "25.200 $/Jahr"
 
 #. js-lingui-id: fz2uoZ
 #: src/sections/compare/compare-data.ts
 msgid "$3,500"
-msgstr ""
+msgstr "3.500 $"
 
 #. js-lingui-id: 4wGGg4
 #: src/sections/compare/compare-data.ts
 msgid "$30,000"
-msgstr ""
+msgstr "30.000 $"
 
 #. js-lingui-id: r4X3nR
 #: src/sections/compare/compare-data.ts
 msgid "$32,160/yr"
-msgstr ""
+msgstr "32.160 $/Jahr"
 
 #. js-lingui-id: SY5PTh
 #: src/sections/compare/compare-data.ts
 msgid "$36,000/yr"
-msgstr ""
+msgstr "36.000 $/Jahr"
 
 #. js-lingui-id: q9R8xN
 #: src/sections/compare/compare-data.ts
 msgid "$39,500"
-msgstr ""
+msgstr "39.500 $"
 
 #. js-lingui-id: BkOdiw
 #: src/sections/compare/compare-data.ts
@@ -386,7 +380,7 @@ msgstr ""
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$4,560"
-msgstr ""
+msgstr "4.560 $"
 
 #. js-lingui-id: godgke
 #: src/sections/compare/compare-data.ts
@@ -395,62 +389,62 @@ msgstr ""
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$4,560/yr"
-msgstr ""
+msgstr "4.560 $/Jahr"
 
 #. js-lingui-id: 6bS7c4
 #: src/sections/compare/compare-data.ts
 msgid "$4,800/yr"
-msgstr ""
+msgstr "4.800 $/Jahr"
 
 #. js-lingui-id: jG39xD
 #: src/sections/compare/compare-data.ts
 msgid "$40,000+"
-msgstr ""
+msgstr "40.000+ $"
 
 #. js-lingui-id: meADa5
 #: src/sections/compare/compare-data.ts
 msgid "$40/GB/month"
-msgstr ""
+msgstr "40 $/GB/Monat"
 
 #. js-lingui-id: qw71Lk
 #: src/sections/compare/compare-data.ts
 msgid "$40k to $150k+"
-msgstr ""
+msgstr "40.000 bis 150.000+ $"
 
 #. js-lingui-id: HQhcTN
 #: src/sections/compare/compare-data.ts
 msgid "$42,000/yr"
-msgstr ""
+msgstr "42.000 $/Jahr"
 
 #. js-lingui-id: lg3QC/
 #: src/sections/compare/compare-data.ts
 msgid "$49/user/mo"
-msgstr ""
+msgstr "49 $ pro Benutzer/Monat"
 
 #. js-lingui-id: ft5bJk
 #: src/sections/compare/compare-data.ts
 msgid "$500/user/mo"
-msgstr ""
+msgstr "500 $ pro Benutzer/Monat"
 
 #. js-lingui-id: rJXDlT
 #: src/sections/compare/compare-data.ts
 msgid "$54,600"
-msgstr ""
+msgstr "54.600 $"
 
 #. js-lingui-id: HhjIdv
 #: src/sections/compare/compare-data.ts
 msgid "$72,160+"
-msgstr ""
+msgstr "72.160+ $"
 
 #. js-lingui-id: 53v+LE
 #: src/sections/compare/compare-data.ts
 msgid "$79 per user per month with SSO"
-msgstr ""
+msgstr "79 $ pro Benutzer und Monat mit SSO"
 
 #. js-lingui-id: wcrOee
 #: src/sections/compare/compare-data.ts
 msgid "$79/user/mo"
-msgstr ""
+msgstr "79 $ pro Benutzer/Monat"
 
 #. js-lingui-id: 8r6DgO
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -462,12 +456,12 @@ msgstr "9 $"
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$9 to $19/user, everything included"
-msgstr ""
+msgstr "9 bis 19 $/Benutzer, alles inklusive"
 
 #. js-lingui-id: 5QiFtr
 #: src/sections/compare/compare-data.ts
 msgid "$9/user on Pro"
-msgstr ""
+msgstr "9 $/Benutzer im Pro-Tarif"
 
 #. js-lingui-id: EHNAf2
 #: src/case-studies/case-study-catalog.ts
@@ -486,11 +480,9 @@ msgstr "100 pro Minute"
 
 #. js-lingui-id: uuKUqZ
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"11 permissions\n"
+msgid "11 permissions\n"
 "groups"
-msgstr ""
-"11 Berechtigungs-\n"
+msgstr "11 Berechtigungs-\n"
 "gruppen"
 
 #. js-lingui-id: 2szX5S
@@ -520,32 +512,32 @@ msgstr "2.000+"
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "20 × Organization ($19)"
-msgstr ""
+msgstr "20 × Organization (19 $)"
 
 #. js-lingui-id: t8U4dF
 #: src/sections/compare/compare-data.ts
 msgid "20 × Premium ($49)"
-msgstr ""
+msgstr "20 × Premium (49 $)"
 
 #. js-lingui-id: s3hVxk
 #: src/sections/compare/compare-data.ts
 msgid "20 × Sales Cloud Enterprise ($175)"
-msgstr ""
+msgstr "20 × Sales Cloud Enterprise (175 $)"
 
 #. js-lingui-id: ANl7kz
 #: src/sections/compare/compare-data.ts
 msgid "20 × Sales Cloud V2 ($134)"
-msgstr ""
+msgstr "20 × Sales Cloud V2 (134 $)"
 
 #. js-lingui-id: 540kVH
 #: src/sections/compare/compare-data.ts
 msgid "20 × Sales Enterprise ($105)"
-msgstr ""
+msgstr "20 × Sales Enterprise (105 $)"
 
 #. js-lingui-id: 76JctL
 #: src/sections/compare/compare-data.ts
 msgid "20 × Sales Hub Enterprise ($150)"
-msgstr ""
+msgstr "20 × Sales Hub Enterprise (150 $)"
 
 #. js-lingui-id: FKcV/y
 #: src/case-studies/case-study-catalog.ts
@@ -562,11 +554,9 @@ msgstr "3"
 
 #. js-lingui-id: BL47wE
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"3 2 years contract\n"
+msgid "3 2 years contract\n"
 "-33% off"
-msgstr ""
-"3 2‑Jahres‑Vertrag\n"
+msgstr "3 2‑Jahres‑Vertrag\n"
 "-33 % Rabatt"
 
 #. js-lingui-id: /jgC+9
@@ -577,7 +567,7 @@ msgstr "3 Produktlinien"
 #. js-lingui-id: MW3Qpb
 #: src/partners-marketplace/PartnerProfileCtas.tsx
 msgid "30 minutes, no commitment"
-msgstr ""
+msgstr "30 Minuten, keine Verpflichtung"
 
 #. js-lingui-id: 7SJhyh
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -627,7 +617,7 @@ msgstr "90 %+"
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "A 20-person sales team, billed annually"
-msgstr ""
+msgstr "Ein Vertriebsteam mit 20 Personen, jährlich abgerechnet"
 
 #. js-lingui-id: u6Xxdi
 #: src/case-studies/case-study-stories.ts
@@ -646,11 +636,9 @@ msgstr "Ein CRM für Teams, die sich *schnell bewegen*"
 
 #. js-lingui-id: MXRINg
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"A CRM that\n"
+msgid "A CRM that\n"
 "*grows* with you"
-msgstr ""
-"Ein CRM, das\n"
+msgstr "Ein CRM, das\n"
 "*mit Ihnen wächst*"
 
 #. js-lingui-id: diWAWP
@@ -665,11 +653,9 @@ msgstr "Ein CRM, das mit Ihnen wächst | NetZero & Twenty"
 
 #. js-lingui-id: N3qsQD
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"A CRM they\n"
+msgid "A CRM they\n"
 "*actually own*"
-msgstr ""
-"Ein CRM, das sie\n"
+msgstr "Ein CRM, das sie\n"
 "*wirklich besitzen*"
 
 #. js-lingui-id: muZzEA
@@ -684,17 +670,17 @@ msgstr "Ein individuelles CRM verschafft Ihrer Organisation einen Vorsprung – 
 
 #. js-lingui-id: 4lAzBW
 #: src/sections/compare/compare-data.ts
-msgid ""
-"A feature-by-feature price check, with sources.\n"
+msgid "A feature-by-feature price check, with sources.\n"
 "Most of what HubSpot gates behind tiers is simply included in Twenty."
-msgstr ""
+msgstr "Ein Funktions-zu-Funktion-Preisvergleich mit Quellen.\n"
+"Das meiste, was HubSpot hinter Tarifen einschränkt, ist in Twenty einfach enthalten."
 
 #. js-lingui-id: eZ3I1t
 #: src/sections/compare/compare-data.ts
-msgid ""
-"A friendly price on the front page.\n"
+msgid "A friendly price on the front page.\n"
 "The caps show up after you sign."
-msgstr ""
+msgstr "Ein freundlicher Preis auf der Startseite.\n"
+"Die Limits tauchen auf, nachdem Sie unterschrieben haben."
 
 #. js-lingui-id: uNIo/j
 #: src/sections/three-cards/ProductThreeCards.tsx
@@ -723,11 +709,9 @@ msgstr "Eine Plattform, bereit für Wachstum"
 
 #. js-lingui-id: vbJW8I
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"A real estate agency on WhatsApp built a\n"
+msgid "A real estate agency on WhatsApp built a\n"
 "*CRM* around it"
-msgstr ""
-"Eine Immobilienagentur auf WhatsApp baute ein\n"
+msgstr "Eine Immobilienagentur auf WhatsApp baute ein\n"
 "*CRM* darum herum"
 
 #. js-lingui-id: hwoGni
@@ -738,7 +722,7 @@ msgstr "Eine Immobilienagentur auf WhatsApp baute ein CRM darum herum"
 #. js-lingui-id: 0wOuyC
 #: src/sections/compare/compare-data.ts
 msgid "A real staging environment"
-msgstr ""
+msgstr "Eine echte Staging-Umgebung"
 
 #. js-lingui-id: WjUlJr
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -825,7 +809,7 @@ msgstr "Die Aktivierungsantwort war unvollständig."
 #. js-lingui-id: y2DpQ/
 #: src/sections/compare/compare-data.ts
 msgid "Active automations"
-msgstr ""
+msgstr "Aktive Automatisierungen"
 
 #. js-lingui-id: Yyn/dP
 #: src/partners-marketplace/ActiveFilterPills.tsx
@@ -876,7 +860,7 @@ msgstr "Task hinzufügen"
 #. js-lingui-id: lWjdR6
 #: src/sections/compare/compare-data.ts
 msgid "Add-on, per environment"
-msgstr ""
+msgstr "Add-on, pro Umgebung"
 
 #. js-lingui-id: Y2K3rp
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -959,22 +943,22 @@ msgstr "Agentur"
 #. js-lingui-id: aC4eD2
 #: src/sections/compare/compare-data.ts
 msgid "Agent conversations"
-msgstr ""
+msgstr "Agentengespräche"
 
 #. js-lingui-id: 7YoL3t
 #: src/sections/compare/compare-data.ts
 msgid "Agentforce 1 Sales edition"
-msgstr ""
+msgstr "Agentforce 1 Sales Edition"
 
 #. js-lingui-id: Ir3nik
 #: src/sections/compare/compare-data.ts
 msgid "Agentforce list price"
-msgstr ""
+msgstr "Agentforce-Listenpreis"
 
 #. js-lingui-id: HrtCcp
 #: src/sections/compare/compare-data.ts
 msgid "Agents and Data Cloud bundled"
-msgstr ""
+msgstr "Agents und Data Cloud im Paket"
 
 #. js-lingui-id: vZKKhf
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -1020,7 +1004,7 @@ msgstr "KI‑Agenten beginnen damit, Outreach zu entwerfen, Leads zu bewerten, A
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "AI agents included, usage credits"
-msgstr ""
+msgstr "KI-Agents enthalten, Nutzungsguthaben"
 
 #. js-lingui-id: Rsxdfy
 #: src/sections/pricing-plans/plans-data.ts
@@ -1072,7 +1056,7 @@ msgstr "KI‑unterstützt"
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Air-gapped deployment"
-msgstr ""
+msgstr "Air-gapped-Bereitstellung"
 
 #. js-lingui-id: 7xlBwk
 #: src/partner-application/data/partner-country-options.ts
@@ -1087,7 +1071,7 @@ msgstr "Algerien 🇩🇿"
 #. js-lingui-id: N40H+G
 #: src/apps-marketplace/AppsMarketplaceClient.tsx
 msgid "All"
-msgstr ""
+msgstr "Alle"
 
 #. js-lingui-id: LIGwFL
 #: src/sections/three-cards/three-cards.data.ts
@@ -1195,15 +1179,13 @@ msgstr "APIs, SDKs und Webhooks, um Twenty zu erweitern und Apps auf Basis Ihrer
 #. js-lingui-id: L/34fX
 #: src/app/[locale]/(site)/apps/[slug]/page.tsx
 msgid "App not found — Twenty"
-msgstr ""
+msgstr "App nicht gefunden – Twenty"
 
 #. js-lingui-id: k8I7/G
 #: src/partner-application/partner-application-copy.ts
-msgid ""
-"Apply to build\n"
+msgid "Apply to build\n"
 "*the future of CRM*"
-msgstr ""
-"Bewerben Sie sich, um\n"
+msgstr "Bewerben Sie sich, um\n"
 "*die Zukunft von CRM aufzubauen*"
 
 #. js-lingui-id: LJCDxT
@@ -1214,12 +1196,12 @@ msgstr "Bewerben Sie sich, um dem Twenty-Partner-Ökosystem beizutreten und Ihr 
 #. js-lingui-id: VDvaN2
 #: src/sections/menu/data/menu.ts
 msgid "Apps"
-msgstr ""
+msgstr "Apps"
 
 #. js-lingui-id: lAg+Wy
 #: src/apps-marketplace/AppsMarketplaceHeader.tsx
 msgid "Apps for *Twenty*"
-msgstr ""
+msgstr "Apps für *Twenty*"
 
 #. js-lingui-id: 1AsfMD
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
@@ -1291,7 +1273,7 @@ msgstr "Österreich 🇦🇹"
 #. js-lingui-id: nb3YW4
 #: src/sections/compare/compare-data.ts
 msgid "Auto-renewing term contracts"
-msgstr ""
+msgstr "Sich automatisch verlängernde Laufzeitverträge"
 
 #. js-lingui-id: FFv0Vh
 #: src/sections/product-stepper/data/product-stepper-data.ts
@@ -1365,11 +1347,9 @@ msgstr "Da die API von Twenty vollständig offen ist, konnte ich sie mit jedem a
 
 #. js-lingui-id: kWm0dC
 #: src/sections/partner-hero/PartnerHero.tsx
-msgid ""
-"Become\n"
+msgid "Become\n"
 "*our partner*"
-msgstr ""
-"Werden Sie\n"
+msgstr "Werden Sie\n"
 "*unser Partner*"
 
 #. js-lingui-id: PKMHNe
@@ -1441,12 +1421,12 @@ msgstr "Über die *interne Einführung* hinaus"
 #. js-lingui-id: rp00sQ
 #: src/sections/compare/compare-data.ts
 msgid "Beyond deals and contacts"
-msgstr ""
+msgstr "Mehr als nur Deals und Kontakte"
 
 #. js-lingui-id: y37rt+
 #: src/sections/compare/compare-data.ts
 msgid "Beyond the pooled entitlement"
-msgstr ""
+msgstr "Über den gemeinsamen Anspruch hinaus"
 
 #. js-lingui-id: OPnz/X
 #: src/partner-application/data/partner-country-options.ts
@@ -1471,7 +1451,7 @@ msgstr "Bolivien 🇧🇴"
 #. js-lingui-id: 4fKvqx
 #: src/partners-marketplace/PartnerProfileCtas.tsx
 msgid "Book intro call"
-msgstr ""
+msgstr "Einführungstermin buchen"
 
 #. js-lingui-id: bOwPjT
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
@@ -1496,7 +1476,7 @@ msgstr "Brasilien 🇧🇷"
 #. js-lingui-id: hKAV/O
 #: src/sections/pricing-engagement-band/PricingEngagementBand.tsx
 msgid "Browse partners"
-msgstr ""
+msgstr "Partner durchsuchen"
 
 #. js-lingui-id: bmk2dj
 #: src/platform/routing/static-website-routes.ts
@@ -1511,7 +1491,7 @@ msgstr "Brunei 🇧🇳"
 #. js-lingui-id: 0Nu8Fw
 #: src/client-brief/client-brief-copy.ts
 msgid "Budget range"
-msgstr ""
+msgstr "Budgetspanne"
 
 #. js-lingui-id: NcjNpp
 #: src/sections/why-twenty-signoff/WhyTwentySignoff.tsx
@@ -1621,7 +1601,7 @@ msgstr "Kann ich von Salesforce oder HubSpot migrieren?"
 #. js-lingui-id: wsjgUI
 #: src/sections/compare/compare-data.ts
 msgid "Can you see the bill coming?"
-msgstr ""
+msgstr "Sehen Sie die Rechnung schon kommen?"
 
 #. js-lingui-id: nEOTNi
 #: src/partner-application/data/partner-country-options.ts
@@ -1637,7 +1617,7 @@ msgstr "Kap Verde 🇨🇻"
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "Capped per tier"
-msgstr ""
+msgstr "Pro Tarifstufe begrenzt"
 
 #. js-lingui-id: qLBo3s
 #: src/sections/testimonials/TestimonialsCarousel.tsx
@@ -1653,12 +1633,12 @@ msgstr "Fallstudie"
 #. js-lingui-id: ZaqvFY
 #: src/partners-marketplace/PartnerSelectedWork.tsx
 msgid "Case studies"
-msgstr ""
+msgstr "Fallstudien"
 
 #. js-lingui-id: QuY9hS
 #: src/partners-marketplace/CaseStudyModal.tsx
 msgid "Case study"
-msgstr ""
+msgstr "Fallstudie"
 
 #. js-lingui-id: M1RLfx
 #: src/partners-marketplace/spoken-language-labels.ts
@@ -1668,7 +1648,7 @@ msgstr "Katalanisch"
 #. js-lingui-id: K7tIrx
 #: src/apps-marketplace/AppDetail.tsx
 msgid "Category"
-msgstr ""
+msgstr "Kategorie"
 
 #. js-lingui-id: dBApoS
 #: src/partner-application/data/partner-country-options.ts
@@ -1771,12 +1751,12 @@ msgstr "Cloud"
 #. js-lingui-id: gHCE2l
 #: src/client-brief/client-brief-copy.ts
 msgid "Cloud (Twenty-hosted)"
-msgstr ""
+msgstr "Cloud (Twenty-gehostet)"
 
 #. js-lingui-id: N/+h4B
 #: src/client-brief/client-brief-copy.ts
 msgid "Cloud or self-hosted?"
-msgstr ""
+msgstr "Cloud oder Self-hosted?"
 
 #. js-lingui-id: L/LPQZ
 #: src/sections/faq/faq.data.ts
@@ -1864,7 +1844,7 @@ msgstr "Unternehmen"
 #. js-lingui-id: WDhGtU
 #: src/client-brief/client-brief-copy.ts
 msgid "Company name *"
-msgstr ""
+msgstr "Unternehmensname *"
 
 #. js-lingui-id: SHjhDC
 #: src/partner-application/partner-application-copy.ts
@@ -1874,12 +1854,12 @@ msgstr "Unternehmen oder Marke *"
 #. js-lingui-id: 5NnZpk
 #: src/sections/compare/compare-data.ts
 msgid "Company-wide, not per user"
-msgstr ""
+msgstr "Unternehmensweit, nicht pro Benutzer"
 
 #. js-lingui-id: y9d5MZ
 #: src/sections/pricing-salesfarce/PricingSalesfarce.tsx
 msgid "Compare *the real cost*"
-msgstr ""
+msgstr "Vergleichen Sie *die tatsächlichen Kosten*"
 
 #. js-lingui-id: QOhkyl
 #: src/sections/product-feature/EmailsVisual/EmailsVisual.tsx
@@ -1929,7 +1909,7 @@ msgstr "Verbunden über API"
 #. js-lingui-id: j/G3/h
 #: src/sections/compare/compare-data.ts
 msgid "Connecting the rest of your stack"
-msgstr ""
+msgstr "Den Rest Ihres Stacks verbinden"
 
 #. js-lingui-id: cfAG43
 #: src/case-studies/case-study-catalog.ts
@@ -1939,7 +1919,7 @@ msgstr "Beratung"
 #. js-lingui-id: jfC/xh
 #: src/partners-marketplace/PartnerProfileCtas.tsx
 msgid "Contact"
-msgstr ""
+msgstr "Kontakt"
 
 #. js-lingui-id: Oii3vg
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -1954,7 +1934,7 @@ msgstr "Kontext lebt beim Datensatz."
 #. js-lingui-id: xjHB3/
 #: src/client-brief/client-brief-copy.ts
 msgid "Continue →"
-msgstr ""
+msgstr "Weiter →"
 
 #. js-lingui-id: mXovG/
 #: src/sections/home-stepper/data/stepper.data.ts
@@ -1964,7 +1944,7 @@ msgstr "Iterationen ohne *Reibung fortsetzen*"
 #. js-lingui-id: sZ2EiM
 #: src/sections/compare/compare-data.ts
 msgid "Contract terms"
-msgstr ""
+msgstr "Vertragsbedingungen"
 
 #. js-lingui-id: LqyWsJ
 #: src/platform/releases/ReleaseNotes.tsx
@@ -1984,7 +1964,7 @@ msgstr "Kontrolle"
 #. js-lingui-id: uiJ97K
 #: src/sections/compare/compare-data.ts
 msgid "Control who sees and edits what"
-msgstr ""
+msgstr "Steuern Sie, wer was sieht und bearbeitet"
 
 #. js-lingui-id: GplbCP
 #: src/case-studies/case-study-stories.ts
@@ -2049,7 +2029,7 @@ msgstr "Land *"
 #. js-lingui-id: vk+Og8
 #: src/client-brief/client-brief-copy.ts
 msgid "Country / region"
-msgstr ""
+msgstr "Land / Region"
 
 #. js-lingui-id: kCu+Rq
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2136,7 +2116,7 @@ msgstr "Erstellungsdatum"
 #. js-lingui-id: KOLvLO
 #: src/sections/compare/compare-data.ts
 msgid "Credit-based, no per-chat fee"
-msgstr ""
+msgstr "Guthabenbasiert, keine Gebühr pro Chat"
 
 #. js-lingui-id: NLgmM4
 #: src/partners-marketplace/data/partner-scope-options.ts
@@ -2213,7 +2193,7 @@ msgstr "Währungsfeld"
 #. js-lingui-id: 8Tg/JR
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Custom"
-msgstr ""
+msgstr "Individuell"
 
 #. js-lingui-id: lh6aPn
 #: src/sections/pricing-plans/plans-data.ts
@@ -2358,7 +2338,7 @@ msgstr "Anpassung"
 #. js-lingui-id: 4urq82
 #: src/sections/compare/compare-data.ts
 msgid "Customization apps"
-msgstr ""
+msgstr "Anpassungs-Apps"
 
 #. js-lingui-id: GRfLAg
 #: src/case-studies/case-study-catalog.ts
@@ -2430,17 +2410,17 @@ msgstr "Datenmodellierung · Migrationen · No‑Code‑Workflows · Dashboards 
 #. js-lingui-id: pSXc9s
 #: src/partner-application/data/partner-twenty-experience-options.ts
 msgid "Data models"
-msgstr ""
+msgstr "Datenmodelle"
 
 #. js-lingui-id: dfdijQ
 #: src/sections/compare/compare-data.ts
 msgid "Database storage"
-msgstr ""
+msgstr "Datenbankspeicher"
 
 #. js-lingui-id: o4n86F
 #: src/sections/compare/compare-data.ts
 msgid "Dataverse database add-on"
-msgstr ""
+msgstr "Dataverse-Datenbank-Add-on"
 
 #. js-lingui-id: JvUngl
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
@@ -2470,7 +2450,7 @@ msgstr "Deals, die sich von selbst bewegen."
 #. js-lingui-id: VWVokE
 #: src/sections/compare/compare-data.ts
 msgid "Deals, contacts and products only"
-msgstr ""
+msgstr "Nur Deals, Kontakte und Produkte"
 
 #. js-lingui-id: 1BzJf0
 #: src/sections/product-feature/EmailsVisual/data/threads.ts
@@ -2482,7 +2462,7 @@ msgstr "Liebes Team, ich freue mich, Ihnen unseren Vorschlag zur Prüfung vorleg
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Dedicated support & SLA"
-msgstr ""
+msgstr "Dedizierter Support & SLA"
 
 #. js-lingui-id: 46Erl4
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
@@ -2502,7 +2482,7 @@ msgstr "Dänemark 🇩🇰"
 #. js-lingui-id: 59TXqJ
 #: src/partner-application/partner-application-copy.ts
 msgid "Describe a real Twenty project (customer or internal): who it was for, what you built, and how you used the areas you selected. Min. {TWENTY_EXPERIENCE_NOTES_MIN_LENGTH} characters."
-msgstr ""
+msgstr "Beschreibe ein reales Twenty-Projekt (Kunde oder intern): für wen es war, was du erstellt hast und wie du die ausgewählten Bereiche genutzt hast. Min. {TWENTY_EXPERIENCE_NOTES_MIN_LENGTH} Zeichen."
 
 #. js-lingui-id: tqbpyT
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2517,7 +2497,7 @@ msgstr "Dev-Teams treiben unternehmensweite *Veränderungen mit Twenty* voran"
 #. js-lingui-id: 7aDnUb
 #: src/apps-marketplace/AppDetail.tsx
 msgid "Developer"
-msgstr ""
+msgstr "Entwickler"
 
 #. js-lingui-id: n+SX4g
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -2539,7 +2519,7 @@ msgstr "Entwickler können jetzt Webhooks verwenden, um Aktualisierungen von Kun
 #. js-lingui-id: C39swB
 #: src/partners-marketplace/MarketplaceBriefPrompt.tsx
 msgid "Didn't find the *right partner*?"
-msgstr ""
+msgstr "Nicht den *richtigen Partner* gefunden?"
 
 #. js-lingui-id: ohFj56
 #: src/sections/why-twenty-editorial/editorials.data.ts
@@ -2647,42 +2627,42 @@ msgstr "Niederländisch"
 #. js-lingui-id: kUOwve
 #: src/platform/routing/static-website-routes.ts
 msgid "Dynamics 365 Sales runs $105/user/month plus $40/GB database storage. See the full comparison with Twenty, from $9 per user, open source."
-msgstr ""
+msgstr "Dynamics 365 Sales kostet 105 $ pro Benutzer und Monat plus 40 $/GB Datenbankspeicher. Sehen Sie sich den vollständigen Vergleich mit Twenty an, ab 9 $ pro Benutzer, Open Source."
 
 #. js-lingui-id: kqC52U
 #: src/sections/compare/compare-data.ts
 msgid "Dynamics 365 Sales, per user"
-msgstr ""
+msgstr "Dynamics 365 Sales, pro Benutzer"
 
 #. js-lingui-id: j95Wjb
 #: src/client-brief/client-brief-copy.ts
 msgid "e.g. ~30"
-msgstr ""
+msgstr "z. B. ~30"
 
 #. js-lingui-id: Fy9UWF
 #: src/client-brief/client-brief-copy.ts
 msgid "e.g. $10k–$25k"
-msgstr ""
+msgstr "z. B. $10k–$25k"
 
 #. js-lingui-id: QEIMPf
 #: src/client-brief/client-brief-copy.ts
 msgid "e.g. Before Q4, Q1 2027…"
-msgstr ""
+msgstr "z. B. vor Q4, Q1 2027…"
 
 #. js-lingui-id: MfXXHH
 #: src/client-brief/client-brief-copy.ts
 msgid "e.g. France, DACH, North America…"
-msgstr ""
+msgstr "z. B. Frankreich, DACH, Nordamerika…"
 
 #. js-lingui-id: N+DZwY
 #: src/client-brief/client-brief-copy.ts
 msgid "e.g. French, English (comma-separated)"
-msgstr ""
+msgstr "z. B. Französisch, Englisch (durch Kommas getrennt)"
 
 #. js-lingui-id: SAO19z
 #: src/client-brief/client-brief-copy.ts
 msgid "e.g. Migrate from HubSpot, set up pipelines, custom integrations…"
-msgstr ""
+msgstr "z. B. Migration von HubSpot, Einrichten von Pipelines, benutzerdefinierte Integrationen…"
 
 #. js-lingui-id: FJ+YsO
 #: src/partner-application/partner-application-copy.ts
@@ -2898,7 +2878,7 @@ msgstr "Geben Sie eine gültige URL ein (beginnend mit http:// oder https://)."
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Enterprise"
-msgstr ""
+msgstr "Enterprise"
 
 #. js-lingui-id: 87BcPj
 #: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
@@ -2913,23 +2893,23 @@ msgstr "Enterprise Activation | Twenty"
 #. js-lingui-id: aDpB6R
 #: src/sections/compare/compare-data.ts
 msgid "Enterprise edition"
-msgstr ""
+msgstr "Enterprise Edition"
 
 #. js-lingui-id: YKwRCb
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "Enterprise only"
-msgstr ""
+msgstr "Nur Enterprise"
 
 #. js-lingui-id: /BbcE4
 #: src/sections/compare/compare-data.ts
 msgid "Enterprise rate cards are rarely published"
-msgstr ""
+msgstr "Enterprise-Preistabellen werden selten veröffentlicht"
 
 #. js-lingui-id: wDenrZ
 #: src/sections/compare/compare-data.ts
 msgid "Enterprise software, enterprise line items"
-msgstr ""
+msgstr "Enterprise-Software, Enterprise-Posten"
 
 #. js-lingui-id: 3dQ6zJ
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -2985,7 +2965,7 @@ msgstr "Jeder Thread, beim richtigen Datensatz."
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Everything in Organization"
-msgstr ""
+msgstr "Alles in Organization"
 
 #. js-lingui-id: kz/8m8
 #: src/sections/pricing-plans/plans-data.ts
@@ -3012,7 +2992,7 @@ msgstr "z. B.: {example}"
 #. placeholder {0}: i18n._(scope.examples)
 #: src/partners-marketplace/PartnerCoverageSection.tsx
 msgid "ex. {0}"
-msgstr ""
+msgstr "z. B. {0}"
 
 #. js-lingui-id: 2NGXKo
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3022,7 +3002,7 @@ msgstr "Erweiterte Unterstützung für mehr als 30 Sprachen, damit Benutzer die 
 #. js-lingui-id: bKBhgb
 #: src/partner-application/partner-application-copy.ts
 msgid "Experience"
-msgstr ""
+msgstr "Erfahrung"
 
 #. js-lingui-id: 14xdUh
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3037,7 +3017,7 @@ msgstr "Erleben Sie Granularität in Enterprise-Qualität – beginnend mit der 
 #. js-lingui-id: PXKAnm
 #: src/partner-application/partner-application-copy.ts
 msgid "Expertise"
-msgstr ""
+msgstr "Expertise"
 
 #. js-lingui-id: JTM5zS
 #: src/sections/case-study-promo/CaseStudyPromo.tsx
@@ -3047,22 +3027,22 @@ msgstr "Kundengeschichten entdecken"
 #. js-lingui-id: JmyCnz
 #: src/sections/compare/compare-data.ts
 msgid "Extend beyond the CRM screens"
-msgstr ""
+msgstr "Über die CRM-Oberflächen hinaus erweitern"
 
 #. js-lingui-id: qu9kGK
 #: src/platform/routing/static-website-routes.ts
 msgid "Extend Twenty with vetted apps — call recording, enrichment, Slack, Discord, Linear and more. Install any app on your open source CRM workspace in one click."
-msgstr ""
+msgstr "Erweitere Twenty mit geprüften Apps – Anrufaufzeichnung, Anreicherung, Slack, Discord, Linear und mehr. Installiere jede App mit einem Klick in deinem Open‑Source‑CRM‑Workspace."
 
 #. js-lingui-id: ZToPid
 #: src/sections/menu/data/menu.ts
 msgid "Extend your CRM"
-msgstr ""
+msgstr "Erweitere dein CRM"
 
 #. js-lingui-id: wmJ4p4
 #: src/apps-marketplace/AppsMarketplaceHeader.tsx
 msgid "Extend your CRM with apps built and maintained by Twenty. Every app here is vetted by our team — install one in a click and it's live in your workspace."
-msgstr ""
+msgstr "Erweitere dein CRM mit Apps, die von Twenty entwickelt und gepflegt werden. Jede App hier ist von unserem Team geprüft – installiere sie mit einem Klick und sie ist sofort in deinem Workspace live."
 
 #. js-lingui-id: weFouS
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -3072,7 +3052,7 @@ msgstr "Verlängerte Laufzeit!"
 #. js-lingui-id: D5e0U+
 #: src/sections/compare/compare-data.ts
 msgid "Extra Dataverse storage (10 GB)"
-msgstr ""
+msgstr "Zusätzlicher Dataverse-Speicher (10 GB)"
 
 #. js-lingui-id: tX4pRm
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -3082,7 +3062,7 @@ msgstr "Enterprise-Schlüssel konnte nicht aktiviert werden. Bitte versuchen Sie
 #. js-lingui-id: byb/Zh
 #: src/sections/compare/CompareReceipt.tsx
 msgid "Fair play"
-msgstr ""
+msgstr "Faires Spiel"
 
 #. js-lingui-id: akLvep
 #: src/sections/feature-cards/feature-cards.data.ts
@@ -3102,7 +3082,7 @@ msgstr "Schneller Weg zur Aktion"
 #. js-lingui-id: /irOkZ
 #: src/sections/compare/compare-data.ts
 msgid "Faster answers when it matters"
-msgstr ""
+msgstr "Schnellere Antworten, wenn es zählt"
 
 #. js-lingui-id: idFRAo
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3127,12 +3107,12 @@ msgstr "Funktion"
 #. js-lingui-id: en3oy5
 #: src/sections/compare/CompareCostTable.tsx
 msgid "Feature"
-msgstr ""
+msgstr "Funktion"
 
 #. js-lingui-id: oh8fKo
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Feature-by-feature price checks against the CRMs you're probably comparing us with. Sources included."
-msgstr ""
+msgstr "Funktionsweise-Preisvergleiche für die CRMs, mit denen Sie uns wahrscheinlich vergleichen. Quellen inklusive."
 
 #. js-lingui-id: 3oXVPw
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
@@ -3197,7 +3177,7 @@ msgstr "Filter"
 #. js-lingui-id: tr2ZvJ
 #: src/apps-marketplace/AppsMarketplaceClient.tsx
 msgid "Filter apps by category"
-msgstr ""
+msgstr "Apps nach Kategorie filtern"
 
 #. js-lingui-id: 1t0xRH
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3263,7 +3243,7 @@ msgstr "Finnisch"
 #. js-lingui-id: GxR+Ds
 #: src/client-brief/client-brief-copy.ts
 msgid "First name *"
-msgstr ""
+msgstr "Vorname *"
 
 #. js-lingui-id: PHM5wp
 #: src/case-studies/case-study-stories.ts
@@ -3277,11 +3257,9 @@ msgstr "Flexible Beziehungen"
 
 #. js-lingui-id: HBJ0P5
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"Flow\n"
+msgid "Flow\n"
 "orchestration"
-msgstr ""
-"Flow‑\n"
+msgstr "Flow‑\n"
 "Orchestrierung"
 
 #. js-lingui-id: obrJBN
@@ -3367,7 +3345,7 @@ msgstr "Französisch"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "From $50k/year"
-msgstr ""
+msgstr "Ab 50.000 $/Jahr"
 
 #. js-lingui-id: Iuxc00
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -3386,11 +3364,9 @@ msgstr "Von Dokumenten zu offenen APIs"
 
 #. js-lingui-id: 2CtZ6T
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"From Salesforce to\n"
+msgid "From Salesforce to\n"
 "*self-hosted Twenty*"
-msgstr ""
-"Von Salesforce zu\n"
+msgstr "Von Salesforce zu\n"
 "*self-hosted Twenty*"
 
 #. js-lingui-id: kl+hEJ
@@ -3416,7 +3392,7 @@ msgstr "Von einfach bis fortgeschritten"
 #. js-lingui-id: IvIKDS
 #: src/partner-application/data/partner-twenty-experience-options.ts
 msgid "Front components"
-msgstr ""
+msgstr "Front-Komponenten"
 
 #. js-lingui-id: m1I5TY
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -3433,7 +3409,7 @@ msgstr "Vollständige Anpassung"
 #. js-lingui-id: bKjaLJ
 #: src/sections/compare/compare-data.ts
 msgid "Full customization included"
-msgstr ""
+msgstr "Vollständige Anpassung inklusive"
 
 #. js-lingui-id: YZ7Q3Z
 #: src/case-studies/case-study-catalog.ts
@@ -3443,12 +3419,12 @@ msgstr "Volles Eigentum"
 #. js-lingui-id: vS1Nnz
 #: src/sections/compare/compare-data.ts
 msgid "Full sandbox"
-msgstr ""
+msgstr "Vollständige Sandbox"
 
 #. js-lingui-id: GRJp51
 #: src/sections/compare/compare-data.ts
 msgid "Full workflow automation"
-msgstr ""
+msgstr "Vollständige Workflow-Automatisierung"
 
 #. js-lingui-id: hdxwWi
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -3497,7 +3473,7 @@ msgstr "Deutschland 🇩🇪"
 #. js-lingui-id: b+jRGN
 #: src/partners-marketplace/MarketplaceMatchCard.tsx
 msgid "Get matched"
-msgstr ""
+msgstr "Passenden Partner finden"
 
 #. js-lingui-id: ZDIydz
 #: src/sections/why-twenty-signoff/WhyTwentySignoff.tsx
@@ -3517,14 +3493,14 @@ msgstr "Loslegen"
 #. js-lingui-id: 7hktsm
 #: src/sections/compare/compare-data.ts
 msgid "Getting started"
-msgstr ""
+msgstr "Erste Schritte"
 
 #. js-lingui-id: kyX250
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "Getting to a working CRM"
-msgstr ""
+msgstr "Der Weg zu einem funktionierenden CRM"
 
 #. js-lingui-id: xyKSqi
 #: src/partner-application/data/partner-country-options.ts
@@ -3700,7 +3676,7 @@ msgstr "Hosting & Infrastruktur"
 #. js-lingui-id: DTlJRg
 #: src/client-brief/client-brief-copy.ts
 msgid "Hosting preference"
-msgstr ""
+msgstr "Hosting-Präferenz"
 
 #. js-lingui-id: SHZNBm
 #: src/partners-marketplace/PartnerRatesPanel.tsx
@@ -3735,7 +3711,7 @@ msgstr "Wie lange dauert es, bis ich starten kann?"
 #. js-lingui-id: FopmmJ
 #: src/sections/compare/compare-data.ts
 msgid "How long you are committed"
-msgstr ""
+msgstr "Wie lange Sie gebunden sind"
 
 #. js-lingui-id: iRzy9e
 #: src/case-studies/case-study-stories.ts
@@ -3749,11 +3725,9 @@ msgstr "Wie Nine Dots Ventures eine Immobilienagentur in Singapur auf Basis von 
 
 #. js-lingui-id: 5sWcC0
 #: src/sections/case-study-promo/CaseStudyPromo.tsx
-msgid ""
-"How teams\n"
+msgid "How teams\n"
 "*built with Twenty*"
-msgstr ""
-"Wie Teams\n"
+msgstr "Wie Teams\n"
 "*mit Twenty aufgebaut haben*"
 
 #. js-lingui-id: Z3Cabh
@@ -3769,17 +3743,17 @@ msgstr "Wie W3villa Technologies W3Grads – eine KI‑Plattform für Probeinter
 #. js-lingui-id: vXtlks
 #: src/partner-application/wizard/steps/ExperienceStep.tsx
 msgid "https://"
-msgstr ""
+msgstr "https://"
 
 #. js-lingui-id: 7SUgjW
 #: src/sections/compare/compare-data.ts
 msgid "HubSpot brings a full marketing suite and a huge agency ecosystem. If you need marketing automation more than a CRM, it is a fair choice."
-msgstr ""
+msgstr "HubSpot bietet eine vollständige Marketing-Suite und ein riesiges Agentur-Ökosystem. Wenn Sie Marketing-Automatisierung mehr als ein CRM benötigen, ist es eine faire Wahl."
 
 #. js-lingui-id: EITYKN
 #: src/platform/routing/static-website-routes.ts
 msgid "HubSpot gates custom objects behind its $150/seat Enterprise tier. See the full price comparison, with sources, and what Twenty includes from $9 per user."
-msgstr ""
+msgstr "HubSpot schränkt benutzerdefinierte Objekte hinter seinem Enterprise-Tarif für 150 $ pro Platz ein. Sehen Sie sich den vollständigen Preisvergleich mit Quellen an und was Twenty ab 9 $ pro Benutzer beinhaltet."
 
 #. js-lingui-id: htrFcw
 #: src/partner-application/data/partner-country-options.ts
@@ -3805,12 +3779,12 @@ msgstr "Identität"
 #. js-lingui-id: 6M+L8e
 #: src/sections/compare/compare-data.ts
 msgid "If your business already runs on S/4HANA, Sales Cloud speaks its language natively and handles global-enterprise compliance at serious scale."
-msgstr ""
+msgstr "Wenn Ihr Unternehmen bereits auf S/4HANA läuft, spricht Sales Cloud dessen Sprache nativ und erfüllt globale Enterprise-Compliance-Anforderungen in großem Maßstab."
 
 #. js-lingui-id: KibVrt
 #: src/sections/compare/compare-data.ts
 msgid "If your company lives in Microsoft 365 and already runs on the Power Platform, Dynamics integrates like nothing else."
-msgstr ""
+msgstr "Wenn Ihr Unternehmen in Microsoft 365 lebt und bereits auf der Power Platform läuft, integriert sich Dynamics wie nichts anderes."
 
 #. js-lingui-id: Grur3I
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3839,7 +3813,7 @@ msgstr "Implementierungspartner"
 #. js-lingui-id: t0dRYo
 #: src/sections/compare/compare-data.ts
 msgid "Implementation project (year one, typical)"
-msgstr ""
+msgstr "Implementierungsprojekt (erstes Jahr, typisch)"
 
 #. js-lingui-id: 9P1c4k
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3859,27 +3833,27 @@ msgstr "Import V2"
 #. js-lingui-id: UZGy5o
 #: src/sections/compare/compare-data.ts
 msgid "Import your data and see your own numbers. Most teams migrate from HubSpot in under a day."
-msgstr ""
+msgstr "Importieren Sie Ihre Daten und sehen Sie Ihre eigenen Zahlen. Die meisten Teams migrieren in weniger als einem Tag von HubSpot."
 
 #. js-lingui-id: Z0UUpr
 #: src/sections/compare/compare-data.ts
 msgid "Import your data and see your own numbers. No six-month implementation project required."
-msgstr ""
+msgstr "Importieren Sie Ihre Daten und sehen Sie Ihre eigenen Zahlen. Kein sechsmonatiges Implementierungsprojekt erforderlich."
 
 #. js-lingui-id: qF2Mif
 #: src/sections/compare/compare-data.ts
 msgid "Import your data and see your own numbers. Pipedrive exports map cleanly onto Twenty objects."
-msgstr ""
+msgstr "Importieren Sie Ihre Daten und sehen Sie Ihre eigenen Zahlen. Pipedrive-Exporte lassen sich sauber auf Twenty-Objekte abbilden."
 
 #. js-lingui-id: AvqnMU
 #: src/sections/compare/compare-data.ts
 msgid "Import your data and see your own numbers. Twenty's importer handles Dynamics exports without a consulting project."
-msgstr ""
+msgstr "Importieren Sie Ihre Daten und sehen Sie Ihre eigenen Zahlen. Der Importer von Twenty verarbeitet Dynamics-Exporte ohne Beratungsprojekt."
 
 #. js-lingui-id: L8Hqt4
 #: src/sections/compare/compare-data.ts
 msgid "Import your data and see your own numbers. Twenty's importer handles Salesforce exports out of the box."
-msgstr ""
+msgstr "Importieren Sie Ihre Daten und sehen Sie Ihre eigenen Zahlen. Der Importer von Twenty verarbeitet Salesforce-Exporte out of the box."
 
 #. js-lingui-id: ZAKTS6
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -3917,7 +3891,7 @@ msgstr "Im Produktivbetrieb."
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "in year one"
-msgstr ""
+msgstr "im ersten Jahr"
 
 #. js-lingui-id: Sqb+jp
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -3935,18 +3909,18 @@ msgstr "Posteingang"
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "Included"
-msgstr ""
+msgstr "Inbegriffen"
 
 #. js-lingui-id: Le6Tov
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "Included from Pro"
-msgstr ""
+msgstr "Ab Pro enthalten"
 
 #. js-lingui-id: ZI6lOR
 #: src/sections/compare/compare-data.ts
 msgid "Included from Pro, $9/user"
-msgstr ""
+msgstr "Ab Pro enthalten, 9 $/Benutzer"
 
 #. js-lingui-id: 3XP8Lk
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -3989,17 +3963,17 @@ msgstr "Unendliches Scrollen ist immer noch „Kommt bald“ – im Gegensatz zu
 #: src/apps-marketplace/AppDetail.tsx
 #: src/apps-marketplace/AppCard.tsx
 msgid "Install"
-msgstr ""
+msgstr "Installieren"
 
 #. js-lingui-id: qq1x6K
 #: src/sections/menu/data/menu.ts
 msgid "Install call recording, enrichment, Slack, Linear and more — every app built and maintained by Twenty."
-msgstr ""
+msgstr "Installiere Anrufaufzeichnung, Anreicherung, Slack, Linear und mehr – jede App wird von Twenty entwickelt und gepflegt."
 
 #. js-lingui-id: R6HbUq
 #: src/apps-marketplace/AppDetail.tsx
 msgid "Install on Twenty"
-msgstr ""
+msgstr "Auf Twenty installieren"
 
 #. js-lingui-id: K8iwJx
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -4066,7 +4040,7 @@ msgstr "Einladungsrollen"
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "IP allow-listing"
-msgstr ""
+msgstr "IP-Allowlisting"
 
 #. js-lingui-id: FtgjCv
 #: src/partner-application/data/partner-country-options.ts
@@ -4282,7 +4256,7 @@ msgstr "Sprachen"
 #. js-lingui-id: Ofy0wQ
 #: src/client-brief/client-brief-copy.ts
 msgid "Languages needed"
-msgstr ""
+msgstr "Benötigte Sprachen"
 
 #. js-lingui-id: u6jooT
 #: src/partners-marketplace/PartnerReachFacts.tsx
@@ -4298,7 +4272,7 @@ msgstr "Laos 🇱🇦"
 #. js-lingui-id: 1ZaQUH
 #: src/client-brief/client-brief-copy.ts
 msgid "Last name"
-msgstr ""
+msgstr "Nachname"
 
 #. js-lingui-id: 2lrGbG
 #: src/partners-marketplace/served-geo-labels.ts
@@ -4307,11 +4281,9 @@ msgstr "LATAM"
 
 #. js-lingui-id: WvrtRi
 #: src/sections/releases-hero/ReleasesHero.tsx
-msgid ""
-"Latest\n"
+msgid "Latest\n"
 "*Releases*"
-msgstr ""
-"Neueste\n"
+msgstr "Neueste\n"
 "*Releases*"
 
 #. js-lingui-id: 7OHfcc
@@ -4333,13 +4305,13 @@ msgstr "Lernen Sie, wie man Twenty nutzt"
 #. js-lingui-id: zwWKhA
 #: src/apps-marketplace/AppCard.tsx
 msgid "Learn more"
-msgstr ""
+msgstr "Mehr erfahren"
 
 #. js-lingui-id: Pd/m1Q
 #. placeholder {0}: app.name
 #: src/apps-marketplace/AppCard.tsx
 msgid "Learn more about {0}"
-msgstr ""
+msgstr "Mehr über {0} erfahren"
 
 #. js-lingui-id: wB0DGn
 #: src/partner-application/data/partner-country-options.ts
@@ -4359,7 +4331,7 @@ msgstr "Lesotho 🇱🇸"
 #. js-lingui-id: 4jcSf4
 #: src/partners-marketplace/MarketplaceMatchCard.tsx
 msgid "Let us *match* you"
-msgstr ""
+msgstr "Lassen Sie uns *den passenden Partner* für Sie finden"
 
 #. js-lingui-id: rJargy
 #: src/partner-application/data/partner-country-options.ts
@@ -4374,7 +4346,7 @@ msgstr "Libyen 🇱🇾"
 #. js-lingui-id: 1x59Ts
 #: src/sections/compare/compare-data.ts
 msgid "License list price from the SAP Store, billed annually, checked on July 30, 2026. Implementation figures are typical partner-project ranges, not SAP list prices."
-msgstr ""
+msgstr "Listenlizenzpreis aus dem SAP Store, jährlich abgerechnet, geprüft am 30. Juli 2026. Die Implementierungszahlen sind typische Partnerprojekt-Spannen, keine SAP-Listenpreise."
 
 #. js-lingui-id: tHFTlp
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -4399,7 +4371,7 @@ msgstr "Linkfeld"
 #. js-lingui-id: YOe6r4
 #: src/partner-application/partner-application-copy.ts
 msgid "Link that shows the work (Loom, GitHub, Notion, Drive, public write-up…). No public workspace? Share a short Loom."
-msgstr ""
+msgstr "Link, der die Arbeit zeigt (Loom, GitHub, Notion, Drive, öffentliche Ausarbeitung …). Kein öffentlicher Arbeitsbereich? Teile ein kurzes Loom."
 
 #. js-lingui-id: gggTBm
 #: src/sections/footer/footer.data.ts
@@ -4426,22 +4398,22 @@ msgstr "Links"
 #. js-lingui-id: 0S9+C5
 #: src/sections/compare/compare-data.ts
 msgid "List prices from HubSpot's public pricing page, billed annually, checked on July 30, 2026."
-msgstr ""
+msgstr "Listenpreise von HubSpots öffentlicher Preisseite, jährlich abgerechnet, geprüft am 30. Juli 2026."
 
 #. js-lingui-id: qyZA//
 #: src/sections/compare/compare-data.ts
 msgid "List prices from Microsoft's public Dynamics 365 pricing page, billed annually, checked on July 30, 2026."
-msgstr ""
+msgstr "Listenpreise von Microsofts öffentlicher Dynamics-365-Preisseite, jährlich abgerechnet, geprüft am 30. Juli 2026."
 
 #. js-lingui-id: FE0RcF
 #: src/sections/compare/compare-data.ts
 msgid "List prices from Pipedrive's public pricing page, billed annually, checked on July 30, 2026."
-msgstr ""
+msgstr "Listenpreise von Pipedrives öffentlicher Preisseite, jährlich abgerechnet, geprüft am 30. Juli 2026."
 
 #. js-lingui-id: 04Tzju
 #: src/sections/compare/compare-data.ts
 msgid "List prices from Salesforce's public pricing page, billed annually, checked on July 30, 2026."
-msgstr ""
+msgstr "Listenpreise von Salesforces öffentlicher Preisseite, jährlich abgerechnet, geprüft am 30. Juli 2026."
 
 #. js-lingui-id: 2WIZYd
 #: src/partner-application/data/partner-country-options.ts
@@ -4483,7 +4455,7 @@ msgstr "Wird geladen…"
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "Local environment included"
-msgstr ""
+msgstr "Lokale Umgebung inklusive"
 
 #. js-lingui-id: 7VBQ2j
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -4516,7 +4488,7 @@ msgstr "Niedrigere CRM‑Kosten"
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "LTS releases"
-msgstr ""
+msgstr "LTS-Releases"
 
 #. js-lingui-id: J13skq
 #: src/partner-application/data/partner-country-options.ts
@@ -4576,7 +4548,7 @@ msgstr "Management‑Beratung"
 #. js-lingui-id: jBpOB9
 #: src/sections/compare/compare-data.ts
 msgid "Mandatory onboarding (one-time)"
-msgstr ""
+msgstr "Verpflichtendes Onboarding (einmalig)"
 
 #. js-lingui-id: TMZPkv
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4682,7 +4654,7 @@ msgstr "Microsoft o365-Integration"
 #. js-lingui-id: z1ceJ1
 #: src/sections/compare/compare-data.ts
 msgid "Middleware licensed separately"
-msgstr ""
+msgstr "Middleware separat lizenziert"
 
 #. js-lingui-id: so04x6
 #: src/case-studies/case-study-stories.ts
@@ -4702,7 +4674,7 @@ msgstr "Minimieren"
 #. js-lingui-id: SocJIs
 #: src/sections/compare/compare-data.ts
 msgid "Minimum 10 users"
-msgstr ""
+msgstr "Mindestens 10 Benutzer"
 
 #. js-lingui-id: 5IvRfo
 #: src/partner-application/partner-application-copy.ts
@@ -4712,7 +4684,7 @@ msgstr "Minimales Projektbudget *"
 #. js-lingui-id: 87xybU
 #: src/sections/compare/compare-data.ts
 msgid "Model deals, assets, or anything else"
-msgstr ""
+msgstr "Deals, Assets oder sonstige Objekte modellieren"
 
 #. js-lingui-id: 179i38
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4747,7 +4719,7 @@ msgstr "Monatlich"
 #. js-lingui-id: Ggmdbf
 #: src/sections/compare/compare-data.ts
 msgid "Monthly or yearly, cancel anytime"
-msgstr ""
+msgstr "Monatlich oder jährlich, jederzeit kündbar"
 
 #. js-lingui-id: paxFAm
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4807,7 +4779,7 @@ msgstr "Multi-Arbeitsbereich"
 #. js-lingui-id: NZn+Fh
 #: src/client-brief/client-brief-copy.ts
 msgid "Must-haves, integrations, compliance, languages…"
-msgstr ""
+msgstr "Must-haves, Integrationen, Compliance, Sprachen…"
 
 #. js-lingui-id: QGWbbv
 #: src/partner-application/data/partner-country-options.ts
@@ -4923,7 +4895,7 @@ msgstr "Neuseeland 🇳🇿"
 #. js-lingui-id: hXzOVo
 #: src/partners-marketplace/CaseStudyModal.tsx
 msgid "Next"
-msgstr ""
+msgstr "Weiter"
 
 #. js-lingui-id: GY6uSc
 #: src/partner-application/partner-application-copy.ts
@@ -4979,7 +4951,7 @@ msgstr "Nein"
 #. js-lingui-id: UVo4Xv
 #: src/apps-marketplace/AppsMarketplaceClient.tsx
 msgid "No apps are available right now. Check back soon."
-msgstr ""
+msgstr "Derzeit sind keine Apps verfügbar. Schau bald wieder vorbei."
 
 #. js-lingui-id: 6tRXQ4
 #: src/partner-application/partner-application-copy.ts
@@ -5018,15 +4990,15 @@ msgstr "Nein. Erstellen Sie benutzerdefinierte Objekte, Felder, Ansichten und No
 
 #. js-lingui-id: 4yg7QV
 #: src/sections/compare/compare-data.ts
-msgid ""
-"Nobody buys Dynamics, they license it.\n"
+msgid "Nobody buys Dynamics, they license it.\n"
 "Here is what it costs once storage and add-ons land."
-msgstr ""
+msgstr "Niemand kauft Dynamics, man lizenziert es.\n"
+"Hier sehen Sie, was es kostet, sobald Speicher und Add-ons dazukommen."
 
 #. js-lingui-id: EVSOLf
 #: src/sections/compare/compare-data.ts
 msgid "None, start in minutes"
-msgstr ""
+msgstr "Keins, Start in wenigen Minuten"
 
 #. js-lingui-id: 096JXI
 #: src/partner-application/data/partner-country-options.ts
@@ -5051,7 +5023,7 @@ msgstr "Norwegisch"
 #. js-lingui-id: OJx3wK
 #: src/sections/compare/compare-data.ts
 msgid "Not available"
-msgstr ""
+msgstr "Nicht verfügbar"
 
 #. js-lingui-id: 1DBGsz
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
@@ -5106,17 +5078,17 @@ msgstr "Auf einem einzigen CRM"
 #. js-lingui-id: vSdM7d
 #: src/sections/compare/compare-data.ts
 msgid "On Dynamics 365"
-msgstr ""
+msgstr "Auf Dynamics 365"
 
 #. js-lingui-id: yHWa5D
 #: src/sections/compare/compare-data.ts
 msgid "On HubSpot"
-msgstr ""
+msgstr "Auf HubSpot"
 
 #. js-lingui-id: VtKbQl
 #: src/sections/compare/compare-data.ts
 msgid "On Pipedrive"
-msgstr ""
+msgstr "Auf Pipedrive"
 
 #. js-lingui-id: w5ATz2
 #: src/platform/releases/ReleaseNotes.tsx
@@ -5126,12 +5098,12 @@ msgstr "Auf Datensatzseiten können Sie Beziehungskarten jetzt erweitern, um der
 #. js-lingui-id: Mkx+rq
 #: src/sections/compare/compare-data.ts
 msgid "On Salesforce"
-msgstr ""
+msgstr "Auf Salesforce"
 
 #. js-lingui-id: 8/DhTc
 #: src/sections/compare/compare-data.ts
 msgid "On SAP"
-msgstr ""
+msgstr "Auf SAP"
 
 #. js-lingui-id: XhXmzW
 #: src/sections/case-study-detail/CaseStudyArticleNav.tsx
@@ -5141,12 +5113,12 @@ msgstr "Auf dieser Seite"
 #. js-lingui-id: EnS09a
 #: src/sections/compare/CompareCostTable.tsx
 msgid "On Twenty"
-msgstr ""
+msgstr "Auf Twenty"
 
 #. js-lingui-id: gukxZ5
 #: src/sections/compare/compare-data.ts
 msgid "Onboarding"
-msgstr ""
+msgstr "Onboarding"
 
 #. js-lingui-id: jxC7HY
 #: src/partners-marketplace/data/partner-scope-options.ts
@@ -5172,7 +5144,7 @@ msgstr "Eine API, sie alle zu beherrschen"
 #. js-lingui-id: tjXWxA
 #: src/sections/compare/compare-data.ts
 msgid "One-time mandatory onboarding fee"
-msgstr ""
+msgstr "Einmalige, verpflichtende Onboarding-Gebühr"
 
 #. js-lingui-id: pShqss
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -5183,7 +5155,7 @@ msgstr "Nur 5 $ für SSO. Praktisch ein Wohltätigkeitsprogramm."
 #. placeholder {0}: caseStudy.title
 #: src/partners-marketplace/PartnerSelectedWork.tsx
 msgid "Open case study: {0}"
-msgstr ""
+msgstr "Fallstudie öffnen: {0}"
 
 #. js-lingui-id: GSr0rF
 #: src/sections/menu/Menu.tsx
@@ -5230,7 +5202,7 @@ msgstr "Organisation"
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "Organization, $19/user"
-msgstr ""
+msgstr "Organization, 19 $/Benutzer"
 
 #. js-lingui-id: /IX/7x
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
@@ -5250,12 +5222,12 @@ msgstr "Unser Onboarding-Prozess wurde vereinfacht, sodass Sie Ihren Kalender un
 #. js-lingui-id: V+7KMm
 #: src/partner-application/partner-application-copy.ts
 msgid "Our team reviews every application and will reach out if there's a fit."
-msgstr ""
+msgstr "Unser Team prüft jede Bewerbung und meldet sich, wenn es passt."
 
 #. js-lingui-id: XR9aQ6
 #: src/client-brief/client-brief-copy.ts
 msgid "Our team will review your project and follow up by email. You won't hear from partners until we've matched you."
-msgstr ""
+msgstr "Unser Team prüft Ihr Projekt und meldet sich per E-Mail bei Ihnen. Sie hören erst von Partnern, nachdem wir den passenden Partner für Sie gefunden haben."
 
 #. js-lingui-id: dKGg8T
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -5286,7 +5258,7 @@ msgstr "Ihr Stack zu besitzen, bleibt auf mysteriöse Weise nicht vorrätig."
 #. js-lingui-id: mGYa19
 #: src/apps-marketplace/AppDetail.tsx
 msgid "Package"
-msgstr ""
+msgstr "Paket"
 
 #. js-lingui-id: h/oMMb
 #: src/platform/routing/static-website-routes.ts
@@ -5341,7 +5313,7 @@ msgstr "Partner-Fakten und Kontakt"
 #. js-lingui-id: UbWqbA
 #: src/partners-marketplace/MarketplaceMatchCard.tsx
 msgid "Partner matching"
-msgstr ""
+msgstr "Partnerzuordnung"
 
 #. js-lingui-id: 4RPECg
 #: src/app/[locale]/(site)/partners/profile/[slug]/page.tsx
@@ -5383,12 +5355,12 @@ msgstr "Personen"
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "per year"
-msgstr ""
+msgstr "pro Jahr"
 
 #. js-lingui-id: iCviv4
 #: src/sections/compare/compare-data.ts
 msgid "per year with SSO"
-msgstr ""
+msgstr "pro Jahr mit SSO"
 
 #. js-lingui-id: TMErUt
 #: src/platform/releases/ReleaseNotes.tsx
@@ -5438,12 +5410,12 @@ msgstr "Wählen Sie Ihr Modell, bauen Sie Agents, die E-Mails schreiben oder Dat
 #. js-lingui-id: j3vw0M
 #: src/platform/routing/static-website-routes.ts
 msgid "Pipedrive caps automations per company and keeps SSO for its top tier. Compare real per-seat costs with Twenty, from $9 per user with no caps."
-msgstr ""
+msgstr "Pipedrive begrenzt Automatisierungen pro Unternehmen und behält SSO seiner obersten Tarifstufe vor. Vergleichen Sie die tatsächlichen Pro-Platz-Kosten mit Twenty, ab 9 $ pro Benutzer ohne Limits."
 
 #. js-lingui-id: SxlMNM
 #: src/sections/compare/compare-data.ts
 msgid "Pipedrive's pipeline UX is famously simple, and its entry tier is genuinely affordable for very small teams."
-msgstr ""
+msgstr "Die Pipeline-UX von Pipedrive ist berühmt einfach und die Einstiegstarifstufe ist für sehr kleine Teams wirklich erschwinglich."
 
 #. js-lingui-id: FFkjaT
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -5453,7 +5425,7 @@ msgstr "Pipeline‑Management"
 #. js-lingui-id: 9TW54K
 #: src/sections/compare/compare-data.ts
 msgid "Pipeline, contacts, email sync"
-msgstr ""
+msgstr "Pipeline, Kontakte, E-Mail-Synchronisierung"
 
 #. js-lingui-id: gzkkC3
 #: src/platform/routing/static-website-routes.ts
@@ -5469,7 +5441,7 @@ msgstr "Bitte füllen Sie alle Pflichtfelder aus, bevor Sie fortfahren."
 #. js-lingui-id: LjJ5i7
 #: src/partner-application/partner-application-copy.ts
 msgid "Please write at least {TWENTY_EXPERIENCE_NOTES_MIN_LENGTH} characters about the implementation."
-msgstr ""
+msgstr "Bitte schreibe mindestens {TWENTY_EXPERIENCE_NOTES_MIN_LENGTH} Zeichen über die Implementierung."
 
 #. js-lingui-id: P04j61
 #: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
@@ -5505,17 +5477,17 @@ msgstr "Portugiesisch"
 #. js-lingui-id: fck69e
 #: src/sections/compare/compare-data.ts
 msgid "Premier support"
-msgstr ""
+msgstr "Premier Support"
 
 #. js-lingui-id: 7F0cbd
 #: src/sections/compare/compare-data.ts
 msgid "Premier support (+30%)"
-msgstr ""
+msgstr "Premier Support (+30 %)"
 
 #. js-lingui-id: zoJUYX
 #: src/sections/compare/compare-data.ts
 msgid "Premium plan, billed annually"
-msgstr ""
+msgstr "Premium-Tarif, jährlich abgerechnet"
 
 #. js-lingui-id: O1WMgS
 #: src/sections/product-feature/TasksVisual/data/tasks.ts
@@ -5525,7 +5497,7 @@ msgstr "Onboarding-Deck vorbereiten"
 #. js-lingui-id: DHhJ7s
 #: src/partners-marketplace/CaseStudyModal.tsx
 msgid "Previous"
-msgstr ""
+msgstr "Zurück"
 
 #. js-lingui-id: LZoO8F
 #: src/sections/testimonials/TestimonialsCarousel.tsx
@@ -5541,7 +5513,7 @@ msgstr "Preis"
 #. js-lingui-id: AMgXfs
 #: src/sections/compare/compare-data.ts
 msgid "Price transparency"
-msgstr ""
+msgstr "Preistransparenz"
 
 #. js-lingui-id: aHCEmh
 #: src/sections/menu/data/menu.ts
@@ -5575,7 +5547,7 @@ msgstr "Priorisierter Support"
 #. js-lingui-id: 2A0117
 #: src/sections/compare/compare-data.ts
 msgid "Priority support on Organization"
-msgstr ""
+msgstr "Priorisierter Support im Organization-Tarif"
 
 #. js-lingui-id: LcET2C
 #: src/sections/footer/footer.data.ts
@@ -5600,7 +5572,7 @@ msgstr "Pro"
 #: src/sections/menu/data/menu.ts
 #: src/sections/footer/footer.data.ts
 msgid "Product"
-msgstr ""
+msgstr "Produkt"
 
 #. js-lingui-id: kIGKva
 #: src/sections/three-cards/three-cards.data.ts
@@ -5611,7 +5583,7 @@ msgstr "Produktionsreife Qualität"
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "Professional tier and up"
-msgstr ""
+msgstr "Professional-Tarif und höher"
 
 #. js-lingui-id: vERlcd
 #: src/partner-application/partner-application-copy.ts
@@ -5631,12 +5603,12 @@ msgstr "Projektminimum"
 #. js-lingui-id: fBaMOU
 #: src/sections/compare/compare-data.ts
 msgid "Project-based"
-msgstr ""
+msgstr "Projektbasiert"
 
 #. js-lingui-id: wwBgHX
 #: src/partner-application/partner-application-copy.ts
 msgid "Proof URL *"
-msgstr ""
+msgstr "Nachweis-URL *"
 
 #. js-lingui-id: qcybNQ
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
@@ -5661,7 +5633,7 @@ msgstr "Proprietäre Sprachen, langsame Deployment‑Zyklen und „Black‑Box�
 #. js-lingui-id: PWlva/
 #: src/sections/compare/compare-data.ts
 msgid "Public pricing, this page included"
-msgstr ""
+msgstr "Öffentliche Preise, diese Seite eingeschlossen"
 
 #. js-lingui-id: u9RZ7+
 #: src/partners-marketplace/spoken-language-labels.ts
@@ -5686,7 +5658,7 @@ msgstr "Ermitteln Sie schnell, wer einen bestimmten Datensatz erstellt hat und w
 #. js-lingui-id: t7dB3i
 #: src/sections/compare/compare-data.ts
 msgid "Quote-based"
-msgstr ""
+msgstr "Angebotsbasiert"
 
 #. js-lingui-id: 3XOwjg
 #: src/partners-marketplace/PartnerRatesPanel.tsx
@@ -5706,7 +5678,7 @@ msgstr "Kontakt aufnehmen"
 #. js-lingui-id: IUmx6x
 #: src/partners-marketplace/PartnerSelectedWork.tsx
 msgid "Read case study"
-msgstr ""
+msgstr "Fallstudie lesen"
 
 #. js-lingui-id: gSQVmr
 #: src/sections/helped/HelpedCard.tsx
@@ -5789,7 +5761,7 @@ msgstr "Regionen"
 #. js-lingui-id: Mjbud+
 #: src/partners-marketplace/PartnerReachFacts.tsx
 msgid "Regions served"
-msgstr ""
+msgstr "Bediente Regionen"
 
 #. js-lingui-id: h9AYFD
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
@@ -5846,12 +5818,12 @@ msgstr "Berichte & Dashboards"
 #. js-lingui-id: 0NRPk+
 #: src/sections/compare/compare-data.ts
 msgid "Required onboarding on paid tiers"
-msgstr ""
+msgstr "Verpflichtendes Onboarding in kostenpflichtigen Tarifen"
 
 #. js-lingui-id: 4XUnqY
 #: src/client-brief/client-brief-copy.ts
 msgid "Requirements or constraints"
-msgstr ""
+msgstr "Anforderungen oder Einschränkungen"
 
 #. js-lingui-id: TD9BOQ
 #: src/app-preview/terminal/TerminalSendButton.tsx
@@ -5881,7 +5853,7 @@ msgstr "REST & GraphQL API"
 #. js-lingui-id: 7B+bTC
 #: src/sections/compare/compare-data.ts
 msgid "REST & GraphQL APIs included"
-msgstr ""
+msgstr "REST- & GraphQL-APIs inklusive"
 
 #. js-lingui-id: kx0s+n
 #: src/case-studies/case-study-stories.ts
@@ -5942,7 +5914,7 @@ msgstr "Roadmap"
 #. js-lingui-id: Yb8S4J
 #: src/sections/compare/compare-data.ts
 msgid "Roles from Pro, row-level on Organization"
-msgstr ""
+msgstr "Rollen ab Pro, Zeilenebene in Organization"
 
 #. js-lingui-id: mLp5AP
 #: src/partner-application/data/partner-country-options.ts
@@ -5964,7 +5936,7 @@ msgstr "Zeilen‑Berechtigungen"
 #. js-lingui-id: GGlqFE
 #: src/sections/compare/ComparePage.tsx
 msgid "Run the comparison on your own data"
-msgstr ""
+msgstr "Führen Sie den Vergleich mit Ihren eigenen Daten durch"
 
 #. js-lingui-id: mRpuWW
 #: src/case-studies/case-study-stories.ts
@@ -6005,27 +5977,27 @@ msgstr "St. Vincent 🇻🇨"
 #. js-lingui-id: SYZcC7
 #: src/platform/routing/static-website-routes.ts
 msgid "Sales Cloud Enterprise lists at $175/user/month before support, sandboxes, and AI add-ons. Compare the real cost with Twenty, from $9 per user."
-msgstr ""
+msgstr "Sales Cloud Enterprise kostet laut Liste 175 $ pro Benutzer und Monat, noch vor Support, Sandboxes und KI-Add-ons. Vergleichen Sie die tatsächlichen Kosten mit Twenty, ab 9 $ pro Benutzer."
 
 #. js-lingui-id: KfBfN6
 #: src/sections/compare/compare-data.ts
 msgid "Sales Cloud V2, per user"
-msgstr ""
+msgstr "Sales Cloud V2, pro Benutzer"
 
 #. js-lingui-id: 7BhLgO
 #: src/sections/compare/compare-data.ts
 msgid "Sales Cloud, per user"
-msgstr ""
+msgstr "Sales Cloud, pro Benutzer"
 
 #. js-lingui-id: i5I6i7
 #: src/sections/compare/compare-data.ts
 msgid "Sales Enterprise edition"
-msgstr ""
+msgstr "Sales Enterprise Edition"
 
 #. js-lingui-id: r48akk
 #: src/sections/compare/compare-data.ts
 msgid "Sales Hub Enterprise only"
-msgstr ""
+msgstr "Nur Sales Hub Enterprise"
 
 #. js-lingui-id: DdLxT3
 #: src/sections/product-feature/DashboardVisual/DashboardVisual.tsx
@@ -6035,7 +6007,7 @@ msgstr "Sales-Performance"
 #. js-lingui-id: LhkSn9
 #: src/sections/compare/compare-data.ts
 msgid "Sales Premium with AI insights"
-msgstr ""
+msgstr "Sales Premium mit KI-Einblicken"
 
 #. js-lingui-id: Burn4/
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -6060,7 +6032,7 @@ msgstr "Salesforce‑Migration"
 #. js-lingui-id: wYxlN+
 #: src/sections/compare/compare-data.ts
 msgid "Salesforce remains the deepest enterprise platform, with an ecosystem for almost everything. At a thousand seats with a dedicated admin team, it is a different conversation."
-msgstr ""
+msgstr "Salesforce bleibt die umfassendste Enterprise-Plattform mit einem Ökosystem für fast alles. Bei tausend Plätzen und einem dedizierten Admin-Team ist es ein anderes Gespräch."
 
 #. js-lingui-id: CADlRK
 #: src/sections/why-twenty-marquee/WhyTwentyMarquee.tsx
@@ -6080,12 +6052,12 @@ msgstr "Gleiche Ergebnisse"
 #. js-lingui-id: YEOVrT
 #: src/sections/compare/compare-data.ts
 msgid "SAML SSO"
-msgstr ""
+msgstr "SAML-SSO"
 
 #. js-lingui-id: XgVUuP
 #: src/sections/compare/compare-data.ts
 msgid "SAML SSO & security rules"
-msgstr ""
+msgstr "SAML-SSO & Sicherheitsregeln"
 
 #. js-lingui-id: w9QWxz
 #: src/sections/pricing-plans/plans-data.ts
@@ -6106,7 +6078,7 @@ msgstr "San Marino 🇸🇲"
 #. js-lingui-id: wKLtPM
 #: src/sections/compare/compare-data.ts
 msgid "Sandboxes"
-msgstr ""
+msgstr "Sandboxes"
 
 #. js-lingui-id: KDcBQd
 #: src/partner-application/data/partner-country-options.ts
@@ -6116,12 +6088,12 @@ msgstr "São Tomé & Príncipe 🇸🇹"
 #. js-lingui-id: Tme4Lo
 #: src/platform/routing/static-website-routes.ts
 msgid "SAP Sales Cloud lists at $134/user/month before a year-one implementation project that often exceeds the licenses. Compare with Twenty, from $9 per user."
-msgstr ""
+msgstr "SAP Sales Cloud kostet laut Liste 134 $ pro Benutzer und Monat, noch vor einem Implementierungsprojekt im ersten Jahr, das die Lizenzen oft übersteigt. Vergleichen Sie mit Twenty, ab 9 $ pro Benutzer."
 
 #. js-lingui-id: jv/Hsj
 #: src/sections/compare/compare-data.ts
 msgid "SAP Store list price"
-msgstr ""
+msgstr "SAP-Store-Listenpreis"
 
 #. js-lingui-id: /BK0Nl
 #: src/partner-application/data/partner-country-options.ts
@@ -6163,7 +6135,7 @@ msgstr "Security-Review planen"
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "SCIM provisioning"
-msgstr ""
+msgstr "SCIM-Provisionierung"
 
 #. js-lingui-id: cOh+MI
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
@@ -6198,15 +6170,13 @@ msgstr "Sicherheit"
 #. js-lingui-id: sioPk8
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Security review & DPA"
-msgstr ""
+msgstr "Sicherheitsprüfung & DPA"
 
 #. js-lingui-id: nmVU/t
 #: src/sections/customers-hero/CustomersHero.tsx
-msgid ""
-"See how teams\n"
+msgid "See how teams\n"
 "build *on Twenty*"
-msgstr ""
-"Sehen Sie, wie Teams\n"
+msgstr "Sehen Sie, wie Teams\n"
 "*auf Twenty* aufbauen"
 
 #. js-lingui-id: aB+XpI
@@ -6217,7 +6187,7 @@ msgstr "Weitere Features anzeigen"
 #. js-lingui-id: 8Zhz04
 #: src/sections/compare/ComparePage.tsx
 msgid "See Twenty pricing"
-msgstr ""
+msgstr "Twenty-Preise ansehen"
 
 #. js-lingui-id: JDp1bg
 #: src/sections/three-cards/product-three-cards-data.ts
@@ -6244,7 +6214,7 @@ msgstr "Alle auswählen"
 #. js-lingui-id: /a1JwJ
 #: src/partner-application/partner-application-copy.ts
 msgid "Select every area you used in a real project — not what you offer, what you actually did."
-msgstr ""
+msgstr "Wähle alle Bereiche aus, die du in einem realen Projekt verwendet hast – nicht, was du anbietest, sondern was du tatsächlich gemacht hast."
 
 #. js-lingui-id: 6p/m5q
 #: src/partner-application/partner-application-copy.ts
@@ -6315,7 +6285,7 @@ msgstr "Self-Onboarding"
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "Self-serve, partners optional"
-msgstr ""
+msgstr "Self-Service, Partner optional"
 
 #. js-lingui-id: NaHz2o
 #: src/sections/pricing-plans/SelfHostToggle.tsx
@@ -6350,7 +6320,7 @@ msgstr "Senegal 🇸🇳"
 #. js-lingui-id: u2ouFU
 #: src/sections/compare/compare-data.ts
 msgid "Separate Power Apps licensing"
-msgstr ""
+msgstr "Separate Power-Apps-Lizenzierung"
 
 #. js-lingui-id: eEJlq0
 #: src/partner-application/data/partner-country-options.ts
@@ -6360,7 +6330,7 @@ msgstr "Serbien 🇷🇸"
 #. js-lingui-id: MILoeL
 #: src/partners-marketplace/PartnerServices.tsx
 msgid "Services"
-msgstr ""
+msgstr "Leistungen"
 
 #. js-lingui-id: 62gxWx
 #: src/partner-application/data/partner-country-options.ts
@@ -6370,22 +6340,22 @@ msgstr "Seychellen 🇸🇨"
 #. js-lingui-id: G8/iGo
 #: src/sections/compare/compare-data.ts
 msgid "Shape records to your business"
-msgstr ""
+msgstr "Datensätze an Ihr Unternehmen anpassen"
 
 #. js-lingui-id: XawGZE
 #: src/client-brief/client-brief-copy.ts
 msgid "Share your CRM project brief and our team will match you with a certified Twenty partner."
-msgstr ""
+msgstr "Teilen Sie uns die Eckdaten Ihres CRM-Projekts mit, und unser Team bringt Sie mit einem zertifizierten Twenty-Partner zusammen."
 
 #. js-lingui-id: /beeoq
 #: src/partners-marketplace/MarketplaceMatchCard.tsx
 msgid "Share your project in a few minutes. We pair you with a certified partner who fits."
-msgstr ""
+msgstr "Teilen Sie Ihr Projekt in wenigen Minuten mit uns. Wir bringen Sie mit einem zertifizierten Partner zusammen, der zu Ihnen passt."
 
 #. js-lingui-id: NTNL31
 #: src/sections/compare/compare-data.ts
 msgid "Shared limit below Ultimate"
-msgstr ""
+msgstr "Gemeinsames Limit unterhalb von Ultimate"
 
 #. js-lingui-id: 3VFzsh
 #: src/sections/helped/helped.data.ts
@@ -6429,11 +6399,9 @@ msgstr "Melden Sie sich in weniger als einer Minute für Cloud an und starten Si
 
 #. js-lingui-id: qTFDyz
 #: src/sections/pricing-plans/PricingIntro.tsx
-msgid ""
-"Simple\n"
+msgid "Simple\n"
 "*Pricing*"
-msgstr ""
-"Einfache\n"
+msgstr "Einfache\n"
 "*Preise*"
 
 #. js-lingui-id: 0eG5g+
@@ -6444,18 +6412,18 @@ msgstr "Singapur 🇸🇬"
 #. js-lingui-id: NezR4F
 #: src/sections/compare/compare-data.ts
 msgid "Single sign-on for your team"
-msgstr ""
+msgstr "Single Sign-on für Ihr Team"
 
 #. js-lingui-id: 2yVNbv
 #: src/sections/compare/compare-data.ts
 msgid "Single sign-on, access policies"
-msgstr ""
+msgstr "Single Sign-on, Zugriffsrichtlinien"
 
 #. js-lingui-id: +L2uYJ
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Single-tenant isolation"
-msgstr ""
+msgstr "Mandantenisolation mit Einzelmandant"
 
 #. js-lingui-id: V9dFwD
 #: src/sections/footer/footer.data.ts
@@ -6475,7 +6443,7 @@ msgstr "Fähigkeiten"
 #. js-lingui-id: hnlGzG
 #: src/client-brief/client-brief-copy.ts
 msgid "Skip for now"
-msgstr ""
+msgstr "Für jetzt überspringen"
 
 #. js-lingui-id: t6ComU
 #: src/sections/feature-cards/FeatureCards.tsx
@@ -6551,7 +6519,7 @@ msgstr "Einige Änderungen von Teammitgliedern erscheinen jetzt sofort, sodass s
 #. js-lingui-id: tiFPjk
 #: src/sections/compare/CompareCostTable.tsx
 msgid "source"
-msgstr ""
+msgstr "Quelle"
 
 #. js-lingui-id: B/mYo/
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -6587,7 +6555,7 @@ msgstr "Spanisch"
 #. js-lingui-id: UQ7amu
 #: src/sections/compare/CompareCostTable.tsx
 msgid "Spotted an inaccuracy? Tell us and we will fix it."
-msgstr ""
+msgstr "Eine Ungenauigkeit entdeckt? Sagen Sie uns Bescheid, und wir beheben sie."
 
 #. js-lingui-id: 00jcbn
 #: src/partner-application/data/partner-country-options.ts
@@ -6603,12 +6571,12 @@ msgstr "SSO"
 #. js-lingui-id: WCsEjz
 #: src/sections/compare/compare-data.ts
 msgid "SSO & row-level permissions"
-msgstr ""
+msgstr "SSO & Berechtigungen auf Zeilenebene"
 
 #. js-lingui-id: YdnFzT
 #: src/sections/compare/compare-data.ts
 msgid "SSO & security rules: move to Ultimate"
-msgstr ""
+msgstr "SSO & Sicherheitsregeln: Wechsel zu Ultimate"
 
 #. js-lingui-id: uQl22y
 #: src/sections/pricing-plans/plans-data.ts
@@ -6638,11 +6606,9 @@ msgstr "Fangen Sie an, *heute schneller zu werden.*"
 
 #. js-lingui-id: sBOFB0
 #: src/sections/pricing-plans/PricingIntro.tsx
-msgid ""
-"Start your free trial today\n"
+msgid "Start your free trial today\n"
 "without credit card."
-msgstr ""
-"Starten Sie noch heute Ihre kostenlose Testphase\n"
+msgstr "Starten Sie noch heute Ihre kostenlose Testphase\n"
 "ohne Kreditkarte."
 
 #. js-lingui-id: ThcPyu
@@ -6685,7 +6651,7 @@ msgstr "Stop-Workflow-Button"
 #. js-lingui-id: BrrIs8
 #: src/sections/compare/compare-data.ts
 msgid "Storage"
-msgstr ""
+msgstr "Speicher"
 
 #. js-lingui-id: 3QIOGT
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6706,17 +6672,17 @@ msgstr "Subdomain (yourco.twenty.com)"
 #: src/partners-marketplace/PartnerProfileCtas.tsx
 #: src/partners-marketplace/MarketplaceBriefPrompt.tsx
 msgid "Submit a brief"
-msgstr ""
+msgstr "Kurze Projektbeschreibung einreichen"
 
 #. js-lingui-id: 1LJhtF
 #: src/platform/routing/static-website-routes.ts
 msgid "Submit a Client Brief — Twenty Partners"
-msgstr ""
+msgstr "Kurzbeschreibung eines Kundenprojekts einreichen — Twenty-Partner"
 
 #. js-lingui-id: Tp3Gi6
 #: src/platform/routing/static-website-routes.ts
 msgid "Submit a project brief and get matched with a certified Twenty partner for migration, customisation, and CRM implementation."
-msgstr ""
+msgstr "Reichen Sie eine Projektbeschreibung ein und lassen Sie sich für Migration, Anpassung und CRM-Einführung mit einem zertifizierten Twenty-Partner zusammenbringen."
 
 #. js-lingui-id: H5/rZQ
 #: src/partner-application/partner-application-copy.ts
@@ -6726,7 +6692,7 @@ msgstr "Bewerbung absenden"
 #. js-lingui-id: 7mJ+Cm
 #: src/client-brief/client-brief-copy.ts
 msgid "Submit brief"
-msgstr ""
+msgstr "Kurzbeschreibung einreichen"
 
 #. js-lingui-id: MDqQmP
 #: src/partner-application/partner-application-copy.ts
@@ -6737,7 +6703,7 @@ msgstr "Wird gesendet…"
 #. js-lingui-id: bA73Yb
 #: src/sections/compare/compare-data.ts
 msgid "Success plan uplift"
-msgstr ""
+msgstr "Aufschlag für Success-Plan"
 
 #. js-lingui-id: 8Z1557
 #: src/partner-application/data/partner-country-options.ts
@@ -6820,7 +6786,7 @@ msgstr "Behalten Sie die Kontrolle über Ihre laufenden Workflows mit dem neuen 
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Talk to sales"
-msgstr ""
+msgstr "Vertrieb kontaktieren"
 
 #. js-lingui-id: JAKtcG
 #: src/sections/product-signoff/ProductSignoff.tsx
@@ -6857,7 +6823,7 @@ msgstr "Aufgaben & Aktivitäten"
 #. js-lingui-id: ERpQwB
 #: src/client-brief/client-brief-copy.ts
 msgid "Team size / seats"
-msgstr ""
+msgstr "Teamgröße / Plätze"
 
 #. js-lingui-id: Ye3KKA
 #: src/sections/menu/data/menu.ts
@@ -6867,7 +6833,7 @@ msgstr "Arbeiten Sie mit einem Twenty‑Experten zusammen"
 #. js-lingui-id: 1TcKFc
 #: src/sections/compare/compare-data.ts
 msgid "Teams & permission sets"
-msgstr ""
+msgstr "Teams & Berechtigungssätze"
 
 #. js-lingui-id: vsdUaL
 #: src/sections/releases-hero/ReleasesHero.tsx
@@ -6883,24 +6849,24 @@ msgstr "Technische Fähigkeiten"
 #. js-lingui-id: JOu8tZ
 #: src/partner-application/partner-application-copy.ts
 msgid "Tell us about the implementation *"
-msgstr ""
+msgstr "Erzähle uns etwas über die Implementierung *"
 
 #. js-lingui-id: 5N30dV
 #: src/client-brief/client-brief-copy.ts
 msgid "Tell us more"
-msgstr ""
+msgstr "Erzählen Sie uns mehr"
 
 #. js-lingui-id: YXuDx1
 #: src/client-brief/client-brief-copy.ts
-msgid ""
-"Tell us what you need\n"
+msgid "Tell us what you need\n"
 "*We'll find the right partner*"
-msgstr ""
+msgstr "Sagen Sie uns, was Sie brauchen\n"
+"*Wir finden den richtigen Partner*"
 
 #. js-lingui-id: kjnQvE
 #: src/partners-marketplace/MarketplaceBriefPrompt.tsx
 msgid "Tell us what you need and we'll match you with a certified Twenty partner."
-msgstr ""
+msgstr "Sagen Sie uns, was Sie brauchen, und wir bringen Sie mit einem zertifizierten Twenty-Partner zusammen."
 
 #. js-lingui-id: Hevu8X
 #: src/app-preview/terminal/TerminalToggle.tsx
@@ -6925,7 +6891,7 @@ msgstr "Terms of Service | Twenty"
 #. js-lingui-id: WHDrjh
 #: src/sections/compare/compare-data.ts
 msgid "Test changes before production"
-msgstr ""
+msgstr "Änderungen vor dem Produktivbetrieb testen"
 
 #. js-lingui-id: VUZDlr
 #: src/sections/testimonials/TestimonialsCarousel.tsx
@@ -6945,12 +6911,12 @@ msgstr "Thailand 🇹🇭"
 #. js-lingui-id: hXU+R1
 #: src/client-brief/client-brief-copy.ts
 msgid "Thanks — we received your brief."
-msgstr ""
+msgstr "Vielen Dank – wir haben Ihre Kurzbeschreibung erhalten."
 
 #. js-lingui-id: 0ClTlj
 #: src/partner-application/partner-application-copy.ts
 msgid "Thanks for applying."
-msgstr ""
+msgstr "Danke für deine Bewerbung."
 
 #. js-lingui-id: FjkPYg
 #: src/case-studies/case-study-stories.ts
@@ -6981,7 +6947,7 @@ msgstr "Das <0>Multi-Select-Feld</0> ermöglicht es, einen Datensatz mit mehrere
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "The AI edition"
-msgstr ""
+msgstr "Die KI-Edition"
 
 #. js-lingui-id: 6wVgAW
 #: src/case-studies/case-study-stories.ts
@@ -6996,7 +6962,7 @@ msgstr "Die Wette zahlt sich aus"
 #. js-lingui-id: xEGzLl
 #: src/sections/compare/ComparePage.tsx
 msgid "The bill, side by side"
-msgstr ""
+msgstr "Die Rechnung im direkten Vergleich"
 
 #. js-lingui-id: Wie492
 #: src/case-studies/case-study-stories.ts
@@ -7012,7 +6978,7 @@ msgstr "Der CEO hatte sich jahrelang dagegen gesträubt, ein CRM einzuführen. D
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "The CRM"
-msgstr ""
+msgstr "Das CRM"
 
 #. js-lingui-id: EYi+kT
 #: src/case-studies/case-study-stories.ts
@@ -7028,7 +6994,7 @@ msgstr "Das CRM als Steuerungszentrale"
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "The CRM itself"
-msgstr ""
+msgstr "Das CRM selbst"
 
 #. js-lingui-id: XlFsoH
 #: src/case-studies/case-study-stories.ts
@@ -7078,27 +7044,27 @@ msgstr "Die zentrale Entscheidung war, nicht alles von Grund auf neu zu bauen. T
 
 #. js-lingui-id: aa8o1y
 #: src/sections/compare/compare-data.ts
-msgid ""
-"The license is the cheap part.\n"
+msgid "The license is the cheap part.\n"
 "Here is what SAP Sales Cloud costs by the time it goes live."
-msgstr ""
+msgstr "Die Lizenz ist der günstige Teil.\n"
+"Hier sehen Sie, was SAP Sales Cloud kostet, bis es live geht."
 
 #. js-lingui-id: gav9Hl
 #: src/sections/compare/compare-data.ts
 msgid "The licensing maze, priced"
-msgstr ""
+msgstr "Das Lizenzlabyrinth, bepreist"
 
 #. js-lingui-id: 4cYuXe
 #: src/sections/compare/compare-data.ts
 msgid "The line items add up"
-msgstr ""
+msgstr "Die Posten summieren sich"
 
 #. js-lingui-id: DIMXNH
 #: src/sections/compare/compare-data.ts
-msgid ""
-"The list price is only the beginning.\n"
+msgid "The list price is only the beginning.\n"
 "Here is what the invoice looks like once a real team is on it."
-msgstr ""
+msgstr "Der Listenpreis ist nur der Anfang.\n"
+"So sieht die Rechnung aus, sobald ein echtes Team darauf arbeitet."
 
 #. js-lingui-id: nf1NnD
 #: src/platform/releases/ReleaseNotes.tsx
@@ -7118,7 +7084,7 @@ msgstr "Die Chance"
 #. js-lingui-id: 80f4ed
 #: src/sections/menu/data/menu.ts
 msgid "The principles and product philosophy behind the open source CRM."
-msgstr ""
+msgstr "Die Prinzipien und die Produktphilosophie hinter dem Open-Source-CRM."
 
 #. js-lingui-id: 2NJdyz
 #: src/sections/problem/Problem.tsx
@@ -7188,7 +7154,7 @@ msgstr "Die Situation"
 #. js-lingui-id: gXGp3Q
 #: src/sections/menu/data/menu.ts
 msgid "The story behind Twenty"
-msgstr ""
+msgstr "Die Geschichte hinter Twenty"
 
 #. js-lingui-id: axo4rg
 #: src/platform/routing/static-website-routes.ts
@@ -7238,7 +7204,7 @@ msgstr "Mit dieser Funktion können Sie zwei Datensätze zu einem zusammenführe
 #. js-lingui-id: cklVjM
 #: src/client-brief/client-brief-copy.ts
 msgid "Timeline"
-msgstr ""
+msgstr "Zeitplan"
 
 #. js-lingui-id: 6f8QUY
 #: src/partner-application/data/partner-country-options.ts
@@ -7324,7 +7290,7 @@ msgstr "Auslöser"
 #. js-lingui-id: SIBKlQ
 #: src/sections/compare/compare-data.ts
 msgid "Trigger actions on record changes"
-msgstr ""
+msgstr "Aktionen bei Datensatzänderungen auslösen"
 
 #. js-lingui-id: /ga9kq
 #: src/partner-application/data/partner-country-options.ts
@@ -7389,12 +7355,12 @@ msgstr "Twenty | #1 Open‑Source‑CRM"
 #. js-lingui-id: XxKVz4
 #: src/platform/routing/static-website-routes.ts
 msgid "Twenty Apps — Vetted Apps for the Open Source CRM"
-msgstr ""
+msgstr "Twenty‑Apps – geprüfte Apps für das Open‑Source‑CRM"
 
 #. js-lingui-id: jwNPEV
 #: src/sections/menu/data/menu.ts
 msgid "Twenty apps marketplace"
-msgstr ""
+msgstr "Twenty‑App‑Marktplatz"
 
 #. js-lingui-id: NalB1c
 #: src/sections/testimonials/partner-testimonials.data.ts
@@ -7403,11 +7369,9 @@ msgstr "Twenty Apps öffnet die Tür, Produkte zu bauen – nicht nur Implementi
 
 #. js-lingui-id: fZsVj6
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"Twenty as the\n"
+msgid "Twenty as the\n"
 "*API backbone* of a go-to-market stack"
-msgstr ""
-"Twenty als\n"
+msgstr "Twenty als\n"
 "*API-Backbone* eines Go-to-Market-Stacks"
 
 #. js-lingui-id: +w9xZW
@@ -7517,61 +7481,61 @@ msgstr "Vorschau des Twenty-User-Guides"
 #: src/sections/pricing-salesfarce/PricingSalesfarce.tsx
 #: src/sections/compare/compare-data.ts
 msgid "Twenty vs HubSpot"
-msgstr ""
+msgstr "Twenty vs HubSpot"
 
 #. js-lingui-id: 1f7tJr
 #: src/platform/routing/static-website-routes.ts
 msgid "Twenty vs HubSpot Pricing — The Real Cost Compared"
-msgstr ""
+msgstr "Twenty vs HubSpot Preise – der Vergleich der tatsächlichen Kosten"
 
 #. js-lingui-id: PU2vgp
 #: src/sections/pricing-salesfarce/PricingSalesfarce.tsx
 #: src/sections/compare/compare-data.ts
 msgid "Twenty vs Microsoft Dynamics"
-msgstr ""
+msgstr "Twenty vs Microsoft Dynamics"
 
 #. js-lingui-id: YwgbXH
 #: src/platform/routing/static-website-routes.ts
 msgid "Twenty vs Microsoft Dynamics Pricing — The Real Cost Compared"
-msgstr ""
+msgstr "Twenty vs Microsoft Dynamics Preise – der Vergleich der tatsächlichen Kosten"
 
 #. js-lingui-id: jqVcCJ
 #: src/sections/pricing-salesfarce/PricingSalesfarce.tsx
 #: src/sections/compare/compare-data.ts
 msgid "Twenty vs Pipedrive"
-msgstr ""
+msgstr "Twenty vs Pipedrive"
 
 #. js-lingui-id: Ure+SU
 #: src/platform/routing/static-website-routes.ts
 msgid "Twenty vs Pipedrive Pricing — The Real Cost Compared"
-msgstr ""
+msgstr "Twenty vs Pipedrive Preise – der Vergleich der tatsächlichen Kosten"
 
 #. js-lingui-id: BpUVzg
 #: src/sections/pricing-salesfarce/PricingSalesfarce.tsx
 #: src/sections/compare/compare-data.ts
 msgid "Twenty vs Salesforce"
-msgstr ""
+msgstr "Twenty vs Salesforce"
 
 #. js-lingui-id: g9RXI4
 #: src/platform/routing/static-website-routes.ts
 msgid "Twenty vs Salesforce Pricing — The Real Cost Compared"
-msgstr ""
+msgstr "Twenty vs Salesforce Preise – der Vergleich der tatsächlichen Kosten"
 
 #. js-lingui-id: AKwcOh
 #: src/sections/pricing-salesfarce/PricingSalesfarce.tsx
 #: src/sections/compare/compare-data.ts
 msgid "Twenty vs SAP Sales Cloud"
-msgstr ""
+msgstr "Twenty vs SAP Sales Cloud"
 
 #. js-lingui-id: 6ix7s6
 #: src/platform/routing/static-website-routes.ts
 msgid "Twenty vs SAP Sales Cloud Pricing — The Real Cost Compared"
-msgstr ""
+msgstr "Twenty vs SAP Sales Cloud Preise – der Vergleich der tatsächlichen Kosten"
 
 #. js-lingui-id: abTOgp
 #: src/partners-marketplace/MarketplaceHeader.tsx
 msgid "Twenty's certified partners help teams migrate, customise, and operate the open source CRM across regions, languages, and deployment models. Browse profiles and book a call, or <0>tell us what you need</0> and we'll match you."
-msgstr ""
+msgstr "Zertifizierte Partner von Twenty helfen Teams dabei, das Open-Source-CRM über Regionen, Sprachen und Bereitstellungsmodelle hinweg zu migrieren, anzupassen und zu betreiben. Durchsuchen Sie Profile und buchen Sie einen Anruf oder <0>sagen Sie uns, was Sie brauchen</0>, und wir bringen Sie mit einem passenden Partner zusammen."
 
 #. js-lingui-id: tuvLv1
 #: src/platform/releases/ReleaseNotes.tsx
@@ -7592,12 +7556,12 @@ msgstr "Teamtyp *"
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "Typical partner project"
-msgstr ""
+msgstr "Typisches Partnerprojekt"
 
 #. js-lingui-id: o5LVCI
 #: src/sections/compare/compare-data.ts
 msgid "Typical partner project, year one"
-msgstr ""
+msgstr "Typisches Partnerprojekt, erstes Jahr"
 
 #. js-lingui-id: HqFilh
 #: src/partner-application/data/partner-country-options.ts
@@ -7632,7 +7596,7 @@ msgstr "Ukrainisch"
 #. js-lingui-id: 8th57M
 #: src/sections/compare/compare-data.ts
 msgid "Ultimate plan only"
-msgstr ""
+msgstr "Nur Ultimate-Tarif"
 
 #. js-lingui-id: jqzUyM
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -7677,17 +7641,17 @@ msgstr "Unbegrenzt"
 #. js-lingui-id: Gq9ISP
 #: src/sections/compare/compare-data.ts
 msgid "Unlimited from Pro"
-msgstr ""
+msgstr "Unbegrenzt ab Pro"
 
 #. js-lingui-id: WIyvZG
 #: src/sections/compare/compare-data.ts
 msgid "Unlimited on top tiers only"
-msgstr ""
+msgstr "Unbegrenzt nur in den obersten Tarifen"
 
 #. js-lingui-id: voJ+Nz
 #: src/sections/compare/compare-data.ts
 msgid "Unlimited workflows"
-msgstr ""
+msgstr "Unbegrenzte Workflows"
 
 #. js-lingui-id: q7vKOJ
 #: src/platform/releases/ReleaseNotes.tsx
@@ -7697,7 +7661,7 @@ msgstr "Unlisted-Ansichten"
 #. js-lingui-id: qYHQVk
 #: src/sections/compare/compare-data.ts
 msgid "Up to 36 months"
-msgstr ""
+msgstr "Bis zu 36 Monate"
 
 #. js-lingui-id: aGpTSC
 #: src/sections/pricing-plans/plans-data.ts
@@ -7811,12 +7775,12 @@ msgstr "Version Control"
 #. js-lingui-id: vNIHYX
 #: src/sections/menu/data/menu.ts
 msgid "Vetted apps for your workspace"
-msgstr ""
+msgstr "Geprüfte Apps für deinen Workspace"
 
 #. js-lingui-id: k5HTQK
 #: src/apps-marketplace/AppDetail.tsx
 msgid "Vetted by Twenty"
-msgstr ""
+msgstr "Geprüft von Twenty"
 
 #. js-lingui-id: FlQ1vR
 #: src/partner-application/data/partner-country-options.ts
@@ -7831,7 +7795,7 @@ msgstr "Vietnamesisch"
 #. js-lingui-id: 9nyGVq
 #: src/partners-marketplace/CaseStudyModal.tsx
 msgid "View case study"
-msgstr ""
+msgstr "Fallstudie ansehen"
 
 #. js-lingui-id: V4nZs/
 #: src/platform/releases/ReleaseNotes.tsx
@@ -7917,7 +7881,7 @@ msgstr "Wir konnten Ihre Bewerbung nicht übermitteln. Bitte versuchen Sie es in
 #. js-lingui-id: To/mhY
 #: src/client-brief/client-brief-copy.ts
 msgid "We could not submit your brief. Please try again in a moment."
-msgstr ""
+msgstr "Wir konnten Ihre Kurzbeschreibung nicht übermitteln. Bitte versuchen Sie es in einem Moment erneut."
 
 #. js-lingui-id: ofRgSN
 #: src/case-studies/case-study-stories.ts
@@ -7993,7 +7957,7 @@ msgstr "Webhooks-Multi-Object-Filtering"
 #. js-lingui-id: On0aF2
 #: src/apps-marketplace/AppDetail.tsx
 msgid "Website"
-msgstr ""
+msgstr "Website"
 
 #. js-lingui-id: 7kkV4O
 #: src/partner-application/partner-application-copy.ts
@@ -8014,47 +7978,47 @@ msgstr "Was Olivier überzeugte, war die Flexibilität der Plattform und ihre Ri
 #. js-lingui-id: QtGFRl
 #: src/sections/compare/compare-data.ts
 msgid "What costs extra over there"
-msgstr ""
+msgstr "Was dort extra kostet"
 
 #. js-lingui-id: SMBgOd
 #: src/client-brief/client-brief-copy.ts
 msgid "What do you need help with? *"
-msgstr ""
+msgstr "Wobei benötigen Sie Hilfe? *"
 
 #. js-lingui-id: Gln6w3
 #: src/sections/compare/compare-data.ts
-msgid ""
-"What does\n"
+msgid "What does\n"
 "*Dynamics 365* really cost?"
-msgstr ""
+msgstr "Was kostet\n"
+"*Dynamics 365* wirklich?"
 
 #. js-lingui-id: ndwi6c
 #: src/sections/compare/compare-data.ts
-msgid ""
-"What does\n"
+msgid "What does\n"
 "*HubSpot* really cost?"
-msgstr ""
+msgstr "Was kostet\n"
+"*HubSpot* wirklich?"
 
 #. js-lingui-id: QSAZlS
 #: src/sections/compare/compare-data.ts
-msgid ""
-"What does\n"
+msgid "What does\n"
 "*Pipedrive* really cost?"
-msgstr ""
+msgstr "Was kostet\n"
+"*Pipedrive* wirklich?"
 
 #. js-lingui-id: rv6SWP
 #: src/sections/compare/compare-data.ts
-msgid ""
-"What does\n"
+msgid "What does\n"
 "*Salesforce* really cost?"
-msgstr ""
+msgstr "Was kostet\n"
+"*Salesforce* wirklich?"
 
 #. js-lingui-id: mdVDDM
 #: src/sections/compare/compare-data.ts
-msgid ""
-"What does\n"
+msgid "What does\n"
 "*SAP Sales Cloud* really cost?"
-msgstr ""
+msgstr "Was kostet\n"
+"*SAP Sales Cloud* wirklich?"
 
 #. js-lingui-id: phiBjc
 #: src/sections/faq/faq.data.ts
@@ -8080,7 +8044,7 @@ msgstr "Die geplanten Schritte sind bedeutend. NetZero hat einen Data Lake, Onli
 #. js-lingui-id: w8IA3m
 #: src/partners-marketplace/marketplace-copy.ts
 msgid "What they cover"
-msgstr ""
+msgstr "Was sie abdecken"
 
 #. js-lingui-id: aYRqmz
 #: src/sections/why-twenty-editorial/editorials.data.ts
@@ -8095,7 +8059,7 @@ msgstr "Was Sie abdecken *"
 #. js-lingui-id: QFLt0F
 #: src/partner-application/partner-application-copy.ts
 msgid "What you've built in Twenty *"
-msgstr ""
+msgstr "Was du in Twenty gebaut hast *"
 
 #. js-lingui-id: 1kfjxX
 #: src/case-studies/case-study-stories.ts
@@ -8110,7 +8074,7 @@ msgstr "Wenn sich ein Student per QR‑Code bei einer Campus‑Veranstaltung reg
 #. js-lingui-id: c6bbrQ
 #: src/sections/compare/compare-data.ts
 msgid "When customers talk to your AI"
-msgstr ""
+msgstr "Wenn Kunden mit Ihrer KI sprechen"
 
 #. js-lingui-id: chISDP
 #: src/platform/releases/ReleaseNotes.tsx
@@ -8139,11 +8103,9 @@ msgstr "Als der Anbieter den Stecker zog"
 
 #. js-lingui-id: 8SbakK
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"When your CRM is\n"
+msgid "When your CRM is\n"
 "*the product*"
-msgstr ""
-"Wenn Ihr CRM\n"
+msgstr "Wenn Ihr CRM\n"
 "*das Produkt ist*"
 
 #. js-lingui-id: OQ41z8
@@ -8159,7 +8121,7 @@ msgstr "Wenn Ihr CRM das Produkt ist: W3Grads auf Twenty | W3villa Technologies"
 #. js-lingui-id: 2IUg0g
 #: src/sections/compare/compare-data.ts
 msgid "Where the caps and gates are"
-msgstr ""
+msgstr "Wo die Limits und Schranken liegen"
 
 #. js-lingui-id: bGN8u+
 #: src/case-studies/case-study-stories.ts
@@ -8169,7 +8131,7 @@ msgstr "Während NetZero für WhatsApp‑intensive Abläufe mit Landwirten in Br
 #. js-lingui-id: oa2Bs3
 #: src/partner-application/partner-application-copy.ts
 msgid "Who it was for, what you built, which of the four areas you used…"
-msgstr ""
+msgstr "Für wen es war, was du gebaut hast, welche der vier Bereiche du verwendet hast …"
 
 #. js-lingui-id: DJlSwA
 #: src/sections/menu/data/menu.ts
@@ -8179,7 +8141,7 @@ msgstr "Warum"
 #. js-lingui-id: mrxgOV
 #: src/sections/menu/data/menu.ts
 msgid "Why teams choose Twenty"
-msgstr ""
+msgstr "Warum Teams sich für Twenty entscheiden"
 
 #. js-lingui-id: 4sOVu+
 #: src/sections/footer/footer.data.ts
@@ -8194,7 +8156,7 @@ msgstr "Warum Twenty – Das Open‑Source‑CRM, das von Grund auf anpassbar is
 #. js-lingui-id: tetjz4
 #: src/sections/menu/data/menu.ts
 msgid "Why Twenty illustration"
-msgstr ""
+msgstr "Illustration „Warum Twenty“"
 
 #. js-lingui-id: baquqN
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
@@ -8390,7 +8352,7 @@ msgstr "Ja. Twenty ist das #1 Open‑Source‑CRM auf GitHub. Sie können es sel
 #. js-lingui-id: kWJmRL
 #: src/client-brief/client-brief-copy.ts
 msgid "You"
-msgstr ""
+msgstr "Sie"
 
 #. js-lingui-id: Q3GDrw
 #: src/platform/releases/ReleaseNotes.tsx
@@ -8505,7 +8467,7 @@ msgstr "Sie können Nodes jetzt duplizieren, ihren Typ ändern und ein optimiert
 #. js-lingui-id: COA0DV
 #: src/client-brief/client-brief-copy.ts
 msgid "Your brief"
-msgstr ""
+msgstr "Ihre Kurzbeschreibung"
 
 #. js-lingui-id: SfJVcK
 #: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
@@ -8561,3 +8523,4 @@ msgstr "Simbabwe 🇿🇼"
 #: src/app-preview/stage/TrafficLights.tsx
 msgid "Zoom"
 msgstr "Zoom"
+

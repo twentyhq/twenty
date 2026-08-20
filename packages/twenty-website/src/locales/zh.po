@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-06-28 13:26\n"
+"PO-Revision-Date: 2026-08-20 10:17\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -32,7 +32,7 @@ msgstr "……配合真正帮你*加快工作节奏*的 AI"
 #. placeholder {0}: app.name
 #: src/app/[locale]/(site)/apps/[slug]/page.tsx
 msgid "{0} — Twenty Apps"
-msgstr ""
+msgstr "{0} — Twenty 应用"
 
 #. js-lingui-id: Z6mKXu
 #. placeholder {0}: partner.name
@@ -50,7 +50,7 @@ msgstr "{0} 案例研究"
 #. placeholder {0}: app.name
 #: src/apps-marketplace/AppDetail.tsx
 msgid "{0} screenshot"
-msgstr ""
+msgstr "{0} 截图"
 
 #. js-lingui-id: jC5JCB
 #: src/sections/case-study-promo/CaseStudyPromo.tsx
@@ -103,7 +103,7 @@ msgstr "/用户/月"
 #. js-lingui-id: 0XQjhY
 #: src/sections/pricing-plans/plans-data.ts
 msgid "/year"
-msgstr ""
+msgstr "/年"
 
 #. js-lingui-id: UEDohT
 #: src/sections/footer/FooterBottom.tsx
@@ -139,7 +139,7 @@ msgstr "+ 每用户每月 $5"
 #. js-lingui-id: QO+kOi
 #: src/sections/compare/compare-data.ts
 msgid "+$7,200/yr"
-msgstr ""
+msgstr "+$7,200/年"
 
 #. js-lingui-id: JIwDAd
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -150,11 +150,9 @@ msgstr "+ 每组织每月 $7000"
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"+$75/user per month\n"
+msgid "+$75/user per month\n"
 "Switch to enterprise!"
-msgstr ""
-"+ 每用户每月 $75\n"
+msgstr "+ 每用户每月 $75\n"
 "切换到企业版！"
 
 #. js-lingui-id: iK+ikF
@@ -164,12 +162,10 @@ msgstr "+ 其他 1 万人"
 
 #. js-lingui-id: nRtVCK
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"+20% of net spend\n"
+msgid "+20% of net spend\n"
 "+$75/user per month\n"
 "Switch to enterprise!"
-msgstr ""
-"+ 净支出的 20%\n"
+msgstr "+ 净支出的 20%\n"
 "+ 每用户每月 $75\n"
 "切换到企业版！"
 
@@ -177,7 +173,7 @@ msgstr ""
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "+30% of spend"
-msgstr ""
+msgstr "+30% 的支出"
 
 #. js-lingui-id: BmAWVq
 #: src/platform/releases/ReleaseNotes.tsx
@@ -197,47 +193,47 @@ msgstr "<0>快速访问记录</0>：侧边栏允许你在不离开当前页面�
 #. js-lingui-id: 9ymtak
 #: src/sections/compare/compare-data.ts
 msgid "≈ $125 per user per month"
-msgstr ""
+msgstr "≈ 每用户每月 $125"
 
 #. js-lingui-id: 4rd87j
 #: src/sections/compare/compare-data.ts
 msgid "≈ $165 per user per month in year one"
-msgstr ""
+msgstr "≈ 第一年每用户每月 $165"
 
 #. js-lingui-id: q0hdAM
 #: src/sections/compare/compare-data.ts
 msgid "≈ $228 per user per month before add-ons"
-msgstr ""
+msgstr "≈ 在附加组件前每用户每月 $228"
 
 #. js-lingui-id: O8ZrTl
 #: src/sections/compare/compare-data.ts
 msgid "≈ $300 per user per month in year one"
-msgstr ""
+msgstr "第一年每位用户每月约 $300"
 
 #. js-lingui-id: jdJifG
 #: src/sections/compare/compare-data.ts
 msgid "≈ 12× less"
-msgstr ""
+msgstr "大约降低 12 倍"
 
 #. js-lingui-id: xSqWmB
 #: src/sections/compare/compare-data.ts
 msgid "≈ 15× less"
-msgstr ""
+msgstr "大约降低 15 倍"
 
 #. js-lingui-id: XEcaNi
 #: src/sections/compare/compare-data.ts
 msgid "≈ 4× less"
-msgstr ""
+msgstr "大约降低 4 倍"
 
 #. js-lingui-id: 7AGSOz
 #: src/sections/compare/compare-data.ts
 msgid "≈ 6× less"
-msgstr ""
+msgstr "大约降低 6 倍"
 
 #. js-lingui-id: rHH4Ef
 #: src/sections/compare/compare-data.ts
 msgid "≈ 8× less"
-msgstr ""
+msgstr "大约降低 8 倍"
 
 #. js-lingui-id: be30i9
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -249,16 +245,14 @@ msgstr "$0"
 #. js-lingui-id: RVS9wF
 #: src/sections/compare/compare-data.ts
 msgid "$1,500 to $3,500"
-msgstr ""
+msgstr "$1,500 至 $3,500"
 
 #. js-lingui-id: 6inRXo
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"$1/orchestration run/org\n"
+msgid "$1/orchestration run/org\n"
 "+$75/user per month\n"
 "Switch to enterprise!"
-msgstr ""
-"$1/每次编排运行/每组织\n"
+msgstr "$1/每次编排运行/每组织\n"
 "+ 每用户每月 $75\n"
 "切换到企业版！"
 
@@ -266,59 +260,59 @@ msgstr ""
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$100/seat/mo"
-msgstr ""
+msgstr "$100/席位/月"
 
 #. js-lingui-id: RxZCTe
 #: src/sections/compare/compare-data.ts
 msgid "$105/user/mo"
-msgstr ""
+msgstr "$105/用户/月"
 
 #. js-lingui-id: iwVjw1
 #: src/sections/compare/compare-data.ts
 msgid "$10k to $100k+"
-msgstr ""
+msgstr "$10k 至 $100k+"
 
 #. js-lingui-id: T0Wpr9
 #: src/sections/compare/compare-data.ts
 msgid "$11,760/yr"
-msgstr ""
+msgstr "$11,760/年"
 
 #. js-lingui-id: gwvlUn
 #: src/sections/compare/compare-data.ts
 msgid "$12,600/yr"
-msgstr ""
+msgstr "$12,600/年"
 
 #. js-lingui-id: i95Cip
 #: src/sections/compare/compare-data.ts
 msgid "$134/user/mo"
-msgstr ""
+msgstr "$134/用户/月"
 
 #. js-lingui-id: +v2oYY
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$150/seat/mo"
-msgstr ""
+msgstr "$150/席位/月"
 
 #. js-lingui-id: E9br9b
 #: src/sections/compare/compare-data.ts
 msgid "$150/user/mo"
-msgstr ""
+msgstr "$150/用户/月"
 
 #. js-lingui-id: no7TyB
 #: src/sections/compare/compare-data.ts
 msgid "$15k to $100k+"
-msgstr ""
+msgstr "$15k 至 $100k+"
 
 #. js-lingui-id: NCPkk1
 #: src/sections/compare/compare-data.ts
 msgid "$175/user/mo"
-msgstr ""
+msgstr "$175/用户/月"
 
 #. js-lingui-id: F/xoOk
 #: src/sections/compare/compare-data.ts
 msgid "$18,960"
-msgstr ""
+msgstr "$18,960"
 
 #. js-lingui-id: EkIZkY
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -329,7 +323,7 @@ msgstr "$19"
 #. js-lingui-id: 3TfGqu
 #: src/sections/compare/compare-data.ts
 msgid "$19 per user per month, SSO included"
-msgstr ""
+msgstr "每位用户每月 $19，包含 SSO"
 
 #. js-lingui-id: nEeXt3
 #: src/sections/compare/compare-data.ts
@@ -337,47 +331,47 @@ msgstr ""
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$19 per user per month, that's it"
-msgstr ""
+msgstr "每位用户每月 $19，就是全部费用"
 
 #. js-lingui-id: buZDJK
 #: src/sections/compare/compare-data.ts
 msgid "$2/conversation"
-msgstr ""
+msgstr "$2/会话"
 
 #. js-lingui-id: SipiNI
 #: src/sections/compare/compare-data.ts
 msgid "$20/user/mo"
-msgstr ""
+msgstr "$20/用户/月"
 
 #. js-lingui-id: 9TSE4w
 #: src/sections/compare/compare-data.ts
 msgid "$25,200/yr"
-msgstr ""
+msgstr "$25,200/年"
 
 #. js-lingui-id: fz2uoZ
 #: src/sections/compare/compare-data.ts
 msgid "$3,500"
-msgstr ""
+msgstr "$3,500"
 
 #. js-lingui-id: 4wGGg4
 #: src/sections/compare/compare-data.ts
 msgid "$30,000"
-msgstr ""
+msgstr "$30,000"
 
 #. js-lingui-id: r4X3nR
 #: src/sections/compare/compare-data.ts
 msgid "$32,160/yr"
-msgstr ""
+msgstr "$32,160/年"
 
 #. js-lingui-id: SY5PTh
 #: src/sections/compare/compare-data.ts
 msgid "$36,000/yr"
-msgstr ""
+msgstr "$36,000/年"
 
 #. js-lingui-id: q9R8xN
 #: src/sections/compare/compare-data.ts
 msgid "$39,500"
-msgstr ""
+msgstr "$39,500"
 
 #. js-lingui-id: BkOdiw
 #: src/sections/compare/compare-data.ts
@@ -386,7 +380,7 @@ msgstr ""
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$4,560"
-msgstr ""
+msgstr "$4,560"
 
 #. js-lingui-id: godgke
 #: src/sections/compare/compare-data.ts
@@ -395,62 +389,62 @@ msgstr ""
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$4,560/yr"
-msgstr ""
+msgstr "$4,560/年"
 
 #. js-lingui-id: 6bS7c4
 #: src/sections/compare/compare-data.ts
 msgid "$4,800/yr"
-msgstr ""
+msgstr "$4,800/年"
 
 #. js-lingui-id: jG39xD
 #: src/sections/compare/compare-data.ts
 msgid "$40,000+"
-msgstr ""
+msgstr "$40,000+"
 
 #. js-lingui-id: meADa5
 #: src/sections/compare/compare-data.ts
 msgid "$40/GB/month"
-msgstr ""
+msgstr "$40/GB/月"
 
 #. js-lingui-id: qw71Lk
 #: src/sections/compare/compare-data.ts
 msgid "$40k to $150k+"
-msgstr ""
+msgstr "$40k 至 $150k+"
 
 #. js-lingui-id: HQhcTN
 #: src/sections/compare/compare-data.ts
 msgid "$42,000/yr"
-msgstr ""
+msgstr "$42,000/年"
 
 #. js-lingui-id: lg3QC/
 #: src/sections/compare/compare-data.ts
 msgid "$49/user/mo"
-msgstr ""
+msgstr "$49/用户/月"
 
 #. js-lingui-id: ft5bJk
 #: src/sections/compare/compare-data.ts
 msgid "$500/user/mo"
-msgstr ""
+msgstr "$500/用户/月"
 
 #. js-lingui-id: rJXDlT
 #: src/sections/compare/compare-data.ts
 msgid "$54,600"
-msgstr ""
+msgstr "$54,600"
 
 #. js-lingui-id: HhjIdv
 #: src/sections/compare/compare-data.ts
 msgid "$72,160+"
-msgstr ""
+msgstr "$72,160+"
 
 #. js-lingui-id: 53v+LE
 #: src/sections/compare/compare-data.ts
 msgid "$79 per user per month with SSO"
-msgstr ""
+msgstr "每位用户每月 $79，包含 SSO"
 
 #. js-lingui-id: wcrOee
 #: src/sections/compare/compare-data.ts
 msgid "$79/user/mo"
-msgstr ""
+msgstr "$79/用户/月"
 
 #. js-lingui-id: 8r6DgO
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -462,12 +456,12 @@ msgstr "$9"
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "$9 to $19/user, everything included"
-msgstr ""
+msgstr "每位用户 $9 至 $19，全部功能已包含"
 
 #. js-lingui-id: 5QiFtr
 #: src/sections/compare/compare-data.ts
 msgid "$9/user on Pro"
-msgstr ""
+msgstr "Pro 版每位用户 $9"
 
 #. js-lingui-id: EHNAf2
 #: src/case-studies/case-study-catalog.ts
@@ -486,11 +480,9 @@ msgstr "每分钟 100 次"
 
 #. js-lingui-id: uuKUqZ
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"11 permissions\n"
+msgid "11 permissions\n"
 "groups"
-msgstr ""
-"11 个权限\n"
+msgstr "11 个权限\n"
 "组"
 
 #. js-lingui-id: 2szX5S
@@ -520,32 +512,32 @@ msgstr "2,000+"
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "20 × Organization ($19)"
-msgstr ""
+msgstr "20 × Organization（$19）"
 
 #. js-lingui-id: t8U4dF
 #: src/sections/compare/compare-data.ts
 msgid "20 × Premium ($49)"
-msgstr ""
+msgstr "20 × Premium（$49）"
 
 #. js-lingui-id: s3hVxk
 #: src/sections/compare/compare-data.ts
 msgid "20 × Sales Cloud Enterprise ($175)"
-msgstr ""
+msgstr "20 × Sales Cloud Enterprise（$175）"
 
 #. js-lingui-id: ANl7kz
 #: src/sections/compare/compare-data.ts
 msgid "20 × Sales Cloud V2 ($134)"
-msgstr ""
+msgstr "20 × Sales Cloud V2（$134）"
 
 #. js-lingui-id: 540kVH
 #: src/sections/compare/compare-data.ts
 msgid "20 × Sales Enterprise ($105)"
-msgstr ""
+msgstr "20 × Sales Enterprise（$105）"
 
 #. js-lingui-id: 76JctL
 #: src/sections/compare/compare-data.ts
 msgid "20 × Sales Hub Enterprise ($150)"
-msgstr ""
+msgstr "20 × Sales Hub Enterprise（$150）"
 
 #. js-lingui-id: FKcV/y
 #: src/case-studies/case-study-catalog.ts
@@ -562,11 +554,9 @@ msgstr "3"
 
 #. js-lingui-id: BL47wE
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"3 2 years contract\n"
+msgid "3 2 years contract\n"
 "-33% off"
-msgstr ""
-"3 个 2 年合约\n"
+msgstr "3 个 2 年合约\n"
 "立减 33%"
 
 #. js-lingui-id: /jgC+9
@@ -577,7 +567,7 @@ msgstr "3 条产品线"
 #. js-lingui-id: MW3Qpb
 #: src/partners-marketplace/PartnerProfileCtas.tsx
 msgid "30 minutes, no commitment"
-msgstr ""
+msgstr "30 分钟，无需承诺"
 
 #. js-lingui-id: 7SJhyh
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -627,7 +617,7 @@ msgstr "90%+"
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "A 20-person sales team, billed annually"
-msgstr ""
+msgstr "一支 20 人的销售团队，按年计费"
 
 #. js-lingui-id: u6Xxdi
 #: src/case-studies/case-study-stories.ts
@@ -646,11 +636,9 @@ msgstr "为*行动迅速*的团队打造的 CRM"
 
 #. js-lingui-id: MXRINg
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"A CRM that\n"
+msgid "A CRM that\n"
 "*grows* with you"
-msgstr ""
-"一个\n"
+msgstr "一个\n"
 "*能与你一同成长的* CRM"
 
 #. js-lingui-id: diWAWP
@@ -665,11 +653,9 @@ msgstr "一个能与你一同成长的 CRM | NetZero 与 Twenty"
 
 #. js-lingui-id: N3qsQD
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"A CRM they\n"
+msgid "A CRM they\n"
 "*actually own*"
-msgstr ""
-"一个他们\n"
+msgstr "一个他们\n"
 "*真正拥有的* CRM"
 
 #. js-lingui-id: muZzEA
@@ -684,17 +670,17 @@ msgstr "一款定制 CRM 能让你的组织占得先机，*但构建它*会带�
 
 #. js-lingui-id: 4lAzBW
 #: src/sections/compare/compare-data.ts
-msgid ""
-"A feature-by-feature price check, with sources.\n"
+msgid "A feature-by-feature price check, with sources.\n"
 "Most of what HubSpot gates behind tiers is simply included in Twenty."
-msgstr ""
+msgstr "按功能逐项核对价格，并附来源说明。\n"
+"HubSpot 按套餐分级限制的大部分功能，在 Twenty 中都已直接包含。"
 
 #. js-lingui-id: eZ3I1t
 #: src/sections/compare/compare-data.ts
-msgid ""
-"A friendly price on the front page.\n"
+msgid "A friendly price on the front page.\n"
 "The caps show up after you sign."
-msgstr ""
+msgstr "首页上的价格看起来很友好。\n"
+"但各种限制会在你签约之后才出现。"
 
 #. js-lingui-id: uNIo/j
 #: src/sections/three-cards/ProductThreeCards.tsx
@@ -723,11 +709,9 @@ msgstr "一个随时准备扩展的平台"
 
 #. js-lingui-id: vbJW8I
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"A real estate agency on WhatsApp built a\n"
+msgid "A real estate agency on WhatsApp built a\n"
 "*CRM* around it"
-msgstr ""
-"一家在 WhatsApp 上运营的房地产中介围绕它打造了一套\n"
+msgstr "一家在 WhatsApp 上运营的房地产中介围绕它打造了一套\n"
 "*CRM*"
 
 #. js-lingui-id: hwoGni
@@ -738,7 +722,7 @@ msgstr "一家在 WhatsApp 上运营的房地产中介围绕它打造了 CRM"
 #. js-lingui-id: 0wOuyC
 #: src/sections/compare/compare-data.ts
 msgid "A real staging environment"
-msgstr ""
+msgstr "真正的预发布环境"
 
 #. js-lingui-id: WjUlJr
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -825,7 +809,7 @@ msgstr "激活响应不完整。"
 #. js-lingui-id: y2DpQ/
 #: src/sections/compare/compare-data.ts
 msgid "Active automations"
-msgstr ""
+msgstr "活跃自动化流程"
 
 #. js-lingui-id: Yyn/dP
 #: src/partners-marketplace/ActiveFilterPills.tsx
@@ -876,7 +860,7 @@ msgstr "添加任务"
 #. js-lingui-id: lWjdR6
 #: src/sections/compare/compare-data.ts
 msgid "Add-on, per environment"
-msgstr ""
+msgstr "附加项，按环境计费"
 
 #. js-lingui-id: Y2K3rp
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -959,22 +943,22 @@ msgstr "代理机构"
 #. js-lingui-id: aC4eD2
 #: src/sections/compare/compare-data.ts
 msgid "Agent conversations"
-msgstr ""
+msgstr "人工客服会话"
 
 #. js-lingui-id: 7YoL3t
 #: src/sections/compare/compare-data.ts
 msgid "Agentforce 1 Sales edition"
-msgstr ""
+msgstr "Agentforce 1 Sales 版本"
 
 #. js-lingui-id: Ir3nik
 #: src/sections/compare/compare-data.ts
 msgid "Agentforce list price"
-msgstr ""
+msgstr "Agentforce 标价"
 
 #. js-lingui-id: HrtCcp
 #: src/sections/compare/compare-data.ts
 msgid "Agents and Data Cloud bundled"
-msgstr ""
+msgstr "代理与 Data Cloud 打包"
 
 #. js-lingui-id: vZKKhf
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -1020,7 +1004,7 @@ msgstr "AI 代理已经开始起草外联内容、对潜在客户评分、调研
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "AI agents included, usage credits"
-msgstr ""
+msgstr "包含 AI 代理与使用额度"
 
 #. js-lingui-id: Rsxdfy
 #: src/sections/pricing-plans/plans-data.ts
@@ -1072,7 +1056,7 @@ msgstr "AI 辅助"
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Air-gapped deployment"
-msgstr ""
+msgstr "物理隔离部署（Air-gapped）"
 
 #. js-lingui-id: 7xlBwk
 #: src/partner-application/data/partner-country-options.ts
@@ -1087,7 +1071,7 @@ msgstr "阿尔及利亚 🇩🇿"
 #. js-lingui-id: N40H+G
 #: src/apps-marketplace/AppsMarketplaceClient.tsx
 msgid "All"
-msgstr ""
+msgstr "全部"
 
 #. js-lingui-id: LIGwFL
 #: src/sections/three-cards/three-cards.data.ts
@@ -1195,15 +1179,13 @@ msgstr "通过 API、SDK 和 webhook 扩展 Twenty，并在你的 CRM 数据之�
 #. js-lingui-id: L/34fX
 #: src/app/[locale]/(site)/apps/[slug]/page.tsx
 msgid "App not found — Twenty"
-msgstr ""
+msgstr "未找到应用 — Twenty"
 
 #. js-lingui-id: k8I7/G
 #: src/partner-application/partner-application-copy.ts
-msgid ""
-"Apply to build\n"
+msgid "Apply to build\n"
 "*the future of CRM*"
-msgstr ""
-"申请一起构建\n"
+msgstr "申请一起构建\n"
 "*CRM 的未来*"
 
 #. js-lingui-id: LJCDxT
@@ -1214,12 +1196,12 @@ msgstr "申请加入 Twenty 合作伙伴生态系统，与全球排名第 1 的�
 #. js-lingui-id: VDvaN2
 #: src/sections/menu/data/menu.ts
 msgid "Apps"
-msgstr ""
+msgstr "应用"
 
 #. js-lingui-id: lAg+Wy
 #: src/apps-marketplace/AppsMarketplaceHeader.tsx
 msgid "Apps for *Twenty*"
-msgstr ""
+msgstr "适用于 *Twenty* 的应用程序"
 
 #. js-lingui-id: 1AsfMD
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
@@ -1291,7 +1273,7 @@ msgstr "奥地利 🇦🇹"
 #. js-lingui-id: nb3YW4
 #: src/sections/compare/compare-data.ts
 msgid "Auto-renewing term contracts"
-msgstr ""
+msgstr "自动续约的定期合同"
 
 #. js-lingui-id: FFv0Vh
 #: src/sections/product-stepper/data/product-stepper-data.ts
@@ -1365,11 +1347,9 @@ msgstr "因为 Twenty 的 API 完全开放，我可以把它与我们技术栈�
 
 #. js-lingui-id: kWm0dC
 #: src/sections/partner-hero/PartnerHero.tsx
-msgid ""
-"Become\n"
+msgid "Become\n"
 "*our partner*"
-msgstr ""
-"成为\n"
+msgstr "成为\n"
 "*我们的合作伙伴*"
 
 #. js-lingui-id: PKMHNe
@@ -1441,12 +1421,12 @@ msgstr "走出*内部上线*的范畴"
 #. js-lingui-id: rp00sQ
 #: src/sections/compare/compare-data.ts
 msgid "Beyond deals and contacts"
-msgstr ""
+msgstr "超越交易与联系人"
 
 #. js-lingui-id: y37rt+
 #: src/sections/compare/compare-data.ts
 msgid "Beyond the pooled entitlement"
-msgstr ""
+msgstr "超出共享配额之后"
 
 #. js-lingui-id: OPnz/X
 #: src/partner-application/data/partner-country-options.ts
@@ -1471,7 +1451,7 @@ msgstr "玻利维亚 🇧🇴"
 #. js-lingui-id: 4fKvqx
 #: src/partners-marketplace/PartnerProfileCtas.tsx
 msgid "Book intro call"
-msgstr ""
+msgstr "预约介绍电话"
 
 #. js-lingui-id: bOwPjT
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
@@ -1496,7 +1476,7 @@ msgstr "巴西 🇧🇷"
 #. js-lingui-id: hKAV/O
 #: src/sections/pricing-engagement-band/PricingEngagementBand.tsx
 msgid "Browse partners"
-msgstr ""
+msgstr "浏览合作伙伴"
 
 #. js-lingui-id: bmk2dj
 #: src/platform/routing/static-website-routes.ts
@@ -1511,7 +1491,7 @@ msgstr "文莱 🇧🇳"
 #. js-lingui-id: 0Nu8Fw
 #: src/client-brief/client-brief-copy.ts
 msgid "Budget range"
-msgstr ""
+msgstr "预算范围"
 
 #. js-lingui-id: NcjNpp
 #: src/sections/why-twenty-signoff/WhyTwentySignoff.tsx
@@ -1621,7 +1601,7 @@ msgstr "我可以从 Salesforce 或 HubSpot 迁移过来吗？"
 #. js-lingui-id: wsjgUI
 #: src/sections/compare/compare-data.ts
 msgid "Can you see the bill coming?"
-msgstr ""
+msgstr "你能预见账单会涨到多少吗？"
 
 #. js-lingui-id: nEOTNi
 #: src/partner-application/data/partner-country-options.ts
@@ -1637,7 +1617,7 @@ msgstr "佛得角 🇨🇻"
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "Capped per tier"
-msgstr ""
+msgstr "按套餐等级设置上限"
 
 #. js-lingui-id: qLBo3s
 #: src/sections/testimonials/TestimonialsCarousel.tsx
@@ -1653,12 +1633,12 @@ msgstr "案例"
 #. js-lingui-id: ZaqvFY
 #: src/partners-marketplace/PartnerSelectedWork.tsx
 msgid "Case studies"
-msgstr ""
+msgstr "案例研究"
 
 #. js-lingui-id: QuY9hS
 #: src/partners-marketplace/CaseStudyModal.tsx
 msgid "Case study"
-msgstr ""
+msgstr "案例研究"
 
 #. js-lingui-id: M1RLfx
 #: src/partners-marketplace/spoken-language-labels.ts
@@ -1668,7 +1648,7 @@ msgstr "加泰罗尼亚语"
 #. js-lingui-id: K7tIrx
 #: src/apps-marketplace/AppDetail.tsx
 msgid "Category"
-msgstr ""
+msgstr "类别"
 
 #. js-lingui-id: dBApoS
 #: src/partner-application/data/partner-country-options.ts
@@ -1771,12 +1751,12 @@ msgstr "云"
 #. js-lingui-id: gHCE2l
 #: src/client-brief/client-brief-copy.ts
 msgid "Cloud (Twenty-hosted)"
-msgstr ""
+msgstr "云（Twenty 托管）"
 
 #. js-lingui-id: N/+h4B
 #: src/client-brief/client-brief-copy.ts
 msgid "Cloud or self-hosted?"
-msgstr ""
+msgstr "云端还是自托管？"
 
 #. js-lingui-id: L/LPQZ
 #: src/sections/faq/faq.data.ts
@@ -1864,7 +1844,7 @@ msgstr "公司"
 #. js-lingui-id: WDhGtU
 #: src/client-brief/client-brief-copy.ts
 msgid "Company name *"
-msgstr ""
+msgstr "公司名称 *"
 
 #. js-lingui-id: SHjhDC
 #: src/partner-application/partner-application-copy.ts
@@ -1874,12 +1854,12 @@ msgstr "公司或品牌 *"
 #. js-lingui-id: 5NnZpk
 #: src/sections/compare/compare-data.ts
 msgid "Company-wide, not per user"
-msgstr ""
+msgstr "公司层面，而不是按用户"
 
 #. js-lingui-id: y9d5MZ
 #: src/sections/pricing-salesfarce/PricingSalesfarce.tsx
 msgid "Compare *the real cost*"
-msgstr ""
+msgstr "比较*真实成本*"
 
 #. js-lingui-id: QOhkyl
 #: src/sections/product-feature/EmailsVisual/EmailsVisual.tsx
@@ -1929,7 +1909,7 @@ msgstr "通过 API 连接"
 #. js-lingui-id: j/G3/h
 #: src/sections/compare/compare-data.ts
 msgid "Connecting the rest of your stack"
-msgstr ""
+msgstr "连接技术栈中的其他系统"
 
 #. js-lingui-id: cfAG43
 #: src/case-studies/case-study-catalog.ts
@@ -1939,7 +1919,7 @@ msgstr "咨询服务"
 #. js-lingui-id: jfC/xh
 #: src/partners-marketplace/PartnerProfileCtas.tsx
 msgid "Contact"
-msgstr ""
+msgstr "联系"
 
 #. js-lingui-id: Oii3vg
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -1954,7 +1934,7 @@ msgstr "上下文与记录同在。"
 #. js-lingui-id: xjHB3/
 #: src/client-brief/client-brief-copy.ts
 msgid "Continue →"
-msgstr ""
+msgstr "继续 →"
 
 #. js-lingui-id: mXovG/
 #: src/sections/home-stepper/data/stepper.data.ts
@@ -1964,7 +1944,7 @@ msgstr "持续*无摩擦*地迭代"
 #. js-lingui-id: sZ2EiM
 #: src/sections/compare/compare-data.ts
 msgid "Contract terms"
-msgstr ""
+msgstr "合同条款"
 
 #. js-lingui-id: LqyWsJ
 #: src/platform/releases/ReleaseNotes.tsx
@@ -1984,7 +1964,7 @@ msgstr "控制"
 #. js-lingui-id: uiJ97K
 #: src/sections/compare/compare-data.ts
 msgid "Control who sees and edits what"
-msgstr ""
+msgstr "控制谁可以查看和编辑什么内容"
 
 #. js-lingui-id: GplbCP
 #: src/case-studies/case-study-stories.ts
@@ -2049,7 +2029,7 @@ msgstr "国家 *"
 #. js-lingui-id: vk+Og8
 #: src/client-brief/client-brief-copy.ts
 msgid "Country / region"
-msgstr ""
+msgstr "国家 / 地区"
 
 #. js-lingui-id: kCu+Rq
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2136,7 +2116,7 @@ msgstr "创建日期"
 #. js-lingui-id: KOLvLO
 #: src/sections/compare/compare-data.ts
 msgid "Credit-based, no per-chat fee"
-msgstr ""
+msgstr "基于额度，无单聊费用"
 
 #. js-lingui-id: NLgmM4
 #: src/partners-marketplace/data/partner-scope-options.ts
@@ -2213,7 +2193,7 @@ msgstr "货币字段"
 #. js-lingui-id: 8Tg/JR
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Custom"
-msgstr ""
+msgstr "自定义"
 
 #. js-lingui-id: lh6aPn
 #: src/sections/pricing-plans/plans-data.ts
@@ -2358,7 +2338,7 @@ msgstr "自定义能力"
 #. js-lingui-id: 4urq82
 #: src/sections/compare/compare-data.ts
 msgid "Customization apps"
-msgstr ""
+msgstr "自定义应用"
 
 #. js-lingui-id: GRfLAg
 #: src/case-studies/case-study-catalog.ts
@@ -2430,17 +2410,17 @@ msgstr "数据建模 · 迁移 · 无代码工作流 · 仪表盘 · SSO/SCIM ·
 #. js-lingui-id: pSXc9s
 #: src/partner-application/data/partner-twenty-experience-options.ts
 msgid "Data models"
-msgstr ""
+msgstr "数据模型"
 
 #. js-lingui-id: dfdijQ
 #: src/sections/compare/compare-data.ts
 msgid "Database storage"
-msgstr ""
+msgstr "数据库存储"
 
 #. js-lingui-id: o4n86F
 #: src/sections/compare/compare-data.ts
 msgid "Dataverse database add-on"
-msgstr ""
+msgstr "Dataverse 数据库附加组件"
 
 #. js-lingui-id: JvUngl
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
@@ -2470,7 +2450,7 @@ msgstr "会自己推进的交易。"
 #. js-lingui-id: VWVokE
 #: src/sections/compare/compare-data.ts
 msgid "Deals, contacts and products only"
-msgstr ""
+msgstr "仅限交易、联系人和产品"
 
 #. js-lingui-id: 1BzJf0
 #: src/sections/product-feature/EmailsVisual/data/threads.ts
@@ -2482,7 +2462,7 @@ msgstr "亲爱的团队，我很高兴提交我们的提案供你们考虑。我
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Dedicated support & SLA"
-msgstr ""
+msgstr "专属支持与 SLA"
 
 #. js-lingui-id: 46Erl4
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
@@ -2502,7 +2482,7 @@ msgstr "丹麦 🇩🇰"
 #. js-lingui-id: 59TXqJ
 #: src/partner-application/partner-application-copy.ts
 msgid "Describe a real Twenty project (customer or internal): who it was for, what you built, and how you used the areas you selected. Min. {TWENTY_EXPERIENCE_NOTES_MIN_LENGTH} characters."
-msgstr ""
+msgstr "请描述一个真实的 Twenty 项目（客户项目或内部项目）：项目是为谁做的、你构建了什么，以及你是如何使用你选择的这些区域的。至少 {TWENTY_EXPERIENCE_NOTES_MIN_LENGTH} 个字符。"
 
 #. js-lingui-id: tqbpyT
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2517,7 +2497,7 @@ msgstr "开发团队用 Twenty 推动公司范围的*变革*"
 #. js-lingui-id: 7aDnUb
 #: src/apps-marketplace/AppDetail.tsx
 msgid "Developer"
-msgstr ""
+msgstr "开发者"
 
 #. js-lingui-id: n+SX4g
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -2539,7 +2519,7 @@ msgstr "开发者现在可以使用 webhooks，在应用之间实时同步客户
 #. js-lingui-id: C39swB
 #: src/partners-marketplace/MarketplaceBriefPrompt.tsx
 msgid "Didn't find the *right partner*?"
-msgstr ""
+msgstr "没有找到*合适的合作伙伴*？"
 
 #. js-lingui-id: ohFj56
 #: src/sections/why-twenty-editorial/editorials.data.ts
@@ -2647,42 +2627,42 @@ msgstr "荷兰语"
 #. js-lingui-id: kUOwve
 #: src/platform/routing/static-website-routes.ts
 msgid "Dynamics 365 Sales runs $105/user/month plus $40/GB database storage. See the full comparison with Twenty, from $9 per user, open source."
-msgstr ""
+msgstr "Dynamics 365 Sales 的价格为 $105/用户/月，外加 $40/GB 的数据库存储费用。查看与 Twenty 的完整对比，Twenty 从每位用户 $9 起，且为开源。"
 
 #. js-lingui-id: kqC52U
 #: src/sections/compare/compare-data.ts
 msgid "Dynamics 365 Sales, per user"
-msgstr ""
+msgstr "Dynamics 365 Sales，按用户计费"
 
 #. js-lingui-id: j95Wjb
 #: src/client-brief/client-brief-copy.ts
 msgid "e.g. ~30"
-msgstr ""
+msgstr "例如：约 30"
 
 #. js-lingui-id: Fy9UWF
 #: src/client-brief/client-brief-copy.ts
 msgid "e.g. $10k–$25k"
-msgstr ""
+msgstr "例如：$10k–$25k"
 
 #. js-lingui-id: QEIMPf
 #: src/client-brief/client-brief-copy.ts
 msgid "e.g. Before Q4, Q1 2027…"
-msgstr ""
+msgstr "例如：在 Q4 之前，2027 年 Q1…"
 
 #. js-lingui-id: MfXXHH
 #: src/client-brief/client-brief-copy.ts
 msgid "e.g. France, DACH, North America…"
-msgstr ""
+msgstr "例如：法国、DACH、北美…"
 
 #. js-lingui-id: N+DZwY
 #: src/client-brief/client-brief-copy.ts
 msgid "e.g. French, English (comma-separated)"
-msgstr ""
+msgstr "例如：法语、英语（以逗号分隔）"
 
 #. js-lingui-id: SAO19z
 #: src/client-brief/client-brief-copy.ts
 msgid "e.g. Migrate from HubSpot, set up pipelines, custom integrations…"
-msgstr ""
+msgstr "例如：从 HubSpot 迁移、设置流水线、自定义集成…"
 
 #. js-lingui-id: FJ+YsO
 #: src/partner-application/partner-application-copy.ts
@@ -2898,7 +2878,7 @@ msgstr "请输入有效的 URL（以 http:// 或 https:// 开头）。"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Enterprise"
-msgstr ""
+msgstr "Enterprise"
 
 #. js-lingui-id: 87BcPj
 #: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
@@ -2913,23 +2893,23 @@ msgstr "企业版激活 | Twenty"
 #. js-lingui-id: aDpB6R
 #: src/sections/compare/compare-data.ts
 msgid "Enterprise edition"
-msgstr ""
+msgstr "Enterprise 版本"
 
 #. js-lingui-id: YKwRCb
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "Enterprise only"
-msgstr ""
+msgstr "仅 Enterprise"
 
 #. js-lingui-id: /BbcE4
 #: src/sections/compare/compare-data.ts
 msgid "Enterprise rate cards are rarely published"
-msgstr ""
+msgstr "Enterprise 价目表很少公开发布"
 
 #. js-lingui-id: wDenrZ
 #: src/sections/compare/compare-data.ts
 msgid "Enterprise software, enterprise line items"
-msgstr ""
+msgstr "企业软件，企业级项目明细"
 
 #. js-lingui-id: 3dQ6zJ
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -2985,7 +2965,7 @@ msgstr "每条对话，都在正确的记录上。"
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Everything in Organization"
-msgstr ""
+msgstr "包含 Organization 版中的所有内容"
 
 #. js-lingui-id: kz/8m8
 #: src/sections/pricing-plans/plans-data.ts
@@ -3012,7 +2992,7 @@ msgstr "示例：{example}"
 #. placeholder {0}: i18n._(scope.examples)
 #: src/partners-marketplace/PartnerCoverageSection.tsx
 msgid "ex. {0}"
-msgstr ""
+msgstr "示例：{0}"
 
 #. js-lingui-id: 2NGXKo
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3022,7 +3002,7 @@ msgstr "新增对 30 多种语言的扩展支持，让用户可以使用自己�
 #. js-lingui-id: bKBhgb
 #: src/partner-application/partner-application-copy.ts
 msgid "Experience"
-msgstr ""
+msgstr "经验"
 
 #. js-lingui-id: 14xdUh
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3037,7 +3017,7 @@ msgstr "体验企业级的精细化权限控制，从第 11 条权限开始。"
 #. js-lingui-id: PXKAnm
 #: src/partner-application/partner-application-copy.ts
 msgid "Expertise"
-msgstr ""
+msgstr "专长"
 
 #. js-lingui-id: JTM5zS
 #: src/sections/case-study-promo/CaseStudyPromo.tsx
@@ -3047,22 +3027,22 @@ msgstr "查看客户案例"
 #. js-lingui-id: JmyCnz
 #: src/sections/compare/compare-data.ts
 msgid "Extend beyond the CRM screens"
-msgstr ""
+msgstr "扩展到 CRM 界面之外"
 
 #. js-lingui-id: qu9kGK
 #: src/platform/routing/static-website-routes.ts
 msgid "Extend Twenty with vetted apps — call recording, enrichment, Slack, Discord, Linear and more. Install any app on your open source CRM workspace in one click."
-msgstr ""
+msgstr "通过经过审核的应用扩展 Twenty——通话录音、数据增强、Slack、Discord、Linear 等等。只需一键即可在你的开源 CRM 工作区中安装任意应用。"
 
 #. js-lingui-id: ZToPid
 #: src/sections/menu/data/menu.ts
 msgid "Extend your CRM"
-msgstr ""
+msgstr "扩展你的 CRM"
 
 #. js-lingui-id: wmJ4p4
 #: src/apps-marketplace/AppsMarketplaceHeader.tsx
 msgid "Extend your CRM with apps built and maintained by Twenty. Every app here is vetted by our team — install one in a click and it's live in your workspace."
-msgstr ""
+msgstr "使用由 Twenty 构建并维护的应用扩展你的 CRM。这里的每个应用都经过我们团队的审核——一键安装，即可在你的工作区中启用。"
 
 #. js-lingui-id: weFouS
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -3072,7 +3052,7 @@ msgstr "延长加演！"
 #. js-lingui-id: D5e0U+
 #: src/sections/compare/compare-data.ts
 msgid "Extra Dataverse storage (10 GB)"
-msgstr ""
+msgstr "额外 Dataverse 存储（10 GB）"
 
 #. js-lingui-id: tX4pRm
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -3082,7 +3062,7 @@ msgstr "企业密钥激活失败。请重试。"
 #. js-lingui-id: byb/Zh
 #: src/sections/compare/CompareReceipt.tsx
 msgid "Fair play"
-msgstr ""
+msgstr "公平合理"
 
 #. js-lingui-id: akLvep
 #: src/sections/feature-cards/feature-cards.data.ts
@@ -3102,7 +3082,7 @@ msgstr "快速通往行动"
 #. js-lingui-id: /irOkZ
 #: src/sections/compare/compare-data.ts
 msgid "Faster answers when it matters"
-msgstr ""
+msgstr "关键时刻获得更快的答复"
 
 #. js-lingui-id: idFRAo
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3127,12 +3107,12 @@ msgstr "功能"
 #. js-lingui-id: en3oy5
 #: src/sections/compare/CompareCostTable.tsx
 msgid "Feature"
-msgstr ""
+msgstr "功能"
 
 #. js-lingui-id: oh8fKo
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "Feature-by-feature price checks against the CRMs you're probably comparing us with. Sources included."
-msgstr ""
+msgstr "逐项功能价格核对，对比你大概率正在评估的各个 CRM。附上来源说明。"
 
 #. js-lingui-id: 3oXVPw
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
@@ -3197,7 +3177,7 @@ msgstr "筛选器"
 #. js-lingui-id: tr2ZvJ
 #: src/apps-marketplace/AppsMarketplaceClient.tsx
 msgid "Filter apps by category"
-msgstr ""
+msgstr "按类别筛选应用"
 
 #. js-lingui-id: 1t0xRH
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3263,7 +3243,7 @@ msgstr "芬兰语"
 #. js-lingui-id: GxR+Ds
 #: src/client-brief/client-brief-copy.ts
 msgid "First name *"
-msgstr ""
+msgstr "名字 *"
 
 #. js-lingui-id: PHM5wp
 #: src/case-studies/case-study-stories.ts
@@ -3277,11 +3257,9 @@ msgstr "灵活关系"
 
 #. js-lingui-id: HBJ0P5
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"Flow\n"
+msgid "Flow\n"
 "orchestration"
-msgstr ""
-"流程\n"
+msgstr "流程\n"
 "编排"
 
 #. js-lingui-id: obrJBN
@@ -3367,7 +3345,7 @@ msgstr "法语"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "From $50k/year"
-msgstr ""
+msgstr "每年 $50k 起"
 
 #. js-lingui-id: Iuxc00
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -3386,11 +3364,9 @@ msgstr "从文档到开放 API"
 
 #. js-lingui-id: 2CtZ6T
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"From Salesforce to\n"
+msgid "From Salesforce to\n"
 "*self-hosted Twenty*"
-msgstr ""
-"从 Salesforce 到\n"
+msgstr "从 Salesforce 到\n"
 "*自托管 Twenty*"
 
 #. js-lingui-id: kl+hEJ
@@ -3416,7 +3392,7 @@ msgstr "从简单到高级"
 #. js-lingui-id: IvIKDS
 #: src/partner-application/data/partner-twenty-experience-options.ts
 msgid "Front components"
-msgstr ""
+msgstr "Front 组件"
 
 #. js-lingui-id: m1I5TY
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -3433,7 +3409,7 @@ msgstr "全面自定义"
 #. js-lingui-id: bKjaLJ
 #: src/sections/compare/compare-data.ts
 msgid "Full customization included"
-msgstr ""
+msgstr "包含全面自定义"
 
 #. js-lingui-id: YZ7Q3Z
 #: src/case-studies/case-study-catalog.ts
@@ -3443,12 +3419,12 @@ msgstr "完全所有权"
 #. js-lingui-id: vS1Nnz
 #: src/sections/compare/compare-data.ts
 msgid "Full sandbox"
-msgstr ""
+msgstr "完整沙盒环境"
 
 #. js-lingui-id: GRJp51
 #: src/sections/compare/compare-data.ts
 msgid "Full workflow automation"
-msgstr ""
+msgstr "完整的工作流自动化"
 
 #. js-lingui-id: hdxwWi
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -3497,7 +3473,7 @@ msgstr "德国 🇩🇪"
 #. js-lingui-id: b+jRGN
 #: src/partners-marketplace/MarketplaceMatchCard.tsx
 msgid "Get matched"
-msgstr ""
+msgstr "获取匹配结果"
 
 #. js-lingui-id: ZDIydz
 #: src/sections/why-twenty-signoff/WhyTwentySignoff.tsx
@@ -3517,14 +3493,14 @@ msgstr "开始使用"
 #. js-lingui-id: 7hktsm
 #: src/sections/compare/compare-data.ts
 msgid "Getting started"
-msgstr ""
+msgstr "入门"
 
 #. js-lingui-id: kyX250
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "Getting to a working CRM"
-msgstr ""
+msgstr "搭建一个可用的 CRM"
 
 #. js-lingui-id: xyKSqi
 #: src/partner-application/data/partner-country-options.ts
@@ -3700,7 +3676,7 @@ msgstr "托管与基础设施"
 #. js-lingui-id: DTlJRg
 #: src/client-brief/client-brief-copy.ts
 msgid "Hosting preference"
-msgstr ""
+msgstr "托管偏好"
 
 #. js-lingui-id: SHZNBm
 #: src/partners-marketplace/PartnerRatesPanel.tsx
@@ -3735,7 +3711,7 @@ msgstr "要开始使用需要多长时间？"
 #. js-lingui-id: FopmmJ
 #: src/sections/compare/compare-data.ts
 msgid "How long you are committed"
-msgstr ""
+msgstr "你需要被绑定多长时间"
 
 #. js-lingui-id: iRzy9e
 #: src/case-studies/case-study-stories.ts
@@ -3749,11 +3725,9 @@ msgstr "Nine Dots Ventures 如何在每天 2,000+ 条 WhatsApp 消息之上，�
 
 #. js-lingui-id: 5sWcC0
 #: src/sections/case-study-promo/CaseStudyPromo.tsx
-msgid ""
-"How teams\n"
+msgid "How teams\n"
 "*built with Twenty*"
-msgstr ""
-"团队如何\n"
+msgstr "团队如何\n"
 "*基于 Twenty 构建*"
 
 #. js-lingui-id: Z3Cabh
@@ -3769,17 +3743,17 @@ msgstr "W3villa Technologies 如何在 Twenty 上交付 W3Grads——一款面�
 #. js-lingui-id: vXtlks
 #: src/partner-application/wizard/steps/ExperienceStep.tsx
 msgid "https://"
-msgstr ""
+msgstr "https://"
 
 #. js-lingui-id: 7SUgjW
 #: src/sections/compare/compare-data.ts
 msgid "HubSpot brings a full marketing suite and a huge agency ecosystem. If you need marketing automation more than a CRM, it is a fair choice."
-msgstr ""
+msgstr "HubSpot 提供完整的营销套件和庞大的代理合作生态。如果你更需要营销自动化，而不是 CRM，那它是一个公平的选择。"
 
 #. js-lingui-id: EITYKN
 #: src/platform/routing/static-website-routes.ts
 msgid "HubSpot gates custom objects behind its $150/seat Enterprise tier. See the full price comparison, with sources, and what Twenty includes from $9 per user."
-msgstr ""
+msgstr "HubSpot 将自定义对象锁在其 $150/席位 的 Enterprise 套餐后面。查看带来源说明的完整价格对比，并了解 Twenty 从每位用户 $9 起都包含了哪些内容。"
 
 #. js-lingui-id: htrFcw
 #: src/partner-application/data/partner-country-options.ts
@@ -3805,12 +3779,12 @@ msgstr "身份信息"
 #. js-lingui-id: 6M+L8e
 #: src/sections/compare/compare-data.ts
 msgid "If your business already runs on S/4HANA, Sales Cloud speaks its language natively and handles global-enterprise compliance at serious scale."
-msgstr ""
+msgstr "如果你的业务已经运行在 S/4HANA 上，Sales Cloud 能够原生“说”这门语言，并能在大规模下处理全球企业合规性。"
 
 #. js-lingui-id: KibVrt
 #: src/sections/compare/compare-data.ts
 msgid "If your company lives in Microsoft 365 and already runs on the Power Platform, Dynamics integrates like nothing else."
-msgstr ""
+msgstr "如果你的公司高度依赖 Microsoft 365，并且已经使用 Power Platform，Dynamics 能提供无与伦比的集成体验。"
 
 #. js-lingui-id: Grur3I
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3839,7 +3813,7 @@ msgstr "实施合作伙伴"
 #. js-lingui-id: t0dRYo
 #: src/sections/compare/compare-data.ts
 msgid "Implementation project (year one, typical)"
-msgstr ""
+msgstr "实施项目（第一年，典型情况）"
 
 #. js-lingui-id: 9P1c4k
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3859,27 +3833,27 @@ msgstr "导入 V2"
 #. js-lingui-id: UZGy5o
 #: src/sections/compare/compare-data.ts
 msgid "Import your data and see your own numbers. Most teams migrate from HubSpot in under a day."
-msgstr ""
+msgstr "导入你的数据，查看你自己的数字。大多数团队在一天之内就能从 HubSpot 迁移过来。"
 
 #. js-lingui-id: Z0UUpr
 #: src/sections/compare/compare-data.ts
 msgid "Import your data and see your own numbers. No six-month implementation project required."
-msgstr ""
+msgstr "导入你的数据，查看你自己的数字。无需为此开展为期六个月的实施项目。"
 
 #. js-lingui-id: qF2Mif
 #: src/sections/compare/compare-data.ts
 msgid "Import your data and see your own numbers. Pipedrive exports map cleanly onto Twenty objects."
-msgstr ""
+msgstr "导入你的数据，查看你自己的数字。Pipedrive 的导出可以干净地映射到 Twenty 对象上。"
 
 #. js-lingui-id: AvqnMU
 #: src/sections/compare/compare-data.ts
 msgid "Import your data and see your own numbers. Twenty's importer handles Dynamics exports without a consulting project."
-msgstr ""
+msgstr "导入你的数据，查看你自己的数字。Twenty 的导入工具可以处理 Dynamics 的导出，无需咨询项目。"
 
 #. js-lingui-id: L8Hqt4
 #: src/sections/compare/compare-data.ts
 msgid "Import your data and see your own numbers. Twenty's importer handles Salesforce exports out of the box."
-msgstr ""
+msgstr "导入你的数据，查看你自己的数字。Twenty 的导入工具可以直接处理 Salesforce 的导出。"
 
 #. js-lingui-id: ZAKTS6
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -3917,7 +3891,7 @@ msgstr "已在生产环境运行。"
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "in year one"
-msgstr ""
+msgstr "在第一年"
 
 #. js-lingui-id: Sqb+jp
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -3935,18 +3909,18 @@ msgstr "收件箱"
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "Included"
-msgstr ""
+msgstr "已包含"
 
 #. js-lingui-id: Le6Tov
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "Included from Pro"
-msgstr ""
+msgstr "从 Pro 起包含"
 
 #. js-lingui-id: ZI6lOR
 #: src/sections/compare/compare-data.ts
 msgid "Included from Pro, $9/user"
-msgstr ""
+msgstr "从 Pro 起包含，每位用户 $9"
 
 #. js-lingui-id: 3XP8Lk
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -3989,17 +3963,17 @@ msgstr "无限滚动仍然“敬请期待”，但发票不会。"
 #: src/apps-marketplace/AppDetail.tsx
 #: src/apps-marketplace/AppCard.tsx
 msgid "Install"
-msgstr ""
+msgstr "安装"
 
 #. js-lingui-id: qq1x6K
 #: src/sections/menu/data/menu.ts
 msgid "Install call recording, enrichment, Slack, Linear and more — every app built and maintained by Twenty."
-msgstr ""
+msgstr "安装通话录音、数据增强、Slack、Linear 等应用——所有应用均由 Twenty 构建并维护。"
 
 #. js-lingui-id: R6HbUq
 #: src/apps-marketplace/AppDetail.tsx
 msgid "Install on Twenty"
-msgstr ""
+msgstr "在 Twenty 上安装"
 
 #. js-lingui-id: K8iwJx
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -4066,7 +4040,7 @@ msgstr "邀请角色"
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "IP allow-listing"
-msgstr ""
+msgstr "IP 允许列表"
 
 #. js-lingui-id: FtgjCv
 #: src/partner-application/data/partner-country-options.ts
@@ -4282,7 +4256,7 @@ msgstr "语言"
 #. js-lingui-id: Ofy0wQ
 #: src/client-brief/client-brief-copy.ts
 msgid "Languages needed"
-msgstr ""
+msgstr "所需语言"
 
 #. js-lingui-id: u6jooT
 #: src/partners-marketplace/PartnerReachFacts.tsx
@@ -4298,7 +4272,7 @@ msgstr "老挝 🇱🇦"
 #. js-lingui-id: 1ZaQUH
 #: src/client-brief/client-brief-copy.ts
 msgid "Last name"
-msgstr ""
+msgstr "姓氏"
 
 #. js-lingui-id: 2lrGbG
 #: src/partners-marketplace/served-geo-labels.ts
@@ -4307,11 +4281,9 @@ msgstr "拉美地区（LATAM）"
 
 #. js-lingui-id: WvrtRi
 #: src/sections/releases-hero/ReleasesHero.tsx
-msgid ""
-"Latest\n"
+msgid "Latest\n"
 "*Releases*"
-msgstr ""
-"最新\n"
+msgstr "最新\n"
 "*版本发布*"
 
 #. js-lingui-id: 7OHfcc
@@ -4333,13 +4305,13 @@ msgstr "了解如何使用 Twenty"
 #. js-lingui-id: zwWKhA
 #: src/apps-marketplace/AppCard.tsx
 msgid "Learn more"
-msgstr ""
+msgstr "了解更多"
 
 #. js-lingui-id: Pd/m1Q
 #. placeholder {0}: app.name
 #: src/apps-marketplace/AppCard.tsx
 msgid "Learn more about {0}"
-msgstr ""
+msgstr "了解有关 {0} 的更多信息"
 
 #. js-lingui-id: wB0DGn
 #: src/partner-application/data/partner-country-options.ts
@@ -4359,7 +4331,7 @@ msgstr "莱索托 🇱🇸"
 #. js-lingui-id: 4jcSf4
 #: src/partners-marketplace/MarketplaceMatchCard.tsx
 msgid "Let us *match* you"
-msgstr ""
+msgstr "让我们来*为你匹配*"
 
 #. js-lingui-id: rJargy
 #: src/partner-application/data/partner-country-options.ts
@@ -4374,7 +4346,7 @@ msgstr "利比亚 🇱🇾"
 #. js-lingui-id: 1x59Ts
 #: src/sections/compare/compare-data.ts
 msgid "License list price from the SAP Store, billed annually, checked on July 30, 2026. Implementation figures are typical partner-project ranges, not SAP list prices."
-msgstr ""
+msgstr "来自 SAP Store 的许可证标价，按年计费，查询日期为 2026 年 7 月 30 日。实施数字为典型的合作伙伴项目价格区间，而非 SAP 官方标价。"
 
 #. js-lingui-id: tHFTlp
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -4399,7 +4371,7 @@ msgstr "链接字段"
 #. js-lingui-id: YOe6r4
 #: src/partner-application/partner-application-copy.ts
 msgid "Link that shows the work (Loom, GitHub, Notion, Drive, public write-up…). No public workspace? Share a short Loom."
-msgstr ""
+msgstr "展示该工作的链接（Loom、GitHub、Notion、Drive、公开文档等）。没有公共工作区？请分享一个简短的 Loom。"
 
 #. js-lingui-id: gggTBm
 #: src/sections/footer/footer.data.ts
@@ -4426,22 +4398,22 @@ msgstr "链接"
 #. js-lingui-id: 0S9+C5
 #: src/sections/compare/compare-data.ts
 msgid "List prices from HubSpot's public pricing page, billed annually, checked on July 30, 2026."
-msgstr ""
+msgstr "来自 HubSpot 公共定价页面的标价，按年计费，查询日期为 2026 年 7 月 30 日。"
 
 #. js-lingui-id: qyZA//
 #: src/sections/compare/compare-data.ts
 msgid "List prices from Microsoft's public Dynamics 365 pricing page, billed annually, checked on July 30, 2026."
-msgstr ""
+msgstr "来自 Microsoft 公共 Dynamics 365 定价页面的标价，按年计费，查询日期为 2026 年 7 月 30 日。"
 
 #. js-lingui-id: FE0RcF
 #: src/sections/compare/compare-data.ts
 msgid "List prices from Pipedrive's public pricing page, billed annually, checked on July 30, 2026."
-msgstr ""
+msgstr "来自 Pipedrive 公共定价页面的标价，按年计费，查询日期为 2026 年 7 月 30 日。"
 
 #. js-lingui-id: 04Tzju
 #: src/sections/compare/compare-data.ts
 msgid "List prices from Salesforce's public pricing page, billed annually, checked on July 30, 2026."
-msgstr ""
+msgstr "来自 Salesforce 公共定价页面的标价，按年计费，查询日期为 2026 年 7 月 30 日。"
 
 #. js-lingui-id: 2WIZYd
 #: src/partner-application/data/partner-country-options.ts
@@ -4483,7 +4455,7 @@ msgstr "正在加载…"
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "Local environment included"
-msgstr ""
+msgstr "包含本地环境"
 
 #. js-lingui-id: 7VBQ2j
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -4516,7 +4488,7 @@ msgstr "降低 CRM 成本"
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "LTS releases"
-msgstr ""
+msgstr "LTS 版本"
 
 #. js-lingui-id: J13skq
 #: src/partner-application/data/partner-country-options.ts
@@ -4576,7 +4548,7 @@ msgstr "管理咨询"
 #. js-lingui-id: jBpOB9
 #: src/sections/compare/compare-data.ts
 msgid "Mandatory onboarding (one-time)"
-msgstr ""
+msgstr "强制入门培训（一次性）"
 
 #. js-lingui-id: TMZPkv
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4682,7 +4654,7 @@ msgstr "Microsoft o365 集成"
 #. js-lingui-id: z1ceJ1
 #: src/sections/compare/compare-data.ts
 msgid "Middleware licensed separately"
-msgstr ""
+msgstr "中间件单独授权"
 
 #. js-lingui-id: so04x6
 #: src/case-studies/case-study-stories.ts
@@ -4702,7 +4674,7 @@ msgstr "最小化"
 #. js-lingui-id: SocJIs
 #: src/sections/compare/compare-data.ts
 msgid "Minimum 10 users"
-msgstr ""
+msgstr "至少 10 个用户"
 
 #. js-lingui-id: 5IvRfo
 #: src/partner-application/partner-application-copy.ts
@@ -4712,7 +4684,7 @@ msgstr "最低项目预算 *"
 #. js-lingui-id: 87xybU
 #: src/sections/compare/compare-data.ts
 msgid "Model deals, assets, or anything else"
-msgstr ""
+msgstr "为交易、资产或任何其他内容建模"
 
 #. js-lingui-id: 179i38
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4747,7 +4719,7 @@ msgstr "按月"
 #. js-lingui-id: Ggmdbf
 #: src/sections/compare/compare-data.ts
 msgid "Monthly or yearly, cancel anytime"
-msgstr ""
+msgstr "按月或按年计费，随时可取消"
 
 #. js-lingui-id: paxFAm
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4807,7 +4779,7 @@ msgstr "多工作区"
 #. js-lingui-id: NZn+Fh
 #: src/client-brief/client-brief-copy.ts
 msgid "Must-haves, integrations, compliance, languages…"
-msgstr ""
+msgstr "必备条件、集成、合规、语言等…"
 
 #. js-lingui-id: QGWbbv
 #: src/partner-application/data/partner-country-options.ts
@@ -4923,7 +4895,7 @@ msgstr "新西兰 🇳🇿"
 #. js-lingui-id: hXzOVo
 #: src/partners-marketplace/CaseStudyModal.tsx
 msgid "Next"
-msgstr ""
+msgstr "下一步"
 
 #. js-lingui-id: GY6uSc
 #: src/partner-application/partner-application-copy.ts
@@ -4979,7 +4951,7 @@ msgstr "否"
 #. js-lingui-id: UVo4Xv
 #: src/apps-marketplace/AppsMarketplaceClient.tsx
 msgid "No apps are available right now. Check back soon."
-msgstr ""
+msgstr "目前暂无可用应用。请稍后再来查看。"
 
 #. js-lingui-id: 6tRXQ4
 #: src/partner-application/partner-application-copy.ts
@@ -5018,15 +4990,15 @@ msgstr "不会。直接在 Settings 中构建自定义对象、字段、视图�
 
 #. js-lingui-id: 4yg7QV
 #: src/sections/compare/compare-data.ts
-msgid ""
-"Nobody buys Dynamics, they license it.\n"
+msgid "Nobody buys Dynamics, they license it.\n"
 "Here is what it costs once storage and add-ons land."
-msgstr ""
+msgstr "没有人“购买” Dynamics，只是获取其授权。\n"
+"这是假如把存储和附加组件都算上的全部成本。"
 
 #. js-lingui-id: EVSOLf
 #: src/sections/compare/compare-data.ts
 msgid "None, start in minutes"
-msgstr ""
+msgstr "无需实施，几分钟即可上手"
 
 #. js-lingui-id: 096JXI
 #: src/partner-application/data/partner-country-options.ts
@@ -5051,7 +5023,7 @@ msgstr "挪威语"
 #. js-lingui-id: OJx3wK
 #: src/sections/compare/compare-data.ts
 msgid "Not available"
-msgstr ""
+msgstr "不可用"
 
 #. js-lingui-id: 1DBGsz
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
@@ -5106,17 +5078,17 @@ msgstr "基于单一 CRM"
 #. js-lingui-id: vSdM7d
 #: src/sections/compare/compare-data.ts
 msgid "On Dynamics 365"
-msgstr ""
+msgstr "在 Dynamics 365 上"
 
 #. js-lingui-id: yHWa5D
 #: src/sections/compare/compare-data.ts
 msgid "On HubSpot"
-msgstr ""
+msgstr "在 HubSpot 上"
 
 #. js-lingui-id: VtKbQl
 #: src/sections/compare/compare-data.ts
 msgid "On Pipedrive"
-msgstr ""
+msgstr "在 Pipedrive 上"
 
 #. js-lingui-id: w5ATz2
 #: src/platform/releases/ReleaseNotes.tsx
@@ -5126,12 +5098,12 @@ msgstr "在记录页面上，你现在可以展开关系卡片来查看其字段
 #. js-lingui-id: Mkx+rq
 #: src/sections/compare/compare-data.ts
 msgid "On Salesforce"
-msgstr ""
+msgstr "在 Salesforce 上"
 
 #. js-lingui-id: 8/DhTc
 #: src/sections/compare/compare-data.ts
 msgid "On SAP"
-msgstr ""
+msgstr "在 SAP 上"
 
 #. js-lingui-id: XhXmzW
 #: src/sections/case-study-detail/CaseStudyArticleNav.tsx
@@ -5141,12 +5113,12 @@ msgstr "本页内容"
 #. js-lingui-id: EnS09a
 #: src/sections/compare/CompareCostTable.tsx
 msgid "On Twenty"
-msgstr ""
+msgstr "在 Twenty 上"
 
 #. js-lingui-id: gukxZ5
 #: src/sections/compare/compare-data.ts
 msgid "Onboarding"
-msgstr ""
+msgstr "引导上手"
 
 #. js-lingui-id: jxC7HY
 #: src/partners-marketplace/data/partner-scope-options.ts
@@ -5172,7 +5144,7 @@ msgstr "一个 API 统领全局"
 #. js-lingui-id: tjXWxA
 #: src/sections/compare/compare-data.ts
 msgid "One-time mandatory onboarding fee"
-msgstr ""
+msgstr "一次性强制入门费用"
 
 #. js-lingui-id: pShqss
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -5183,7 +5155,7 @@ msgstr "SSO 只要 5 美元。几乎就是慈善项目。"
 #. placeholder {0}: caseStudy.title
 #: src/partners-marketplace/PartnerSelectedWork.tsx
 msgid "Open case study: {0}"
-msgstr ""
+msgstr "打开案例研究：{0}"
 
 #. js-lingui-id: GSr0rF
 #: src/sections/menu/Menu.tsx
@@ -5230,7 +5202,7 @@ msgstr "组织"
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "Organization, $19/user"
-msgstr ""
+msgstr "Organization，$19/用户"
 
 #. js-lingui-id: /IX/7x
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
@@ -5250,12 +5222,12 @@ msgstr "我们简化了初始引导流程，让你可以无缝导入日历和电
 #. js-lingui-id: V+7KMm
 #: src/partner-application/partner-application-copy.ts
 msgid "Our team reviews every application and will reach out if there's a fit."
-msgstr ""
+msgstr "我们的团队会审核每份申请，如果匹配合适，我们会与您联系。"
 
 #. js-lingui-id: XR9aQ6
 #: src/client-brief/client-brief-copy.ts
 msgid "Our team will review your project and follow up by email. You won't hear from partners until we've matched you."
-msgstr ""
+msgstr "我们的团队会审核你的项目，并通过电子邮件进行跟进。在我们为你匹配好合作伙伴之前，你不会接到合作伙伴的联系。"
 
 #. js-lingui-id: dKGg8T
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -5286,7 +5258,7 @@ msgstr "对你自有技术栈的掌控始终莫名其妙地处于缺货状态。
 #. js-lingui-id: mGYa19
 #: src/apps-marketplace/AppDetail.tsx
 msgid "Package"
-msgstr ""
+msgstr "软件包"
 
 #. js-lingui-id: h/oMMb
 #: src/platform/routing/static-website-routes.ts
@@ -5341,7 +5313,7 @@ msgstr "合作伙伴信息与联系方式"
 #. js-lingui-id: UbWqbA
 #: src/partners-marketplace/MarketplaceMatchCard.tsx
 msgid "Partner matching"
-msgstr ""
+msgstr "合作伙伴匹配"
 
 #. js-lingui-id: 4RPECg
 #: src/app/[locale]/(site)/partners/profile/[slug]/page.tsx
@@ -5383,12 +5355,12 @@ msgstr "人员"
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "per year"
-msgstr ""
+msgstr "每年"
 
 #. js-lingui-id: iCviv4
 #: src/sections/compare/compare-data.ts
 msgid "per year with SSO"
-msgstr ""
+msgstr "每年，包含 SSO"
 
 #. js-lingui-id: TMErUt
 #: src/platform/releases/ReleaseNotes.tsx
@@ -5438,12 +5410,12 @@ msgstr "选择你的模型，构建能够撰写电子邮件或在工作流中丰
 #. js-lingui-id: j3vw0M
 #: src/platform/routing/static-website-routes.ts
 msgid "Pipedrive caps automations per company and keeps SSO for its top tier. Compare real per-seat costs with Twenty, from $9 per user with no caps."
-msgstr ""
+msgstr "Pipedrive 按公司限制自动化数量，并将 SSO 只提供给其最高等级套餐。对比一下真实的每席位成本，与 Twenty 从每位用户 $9 起且无上限的定价。"
 
 #. js-lingui-id: SxlMNM
 #: src/sections/compare/compare-data.ts
 msgid "Pipedrive's pipeline UX is famously simple, and its entry tier is genuinely affordable for very small teams."
-msgstr ""
+msgstr "Pipedrive 以极其简洁的 pipeline 体验著称，其入门套餐对非常小的团队来说也确实负担得起。"
 
 #. js-lingui-id: FFkjaT
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -5453,7 +5425,7 @@ msgstr "销售漏斗管理"
 #. js-lingui-id: 9TW54K
 #: src/sections/compare/compare-data.ts
 msgid "Pipeline, contacts, email sync"
-msgstr ""
+msgstr "销售管道、联系人、邮件同步"
 
 #. js-lingui-id: gzkkC3
 #: src/platform/routing/static-website-routes.ts
@@ -5469,7 +5441,7 @@ msgstr "在继续之前，请填写所有必填字段。"
 #. js-lingui-id: LjJ5i7
 #: src/partner-application/partner-application-copy.ts
 msgid "Please write at least {TWENTY_EXPERIENCE_NOTES_MIN_LENGTH} characters about the implementation."
-msgstr ""
+msgstr "请至少撰写 {TWENTY_EXPERIENCE_NOTES_MIN_LENGTH} 个字符，介绍该实现。"
 
 #. js-lingui-id: P04j61
 #: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
@@ -5505,17 +5477,17 @@ msgstr "葡萄牙语"
 #. js-lingui-id: fck69e
 #: src/sections/compare/compare-data.ts
 msgid "Premier support"
-msgstr ""
+msgstr "高级支持"
 
 #. js-lingui-id: 7F0cbd
 #: src/sections/compare/compare-data.ts
 msgid "Premier support (+30%)"
-msgstr ""
+msgstr "高级支持（+30%）"
 
 #. js-lingui-id: zoJUYX
 #: src/sections/compare/compare-data.ts
 msgid "Premium plan, billed annually"
-msgstr ""
+msgstr "Premium 套餐，按年计费"
 
 #. js-lingui-id: O1WMgS
 #: src/sections/product-feature/TasksVisual/data/tasks.ts
@@ -5525,7 +5497,7 @@ msgstr "准备入职演示文档"
 #. js-lingui-id: DHhJ7s
 #: src/partners-marketplace/CaseStudyModal.tsx
 msgid "Previous"
-msgstr ""
+msgstr "上一个"
 
 #. js-lingui-id: LZoO8F
 #: src/sections/testimonials/TestimonialsCarousel.tsx
@@ -5541,7 +5513,7 @@ msgstr "价格"
 #. js-lingui-id: AMgXfs
 #: src/sections/compare/compare-data.ts
 msgid "Price transparency"
-msgstr ""
+msgstr "价格透明度"
 
 #. js-lingui-id: aHCEmh
 #: src/sections/menu/data/menu.ts
@@ -5575,7 +5547,7 @@ msgstr "优先级支持"
 #. js-lingui-id: 2A0117
 #: src/sections/compare/compare-data.ts
 msgid "Priority support on Organization"
-msgstr ""
+msgstr "Organization 版本上的优先级支持"
 
 #. js-lingui-id: LcET2C
 #: src/sections/footer/footer.data.ts
@@ -5600,7 +5572,7 @@ msgstr "专业版"
 #: src/sections/menu/data/menu.ts
 #: src/sections/footer/footer.data.ts
 msgid "Product"
-msgstr ""
+msgstr "产品"
 
 #. js-lingui-id: kIGKva
 #: src/sections/three-cards/three-cards.data.ts
@@ -5611,7 +5583,7 @@ msgstr "生产级质量"
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "Professional tier and up"
-msgstr ""
+msgstr "Professional 套餐及以上"
 
 #. js-lingui-id: vERlcd
 #: src/partner-application/partner-application-copy.ts
@@ -5631,12 +5603,12 @@ msgstr "项目最低预算"
 #. js-lingui-id: fBaMOU
 #: src/sections/compare/compare-data.ts
 msgid "Project-based"
-msgstr ""
+msgstr "按项目计费"
 
 #. js-lingui-id: wwBgHX
 #: src/partner-application/partner-application-copy.ts
 msgid "Proof URL *"
-msgstr ""
+msgstr "证明 URL *"
 
 #. js-lingui-id: qcybNQ
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
@@ -5661,7 +5633,7 @@ msgstr "专有语言、缓慢的部署周期，以及“黑盒”逻辑。"
 #. js-lingui-id: PWlva/
 #: src/sections/compare/compare-data.ts
 msgid "Public pricing, this page included"
-msgstr ""
+msgstr "公开定价，包括本页面"
 
 #. js-lingui-id: u9RZ7+
 #: src/partners-marketplace/spoken-language-labels.ts
@@ -5686,7 +5658,7 @@ msgstr "快速识别是谁创建了某条记录，以及创建来源，是通过
 #. js-lingui-id: t7dB3i
 #: src/sections/compare/compare-data.ts
 msgid "Quote-based"
-msgstr ""
+msgstr "按报价定价"
 
 #. js-lingui-id: 3XOwjg
 #: src/partners-marketplace/PartnerRatesPanel.tsx
@@ -5706,7 +5678,7 @@ msgstr "联系"
 #. js-lingui-id: IUmx6x
 #: src/partners-marketplace/PartnerSelectedWork.tsx
 msgid "Read case study"
-msgstr ""
+msgstr "阅读案例研究"
 
 #. js-lingui-id: gSQVmr
 #: src/sections/helped/HelpedCard.tsx
@@ -5789,7 +5761,7 @@ msgstr "区域"
 #. js-lingui-id: Mjbud+
 #: src/partners-marketplace/PartnerReachFacts.tsx
 msgid "Regions served"
-msgstr ""
+msgstr "服务地区"
 
 #. js-lingui-id: h9AYFD
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
@@ -5846,12 +5818,12 @@ msgstr "报表与仪表盘"
 #. js-lingui-id: 0NRPk+
 #: src/sections/compare/compare-data.ts
 msgid "Required onboarding on paid tiers"
-msgstr ""
+msgstr "付费套餐需强制入门培训"
 
 #. js-lingui-id: 4XUnqY
 #: src/client-brief/client-brief-copy.ts
 msgid "Requirements or constraints"
-msgstr ""
+msgstr "需求或限制条件"
 
 #. js-lingui-id: TD9BOQ
 #: src/app-preview/terminal/TerminalSendButton.tsx
@@ -5881,7 +5853,7 @@ msgstr "REST 与 GraphQL API"
 #. js-lingui-id: 7B+bTC
 #: src/sections/compare/compare-data.ts
 msgid "REST & GraphQL APIs included"
-msgstr ""
+msgstr "包含 REST 与 GraphQL API"
 
 #. js-lingui-id: kx0s+n
 #: src/case-studies/case-study-stories.ts
@@ -5942,7 +5914,7 @@ msgstr "路线图"
 #. js-lingui-id: Yb8S4J
 #: src/sections/compare/compare-data.ts
 msgid "Roles from Pro, row-level on Organization"
-msgstr ""
+msgstr "从 Pro 起提供角色管理，在 Organization 上提供行级权限"
 
 #. js-lingui-id: mLp5AP
 #: src/partner-application/data/partner-country-options.ts
@@ -5964,7 +5936,7 @@ msgstr "行级权限"
 #. js-lingui-id: GGlqFE
 #: src/sections/compare/ComparePage.tsx
 msgid "Run the comparison on your own data"
-msgstr ""
+msgstr "用你自己的数据进行对比"
 
 #. js-lingui-id: mRpuWW
 #: src/case-studies/case-study-stories.ts
@@ -6005,27 +5977,27 @@ msgstr "圣文森特 🇻🇨"
 #. js-lingui-id: SYZcC7
 #: src/platform/routing/static-website-routes.ts
 msgid "Sales Cloud Enterprise lists at $175/user/month before support, sandboxes, and AI add-ons. Compare the real cost with Twenty, from $9 per user."
-msgstr ""
+msgstr "Sales Cloud Enterprise 的标价为 $175/用户/月，这还不包括支持、沙盒和 AI 附加组件。将真实成本与 Twenty 对比，Twenty 从每位用户 $9 起。"
 
 #. js-lingui-id: KfBfN6
 #: src/sections/compare/compare-data.ts
 msgid "Sales Cloud V2, per user"
-msgstr ""
+msgstr "Sales Cloud V2，按用户计费"
 
 #. js-lingui-id: 7BhLgO
 #: src/sections/compare/compare-data.ts
 msgid "Sales Cloud, per user"
-msgstr ""
+msgstr "Sales Cloud，按用户计费"
 
 #. js-lingui-id: i5I6i7
 #: src/sections/compare/compare-data.ts
 msgid "Sales Enterprise edition"
-msgstr ""
+msgstr "Sales Enterprise 版本"
 
 #. js-lingui-id: r48akk
 #: src/sections/compare/compare-data.ts
 msgid "Sales Hub Enterprise only"
-msgstr ""
+msgstr "仅限 Sales Hub Enterprise"
 
 #. js-lingui-id: DdLxT3
 #: src/sections/product-feature/DashboardVisual/DashboardVisual.tsx
@@ -6035,7 +6007,7 @@ msgstr "销售业绩"
 #. js-lingui-id: LhkSn9
 #: src/sections/compare/compare-data.ts
 msgid "Sales Premium with AI insights"
-msgstr ""
+msgstr "带 AI 洞察的 Sales Premium"
 
 #. js-lingui-id: Burn4/
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -6060,7 +6032,7 @@ msgstr "Salesforce 迁移"
 #. js-lingui-id: wYxlN+
 #: src/sections/compare/compare-data.ts
 msgid "Salesforce remains the deepest enterprise platform, with an ecosystem for almost everything. At a thousand seats with a dedicated admin team, it is a different conversation."
-msgstr ""
+msgstr "Salesforce 仍然是最深度的企业平台之一，其生态几乎覆盖一切需求。对于拥有上千席位且配有专职管理团队的组织，这是另一种层面的讨论。"
 
 #. js-lingui-id: CADlRK
 #: src/sections/why-twenty-marquee/WhyTwentyMarquee.tsx
@@ -6080,12 +6052,12 @@ msgstr "同样的结果"
 #. js-lingui-id: YEOVrT
 #: src/sections/compare/compare-data.ts
 msgid "SAML SSO"
-msgstr ""
+msgstr "SAML SSO"
 
 #. js-lingui-id: XgVUuP
 #: src/sections/compare/compare-data.ts
 msgid "SAML SSO & security rules"
-msgstr ""
+msgstr "SAML SSO 与安全规则"
 
 #. js-lingui-id: w9QWxz
 #: src/sections/pricing-plans/plans-data.ts
@@ -6106,7 +6078,7 @@ msgstr "圣马力诺 🇸🇲"
 #. js-lingui-id: wKLtPM
 #: src/sections/compare/compare-data.ts
 msgid "Sandboxes"
-msgstr ""
+msgstr "沙盒环境"
 
 #. js-lingui-id: KDcBQd
 #: src/partner-application/data/partner-country-options.ts
@@ -6116,12 +6088,12 @@ msgstr "圣多美和普林西比 🇸🇹"
 #. js-lingui-id: Tme4Lo
 #: src/platform/routing/static-website-routes.ts
 msgid "SAP Sales Cloud lists at $134/user/month before a year-one implementation project that often exceeds the licenses. Compare with Twenty, from $9 per user."
-msgstr ""
+msgstr "SAP Sales Cloud 的标价为 $134/用户/月，而第一年的实施项目费用往往超过许可证本身。对比 Twenty 的价格，Twenty 从每位用户 $9 起。"
 
 #. js-lingui-id: jv/Hsj
 #: src/sections/compare/compare-data.ts
 msgid "SAP Store list price"
-msgstr ""
+msgstr "SAP Store 标价"
 
 #. js-lingui-id: /BK0Nl
 #: src/partner-application/data/partner-country-options.ts
@@ -6163,7 +6135,7 @@ msgstr "安排安全审查"
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "SCIM provisioning"
-msgstr ""
+msgstr "SCIM 开通与回收"
 
 #. js-lingui-id: cOh+MI
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
@@ -6198,15 +6170,13 @@ msgstr "安全性"
 #. js-lingui-id: sioPk8
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Security review & DPA"
-msgstr ""
+msgstr "安全审查与 DPA"
 
 #. js-lingui-id: nmVU/t
 #: src/sections/customers-hero/CustomersHero.tsx
-msgid ""
-"See how teams\n"
+msgid "See how teams\n"
 "build *on Twenty*"
-msgstr ""
-"看看各团队如何\n"
+msgstr "看看各团队如何\n"
 "在 *Twenty 之上构建*"
 
 #. js-lingui-id: aB+XpI
@@ -6217,7 +6187,7 @@ msgstr "查看更多功能"
 #. js-lingui-id: 8Zhz04
 #: src/sections/compare/ComparePage.tsx
 msgid "See Twenty pricing"
-msgstr ""
+msgstr "查看 Twenty 定价"
 
 #. js-lingui-id: JDp1bg
 #: src/sections/three-cards/product-three-cards-data.ts
@@ -6244,7 +6214,7 @@ msgstr "全选"
 #. js-lingui-id: /a1JwJ
 #: src/partner-application/partner-application-copy.ts
 msgid "Select every area you used in a real project — not what you offer, what you actually did."
-msgstr ""
+msgstr "请选择你在真实项目中使用过的所有领域——不是你能提供的，而是你实际做过的。"
 
 #. js-lingui-id: 6p/m5q
 #: src/partner-application/partner-application-copy.ts
@@ -6315,7 +6285,7 @@ msgstr "自助式初始引导"
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "Self-serve, partners optional"
-msgstr ""
+msgstr "自助式使用，可选合作伙伴服务"
 
 #. js-lingui-id: NaHz2o
 #: src/sections/pricing-plans/SelfHostToggle.tsx
@@ -6350,7 +6320,7 @@ msgstr "塞内加尔 🇸🇳"
 #. js-lingui-id: u2ouFU
 #: src/sections/compare/compare-data.ts
 msgid "Separate Power Apps licensing"
-msgstr ""
+msgstr "单独授权 Power Apps"
 
 #. js-lingui-id: eEJlq0
 #: src/partner-application/data/partner-country-options.ts
@@ -6360,7 +6330,7 @@ msgstr "塞尔维亚 🇷🇸"
 #. js-lingui-id: MILoeL
 #: src/partners-marketplace/PartnerServices.tsx
 msgid "Services"
-msgstr ""
+msgstr "服务"
 
 #. js-lingui-id: 62gxWx
 #: src/partner-application/data/partner-country-options.ts
@@ -6370,22 +6340,22 @@ msgstr "塞舌尔 🇸🇨"
 #. js-lingui-id: G8/iGo
 #: src/sections/compare/compare-data.ts
 msgid "Shape records to your business"
-msgstr ""
+msgstr "按你的业务塑造记录模型"
 
 #. js-lingui-id: XawGZE
 #: src/client-brief/client-brief-copy.ts
 msgid "Share your CRM project brief and our team will match you with a certified Twenty partner."
-msgstr ""
+msgstr "分享你的 CRM 项目概要，我们的团队会为你匹配经过认证的 Twenty 合作伙伴。"
 
 #. js-lingui-id: /beeoq
 #: src/partners-marketplace/MarketplaceMatchCard.tsx
 msgid "Share your project in a few minutes. We pair you with a certified partner who fits."
-msgstr ""
+msgstr "花几分钟分享你的项目。我们会为你匹配合适的认证合作伙伴。"
 
 #. js-lingui-id: NTNL31
 #: src/sections/compare/compare-data.ts
 msgid "Shared limit below Ultimate"
-msgstr ""
+msgstr "在 Ultimate 以下为共享上限"
 
 #. js-lingui-id: 3VFzsh
 #: src/sections/helped/helped.data.ts
@@ -6429,11 +6399,9 @@ msgstr "在一分钟内注册 Cloud 并开始你的 30 天试用。对于更大�
 
 #. js-lingui-id: qTFDyz
 #: src/sections/pricing-plans/PricingIntro.tsx
-msgid ""
-"Simple\n"
+msgid "Simple\n"
 "*Pricing*"
-msgstr ""
-"简单\n"
+msgstr "简单\n"
 "*定价*"
 
 #. js-lingui-id: 0eG5g+
@@ -6444,18 +6412,18 @@ msgstr "新加坡 🇸🇬"
 #. js-lingui-id: NezR4F
 #: src/sections/compare/compare-data.ts
 msgid "Single sign-on for your team"
-msgstr ""
+msgstr "为你的团队提供单点登录"
 
 #. js-lingui-id: 2yVNbv
 #: src/sections/compare/compare-data.ts
 msgid "Single sign-on, access policies"
-msgstr ""
+msgstr "单点登录与访问策略"
 
 #. js-lingui-id: +L2uYJ
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Single-tenant isolation"
-msgstr ""
+msgstr "单租户隔离"
 
 #. js-lingui-id: V9dFwD
 #: src/sections/footer/footer.data.ts
@@ -6475,7 +6443,7 @@ msgstr "技能"
 #. js-lingui-id: hnlGzG
 #: src/client-brief/client-brief-copy.ts
 msgid "Skip for now"
-msgstr ""
+msgstr "暂时跳过"
 
 #. js-lingui-id: t6ComU
 #: src/sections/feature-cards/FeatureCards.tsx
@@ -6551,7 +6519,7 @@ msgstr "部分队友的更改现在会立刻显示，让协作更快速、更实
 #. js-lingui-id: tiFPjk
 #: src/sections/compare/CompareCostTable.tsx
 msgid "source"
-msgstr ""
+msgstr "来源"
 
 #. js-lingui-id: B/mYo/
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -6587,7 +6555,7 @@ msgstr "西班牙语"
 #. js-lingui-id: UQ7amu
 #: src/sections/compare/CompareCostTable.tsx
 msgid "Spotted an inaccuracy? Tell us and we will fix it."
-msgstr ""
+msgstr "发现有不准确的地方？请告诉我们，我们会立即修正。"
 
 #. js-lingui-id: 00jcbn
 #: src/partner-application/data/partner-country-options.ts
@@ -6603,12 +6571,12 @@ msgstr "SSO"
 #. js-lingui-id: WCsEjz
 #: src/sections/compare/compare-data.ts
 msgid "SSO & row-level permissions"
-msgstr ""
+msgstr "SSO 与行级权限"
 
 #. js-lingui-id: YdnFzT
 #: src/sections/compare/compare-data.ts
 msgid "SSO & security rules: move to Ultimate"
-msgstr ""
+msgstr "SSO 与安全规则：需升级到 Ultimate"
 
 #. js-lingui-id: uQl22y
 #: src/sections/pricing-plans/plans-data.ts
@@ -6638,11 +6606,9 @@ msgstr "从今天起*更快行动。*"
 
 #. js-lingui-id: sBOFB0
 #: src/sections/pricing-plans/PricingIntro.tsx
-msgid ""
-"Start your free trial today\n"
+msgid "Start your free trial today\n"
 "without credit card."
-msgstr ""
-"今天就开始你的免费试用，\n"
+msgstr "今天就开始你的免费试用，\n"
 "无需信用卡。"
 
 #. js-lingui-id: ThcPyu
@@ -6685,7 +6651,7 @@ msgstr "停止工作流按钮"
 #. js-lingui-id: BrrIs8
 #: src/sections/compare/compare-data.ts
 msgid "Storage"
-msgstr ""
+msgstr "存储"
 
 #. js-lingui-id: 3QIOGT
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6706,17 +6672,17 @@ msgstr "子域名（yourco.twenty.com）"
 #: src/partners-marketplace/PartnerProfileCtas.tsx
 #: src/partners-marketplace/MarketplaceBriefPrompt.tsx
 msgid "Submit a brief"
-msgstr ""
+msgstr "提交概要"
 
 #. js-lingui-id: 1LJhtF
 #: src/platform/routing/static-website-routes.ts
 msgid "Submit a Client Brief — Twenty Partners"
-msgstr ""
+msgstr "提交客户概要 — Twenty 合作伙伴"
 
 #. js-lingui-id: Tp3Gi6
 #: src/platform/routing/static-website-routes.ts
 msgid "Submit a project brief and get matched with a certified Twenty partner for migration, customisation, and CRM implementation."
-msgstr ""
+msgstr "提交项目概要，并为迁移、自定义和 CRM 实施匹配经过认证的 Twenty 合作伙伴。"
 
 #. js-lingui-id: H5/rZQ
 #: src/partner-application/partner-application-copy.ts
@@ -6726,7 +6692,7 @@ msgstr "提交申请"
 #. js-lingui-id: 7mJ+Cm
 #: src/client-brief/client-brief-copy.ts
 msgid "Submit brief"
-msgstr ""
+msgstr "提交概要"
 
 #. js-lingui-id: MDqQmP
 #: src/partner-application/partner-application-copy.ts
@@ -6737,7 +6703,7 @@ msgstr "正在提交…"
 #. js-lingui-id: bA73Yb
 #: src/sections/compare/compare-data.ts
 msgid "Success plan uplift"
-msgstr ""
+msgstr "成功计划加价"
 
 #. js-lingui-id: 8Z1557
 #: src/partner-application/data/partner-country-options.ts
@@ -6820,7 +6786,7 @@ msgstr "通过全新的“停止工作流”按钮，掌控正在运行的工作
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Talk to sales"
-msgstr ""
+msgstr "联系销售团队"
 
 #. js-lingui-id: JAKtcG
 #: src/sections/product-signoff/ProductSignoff.tsx
@@ -6857,7 +6823,7 @@ msgstr "任务与活动"
 #. js-lingui-id: ERpQwB
 #: src/client-brief/client-brief-copy.ts
 msgid "Team size / seats"
-msgstr ""
+msgstr "团队规模 / 席位数"
 
 #. js-lingui-id: Ye3KKA
 #: src/sections/menu/data/menu.ts
@@ -6867,7 +6833,7 @@ msgstr "与 Twenty 专家组队合作"
 #. js-lingui-id: 1TcKFc
 #: src/sections/compare/compare-data.ts
 msgid "Teams & permission sets"
-msgstr ""
+msgstr "团队与权限集"
 
 #. js-lingui-id: vsdUaL
 #: src/sections/releases-hero/ReleasesHero.tsx
@@ -6883,24 +6849,24 @@ msgstr "技术技能"
 #. js-lingui-id: JOu8tZ
 #: src/partner-application/partner-application-copy.ts
 msgid "Tell us about the implementation *"
-msgstr ""
+msgstr "请向我们介绍该实现 *"
 
 #. js-lingui-id: 5N30dV
 #: src/client-brief/client-brief-copy.ts
 msgid "Tell us more"
-msgstr ""
+msgstr "告诉我们更多信息"
 
 #. js-lingui-id: YXuDx1
 #: src/client-brief/client-brief-copy.ts
-msgid ""
-"Tell us what you need\n"
+msgid "Tell us what you need\n"
 "*We'll find the right partner*"
-msgstr ""
+msgstr "告诉我们你的需求\n"
+"*我们会为你找到合适的合作伙伴*"
 
 #. js-lingui-id: kjnQvE
 #: src/partners-marketplace/MarketplaceBriefPrompt.tsx
 msgid "Tell us what you need and we'll match you with a certified Twenty partner."
-msgstr ""
+msgstr "告诉我们你的需求，我们会为你匹配经过认证的 Twenty 合作伙伴。"
 
 #. js-lingui-id: Hevu8X
 #: src/app-preview/terminal/TerminalToggle.tsx
@@ -6925,7 +6891,7 @@ msgstr "服务条款 | Twenty"
 #. js-lingui-id: WHDrjh
 #: src/sections/compare/compare-data.ts
 msgid "Test changes before production"
-msgstr ""
+msgstr "在生产环境之前测试变更"
 
 #. js-lingui-id: VUZDlr
 #: src/sections/testimonials/TestimonialsCarousel.tsx
@@ -6945,12 +6911,12 @@ msgstr "泰国 🇹🇭"
 #. js-lingui-id: hXU+R1
 #: src/client-brief/client-brief-copy.ts
 msgid "Thanks — we received your brief."
-msgstr ""
+msgstr "谢谢——我们已收到你的概要。"
 
 #. js-lingui-id: 0ClTlj
 #: src/partner-application/partner-application-copy.ts
 msgid "Thanks for applying."
-msgstr ""
+msgstr "感谢你的申请。"
 
 #. js-lingui-id: FjkPYg
 #: src/case-studies/case-study-stories.ts
@@ -6981,7 +6947,7 @@ msgstr "<0>多选字段</0>允许使用多个属性为一条记录打标签，�
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "The AI edition"
-msgstr ""
+msgstr "AI 版本"
 
 #. js-lingui-id: 6wVgAW
 #: src/case-studies/case-study-stories.ts
@@ -6996,7 +6962,7 @@ msgstr "这笔赌注正在得到回报"
 #. js-lingui-id: xEGzLl
 #: src/sections/compare/ComparePage.tsx
 msgid "The bill, side by side"
-msgstr ""
+msgstr "账单，一目了然对比"
 
 #. js-lingui-id: Wie492
 #: src/case-studies/case-study-stories.ts
@@ -7012,7 +6978,7 @@ msgstr "CEO 多年来一直抗拒引入 CRM。业务拓展团队也没有使用 
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "The CRM"
-msgstr ""
+msgstr "该 CRM"
 
 #. js-lingui-id: EYi+kT
 #: src/case-studies/case-study-stories.ts
@@ -7028,7 +6994,7 @@ msgstr "作为控制枢纽的 CRM"
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "The CRM itself"
-msgstr ""
+msgstr "CRM 本身"
 
 #. js-lingui-id: XlFsoH
 #: src/case-studies/case-study-stories.ts
@@ -7078,27 +7044,27 @@ msgstr "关键决策是不从零开始构建一切。Twenty 覆盖了数据模�
 
 #. js-lingui-id: aa8o1y
 #: src/sections/compare/compare-data.ts
-msgid ""
-"The license is the cheap part.\n"
+msgid "The license is the cheap part.\n"
 "Here is what SAP Sales Cloud costs by the time it goes live."
-msgstr ""
+msgstr "许可证只是较小的一部分成本。\n"
+"这是 SAP Sales Cloud 在真正上线时的总成本。"
 
 #. js-lingui-id: gav9Hl
 #: src/sections/compare/compare-data.ts
 msgid "The licensing maze, priced"
-msgstr ""
+msgstr "授权迷宫，价格一览"
 
 #. js-lingui-id: 4cYuXe
 #: src/sections/compare/compare-data.ts
 msgid "The line items add up"
-msgstr ""
+msgstr "项目明细逐项累加起来"
 
 #. js-lingui-id: DIMXNH
 #: src/sections/compare/compare-data.ts
-msgid ""
-"The list price is only the beginning.\n"
+msgid "The list price is only the beginning.\n"
 "Here is what the invoice looks like once a real team is on it."
-msgstr ""
+msgstr "标价只是开始。\n"
+"当一支真实团队在使用时，发票看起来会是这样。"
 
 #. js-lingui-id: nf1NnD
 #: src/platform/releases/ReleaseNotes.tsx
@@ -7118,7 +7084,7 @@ msgstr "机遇"
 #. js-lingui-id: 80f4ed
 #: src/sections/menu/data/menu.ts
 msgid "The principles and product philosophy behind the open source CRM."
-msgstr ""
+msgstr "这款开源 CRM 背后的原则和产品理念。"
 
 #. js-lingui-id: 2NJdyz
 #: src/sections/problem/Problem.tsx
@@ -7188,7 +7154,7 @@ msgstr "现状"
 #. js-lingui-id: gXGp3Q
 #: src/sections/menu/data/menu.ts
 msgid "The story behind Twenty"
-msgstr ""
+msgstr "Twenty 背后的故事"
 
 #. js-lingui-id: axo4rg
 #: src/platform/routing/static-website-routes.ts
@@ -7238,7 +7204,7 @@ msgstr "该功能让你可以将两条记录合并为一条。这会合并它们
 #. js-lingui-id: cklVjM
 #: src/client-brief/client-brief-copy.ts
 msgid "Timeline"
-msgstr ""
+msgstr "时间表"
 
 #. js-lingui-id: 6f8QUY
 #: src/partner-application/data/partner-country-options.ts
@@ -7324,7 +7290,7 @@ msgstr "触发器"
 #. js-lingui-id: SIBKlQ
 #: src/sections/compare/compare-data.ts
 msgid "Trigger actions on record changes"
-msgstr ""
+msgstr "在记录变更时触发动作"
 
 #. js-lingui-id: /ga9kq
 #: src/partner-application/data/partner-country-options.ts
@@ -7389,12 +7355,12 @@ msgstr "Twenty | 全球排名第 1 的开源 CRM"
 #. js-lingui-id: XxKVz4
 #: src/platform/routing/static-website-routes.ts
 msgid "Twenty Apps — Vetted Apps for the Open Source CRM"
-msgstr ""
+msgstr "Twenty 应用——这款开源 CRM 的精选应用"
 
 #. js-lingui-id: jwNPEV
 #: src/sections/menu/data/menu.ts
 msgid "Twenty apps marketplace"
-msgstr ""
+msgstr "Twenty 应用市场"
 
 #. js-lingui-id: NalB1c
 #: src/sections/testimonials/partner-testimonials.data.ts
@@ -7403,11 +7369,9 @@ msgstr "Twenty Apps 打开的是构建产品的大门，而不仅仅是做实施
 
 #. js-lingui-id: fZsVj6
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"Twenty as the\n"
+msgid "Twenty as the\n"
 "*API backbone* of a go-to-market stack"
-msgstr ""
-"将 Twenty 作为市场拓展技术栈的\n"
+msgstr "将 Twenty 作为市场拓展技术栈的\n"
 "*API 支柱*"
 
 #. js-lingui-id: +w9xZW
@@ -7517,61 +7481,61 @@ msgstr "Twenty 用户指南预览"
 #: src/sections/pricing-salesfarce/PricingSalesfarce.tsx
 #: src/sections/compare/compare-data.ts
 msgid "Twenty vs HubSpot"
-msgstr ""
+msgstr "Twenty vs HubSpot"
 
 #. js-lingui-id: 1f7tJr
 #: src/platform/routing/static-website-routes.ts
 msgid "Twenty vs HubSpot Pricing — The Real Cost Compared"
-msgstr ""
+msgstr "Twenty 与 HubSpot 定价对比 — 真实成本比较"
 
 #. js-lingui-id: PU2vgp
 #: src/sections/pricing-salesfarce/PricingSalesfarce.tsx
 #: src/sections/compare/compare-data.ts
 msgid "Twenty vs Microsoft Dynamics"
-msgstr ""
+msgstr "Twenty vs Microsoft Dynamics"
 
 #. js-lingui-id: YwgbXH
 #: src/platform/routing/static-website-routes.ts
 msgid "Twenty vs Microsoft Dynamics Pricing — The Real Cost Compared"
-msgstr ""
+msgstr "Twenty 与 Microsoft Dynamics 定价对比 — 真实成本比较"
 
 #. js-lingui-id: jqVcCJ
 #: src/sections/pricing-salesfarce/PricingSalesfarce.tsx
 #: src/sections/compare/compare-data.ts
 msgid "Twenty vs Pipedrive"
-msgstr ""
+msgstr "Twenty vs Pipedrive"
 
 #. js-lingui-id: Ure+SU
 #: src/platform/routing/static-website-routes.ts
 msgid "Twenty vs Pipedrive Pricing — The Real Cost Compared"
-msgstr ""
+msgstr "Twenty 与 Pipedrive 定价对比 — 真实成本比较"
 
 #. js-lingui-id: BpUVzg
 #: src/sections/pricing-salesfarce/PricingSalesfarce.tsx
 #: src/sections/compare/compare-data.ts
 msgid "Twenty vs Salesforce"
-msgstr ""
+msgstr "Twenty vs Salesforce"
 
 #. js-lingui-id: g9RXI4
 #: src/platform/routing/static-website-routes.ts
 msgid "Twenty vs Salesforce Pricing — The Real Cost Compared"
-msgstr ""
+msgstr "Twenty 与 Salesforce 定价对比 — 真实成本比较"
 
 #. js-lingui-id: AKwcOh
 #: src/sections/pricing-salesfarce/PricingSalesfarce.tsx
 #: src/sections/compare/compare-data.ts
 msgid "Twenty vs SAP Sales Cloud"
-msgstr ""
+msgstr "Twenty vs SAP Sales Cloud"
 
 #. js-lingui-id: 6ix7s6
 #: src/platform/routing/static-website-routes.ts
 msgid "Twenty vs SAP Sales Cloud Pricing — The Real Cost Compared"
-msgstr ""
+msgstr "Twenty 与 SAP Sales Cloud 定价对比 — 真实成本比较"
 
 #. js-lingui-id: abTOgp
 #: src/partners-marketplace/MarketplaceHeader.tsx
 msgid "Twenty's certified partners help teams migrate, customise, and operate the open source CRM across regions, languages, and deployment models. Browse profiles and book a call, or <0>tell us what you need</0> and we'll match you."
-msgstr ""
+msgstr "Twenty 认证合作伙伴帮助团队在不同区域、语言和部署模式下迁移、定制并运营这款开源 CRM。浏览合作伙伴资料并预约电话沟通，或者 <0>告诉我们你的需求</0>，我们会为你进行匹配。"
 
 #. js-lingui-id: tuvLv1
 #: src/platform/releases/ReleaseNotes.tsx
@@ -7592,12 +7556,12 @@ msgstr "团队类型 *"
 #: src/sections/compare/compare-data.ts
 #: src/sections/compare/compare-data.ts
 msgid "Typical partner project"
-msgstr ""
+msgstr "典型合作伙伴项目"
 
 #. js-lingui-id: o5LVCI
 #: src/sections/compare/compare-data.ts
 msgid "Typical partner project, year one"
-msgstr ""
+msgstr "典型合作伙伴项目，第一年"
 
 #. js-lingui-id: HqFilh
 #: src/partner-application/data/partner-country-options.ts
@@ -7632,7 +7596,7 @@ msgstr "乌克兰语"
 #. js-lingui-id: 8th57M
 #: src/sections/compare/compare-data.ts
 msgid "Ultimate plan only"
-msgstr ""
+msgstr "仅限 Ultimate 套餐"
 
 #. js-lingui-id: jqzUyM
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -7677,17 +7641,17 @@ msgstr "不限"
 #. js-lingui-id: Gq9ISP
 #: src/sections/compare/compare-data.ts
 msgid "Unlimited from Pro"
-msgstr ""
+msgstr "从 Pro 起不限量"
 
 #. js-lingui-id: WIyvZG
 #: src/sections/compare/compare-data.ts
 msgid "Unlimited on top tiers only"
-msgstr ""
+msgstr "仅在最高等级套餐中不限量"
 
 #. js-lingui-id: voJ+Nz
 #: src/sections/compare/compare-data.ts
 msgid "Unlimited workflows"
-msgstr ""
+msgstr "无限工作流"
 
 #. js-lingui-id: q7vKOJ
 #: src/platform/releases/ReleaseNotes.tsx
@@ -7697,7 +7661,7 @@ msgstr "未列出视图"
 #. js-lingui-id: qYHQVk
 #: src/sections/compare/compare-data.ts
 msgid "Up to 36 months"
-msgstr ""
+msgstr "最长期限 36 个月"
 
 #. js-lingui-id: aGpTSC
 #: src/sections/pricing-plans/plans-data.ts
@@ -7811,12 +7775,12 @@ msgstr "版本控制"
 #. js-lingui-id: vNIHYX
 #: src/sections/menu/data/menu.ts
 msgid "Vetted apps for your workspace"
-msgstr ""
+msgstr "适用于你的工作区的精选应用"
 
 #. js-lingui-id: k5HTQK
 #: src/apps-marketplace/AppDetail.tsx
 msgid "Vetted by Twenty"
-msgstr ""
+msgstr "由 Twenty 审核"
 
 #. js-lingui-id: FlQ1vR
 #: src/partner-application/data/partner-country-options.ts
@@ -7831,7 +7795,7 @@ msgstr "越南语"
 #. js-lingui-id: 9nyGVq
 #: src/partners-marketplace/CaseStudyModal.tsx
 msgid "View case study"
-msgstr ""
+msgstr "查看案例研究"
 
 #. js-lingui-id: V4nZs/
 #: src/platform/releases/ReleaseNotes.tsx
@@ -7917,7 +7881,7 @@ msgstr "我们未能提交您的申请。请稍后再试。"
 #. js-lingui-id: To/mhY
 #: src/client-brief/client-brief-copy.ts
 msgid "We could not submit your brief. Please try again in a moment."
-msgstr ""
+msgstr "我们未能提交你的概要。请稍后再试。"
 
 #. js-lingui-id: ofRgSN
 #: src/case-studies/case-study-stories.ts
@@ -7993,7 +7957,7 @@ msgstr "Webhooks 多对象筛选"
 #. js-lingui-id: On0aF2
 #: src/apps-marketplace/AppDetail.tsx
 msgid "Website"
-msgstr ""
+msgstr "网站"
 
 #. js-lingui-id: 7kkV4O
 #: src/partner-application/partner-application-copy.ts
@@ -8014,47 +7978,47 @@ msgstr "让 Olivier 真正信服的是平台的灵活性以及未来发展方向
 #. js-lingui-id: QtGFRl
 #: src/sections/compare/compare-data.ts
 msgid "What costs extra over there"
-msgstr ""
+msgstr "在那边哪些项目需要额外付费"
 
 #. js-lingui-id: SMBgOd
 #: src/client-brief/client-brief-copy.ts
 msgid "What do you need help with? *"
-msgstr ""
+msgstr "你需要什么方面的帮助？*"
 
 #. js-lingui-id: Gln6w3
 #: src/sections/compare/compare-data.ts
-msgid ""
-"What does\n"
+msgid "What does\n"
 "*Dynamics 365* really cost?"
-msgstr ""
+msgstr "*Dynamics 365* 的\n"
+"真实成本是多少？"
 
 #. js-lingui-id: ndwi6c
 #: src/sections/compare/compare-data.ts
-msgid ""
-"What does\n"
+msgid "What does\n"
 "*HubSpot* really cost?"
-msgstr ""
+msgstr "*HubSpot* 的\n"
+"真实成本是多少？"
 
 #. js-lingui-id: QSAZlS
 #: src/sections/compare/compare-data.ts
-msgid ""
-"What does\n"
+msgid "What does\n"
 "*Pipedrive* really cost?"
-msgstr ""
+msgstr "*Pipedrive* 的\n"
+"真实成本是多少？"
 
 #. js-lingui-id: rv6SWP
 #: src/sections/compare/compare-data.ts
-msgid ""
-"What does\n"
+msgid "What does\n"
 "*Salesforce* really cost?"
-msgstr ""
+msgstr "*Salesforce* 的\n"
+"真实成本是多少？"
 
 #. js-lingui-id: mdVDDM
 #: src/sections/compare/compare-data.ts
-msgid ""
-"What does\n"
+msgid "What does\n"
 "*SAP Sales Cloud* really cost?"
-msgstr ""
+msgstr "*SAP Sales Cloud* 的\n"
+"真实成本是多少？"
 
 #. js-lingui-id: phiBjc
 #: src/sections/faq/faq.data.ts
@@ -8080,7 +8044,7 @@ msgstr "已规划的内容分量十足。NetZero 拥有一个数据湖、在线�
 #. js-lingui-id: w8IA3m
 #: src/partners-marketplace/marketplace-copy.ts
 msgid "What they cover"
-msgstr ""
+msgstr "他们的服务范围"
 
 #. js-lingui-id: aYRqmz
 #: src/sections/why-twenty-editorial/editorials.data.ts
@@ -8095,7 +8059,7 @@ msgstr "你的服务范围 *"
 #. js-lingui-id: QFLt0F
 #: src/partner-application/partner-application-copy.ts
 msgid "What you've built in Twenty *"
-msgstr ""
+msgstr "你在 Twenty 中构建了什么 *"
 
 #. js-lingui-id: 1kfjxX
 #: src/case-studies/case-study-stories.ts
@@ -8110,7 +8074,7 @@ msgstr "当一名学生在校园活动中通过二维码注册时，系统会为
 #. js-lingui-id: c6bbrQ
 #: src/sections/compare/compare-data.ts
 msgid "When customers talk to your AI"
-msgstr ""
+msgstr "当客户与你的 AI 对话时"
 
 #. js-lingui-id: chISDP
 #: src/platform/releases/ReleaseNotes.tsx
@@ -8139,11 +8103,9 @@ msgstr "当供应商拔掉插头"
 
 #. js-lingui-id: 8SbakK
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"When your CRM is\n"
+msgid "When your CRM is\n"
 "*the product*"
-msgstr ""
-"当你的 CRM\n"
+msgstr "当你的 CRM\n"
 "*就是产品*"
 
 #. js-lingui-id: OQ41z8
@@ -8159,7 +8121,7 @@ msgstr "当你的 CRM 就是产品：W3Grads 使用 Twenty | W3villa Technologie
 #. js-lingui-id: 2IUg0g
 #: src/sections/compare/compare-data.ts
 msgid "Where the caps and gates are"
-msgstr ""
+msgstr "限制和门槛都在哪些地方"
 
 #. js-lingui-id: bGN8u+
 #: src/case-studies/case-study-stories.ts
@@ -8169,7 +8131,7 @@ msgstr "目前 NetZero 仍在并行运行第二套 CRM，用于在巴西与农�
 #. js-lingui-id: oa2Bs3
 #: src/partner-application/partner-application-copy.ts
 msgid "Who it was for, what you built, which of the four areas you used…"
-msgstr ""
+msgstr "为谁构建的、你构建了什么、以及你使用了四个领域中的哪些……"
 
 #. js-lingui-id: DJlSwA
 #: src/sections/menu/data/menu.ts
@@ -8179,7 +8141,7 @@ msgstr "为什么"
 #. js-lingui-id: mrxgOV
 #: src/sections/menu/data/menu.ts
 msgid "Why teams choose Twenty"
-msgstr ""
+msgstr "团队选择 Twenty 的原因"
 
 #. js-lingui-id: 4sOVu+
 #: src/sections/footer/footer.data.ts
@@ -8194,7 +8156,7 @@ msgstr "为什么选择 Twenty —— 为定制而生的开源 CRM"
 #. js-lingui-id: tetjz4
 #: src/sections/menu/data/menu.ts
 msgid "Why Twenty illustration"
-msgstr ""
+msgstr "Why Twenty illustration"
 
 #. js-lingui-id: baquqN
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
@@ -8390,7 +8352,7 @@ msgstr "可以。Twenty 是 GitHub 上排名第 1 的开源 CRM。你可以自�
 #. js-lingui-id: kWJmRL
 #: src/client-brief/client-brief-copy.ts
 msgid "You"
-msgstr ""
+msgstr "你"
 
 #. js-lingui-id: Q3GDrw
 #: src/platform/releases/ReleaseNotes.tsx
@@ -8505,7 +8467,7 @@ msgstr "你现在可以在工作流中复制节点、更改节点类型，并使
 #. js-lingui-id: COA0DV
 #: src/client-brief/client-brief-copy.ts
 msgid "Your brief"
-msgstr ""
+msgstr "你的概要"
 
 #. js-lingui-id: SfJVcK
 #: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
@@ -8561,3 +8523,4 @@ msgstr "津巴布韦 🇿🇼"
 #: src/app-preview/stage/TrafficLights.tsx
 msgid "Zoom"
 msgstr "缩放"
+
