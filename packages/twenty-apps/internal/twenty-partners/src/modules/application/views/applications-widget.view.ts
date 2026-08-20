@@ -3,6 +3,7 @@ import { ViewType, defineView } from 'twenty-sdk/define';
 import {
   APPLICATION_OBJECT_UNIVERSAL_IDENTIFIER,
   APPLICATION_OPPORTUNITY_FIELD_ID,
+  APPLICATION_PARTNER_FIELD_ID,
   APPLICATION_STATE_FIELD_ID,
 } from 'src/modules/application/objects/application.object';
 
@@ -18,16 +19,23 @@ export default defineView({
   type: ViewType.TABLE_WIDGET,
   fields: [
     {
+      universalIdentifier: '644e184f-82ec-4762-bc04-8c9998c2784f',
+      fieldMetadataUniversalIdentifier: APPLICATION_PARTNER_FIELD_ID,
+      position: 0,
+      isVisible: true,
+      size: 220,
+    },
+    {
       universalIdentifier: '0b009608-bbf4-4b2f-b2c1-533be28abc76',
       fieldMetadataUniversalIdentifier: APPLICATION_OPPORTUNITY_FIELD_ID,
-      position: 0,
+      position: 1,
       isVisible: true,
       size: 220,
     },
     {
       universalIdentifier: '7fd677f5-01b9-4bef-9e9f-02ecb2e69eb3',
       fieldMetadataUniversalIdentifier: APPLICATION_STATE_FIELD_ID,
-      position: 1,
+      position: 2,
       isVisible: true,
       size: 140,
     },
