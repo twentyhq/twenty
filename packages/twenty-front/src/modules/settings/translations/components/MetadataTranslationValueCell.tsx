@@ -2,6 +2,7 @@ import { type MetadataTranslationRow } from '@/settings/translations/hooks/useMe
 import { TextInput } from '@/ui/input/components/TextInput';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { MetadataTranslationProvenance } from '~/generated-metadata/graphql';
 
@@ -62,7 +63,7 @@ export const MetadataTranslationValueCell = ({
 
         const value = draftValue.trim() === '' ? null : draftValue;
 
-        if (value === row.value || (value === null && isInherited)) {
+        if (value === row.value || (!isDefined(value) && isInherited)) {
           return;
         }
 
