@@ -3,7 +3,7 @@ import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuIt
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
-import { SoloTabWidgetVisibilityDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/SoloTabWidgetVisibilityDropdownContent';
+import { SingleWidgetTabVisibilityDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/SingleWidgetTabVisibilityDropdownContent';
 import { TAB_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/TabSettingsSelectableItemIds';
 import { useTranslatedVisibilityLabel } from '@/side-panel/pages/page-layout/hooks/useTranslatedVisibilityLabel';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -22,12 +22,14 @@ import {
 } from 'twenty-ui/icon';
 import { AppTooltip } from 'twenty-ui/surfaces';
 
-const RESET_TAB_TO_DEFAULT_MODAL_ID = 'reset-solo-tab-to-default-modal';
-const RESET_TAB_TO_DEFAULT_MENU_ITEM_ID = 'reset-solo-tab-to-default-menu-item';
+const RESET_TAB_TO_DEFAULT_MODAL_ID =
+  'reset-single-widget-tab-to-default-modal';
+const RESET_TAB_TO_DEFAULT_MENU_ITEM_ID =
+  'reset-single-widget-tab-to-default-menu-item';
 
-type SoloTabSettingsContentProps = {
+type SingleWidgetTabSettingsContentProps = {
   pageLayoutId: string;
-  soloWidget: PageLayoutWidget | undefined;
+  singleWidget: PageLayoutWidget | undefined;
   canSetAsPinned: boolean;
   canMoveLeft: boolean;
   canMoveRight: boolean;
@@ -40,9 +42,9 @@ type SoloTabSettingsContentProps = {
   onDelete: () => void;
 };
 
-export const SoloTabSettingsContent = ({
+export const SingleWidgetTabSettingsContent = ({
   pageLayoutId,
-  soloWidget,
+  singleWidget,
   canSetAsPinned,
   canMoveLeft,
   canMoveRight,
@@ -53,12 +55,12 @@ export const SoloTabSettingsContent = ({
   onSetAsPinned,
   onResetToDefault,
   onDelete,
-}: SoloTabSettingsContentProps) => {
+}: SingleWidgetTabSettingsContentProps) => {
   const { t } = useLingui();
   const { openModal } = useModal();
 
   const visibilityLabel = useTranslatedVisibilityLabel(
-    soloWidget?.conditionalAvailabilityExpression,
+    singleWidget?.conditionalAvailabilityExpression,
   );
 
   const handleResetToDefault = () => {
@@ -72,7 +74,7 @@ export const SoloTabSettingsContent = ({
     ...(canSetAsPinned ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.SET_AS_PINNED] : []),
     ...(canMoveLeft ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_LEFT] : []),
     ...(canMoveRight ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_RIGHT] : []),
-    ...(isDefined(soloWidget)
+    ...(isDefined(singleWidget)
       ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION]
       : []),
     TAB_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT,
@@ -124,7 +126,7 @@ export const SoloTabSettingsContent = ({
           )}
         </SidePanelGroup>
         <SidePanelGroup heading={t`Manage`}>
-          {isDefined(soloWidget) && (
+          {isDefined(singleWidget) && (
             <SelectableListItem
               itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION}
             >
@@ -137,10 +139,10 @@ export const SoloTabSettingsContent = ({
                 }
                 dropdownComponents={
                   <DropdownContent>
-                    <SoloTabWidgetVisibilityDropdownContent
-                      widgetId={soloWidget.id}
+                    <SingleWidgetTabVisibilityDropdownContent
+                      widgetId={singleWidget.id}
                       currentExpression={
-                        soloWidget.conditionalAvailabilityExpression
+                        singleWidget.conditionalAvailabilityExpression
                       }
                       pageLayoutId={pageLayoutId}
                     />
