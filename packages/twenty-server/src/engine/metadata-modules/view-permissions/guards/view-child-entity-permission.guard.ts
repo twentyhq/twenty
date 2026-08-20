@@ -9,6 +9,7 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { type ViewChildEntityKind } from 'src/engine/metadata-modules/view-permissions/types/view-permissions.types';
 import { ViewAccessService } from 'src/engine/metadata-modules/view-permissions/services/view-access.service';
 import { ViewEntityLookupService } from 'src/engine/metadata-modules/view-permissions/services/view-entity-lookup.service';
+import { resolveViewChildEntityId } from 'src/engine/metadata-modules/view-permissions/utils/resolve-view-child-entity-id.util';
 
 export const ViewChildEntityPermissionGuard = (
   kind: ViewChildEntityKind,
@@ -25,13 +26,10 @@ export const ViewChildEntityPermissionGuard = (
       const request = gqlContext.getContext().req;
       const args = gqlContext.getArgs();
 
-      // The top-level id is the authoritative one where a mutation takes it:
-      // its input extends a partial create input that also carries an
-      // optional id, and only the argument routes the mutation.
-      const entityId =
-        (typeof args?.id === 'string' ? args.id : undefined) ??
-        (typeof args?.input?.id === 'string' ? args.input.id : undefined) ??
-        (typeof request.params?.id === 'string' ? request.params.id : '');
+      const entityId = resolveViewChildEntityId({
+        args,
+        params: request.params,
+      });
 
       const viewId = entityId
         ? await this.viewEntityLookupService.findViewIdByEntityIdAndKind(
