@@ -54,10 +54,14 @@ export class TimelineCalendarEventService {
       async () => {
         const offset = (page - 1) * pageSize;
 
+        // Runs under a system auth context: the timeline loads participants
+        // (person, workspaceMember) the caller's role may not be able to read,
+        // then redacts each event itself through `visibility` below.
         const calendarEventRepository =
           await this.globalWorkspaceOrmManager.getRepository<CalendarEventWorkspaceEntity>(
             workspaceId,
             'calendarEvent',
+            { shouldBypassPermissionChecks: true },
           );
 
         const totalNumberOfCalendarEvents = await calendarEventRepository.count(
@@ -114,6 +118,7 @@ export class TimelineCalendarEventService {
           await this.globalWorkspaceOrmManager.getRepository<CallRecordingWorkspaceEntity>(
             workspaceId,
             'callRecording',
+            { shouldBypassPermissionChecks: true },
           );
 
         const callRecordings = await callRecordingRepository.find({
