@@ -1,3 +1,4 @@
 export const INBOUND_EMAIL_MESSAGE_SOURCE = {
   SES_S3: 'SES_S3',
+  RESEND: 'RESEND',
 } as const;

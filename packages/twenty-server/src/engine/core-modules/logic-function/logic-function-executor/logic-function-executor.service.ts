@@ -8,6 +8,7 @@ import {
   DEFAULT_FUNCTIONS_URL_NAME,
   type LogicFunctionInvokingUser,
 } from 'twenty-shared/application';
+import { type LogicFunctionExecutionContext } from 'twenty-shared/logic-function';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -111,6 +112,7 @@ export class LogicFunctionExecutorService {
     userWorkspaceId,
     invokingUser,
     executionMode,
+    context = { retryCount: 0, maxRetries: 0 },
   }: {
     logicFunctionId: string;
     workspaceId: string;
@@ -119,6 +121,7 @@ export class LogicFunctionExecutorService {
     userWorkspaceId?: string;
     invokingUser?: LogicFunctionInvokingUser;
     executionMode?: LogicFunctionExecutionMode;
+    context?: LogicFunctionExecutionContext;
   }): Promise<LogicFunctionExecuteResult> {
     const { flatApplication, flatLogicFunction, applicationVariableMaps } =
       await this.getFlatEntitiesOrThrow({
@@ -164,6 +167,7 @@ export class LogicFunctionExecutorService {
         flatApplication,
         applicationUniversalIdentifier: flatApplication.universalIdentifier,
         payload,
+        context,
         env: envVariables,
         timeoutMs: flatLogicFunction.timeoutSeconds * 1_000,
         forceExecutionMode: effectiveExecutionMode,

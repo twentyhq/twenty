@@ -70,6 +70,9 @@ t({ message: 'Open', context: 'window' });
 <Trans context="card-title">Untitled</Trans>
 ```
 
+컨텍스트 문자열은 로케일 카탈로그에서 해당 컨텍스트를 키로 하는 그룹으로 나타납니다:
+`"\<context>": { "\<message>": "\<translation>" }`. 매니페스트 레이블은 설계상 컨텍스트 정보를 포함합니다. 각 레이블은 자신이 수행하는 메타데이터 역할(`objectMetadata.labelSingular`, `fieldMetadata.label`, `view.name`, …)을 담고 있으므로, 같은 단어라도 객체 이름으로 쓰일 때와 뷰 이름으로 쓰일 때 서로 다르게 번역될 수 있습니다.
+
 ## 추출 및 번역
 
 앱 디렉터리에서 extract 명령을 실행하세요:
@@ -87,9 +90,17 @@ twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 {
   "Loading postcard…": "Chargement de la carte…",
   "Hi {name}": "Bonjour {name}",
-  "Saved {count} cards": "{count} cartes enregistrées"
+  "Saved {count} cards": "{count} cartes enregistrées",
+  "door": {
+    "Open": "Ouvrir"
+  },
+  "objectMetadata.labelSingular": {
+    "Postcard": "Carte postale"
+  }
 }
 ```
+
+문맥이 없는 문자열은 평면 엔트리이고, 문맥이 있는 문자열(모든 매니페스트 레이블 포함)은 해당 컨텍스트 키 아래에 중첩됩니다.
 
 `{name}`과 같은 플레이스홀더는 런타임에 치환되므로 — 번역문에도 그대로 유지해야 합니다. 비워 둔 문자열은 소스 텍스트를 그대로 사용합니다.
 

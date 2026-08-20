@@ -1,5 +1,6 @@
 import { clsx } from 'clsx';
 
+import { Text } from '@ui/typography/Text/Text';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './EllipsisDisplay.module.scss';
@@ -15,10 +16,11 @@ export const EllipsisDisplay = ({
   maxWidth,
   className,
 }: EllipsisDisplayProps) => (
-  <div
+  <Text
+    truncate
     className={clsx(styles.ellipsis, className)}
     style={isDefined(maxWidth) ? { maxWidth: `${maxWidth}px` } : undefined}
   >
     {children}
-  </div>
+  </Text>
 );

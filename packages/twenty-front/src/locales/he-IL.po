@@ -1283,8 +1283,8 @@ msgid "Add Field"
 msgstr "הוסף שדה"
 
 #. js-lingui-id: T7RGT6
-#: src/modules/activities/files/components/FilesCard.tsx
-#: src/modules/activities/files/components/FilesCard.tsx
+#: src/modules/activities/files/components/FilesCardContent.tsx
+#: src/modules/page-layout/widgets/files/components/WidgetActionFileAttach.tsx
 msgid "Add file"
 msgstr "הוסף קובץ"
 
@@ -2034,7 +2034,7 @@ msgid "All system objects are already in the sidebar"
 msgstr "כל אובייקטי המערכת כבר נמצאים בסרגל הצד"
 
 #. js-lingui-id: p+lpde
-#: src/modules/activities/tasks/components/TaskGroups.tsx
+#: src/modules/activities/tasks/components/TaskGroupsContent.tsx
 msgid "All tasks addressed. Maintain the momentum."
 msgstr "כל המשימות טופלו. שמרו על התנופה."
 
@@ -2266,6 +2266,11 @@ msgstr "וגם"
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
 msgid "Annual"
 msgstr "שנתי"
+
+#. js-lingui-id: GqCA/t
+#: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
+msgid "Answered"
+msgstr ""
 
 #. js-lingui-id: +qygei
 #: src/modules/ai/components/AiChatQuestionStatusRenderer.tsx
@@ -4356,7 +4361,7 @@ msgid "Component name"
 msgstr "שם הרכיב"
 
 #. js-lingui-id: QOhkyl
-#: src/modules/activities/emails/components/EmailsCard.tsx
+#: src/modules/page-layout/widgets/emails/components/WidgetActionEmailCompose.tsx
 msgid "Compose"
 msgstr ""
 
@@ -8330,7 +8335,7 @@ msgid "Failed to delete unsubscribe topic."
 msgstr "מחיקת נושא ההסרה מרשימה נכשלה."
 
 #. js-lingui-id: NUmmdc
-#: src/modules/command-menu-item/engine-command/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
+#: src/modules/dashboards/hooks/useDuplicateDashboard.ts
 msgid "Failed to duplicate dashboard"
 msgstr "שכפול לוח הבקרה נכשל"
 
@@ -12062,7 +12067,7 @@ msgid "Missing email draft permission."
 msgstr "אין הרשאה ליצירת טיוטות אימייל."
 
 #. js-lingui-id: mibKsa
-#: src/modules/activities/tasks/components/TaskGroups.tsx
+#: src/modules/activities/tasks/components/TaskGroupsContent.tsx
 msgid "Mission accomplished!"
 msgstr "המשימה הושלמה!"
 
@@ -12284,6 +12289,11 @@ msgstr "קדם עבודה בין צוותים וסוכנים"
 #. js-lingui-id: XXzjfC
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
 msgid "Msgs"
+msgstr ""
+
+#. js-lingui-id: cT1jbf
+#: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
+msgid "Multiple answers"
 msgstr ""
 
 #. js-lingui-id: asWVA5
@@ -12622,8 +12632,8 @@ msgid "New Model"
 msgstr "מודל חדש"
 
 #. js-lingui-id: zPPcuu
-#: src/modules/activities/notes/components/NotesCard.tsx
-#: src/modules/activities/notes/components/NotesCard.tsx
+#: src/modules/activities/notes/components/NotesCardContent.tsx
+#: src/modules/page-layout/widgets/notes/components/WidgetActionNoteCreate.tsx
 msgid "New note"
 msgstr "הערה חדשה"
 
@@ -12672,8 +12682,8 @@ msgid "New Tab"
 msgstr "לשונית חדשה"
 
 #. js-lingui-id: wl18ST
-#: src/modules/activities/tasks/components/TaskGroups.tsx
-#: src/modules/activities/tasks/components/TaskGroups.tsx
+#: src/modules/activities/tasks/components/TaskGroupsContent.tsx
+#: src/modules/page-layout/widgets/tasks/components/WidgetActionTaskCreate.tsx
 msgid "New task"
 msgstr "משימה חדשה"
 
@@ -13053,12 +13063,12 @@ msgid "No event logs found"
 msgstr "לא נמצאו יומני אירועים"
 
 #. js-lingui-id: l7y8S8
-#: src/modules/activities/calendar/components/CalendarEventsCard.tsx
+#: src/modules/activities/calendar/components/CalendarEventsCardContent.tsx
 msgid "No Events"
 msgstr "אין אירועים"
 
 #. js-lingui-id: wY82y3
-#: src/modules/activities/calendar/components/CalendarEventsCard.tsx
+#: src/modules/activities/calendar/components/CalendarEventsCardContent.tsx
 msgid "No events have been scheduled with this {objectName} yet."
 msgstr "עדיין לא נקבעו אירועים עם {objectName} זה."
 
@@ -13083,7 +13093,7 @@ msgid "No fields to display"
 msgstr "אין שדות להצגה"
 
 #. js-lingui-id: 23Rceg
-#: src/modules/activities/files/components/FilesCard.tsx
+#: src/modules/activities/files/components/FilesCardContent.tsx
 msgid "No Files"
 msgstr "אין קבצים"
 
@@ -13197,7 +13207,7 @@ msgid "No models available. Please configure AI models in your workspace setting
 msgstr "אין מודלים זמינים. נא להגדיר מודלים לבינה מלאכותית בהגדרות מרחב העבודה שלכם."
 
 #. js-lingui-id: 9VrTfZ
-#: src/modules/activities/notes/components/NotesCard.tsx
+#: src/modules/activities/notes/components/NotesCardContent.tsx
 msgid "No notes"
 msgstr "אין הערות"
 
@@ -14235,6 +14245,7 @@ msgstr "ארגון"
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
@@ -15175,6 +15186,11 @@ msgstr ""
 msgid "Queries that relied on it will fall back to a sequential scan. You can recreate it later."
 msgstr "שאילתות שהסתמכו עליו יחזרו לסריקה רציפה (sequential scan). תוכל ליצור אותו מחדש מאוחר יותר."
 
+#. js-lingui-id: enzGAL
+#: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
+msgid "Questions"
+msgstr ""
+
 #. js-lingui-id: /IUt/5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerHealthStatus.tsx
 msgid "Queue information is not available because the worker is down"
@@ -15354,6 +15370,7 @@ msgstr ""
 
 #. js-lingui-id: WEYdDv
 #: src/modules/ai/components/AiChatQuestionCard.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsQuestion.tsx
 msgid "Recommended"
 msgstr "מומלץ"
 
@@ -17597,6 +17614,11 @@ msgstr "דלג על יצירת שדה שם "
 msgid "Skip the junction object (similar to many-to-many relations)"
 msgstr "דלג על אובייקט הצומת (בדומה לקשרים רבים-לרבים)"
 
+#. js-lingui-id: 9NyAH9
+#: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
+msgid "Skipped"
+msgstr ""
+
 #. js-lingui-id: BIZl8w
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Sky"
@@ -18731,12 +18753,12 @@ msgid "then"
 msgstr "אז"
 
 #. js-lingui-id: l2fWLK
-#: src/modules/activities/files/components/FilesCard.tsx
+#: src/modules/activities/files/components/FilesCardContent.tsx
 msgid "There are no associated files with this record."
 msgstr "אין קבצים מקושרים עם רשומה זו."
 
 #. js-lingui-id: 6g0c8y
-#: src/modules/activities/notes/components/NotesCard.tsx
+#: src/modules/activities/notes/components/NotesCardContent.tsx
 msgid "There are no associated notes with this record."
 msgstr "אין הערות מקושרות לרשומה זו."
 
@@ -19702,6 +19724,11 @@ msgstr "לא ניתן לטעון את פרטי היישום. נא לנסות ש�
 #: src/modules/client-config/components/ClientConfigProvider.tsx
 msgid "Unable to Reach Back-end"
 msgstr "לא ניתן להגיע לשרת"
+
+#. js-lingui-id: 2lF8Zj
+#: src/modules/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart.tsx
+msgid "Unanswered"
+msgstr ""
 
 #. js-lingui-id: 5JOLV9
 #: src/modules/ai/components/AiChatThreadItemMenu.tsx

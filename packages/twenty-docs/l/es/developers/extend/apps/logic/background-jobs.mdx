@@ -36,10 +36,10 @@ La función de destino recibe `payload` como su argumento de manejador, exactame
 
 ## Opciones del trabajo
 
-| Opción       | Predeterminado | Rango                    | Qué hace                                                                                                                                                  |
-| ------------ | -------------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `retryLimit` | `0`            | `0`–`10`                 | Intentos adicionales si la ejecución produce una excepción. Solo incrementa este valor para manejadores que se puedan ejecutar dos veces de forma segura. |
-| `delayMs`    | `0`            | `0`–`604800000` (7 días) | Espera este tiempo antes de que la ejecución sea elegible.                                                                                                |
+| Opción       | Predeterminado | Rango                    | Qué hace                                                                                                                                                                                                     |
+| ------------ | -------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `retryLimit` | `0`            | `0`–`10`                 | Intentos adicionales totales en la cola. Los reintentos solicitados por la aplicación tienen un límite de `3`. Solo incrementa este valor para manejadores que se puedan ejecutar dos veces de forma segura. |
+| `delayMs`    | `0`            | `0`–`604800000` (7 días) | Espera este tiempo antes de que la ejecución sea elegible.                                                                                                                                                   |
 
 ```ts
 await enqueueJob({
@@ -55,6 +55,40 @@ await enqueueJob({
 </Note>
 
 La ejecución encolada hereda el usuario activo de la función que la puso en cola, por lo que actúa con los mismos permisos.
+
+## Reintentar un fallo transitorio
+
+Twenty no vuelve a intentar todas las excepciones del código de la aplicación. Un error ordinario lanzado se trata como un fallo permanente. Para un fallo transitorio, una función lógica en cola puede solicitar hasta tres reintentos lanzando `RetryableLogicFunctionError`.
+
+```ts
+import {
+  type LogicFunctionExecutionContext,
+  RetryableLogicFunctionError,
+} from 'twenty-sdk/logic-function';
+
+export const handler = async (
+  _payload: unknown,
+  { retryCount, maxRetries }: LogicFunctionExecutionContext,
+) => {
+  const response = await fetch('https://api.example.com/contacts');
+
+  if (response.status === 429 || response.status >= 500) {
+    throw new RetryableLogicFunctionError(
+      `The contacts API is temporarily unavailable (${response.status}); retry ${retryCount} of ${maxRetries}`,
+    );
+  }
+};
+```
+
+Lanza `RetryableLogicFunctionError` directamente cuando sea posible. Si lo extiendes, no sustituyas su `name`: Twenty reconoce el nombre serializado `RetryableLogicFunctionError` en todos los entornos de ejecución.
+
+`retryCount` es `0` para la ejecución inicial y aumenta solo cuando el código de la aplicación solicita un reintento. `maxRetries` es como máximo `3` y puede ser menor cuando el trabajo en cola tiene un límite general de reintentos más bajo. Los fallos de la plataforma no aumentan `retryCount`, aunque siguen consumiendo el presupuesto general de seguridad de la cola.
+
+La cola retrasa los intentos de reintento con una espera exponencial y fluctuación. El retraso exacto no se garantiza intencionadamente, por lo que el código de la aplicación no debe depender de que un reintento ocurra en un momento preciso. Una vez que se alcanza `maxRetries`, otro `RetryableLogicFunctionError` se registra como el fallo final de la aplicación sin otra ejecución.
+
+<Warning>
+Los reintentos vuelven a ejecutar todo el controlador y pueden ocurrir después de que algunos efectos secundarios se hayan realizado correctamente. Haz que el controlador sea idempotente antes de solicitar reintentos.
+</Warning>
 
 ## Úsalo: recorre por páginas una sincronización larga
 
@@ -159,7 +193,3 @@ Por qué esto se mantiene bien:
 * **Guarda el progreso antes de poner en cola la siguiente ejecución**, de modo que un eslabón fallido se reinicie desde el último bloque completado en lugar de desde el principio.
 * **Mantén cada bloque idempotente.** Volver a procesar un bloque después de un reintento no debe escribir dos veces — indexa las escrituras por el registro o el id externo que estés procesando.
 * **Prefiere una cadena por bloques en lugar de una expansión masiva** cuando el trabajo interactúa con un tercero con limitación de tasa: una cadena con `delayMs` se autorregula, mientras que miles de trabajos encolados a la vez se vuelven elegibles de inmediato.
-
-<Warning>
-Los reintentos vuelven a ejecutar todo el manejador. Mantén los manejadores encolados idempotentes antes de establecer `retryLimit` por encima de `0`.
-</Warning>

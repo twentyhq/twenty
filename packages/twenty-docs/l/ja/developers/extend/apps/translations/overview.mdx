@@ -69,6 +69,9 @@ t({ message: 'Open', context: 'window' });
 <Trans context="card-title">Untitled</Trans>
 ```
 
+コンテキスト付きの文字列は、ロケールカタログ内ではそのコンテキストをキーとしたグループとして表示されます:
+`"\<context>": { "\<message>": "\<translation>" }`。 マニフェストのラベルは、設計上コンテキスト付きになっています — それぞれが果たすメタデータ上の役割（`objectMetadata.labelSingular`、`fieldMetadata.label`、`view.name` など）を保持しているため、同じ語でもオブジェクト名として訳す場合とビュー名として訳す場合で、異なる訳語になる可能性があります。
+
 ## 抽出と翻訳
 
 アプリディレクトリから抽出コマンドを実行します。
@@ -85,9 +88,18 @@ twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 {
   "Loading postcard…": "Chargement de la carte…",
   "Hi {name}": "Bonjour {name}",
-  "Saved {count} cards": "{count} cartes enregistrées"
+  "Saved {count} cards": "{count} cartes enregistrées",
+  "door": {
+    "Open": "Ouvrir"
+  },
+  "objectMetadata.labelSingular": {
+    "Postcard": "Carte postale"
+  }
 }
 ```
+
+コンテキストに依存しない文字列はフラットなエントリです。コンテキスト付きの文字列（すべての
+マニフェストラベルを含む）は、そのコンテキストキーの下にネストされます。
 
 `{name}`のようなプレースホルダは、実行時に置き換えられます —
 翻訳でそれらを維持します。 空の文字列はすべて元のテキストに戻ります。
