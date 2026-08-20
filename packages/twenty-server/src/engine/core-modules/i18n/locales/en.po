@@ -10217,6 +10217,11 @@ msgstr "This file has already been uploaded."
 msgid "This file upload has already been finalized."
 msgstr "This file upload has already been finalized."
 
+#. js-lingui-id: bHna44
+#: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
+msgid "This HTTP method is not allowed on this server route."
+msgstr "This HTTP method is not allowed on this server route."
+
 #. js-lingui-id: cvWDSJ
 #: src/engine/metadata-modules/metadata-side-effect/utils/map-system-side-effect-collision-to-failure.util.ts
 msgid "This identifier is reserved by the system"
