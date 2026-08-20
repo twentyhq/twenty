@@ -155,9 +155,13 @@ export class MessageCampaignDeliveryService {
       await this.emailBillingService.hasEmailCredits(workspaceId);
 
     if (!hasEmailCredits) {
-      await messageRepository.update(messageId, {
-        deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SKIPPED,
-      });
+      await messageRepository.update(
+        {
+          id: messageId,
+          deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SENDING,
+        },
+        { deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SKIPPED },
+      );
 
       return;
     }
@@ -180,7 +184,13 @@ export class MessageCampaignDeliveryService {
     } catch (error) {
       const { deliveryStatus, shouldRetry } = resolveCampaignSendFailure(error);
 
-      await messageRepository.update(messageId, { deliveryStatus });
+      await messageRepository.update(
+        {
+          id: messageId,
+          deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SENDING,
+        },
+        { deliveryStatus },
+      );
 
       if (deliveryStatus === CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED) {
         this.logger.warn(
@@ -197,12 +207,26 @@ export class MessageCampaignDeliveryService {
       return;
     }
 
-    await messageRepository.update(messageId, {
-      deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SENT,
-      headerMessageId: result.messageId,
-      subject,
-      text: plainText,
-    });
+    const { affected } = await messageRepository.update(
+      {
+        id: messageId,
+        deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SENDING,
+      },
+      {
+        deliveryStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.SENT,
+        headerMessageId: result.messageId,
+        subject,
+        text: plainText,
+      },
+    );
+
+    if (affected !== 1) {
+      this.logger.warn(
+        `Campaign ${campaignId} delivered message ${messageId} after the sweeper reclaimed it, so it is not recorded or billed against the finalized campaign`,
+      );
+
+      return;
+    }
 
     await this.emailBillingService.billSentEmails({
       workspaceId,

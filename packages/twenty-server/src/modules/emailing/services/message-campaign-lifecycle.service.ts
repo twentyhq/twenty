@@ -2,9 +2,10 @@ import { Injectable, type Type } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
-import { In, type ObjectLiteral } from 'typeorm';
+import { In, LessThan, type ObjectLiteral } from 'typeorm';
 
 import {
+  CAMPAIGN_MESSAGE_CLAIM_STALE_THRESHOLD_MS,
   CAMPAIGN_MESSAGE_DELIVERY_STATUS,
   CAMPAIGN_STATS_REFRESH_DELAY_MS,
   REFRESH_CAMPAIGN_STATS_JOB,
@@ -140,15 +141,24 @@ export class MessageCampaignLifecycleService {
     workspaceId: string;
     campaignId: string;
   }): Promise<number> {
-    return this.settleMessages({
+    const failedQueuedCount = await this.settleMessages({
       workspaceId,
       campaignId,
-      fromStatuses: [
-        CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED,
-        CAMPAIGN_MESSAGE_DELIVERY_STATUS.SENDING,
-      ],
+      fromStatuses: [CAMPAIGN_MESSAGE_DELIVERY_STATUS.QUEUED],
       toStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED,
     });
+
+    const failedAbandonedClaimCount = await this.settleMessages({
+      workspaceId,
+      campaignId,
+      fromStatuses: [CAMPAIGN_MESSAGE_DELIVERY_STATUS.SENDING],
+      toStatus: CAMPAIGN_MESSAGE_DELIVERY_STATUS.FAILED,
+      unchangedSince: new Date(
+        Date.now() - CAMPAIGN_MESSAGE_CLAIM_STALE_THRESHOLD_MS,
+      ).toISOString(),
+    });
+
+    return failedQueuedCount + failedAbandonedClaimCount;
   }
 
   async settleMessages({
@@ -156,11 +166,13 @@ export class MessageCampaignLifecycleService {
     campaignId,
     fromStatuses,
     toStatus,
+    unchangedSince,
   }: {
     workspaceId: string;
     campaignId: string;
     fromStatuses: CampaignMessageDeliveryStatus[];
     toStatus: CampaignMessageDeliveryStatus;
+    unchangedSince?: string;
   }): Promise<number> {
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
@@ -169,11 +181,16 @@ export class MessageCampaignLifecycleService {
           MessageWorkspaceEntity,
         );
 
+        const settleableCriteria = {
+          messageCampaignId: campaignId,
+          deliveryStatus: In(fromStatuses),
+          ...(isDefined(unchangedSince)
+            ? { updatedAt: LessThan(unchangedSince) }
+            : {}),
+        };
+
         const settleableMessages = await messageRepository.find({
-          where: {
-            messageCampaignId: campaignId,
-            deliveryStatus: In(fromStatuses),
-          },
+          where: settleableCriteria,
           select: { id: true },
         });
 
@@ -184,7 +201,7 @@ export class MessageCampaignLifecycleService {
           QUERY_MAX_RECORDS,
         )) {
           const { affected } = await messageRepository.update(
-            { id: In(idsChunk), deliveryStatus: In(fromStatuses) },
+            { ...settleableCriteria, id: In(idsChunk) },
             { deliveryStatus: toStatus },
           );
 
