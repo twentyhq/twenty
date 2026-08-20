@@ -3,124 +3,51 @@
  * translation step (MT / AI / human), so Crowdin's builder can always rebuild
  * valid output and downstream builds (Mintlify, Lingui) don't go stale.
  *
- * Why a single engine with rules:
- * Every corruption class we have hit is the same shape — a mechanical,
+ * Every corruption class we have hit is the same shape - a mechanical,
  * language-independent, idempotent text fix applied directly in Crowdin (the
- * source of truth). Rather than copy a whole script per class, each class is a
- * small `NormalizationRule` ({ detect, fix }). New corruption = new rule, not a
- * new script or workflow step.
+ * source of truth). Each class is therefore a small `NormalizationRule` in
+ * crowdin-normalization-rules.ts rather than a script of its own.
  *
  * Scan strategy is chosen automatically:
  *   - If every selected rule declares a `sourceFilter`, only the matching source
- *     strings are scanned (cheap per-string lookup) — used for the docs
- *     inline-code rule.
- *   - Otherwise every translation is paged per language (bulk) — needed for
+ *     strings are scanned (targeted) - used for the docs inline-code rule.
+ *   - Otherwise every translation is paged per language (bulk) - needed for
  *     rules like escaped-unicode that can appear in any string.
  *
  * Usage:
  *   # Dry-run (read-only), all rules, default project 2 (docs)
  *   CROWDIN_PERSONAL_TOKEN=xxx npx tsx packages/twenty-utils/normalize-crowdin-translations.ts
  *
- *   # Apply, docs inline-code only (fast, targeted)
+ *   # Apply, docs inline-code only (targeted)
  *   CROWDIN_PERSONAL_TOKEN=xxx npx tsx packages/twenty-utils/normalize-crowdin-translations.ts \
  *     --project=2 --apply --rules=escaped-inline-code-tags
  *
  *   # Apply, app unicode fix (bulk)
  *   CROWDIN_PERSONAL_TOKEN=xxx npx tsx packages/twenty-utils/normalize-crowdin-translations.ts \
  *     --project=1 --apply --rules=escaped-unicode
- *
- * The token can be obtained from: https://twenty.crowdin.com/u/settings#api-key
  */
 
-const CROWDIN_BASE_URL = 'https://twenty.api.crowdin.com/api/v2';
+import {
+  addTranslation,
+  deleteTranslation,
+  fetchLanguageTranslations,
+  fetchSourceStringsById,
+  fetchTargetLanguageIds,
+  getCrowdinTokenOrThrow,
+  type CrowdinContext,
+  type CrowdinTranslation,
+} from './crowdin-api';
+import {
+  evaluateRules,
+  NORMALIZATION_RULES,
+  type NormalizationRule,
+} from './crowdin-normalization-rules';
+import { mapWithConcurrency } from './map-with-concurrency.util';
 
-const PROJECT_ARG = process.argv.find((arg: string) =>
-  arg.startsWith('--project='),
-);
-const CROWDIN_PROJECT_ID = PROJECT_ARG ? Number(PROJECT_ARG.split('=')[1]) : 2;
-const APPLY = process.argv.includes('--apply');
-const RULES_ARG = process.argv.find((arg: string) => arg.startsWith('--rules='));
-const SELECTED_RULE_NAMES = RULES_ARG
-  ? RULES_ARG.split('=')[1]
-      .split(',')
-      .map((name: string) => name.trim())
-      .filter(Boolean)
-  : null;
-
-// How many string+language lookups to run in parallel (Crowdin rate limits are generous).
+const DEFAULT_PROJECT_ID = 2;
+// How many per-language lookups to run in parallel (Crowdin rate limits are generous).
 const FETCH_CONCURRENCY = 10;
-
-type NormalizationRule = {
-  name: string;
-  detect: (text: string) => boolean;
-  fix: (text: string) => string;
-  // When present, only source strings matching this predicate are scanned,
-  // which lets the engine use the cheap targeted lookup instead of a full scan.
-  sourceFilter?: (sourceText: string) => boolean;
-};
-
-// Matches inline-code spans: `...` (single backtick pairs, no newline inside)
-// Matches a full inline-code span, backticks included (single-line only).
-const INLINE_CODE_SPAN_REGEX = /`[^`\n]+`/g;
-// The build-breaking signature: escaped angle brackets
-const ESCAPED_TAG_REGEX = /&lt;|&gt;|&#0*60;|&#0*62;/i;
-// Literal \uXXXX sequences that leaked into a translation instead of the character
-const ESCAPED_UNICODE_REGEX = /\\u[0-9a-fA-F]{4}/;
-
-function inlineCodeSpans(text: string): string[] {
-  return text.match(INLINE_CODE_SPAN_REGEX) ?? [];
-}
-
-// Source strings worth repairing: those carrying an angle bracket inside inline code.
-function sourceHasTagInInlineCode(sourceText: string): boolean {
-  return inlineCodeSpans(sourceText).some(
-    (span) => span.includes('<') || span.includes('>'),
-  );
-}
-
-// Only flag/repair escaping that lives inside an inline-code span. Angle brackets
-// escaped elsewhere (e.g. intentionally in prose) are left untouched so we never
-// turn literal documentation content into markup.
-function inlineCodeHasEscapedTag(text: string): boolean {
-  return inlineCodeSpans(text).some((span) => ESCAPED_TAG_REGEX.test(span));
-}
-
-function unescapeInlineCodeTags(text: string): string {
-  return text.replace(INLINE_CODE_SPAN_REGEX, (span) =>
-    span
-      .replace(/&lt;/gi, '<')
-      .replace(/&gt;/gi, '>')
-      .replace(/&#0*60;/g, '<')
-      .replace(/&#0*62;/g, '>'),
-  );
-}
-
-const RULES: NormalizationRule[] = [
-  {
-    name: 'escaped-unicode',
-    detect: (text) => ESCAPED_UNICODE_REGEX.test(text),
-    fix: (text) =>
-      text.replace(/\\u([0-9a-fA-F]{4})/g, (match, hex) => {
-        try {
-          return String.fromCharCode(parseInt(hex, 16));
-        } catch {
-          return match;
-        }
-      }),
-  },
-  {
-    name: 'escaped-inline-code-tags',
-    detect: inlineCodeHasEscapedTag,
-    fix: unescapeInlineCodeTags,
-    sourceFilter: sourceHasTagInInlineCode,
-  },
-];
-
-type CrowdinTranslation = {
-  stringId: number;
-  translationId: number;
-  text: string;
-};
+const MAX_PREVIEWED_FINDINGS = 15;
 
 type NormalizationFinding = {
   languageId: string;
@@ -132,396 +59,197 @@ type NormalizationFinding = {
   ruleNames: string[];
 };
 
-async function getToken(): Promise<string> {
-  const token = process.env.CROWDIN_PERSONAL_TOKEN;
+function getArgumentValue(name: string): string | undefined {
+  return process.argv
+    .find((argument) => argument.startsWith(`--${name}=`))
+    ?.split('=')[1];
+}
 
-  if (!token) {
-    console.error('Error: CROWDIN_PERSONAL_TOKEN environment variable not set');
-    console.error(
-      'Get your token from: https://twenty.crowdin.com/u/settings#api-key',
+function parseProjectIdOrThrow(): number {
+  const rawProjectId = getArgumentValue('project');
+
+  if (rawProjectId === undefined) return DEFAULT_PROJECT_ID;
+
+  const projectId = Number(rawProjectId);
+
+  if (!Number.isInteger(projectId) || projectId <= 0) {
+    throw new Error(`Invalid --project=${rawProjectId}, expected a project id`);
+  }
+
+  return projectId;
+}
+
+function selectRulesOrThrow(): NormalizationRule[] {
+  const rawRules = getArgumentValue('rules');
+
+  if (rawRules === undefined) return NORMALIZATION_RULES;
+
+  const requestedNames = rawRules
+    .split(',')
+    .map((name) => name.trim())
+    .filter(Boolean);
+
+  const availableNames = NORMALIZATION_RULES.map((rule) => rule.name);
+  const unknownNames = requestedNames.filter(
+    (name) => !availableNames.includes(name),
+  );
+
+  if (requestedNames.length === 0 || unknownNames.length > 0) {
+    throw new Error(
+      `Unknown rule(s): ${unknownNames.join(', ') || '(none given)'}. Available: ${availableNames.join(', ')}`,
     );
-    process.exit(1);
   }
 
-  return token;
-}
-
-async function crowdinRequest<T>(
-  endpoint: string,
-  token: string,
-  options: RequestInit = {},
-): Promise<T | null> {
-  const url = `${CROWDIN_BASE_URL}${endpoint}`;
-  const response = await fetch(url, {
-    ...options,
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-  if (!response.ok) {
-    if (response.status === 404) return null;
-    const text = await response.text();
-    throw new Error(`Crowdin API error: ${response.status} ${text}`);
-  }
-
-  const text = await response.text();
-
-  if (!text) return null;
-
-  return JSON.parse(text) as T;
-}
-
-async function mapWithConcurrency<T, R>(
-  items: T[],
-  limit: number,
-  handler: (item: T) => Promise<R>,
-): Promise<R[]> {
-  const results: R[] = Array.from({ length: items.length });
-  let cursor = 0;
-
-  const worker = async () => {
-    while (cursor < items.length) {
-      const index = cursor++;
-      results[index] = await handler(items[index]);
-    }
-  };
-
-  await Promise.all(
-    Array.from({ length: Math.min(limit, items.length) }, worker),
-  );
-
-  return results;
-}
-
-async function getProjectLanguages(token: string): Promise<string[]> {
-  type ProjectResponse = {
-    data: {
-      targetLanguageIds: string[];
-    };
-  };
-
-  const response = await crowdinRequest<ProjectResponse>(
-    `/projects/${CROWDIN_PROJECT_ID}`,
-    token,
-  );
-
-  return response?.data.targetLanguageIds || [];
-}
-
-async function getSourceStrings(token: string): Promise<Map<number, string>> {
-  const result = new Map<number, string>();
-  let offset = 0;
-  const limit = 500;
-
-  while (true) {
-    type StringsResponse = {
-      data: Array<{
-        data: {
-          id: number;
-          text: string | Record<string, string>;
-        };
-      }>;
-    };
-
-    const response = await crowdinRequest<StringsResponse>(
-      `/projects/${CROWDIN_PROJECT_ID}/strings?limit=${limit}&offset=${offset}`,
-      token,
-    );
-
-    if (!response || response.data.length === 0) break;
-
-    for (const item of response.data) {
-      const text = item.data.text;
-
-      if (typeof text !== 'string') continue;
-
-      result.set(item.data.id, text);
-    }
-
-    if (response.data.length < limit) break;
-    offset += limit;
-  }
-
-  return result;
-}
-
-// Targeted lookup: translations for a single string+language. This endpoint
-// returns the translation id as `id` and does not echo the stringId back.
-async function getTranslationsForString(
-  token: string,
-  stringId: number,
-  languageId: string,
-): Promise<CrowdinTranslation[]> {
-  type TranslationsResponse = {
-    data: Array<{ data: { id: number; text: string } }>;
-  };
-
-  const response = await crowdinRequest<TranslationsResponse>(
-    `/projects/${CROWDIN_PROJECT_ID}/translations?stringId=${stringId}&languageId=${languageId}&limit=100`,
-    token,
-  );
-
-  if (!response) return [];
-
-  return response.data.map((item) => ({
-    stringId,
-    translationId: item.data.id,
-    text: item.data.text,
-  }));
-}
-
-// Bulk lookup: every translation for a language, paged. This endpoint returns
-// both stringId and translationId.
-async function getTranslationsForLanguage(
-  token: string,
-  languageId: string,
-): Promise<CrowdinTranslation[]> {
-  const translations: CrowdinTranslation[] = [];
-  let offset = 0;
-  const limit = 500;
-
-  while (true) {
-    type TranslationsResponse = {
-      data: Array<{
-        data: { stringId: number; translationId: number; text: string };
-      }>;
-    };
-
-    const response = await crowdinRequest<TranslationsResponse>(
-      `/projects/${CROWDIN_PROJECT_ID}/languages/${languageId}/translations?limit=${limit}&offset=${offset}`,
-      token,
-    );
-
-    if (!response || response.data.length === 0) break;
-
-    for (const item of response.data) {
-      translations.push({
-        stringId: item.data.stringId,
-        translationId: item.data.translationId,
-        text: item.data.text,
-      });
-    }
-
-    if (response.data.length < limit) break;
-    offset += limit;
-  }
-
-  return translations;
-}
-
-async function deleteTranslation(
-  token: string,
-  translationId: number,
-): Promise<void> {
-  await crowdinRequest(
-    `/projects/${CROWDIN_PROJECT_ID}/translations/${translationId}`,
-    token,
-    { method: 'DELETE' },
+  return NORMALIZATION_RULES.filter((rule) =>
+    requestedNames.includes(rule.name),
   );
 }
 
-async function addTranslation(
-  token: string,
-  stringId: number,
-  languageId: string,
-  text: string,
-): Promise<void> {
-  const url = `${CROWDIN_BASE_URL}/projects/${CROWDIN_PROJECT_ID}/translations`;
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ stringId, languageId, text }),
-  });
+function collectFindings({
+  rules,
+  sourceStrings,
+  languageId,
+  translations,
+}: {
+  rules: NormalizationRule[];
+  sourceStrings: Map<number, string> | null;
+  languageId: string;
+  translations: CrowdinTranslation[];
+}): NormalizationFinding[] {
+  return translations.flatMap((translation) => {
+    const sourceText = sourceStrings?.get(translation.stringId);
+    const { fixedText, ruleNames } = evaluateRules({
+      rules,
+      sourceText,
+      translationText: translation.text,
+    });
 
-  if (response.ok) return;
+    if (ruleNames.length === 0) return [];
 
-  const data = (await response.json()) as {
-    errors?: Array<{ error?: { errors?: Array<{ message?: string }> } }>;
-  };
-  const errorMsg = data?.errors?.[0]?.error?.errors?.[0]?.message || '';
-
-  // An identical translation already existing means our corrected text is
-  // already present as a translation for this string — treat as success.
-  if (errorMsg.includes('identical')) return;
-
-  throw new Error(`Failed to add translation: ${JSON.stringify(data)}`);
-}
-
-// Applies every rule whose source string qualifies and whose pattern is present.
-function evaluate(
-  rules: NormalizationRule[],
-  sourceText: string | undefined,
-  translationText: string,
-): { fixedText: string; ruleNames: string[] } {
-  let fixedText = translationText;
-  const ruleNames: string[] = [];
-
-  for (const rule of rules) {
-    if (
-      rule.sourceFilter &&
-      (sourceText === undefined || !rule.sourceFilter(sourceText))
-    ) {
-      continue;
-    }
-
-    if (rule.detect(fixedText)) {
-      fixedText = rule.fix(fixedText);
-      ruleNames.push(rule.name);
-    }
-  }
-
-  return { fixedText, ruleNames };
-}
-
-async function scanTargeted(
-  token: string,
-  rules: NormalizationRule[],
-  sourceStrings: Map<number, string>,
-): Promise<NormalizationFinding[]> {
-  const candidateIds = [...sourceStrings.entries()].filter(([, sourceText]) =>
-    rules.some((rule) => rule.sourceFilter?.(sourceText)),
-  );
-
-  console.log(`  ${candidateIds.length} source strings match a rule filter`);
-
-  const languages = await getProjectLanguages(token);
-  console.log(`Languages: ${languages.length}`);
-
-  const lookups: Array<{ stringId: number; languageId: string }> = [];
-
-  for (const [stringId] of candidateIds) {
-    for (const languageId of languages) {
-      lookups.push({ stringId, languageId });
-    }
-  }
-
-  console.log(`Scanning ${lookups.length} string/language pairs...`);
-
-  const perLookup = await mapWithConcurrency(
-    lookups,
-    FETCH_CONCURRENCY,
-    async ({ stringId, languageId }) => {
-      const translations = await getTranslationsForString(
-        token,
-        stringId,
+    return [
+      {
         languageId,
+        stringId: translation.stringId,
+        translationId: translation.translationId,
+        sourceText: sourceText ?? '',
+        originalText: translation.text,
+        fixedText,
+        ruleNames,
+      },
+    ];
+  });
+}
+
+async function scan({
+  context,
+  rules,
+  sourceStrings,
+}: {
+  context: CrowdinContext;
+  rules: NormalizationRule[];
+  sourceStrings: Map<number, string> | null;
+}): Promise<NormalizationFinding[]> {
+  const candidateStringIds = sourceStrings
+    ? [...sourceStrings.entries()]
+        .filter(([, sourceText]) =>
+          rules.some((rule) => rule.sourceFilter?.(sourceText)),
+        )
+        .map(([stringId]) => stringId)
+    : [];
+
+  const isTargeted = rules.every((rule) => rule.sourceFilter);
+
+  if (isTargeted) {
+    console.log(
+      `Strategy: targeted - ${candidateStringIds.length} source strings match a rule filter`,
+    );
+  } else {
+    console.log('Strategy: bulk - every translation of every language');
+  }
+
+  const languageIds = await fetchTargetLanguageIds(context);
+
+  console.log(`Languages: ${languageIds.length}`);
+
+  const perLanguage = await mapWithConcurrency({
+    items: languageIds,
+    limit: FETCH_CONCURRENCY,
+    handler: async (languageId) => {
+      const translations = await fetchLanguageTranslations(context, {
+        languageId,
+        stringIds: isTargeted ? candidateStringIds : undefined,
+      });
+
+      const findings = collectFindings({
+        rules,
+        sourceStrings,
+        languageId,
+        translations,
+      });
+
+      console.log(
+        `  ${languageId}: ${translations.length} translations, ${findings.length} to fix`,
       );
-      const sourceText = sourceStrings.get(stringId);
-      const findings: NormalizationFinding[] = [];
-
-      for (const translation of translations) {
-        const { fixedText, ruleNames } = evaluate(
-          rules,
-          sourceText,
-          translation.text,
-        );
-
-        if (ruleNames.length > 0) {
-          findings.push({
-            languageId,
-            stringId: translation.stringId,
-            translationId: translation.translationId,
-            sourceText: sourceText ?? '',
-            originalText: translation.text,
-            fixedText,
-            ruleNames,
-          });
-        }
-      }
 
       return findings;
     },
-  );
+  });
 
-  return perLookup.flat();
+  return perLanguage.flat();
 }
 
-async function scanBulk(
-  token: string,
-  rules: NormalizationRule[],
-  sourceStrings: Map<number, string> | null,
-): Promise<NormalizationFinding[]> {
-  const languages = await getProjectLanguages(token);
-  console.log(`Languages: ${languages.length}`);
+async function repair(
+  context: CrowdinContext,
+  findings: NormalizationFinding[],
+): Promise<number> {
+  let failed = 0;
 
-  const findings: NormalizationFinding[] = [];
-
-  for (const languageId of languages) {
-    process.stdout.write(`Checking ${languageId}...`);
-    const translations = await getTranslationsForLanguage(token, languageId);
-    let found = 0;
-
-    for (const translation of translations) {
-      const sourceText = sourceStrings?.get(translation.stringId);
-      const { fixedText, ruleNames } = evaluate(
-        rules,
-        sourceText,
-        translation.text,
+  for (const finding of findings) {
+    try {
+      // Add before delete: the newly added translation becomes the exported one,
+      // so a failed re-add can never leave the string without a translation.
+      await addTranslation(context, {
+        stringId: finding.stringId,
+        languageId: finding.languageId,
+        text: finding.fixedText,
+      });
+      await deleteTranslation(context, {
+        translationId: finding.translationId,
+      });
+    } catch (error) {
+      failed++;
+      console.error(
+        `  Failed to repair string ${finding.stringId} (${finding.languageId}): ${error}`,
       );
-
-      if (ruleNames.length > 0) {
-        findings.push({
-          languageId,
-          stringId: translation.stringId,
-          translationId: translation.translationId,
-          sourceText: sourceText ?? '',
-          originalText: translation.text,
-          fixedText,
-          ruleNames,
-        });
-        found++;
-      }
     }
-
-    console.log(` ${translations.length} translations, ${found} to fix`);
   }
 
-  return findings;
+  return failed;
 }
 
 async function main() {
-  const token = await getToken();
-
-  const selectedRules = SELECTED_RULE_NAMES
-    ? RULES.filter((rule) => SELECTED_RULE_NAMES.includes(rule.name))
-    : RULES;
-
-  if (selectedRules.length === 0) {
-    console.error(
-      `No rules selected. Available: ${RULES.map((rule) => rule.name).join(', ')}`,
-    );
-    process.exit(1);
-  }
+  const context: CrowdinContext = {
+    token: getCrowdinTokenOrThrow(),
+    projectId: parseProjectIdOrThrow(),
+  };
+  const rules = selectRulesOrThrow();
+  const isApply = process.argv.includes('--apply');
 
   console.log(
-    `Project ${CROWDIN_PROJECT_ID} — normalize translations (${APPLY ? 'APPLY' : 'DRY-RUN'})`,
+    `Project ${context.projectId} - normalize translations (${isApply ? 'APPLY' : 'DRY-RUN'})`,
   );
-  console.log(`Rules: ${selectedRules.map((rule) => rule.name).join(', ')}`);
+  console.log(`Rules: ${rules.map((rule) => rule.name).join(', ')}`);
 
-  const canTarget = selectedRules.every((rule) => rule.sourceFilter);
-  const needsSource = selectedRules.some((rule) => rule.sourceFilter);
+  const needsSourceStrings = rules.some((rule) => rule.sourceFilter);
+  const sourceStrings = needsSourceStrings
+    ? await fetchSourceStringsById(context)
+    : null;
 
-  let findings: NormalizationFinding[];
-
-  if (canTarget) {
-    console.log('Strategy: targeted (source-filtered lookup)');
-    const sourceStrings = await getSourceStrings(token);
-    findings = await scanTargeted(token, selectedRules, sourceStrings);
-  } else {
-    console.log('Strategy: bulk (full per-language scan)');
-    const sourceStrings = needsSource ? await getSourceStrings(token) : null;
-    findings = await scanBulk(token, selectedRules, sourceStrings);
-  }
+  const findings = await scan({ context, rules, sourceStrings });
 
   console.log(`\n=== Found ${findings.length} corrupted translation(s) ===`);
 
-  for (const finding of findings.slice(0, 15)) {
+  for (const finding of findings.slice(0, MAX_PREVIEWED_FINDINGS)) {
     console.log(
       `\n[${finding.languageId}] string ${finding.stringId} (${finding.ruleNames.join(', ')})`,
     );
@@ -532,54 +260,32 @@ async function main() {
 
   if (findings.length === 0) {
     console.log('Nothing to normalize.');
+
     return;
   }
 
-  if (!APPLY) {
+  if (!isApply) {
     console.log('\nDry-run only. Re-run with --apply to repair.');
+
     return;
   }
 
   console.log('\n=== Applying repairs ===');
-  let repaired = 0;
-  let failed = 0;
 
-  for (const finding of findings) {
-    try {
-      // Add the corrected translation first so a failed re-add can never leave
-      // the string empty; the newly added translation becomes the active one,
-      // then we remove the corrupted record.
-      await addTranslation(
-        token,
-        finding.stringId,
-        finding.languageId,
-        finding.fixedText,
-      );
-      await deleteTranslation(token, finding.translationId);
+  const failed = await repair(context, findings);
 
-      repaired++;
-      process.stdout.write('.');
-    } catch (error) {
-      failed++;
-      console.log(
-        `\n  Failed to repair string ${finding.stringId} (${finding.languageId}): ${error}`,
-      );
-    }
-  }
+  console.log(
+    `Repaired ${findings.length - failed} translation(s) in Crowdin.`,
+  );
 
-  console.log(`\nDone! Repaired ${repaired} translation(s) in Crowdin.`);
-
-  // Surface failures loudly: exit non-zero so the workflow's warning wrapper fires
-  // instead of the run passing silently with translations left corrupted.
+  // Surface failures loudly: a silent partial run leaves a language unbuildable
+  // and every one of its pages stale until someone notices.
   if (failed > 0) {
-    console.error(
-      `::warning::${failed} translation(s) could not be normalized and remain corrupted.`,
-    );
-    process.exit(1);
+    throw new Error(`${failed} translation(s) could not be normalized`);
   }
 }
 
 main().catch((error) => {
-  console.error('Error:', error);
+  console.error(`Error: ${error instanceof Error ? error.message : error}`);
   process.exit(1);
 });
