@@ -1,97 +1,100 @@
-import { installAnimationFrameWindowAliases } from '../installAnimationFrameWindowAliases';
+import { installSchedulerPairAliases } from '../installSchedulerPairAliases';
 
-type RequestFrame = (callback: FrameRequestCallback) => number;
-type CancelFrame = (frameHandle: number) => void;
+const REQUEST_FUNCTION_NAME = 'requestScheduledWork';
+const CANCEL_FUNCTION_NAME = 'cancelScheduledWork';
+
+const createFallbackSchedulerPair = () => ({
+  request: jest.fn().mockReturnValue(11),
+  cancel: jest.fn(),
+});
+
+const installPair = (
+  globalScope: Record<string, unknown>,
+  createPair = createFallbackSchedulerPair,
+) =>
+  installSchedulerPairAliases({
+    globalScope,
+    requestFunctionName: REQUEST_FUNCTION_NAME,
+    cancelFunctionName: CANCEL_FUNCTION_NAME,
+    createFallbackSchedulerPair: createPair,
+  });
 
 describe('installSchedulerPairAliases', () => {
-  afterEach(() => {
-    jest.useRealTimers();
-  });
+  it('should alias a native pair onto a distinct window, bound to the global scope', () => {
+    const receivedThisValues: unknown[] = [];
+    const globalScope: Record<string, unknown> = { window: {} };
 
-  it('should alias the native scheduler onto a distinct window when present', () => {
-    const nativeRequestAnimationFrame = jest.fn().mockReturnValue(7);
-    const nativeCancelAnimationFrame = jest.fn();
-    const polyfillWindow: Record<string, unknown> = {};
-    const globalScope: Record<string, unknown> = {
-      window: polyfillWindow,
-      requestAnimationFrame: nativeRequestAnimationFrame,
-      cancelAnimationFrame: nativeCancelAnimationFrame,
+    globalScope[REQUEST_FUNCTION_NAME] = function (this: unknown) {
+      receivedThisValues.push(this);
+
+      return 7;
     };
+    globalScope[CANCEL_FUNCTION_NAME] = jest.fn();
 
-    installAnimationFrameWindowAliases(globalScope);
+    const nativeRequest = globalScope[REQUEST_FUNCTION_NAME];
 
-    expect(globalScope.requestAnimationFrame).toBe(nativeRequestAnimationFrame);
-    expect(globalScope.cancelAnimationFrame).toBe(nativeCancelAnimationFrame);
+    installPair(globalScope);
 
-    const frameCallback = jest.fn();
-    const frameHandle = (polyfillWindow.requestAnimationFrame as RequestFrame)(
-      frameCallback,
-    );
+    const polyfillWindow = globalScope.window as Record<string, unknown>;
 
-    expect(frameHandle).toBe(7);
-    expect(nativeRequestAnimationFrame).toHaveBeenCalledWith(frameCallback);
-
-    (polyfillWindow.cancelAnimationFrame as CancelFrame)(frameHandle);
-
-    expect(nativeCancelAnimationFrame).toHaveBeenCalledWith(7);
+    expect(globalScope[REQUEST_FUNCTION_NAME]).toBe(nativeRequest);
+    expect((polyfillWindow[REQUEST_FUNCTION_NAME] as () => number)()).toBe(7);
+    expect(receivedThisValues).toEqual([globalScope]);
   });
 
-  it('should install a fallback on every target when no native scheduler exists', () => {
-    jest.useFakeTimers();
-
+  it('should install one fallback pair on every target when no native pair exists', () => {
     const polyfillWindow: Record<string, unknown> = {};
     const globalScope: Record<string, unknown> = { window: polyfillWindow };
 
-    installAnimationFrameWindowAliases(globalScope);
+    installPair(globalScope);
 
-    expect(globalScope.requestAnimationFrame).toBe(
-      polyfillWindow.requestAnimationFrame,
+    expect(globalScope[REQUEST_FUNCTION_NAME]).toBe(
+      polyfillWindow[REQUEST_FUNCTION_NAME],
     );
-
-    const firedCallback = jest.fn();
-
-    (polyfillWindow.requestAnimationFrame as RequestFrame)(firedCallback);
-
-    expect(firedCallback).not.toHaveBeenCalled();
-
-    jest.advanceTimersByTime(16);
-
-    expect(firedCallback).toHaveBeenCalledTimes(1);
-    expect(firedCallback).toHaveBeenCalledWith(expect.any(Number));
+    expect(globalScope[CANCEL_FUNCTION_NAME]).toBe(
+      polyfillWindow[CANCEL_FUNCTION_NAME],
+    );
   });
 
-  it('should keep a native scheduler that is missing its cancel function', () => {
-    const nativeRequestAnimationFrame = jest.fn();
+  it('should keep a native function whose counterpart is missing', () => {
+    const nativeRequest = jest.fn();
     const polyfillWindow: Record<string, unknown> = {};
-    const globalScope: Record<string, unknown> = {
-      window: polyfillWindow,
-      requestAnimationFrame: nativeRequestAnimationFrame,
-    };
+    const globalScope: Record<string, unknown> = { window: polyfillWindow };
 
-    installAnimationFrameWindowAliases(globalScope);
+    globalScope[REQUEST_FUNCTION_NAME] = nativeRequest;
 
-    expect(globalScope.requestAnimationFrame).toBe(nativeRequestAnimationFrame);
-    expect(globalScope.cancelAnimationFrame).toBeUndefined();
-    expect(polyfillWindow.requestAnimationFrame).toEqual(expect.any(Function));
-    expect(polyfillWindow.cancelAnimationFrame).toEqual(expect.any(Function));
+    installPair(globalScope);
+
+    expect(globalScope[REQUEST_FUNCTION_NAME]).toBe(nativeRequest);
+    expect(globalScope[CANCEL_FUNCTION_NAME]).toBeUndefined();
+    expect(polyfillWindow[REQUEST_FUNCTION_NAME]).toEqual(expect.any(Function));
+    expect(polyfillWindow[CANCEL_FUNCTION_NAME]).toEqual(expect.any(Function));
   });
 
   it('should not overwrite a target that already holds the whole pair', () => {
-    const existingRequestAnimationFrame = jest.fn();
-    const existingCancelAnimationFrame = jest.fn();
+    const existingRequest = jest.fn();
+    const existingCancel = jest.fn();
     const polyfillWindow: Record<string, unknown> = {
-      requestAnimationFrame: existingRequestAnimationFrame,
-      cancelAnimationFrame: existingCancelAnimationFrame,
+      [REQUEST_FUNCTION_NAME]: existingRequest,
+      [CANCEL_FUNCTION_NAME]: existingCancel,
     };
     const globalScope: Record<string, unknown> = { window: polyfillWindow };
 
-    installAnimationFrameWindowAliases(globalScope);
+    installPair(globalScope);
 
-    expect(polyfillWindow.requestAnimationFrame).toBe(
-      existingRequestAnimationFrame,
-    );
-    expect(polyfillWindow.cancelAnimationFrame).toBe(
-      existingCancelAnimationFrame,
-    );
+    expect(polyfillWindow[REQUEST_FUNCTION_NAME]).toBe(existingRequest);
+    expect(polyfillWindow[CANCEL_FUNCTION_NAME]).toBe(existingCancel);
+  });
+
+  it('should not build a fallback pair when a native pair exists', () => {
+    const createPair = jest.fn(createFallbackSchedulerPair);
+    const globalScope: Record<string, unknown> = { window: {} };
+
+    globalScope[REQUEST_FUNCTION_NAME] = jest.fn();
+    globalScope[CANCEL_FUNCTION_NAME] = jest.fn();
+
+    installPair(globalScope, createPair);
+
+    expect(createPair).not.toHaveBeenCalled();
   });
 });
