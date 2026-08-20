@@ -27,9 +27,9 @@ import { isAutoSelectModelId } from 'twenty-shared/utils';
 
 import { DEFAULT_MAX_OUTPUT_TOKENS } from 'src/engine/metadata-modules/ai/ai-models/types/default-max-output-tokens.const';
 import { buildCompositeModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/composite-model-id.util';
+import { getPositiveTokenLimitOrDefault } from 'src/engine/metadata-modules/ai/ai-models/utils/get-positive-token-limit-or-default.util';
 import { inferModelFamily } from 'src/engine/metadata-modules/ai/ai-models/utils/infer-model-family.util';
 import { isProviderConfigured } from 'src/engine/metadata-modules/ai/ai-models/utils/is-provider-configured.util';
-import { resolveTokenLimit } from 'src/engine/metadata-modules/ai/ai-models/utils/resolve-token-limit.util';
 import {
   isModelAllowedByWorkspace,
   type WorkspaceModelAvailabilitySettings,
@@ -156,11 +156,11 @@ export class AiModelRegistryService {
       cacheCreationCostPerMillionTokens:
         modelDef.cacheCreationCostPerMillionTokens,
       longContextCost: modelDef.longContextCost,
-      contextWindowTokens: resolveTokenLimit(
+      contextWindowTokens: getPositiveTokenLimitOrDefault(
         modelDef.contextWindowTokens,
         DEFAULT_CONTEXT_WINDOW_TOKENS,
       ),
-      maxOutputTokens: resolveTokenLimit(
+      maxOutputTokens: getPositiveTokenLimitOrDefault(
         modelDef.maxOutputTokens,
         DEFAULT_MAX_OUTPUT_TOKENS,
       ),

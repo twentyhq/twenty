@@ -66,11 +66,15 @@ type ModelSuggestion = {
   supportsReasoning: boolean;
 };
 
-// A blank limit means "unset" and lets the server apply its default, but a
-// value the admin actually typed has to be usable.
-const isInvalidLimit = (rawValue: string, parsedValue: number) =>
-  rawValue.trim() !== '' &&
-  (!Number.isInteger(parsedValue) || parsedValue <= 0);
+const isInvalidLimit = (rawValue: string) => {
+  if (rawValue.trim() === '') {
+    return false;
+  }
+
+  const parsedValue = Number(rawValue);
+
+  return !Number.isInteger(parsedValue) || parsedValue <= 0;
+};
 
 type FormValues = {
   name: string;
@@ -188,8 +192,6 @@ export const SettingsAdminNewAiModel = () => {
           ? String(suggestion.cacheCreationCostPerMillionTokens)
           : '',
       );
-      // models.dev entries without limits are exposed as 0, which must stay
-      // blank so the user is not offered a value that cannot be saved.
       form.setValue(
         'contextWindowTokens',
         suggestion.contextWindowTokens > 0
@@ -235,7 +237,7 @@ export const SettingsAdminNewAiModel = () => {
     const contextWindowTokens = Number(values.contextWindowTokens);
     const maxOutputTokens = Number(values.maxOutputTokens);
 
-    if (isInvalidLimit(values.contextWindowTokens, contextWindowTokens)) {
+    if (isInvalidLimit(values.contextWindowTokens)) {
       form.setError('contextWindowTokens', {
         type: 'manual',
         message: t`Context window must be a positive integer`,
@@ -244,7 +246,7 @@ export const SettingsAdminNewAiModel = () => {
       return;
     }
 
-    if (isInvalidLimit(values.maxOutputTokens, maxOutputTokens)) {
+    if (isInvalidLimit(values.maxOutputTokens)) {
       form.setError('maxOutputTokens', {
         type: 'manual',
         message: t`Max output must be a positive integer`,
