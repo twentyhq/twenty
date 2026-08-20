@@ -1,10 +1,6 @@
-/**
- * Rules describing the mechanical corruptions that the translation step (MT / AI
- * / human) introduces in Crowdin, and how to repair each one.
- *
- * Every rule is pure text in / text out and must be idempotent: the normalizer
- * re-runs on every pull, so `fix(fix(text))` has to equal `fix(text)`.
- */
+// Each rule describes one mechanical corruption the translation step introduces
+// in Crowdin and how to repair it. Rules are pure text in / text out and must be
+// idempotent: the normalizer re-runs on every pull, so fix(fix(text)) === fix(text).
 
 export type NormalizationRule = {
   name: string;
@@ -13,6 +9,9 @@ export type NormalizationRule = {
   sourceFilter?: (sourceText: string) => boolean;
 };
 
+// Single-backtick spans only. Multi-backtick spans (used to embed a literal
+// backtick) pair differently, and mispairing them would rewrite prose as MDX, so
+// they are left alone: missing a repair is recoverable, corrupting one is not.
 const INLINE_CODE_SPAN_REGEX = /`[^`\n]+`/g;
 const ESCAPED_TAG_REGEX = /&lt;|&gt;|&#0*60;|&#0*62;|&#x0*3c;|&#x0*3e;/i;
 const ESCAPED_UNICODE_REGEX = /\\u[0-9a-fA-F]{4}/;

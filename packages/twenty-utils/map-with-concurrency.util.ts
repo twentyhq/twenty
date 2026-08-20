@@ -8,6 +8,12 @@ export async function mapWithConcurrency<TItem, TResult>({
   limit: number;
   handler: (item: TItem) => Promise<TResult>;
 }): Promise<TResult[]> {
+  if (limit < 1) {
+    throw new Error(
+      `mapWithConcurrency needs a limit of at least 1, got ${limit}`,
+    );
+  }
+
   const results: TResult[] = Array.from({ length: items.length });
   let cursor = 0;
 

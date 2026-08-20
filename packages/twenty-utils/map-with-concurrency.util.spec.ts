@@ -34,6 +34,12 @@ describe('mapWithConcurrency', () => {
     expect(peak).toBe(3);
   });
 
+  it('rejects a limit that would leave every item unhandled', async () => {
+    await expect(
+      mapWithConcurrency({ items: [1], limit: 0, handler: jest.fn() }),
+    ).rejects.toThrow('at least 1');
+  });
+
   it('returns an empty array without spawning workers', async () => {
     const handler = jest.fn();
 

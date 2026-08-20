@@ -1,31 +1,18 @@
-/**
- * Normalizes Crowdin translations that were mechanically corrupted during the
- * translation step (MT / AI / human), so Crowdin's builder can always rebuild
- * valid output and downstream builds (Mintlify, Lingui) don't go stale.
- *
- * Every corruption class we have hit is the same shape - a mechanical,
- * language-independent, idempotent text fix applied directly in Crowdin (the
- * source of truth). Each class is therefore a small `NormalizationRule` in
- * crowdin-normalization-rules.ts rather than a script of its own.
- *
- * Scan strategy is chosen automatically:
- *   - If every selected rule declares a `sourceFilter`, only the matching source
- *     strings are scanned (targeted) - used for the docs inline-code rule.
- *   - Otherwise every translation is paged per language (bulk) - needed for
- *     rules like escaped-unicode that can appear in any string.
- *
- * Usage:
- *   # Dry-run (read-only), all rules, default project 2 (docs)
- *   CROWDIN_PERSONAL_TOKEN=xxx npx tsx packages/twenty-utils/normalize-crowdin-translations.ts
- *
- *   # Apply, docs inline-code only (targeted)
- *   CROWDIN_PERSONAL_TOKEN=xxx npx tsx packages/twenty-utils/normalize-crowdin-translations.ts \
- *     --project=2 --apply --rules=escaped-inline-code-tags
- *
- *   # Apply, app unicode fix (bulk)
- *   CROWDIN_PERSONAL_TOKEN=xxx npx tsx packages/twenty-utils/normalize-crowdin-translations.ts \
- *     --project=1 --apply --rules=escaped-unicode
- */
+// Repairs translations that the translation step (MT / AI / human) corrupted
+// mechanically, directly in Crowdin so the fix survives every later pull and is
+// what translators see in the UI. Each corruption class is a NormalizationRule
+// in crowdin-normalization-rules.ts rather than a script of its own.
+//
+// The scan strategy follows from the selected rules: when every one of them
+// declares a sourceFilter only the matching source strings are fetched, which is
+// far cheaper than paging every translation of every language.
+//
+// Usage:
+//   CROWDIN_PERSONAL_TOKEN=xxx npx tsx packages/twenty-utils/normalize-crowdin-translations.ts \
+//     --project=2 --rules=escaped-inline-code-tags [--apply]
+//
+// Without --apply the run is a read-only dry-run.
+// Token: https://twenty.crowdin.com/u/settings#api-key
 
 import {
   addTranslation,
@@ -44,7 +31,6 @@ import {
 } from './crowdin-normalization-rules';
 import { mapWithConcurrency } from './map-with-concurrency.util';
 
-const DEFAULT_PROJECT_ID = 2;
 const FETCH_CONCURRENCY = 10;
 const MAX_PREVIEWED_FINDINGS = 15;
 
@@ -64,26 +50,25 @@ function getArgumentValue(name: string): string | undefined {
     ?.split('=')[1];
 }
 
+// No default: the run deletes and re-adds translations, so the project it acts on
+// is never inferred.
 function parseProjectIdOrThrow(): number {
   const rawProjectId = getArgumentValue('project');
-
-  if (rawProjectId === undefined) return DEFAULT_PROJECT_ID;
-
   const projectId = Number(rawProjectId);
 
   if (!Number.isInteger(projectId) || projectId <= 0) {
-    throw new Error(`Invalid --project=${rawProjectId}, expected a project id`);
+    throw new Error(
+      `Missing or invalid --project=${rawProjectId ?? ''}, expected a project id`,
+    );
   }
 
   return projectId;
 }
 
+// No default either: which rules run decides what gets rewritten, and a rule that
+// is safe on one project can damage another.
 function selectRulesOrThrow(): NormalizationRule[] {
-  const rawRules = getArgumentValue('rules');
-
-  if (rawRules === undefined) return NORMALIZATION_RULES;
-
-  const requestedNames = rawRules
+  const requestedNames = (getArgumentValue('rules') ?? '')
     .split(',')
     .map((name) => name.trim())
     .filter(Boolean);
@@ -95,7 +80,7 @@ function selectRulesOrThrow(): NormalizationRule[] {
 
   if (requestedNames.length === 0 || unknownNames.length > 0) {
     throw new Error(
-      `Unknown rule(s): ${unknownNames.join(', ') || '(none given)'}. Available: ${availableNames.join(', ')}`,
+      `Missing or unknown --rules=${unknownNames.join(',')}. Available: ${availableNames.join(', ')}`,
     );
   }
 
@@ -111,7 +96,7 @@ function collectFindings({
   translations,
 }: {
   rules: NormalizationRule[];
-  sourceStrings: Map<number, string> | null;
+  sourceStrings: Map<number, string> | undefined;
   languageId: string;
   translations: CrowdinTranslation[];
 }): NormalizationFinding[] {
@@ -146,7 +131,7 @@ async function scan({
 }: {
   context: CrowdinContext;
   rules: NormalizationRule[];
-  sourceStrings: Map<number, string> | null;
+  sourceStrings: Map<number, string> | undefined;
 }): Promise<NormalizationFinding[]> {
   const candidateStringIds = sourceStrings
     ? [...sourceStrings.entries()]
@@ -197,33 +182,41 @@ async function scan({
   return perLanguage.flat();
 }
 
+async function repairOne(
+  context: CrowdinContext,
+  finding: NormalizationFinding,
+): Promise<boolean> {
+  try {
+    // Add before delete: the newly added translation becomes the exported one,
+    // so a failed re-add can never leave the string without a translation.
+    await addTranslation(context, {
+      stringId: finding.stringId,
+      languageId: finding.languageId,
+      text: finding.fixedText,
+    });
+    await deleteTranslation(context, { translationId: finding.translationId });
+
+    return true;
+  } catch (error) {
+    console.error(
+      `  Failed to repair string ${finding.stringId} (${finding.languageId}): ${error}`,
+    );
+
+    return false;
+  }
+}
+
 async function repair(
   context: CrowdinContext,
   findings: NormalizationFinding[],
 ): Promise<number> {
-  let failed = 0;
+  const outcomes: boolean[] = [];
 
   for (const finding of findings) {
-    try {
-      // Add before delete: the newly added translation becomes the exported one,
-      // so a failed re-add can never leave the string without a translation.
-      await addTranslation(context, {
-        stringId: finding.stringId,
-        languageId: finding.languageId,
-        text: finding.fixedText,
-      });
-      await deleteTranslation(context, {
-        translationId: finding.translationId,
-      });
-    } catch (error) {
-      failed++;
-      console.error(
-        `  Failed to repair string ${finding.stringId} (${finding.languageId}): ${error}`,
-      );
-    }
+    outcomes.push(await repairOne(context, finding));
   }
 
-  return failed;
+  return outcomes.filter((isRepaired) => !isRepaired).length;
 }
 
 async function main() {
@@ -242,7 +235,7 @@ async function main() {
   const needsSourceStrings = rules.some((rule) => rule.sourceFilter);
   const sourceStrings = needsSourceStrings
     ? await fetchSourceStringsById(context)
-    : null;
+    : undefined;
 
   const findings = await scan({ context, rules, sourceStrings });
 

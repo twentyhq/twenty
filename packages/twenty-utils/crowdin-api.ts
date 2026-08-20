@@ -14,6 +14,15 @@ export type CrowdinTranslation = {
   text: string;
 };
 
+export class CrowdinApiError extends Error {
+  constructor(
+    readonly status: number,
+    readonly body: string,
+  ) {
+    super(`Crowdin API error: ${status} ${body}`);
+  }
+}
+
 export function getCrowdinTokenOrThrow(): string {
   const token = process.env.CROWDIN_PERSONAL_TOKEN;
 
@@ -30,7 +39,7 @@ async function crowdinRequest<T>(
   { token }: CrowdinContext,
   endpoint: string,
   options: RequestInit = {},
-): Promise<T | null> {
+): Promise<T | undefined> {
   const response = await fetch(`${CROWDIN_BASE_URL}${endpoint}`, {
     ...options,
     headers: {
@@ -43,12 +52,12 @@ async function crowdinRequest<T>(
   const body = await response.text();
 
   if (!response.ok) {
-    if (response.status === 404) return null;
+    if (response.status === 404) return undefined;
 
-    throw new Error(`Crowdin API error: ${response.status} ${body}`);
+    throw new CrowdinApiError(response.status, body);
   }
 
-  if (!body) return null;
+  if (!body) return undefined;
 
   return JSON.parse(body) as T;
 }
@@ -96,7 +105,10 @@ async function fetchAllPages<TItem>(
 export async function fetchSourceStringsById(
   context: CrowdinContext,
 ): Promise<Map<number, string>> {
-  type SourceString = { id: number; text: string | Record<string, string> };
+  type SourceString = {
+    id?: number;
+    text?: string | Record<string, string>;
+  };
 
   const sourceStrings = await fetchAllPages<SourceString>(
     context,
@@ -107,6 +119,7 @@ export async function fetchSourceStringsById(
     sourceStrings
       .filter(
         (sourceString): sourceString is { id: number; text: string } =>
+          typeof sourceString.id === 'number' &&
           typeof sourceString.text === 'string',
       )
       .map((sourceString) => [sourceString.id, sourceString.text]),
@@ -153,6 +166,8 @@ export async function fetchLanguageTranslations(
   // Plural translations carry their variants in an object instead of `text`; skip them.
   return translations.filter(
     (translation): translation is CrowdinTranslation =>
+      typeof translation.stringId === 'number' &&
+      typeof translation.translationId === 'number' &&
       typeof translation.text === 'string',
   );
 }
@@ -166,6 +181,29 @@ export async function deleteTranslation(
     `/projects/${context.projectId}/translations/${translationId}`,
     { method: 'DELETE' },
   );
+}
+
+// Crowdin rejects an addition identical to an existing translation, which means
+// the corrected text is already there - the only failure the repair can treat as
+// success, so it is matched on the error code rather than on the response body.
+function isIdenticalTranslationError(error: unknown): boolean {
+  if (!(error instanceof CrowdinApiError)) return false;
+
+  type ErrorBody = {
+    errors?: Array<{ error?: { errors?: Array<{ code?: string }> } }>;
+  };
+
+  try {
+    const body = JSON.parse(error.body) as ErrorBody;
+
+    return (body.errors ?? []).some((entry) =>
+      (entry.error?.errors ?? []).some(
+        (detail) => detail.code === 'identicalTranslation',
+      ),
+    );
+  } catch {
+    return false;
+  }
 }
 
 export async function addTranslation(
@@ -186,8 +224,6 @@ export async function addTranslation(
       },
     );
   } catch (error) {
-    // Crowdin rejects an addition identical to an existing translation, which
-    // means the corrected text is already there - the repair is a no-op.
-    if (!/identical/i.test(`${error}`)) throw error;
+    if (!isIdenticalTranslationError(error)) throw error;
   }
 }
