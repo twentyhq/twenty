@@ -3247,7 +3247,7 @@ msgstr "Bu çıktı alanının kısa açıklaması"
 #. js-lingui-id: IjfaX/
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterFieldSelect.tsx
 msgid "Broken field reference. Select the field again to fix this condition."
-msgstr ""
+msgstr "Bozuk alan başvurusu. Bu koşulu düzeltmek için alanı yeniden seçin."
 
 #. js-lingui-id: CSDv65
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -4755,7 +4755,7 @@ msgstr "Bağlam penceresi"
 #. js-lingui-id: uKvqU1
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Context window must be a positive integer"
-msgstr ""
+msgstr "Bağlam penceresi pozitif bir tamsayı olmalıdır"
 
 #. js-lingui-id: xGVfLh
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
@@ -7106,7 +7106,7 @@ msgstr "Tüm Nesnelerdeki Kayıtları Düzenle"
 #. js-lingui-id: /VLYQj
 #: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
 msgid "Edit translations"
-msgstr ""
+msgstr "Çevirileri düzenle"
 
 #. js-lingui-id: eMFB6/
 #: src/modules/views/view-picker/components/ViewPickerContentEditMode.tsx
@@ -9726,53 +9726,35 @@ msgstr "Yatay ayırıcı çizgi"
 
 #. js-lingui-id: WOXdI6
 #: src/pages/settings/applications/utils/getCustomApplicationDescription.ts
-msgid ""
-"Host your workspace's customizations and overrides.\n"
-"\n"
+msgid "Host your workspace's customizations and overrides.\n\n"
 "#### What it includes\n"
-"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n"
-"\n"
+"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n\n"
 "- Custom objects and fields for your own data model\n"
 "- Views, navigation items, and record layouts that shape how your team works\n"
-"- Logic functions, front components, and agents that automate or extend the workspace\n"
-"\n"
+"- Logic functions, front components, and agents that automate or extend the workspace\n\n"
 "#### Why it exists\n"
-"Use this app for workspace-specific customization that should stay local to this workspace.\n"
-"\n"
-"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Scaffold a new app in one command:\n"
-"\n"
+"Use this app for workspace-specific customization that should stay local to this workspace.\n\n"
+"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n\n"
+"#### Build your own app\n\n"
+"Scaffold a new app in one command:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
+"```\n\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"Çalışma alanınızın özelleştirmelerini ve geçersiz kılmalarını barındırın.\n"
-"\n"
+msgstr "Çalışma alanınızın özelleştirmelerini ve geçersiz kılmalarını barındırın.\n\n"
 "#### Neleri içerir\n"
-"Standart uygulamanın üzerine oluşturduğunuz her uzantı, Custom altında gruplanır. Şema değişikliklerinizi, arayüz değişikliklerinizi ve çalışma alanına özgü mantığı tek bir yerde tutar.\n"
-"\n"
+"Standart uygulamanın üzerine oluşturduğunuz her uzantı, Custom altında gruplanır. Şema değişikliklerinizi, arayüz değişikliklerinizi ve çalışma alanına özgü mantığı tek bir yerde tutar.\n\n"
 "- Kendi veri modeliniz için özel nesneler ve alanlar\n"
 "- Ekibinizin çalışma biçimini şekillendiren görünümler, gezinme öğeleri ve kayıt yerleşimleri\n"
-"- Çalışma alanını otomatikleştiren veya genişleten mantık işlevleri, ön uç bileşenleri ve ajanlar\n"
-"\n"
+"- Çalışma alanını otomatikleştiren veya genişleten mantık işlevleri, ön uç bileşenleri ve ajanlar\n\n"
 "#### Neden var\n"
-"Bu uygulamayı, bu çalışma alanına yerel kalması gereken çalışma alanına özgü özelleştirmeler için kullanın.\n"
-"\n"
-"Tek bir işletme için tek bir çalışma alanını şekillendiriyorsanız, bunu burada tutun. Kendi veri modeli, arayüzü ve otomasyonu olan, sürümlendirilmeli, paylaşılmalı veya çalışma alanları arasında kurulabilen yeniden kullanılabilir bir iş uygulaması oluşturuyorsanız, bunun yerine özel bir uygulama oluşturun.\n"
-"\n"
-"#### Kendi uygulamanızı oluşturun\n"
-"\n"
-"Tek bir komutla yeni bir uygulama iskeleti oluşturun:\n"
-"\n"
+"Bu uygulamayı, bu çalışma alanına yerel kalması gereken çalışma alanına özgü özelleştirmeler için kullanın.\n\n"
+"Tek bir işletme için tek bir çalışma alanını şekillendiriyorsanız, bunu burada tutun. Kendi veri modeli, arayüzü ve otomasyonu olan, sürümlendirilmeli, paylaşılmalı veya çalışma alanları arasında kurulabilen yeniden kullanılabilir bir iş uygulaması oluşturuyorsanız, bunun yerine özel bir uygulama oluşturun.\n\n"
+"#### Kendi uygulamanızı oluşturun\n\n"
+"Tek bir komutla yeni bir uygulama iskeleti oluşturun:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
+"```\n\n"
 "Tam adımlı anlatım için [Başlarken kılavuzu](https://twenty.com/developers/extend/apps/getting-started) ve `defineApplication` / `defineEntity` API'leri için [Uygulama Geliştirme](https://twenty.com/developers/extend/apps/building) sayfasına bakın."
 
 #. js-lingui-id: yY8wAv
@@ -10882,12 +10864,12 @@ msgstr "Etiket"
 #. js-lingui-id: B9/B0O
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Label (plural)"
-msgstr ""
+msgstr "Etiket (çoğul)"
 
 #. js-lingui-id: J8GEvd
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Label (singular)"
-msgstr ""
+msgstr "Etiket (tekil)"
 
 #. js-lingui-id: w8Rv8T
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -10913,7 +10895,7 @@ msgstr "Diller"
 #. js-lingui-id: PEi+K2
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Languages without their own translation show the source text."
-msgstr ""
+msgstr "Kendi çevirisi olmayan diller kaynak metni gösterir."
 
 #. js-lingui-id: k7rCa/
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -11859,7 +11841,7 @@ msgstr "Maksimum çıktı"
 #. js-lingui-id: D0Z4Jd
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Max output must be a positive integer"
-msgstr ""
+msgstr "Maksimum çıktı pozitif bir tamsayı olmalıdır"
 
 #. js-lingui-id: 2ICF9k
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -14059,7 +14041,7 @@ msgstr "Yalnızca tarih ve katılımcılar ekibinizle paylaşılacak."
 #. js-lingui-id: aluwJP
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Only in {currentLanguageLabel}"
-msgstr ""
+msgstr "Sadece {currentLanguageLabel} aylarında"
 
 #. js-lingui-id: Ecstfp
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
@@ -15847,7 +15829,7 @@ msgstr "Sohbeti yeniden adlandır"
 #. js-lingui-id: 1PqGzu
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Rename for all languages"
-msgstr ""
+msgstr "Tüm diller için yeniden adlandır"
 
 #. js-lingui-id: oQjB9l
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -17852,7 +17834,7 @@ msgstr "Kaynak E-posta Adresi"
 #. js-lingui-id: MEXVHu
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Source: {canonicalValue}"
-msgstr ""
+msgstr "Kaynak: {canonicalValue}"
 
 #. js-lingui-id: xqlr9R
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -18584,67 +18566,45 @@ msgstr "Bedrock için AWS bölgesi"
 
 #. js-lingui-id: HP7per
 #: src/pages/settings/applications/utils/getStandardApplicationDescription.ts
-msgid ""
-"The base data model every Twenty workspace runs on.\n"
-"\n"
-"#### What \"foundation\" means\n"
-"\n"
-"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n"
-"\n"
+msgid "The base data model every Twenty workspace runs on.\n\n"
+"#### What \"foundation\" means\n\n"
+"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n\n"
 "#### Included objects\n"
 "- **People & Companies**: contact and account records\n"
 "- **Opportunities**: your sales pipeline\n"
 "- **Notes & Tasks**: activity and follow-ups\n"
-"- **Workflows & Dashboards**: automation and reporting\n"
-"\n"
-"Remove this app and the rest of Twenty has nothing to hang off.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n"
-"\n"
+"- **Workflows & Dashboards**: automation and reporting\n\n"
+"Remove this app and the rest of Twenty has nothing to hang off.\n\n"
+"#### Build your own app\n\n"
+"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Then inside the folder:\n"
-"\n"
+"```\n\n"
+"Then inside the folder:\n\n"
 "```bash\n"
 "cd my-twenty-app\n"
 "yarn twenty dev\n"
-"```\n"
-"\n"
+"```\n\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"Her Twenty çalışma alanının üzerinde çalıştığı temel veri modeli.\n"
-"\n"
-"#### \\\"temel\\\" ne anlama gelir\n"
-"\n"
-"Her Twenty çalışma alanı bu nesne kümesiyle başlar. İlişkiler, etkinlik ve raporlamayı da içerecek şekilde CRM'inizin şeklini bunlar belirler. Pazar yeri uygulamaları, yapay zekâ ajanları ve özel nesneler dahil, diğer her şey bunlara bağlanır.\n"
-"\n"
+msgstr "Her Twenty çalışma alanının üzerinde çalıştığı temel veri modeli.\n\n"
+"#### \\\"temel\\\" ne anlama gelir\n\n"
+"Her Twenty çalışma alanı bu nesne kümesiyle başlar. İlişkiler, etkinlik ve raporlamayı da içerecek şekilde CRM'inizin şeklini bunlar belirler. Pazar yeri uygulamaları, yapay zekâ ajanları ve özel nesneler dahil, diğer her şey bunlara bağlanır.\n\n"
 "#### Dahil edilen nesneler\n"
 "- **Kişiler ve Şirketler**: kişi ve hesap kayıtları\n"
 "- **Fırsatlar**: satış boru hattınız\n"
 "- **Notlar ve Görevler**: etkinlik ve takipler\n"
-"- **İş Akışları ve Panolar**: otomasyon ve raporlama\n"
-"\n"
-"Bu uygulamayı kaldırırsanız, Twenty'nin geri kalanı bağlanacak bir şeye sahip olmaz.\n"
-"\n"
-"#### Kendi uygulamanızı oluşturun\n"
-"\n"
-"Twenty'yi kendi nesneleriniz, alanlarınız, mantık işlevleriniz veya yapay zekâ yeteneklerinizle genişletin. Tek bir komutla yeni bir uygulama iskeleti oluşturun:\n"
-"\n"
+"- **İş Akışları ve Panolar**: otomasyon ve raporlama\n\n"
+"Bu uygulamayı kaldırırsanız, Twenty'nin geri kalanı bağlanacak bir şeye sahip olmaz.\n\n"
+"#### Kendi uygulamanızı oluşturun\n\n"
+"Twenty'yi kendi nesneleriniz, alanlarınız, mantık işlevleriniz veya yapay zekâ yeteneklerinizle genişletin. Tek bir komutla yeni bir uygulama iskeleti oluşturun:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Ardından klasörün içinde:\n"
-"\n"
+"```\n\n"
+"Ardından klasörün içinde:\n\n"
 "```bash\n"
 "cd my-twenty-app\n"
 "yarn twenty dev\n"
-"```\n"
-"\n"
+"```\n\n"
 "Tam adımlı anlatım için [Başlarken kılavuzu](https://twenty.com/developers/extend/apps/getting-started) ve `defineApplication` / `defineEntity` API'leri için [Uygulama Geliştirme](https://twenty.com/developers/extend/apps/building) sayfasına bakın."
 
 #. js-lingui-id: VsxjzF
@@ -18897,8 +18857,7 @@ msgstr "Bu işlem geri alınamaz. Bu üye kaldırılacak ve kayıtlarındaki ata
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid ""
-"This action cannot be undone. This will permanently delete your\n"
+msgid "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "Bu işlem geri alınamaz. Bu, tüm hesabınızı kalıcı olarak silecek."
 
@@ -19497,14 +19456,14 @@ msgstr "Aktarılıyor..."
 #. js-lingui-id: 0DTqrp
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Translate or rename?"
-msgstr ""
+msgstr "Çevirilsin mi, yeniden adlandırılsın mı?"
 
 #. js-lingui-id: kAy5R9
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "Translations"
-msgstr ""
+msgstr "Çeviriler"
 
 #. js-lingui-id: lhkaAC
 #: src/modules/settings/billing/components/internal/PlansTags.tsx
@@ -21273,12 +21232,12 @@ msgstr "Size nasıl yardımcı olabilirim?"
 #. js-lingui-id: /SZI25
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "What each language displays for this field's labels"
-msgstr ""
+msgstr "Her dilin bu alanın etiketleri için gösterdiği içerik"
 
 #. js-lingui-id: 9IXG0o
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "What each language displays for this object's labels"
-msgstr ""
+msgstr "Her dilin bu nesnenin etiketleri için gösterdiği içerik"
 
 #. js-lingui-id: cE4SvC
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -21727,7 +21686,7 @@ msgstr "Zaten bu çalışma alanına dahilsiniz"
 #. js-lingui-id: MuS9Gh
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "You are editing the {currentLanguageLabel} translation. Renaming instead changes the source label, for every language."
-msgstr ""
+msgstr "{currentLanguageLabel} çevirisini düzenliyorsunuz. Bunun yerine yeniden adlandırmak, kaynak etiketi tüm diller için değiştirir."
 
 #. js-lingui-id: MFDARJ
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
@@ -21832,8 +21791,7 @@ msgstr "Çalışma alanı alt alan adınızı değiştirmek üzeresiniz. Bu işl
 
 #. js-lingui-id: Z5uTAF
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid ""
-"You've hit your usage limit. \n"
+msgid "You've hit your usage limit. \n"
 "Reach to our support team to upgrade."
 msgstr ""
 
@@ -21842,11 +21800,9 @@ msgstr ""
 #. placeholder {1}: nextResourceCreditPrice ?? ''
 #. placeholder {2}: nextTierInterval ?? ''
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid ""
-"You've hit your usage limit. \n"
+msgid "You've hit your usage limit. \n"
 "Upgrade to {0} credits for ${1}/{2}."
-msgstr ""
-"Kullanım sınırınıza ulaştınız.\n"
+msgstr "Kullanım sınırınıza ulaştınız.\n"
 "{2} başına ${1} karşılığında {0} krediye yükseltin."
 
 #. js-lingui-id: yZ0wRS

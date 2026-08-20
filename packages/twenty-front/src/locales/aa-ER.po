@@ -1663,6 +1663,7 @@ msgstr "crwdns132975:0crwdne132975:0"
 
 #. js-lingui-id: sxkWRg
 #: src/modules/navigation/components/SettingsNavigationDrawer.tsx
+#: src/modules/settings/components/SettingsMorphRelationMultiSelect.tsx
 #: src/modules/ui/layout/dropdown/components/DropdownAdvancedSectionHeader.tsx
 #: src/modules/ui/layout/dropdown/components/DropdownAdvancedSectionMenuItem.tsx
 msgid "Advanced"
@@ -1684,7 +1685,7 @@ msgid "Advanced options"
 msgstr "crwdns107766:0crwdne107766:0"
 
 #. js-lingui-id: 1Cox/a
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Afrikaans"
 msgstr "crwdns1787:0crwdne1787:0"
 
@@ -2541,7 +2542,7 @@ msgid "Apps you're the developer of"
 msgstr "crwdns116174:0crwdne116174:0"
 
 #. js-lingui-id: 8HV3WN
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Arabic"
 msgstr "crwdns1789:0crwdne1789:0"
 
@@ -3243,6 +3244,11 @@ msgstr "crwdns113262:0crwdne113262:0"
 msgid "Brief explanation of this output field"
 msgstr "crwdns6340:0crwdne6340:0"
 
+#. js-lingui-id: IjfaX/
+#: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterFieldSelect.tsx
+msgid "Broken field reference. Select the field again to fix this condition."
+msgstr "crwdns140069:0crwdne140069:0"
+
 #. js-lingui-id: CSDv65
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Bronze"
@@ -3660,7 +3666,7 @@ msgid "Card payment is currently unavailable. Please verify your Stripe configur
 msgstr "crwdns133049:0crwdne133049:0"
 
 #. js-lingui-id: M1RLfx
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Catalan"
 msgstr "crwdns1797:0crwdne1797:0"
 
@@ -3829,12 +3835,12 @@ msgid "Checkout session error. Please retry or contact Twenty team"
 msgstr "crwdns6450:0crwdne6450:0"
 
 #. js-lingui-id: SviKkE
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Chinese — Simplified"
 msgstr "crwdns175:0crwdne175:0"
 
 #. js-lingui-id: dzb4Ep
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Chinese — Traditional"
 msgstr "crwdns177:0crwdne177:0"
 
@@ -4745,6 +4751,11 @@ msgstr "crwdns65978:0crwdne65978:0"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Context window"
 msgstr "crwdns108484:0crwdne108484:0"
+
+#. js-lingui-id: uKvqU1
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "Context window must be a positive integer"
+msgstr "crwdns139919:0crwdne139919:0"
 
 #. js-lingui-id: xGVfLh
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
@@ -5721,7 +5732,7 @@ msgid "Cyan"
 msgstr "crwdns66002:0crwdne66002:0"
 
 #. js-lingui-id: w9VTXG
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Czech"
 msgstr "crwdns1801:0crwdne1801:0"
 
@@ -5754,7 +5765,7 @@ msgid "Danger zone"
 msgstr "crwdns251:0crwdne251:0"
 
 #. js-lingui-id: Fo2vDn
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Danish"
 msgstr "crwdns1803:0crwdne1803:0"
 
@@ -6448,6 +6459,7 @@ msgstr "crwdns6344:0crwdne6344:0"
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
@@ -6868,7 +6880,7 @@ msgid "Duration"
 msgstr "crwdns128419:0crwdne128419:0"
 
 #. js-lingui-id: KIjvtr
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Dutch"
 msgstr "crwdns1805:0crwdne1805:0"
 
@@ -7090,6 +7102,11 @@ msgstr "crwdns112158:0crwdne112158:0"
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Edit Records on All Objects"
 msgstr "crwdns5716:0crwdne5716:0"
+
+#. js-lingui-id: /VLYQj
+#: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
+msgid "Edit translations"
+msgstr "crwdns140043:0crwdne140043:0"
 
 #. js-lingui-id: eMFB6/
 #: src/modules/views/view-picker/components/ViewPickerContentEditMode.tsx
@@ -7430,7 +7447,7 @@ msgid "Enforce two-step verification for every user login."
 msgstr "crwdns6800:0crwdne6800:0"
 
 #. js-lingui-id: lYGfRP
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "English"
 msgstr "crwdns337:0crwdne337:0"
 
@@ -8919,7 +8936,7 @@ msgid "Finish Setup"
 msgstr "crwdns107548:0crwdne107548:0"
 
 #. js-lingui-id: USZ2N6
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Finnish"
 msgstr "crwdns1807:0crwdne1807:0"
 
@@ -9096,7 +9113,7 @@ msgid "free credits per user"
 msgstr "crwdns133311:0crwdne133311:0"
 
 #. js-lingui-id: nLC6tu
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "French"
 msgstr "crwdns391:0crwdne391:0"
 
@@ -9254,7 +9271,7 @@ msgid "Generates a Google Meet or Microsoft Teams link depending on the account.
 msgstr "crwdns133327:0crwdne133327:0"
 
 #. js-lingui-id: DDcvSo
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "German"
 msgstr "crwdns403:0crwdne403:0"
 
@@ -9449,7 +9466,7 @@ msgid "Greater than or equal"
 msgstr "crwdns6624:0crwdne6624:0"
 
 #. js-lingui-id: CZXzs4
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Greek"
 msgstr "crwdns1809:0crwdne1809:0"
 
@@ -9608,7 +9625,7 @@ msgid "Health Status"
 msgstr "crwdns4855:0crwdne4855:0"
 
 #. js-lingui-id: 3oTCgM
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Hebrew"
 msgstr "crwdns1811:0crwdne1811:0"
 
@@ -9837,7 +9854,7 @@ msgid "Human Input"
 msgstr "crwdns7246:0crwdne7246:0"
 
 #. js-lingui-id: mkWad2
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Hungarian"
 msgstr "crwdns1813:0crwdne1813:0"
 
@@ -10657,7 +10674,7 @@ msgid "It natively comes with 7 standard objects."
 msgstr "crwdns135401:0crwdne135401:0"
 
 #. js-lingui-id: Lj7sBL
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Italian"
 msgstr "crwdns451:0crwdne451:0"
 
@@ -10682,7 +10699,7 @@ msgid "Jane Doe"
 msgstr "crwdns133407:0crwdne133407:0"
 
 #. js-lingui-id: dFtidv
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Japanese"
 msgstr "crwdns453:0crwdne453:0"
 
@@ -10813,11 +10830,12 @@ msgid "Kickoff prompt"
 msgstr "crwdns137915:0crwdne137915:0"
 
 #. js-lingui-id: h6S9Yz
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Korean"
 msgstr "crwdns455:0crwdne455:0"
 
 #. js-lingui-id: 87a/t/
+#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsDate.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsRecordPicker.tsx
@@ -10828,6 +10846,16 @@ msgstr "crwdns455:0crwdne455:0"
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 msgid "Label"
 msgstr "crwdns66184:0crwdne66184:0"
+
+#. js-lingui-id: B9/B0O
+#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
+msgid "Label (plural)"
+msgstr "crwdns140045:0crwdne140045:0"
+
+#. js-lingui-id: J8GEvd
+#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
+msgid "Label (singular)"
+msgstr "crwdns140047:0crwdne140047:0"
 
 #. js-lingui-id: w8Rv8T
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -10849,6 +10877,11 @@ msgstr "crwdns459:0crwdne459:0"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Languages"
 msgstr "crwdns133419:0crwdne133419:0"
+
+#. js-lingui-id: PEi+K2
+#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
+msgid "Languages without their own translation show the source text."
+msgstr "crwdns140049:0crwdne140049:0"
 
 #. js-lingui-id: k7rCa/
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -11790,6 +11823,11 @@ msgstr "crwdns6258:0{formatSpreadsheetMaxRecordImportCapacity}crwdne6258:0"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Max output"
 msgstr "crwdns111744:0crwdne111744:0"
+
+#. js-lingui-id: D0Z4Jd
+#: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
+msgid "Max output must be a positive integer"
+msgstr "crwdns139921:0crwdne139921:0"
 
 #. js-lingui-id: 2ICF9k
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -13560,7 +13598,7 @@ msgid "None"
 msgstr "crwdns5207:0crwdne5207:0"
 
 #. js-lingui-id: 1IipHp
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Norwegian"
 msgstr "crwdns1825:0crwdne1825:0"
 
@@ -13985,6 +14023,11 @@ msgstr "crwdns134923:0crwdne134923:0"
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "Only date & participants will be shared with your team."
 msgstr "crwdns5221:0crwdne5221:0"
+
+#. js-lingui-id: aluwJP
+#: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
+msgid "Only in {currentLanguageLabel}"
+msgstr "crwdns140051:0{currentLanguageLabel}crwdne140051:0"
 
 #. js-lingui-id: Ecstfp
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
@@ -14823,17 +14866,17 @@ msgid "Plural"
 msgstr "crwdns4003:0crwdne4003:0"
 
 #. js-lingui-id: trnWaw
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Polish"
 msgstr "crwdns1827:0crwdne1827:0"
 
 #. js-lingui-id: 0nsqwk
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Portuguese — Brazil"
 msgstr "crwdns583:0crwdne583:0"
 
 #. js-lingui-id: xtXHeo
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Portuguese — Portugal"
 msgstr "crwdns585:0crwdne585:0"
 
@@ -15109,7 +15152,7 @@ msgid "Providers"
 msgstr "crwdns107820:0crwdne107820:0"
 
 #. js-lingui-id: YJgRqq
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Pseudo-English"
 msgstr "crwdns593:0crwdne593:0"
 
@@ -15769,6 +15812,11 @@ msgstr "crwdns66342:0crwdne66342:0"
 msgid "Rename chat"
 msgstr "crwdns119488:0crwdne119488:0"
 
+#. js-lingui-id: 1PqGzu
+#: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
+msgid "Rename for all languages"
+msgstr "crwdns140053:0crwdne140053:0"
+
 #. js-lingui-id: oQjB9l
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Renewal date"
@@ -15891,6 +15939,7 @@ msgstr "crwdns116226:0crwdne116226:0"
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
+#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
@@ -16140,7 +16189,7 @@ msgid "Rollover"
 msgstr "crwdns138105:0crwdne138105:0"
 
 #. js-lingui-id: uJc01W
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Romanian"
 msgstr "crwdns1831:0crwdne1831:0"
 
@@ -16242,7 +16291,7 @@ msgid "Running..."
 msgstr "crwdns65088:0crwdne65088:0"
 
 #. js-lingui-id: nji0/X
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Russian"
 msgstr "crwdns1833:0crwdne1833:0"
 
@@ -17141,7 +17190,7 @@ msgid "separator"
 msgstr "crwdns137815:0crwdne137815:0"
 
 #. js-lingui-id: 6oxz/y
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Serbian (Cyrillic)"
 msgstr "crwdns1837:0crwdne1837:0"
 
@@ -17768,13 +17817,18 @@ msgstr "crwdns5955:0crwdne5955:0"
 msgid "Source Email Address"
 msgstr "crwdns125068:0crwdne125068:0"
 
+#. js-lingui-id: MEXVHu
+#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
+msgid "Source: {canonicalValue}"
+msgstr "crwdns140055:0{canonicalValue}crwdne140055:0"
+
 #. js-lingui-id: xqlr9R
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
 msgid "Spaces and comma"
 msgstr "crwdns113186:0crwdne113186:0"
 
 #. js-lingui-id: 65A04M
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Spanish"
 msgstr "crwdns677:0crwdne677:0"
 
@@ -18190,7 +18244,7 @@ msgid "Supports reasoning"
 msgstr "crwdns111804:0crwdne111804:0"
 
 #. js-lingui-id: UaISq3
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Swedish"
 msgstr "crwdns1839:0crwdne1839:0"
 
@@ -19366,6 +19420,18 @@ msgstr "crwdns109400:0crwdne109400:0"
 msgid "Transferring..."
 msgstr "crwdns133835:0crwdne133835:0"
 
+#. js-lingui-id: 0DTqrp
+#: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
+msgid "Translate or rename?"
+msgstr "crwdns140057:0crwdne140057:0"
+
+#. js-lingui-id: kAy5R9
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+#: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+msgid "Translations"
+msgstr "crwdns140059:0crwdne140059:0"
+
 #. js-lingui-id: lhkaAC
 #: src/modules/settings/billing/components/internal/PlansTags.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -19496,7 +19562,7 @@ msgid "TTL"
 msgstr "crwdns8014:0crwdne8014:0"
 
 #. js-lingui-id: Kz91g/
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Turkish"
 msgstr "crwdns1845:0crwdne1845:0"
 
@@ -19635,7 +19701,7 @@ msgid "Types of content this model can process besides text"
 msgstr "crwdns111820:0crwdne111820:0"
 
 #. js-lingui-id: V9+2pH
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Ukrainian"
 msgstr "crwdns1847:0crwdne1847:0"
 
@@ -20659,7 +20725,7 @@ msgid "Video"
 msgstr "crwdns111824:0crwdne111824:0"
 
 #. js-lingui-id: fROFIL
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Vietnamese"
 msgstr "crwdns1849:0crwdne1849:0"
 
@@ -21130,6 +21196,16 @@ msgstr "crwdns106304:0{workspaceName}crwdne106304:0"
 msgid "What can I help you with?"
 msgstr "crwdns108150:0crwdne108150:0"
 
+#. js-lingui-id: /SZI25
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+msgid "What each language displays for this field's labels"
+msgstr "crwdns140061:0crwdne140061:0"
+
+#. js-lingui-id: 9IXG0o
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+msgid "What each language displays for this object's labels"
+msgstr "crwdns140063:0crwdne140063:0"
+
 #. js-lingui-id: cE4SvC
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
@@ -21573,6 +21649,11 @@ msgstr "crwdns6618:0{workspaceDisplayName}crwdne6618:0"
 #: src/modules/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts
 msgid "You already belong to this workspace"
 msgstr "crwdns6620:0crwdne6620:0"
+
+#. js-lingui-id: MuS9Gh
+#: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
+msgid "You are editing the {currentLanguageLabel} translation. Renaming instead changes the source label, for every language."
+msgstr "crwdns140065:0{currentLanguageLabel}crwdne140065:0"
 
 #. js-lingui-id: MFDARJ
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx

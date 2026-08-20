@@ -3879,7 +3879,7 @@ msgstr "A TS_VECTOR típusú mező neve \"searchVector\" kell, hogy legyen."
 #. js-lingui-id: VkSxbb
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
 msgid "Field type TS_VECTOR must have SYSTEM writability"
-msgstr ""
+msgstr "A TS_VECTOR típusú mezőnek SYSTEM írhatósággal kell rendelkeznie."
 
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts

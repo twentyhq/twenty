@@ -3879,7 +3879,7 @@ msgstr "Felttypen TS_VECTOR må ha navnet \"searchVector\""
 #. js-lingui-id: VkSxbb
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
 msgid "Field type TS_VECTOR must have SYSTEM writability"
-msgstr ""
+msgstr "Felttypen TS_VECTOR må ha SYSTEM-skrivbarhet"
 
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts

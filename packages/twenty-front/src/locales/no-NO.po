@@ -3247,7 +3247,7 @@ msgstr "Kort forklaring av dette utdatafeltet"
 #. js-lingui-id: IjfaX/
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterFieldSelect.tsx
 msgid "Broken field reference. Select the field again to fix this condition."
-msgstr ""
+msgstr "Ødelagt feltreferanse. Velg feltet på nytt for å fikse denne betingelsen."
 
 #. js-lingui-id: CSDv65
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -4755,7 +4755,7 @@ msgstr "Kontekstvindu"
 #. js-lingui-id: uKvqU1
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Context window must be a positive integer"
-msgstr ""
+msgstr "Kontekstvinduet må være et positivt heltall"
 
 #. js-lingui-id: xGVfLh
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
@@ -7106,7 +7106,7 @@ msgstr "Rediger oppføringer på alle objekter"
 #. js-lingui-id: /VLYQj
 #: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
 msgid "Edit translations"
-msgstr ""
+msgstr "Rediger oversettelser"
 
 #. js-lingui-id: eMFB6/
 #: src/modules/views/view-picker/components/ViewPickerContentEditMode.tsx
@@ -9726,53 +9726,35 @@ msgstr "Horisontal skillelinje"
 
 #. js-lingui-id: WOXdI6
 #: src/pages/settings/applications/utils/getCustomApplicationDescription.ts
-msgid ""
-"Host your workspace's customizations and overrides.\n"
-"\n"
+msgid "Host your workspace's customizations and overrides.\n\n"
 "#### What it includes\n"
-"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n"
-"\n"
+"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n\n"
 "- Custom objects and fields for your own data model\n"
 "- Views, navigation items, and record layouts that shape how your team works\n"
-"- Logic functions, front components, and agents that automate or extend the workspace\n"
-"\n"
+"- Logic functions, front components, and agents that automate or extend the workspace\n\n"
 "#### Why it exists\n"
-"Use this app for workspace-specific customization that should stay local to this workspace.\n"
-"\n"
-"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Scaffold a new app in one command:\n"
-"\n"
+"Use this app for workspace-specific customization that should stay local to this workspace.\n\n"
+"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n\n"
+"#### Build your own app\n\n"
+"Scaffold a new app in one command:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
+"```\n\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"Huser arbeidsområdets tilpasninger og overstyringer.\n"
-"\n"
+msgstr "Huser arbeidsområdets tilpasninger og overstyringer.\n\n"
 "#### Hva det inneholder\n"
-"Hver utvidelse du oppretter på toppen av standardappen, grupperes under Custom. Den samler skjemaendringer, grensesnittendringer og arbeidsområdespesifikk logikk på ett sted.\n"
-"\n"
+"Hver utvidelse du oppretter på toppen av standardappen, grupperes under Custom. Den samler skjemaendringer, grensesnittendringer og arbeidsområdespesifikk logikk på ett sted.\n\n"
 "- Egendefinerte objekter og felt for din egen datamodell\n"
 "- Visninger, navigasjonselementer og postoppsett som former hvordan teamet ditt jobber\n"
-"- Logikkfunksjoner, frontkomponenter og agenter som automatiserer eller utvider arbeidsområdet\n"
-"\n"
+"- Logikkfunksjoner, frontkomponenter og agenter som automatiserer eller utvider arbeidsområdet\n\n"
 "#### Hvorfor det finnes\n"
-"Bruk denne appen for arbeidsområdespesifikke tilpasninger som skal forbli lokale for dette arbeidsområdet.\n"
-"\n"
-"Hvis du utformer ett arbeidsområde for én virksomhet, behold det her. Hvis du bygger en gjenbrukbar forretningsapp med egen datamodell, UI og automatisering som skal versjoneres, deles eller installeres på tvers av arbeidsområder, opprett en egen app i stedet.\n"
-"\n"
-"#### Bygg din egen app\n"
-"\n"
-"Sett opp en ny app med én kommando:\n"
-"\n"
+"Bruk denne appen for arbeidsområdespesifikke tilpasninger som skal forbli lokale for dette arbeidsområdet.\n\n"
+"Hvis du utformer ett arbeidsområde for én virksomhet, behold det her. Hvis du bygger en gjenbrukbar forretningsapp med egen datamodell, UI og automatisering som skal versjoneres, deles eller installeres på tvers av arbeidsområder, opprett en egen app i stedet.\n\n"
+"#### Bygg din egen app\n\n"
+"Sett opp en ny app med én kommando:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
+"```\n\n"
 "Se [Kom i gang-guiden](https://twenty.com/developers/extend/apps/getting-started) for en full gjennomgang, og [Bygge apper](https://twenty.com/developers/extend/apps/building) for `defineApplication` / `defineEntity`-API-ene."
 
 #. js-lingui-id: yY8wAv
@@ -10882,12 +10864,12 @@ msgstr "Etikett"
 #. js-lingui-id: B9/B0O
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Label (plural)"
-msgstr ""
+msgstr "Etikett (flertall)"
 
 #. js-lingui-id: J8GEvd
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Label (singular)"
-msgstr ""
+msgstr "Etikett (entall)"
 
 #. js-lingui-id: w8Rv8T
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -10913,7 +10895,7 @@ msgstr "Språk"
 #. js-lingui-id: PEi+K2
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Languages without their own translation show the source text."
-msgstr ""
+msgstr "Språk uten egen oversettelse viser kildeteksten."
 
 #. js-lingui-id: k7rCa/
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -11859,7 +11841,7 @@ msgstr "Maks utdata"
 #. js-lingui-id: D0Z4Jd
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Max output must be a positive integer"
-msgstr ""
+msgstr "Maksimal utdata må være et positivt heltall"
 
 #. js-lingui-id: 2ICF9k
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -14059,7 +14041,7 @@ msgstr "Bare dato og deltakere vil bli delt med teamet ditt."
 #. js-lingui-id: aluwJP
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Only in {currentLanguageLabel}"
-msgstr ""
+msgstr "Kun i {currentLanguageLabel}"
 
 #. js-lingui-id: Ecstfp
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
@@ -15847,7 +15829,7 @@ msgstr "Endre navn på chat"
 #. js-lingui-id: 1PqGzu
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Rename for all languages"
-msgstr ""
+msgstr "Endre navn for alle språk"
 
 #. js-lingui-id: oQjB9l
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -17852,7 +17834,7 @@ msgstr "Kilde-e-postadresse"
 #. js-lingui-id: MEXVHu
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Source: {canonicalValue}"
-msgstr ""
+msgstr "Kilde: {canonicalValue}"
 
 #. js-lingui-id: xqlr9R
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -18584,67 +18566,45 @@ msgstr "AWS-regionen for Bedrock"
 
 #. js-lingui-id: HP7per
 #: src/pages/settings/applications/utils/getStandardApplicationDescription.ts
-msgid ""
-"The base data model every Twenty workspace runs on.\n"
-"\n"
-"#### What \"foundation\" means\n"
-"\n"
-"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n"
-"\n"
+msgid "The base data model every Twenty workspace runs on.\n\n"
+"#### What \"foundation\" means\n\n"
+"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n\n"
 "#### Included objects\n"
 "- **People & Companies**: contact and account records\n"
 "- **Opportunities**: your sales pipeline\n"
 "- **Notes & Tasks**: activity and follow-ups\n"
-"- **Workflows & Dashboards**: automation and reporting\n"
-"\n"
-"Remove this app and the rest of Twenty has nothing to hang off.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n"
-"\n"
+"- **Workflows & Dashboards**: automation and reporting\n\n"
+"Remove this app and the rest of Twenty has nothing to hang off.\n\n"
+"#### Build your own app\n\n"
+"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Then inside the folder:\n"
-"\n"
+"```\n\n"
+"Then inside the folder:\n\n"
 "```bash\n"
 "cd my-twenty-app\n"
 "yarn twenty dev\n"
-"```\n"
-"\n"
+"```\n\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"Den grunnleggende datamodellen som alle Twenty-arbeidsområder kjører på.\n"
-"\n"
-"#### Hva \"grunnlag\" betyr\n"
-"\n"
-"Hvert Twenty-arbeidsområde starter med dette settet av objekter. De definerer formen på CRM-et ditt, inkludert relasjoner, aktivitet og rapportering. Alt annet, inkludert markedsplass-apper, AI-agenter og egendefinerte objekter, kobles til dem.\n"
-"\n"
+msgstr "Den grunnleggende datamodellen som alle Twenty-arbeidsområder kjører på.\n\n"
+"#### Hva \"grunnlag\" betyr\n\n"
+"Hvert Twenty-arbeidsområde starter med dette settet av objekter. De definerer formen på CRM-et ditt, inkludert relasjoner, aktivitet og rapportering. Alt annet, inkludert markedsplass-apper, AI-agenter og egendefinerte objekter, kobles til dem.\n\n"
 "#### Inkluderte objekter\n"
 "- **Personer og selskaper**: kontakt- og kontoposter\n"
 "- **Muligheter**: salgspipeline\n"
 "- **Notater og oppgaver**: aktivitet og oppfølging\n"
-"- **Arbeidsflyter og dashbord**: automatisering og rapportering\n"
-"\n"
-"Fjerner du denne appen, har resten av Twenty ingenting å bygge på.\n"
-"\n"
-"#### Bygg din egen app\n"
-"\n"
-"Utvid Twenty med dine egne objekter, felt, logikkfunksjoner eller AI-ferdigheter. Sett opp en ny app med én kommando:\n"
-"\n"
+"- **Arbeidsflyter og dashbord**: automatisering og rapportering\n\n"
+"Fjerner du denne appen, har resten av Twenty ingenting å bygge på.\n\n"
+"#### Bygg din egen app\n\n"
+"Utvid Twenty med dine egne objekter, felt, logikkfunksjoner eller AI-ferdigheter. Sett opp en ny app med én kommando:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Deretter i mappen:\n"
-"\n"
+"```\n\n"
+"Deretter i mappen:\n\n"
 "```bash\n"
 "cd my-twenty-app\n"
 "yarn twenty dev\n"
-"```\n"
-"\n"
+"```\n\n"
 "Se [Kom i gang-veiledningen](https://twenty.com/developers/extend/apps/getting-started) for en full gjennomgang, og [Bygge apper](https://twenty.com/developers/extend/apps/building) for `defineApplication` / `defineEntity`-API-ene."
 
 #. js-lingui-id: VsxjzF
@@ -18897,8 +18857,7 @@ msgstr "Denne handlingen kan ikke angres. Dette medlemmet blir fjernet og ikke l
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid ""
-"This action cannot be undone. This will permanently delete your\n"
+msgid "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "Denne handlingen kan ikke angres. Dette vil permanent slette hele kontoen din."
 
@@ -19497,14 +19456,14 @@ msgstr "Overfører..."
 #. js-lingui-id: 0DTqrp
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Translate or rename?"
-msgstr ""
+msgstr "Oversette eller endre navn?"
 
 #. js-lingui-id: kAy5R9
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "Translations"
-msgstr ""
+msgstr "Oversettelser"
 
 #. js-lingui-id: lhkaAC
 #: src/modules/settings/billing/components/internal/PlansTags.tsx
@@ -21273,12 +21232,12 @@ msgstr "Hva kan jeg hjelpe deg med?"
 #. js-lingui-id: /SZI25
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "What each language displays for this field's labels"
-msgstr ""
+msgstr "Hva hvert språk viser for etikettene til dette feltet"
 
 #. js-lingui-id: 9IXG0o
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "What each language displays for this object's labels"
-msgstr ""
+msgstr "Hva hvert språk viser for etikettene til dette objektet"
 
 #. js-lingui-id: cE4SvC
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -21727,7 +21686,7 @@ msgstr "Du tilhører allerede dette arbeidsområdet"
 #. js-lingui-id: MuS9Gh
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "You are editing the {currentLanguageLabel} translation. Renaming instead changes the source label, for every language."
-msgstr ""
+msgstr "Du redigerer oversettelsen på {currentLanguageLabel}. Hvis du endrer navn i stedet, endres kildeetiketten for alle språk."
 
 #. js-lingui-id: MFDARJ
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
@@ -21832,11 +21791,9 @@ msgstr "Du er i ferd med å endre arbeidsområdets subdomene. Denne handlingen v
 
 #. js-lingui-id: Z5uTAF
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid ""
-"You've hit your usage limit. \n"
+msgid "You've hit your usage limit. \n"
 "Reach to our support team to upgrade."
-msgstr ""
-"Du har nådd bruksgrensen din. \n"
+msgstr "Du har nådd bruksgrensen din. \n"
 "Ta kontakt med støtteteamet vårt for å oppgradere."
 
 #. js-lingui-id: NTyvVW
@@ -21844,11 +21801,9 @@ msgstr ""
 #. placeholder {1}: nextResourceCreditPrice ?? ''
 #. placeholder {2}: nextTierInterval ?? ''
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid ""
-"You've hit your usage limit. \n"
+msgid "You've hit your usage limit. \n"
 "Upgrade to {0} credits for ${1}/{2}."
-msgstr ""
-"Du har nådd bruksgrensen din. \n"
+msgstr "Du har nådd bruksgrensen din. \n"
 "Oppgrader til {0} kreditter for ${1}/{2}."
 
 #. js-lingui-id: yZ0wRS

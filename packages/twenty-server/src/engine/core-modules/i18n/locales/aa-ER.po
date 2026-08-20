@@ -3876,6 +3876,11 @@ msgstr "crwdns108690:0crwdne108690:0"
 msgid "Field type TS_VECTOR must be named \"searchVector\""
 msgstr "crwdns108692:0crwdne108692:0"
 
+#. js-lingui-id: VkSxbb
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
+msgid "Field type TS_VECTOR must have SYSTEM writability"
+msgstr "crwdns140067:0crwdne140067:0"
+
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Field type validation error."

@@ -3879,7 +3879,7 @@ msgstr "Veldtype TS_VECTOR moet \"searchVector\" heten"
 #. js-lingui-id: VkSxbb
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
 msgid "Field type TS_VECTOR must have SYSTEM writability"
-msgstr ""
+msgstr "Veldtype TS_VECTOR moet schrijfbaar zijn voor SYSTEM"
 
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
