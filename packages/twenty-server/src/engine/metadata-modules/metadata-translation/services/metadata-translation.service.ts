@@ -17,7 +17,10 @@ import {
   MetadataTranslationProvenance,
 } from 'src/engine/metadata-modules/metadata-translation/dtos/metadata-translation.dto';
 import { type MetadataTranslationsInput } from 'src/engine/metadata-modules/metadata-translation/dtos/metadata-translations.input';
-import { resolveEffectiveEntityPropertyByName } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
+import {
+  readOverrideTranslation,
+  resolveEffectiveEntityPropertyByName,
+} from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
 
 type TranslatableFlatEntity = FlatObjectMetadata | FlatFieldMetadata;
 
@@ -29,8 +32,8 @@ type TranslatableEntity = {
   entity: TranslatableFlatEntity;
 };
 
-// The two dynamic reads below are the only places the registry-driven
-// property name meets the concrete entity type.
+// The registry decides which property to read, so this is where a dynamic
+// name meets the concrete entity type.
 const readStringProperty = (
   entity: TranslatableFlatEntity,
   property: string,
@@ -60,18 +63,6 @@ const resolveProvenance = ({
   return MetadataTranslationProvenance.INHERITED;
 };
 
-const readTranslation = (
-  overrides: TranslatableFlatEntity['overrides'],
-  locale: string,
-  property: string,
-): string | undefined => {
-  const translations = (overrides as Record<string, unknown> | null)
-    ?.translations as Record<string, Record<string, unknown>> | null;
-  const translation = translations?.[locale]?.[property];
-
-  return typeof translation === 'string' ? translation : undefined;
-};
-
 @Injectable()
 export class MetadataTranslationService {
   constructor(
@@ -87,110 +78,95 @@ export class MetadataTranslationService {
     input: MetadataTranslationsInput;
     workspaceId: string;
   }): Promise<MetadataTranslationDTO[]> {
-    if (
-      !isDefined(input.objectMetadataId) &&
-      !isDefined(input.fieldMetadataId)
-    ) {
-      throw new UserInputError(
-        'metadataTranslations requires an objectMetadataId or a fieldMetadataId',
-      );
-    }
-
-    const entities = await this.collectTranslatableEntities({
+    const translatableEntity = await this.findTranslatableEntity({
       input,
       workspaceId,
     });
+
+    if (!isDefined(translatableEntity)) {
+      return [];
+    }
+
+    const { metadataName, recordId, objectMetadataId, applicationId, entity } =
+      translatableEntity;
+    const overrides = entity.overrides;
     const locales = isDefined(input.locale)
       ? [input.locale]
       : (Object.keys(APP_LOCALES) as (keyof typeof APP_LOCALES)[]);
-    const applicationIds = [
-      ...new Set(entities.map(({ applicationId }) => applicationId)),
-    ];
 
     const translations: MetadataTranslationDTO[] = [];
 
     for (const locale of locales) {
       const { standardApplicationId, catalogByApplicationId } =
         await this.applicationTranslationCatalogService.getCatalogs({
-          applicationIds,
+          applicationIds: [applicationId],
           locale,
           workspaceId,
         });
       const i18nInstance = this.i18nService.getI18nInstance(locale);
 
-      for (const {
-        metadataName,
-        recordId,
-        objectMetadataId,
-        applicationId,
-        entity,
-      } of entities) {
-        const overrides = entity.overrides;
+      for (const property of ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME[
+        metadataName
+      ] ?? []) {
+        const sourceValue = readStringProperty(entity, property);
+        const overrideValue = (overrides as Record<string, unknown> | null)?.[
+          property
+        ];
+        const canonicalValue = isNonEmptyString(overrideValue)
+          ? overrideValue
+          : sourceValue;
 
-        for (const property of ALL_TRANSLATABLE_PROPERTIES_BY_METADATA_NAME[
-          metadataName
-        ] ?? []) {
-          const sourceValue = readStringProperty(entity, property);
-          const overrideValue = (overrides as Record<string, unknown> | null)?.[
-            property
-          ];
-          const canonicalValue = isNonEmptyString(overrideValue)
-            ? overrideValue
-            : sourceValue;
-
-          if (canonicalValue === '') {
-            continue;
-          }
-
-          const value = resolveEffectiveEntityPropertyByName({
-            metadataName,
-            baseValue: sourceValue,
-            overrides,
-            property,
-            i18nContext: {
-              locale,
-              i18nInstance,
-              isStandardApp: applicationId === standardApplicationId,
-              applicationCatalog: isDefined(applicationId)
-                ? catalogByApplicationId.get(applicationId)
-                : undefined,
-            },
-          });
-          const workspaceTranslation = readTranslation(
-            overrides,
-            locale,
-            property,
-          );
-
-          translations.push({
-            metadataName,
-            recordId,
-            objectMetadataId,
-            property,
-            locale,
-            sourceValue,
-            canonicalValue,
-            value,
-            provenance: resolveProvenance({
-              workspaceTranslation,
-              value,
-              canonicalValue,
-            }),
-          });
+        if (canonicalValue === '') {
+          continue;
         }
+
+        const value = resolveEffectiveEntityPropertyByName({
+          metadataName,
+          baseValue: sourceValue,
+          overrides,
+          property,
+          i18nContext: {
+            locale,
+            i18nInstance,
+            isStandardApp: applicationId === standardApplicationId,
+            applicationCatalog: isDefined(applicationId)
+              ? catalogByApplicationId.get(applicationId)
+              : undefined,
+          },
+        });
+
+        translations.push({
+          metadataName,
+          recordId,
+          objectMetadataId,
+          property,
+          locale,
+          sourceValue,
+          canonicalValue,
+          value,
+          provenance: resolveProvenance({
+            workspaceTranslation: readOverrideTranslation({
+              overrides,
+              locale,
+              property,
+            }),
+            value,
+            canonicalValue,
+          }),
+        });
       }
     }
 
     return translations;
   }
 
-  private async collectTranslatableEntities({
+  private async findTranslatableEntity({
     input,
     workspaceId,
   }: {
     input: MetadataTranslationsInput;
     workspaceId: string;
-  }): Promise<TranslatableEntity[]> {
+  }): Promise<TranslatableEntity | null> {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -199,25 +175,6 @@ export class MetadataTranslationService {
         },
       );
 
-    const toObjectEntity = (
-      flatObjectMetadata: FlatObjectMetadata,
-    ): TranslatableEntity => ({
-      metadataName: 'objectMetadata',
-      recordId: flatObjectMetadata.id,
-      objectMetadataId: null,
-      applicationId: flatObjectMetadata.applicationId ?? undefined,
-      entity: flatObjectMetadata,
-    });
-    const toFieldEntity = (
-      flatFieldMetadata: FlatFieldMetadata,
-    ): TranslatableEntity => ({
-      metadataName: 'fieldMetadata',
-      recordId: flatFieldMetadata.id,
-      objectMetadataId: flatFieldMetadata.objectMetadataId,
-      applicationId: flatFieldMetadata.applicationId ?? undefined,
-      entity: flatFieldMetadata,
-    });
-
     if (isDefined(input.objectMetadataId)) {
       const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
         flatEntityMaps: flatObjectMetadataMaps,
@@ -225,21 +182,35 @@ export class MetadataTranslationService {
       });
 
       return isDefined(flatObjectMetadata)
-        ? [toObjectEntity(flatObjectMetadata)]
-        : [];
+        ? {
+            metadataName: 'objectMetadata',
+            recordId: flatObjectMetadata.id,
+            objectMetadataId: null,
+            applicationId: flatObjectMetadata.applicationId ?? undefined,
+            entity: flatObjectMetadata,
+          }
+        : null;
     }
 
-    if (!isDefined(input.fieldMetadataId)) {
-      return [];
+    if (isDefined(input.fieldMetadataId)) {
+      const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityMaps: flatFieldMetadataMaps,
+        flatEntityId: input.fieldMetadataId,
+      });
+
+      return isDefined(flatFieldMetadata)
+        ? {
+            metadataName: 'fieldMetadata',
+            recordId: flatFieldMetadata.id,
+            objectMetadataId: flatFieldMetadata.objectMetadataId,
+            applicationId: flatFieldMetadata.applicationId ?? undefined,
+            entity: flatFieldMetadata,
+          }
+        : null;
     }
 
-    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityMaps: flatFieldMetadataMaps,
-      flatEntityId: input.fieldMetadataId,
-    });
-
-    return isDefined(flatFieldMetadata)
-      ? [toFieldEntity(flatFieldMetadata)]
-      : [];
+    throw new UserInputError(
+      'metadataTranslations requires an objectMetadataId or a fieldMetadataId',
+    );
   }
 }

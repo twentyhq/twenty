@@ -18,7 +18,7 @@ const readOverrideProperty = (overrides: unknown, property: string): unknown =>
     ? (overrides as Record<string, unknown>)[property]
     : undefined;
 
-const readOverrideTranslation = ({
+export const readOverrideTranslation = ({
   overrides,
   locale,
   property,

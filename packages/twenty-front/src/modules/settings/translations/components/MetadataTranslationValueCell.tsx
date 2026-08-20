@@ -17,15 +17,17 @@ const StyledValue = styled.div<{ isInherited: boolean }>`
   width: 100%;
 `;
 
+type MetadataTranslationValueCellProps = {
+  row: MetadataTranslationRow;
+  onSave: (value: string | null) => Promise<void>;
+  disabled?: boolean;
+};
+
 export const MetadataTranslationValueCell = ({
   row,
   onSave,
   disabled = false,
-}: {
-  row: MetadataTranslationRow;
-  onSave: (value: string | null) => Promise<void>;
-  disabled?: boolean;
-}) => {
+}: MetadataTranslationValueCellProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [draftValue, setDraftValue] = useState('');
   const isInherited =

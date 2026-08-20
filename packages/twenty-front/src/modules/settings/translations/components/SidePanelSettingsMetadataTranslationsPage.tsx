@@ -4,7 +4,6 @@ import {
   type MetadataTranslationRow,
   useMetadataTranslations,
 } from '@/settings/translations/hooks/useMetadataTranslations';
-import { useTranslatablePropertyLabel } from '@/settings/translations/hooks/useTranslatablePropertyLabel';
 import {
   type SettingsTranslationsSidePanelTarget,
   settingsTranslationsSidePanelTargetState,
@@ -62,6 +61,14 @@ const getMetadataTranslationsInput = (
 
 export const SidePanelSettingsMetadataTranslationsPage = () => {
   const { t } = useLingui();
+  // Registry property keys are unique across metadata names, except
+  // `description`, which reads the same on both.
+  const labelByProperty: Record<string, string> = {
+    labelSingular: t`Label (singular)`,
+    labelPlural: t`Label (plural)`,
+    label: t`Label`,
+    description: t`Description`,
+  };
   const settingsTranslationsSidePanelTarget = useAtomStateValue(
     settingsTranslationsSidePanelTargetState,
   );
@@ -70,7 +77,6 @@ export const SidePanelSettingsMetadataTranslationsPage = () => {
       ? getMetadataTranslationsInput(settingsTranslationsSidePanelTarget)
       : null,
   );
-  const { getPropertyLabel } = useTranslatablePropertyLabel();
   const localeOptions = useLocaleOptions();
 
   if (!isDefined(settingsTranslationsSidePanelTarget)) {
@@ -97,15 +103,12 @@ export const SidePanelSettingsMetadataTranslationsPage = () => {
         </StyledExplanation>
       </StyledHeader>
       {[...rowsByProperty.entries()].map(([property, localeRows]) => {
-        const canonicalValue = [...localeRows.values()][0]?.canonicalValue;
+        const canonicalValue = localeRows.values().next().value?.canonicalValue;
 
         return (
           <StyledPropertySection key={property}>
             <H2Title
-              title={getPropertyLabel({
-                metadataName: settingsTranslationsSidePanelTarget.metadataName,
-                property,
-              })}
+              title={labelByProperty[property] ?? property}
               description={t`Source: ${canonicalValue}`}
             />
             <Table>

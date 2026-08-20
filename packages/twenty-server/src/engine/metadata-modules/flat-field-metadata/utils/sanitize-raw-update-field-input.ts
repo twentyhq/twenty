@@ -101,8 +101,6 @@ export const sanitizeRawUpdateFieldInput = ({
   if (!isStandardField || isSystemBuild) {
     return {
       updatedEditableFieldProperties,
-      // Custom entities keep property edits in base columns but still hold
-      // per-locale translations in the overrides blob.
       overrides: mergeTranslationsIntoOverrides({
         existingOverrides: existingFlatFieldMetadata.overrides,
         translationEntries,

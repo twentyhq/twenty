@@ -1,16 +1,26 @@
-import { useOpenTranslationsSidePanel } from '@/settings/translations/hooks/useOpenTranslationsSidePanel';
-import { type SettingsTranslationsSidePanelTarget } from '@/settings/translations/states/settingsTranslationsSidePanelTargetState';
+import {
+  type SettingsTranslationsSidePanelTarget,
+  settingsTranslationsSidePanelTargetState,
+} from '@/settings/translations/states/settingsTranslationsSidePanelTargetState';
+import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
+import { SidePanelPages } from 'twenty-shared/types';
 import { IconLanguage } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 
+type SettingsTranslationsButtonProps = {
+  target: SettingsTranslationsSidePanelTarget;
+};
+
 export const SettingsTranslationsButton = ({
   target,
-}: {
-  target: SettingsTranslationsSidePanelTarget;
-}) => {
+}: SettingsTranslationsButtonProps) => {
   const { t } = useLingui();
-  const { openTranslationsSidePanel } = useOpenTranslationsSidePanel();
+  const { navigateSidePanel } = useNavigateSidePanel();
+  const setSettingsTranslationsSidePanelTarget = useSetAtomState(
+    settingsTranslationsSidePanelTargetState,
+  );
 
   return (
     <Button
@@ -18,7 +28,15 @@ export const SettingsTranslationsButton = ({
       title={t`Edit translations`}
       variant="secondary"
       size="small"
-      onClick={() => openTranslationsSidePanel(target)}
+      onClick={() => {
+        setSettingsTranslationsSidePanelTarget(target);
+        navigateSidePanel({
+          page: SidePanelPages.SettingsMetadataTranslations,
+          pageTitle: t`Translations`,
+          pageIcon: IconLanguage,
+          resetNavigationStack: true,
+        });
+      }}
     />
   );
 };
