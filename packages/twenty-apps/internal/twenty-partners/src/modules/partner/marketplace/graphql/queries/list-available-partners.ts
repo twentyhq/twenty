@@ -43,6 +43,10 @@ export const queryAvailablePartners = (client: CoreApiClient) =>
             edges: { node: { id: true } },
           },
           partnerContents: {
+            __args: {
+              filter: { status: { eq: 'APPROVED' } },
+              first: 200,
+            },
             edges: {
               node: {
                 contentType: true,

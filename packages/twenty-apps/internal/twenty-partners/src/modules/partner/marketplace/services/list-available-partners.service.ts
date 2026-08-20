@@ -5,10 +5,9 @@ import {
   mapPartnerForMarketplace,
   type MarketplaceListPartner,
 } from 'src/modules/partner/marketplace/mappers/map-partner-for-marketplace.mapper';
-import { isCaseStudy } from 'src/modules/partner/utils/content-type';
-import { firstFileUrl } from 'src/modules/partner/utils/profile-picture';
-
-import { createWeeklyRotationKey } from '../utils/create-weekly-rotation-key';
+import { isApprovedCaseStudy } from 'src/modules/partner/utils/content-type';
+import { resolveCoverUrl } from 'src/modules/partner/utils/profile-picture';
+import { createWeeklyRotationKey } from 'src/modules/partner/marketplace/utils/create-weekly-rotation-key';
 
 type AvailablePartnerRaw = NonNullable<
   Awaited<ReturnType<typeof queryAvailablePartners>>['partners']
@@ -26,14 +25,6 @@ export type ListAvailablePartnersResult =
   | { ok: true; count: number; partners: MarketplaceRankedListPartner[] }
   | { ok: false; reason: string };
 
-// coverImageUrl is TEXT, so an empty string means "no cover", not null.
-const hasCover = (content: {
-  coverImageUrl?: string | null;
-  coverImage?: ReadonlyArray<{ url?: string | null } | null> | null;
-}): boolean =>
-  (content.coverImageUrl ?? '').trim().length > 0 ||
-  firstFileUrl(content.coverImage) !== null;
-
 const mapListPartner = (
   node: AvailablePartnerRaw,
 ): MarketplaceRankedListPartner => {
@@ -46,18 +37,18 @@ const mapListPartner = (
   }
 
   const approvedCaseStudies = (node.partnerContents?.edges ?? []).filter(
-    ({ node: content }) =>
-      isCaseStudy(content.contentType) && content.status === 'APPROVED',
+    ({ node: content }) => isApprovedCaseStudy(content),
   );
 
   return {
     ...mapped,
     partnerTier: node.partnerTier,
-    serviceCount: node.partnerServices?.edges.length ?? 0,
+    serviceCount: (node.partnerServices?.edges ?? []).length,
     approvedCaseStudyCount: approvedCaseStudies.length,
-    approvedCaseStudyWithCoverCount:
-      approvedCaseStudies.filter(({ node: content }) => hasCover(content))
-        .length,
+    approvedCaseStudyWithCoverCount: approvedCaseStudies.filter(
+      ({ node: content }) =>
+        resolveCoverUrl(content.coverImageUrl, content.coverImage) !== null,
+    ).length,
     rotationKey: createWeeklyRotationKey(node.id),
   };
 };

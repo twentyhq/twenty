@@ -115,4 +115,51 @@ describe('listAvailablePartners', () => {
     expect(result.partners[0].rotationKey).toMatch(/^[a-f0-9]{64}$/);
     expect(result.partners[0].rotationKey).not.toContain('partner-1');
   });
+
+  it('counts zero for a partner with no services and no contents', async () => {
+    queryAvailablePartnersMock.mockResolvedValue({
+      partners: {
+        edges: [
+          {
+            node: {
+              id: 'partner-2',
+              name: 'Fresh',
+              slug: 'fresh',
+              introduction: '',
+              languagesSpoken: [],
+              deploymentExpertise: [],
+              partnerTier: null,
+              partnerScope: [],
+              region: [],
+              calendarLink: { primaryLinkUrl: null },
+              hourlyRate: null,
+              projectBudgetMin: null,
+              linkedin: { primaryLinkUrl: null },
+              website: { primaryLinkUrl: null },
+              profilePicture: { primaryLinkUrl: null },
+              profilePictureFile: [],
+              skills: [],
+              city: null,
+              country: null,
+              partnerServices: null,
+              partnerContents: null,
+            },
+          },
+        ],
+      },
+    } as never);
+
+    const result = await listAvailablePartners();
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+
+    expect(result.partners[0]).toMatchObject({
+      partnerTier: null,
+      serviceCount: 0,
+      approvedCaseStudyCount: 0,
+      approvedCaseStudyWithCoverCount: 0,
+    });
+    expect(result.partners[0].rotationKey).toMatch(/^[a-f0-9]{64}$/);
+  });
 });
