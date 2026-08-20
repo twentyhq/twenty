@@ -14,7 +14,7 @@ import {
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
-import { type CampaignSkippedBreakdown } from 'src/engine/core-modules/emailing-domain/types/campaign-skipped-breakdown.type';
+import { type CampaignAudienceResolution } from 'src/engine/core-modules/emailing-domain/types/campaign-audience-resolution.type';
 import { type MaterializeCampaignJobData } from 'src/engine/core-modules/emailing-domain/types/materialize-campaign-job-data.type';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -27,6 +27,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { CampaignVariableService } from 'src/modules/emailing/services/campaign-variable.service';
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignAudienceService } from 'src/modules/emailing/services/message-campaign-audience.service';
+import { CampaignSendingReputationService } from 'src/modules/emailing/services/campaign-sending-reputation.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { collectCampaignVariableNamesFromTemplates } from 'src/modules/emailing/utils/collect-campaign-variable-names-from-templates.util';
@@ -39,7 +40,7 @@ import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 type SendCampaignResult = {
   campaignId: string;
   queuedCount: number;
-  skipped: CampaignSkippedBreakdown;
+  audience: CampaignAudienceResolution['audience'];
 };
 
 type SendableDraftCampaign = z.infer<typeof sendableDraftCampaignSchema>;
@@ -58,6 +59,7 @@ export class MessageCampaignService {
     private readonly campaignVariableService: CampaignVariableService,
     private readonly messageCampaignAudienceService: MessageCampaignAudienceService,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
+    private readonly campaignSendingReputationService: CampaignSendingReputationService,
   ) {}
 
   async send({
@@ -69,22 +71,30 @@ export class MessageCampaignService {
     userWorkspaceId: string;
     campaignId: string;
   }): Promise<SendCampaignResult> {
+    await this.campaignSendingReputationService.assertWorkspaceCanKeepSendingOrThrow(
+      { workspaceId },
+    );
+
     const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
       workspaceId,
       userWorkspaceId,
     });
 
-    const { fromAddress, listId } =
+    const { fromAddress, listId, unsubscribeTopicId } =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
-          const { fromAddress, listId } =
+          const { fromAddress, listId, unsubscribeTopicId } =
             await this.findSendableDraftCampaignOrThrow({
               workspaceId,
               campaignId,
               roleId,
             });
 
-          return { fromAddress: fromAddress.primaryEmail, listId };
+          return {
+            fromAddress: fromAddress.primaryEmail,
+            listId,
+            unsubscribeTopicId,
+          };
         },
       );
 
@@ -93,11 +103,12 @@ export class MessageCampaignService {
       fromAddress,
     });
 
-    const { recipients, skipped } =
+    const { sendableRecipients, audience } =
       await this.messageCampaignAudienceService.resolveNormalizedAudience({
         workspaceId,
         listId,
         roleId,
+        unsubscribeTopicId: unsubscribeTopicId ?? undefined,
       });
 
     const messageChannel =
@@ -131,7 +142,8 @@ export class MessageCampaignService {
           campaignId,
           messageChannelId: messageChannel.id,
           emailingDomainId: emailingDomain.id,
-          recipients,
+          userWorkspaceId,
+          recipients: sendableRecipients,
         },
         {
           retryLimit: CAMPAIGN_SEND_RETRY_LIMIT,
@@ -150,7 +162,11 @@ export class MessageCampaignService {
         throw error;
       });
 
-    return { campaignId, queuedCount: recipients.length, skipped };
+    return {
+      campaignId,
+      queuedCount: sendableRecipients.length,
+      audience,
+    };
   }
 
   async sendTest({
@@ -193,6 +209,7 @@ export class MessageCampaignService {
         subject: rendered.subject,
         text: rendered.plainText,
         html: rendered.html,
+        sendKind: 'MARKETING',
         unsubscribeTopicId,
       },
     );

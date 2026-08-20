@@ -58,6 +58,11 @@ export const resolveCampaignSendFailure = (
       return failed(CAMPAIGN_FAILURE_REASON.CONFIGURATION_ERROR, false);
     case EmailingDomainDriverExceptionCode.SANDBOX_ACCOUNT:
       return failed(CAMPAIGN_FAILURE_REASON.SANDBOX_ACCOUNT, false);
+    case EmailingDomainDriverExceptionCode.UNSUBSCRIBE_MULTIPLE_RECIPIENTS:
+      return failed(
+        CAMPAIGN_FAILURE_REASON.UNSUBSCRIBE_MULTIPLE_RECIPIENTS,
+        false,
+      );
     default:
       return assertUnreachable(error.code);
   }

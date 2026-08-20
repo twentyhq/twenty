@@ -40,6 +40,7 @@ import { isDefined } from 'twenty-shared/utils';
 type MaterializeMessagesArgs = {
   workspaceId: string;
   emailingDomainId: string;
+  userWorkspaceId: string;
   campaignId: string;
   messageChannelId: string;
   fromAddress: string;
@@ -64,6 +65,7 @@ export class MessageCampaignMaterializationService {
     campaignId,
     messageChannelId,
     emailingDomainId,
+    userWorkspaceId,
     recipients,
   }: MaterializeCampaignJobData): Promise<void> {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
@@ -113,6 +115,7 @@ export class MessageCampaignMaterializationService {
         workspaceId,
         campaignId,
         emailingDomainId,
+        userWorkspaceId,
         recipients: recipientsStrandedByAnEarlierAttempt,
       });
 
@@ -125,6 +128,7 @@ export class MessageCampaignMaterializationService {
         campaignId,
         messageChannelId,
         emailingDomainId,
+        userWorkspaceId,
         fromAddress: campaign.fromAddress?.primaryEmail ?? '',
         subjectTemplate: campaign.subject ?? '',
         bodyTemplate: campaign.bodyTemplate ?? '',
@@ -166,6 +170,7 @@ export class MessageCampaignMaterializationService {
     campaignId,
     messageChannelId,
     emailingDomainId,
+    userWorkspaceId,
     fromAddress,
     subjectTemplate,
     bodyTemplate,
@@ -220,6 +225,7 @@ export class MessageCampaignMaterializationService {
         workspaceId,
         campaignId,
         emailingDomainId,
+        userWorkspaceId,
         recipients: recipientsChunk,
       });
     }
@@ -229,11 +235,13 @@ export class MessageCampaignMaterializationService {
     workspaceId,
     campaignId,
     emailingDomainId,
+    userWorkspaceId,
     recipients,
   }: {
     workspaceId: string;
     campaignId: string;
     emailingDomainId: string;
+    userWorkspaceId: string;
     recipients: CampaignMessageRecipient[];
   }): Promise<void> {
     if (recipients.length === 0) {
@@ -249,6 +257,7 @@ export class MessageCampaignMaterializationService {
         personId: recipient.personId,
         recipientEmail: recipient.email,
         emailingDomainId,
+        userWorkspaceId,
       })),
       {
         retryLimit: CAMPAIGN_SEND_RETRY_LIMIT,

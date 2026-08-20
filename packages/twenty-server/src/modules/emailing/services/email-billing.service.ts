@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { type CurrentBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
 import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -14,6 +15,11 @@ import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/worksp
 import { EMAIL_MARGIN_MULTIPLIER } from 'src/modules/emailing/constants/email-margin-multiplier';
 import { SES_EMAIL_COST_PER_THOUSAND_DOLLARS } from 'src/modules/emailing/constants/ses-email-cost-per-thousand-dollars';
 
+type EmailCreditContext = {
+  hasCredits: boolean;
+  currentBillingSubscription: CurrentBillingSubscription;
+};
+
 @Injectable()
 export class EmailBillingService {
   constructor(
@@ -23,22 +29,44 @@ export class EmailBillingService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  async hasEmailCredits(workspaceId: string): Promise<boolean> {
-    return this.billingUsageService.hasAvailableCredits(workspaceId);
-  }
-
   async validateEmailCreditsOrThrow(workspaceId: string): Promise<void> {
     await this.billingUsageService.hasAvailableCreditsOrThrow(workspaceId);
+  }
+
+  async resolveEmailCreditContext(
+    workspaceId: string,
+  ): Promise<EmailCreditContext> {
+    if (!this.billingService.isBillingEnabled()) {
+      return {
+        hasCredits: true,
+        currentBillingSubscription: NO_BILLING_SUBSCRIPTION,
+      };
+    }
+
+    const { currentBillingSubscription } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'currentBillingSubscription',
+      ]);
+
+    const { hasAvailableCredits } =
+      await this.billingUsageService.getCreditAvailability({
+        workspaceId,
+        currentBillingSubscription,
+      });
+
+    return { hasCredits: hasAvailableCredits, currentBillingSubscription };
   }
 
   async billSentEmails({
     workspaceId,
     sentEmailCount,
     userWorkspaceId,
+    currentBillingSubscription: providedCurrentBillingSubscription,
   }: {
     workspaceId: string;
     sentEmailCount: number;
     userWorkspaceId?: string | null;
+    currentBillingSubscription?: CurrentBillingSubscription;
   }): Promise<void> {
     if (sentEmailCount <= 0) {
       return;
@@ -54,10 +82,13 @@ export class EmailBillingService {
     let periodStart: Date | undefined;
 
     if (this.billingService.isBillingEnabled()) {
-      const { currentBillingSubscription } =
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'currentBillingSubscription',
-        ]);
+      const currentBillingSubscription =
+        providedCurrentBillingSubscription ??
+        (
+          await this.workspaceCacheService.getOrRecompute(workspaceId, [
+            'currentBillingSubscription',
+          ])
+        ).currentBillingSubscription;
 
       if (currentBillingSubscription !== NO_BILLING_SUBSCRIPTION) {
         periodStart = currentBillingSubscription.currentPeriodStart;
@@ -65,6 +96,7 @@ export class EmailBillingService {
         await this.billingUsageService.decrementAvailableCreditsInCache({
           workspaceId,
           usedCredits: creditsUsedMicro,
+          currentBillingSubscription,
         });
       }
     }

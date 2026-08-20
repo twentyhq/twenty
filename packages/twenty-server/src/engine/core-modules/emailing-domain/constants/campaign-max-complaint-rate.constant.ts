@@ -1,0 +1,1 @@
+export const CAMPAIGN_MAX_COMPLAINT_RATE = 0.003;

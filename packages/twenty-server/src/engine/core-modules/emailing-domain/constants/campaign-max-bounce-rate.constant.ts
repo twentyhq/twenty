@@ -1,0 +1,1 @@
+export const CAMPAIGN_MAX_BOUNCE_RATE = 0.05;
