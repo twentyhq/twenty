@@ -34,6 +34,20 @@ describe('emailSchema', () => {
     expect(emailSchema.safeParse('test.@example.com').success).toBe(false);
   });
 
+  it('should accept emails with a unicode domain', () => {
+    expect(emailSchema.safeParse('jöhn@münchen.de').success).toBe(true);
+    expect(emailSchema.safeParse('test@例え.テスト').success).toBe(true);
+  });
+
+  it('should reject domain labels ending with a hyphen', () => {
+    expect(emailSchema.safeParse('test@example-.com').success).toBe(false);
+  });
+
+  it('should accept punycode TLDs containing digits', () => {
+    expect(emailSchema.safeParse('test@example.xn--p1ai').success).toBe(true);
+    expect(emailSchema.safeParse('test@example.xn--90ae').success).toBe(true);
+  });
+
   it('should reject emails with a local part longer than 64 characters', () => {
     const longLocalPart = 'a'.repeat(65);
 
