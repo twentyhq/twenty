@@ -1,21 +1,21 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconLock, IconUserPlus, IconUsers } from 'twenty-ui/icon';
+import { IconLock, IconSparkle2, IconUserPlus, IconUsers } from 'twenty-ui/icon';
 
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
-import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { Section } from 'twenty-ui/layout';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
+import coverDark from '~/pages/settings/members/assets/cover-dark.png';
+import coverLight from '~/pages/settings/members/assets/cover-light.png';
 import { SettingsWorkspaceMembersInviteTab } from '~/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab';
 import { SettingsWorkspaceMembersRolesTab } from '~/pages/settings/members/tabs/SettingsWorkspaceMembersRolesTab';
 import { SettingsWorkspaceMembersTeamTab } from '~/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab';
-import coverDark from '~/pages/settings/members/assets/cover-dark.png';
-import coverLight from '~/pages/settings/members/assets/cover-light.png';
 
 const MEMBERS_TAB_LIST_ID = 'members-tab-list';
 
@@ -79,6 +79,13 @@ export const SettingsWorkspaceMembers = () => {
             darkSrc={coverDark}
             instanceIdPrefix={SETTINGS_MEMBERS_HERO_INSTANCE_ID_PREFIX}
             tabs={[
+              {
+                id: 'members_walkthrough',
+                title: t`Walkthrough`,
+                Icon: IconSparkle2,
+                vimeoId: '1217964364',
+                hasSound: true,
+              },
               {
                 id: 'team',
                 title: t`Team`,
