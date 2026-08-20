@@ -17,9 +17,6 @@ type WidgetSettingsPlacement = {
   showMoveUp: boolean;
 };
 
-// Both the rendered placement section and the selectable-item ids that drive
-// keyboard navigation read this, so the two can never disagree about which
-// actions exist.
 export const useWidgetSettingsPlacement = (
   pageLayoutId: string,
 ): WidgetSettingsPlacement => {

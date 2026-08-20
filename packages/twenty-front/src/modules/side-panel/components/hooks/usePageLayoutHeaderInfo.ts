@@ -5,6 +5,7 @@ import { GRAPH_TYPE_INFORMATION } from '@/side-panel/pages/page-layout/constants
 import { getCurrentGraphTypeFromConfig } from '@/side-panel/pages/page-layout/utils/getCurrentGraphTypeFromConfig';
 import { isWidgetConfigurationOfTypeGraph } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfTypeGraph';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -62,7 +63,7 @@ const getPageLayoutWidgetHeaderInfo = ({
   headerType,
   title: isDefined(editedTitle)
     ? editedTitle
-    : isDefined(widgetInEditMode.title) && widgetInEditMode.title !== ''
+    : isNonEmptyString(widgetInEditMode.title)
       ? widgetInEditMode.title
       : '',
   isReadonly: false,
