@@ -7,6 +7,9 @@ import { ApplicationTranslationEntity } from 'src/engine/core-modules/applicatio
 
 const APPLICATION_REGISTRATION_ID = '20202020-0000-0000-0000-000000000001';
 
+// What the plan says to do is covered by the util spec; what matters here is
+// the one decision the service owns: a manifest that says nothing about
+// translations must not reach the stored rows at all.
 describe('ApplicationTranslationSyncService', () => {
   let service: ApplicationTranslationSyncService;
 
@@ -20,6 +23,7 @@ describe('ApplicationTranslationSyncService', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks();
+    repository.find.mockResolvedValue([]);
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -44,27 +48,15 @@ describe('ApplicationTranslationSyncService', () => {
       translations: undefined,
     });
 
-    expect(repository.find).not.toHaveBeenCalled();
-    expect(repository.softDelete).not.toHaveBeenCalled();
-    expect(cacheService.invalidate).not.toHaveBeenCalled();
+    expect(repository.find).toHaveBeenCalledTimes(0);
+    expect(repository.update).toHaveBeenCalledTimes(0);
+    expect(repository.insert).toHaveBeenCalledTimes(0);
+    expect(repository.softDelete).toHaveBeenCalledTimes(0);
+    expect(cacheService.invalidate).toHaveBeenCalledTimes(0);
   });
 
-  it('prunes every stored locale when the manifest declares no translations', async () => {
+  it('applies the manifest when it declares translations', async () => {
     repository.find.mockResolvedValue([
-      { id: 'row-1', locale: 'fr-FR', deletedAt: null },
-    ]);
-
-    await service.syncFromManifest({
-      applicationRegistrationId: APPLICATION_REGISTRATION_ID,
-      translations: {},
-    });
-
-    expect(repository.softDelete).toHaveBeenCalledWith(['row-1']);
-  });
-
-  it('prunes only the locales the manifest dropped', async () => {
-    repository.find.mockResolvedValue([
-      { id: 'row-fr', locale: 'fr-FR', deletedAt: null },
       { id: 'row-de', locale: 'de-DE', deletedAt: null },
     ]);
 
@@ -73,10 +65,14 @@ describe('ApplicationTranslationSyncService', () => {
       translations: { 'fr-FR': { abc123: 'Entreprise' } },
     });
 
-    expect(repository.update).toHaveBeenCalledWith('row-fr', {
+    expect(repository.insert).toHaveBeenCalledTimes(1);
+    expect(repository.insert).toHaveBeenCalledWith({
+      applicationRegistrationId: APPLICATION_REGISTRATION_ID,
+      locale: 'fr-FR',
       messages: { abc123: 'Entreprise' },
-      deletedAt: null,
     });
+    expect(repository.softDelete).toHaveBeenCalledTimes(1);
     expect(repository.softDelete).toHaveBeenCalledWith(['row-de']);
+    expect(cacheService.invalidate).toHaveBeenCalledTimes(1);
   });
 });

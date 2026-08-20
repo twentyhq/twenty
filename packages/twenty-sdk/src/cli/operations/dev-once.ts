@@ -1,7 +1,7 @@
 import path from 'path';
 import { type Manifest, OUTPUT_DIR } from 'twenty-shared/application';
 import { type MetadataValidationErrorResponse } from 'twenty-shared/metadata';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { isPlainObject } from 'twenty-shared/utils';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
 import {
@@ -205,15 +205,15 @@ const innerAppDevOnce = async (
 
   const translations = await compileApplicationTranslations(appPath);
 
-  const manifestWithChecksums: Manifest = manifestUpdateChecksums({
-    manifest: manifestResult.manifest,
-    builtFileInfos: buildResult.builtFileInfos,
-  });
   // Carried through the dev sync too: the server prunes the locales a manifest
-  // does not list, so syncing without them would drop what the app published.
-  const manifest: Manifest = isDefined(translations)
-    ? { ...manifestWithChecksums, translations }
-    : manifestWithChecksums;
+  // lists none of, so syncing without them would drop what the app published.
+  const manifest: Manifest = {
+    ...manifestUpdateChecksums({
+      manifest: manifestResult.manifest,
+      builtFileInfos: buildResult.builtFileInfos,
+    }),
+    translations,
+  };
 
   await writeManifestToOutput(appPath, manifest);
 

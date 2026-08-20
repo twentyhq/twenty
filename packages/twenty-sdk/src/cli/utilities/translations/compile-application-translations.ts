@@ -16,11 +16,14 @@ const isSupportedLocale = (locale: string): locale is AppLocale =>
 
 export const compileApplicationTranslations = async (
   appPath: string,
-): Promise<TranslationsManifest | undefined> => {
+): Promise<TranslationsManifest> => {
   const localesDir = path.join(appPath, LOCALES_DIR);
 
+  // An empty result is a statement, not a missing one: it tells the server
+  // this app ships no translations, which is what lets it prune locales the
+  // author removed. Only a caller that never compiles omits the key.
   if (!(await pathExists(localesDir))) {
-    return undefined;
+    return {};
   }
 
   const localeFiles = (await readdir(localesDir)).filter((entry) =>
@@ -59,10 +62,6 @@ export const compileApplicationTranslations = async (
     if (Object.keys(compiled).length > 0) {
       translations[locale] = compiled;
     }
-  }
-
-  if (Object.keys(translations).length === 0) {
-    return undefined;
   }
 
   return translations as TranslationsManifest;
