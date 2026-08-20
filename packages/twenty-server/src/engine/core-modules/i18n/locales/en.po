@@ -9822,6 +9822,11 @@ msgstr "The provider denied access to this account. Please reconnect it."
 msgid "The provider is temporarily unavailable. Please try again later."
 msgstr "The provider is temporarily unavailable. Please try again later."
 
+#. js-lingui-id: xKvSoz
+#: src/modules/messaging/message-import-manager/drivers/inbound-email/sources/resend-inbound-email-message-source.service.ts
+msgid "The received email content is no longer available."
+msgstr "The received email content is no longer available."
+
 #. js-lingui-id: pv+BoZ
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
 msgid "The request is too complex to process. Please try reducing the amount of requested fields."
