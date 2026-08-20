@@ -2,10 +2,10 @@
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { getUnconditionalRowLevelPermissionPredicates } from '@/object-record/record-field/ui/meta-types/utils/getUnconditionalRowLevelPermissionPredicates';
 import { useMemo } from 'react';
 import {
   type RowLevelPermissionPredicate,
-  RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -128,54 +128,22 @@ export const useFilteredSelectOptionsFromRLSPredicates = ({
         (predicate) => predicate.fieldMetadataId === fieldMetadataId,
       );
 
-    if (selectPredicates.length === 0) {
+    const unconditionalPredicates =
+      getUnconditionalRowLevelPermissionPredicates({
+        predicates: selectPredicates,
+        predicateGroups: objectPermissions.rowLevelPermissionPredicateGroups,
+      });
+
+    if (unconditionalPredicates.length === 0) {
       return { filteredOptions: options, canSelectEmpty: true };
     }
 
-    const predicateGroups = objectPermissions.rowLevelPermissionPredicateGroups;
-
-    const predicateGroupById = new Map(
-      predicateGroups.map((group) => [group.id, group]),
-    );
-
-    const isPredicateInsideOrGroup = (
-      predicate: RowLevelPermissionPredicate,
-    ): boolean => {
-      let groupId = predicate.rowLevelPermissionPredicateGroupId;
-      const visitedGroupIds = new Set<string>();
-
-      while (isDefined(groupId) && !visitedGroupIds.has(groupId)) {
-        visitedGroupIds.add(groupId);
-
-        const group = predicateGroupById.get(groupId);
-
-        if (!isDefined(group)) {
-          break;
-        }
-
-        if (
-          group.logicalOperator ===
-          RowLevelPermissionPredicateGroupLogicalOperator.OR
-        ) {
-          return true;
-        }
-
-        groupId = group.parentRowLevelPermissionPredicateGroupId;
-      }
-
-      return false;
-    };
-
-    const predicatesOutsideOrGroups = selectPredicates.filter(
-      (predicate) => !isPredicateInsideOrGroup(predicate),
-    );
-
-    const hasIsEmptyPredicate = predicatesOutsideOrGroups.some(
+    const hasIsEmptyPredicate = unconditionalPredicates.some(
       (predicate) =>
         predicate.operand === RowLevelPermissionPredicateOperand.IS_EMPTY,
     );
 
-    const hasIsNotEmptyPredicate = predicatesOutsideOrGroups.some(
+    const hasIsNotEmptyPredicate = unconditionalPredicates.some(
       (predicate) =>
         predicate.operand === RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
     );
@@ -183,7 +151,7 @@ export const useFilteredSelectOptionsFromRLSPredicates = ({
     return {
       filteredOptions: filterOptionsByPredicates(
         options,
-        predicatesOutsideOrGroups,
+        unconditionalPredicates,
       ),
       canSelectEmpty: hasIsEmptyPredicate && !hasIsNotEmptyPredicate,
     };
