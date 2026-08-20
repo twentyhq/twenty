@@ -70,7 +70,9 @@ export class AddCanceledMessageCampaignStatusCommand extends ProvisionedWorkspac
       return;
     }
 
-    if (options.dryRun === true) {
+    const isDryRun = options.dryRun ?? false;
+
+    if (isDryRun) {
       this.logger.log(
         `[DRY RUN] Would add CANCELED to messageCampaign status for workspace ${workspaceId}`,
       );

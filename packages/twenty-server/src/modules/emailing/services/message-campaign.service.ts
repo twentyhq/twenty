@@ -20,6 +20,7 @@ import {
   EmailingDomainDriverExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
+import { buildUnsubscribeHostnameNotReadyMessage } from 'src/engine/core-modules/emailing-domain/drivers/utils/build-unsubscribe-hostname-not-ready-message.util';
 import { isUnsubscribeHostnameReady } from 'src/engine/core-modules/emailing-domain/drivers/utils/is-unsubscribe-hostname-ready.util';
 import {
   EmailingDomainException,
@@ -425,7 +426,7 @@ export class MessageCampaignService {
 
     if (!isUnsubscribeHostnameReady(emailingDomain)) {
       throw new EmailingDomainException(
-        `Cannot send email for ${emailingDomain.domain}: unsubscribe domain is not active (status: ${emailingDomain.unsubscribeHostnameStatus})`,
+        buildUnsubscribeHostnameNotReadyMessage(emailingDomain),
         EmailingDomainExceptionCode.EMAILING_DOMAIN_UNSUBSCRIBE_NOT_READY,
       );
     }
@@ -502,9 +503,13 @@ export class MessageCampaignService {
         });
       }
 
+      // Only the recipients this run created. A replay skips the ones an earlier run already
+      // materialized, whose send jobs it also already enqueued, so no recipient gets two jobs.
+      // Messages stranded by a run that died between materializing and enqueueing are picked up
+      // by the stuck-campaign sweeper instead.
       await this.messageQueueService.bulkAdd<SendCampaignEmailJobData>(
         SEND_CAMPAIGN_EMAIL_JOB,
-        allRecipients.map((recipient) => ({
+        recipientsToCreate.map((recipient) => ({
           workspaceId,
           campaignId,
           messageId: recipient.messageId,

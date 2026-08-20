@@ -95,7 +95,9 @@ export class AddMessageCampaignSkippedCountFieldCommand extends ProvisionedWorks
       );
     }
 
-    if (options.dryRun === true) {
+    const isDryRun = options.dryRun ?? false;
+
+    if (isDryRun) {
       this.logger.log(
         `[DRY RUN] Would add skippedCount field for workspace ${workspaceId}`,
       );
