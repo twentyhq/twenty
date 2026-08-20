@@ -1,41 +1,58 @@
 import { Injectable } from '@nestjs/common';
 
-import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
-import { type CampaignCounts } from 'src/engine/core-modules/emailing-domain/types/campaign-counts.type';
-import { computeCampaignCounts } from 'src/engine/core-modules/emailing-domain/utils/compute-campaign-counts.util';
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { readCampaignMessageCounts } from 'src/modules/emailing/utils/read-campaign-message-counts.util';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
+import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
+
+type DeliveryStatusCountRow = {
+  deliveryStatus: string | null;
+  count: string;
+};
 
 @Injectable()
 export class MessageCampaignStatisticsService {
   constructor(
-    @InjectWorkspaceScopedRepository(CampaignDeliveryEntity)
-    private readonly campaignDeliveryRepository: WorkspaceScopedRepository<CampaignDeliveryEntity>,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
-  async countDeliveriesByState({
+  async countMessagesByDeliveryStatus({
     workspaceId,
     campaignId,
   }: {
     workspaceId: string;
     campaignId: string;
-  }): Promise<CampaignCounts> {
-    const deliveries = await this.campaignDeliveryRepository.find(workspaceId, {
-      where: { campaignId },
-      select: {
-        id: true,
-        state: true,
-        deliveredAt: true,
-        bouncedAt: true,
-        complainedAt: true,
-      },
-    });
+  }): Promise<Map<string, number>> {
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const messageRepository =
+          await this.globalWorkspaceOrmManager.getRepository(
+            workspaceId,
+            MessageWorkspaceEntity,
+            { shouldBypassPermissionChecks: true },
+          );
 
-    return computeCampaignCounts({ deliveries });
+        const deliveryStatusCountRows = await messageRepository
+          .createQueryBuilder('message')
+          .select('message.deliveryStatus', 'deliveryStatus')
+          .addSelect('COUNT(*)', 'count')
+          .where('message.messageCampaignId = :campaignId', { campaignId })
+          .groupBy('message.deliveryStatus')
+          .getRawMany<DeliveryStatusCountRow>();
+
+        return new Map(
+          deliveryStatusCountRows.flatMap<[string, number]>((row) =>
+            isNonEmptyString(row.deliveryStatus)
+              ? [[row.deliveryStatus, Number(row.count)]]
+              : [],
+          ),
+        );
+      },
+      buildSystemAuthContext(workspaceId),
+    );
   }
 
   async refreshCampaignCounts({
@@ -45,12 +62,20 @@ export class MessageCampaignStatisticsService {
     workspaceId: string;
     campaignId: string;
   }): Promise<void> {
-    const counts = await this.countDeliveriesByState({
+    const countByDeliveryStatus = await this.countMessagesByDeliveryStatus({
       workspaceId,
       campaignId,
     });
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const {
+        sentCount,
+        failedCount,
+        skippedCount,
+        bouncedCount,
+        complainedCount,
+      } = readCampaignMessageCounts(countByDeliveryStatus);
+
       const campaignRepository =
         await this.globalWorkspaceOrmManager.getRepository(
           workspaceId,
@@ -61,12 +86,11 @@ export class MessageCampaignStatisticsService {
       await campaignRepository.update(
         { id: campaignId },
         {
-          sentCount: counts.sentCount,
-          deliveredCount: counts.deliveredCount,
-          failedCount: counts.failedCount,
-          skippedCount: counts.skippedCount,
-          bouncedCount: counts.bouncedCount,
-          complainedCount: counts.complainedCount,
+          sentCount,
+          failedCount,
+          skippedCount,
+          bouncedCount,
+          complainedCount,
         },
       );
     }, buildSystemAuthContext(workspaceId));
