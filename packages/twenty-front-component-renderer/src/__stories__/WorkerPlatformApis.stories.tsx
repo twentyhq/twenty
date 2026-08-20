@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import {
   errorHandler,
@@ -7,7 +7,10 @@ import {
   resetFrontComponentStoryMocks,
 } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectJsonDataAttribute } from '@/__stories__/shared/test-utils/matchers/expectJsonDataAttribute';
-import { MOUNT_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
+import {
+  INTERACTION_TIMEOUT,
+  MOUNT_TIMEOUT,
+} from '@/__stories__/shared/test-utils/timeouts';
 import { getBuiltStoryComponentPathForRender } from '@/__stories__/utils/getBuiltStoryComponentPathForRender';
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
 
@@ -89,8 +92,15 @@ const classListTest: Story['play'] = async ({ canvasElement }) => {
     expectedValue: EXPECTED_CLASS_LIST_REPORT,
   });
 
-  expect(canvas.getByTestId('class-list-container').className).toBe(
-    EXPECTED_CLASS_LIST_REPORT.value,
+  // The container class reaches the host as a property update while the report
+  // reaches it as an attribute update, so the two can land a tick apart
+  await waitFor(
+    () => {
+      expect(canvas.getByTestId('class-list-container').className).toBe(
+        EXPECTED_CLASS_LIST_REPORT.value,
+      );
+    },
+    { timeout: INTERACTION_TIMEOUT },
   );
 
   expect(errorHandler).not.toHaveBeenCalled();

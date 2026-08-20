@@ -1,9 +1,11 @@
 import { expect, waitFor, type within } from 'storybook/test';
 
-import { MOUNT_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
+import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
+
+type Canvas = ReturnType<typeof within>;
 
 type ExpectJsonDataAttributeParams = {
-  canvas: ReturnType<typeof within>;
+  canvas: Canvas;
   testId: string;
   attributeName: string;
   expectedValue: unknown;
@@ -15,7 +17,7 @@ export const expectJsonDataAttribute = async ({
   testId,
   attributeName,
   expectedValue,
-  timeout = MOUNT_TIMEOUT,
+  timeout = INTERACTION_TIMEOUT,
 }: ExpectJsonDataAttributeParams): Promise<void> => {
   await waitFor(
     () => {

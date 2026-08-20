@@ -1,4 +1,4 @@
-import { HOOKS, type Hooks, Window } from '@remote-dom/polyfill';
+import { HOOKS, Window } from '@remote-dom/polyfill';
 
 import { type WorkerMutationObserver } from '@/polyfills/dom/types/WorkerMutationObserver';
 import { type WorkerMutationObserverCallback } from '@/polyfills/dom/types/WorkerMutationObserverCallback';
@@ -15,9 +15,6 @@ const createSandboxDocument = (polyfillWindow = new Window()): Document => {
 
   return polyfillWindow.document as unknown as Document;
 };
-
-const resolveWindowHooks = (polyfillWindow: Window): Partial<Hooks> =>
-  (polyfillWindow as unknown as Record<symbol, Partial<Hooks>>)[HOOKS];
 
 describe('installClassList', () => {
   it('should expose classList on every element sharing the prototype', () => {
@@ -78,7 +75,7 @@ describe('installClassList', () => {
   it('should run a classList write through the same attribute hook as setAttribute', () => {
     const polyfillWindow = new Window();
     const setAttributeArguments: unknown[][] = [];
-    resolveWindowHooks(polyfillWindow).setAttribute = (...args) =>
+    polyfillWindow[HOOKS].setAttribute = (...args) =>
       setAttributeArguments.push(args);
 
     const document = createSandboxDocument(polyfillWindow);
@@ -97,7 +94,9 @@ describe('installClassList', () => {
     ]);
   });
 
-  it('should emit a MutationObserver attributes record for a classList write', async () => {
+  // Remote elements map the class attribute onto the className property, which
+  // never reaches the polyfill attribute hook, so only base elements emit this
+  it('should emit a MutationObserver attributes record for a classList write on a base element', async () => {
     const polyfillWindow = new Window();
     const globalScope: Record<string, unknown> = { window: polyfillWindow };
 

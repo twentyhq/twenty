@@ -1,8 +1,9 @@
+import { installClassName } from '../installClassName';
 import { installGetElementsByClassName } from '../installGetElementsByClassName';
 
 class FakeElement {
   childNodes: FakeElement[] = [];
-  className?: string;
+  declare className: string;
   private attributes = new Map<string, string>();
 
   constructor(classAttribute?: string) {
@@ -15,11 +16,16 @@ class FakeElement {
     return this.attributes.get(attributeName) ?? null;
   }
 
+  setAttribute(attributeName: string, attributeValue: string): void {
+    this.attributes.set(attributeName, attributeValue);
+  }
+
   append(...children: FakeElement[]): void {
     this.childNodes.push(...children);
   }
 }
 
+installClassName(FakeElement.prototype);
 installGetElementsByClassName(FakeElement.prototype);
 
 type ClassNameQueryResult = FakeElement[] & {
@@ -50,7 +56,7 @@ describe('installGetElementsByClassName', () => {
     expect(matches[0]).toBe(target);
   });
 
-  it('should match an element whose classes are reflected via the className property', () => {
+  it('should match an element classed through the reflected className property', () => {
     const rootElement = new FakeElement();
     const target = new FakeElement();
     target.className = 'recharts-layer recharts-line';

@@ -11,6 +11,7 @@ import { frontComponentHostCommunicationApi } from '@/remote/worker/thread/state
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToCustomElementTag';
 import { installClipboardPolyfill } from '@/polyfills/clipboard/utils/installClipboardPolyfill';
 import { installClassList } from '@/polyfills/dom/utils/installClassList';
+import { installClassName } from '@/polyfills/dom/utils/installClassName';
 import { installDocumentGetElementById } from '@/polyfills/dom/utils/installDocumentGetElementById';
 import { installGetComputedStyle } from '@/polyfills/dom/utils/installGetComputedStyle';
 import { installGetElementsByClassName } from '@/polyfills/dom/utils/installGetElementsByClassName';
@@ -44,6 +45,7 @@ installErrorEventBridge();
 installDocumentGetElementById(document);
 installGetElementsByClassName(Element.prototype);
 installGetElementsByClassName(document);
+installClassName(Element.prototype);
 installClassList(Element.prototype);
 installLocalStyleOnBaseElements(Element.prototype);
 
