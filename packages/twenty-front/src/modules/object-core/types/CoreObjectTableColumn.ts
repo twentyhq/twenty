@@ -3,8 +3,7 @@ import { type ReactNode } from 'react';
 
 import { type TableFieldMetadata } from '@/ui/layout/table/types/TableFieldMetadata';
 
-// A column without a fieldType is not sortable: useSortedArray only handles
-// string and number fields
+// A column without a fieldType is not sortable and renders a plain header
 export type CoreObjectTableColumn<TItem> = Pick<
   TableFieldMetadata<TItem>,
   'align' | 'FieldIcon'
