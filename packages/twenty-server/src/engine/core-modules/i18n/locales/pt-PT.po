@@ -3876,6 +3876,11 @@ msgstr "O tipo de campo TS_VECTOR deve ser um campo do sistema"
 msgid "Field type TS_VECTOR must be named \"searchVector\""
 msgstr "O tipo de campo TS_VECTOR deve ser nomeado \"searchVector\""
 
+#. js-lingui-id: VkSxbb
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
+msgid "Field type TS_VECTOR must have SYSTEM writability"
+msgstr ""
+
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Field type validation error."

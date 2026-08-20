@@ -3876,6 +3876,11 @@ msgstr "필드 유형 TS_VECTOR은 시스템 필드여야 합니다."
 msgid "Field type TS_VECTOR must be named \"searchVector\""
 msgstr "필드 유형 TS_VECTOR의 이름은 \"searchVector\"이어야 합니다."
 
+#. js-lingui-id: VkSxbb
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
+msgid "Field type TS_VECTOR must have SYSTEM writability"
+msgstr ""
+
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Field type validation error."
