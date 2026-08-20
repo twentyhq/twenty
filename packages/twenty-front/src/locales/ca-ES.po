@@ -1685,7 +1685,7 @@ msgid "Advanced options"
 msgstr "Opcions avançades"
 
 #. js-lingui-id: 1Cox/a
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Afrikaans"
 msgstr "Afrikaans"
 
@@ -2542,7 +2542,7 @@ msgid "Apps you're the developer of"
 msgstr "Aplicacions de les quals ets el desenvolupador"
 
 #. js-lingui-id: 8HV3WN
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Arabic"
 msgstr "Àrab"
 
@@ -3661,7 +3661,7 @@ msgid "Card payment is currently unavailable. Please verify your Stripe configur
 msgstr "El pagament amb targeta no està disponible actualment. Verifica la configuració de Stripe o contacta amb l'administrador del teu espai de treball."
 
 #. js-lingui-id: M1RLfx
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Catalan"
 msgstr "Català"
 
@@ -3830,12 +3830,12 @@ msgid "Checkout session error. Please retry or contact Twenty team"
 msgstr "Error a la sessió de compra. Si us plau, torna-ho a intentar o contacta amb l'equip de Twenty."
 
 #. js-lingui-id: SviKkE
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Chinese — Simplified"
 msgstr "Xinès — Simplificat"
 
 #. js-lingui-id: dzb4Ep
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Chinese — Traditional"
 msgstr "Xinès — Tradicional"
 
@@ -5727,7 +5727,7 @@ msgid "Cyan"
 msgstr "Cian"
 
 #. js-lingui-id: w9VTXG
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Czech"
 msgstr "Txec"
 
@@ -5760,7 +5760,7 @@ msgid "Danger zone"
 msgstr "Zona de perill"
 
 #. js-lingui-id: Fo2vDn
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Danish"
 msgstr "Danès"
 
@@ -6454,6 +6454,7 @@ msgstr "Descriviu què voleu que faci la IA..."
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
+#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
@@ -6874,7 +6875,7 @@ msgid "Duration"
 msgstr "Durada"
 
 #. js-lingui-id: KIjvtr
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Dutch"
 msgstr "Holandès"
 
@@ -7096,6 +7097,11 @@ msgstr "Editar la taula de registres"
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "Edit Records on All Objects"
 msgstr "Editar registres de tots els objectes"
+
+#. js-lingui-id: /VLYQj
+#: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
+msgid "Edit translations"
+msgstr ""
 
 #. js-lingui-id: eMFB6/
 #: src/modules/views/view-picker/components/ViewPickerContentEditMode.tsx
@@ -7436,7 +7442,7 @@ msgid "Enforce two-step verification for every user login."
 msgstr "Aplica la verificació de dos passos per a cada inici de sessió."
 
 #. js-lingui-id: lYGfRP
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "English"
 msgstr "Anglès"
 
@@ -8925,7 +8931,7 @@ msgid "Finish Setup"
 msgstr "Finalitza la configuració"
 
 #. js-lingui-id: USZ2N6
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Finnish"
 msgstr "Finès"
 
@@ -9102,7 +9108,7 @@ msgid "free credits per user"
 msgstr "crèdits gratuïts per usuari"
 
 #. js-lingui-id: nLC6tu
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "French"
 msgstr "Francès"
 
@@ -9260,7 +9266,7 @@ msgid "Generates a Google Meet or Microsoft Teams link depending on the account.
 msgstr "Genera un enllaç de Google Meet o Microsoft Teams segons el compte."
 
 #. js-lingui-id: DDcvSo
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "German"
 msgstr "Alemany"
 
@@ -9455,7 +9461,7 @@ msgid "Greater than or equal"
 msgstr "Major o igual"
 
 #. js-lingui-id: CZXzs4
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Greek"
 msgstr "Grec"
 
@@ -9614,7 +9620,7 @@ msgid "Health Status"
 msgstr "Estat de salut"
 
 #. js-lingui-id: 3oTCgM
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Hebrew"
 msgstr "Hebreu"
 
@@ -9875,7 +9881,7 @@ msgid "Human Input"
 msgstr "Entrada Humana"
 
 #. js-lingui-id: mkWad2
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Hungarian"
 msgstr "Hongarès"
 
@@ -10695,7 +10701,7 @@ msgid "It natively comes with 7 standard objects."
 msgstr "Inclou de manera nativa 7 objectes estàndard."
 
 #. js-lingui-id: Lj7sBL
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Italian"
 msgstr "Italià"
 
@@ -10720,7 +10726,7 @@ msgid "Jane Doe"
 msgstr "Jane Doe"
 
 #. js-lingui-id: dFtidv
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Japanese"
 msgstr "Japonès"
 
@@ -10851,11 +10857,12 @@ msgid "Kickoff prompt"
 msgstr "Instrucció inicial"
 
 #. js-lingui-id: h6S9Yz
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Korean"
 msgstr "Coreà"
 
 #. js-lingui-id: 87a/t/
+#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsDate.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsNumber.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsRecordPicker.tsx
@@ -10866,6 +10873,16 @@ msgstr "Coreà"
 #: src/pages/settings/applications/tabs/SettingsApplicationCommandMenuItemSettingsTab.tsx
 msgid "Label"
 msgstr "Etiqueta"
+
+#. js-lingui-id: B9/B0O
+#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
+msgid "Label (plural)"
+msgstr ""
+
+#. js-lingui-id: J8GEvd
+#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
+msgid "Label (singular)"
+msgstr ""
 
 #. js-lingui-id: w8Rv8T
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -10887,6 +10904,11 @@ msgstr "Idioma"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Languages"
 msgstr "Idiomes"
+
+#. js-lingui-id: PEi+K2
+#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
+msgid "Languages without their own translation show the source text."
+msgstr ""
 
 #. js-lingui-id: k7rCa/
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -13603,7 +13625,7 @@ msgid "None"
 msgstr "Cap"
 
 #. js-lingui-id: 1IipHp
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Norwegian"
 msgstr "Noruec"
 
@@ -14028,6 +14050,11 @@ msgstr "Només es poden reclamar d'aquesta manera les aplicacions publicades a n
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "Only date & participants will be shared with your team."
 msgstr "Només la data i els participants seran compartits amb el teu equip."
+
+#. js-lingui-id: aluwJP
+#: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
+msgid "Only in {currentLanguageLabel}"
+msgstr ""
 
 #. js-lingui-id: Ecstfp
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
@@ -14866,17 +14893,17 @@ msgid "Plural"
 msgstr "Plural"
 
 #. js-lingui-id: trnWaw
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Polish"
 msgstr "Polonès"
 
 #. js-lingui-id: 0nsqwk
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Portuguese — Brazil"
 msgstr "Portuguès — Brasil"
 
 #. js-lingui-id: xtXHeo
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Portuguese — Portugal"
 msgstr "Portuguès — Portugal"
 
@@ -15152,7 +15179,7 @@ msgid "Providers"
 msgstr "Proveïdors"
 
 #. js-lingui-id: YJgRqq
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Pseudo-English"
 msgstr "Pseudo-Anglès"
 
@@ -15812,6 +15839,11 @@ msgstr "Canvia el nom"
 msgid "Rename chat"
 msgstr "Canvia el nom del xat"
 
+#. js-lingui-id: 1PqGzu
+#: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
+msgid "Rename for all languages"
+msgstr ""
+
 #. js-lingui-id: oQjB9l
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 msgid "Renewal date"
@@ -15934,6 +15966,7 @@ msgstr "Restableix el disseny de la pàgina de registre"
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
+#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/SoloTabSettingsContent.tsx
@@ -16183,7 +16216,7 @@ msgid "Rollover"
 msgstr "Acumulació"
 
 #. js-lingui-id: uJc01W
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Romanian"
 msgstr "Romanès"
 
@@ -16285,7 +16318,7 @@ msgid "Running..."
 msgstr "S'està executant..."
 
 #. js-lingui-id: nji0/X
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Russian"
 msgstr "Rus"
 
@@ -17184,7 +17217,7 @@ msgid "separator"
 msgstr "separador"
 
 #. js-lingui-id: 6oxz/y
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Serbian (Cyrillic)"
 msgstr "Serbi (ciríl·lic)"
 
@@ -17811,13 +17844,18 @@ msgstr "Font"
 msgid "Source Email Address"
 msgstr "Adreça de correu electrònic d’origen"
 
+#. js-lingui-id: MEXVHu
+#: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
+msgid "Source: {canonicalValue}"
+msgstr ""
+
 #. js-lingui-id: xqlr9R
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
 msgid "Spaces and comma"
 msgstr "Espais i coma"
 
 #. js-lingui-id: 65A04M
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Spanish"
 msgstr "Espanyol"
 
@@ -18233,7 +18271,7 @@ msgid "Supports reasoning"
 msgstr "Admet raonament"
 
 #. js-lingui-id: UaISq3
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Swedish"
 msgstr "Suec"
 
@@ -19451,6 +19489,18 @@ msgstr "Transfereix la propietat"
 msgid "Transferring..."
 msgstr "S'està transferint..."
 
+#. js-lingui-id: 0DTqrp
+#: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
+msgid "Translate or rename?"
+msgstr ""
+
+#. js-lingui-id: kAy5R9
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+#: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+msgid "Translations"
+msgstr ""
+
 #. js-lingui-id: lhkaAC
 #: src/modules/settings/billing/components/internal/PlansTags.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -19581,7 +19631,7 @@ msgid "TTL"
 msgstr "TTL"
 
 #. js-lingui-id: Kz91g/
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Turkish"
 msgstr "Turc"
 
@@ -19720,7 +19770,7 @@ msgid "Types of content this model can process besides text"
 msgstr "Tipus de contingut que aquest model pot processar a més del text"
 
 #. js-lingui-id: V9+2pH
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Ukrainian"
 msgstr "Ucraïnès"
 
@@ -20744,7 +20794,7 @@ msgid "Video"
 msgstr "Vídeo"
 
 #. js-lingui-id: fROFIL
-#: src/pages/settings/profile/appearance/components/LocalePicker.tsx
+#: src/localization/hooks/useLocaleOptions.ts
 msgid "Vietnamese"
 msgstr "Vietnamita"
 
@@ -21215,6 +21265,16 @@ msgstr "Benvingut, {workspaceName}."
 msgid "What can I help you with?"
 msgstr "En què et puc ajudar?"
 
+#. js-lingui-id: /SZI25
+#: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+msgid "What each language displays for this field's labels"
+msgstr ""
+
+#. js-lingui-id: 9IXG0o
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+msgid "What each language displays for this object's labels"
+msgstr ""
+
 #. js-lingui-id: cE4SvC
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
@@ -21658,6 +21718,11 @@ msgstr "Ja formes part de l'espai de treball {workspaceDisplayName}"
 #: src/modules/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts
 msgid "You already belong to this workspace"
 msgstr "Ja formes part d'aquest espai de treball"
+
+#. js-lingui-id: MuS9Gh
+#: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
+msgid "You are editing the {currentLanguageLabel} translation. Renaming instead changes the source label, for every language."
+msgstr ""
 
 #. js-lingui-id: MFDARJ
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
