@@ -3247,7 +3247,7 @@ msgstr "Кратко објашњење овог излазног поља"
 #. js-lingui-id: IjfaX/
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterFieldSelect.tsx
 msgid "Broken field reference. Select the field again to fix this condition."
-msgstr ""
+msgstr "Неисправна референца поља. Поново изаберите поље да бисте исправили овај услов."
 
 #. js-lingui-id: CSDv65
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -4755,7 +4755,7 @@ msgstr "Контекстни прозор"
 #. js-lingui-id: uKvqU1
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Context window must be a positive integer"
-msgstr ""
+msgstr "Контекстни прозор мора бити позитиван цео број"
 
 #. js-lingui-id: xGVfLh
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
@@ -7106,7 +7106,7 @@ msgstr "Измени записе на свим објектима"
 #. js-lingui-id: /VLYQj
 #: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
 msgid "Edit translations"
-msgstr ""
+msgstr "Уреди преводе"
 
 #. js-lingui-id: eMFB6/
 #: src/modules/views/view-picker/components/ViewPickerContentEditMode.tsx
@@ -9726,53 +9726,35 @@ msgstr "Хоризонтална раздвајачка линија"
 
 #. js-lingui-id: WOXdI6
 #: src/pages/settings/applications/utils/getCustomApplicationDescription.ts
-msgid ""
-"Host your workspace's customizations and overrides.\n"
-"\n"
+msgid "Host your workspace's customizations and overrides.\n\n"
 "#### What it includes\n"
-"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n"
-"\n"
+"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n\n"
 "- Custom objects and fields for your own data model\n"
 "- Views, navigation items, and record layouts that shape how your team works\n"
-"- Logic functions, front components, and agents that automate or extend the workspace\n"
-"\n"
+"- Logic functions, front components, and agents that automate or extend the workspace\n\n"
 "#### Why it exists\n"
-"Use this app for workspace-specific customization that should stay local to this workspace.\n"
-"\n"
-"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Scaffold a new app in one command:\n"
-"\n"
+"Use this app for workspace-specific customization that should stay local to this workspace.\n\n"
+"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n\n"
+"#### Build your own app\n\n"
+"Scaffold a new app in one command:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
+"```\n\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"Хостујте прилагођавања и замене вашег радног простора.\n"
-"\n"
+msgstr "Хостујте прилагођавања и замене вашег радног простора.\n\n"
 "#### Шта обухвата\n"
-"Свако проширење које креирате поврх стандардне апликације груписано је под Custom. Оно на једном месту чува ваше измене шеме, промене интерфејса и логику специфичну за радни простор.\n"
-"\n"
+"Свако проширење које креирате поврх стандардне апликације груписано је под Custom. Оно на једном месту чува ваше измене шеме, промене интерфејса и логику специфичну за радни простор.\n\n"
 "- Прилагођени објекти и поља за ваш сопствени модел података\n"
 "- Прикази, ставке навигације и распореди записа који обликују како ваш тим ради\n"
-"- Логичке функције, фронт-компоненте и агенти који аутоматизују или проширују радни простор\n"
-"\n"
+"- Логичке функције, фронт-компоненте и агенти који аутоматизују или проширују радни простор\n\n"
 "#### Зашто постоји\n"
-"Користите ову апликацију за прилагођавања специфична за радни простор која треба да остану локална за овај радни простор.\n"
-"\n"
-"Ако обликујете један радни простор за један бизнис, задржите га овде. Ако градите поново употребљиву пословну апликацију са сопственим моделом података, UI и аутоматизацијом, која треба да буде верзионисана, дељена или инсталирана у више радних простора, уместо тога креирајте посебну апликацију.\n"
-"\n"
-"#### Направите сопствену апликацију\n"
-"\n"
-"Поставите скелет нове апликације једном командом:\n"
-"\n"
+"Користите ову апликацију за прилагођавања специфична за радни простор која треба да остану локална за овај радни простор.\n\n"
+"Ако обликујете један радни простор за један бизнис, задржите га овде. Ако градите поново употребљиву пословну апликацију са сопственим моделом података, UI и аутоматизацијом, која треба да буде верзионисана, дељена или инсталирана у више радних простора, уместо тога креирајте посебну апликацију.\n\n"
+"#### Направите сопствену апликацију\n\n"
+"Поставите скелет нове апликације једном командом:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
+"```\n\n"
 "Погледајте [водич за почетак](https://twenty.com/developers/extend/apps/getting-started) за потпун преглед корак по корак, и [Прављење апликација](https://twenty.com/developers/extend/apps/building) за `defineApplication` / `defineEntity` API-је."
 
 #. js-lingui-id: yY8wAv
@@ -10882,12 +10864,12 @@ msgstr "Ознака"
 #. js-lingui-id: B9/B0O
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Label (plural)"
-msgstr ""
+msgstr "Oznaka (množina)"
 
 #. js-lingui-id: J8GEvd
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Label (singular)"
-msgstr ""
+msgstr "Oznaka (jednina)"
 
 #. js-lingui-id: w8Rv8T
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -10913,7 +10895,7 @@ msgstr "Језици"
 #. js-lingui-id: PEi+K2
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Languages without their own translation show the source text."
-msgstr ""
+msgstr "Jezici bez sopstvenog prevoda prikazuju izvorni tekst."
 
 #. js-lingui-id: k7rCa/
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -11859,7 +11841,7 @@ msgstr "Максимални излаз"
 #. js-lingui-id: D0Z4Jd
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Max output must be a positive integer"
-msgstr ""
+msgstr "Максимални излаз мора бити позитиван цео број"
 
 #. js-lingui-id: 2ICF9k
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -14059,7 +14041,7 @@ msgstr "Само датум & учесници ће бити подељени с
 #. js-lingui-id: aluwJP
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Only in {currentLanguageLabel}"
-msgstr ""
+msgstr "Само у {currentLanguageLabel}"
 
 #. js-lingui-id: Ecstfp
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
@@ -15847,7 +15829,7 @@ msgstr "Преименуј ћаскање"
 #. js-lingui-id: 1PqGzu
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Rename for all languages"
-msgstr ""
+msgstr "Preimenuj za sve jezike"
 
 #. js-lingui-id: oQjB9l
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -17852,7 +17834,7 @@ msgstr "Изворна имејл адреса"
 #. js-lingui-id: MEXVHu
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Source: {canonicalValue}"
-msgstr ""
+msgstr "Izvor: {canonicalValue}"
 
 #. js-lingui-id: xqlr9R
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -18584,67 +18566,45 @@ msgstr "AWS регион за Bedrock"
 
 #. js-lingui-id: HP7per
 #: src/pages/settings/applications/utils/getStandardApplicationDescription.ts
-msgid ""
-"The base data model every Twenty workspace runs on.\n"
-"\n"
-"#### What \"foundation\" means\n"
-"\n"
-"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n"
-"\n"
+msgid "The base data model every Twenty workspace runs on.\n\n"
+"#### What \"foundation\" means\n\n"
+"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n\n"
 "#### Included objects\n"
 "- **People & Companies**: contact and account records\n"
 "- **Opportunities**: your sales pipeline\n"
 "- **Notes & Tasks**: activity and follow-ups\n"
-"- **Workflows & Dashboards**: automation and reporting\n"
-"\n"
-"Remove this app and the rest of Twenty has nothing to hang off.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n"
-"\n"
+"- **Workflows & Dashboards**: automation and reporting\n\n"
+"Remove this app and the rest of Twenty has nothing to hang off.\n\n"
+"#### Build your own app\n\n"
+"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Then inside the folder:\n"
-"\n"
+"```\n\n"
+"Then inside the folder:\n\n"
 "```bash\n"
 "cd my-twenty-app\n"
 "yarn twenty dev\n"
-"```\n"
-"\n"
+"```\n\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"Основни модел података на ком ради сваки Twenty радни простор.\n"
-"\n"
-"#### Шта значи „основа”\n"
-"\n"
-"Сваки Twenty радни простор почиње са овим скупом објеката. Они дефинишу облик вашег CRM-а, укључујући односе, активности и извештавање. Све остало, укључујући апликације са маркетплејса, AI агенте и прилагођене објекте, прикључује се на њих.\n"
-"\n"
+msgstr "Основни модел података на ком ради сваки Twenty радни простор.\n\n"
+"#### Шта значи „основа”\n\n"
+"Сваки Twenty радни простор почиње са овим скупом објеката. Они дефинишу облик вашег CRM-а, укључујући односе, активности и извештавање. Све остало, укључујући апликације са маркетплејса, AI агенте и прилагођене објекте, прикључује се на њих.\n\n"
 "#### Укључени објекти\n"
 "- **Људи и компаније**: записи о контактима и налозима\n"
 "- **Пословне прилике**: ваш продајни левак\n"
 "- **Белешке и задаци**: активности и праћења\n"
-"- **Радни токови и контролне табле**: аутоматизација и извештавање\n"
-"\n"
-"Уклоните ову апликацију и остатак Twenty неће имати на шта да се надовеже.\n"
-"\n"
-"#### Направите сопствену апликацију\n"
-"\n"
-"Проширите Twenty сопственим објектима, пољима, логичким функцијама или AI вештинама. Поставите скелет нове апликације једном командом:\n"
-"\n"
+"- **Радни токови и контролне табле**: аутоматизација и извештавање\n\n"
+"Уклоните ову апликацију и остатак Twenty неће имати на шта да се надовеже.\n\n"
+"#### Направите сопствену апликацију\n\n"
+"Проширите Twenty сопственим објектима, пољима, логичким функцијама или AI вештинама. Поставите скелет нове апликације једном командом:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Затим унутар фасцикле:\n"
-"\n"
+"```\n\n"
+"Затим унутар фасцикле:\n\n"
 "```bash\n"
 "cd my-twenty-app\n"
 "yarn twenty dev\n"
-"```\n"
-"\n"
+"```\n\n"
 "Погледајте [водич за почетак](https://twenty.com/developers/extend/apps/getting-started) за потпун преглед корак по корак, и [Прављење апликација](https://twenty.com/developers/extend/apps/building) за `defineApplication` / `defineEntity` API-је."
 
 #. js-lingui-id: VsxjzF
@@ -18897,8 +18857,7 @@ msgstr "Ова радња се не може поништити. Овај чла
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid ""
-"This action cannot be undone. This will permanently delete your\n"
+msgid "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "Ова акција се не може опозвати. Ово ће трајно обрисати ваш цео налог."
 
@@ -19497,14 +19456,14 @@ msgstr "Преношење..."
 #. js-lingui-id: 0DTqrp
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Translate or rename?"
-msgstr ""
+msgstr "Prevesti ili preimenovati?"
 
 #. js-lingui-id: kAy5R9
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "Translations"
-msgstr ""
+msgstr "Преводи"
 
 #. js-lingui-id: lhkaAC
 #: src/modules/settings/billing/components/internal/PlansTags.tsx
@@ -21273,12 +21232,12 @@ msgstr "Чиме могу да вам помогнем?"
 #. js-lingui-id: /SZI25
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "What each language displays for this field's labels"
-msgstr ""
+msgstr "Šta svaki jezik prikazuje za oznake ovog polja"
 
 #. js-lingui-id: 9IXG0o
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "What each language displays for this object's labels"
-msgstr ""
+msgstr "Šta svaki jezik prikazuje za oznake ovog objekta"
 
 #. js-lingui-id: cE4SvC
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -21727,7 +21686,7 @@ msgstr "Већ припадате овом радном простору"
 #. js-lingui-id: MuS9Gh
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "You are editing the {currentLanguageLabel} translation. Renaming instead changes the source label, for every language."
-msgstr ""
+msgstr "Uređujete prevod na jeziku {currentLanguageLabel}. Preimenovanjem se umesto toga menja izvorna oznaka za svaki jezik."
 
 #. js-lingui-id: MFDARJ
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
@@ -21832,11 +21791,9 @@ msgstr "Ускоро ћете променити поддомен вашег р�
 
 #. js-lingui-id: Z5uTAF
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid ""
-"You've hit your usage limit. \n"
+msgid "You've hit your usage limit. \n"
 "Reach to our support team to upgrade."
-msgstr ""
-"Достигли сте ограничење коришћења. \n"
+msgstr "Достигли сте ограничење коришћења. \n"
 "Обратите се нашем тиму за подршку ради надоградње."
 
 #. js-lingui-id: NTyvVW
@@ -21844,11 +21801,9 @@ msgstr ""
 #. placeholder {1}: nextResourceCreditPrice ?? ''
 #. placeholder {2}: nextTierInterval ?? ''
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid ""
-"You've hit your usage limit. \n"
+msgid "You've hit your usage limit. \n"
 "Upgrade to {0} credits for ${1}/{2}."
-msgstr ""
-"Достигли сте ограничење коришћења. \n"
+msgstr "Достигли сте ограничење коришћења. \n"
 "Надоградите на {0} кредита за ${1}/{2}."
 
 #. js-lingui-id: yZ0wRS

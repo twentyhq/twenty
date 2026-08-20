@@ -3247,7 +3247,7 @@ msgstr "Rövid magyarázat ehhez a kimeneti mezőhöz"
 #. js-lingui-id: IjfaX/
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterFieldSelect.tsx
 msgid "Broken field reference. Select the field again to fix this condition."
-msgstr ""
+msgstr "Érvénytelen mezőhivatkozás. A feltétel javításához válassza ki újra a mezőt."
 
 #. js-lingui-id: CSDv65
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -4755,7 +4755,7 @@ msgstr "Kontextusablak"
 #. js-lingui-id: uKvqU1
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Context window must be a positive integer"
-msgstr ""
+msgstr "A kontextusablaknak pozitív egész számnak kell lennie."
 
 #. js-lingui-id: xGVfLh
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
@@ -7106,7 +7106,7 @@ msgstr "Rekordok szerkesztése minden objektumon"
 #. js-lingui-id: /VLYQj
 #: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
 msgid "Edit translations"
-msgstr ""
+msgstr "Fordítások szerkesztése"
 
 #. js-lingui-id: eMFB6/
 #: src/modules/views/view-picker/components/ViewPickerContentEditMode.tsx
@@ -9726,53 +9726,35 @@ msgstr "Vízszintes elválasztóvonal"
 
 #. js-lingui-id: WOXdI6
 #: src/pages/settings/applications/utils/getCustomApplicationDescription.ts
-msgid ""
-"Host your workspace's customizations and overrides.\n"
-"\n"
+msgid "Host your workspace's customizations and overrides.\n\n"
 "#### What it includes\n"
-"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n"
-"\n"
+"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n\n"
 "- Custom objects and fields for your own data model\n"
 "- Views, navigation items, and record layouts that shape how your team works\n"
-"- Logic functions, front components, and agents that automate or extend the workspace\n"
-"\n"
+"- Logic functions, front components, and agents that automate or extend the workspace\n\n"
 "#### Why it exists\n"
-"Use this app for workspace-specific customization that should stay local to this workspace.\n"
-"\n"
-"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Scaffold a new app in one command:\n"
-"\n"
+"Use this app for workspace-specific customization that should stay local to this workspace.\n\n"
+"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n\n"
+"#### Build your own app\n\n"
+"Scaffold a new app in one command:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
+"```\n\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"Tárold a munkaterületed testreszabásait és felülírásait.\n"
-"\n"
+msgstr "Tárold a munkaterületed testreszabásait és felülírásait.\n\n"
 "#### Mit tartalmaz\n"
-"Minden, a szabványos alkalmazásra épülő bővítmény a Custom alá kerül. Egy helyen tartja a séma- és felületmódosításokat, valamint a munkaterület-specifikus logikát.\n"
-"\n"
+"Minden, a szabványos alkalmazásra épülő bővítmény a Custom alá kerül. Egy helyen tartja a séma- és felületmódosításokat, valamint a munkaterület-specifikus logikát.\n\n"
 "- Egyéni objektumok és mezők a saját adatmodelledhez\n"
 "- Nézetek, navigációs elemek és rekordelrendezések, amelyek meghatározzák, hogyan dolgozik a csapatod\n"
-"- Logikai függvények, felületi komponensek és ügynökök, amelyek automatizálják vagy bővítik a munkaterületedet\n"
-"\n"
+"- Logikai függvények, felületi komponensek és ügynökök, amelyek automatizálják vagy bővítik a munkaterületedet\n\n"
 "#### Miért létezik\n"
-"Használd ezt az alkalmazást az olyan, munkaterület-specifikus testreszabásokhoz, amelyeknek ezen a munkaterületen kell maradniuk.\n"
-"\n"
-"Ha egyetlen vállalkozás számára alakítasz egy munkaterületet, tartsd itt. Ha pedig egy újrafelhasználható üzleti alkalmazást építesz saját adatmodellel, felhasználói felülettel és automatizálással, amelyet verziózni, megosztani vagy több munkaterületre telepíteni szeretnél, hozz létre inkább egy külön alkalmazást.\n"
-"\n"
-"#### Készíts saját alkalmazást\n"
-"\n"
-"Hozz létre egy új alkalmazásvázat egyetlen paranccsal:\n"
-"\n"
+"Használd ezt az alkalmazást az olyan, munkaterület-specifikus testreszabásokhoz, amelyeknek ezen a munkaterületen kell maradniuk.\n\n"
+"Ha egyetlen vállalkozás számára alakítasz egy munkaterületet, tartsd itt. Ha pedig egy újrafelhasználható üzleti alkalmazást építesz saját adatmodellel, felhasználói felülettel és automatizálással, amelyet verziózni, megosztani vagy több munkaterületre telepíteni szeretnél, hozz létre inkább egy külön alkalmazást.\n\n"
+"#### Készíts saját alkalmazást\n\n"
+"Hozz létre egy új alkalmazásvázat egyetlen paranccsal:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
+"```\n\n"
 "A teljes áttekintéshez lásd az [Első lépések útmutatót](https://twenty.com/developers/extend/apps/getting-started), a `defineApplication` / `defineEntity` API-król pedig az [Alkalmazások készítése](https://twenty.com/developers/extend/apps/building) oldalt."
 
 #. js-lingui-id: yY8wAv
@@ -10882,12 +10864,12 @@ msgstr "Címke"
 #. js-lingui-id: B9/B0O
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Label (plural)"
-msgstr ""
+msgstr "Címke (többes szám)"
 
 #. js-lingui-id: J8GEvd
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Label (singular)"
-msgstr ""
+msgstr "Címke (egyes szám)"
 
 #. js-lingui-id: w8Rv8T
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -10913,7 +10895,7 @@ msgstr "Nyelvek"
 #. js-lingui-id: PEi+K2
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Languages without their own translation show the source text."
-msgstr ""
+msgstr "A saját fordítással nem rendelkező nyelvek a forrásszöveget jelenítik meg."
 
 #. js-lingui-id: k7rCa/
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -11859,7 +11841,7 @@ msgstr "Maximális kimenet"
 #. js-lingui-id: D0Z4Jd
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Max output must be a positive integer"
-msgstr ""
+msgstr "A maximális kimenetnek pozitív egész számnak kell lennie."
 
 #. js-lingui-id: 2ICF9k
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -14059,7 +14041,7 @@ msgstr "Csak a dátum és résztvevők lesznek megosztva a csapatával."
 #. js-lingui-id: aluwJP
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Only in {currentLanguageLabel}"
-msgstr ""
+msgstr "Csak {currentLanguageLabel} hónapban"
 
 #. js-lingui-id: Ecstfp
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
@@ -15847,7 +15829,7 @@ msgstr "Beszélgetés átnevezése"
 #. js-lingui-id: 1PqGzu
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Rename for all languages"
-msgstr ""
+msgstr "Átnevezés minden nyelven"
 
 #. js-lingui-id: oQjB9l
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -17852,7 +17834,7 @@ msgstr "Forrás e-mail cím"
 #. js-lingui-id: MEXVHu
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Source: {canonicalValue}"
-msgstr ""
+msgstr "Forrás: {canonicalValue}"
 
 #. js-lingui-id: xqlr9R
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -18584,67 +18566,45 @@ msgstr "Az AWS-régió a Bedrockhoz"
 
 #. js-lingui-id: HP7per
 #: src/pages/settings/applications/utils/getStandardApplicationDescription.ts
-msgid ""
-"The base data model every Twenty workspace runs on.\n"
-"\n"
-"#### What \"foundation\" means\n"
-"\n"
-"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n"
-"\n"
+msgid "The base data model every Twenty workspace runs on.\n\n"
+"#### What \"foundation\" means\n\n"
+"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n\n"
 "#### Included objects\n"
 "- **People & Companies**: contact and account records\n"
 "- **Opportunities**: your sales pipeline\n"
 "- **Notes & Tasks**: activity and follow-ups\n"
-"- **Workflows & Dashboards**: automation and reporting\n"
-"\n"
-"Remove this app and the rest of Twenty has nothing to hang off.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n"
-"\n"
+"- **Workflows & Dashboards**: automation and reporting\n\n"
+"Remove this app and the rest of Twenty has nothing to hang off.\n\n"
+"#### Build your own app\n\n"
+"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Then inside the folder:\n"
-"\n"
+"```\n\n"
+"Then inside the folder:\n\n"
 "```bash\n"
 "cd my-twenty-app\n"
 "yarn twenty dev\n"
-"```\n"
-"\n"
+"```\n\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"Az az alapadatmodell, amelyre minden Twenty-munkaterület épül.\n"
-"\n"
-"#### Mit jelent az \"alap\"\n"
-"\n"
-"Minden Twenty-munkaterület ezzel az objektumkészlettel indul. Ezek határozzák meg a CRM-ed felépítését, beleértve a kapcsolatokat, a tevékenységeket és a jelentéskészítést. Minden más, beleértve a piactéri alkalmazásokat, az AI-ügynököket és az egyéni objektumokat, ezekhez csatlakozik.\n"
-"\n"
+msgstr "Az az alapadatmodell, amelyre minden Twenty-munkaterület épül.\n\n"
+"#### Mit jelent az \"alap\"\n\n"
+"Minden Twenty-munkaterület ezzel az objektumkészlettel indul. Ezek határozzák meg a CRM-ed felépítését, beleértve a kapcsolatokat, a tevékenységeket és a jelentéskészítést. Minden más, beleértve a piactéri alkalmazásokat, az AI-ügynököket és az egyéni objektumokat, ezekhez csatlakozik.\n\n"
 "#### Tartalmazott objektumok\n"
 "- **Személyek és vállalatok**: kapcsolattartó- és vállalati rekordok\n"
 "- **Lehetőségek**: az értékesítési pipeline\n"
 "- **Jegyzetek és feladatok**: tevékenységek és utánkövetések\n"
-"- **Munkafolyamatok és irányítópultok**: automatizálás és jelentéskészítés\n"
-"\n"
-"Ha eltávolítod ezt az alkalmazást, nem marad semmi, amihez a Twenty többi része kapcsolódhat.\n"
-"\n"
-"#### Készíts saját alkalmazást\n"
-"\n"
-"Bővítsd a Twenty-t saját objektumokkal, mezőkkel, logikai függvényekkel vagy AI-képességekkel. Hozz létre egy új alkalmazásvázat egyetlen paranccsal:\n"
-"\n"
+"- **Munkafolyamatok és irányítópultok**: automatizálás és jelentéskészítés\n\n"
+"Ha eltávolítod ezt az alkalmazást, nem marad semmi, amihez a Twenty többi része kapcsolódhat.\n\n"
+"#### Készíts saját alkalmazást\n\n"
+"Bővítsd a Twenty-t saját objektumokkal, mezőkkel, logikai függvényekkel vagy AI-képességekkel. Hozz létre egy új alkalmazásvázat egyetlen paranccsal:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Ezután a mappán belül:\n"
-"\n"
+"```\n\n"
+"Ezután a mappán belül:\n\n"
 "```bash\n"
 "cd my-twenty-app\n"
 "yarn twenty dev\n"
-"```\n"
-"\n"
+"```\n\n"
 "A teljes áttekintéshez lásd az [Első lépések útmutatót](https://twenty.com/developers/extend/apps/getting-started), a `defineApplication` / `defineEntity` API-król pedig az [Alkalmazások készítése](https://twenty.com/developers/extend/apps/building) oldalt."
 
 #. js-lingui-id: VsxjzF
@@ -18897,8 +18857,7 @@ msgstr "Ez a művelet nem vonható vissza. Ez a tag eltávolításra kerül, és
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid ""
-"This action cannot be undone. This will permanently delete your\n"
+msgid "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "Ez a művelet nem visszavonható. Ez véglegesen törli az egész fiókját."
 
@@ -19497,14 +19456,14 @@ msgstr "Átvitel folyamatban..."
 #. js-lingui-id: 0DTqrp
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Translate or rename?"
-msgstr ""
+msgstr "Fordítás vagy átnevezés?"
 
 #. js-lingui-id: kAy5R9
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "Translations"
-msgstr ""
+msgstr "Fordítások"
 
 #. js-lingui-id: lhkaAC
 #: src/modules/settings/billing/components/internal/PlansTags.tsx
@@ -21273,12 +21232,12 @@ msgstr "Miben segíthetek?"
 #. js-lingui-id: /SZI25
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "What each language displays for this field's labels"
-msgstr ""
+msgstr "Az egyes nyelveken megjelenő címkék ehhez a mezőhöz"
 
 #. js-lingui-id: 9IXG0o
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "What each language displays for this object's labels"
-msgstr ""
+msgstr "Az egyes nyelveken megjelenő címkék ehhez az objektumhoz"
 
 #. js-lingui-id: cE4SvC
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -21727,7 +21686,7 @@ msgstr "Már ehhez a munkaasztalhoz tartozik"
 #. js-lingui-id: MuS9Gh
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "You are editing the {currentLanguageLabel} translation. Renaming instead changes the source label, for every language."
-msgstr ""
+msgstr "A(z) {currentLanguageLabel} fordítását szerkeszti. Az átnevezés ehelyett minden nyelven módosítja a forráscímkét."
 
 #. js-lingui-id: MFDARJ
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
@@ -21832,11 +21791,9 @@ msgstr "A munkahelyi aldomain megváltoztatása előtt áll. Ez a művelet minde
 
 #. js-lingui-id: Z5uTAF
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid ""
-"You've hit your usage limit. \n"
+msgid "You've hit your usage limit. \n"
 "Reach to our support team to upgrade."
-msgstr ""
-"Elérte a felhasználási limitet. \n"
+msgstr "Elérte a felhasználási limitet. \n"
 "Lépjen kapcsolatba ügyféltámogatásunkkal a frissítéshez."
 
 #. js-lingui-id: NTyvVW
@@ -21844,11 +21801,9 @@ msgstr ""
 #. placeholder {1}: nextResourceCreditPrice ?? ''
 #. placeholder {2}: nextTierInterval ?? ''
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid ""
-"You've hit your usage limit. \n"
+msgid "You've hit your usage limit. \n"
 "Upgrade to {0} credits for ${1}/{2}."
-msgstr ""
-"Elérte a felhasználási limitet.\n"
+msgstr "Elérte a felhasználási limitet.\n"
 "Váltson {0} kreditre ${1}/{2} áron."
 
 #. js-lingui-id: yZ0wRS

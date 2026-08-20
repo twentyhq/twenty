@@ -3247,7 +3247,7 @@ msgstr "這個輸出欄位的簡要說明"
 #. js-lingui-id: IjfaX/
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterFieldSelect.tsx
 msgid "Broken field reference. Select the field again to fix this condition."
-msgstr ""
+msgstr "欄位參照已中斷。請再次選取該欄位以修正此條件。"
 
 #. js-lingui-id: CSDv65
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -4755,7 +4755,7 @@ msgstr "上下文視窗"
 #. js-lingui-id: uKvqU1
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Context window must be a positive integer"
-msgstr ""
+msgstr "內容視窗必須為正整數"
 
 #. js-lingui-id: xGVfLh
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
@@ -7106,7 +7106,7 @@ msgstr "編輯所有物件的記錄"
 #. js-lingui-id: /VLYQj
 #: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
 msgid "Edit translations"
-msgstr ""
+msgstr "編輯翻譯"
 
 #. js-lingui-id: eMFB6/
 #: src/modules/views/view-picker/components/ViewPickerContentEditMode.tsx
@@ -9726,29 +9726,20 @@ msgstr "水平分隔線"
 
 #. js-lingui-id: WOXdI6
 #: src/pages/settings/applications/utils/getCustomApplicationDescription.ts
-msgid ""
-"Host your workspace's customizations and overrides.\n"
-"\n"
+msgid "Host your workspace's customizations and overrides.\n\n"
 "#### What it includes\n"
-"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n"
-"\n"
+"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n\n"
 "- Custom objects and fields for your own data model\n"
 "- Views, navigation items, and record layouts that shape how your team works\n"
-"- Logic functions, front components, and agents that automate or extend the workspace\n"
-"\n"
+"- Logic functions, front components, and agents that automate or extend the workspace\n\n"
 "#### Why it exists\n"
-"Use this app for workspace-specific customization that should stay local to this workspace.\n"
-"\n"
-"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Scaffold a new app in one command:\n"
-"\n"
+"Use this app for workspace-specific customization that should stay local to this workspace.\n\n"
+"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n\n"
+"#### Build your own app\n\n"
+"Scaffold a new app in one command:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
+"```\n\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
 msgstr ""
 
@@ -10859,12 +10850,12 @@ msgstr "標籤"
 #. js-lingui-id: B9/B0O
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Label (plural)"
-msgstr ""
+msgstr "標籤（複數）"
 
 #. js-lingui-id: J8GEvd
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Label (singular)"
-msgstr ""
+msgstr "標籤（單數）"
 
 #. js-lingui-id: w8Rv8T
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -10890,7 +10881,7 @@ msgstr "語言"
 #. js-lingui-id: PEi+K2
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Languages without their own translation show the source text."
-msgstr ""
+msgstr "沒有自身翻譯的語言會顯示來源文字。"
 
 #. js-lingui-id: k7rCa/
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -11836,7 +11827,7 @@ msgstr "最大輸出"
 #. js-lingui-id: D0Z4Jd
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Max output must be a positive integer"
-msgstr ""
+msgstr "最大輸出必須為正整數"
 
 #. js-lingui-id: 2ICF9k
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -14036,7 +14027,7 @@ msgstr "只有日期和參與者將與您的團隊共享。"
 #. js-lingui-id: aluwJP
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Only in {currentLanguageLabel}"
-msgstr ""
+msgstr "僅在 {currentLanguageLabel}"
 
 #. js-lingui-id: Ecstfp
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
@@ -15824,7 +15815,7 @@ msgstr "重新命名聊天"
 #. js-lingui-id: 1PqGzu
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Rename for all languages"
-msgstr ""
+msgstr "為所有語言重新命名"
 
 #. js-lingui-id: oQjB9l
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -17829,7 +17820,7 @@ msgstr "來源電子郵件地址"
 #. js-lingui-id: MEXVHu
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Source: {canonicalValue}"
-msgstr ""
+msgstr "來源：{canonicalValue}"
 
 #. js-lingui-id: xqlr9R
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -18561,36 +18552,25 @@ msgstr "Bedrock 的 AWS 區域"
 
 #. js-lingui-id: HP7per
 #: src/pages/settings/applications/utils/getStandardApplicationDescription.ts
-msgid ""
-"The base data model every Twenty workspace runs on.\n"
-"\n"
-"#### What \"foundation\" means\n"
-"\n"
-"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n"
-"\n"
+msgid "The base data model every Twenty workspace runs on.\n\n"
+"#### What \"foundation\" means\n\n"
+"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n\n"
 "#### Included objects\n"
 "- **People & Companies**: contact and account records\n"
 "- **Opportunities**: your sales pipeline\n"
 "- **Notes & Tasks**: activity and follow-ups\n"
-"- **Workflows & Dashboards**: automation and reporting\n"
-"\n"
-"Remove this app and the rest of Twenty has nothing to hang off.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n"
-"\n"
+"- **Workflows & Dashboards**: automation and reporting\n\n"
+"Remove this app and the rest of Twenty has nothing to hang off.\n\n"
+"#### Build your own app\n\n"
+"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Then inside the folder:\n"
-"\n"
+"```\n\n"
+"Then inside the folder:\n\n"
 "```bash\n"
 "cd my-twenty-app\n"
 "yarn twenty dev\n"
-"```\n"
-"\n"
+"```\n\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
 msgstr ""
 
@@ -18844,8 +18824,7 @@ msgstr "此動作無法復原。此成員將被移除，且不再被指派任何
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid ""
-"This action cannot be undone. This will permanently delete your\n"
+msgid "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "此操作無法撤銷。這將永久刪除您的整個帳戶。"
 
@@ -19444,14 +19423,14 @@ msgstr "正在轉移..."
 #. js-lingui-id: 0DTqrp
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Translate or rename?"
-msgstr ""
+msgstr "翻譯還是重新命名？"
 
 #. js-lingui-id: kAy5R9
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "Translations"
-msgstr ""
+msgstr "翻译"
 
 #. js-lingui-id: lhkaAC
 #: src/modules/settings/billing/components/internal/PlansTags.tsx
@@ -21220,12 +21199,12 @@ msgstr "我可以為您提供什麼協助？"
 #. js-lingui-id: /SZI25
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "What each language displays for this field's labels"
-msgstr ""
+msgstr "各語言顯示的此欄位標籤"
 
 #. js-lingui-id: 9IXG0o
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "What each language displays for this object's labels"
-msgstr ""
+msgstr "各語言顯示的此物件標籤"
 
 #. js-lingui-id: cE4SvC
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -21674,7 +21653,7 @@ msgstr "您已經屬於此工作區"
 #. js-lingui-id: MuS9Gh
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "You are editing the {currentLanguageLabel} translation. Renaming instead changes the source label, for every language."
-msgstr ""
+msgstr "您正在編輯 {currentLanguageLabel} 翻譯。重新命名則會變更所有語言的來源標籤。"
 
 #. js-lingui-id: MFDARJ
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
@@ -21779,11 +21758,9 @@ msgstr "您即將更改工作區子域名。此操作將會使所有用戶登出
 
 #. js-lingui-id: Z5uTAF
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid ""
-"You've hit your usage limit. \n"
+msgid "You've hit your usage limit. \n"
 "Reach to our support team to upgrade."
-msgstr ""
-"您的使用量已達上限。\n"
+msgstr "您的使用量已達上限。\n"
 "請聯絡我們的支援團隊以升級。"
 
 #. js-lingui-id: NTyvVW
@@ -21791,11 +21768,9 @@ msgstr ""
 #. placeholder {1}: nextResourceCreditPrice ?? ''
 #. placeholder {2}: nextTierInterval ?? ''
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid ""
-"You've hit your usage limit. \n"
+msgid "You've hit your usage limit. \n"
 "Upgrade to {0} credits for ${1}/{2}."
-msgstr ""
-"您的使用量已達上限。\n"
+msgstr "您的使用量已達上限。\n"
 "升級至 {0} 點數，費用為 ${1}/{2}。"
 
 #. js-lingui-id: yZ0wRS

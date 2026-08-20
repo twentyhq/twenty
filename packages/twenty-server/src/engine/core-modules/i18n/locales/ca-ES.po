@@ -3879,7 +3879,7 @@ msgstr "El tipus de camp TS_VECTOR s'ha d'anomenar \"searchVector\""
 #. js-lingui-id: VkSxbb
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
 msgid "Field type TS_VECTOR must have SYSTEM writability"
-msgstr ""
+msgstr "El tipus de camp TS_VECTOR ha de tenir capacitat d'escriptura SYSTEM"
 
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts

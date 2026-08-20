@@ -3247,7 +3247,7 @@ msgstr "Lyhyt kuvaus tästä tuloskentästä"
 #. js-lingui-id: IjfaX/
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterFieldSelect.tsx
 msgid "Broken field reference. Select the field again to fix this condition."
-msgstr ""
+msgstr "Kenttäviittaus on rikki. Korjaa tämä ehto valitsemalla kenttä uudelleen."
 
 #. js-lingui-id: CSDv65
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -4755,7 +4755,7 @@ msgstr "Konteksti-ikkuna"
 #. js-lingui-id: uKvqU1
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Context window must be a positive integer"
-msgstr ""
+msgstr "Konteksti-ikkunan on oltava positiivinen kokonaisluku"
 
 #. js-lingui-id: xGVfLh
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
@@ -7106,7 +7106,7 @@ msgstr "Muokkaa tietueita kaikista objekteista"
 #. js-lingui-id: /VLYQj
 #: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
 msgid "Edit translations"
-msgstr ""
+msgstr "Muokkaa käännöksiä"
 
 #. js-lingui-id: eMFB6/
 #: src/modules/views/view-picker/components/ViewPickerContentEditMode.tsx
@@ -9726,53 +9726,35 @@ msgstr "Vaakasuuntainen erotusviiva"
 
 #. js-lingui-id: WOXdI6
 #: src/pages/settings/applications/utils/getCustomApplicationDescription.ts
-msgid ""
-"Host your workspace's customizations and overrides.\n"
-"\n"
+msgid "Host your workspace's customizations and overrides.\n\n"
 "#### What it includes\n"
-"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n"
-"\n"
+"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n\n"
 "- Custom objects and fields for your own data model\n"
 "- Views, navigation items, and record layouts that shape how your team works\n"
-"- Logic functions, front components, and agents that automate or extend the workspace\n"
-"\n"
+"- Logic functions, front components, and agents that automate or extend the workspace\n\n"
 "#### Why it exists\n"
-"Use this app for workspace-specific customization that should stay local to this workspace.\n"
-"\n"
-"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Scaffold a new app in one command:\n"
-"\n"
+"Use this app for workspace-specific customization that should stay local to this workspace.\n\n"
+"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n\n"
+"#### Build your own app\n\n"
+"Scaffold a new app in one command:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
+"```\n\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"Isännöi työtilasi mukautuksia ja ylikirjoituksia.\n"
-"\n"
+msgstr "Isännöi työtilasi mukautuksia ja ylikirjoituksia.\n\n"
 "#### Mitä se sisältää\n"
-"Kaikki standardisovelluksen päälle luomasi laajennukset ryhmitellään Custom-osion alle. Se pitää skeemamuutokset, käyttöliittymämuutokset ja työtilakohtaisen logiikan yhdessä paikassa.\n"
-"\n"
+"Kaikki standardisovelluksen päälle luomasi laajennukset ryhmitellään Custom-osion alle. Se pitää skeemamuutokset, käyttöliittymämuutokset ja työtilakohtaisen logiikan yhdessä paikassa.\n\n"
 "- Mukautetut objektit ja kentät omaa tietomalliasi varten\n"
 "- Näkymät, navigointikohteet ja tietueasettelut, jotka määrittävät, miten tiimisi työskentelee\n"
-"- Logiikkafunktiot, käyttöliittymäkomponentit ja agentit, jotka automatisoivat tai laajentavat työtilaa\n"
-"\n"
+"- Logiikkafunktiot, käyttöliittymäkomponentit ja agentit, jotka automatisoivat tai laajentavat työtilaa\n\n"
 "#### Miksi se on olemassa\n"
-"Käytä tätä sovellusta työtilakohtaisiin mukautuksiin, joiden tulee pysyä paikallisina tässä työtilassa.\n"
-"\n"
-"Jos muokkaat yhtä työtilaa yhtä yritystä varten, pidä se täällä. Jos rakennat uudelleenkäytettävää liiketoimintasovellusta, jolla on oma tietomalli, käyttöliittymä ja automaatio ja joka tulisi versioida, jakaa tai asentaa useisiin työtiloihin, luo sen sijaan erillinen sovellus.\n"
-"\n"
-"#### Rakenna oma sovellus\n"
-"\n"
-"Luo uuden sovelluksen runko yhdellä komennolla:\n"
-"\n"
+"Käytä tätä sovellusta työtilakohtaisiin mukautuksiin, joiden tulee pysyä paikallisina tässä työtilassa.\n\n"
+"Jos muokkaat yhtä työtilaa yhtä yritystä varten, pidä se täällä. Jos rakennat uudelleenkäytettävää liiketoimintasovellusta, jolla on oma tietomalli, käyttöliittymä ja automaatio ja joka tulisi versioida, jakaa tai asentaa useisiin työtiloihin, luo sen sijaan erillinen sovellus.\n\n"
+"#### Rakenna oma sovellus\n\n"
+"Luo uuden sovelluksen runko yhdellä komennolla:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
+"```\n\n"
 "Katso täydellinen läpikäynti [Aloitusoppaasta](https://twenty.com/developers/extend/apps/getting-started) ja kohdassa [Sovellusten rakentaminen](https://twenty.com/developers/extend/apps/building) kerrotaan `defineApplication` / `defineEntity` API:ista."
 
 #. js-lingui-id: yY8wAv
@@ -10882,12 +10864,12 @@ msgstr "Label"
 #. js-lingui-id: B9/B0O
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Label (plural)"
-msgstr ""
+msgstr "Nimi (monikko)"
 
 #. js-lingui-id: J8GEvd
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Label (singular)"
-msgstr ""
+msgstr "Nimi (yksikkö)"
 
 #. js-lingui-id: w8Rv8T
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -10913,7 +10895,7 @@ msgstr "Kielet"
 #. js-lingui-id: PEi+K2
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Languages without their own translation show the source text."
-msgstr ""
+msgstr "Kielet, joilla ei ole omaa käännöstä, näyttävät lähdetekstin."
 
 #. js-lingui-id: k7rCa/
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -11859,7 +11841,7 @@ msgstr "Enimmäistuloste"
 #. js-lingui-id: D0Z4Jd
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Max output must be a positive integer"
-msgstr ""
+msgstr "Enimmäistulosteen on oltava positiivinen kokonaisluku"
 
 #. js-lingui-id: 2ICF9k
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -14059,7 +14041,7 @@ msgstr "Vain päivämäärä ja osallistujat jaetaan tiimisi kanssa."
 #. js-lingui-id: aluwJP
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Only in {currentLanguageLabel}"
-msgstr ""
+msgstr "Vain {currentLanguageLabel} kuukautena"
 
 #. js-lingui-id: Ecstfp
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
@@ -15847,7 +15829,7 @@ msgstr "Nimeä keskustelu uudelleen"
 #. js-lingui-id: 1PqGzu
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Rename for all languages"
-msgstr ""
+msgstr "Nimeä uudelleen kaikilla kielillä"
 
 #. js-lingui-id: oQjB9l
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -17852,7 +17834,7 @@ msgstr "Lähdesähköpostiosoite"
 #. js-lingui-id: MEXVHu
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Source: {canonicalValue}"
-msgstr ""
+msgstr "Lähde: {canonicalValue}"
 
 #. js-lingui-id: xqlr9R
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -18584,67 +18566,45 @@ msgstr "AWS-alue Bedrockille"
 
 #. js-lingui-id: HP7per
 #: src/pages/settings/applications/utils/getStandardApplicationDescription.ts
-msgid ""
-"The base data model every Twenty workspace runs on.\n"
-"\n"
-"#### What \"foundation\" means\n"
-"\n"
-"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n"
-"\n"
+msgid "The base data model every Twenty workspace runs on.\n\n"
+"#### What \"foundation\" means\n\n"
+"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n\n"
 "#### Included objects\n"
 "- **People & Companies**: contact and account records\n"
 "- **Opportunities**: your sales pipeline\n"
 "- **Notes & Tasks**: activity and follow-ups\n"
-"- **Workflows & Dashboards**: automation and reporting\n"
-"\n"
-"Remove this app and the rest of Twenty has nothing to hang off.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n"
-"\n"
+"- **Workflows & Dashboards**: automation and reporting\n\n"
+"Remove this app and the rest of Twenty has nothing to hang off.\n\n"
+"#### Build your own app\n\n"
+"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Then inside the folder:\n"
-"\n"
+"```\n\n"
+"Then inside the folder:\n\n"
 "```bash\n"
 "cd my-twenty-app\n"
 "yarn twenty dev\n"
-"```\n"
-"\n"
+"```\n\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"Perustietomalli, jonka varaan jokainen Twenty-työtila rakentuu.\n"
-"\n"
-"#### Mitä \"perusta\" tarkoittaa\n"
-"\n"
-"Jokainen Twenty-työtila alkaa tästä objektijoukosta. Ne määrittelevät CRM-järjestelmäsi rakenteen, mukaan lukien suhteet, aktiivisuuden ja raportoinnin. Kaikki muu, mukaan lukien markkinapaikan sovellukset, AI-agentit ja mukautetut objektit, kytkeytyy niihin.\n"
-"\n"
+msgstr "Perustietomalli, jonka varaan jokainen Twenty-työtila rakentuu.\n\n"
+"#### Mitä \"perusta\" tarkoittaa\n\n"
+"Jokainen Twenty-työtila alkaa tästä objektijoukosta. Ne määrittelevät CRM-järjestelmäsi rakenteen, mukaan lukien suhteet, aktiivisuuden ja raportoinnin. Kaikki muu, mukaan lukien markkinapaikan sovellukset, AI-agentit ja mukautetut objektit, kytkeytyy niihin.\n\n"
 "#### Sisältyvät objektit\n"
 "- **Henkilöt & yritykset**: yhteystieto- ja tilitietueet\n"
 "- **Mahdollisuudet**: myyntiputkesi\n"
 "- **Muistiinpanot & tehtävät**: aktiivisuus ja jälkitoimet\n"
-"- **Työnkulut & koontinäytöt**: automaatio ja raportointi\n"
-"\n"
-"Jos poistat tämän sovelluksen, muulla Twentyllä ei ole mitään, mihin kiinnittyä.\n"
-"\n"
-"#### Rakenna oma sovellus\n"
-"\n"
-"Laajenna Twentyä omilla objekteilla, kentillä, logiikkafunktioilla tai AI-taidoilla. Luo uuden sovelluksen runko yhdellä komennolla:\n"
-"\n"
+"- **Työnkulut & koontinäytöt**: automaatio ja raportointi\n\n"
+"Jos poistat tämän sovelluksen, muulla Twentyllä ei ole mitään, mihin kiinnittyä.\n\n"
+"#### Rakenna oma sovellus\n\n"
+"Laajenna Twentyä omilla objekteilla, kentillä, logiikkafunktioilla tai AI-taidoilla. Luo uuden sovelluksen runko yhdellä komennolla:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Siirry sitten kansioon:\n"
-"\n"
+"```\n\n"
+"Siirry sitten kansioon:\n\n"
 "```bash\n"
 "cd my-twenty-app\n"
 "yarn twenty dev\n"
-"```\n"
-"\n"
+"```\n\n"
 "Katso täydellinen läpikäynti [Aloitusoppaasta](https://twenty.com/developers/extend/apps/getting-started) ja kohdassa [Sovellusten rakentaminen](https://twenty.com/developers/extend/apps/building) kerrotaan `defineApplication` / `defineEntity` API:ista."
 
 #. js-lingui-id: VsxjzF
@@ -18897,8 +18857,7 @@ msgstr "Tätä toimintoa ei voi perua. Jäsen poistetaan ja hänen tietueensa va
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid ""
-"This action cannot be undone. This will permanently delete your\n"
+msgid "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "Tätä toimintoa ei voi peruuttaa. Tämä poistaa koko tilisi pysyvästi."
 
@@ -19497,14 +19456,14 @@ msgstr "Siirretään..."
 #. js-lingui-id: 0DTqrp
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Translate or rename?"
-msgstr ""
+msgstr "Käännä vai nimeä uudelleen?"
 
 #. js-lingui-id: kAy5R9
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "Translations"
-msgstr ""
+msgstr "Käännökset"
 
 #. js-lingui-id: lhkaAC
 #: src/modules/settings/billing/components/internal/PlansTags.tsx
@@ -21273,12 +21232,12 @@ msgstr "Miten voin auttaa sinua?"
 #. js-lingui-id: /SZI25
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "What each language displays for this field's labels"
-msgstr ""
+msgstr "Mitä kukin kieli näyttää tämän kentän nimille"
 
 #. js-lingui-id: 9IXG0o
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "What each language displays for this object's labels"
-msgstr ""
+msgstr "Mitä kukin kieli näyttää tämän objektin nimille"
 
 #. js-lingui-id: cE4SvC
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -21727,7 +21686,7 @@ msgstr "Kuulut jo tähän työtilaan"
 #. js-lingui-id: MuS9Gh
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "You are editing the {currentLanguageLabel} translation. Renaming instead changes the source label, for every language."
-msgstr ""
+msgstr "Muokkaat käännöstä kielelle {currentLanguageLabel}. Uudelleennimeäminen muuttaa sen sijaan lähdenimeä kaikilla kielillä."
 
 #. js-lingui-id: MFDARJ
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
@@ -21832,11 +21791,9 @@ msgstr "Olet muuttamassa työtilan aliavaa. Tämä toimenpide kirjautuu ulos kai
 
 #. js-lingui-id: Z5uTAF
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid ""
-"You've hit your usage limit. \n"
+msgid "You've hit your usage limit. \n"
 "Reach to our support team to upgrade."
-msgstr ""
-"Olet saavuttanut käyttörajasi.\n"
+msgstr "Olet saavuttanut käyttörajasi.\n"
 "Ota yhteyttä tukitiimiimme päivitystä varten."
 
 #. js-lingui-id: NTyvVW
@@ -21844,11 +21801,9 @@ msgstr ""
 #. placeholder {1}: nextResourceCreditPrice ?? ''
 #. placeholder {2}: nextTierInterval ?? ''
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid ""
-"You've hit your usage limit. \n"
+msgid "You've hit your usage limit. \n"
 "Upgrade to {0} credits for ${1}/{2}."
-msgstr ""
-"Olet saavuttanut käyttörajasi.\n"
+msgstr "Olet saavuttanut käyttörajasi.\n"
 "Päivitä {0} krediitteihin hintaan ${1}/{2}."
 
 #. js-lingui-id: yZ0wRS

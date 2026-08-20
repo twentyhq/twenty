@@ -3247,7 +3247,7 @@ msgstr "تفسير موجز لهذا الحقل"
 #. js-lingui-id: IjfaX/
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterFieldSelect.tsx
 msgid "Broken field reference. Select the field again to fix this condition."
-msgstr ""
+msgstr "مرجع الحقل معطّل. حدّد الحقل مرة أخرى لإصلاح هذا الشرط."
 
 #. js-lingui-id: CSDv65
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -4755,7 +4755,7 @@ msgstr "نافذة السياق"
 #. js-lingui-id: uKvqU1
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Context window must be a positive integer"
-msgstr ""
+msgstr "يجب أن تكون نافذة السياق عددًا صحيحًا موجبًا"
 
 #. js-lingui-id: xGVfLh
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
@@ -7106,7 +7106,7 @@ msgstr "تحرير السجلات في جميع العناصر"
 #. js-lingui-id: /VLYQj
 #: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
 msgid "Edit translations"
-msgstr ""
+msgstr "تعديل الترجمات"
 
 #. js-lingui-id: eMFB6/
 #: src/modules/views/view-picker/components/ViewPickerContentEditMode.tsx
@@ -9726,53 +9726,35 @@ msgstr "خط فاصل أفقي"
 
 #. js-lingui-id: WOXdI6
 #: src/pages/settings/applications/utils/getCustomApplicationDescription.ts
-msgid ""
-"Host your workspace's customizations and overrides.\n"
-"\n"
+msgid "Host your workspace's customizations and overrides.\n\n"
 "#### What it includes\n"
-"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n"
-"\n"
+"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n\n"
 "- Custom objects and fields for your own data model\n"
 "- Views, navigation items, and record layouts that shape how your team works\n"
-"- Logic functions, front components, and agents that automate or extend the workspace\n"
-"\n"
+"- Logic functions, front components, and agents that automate or extend the workspace\n\n"
 "#### Why it exists\n"
-"Use this app for workspace-specific customization that should stay local to this workspace.\n"
-"\n"
-"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Scaffold a new app in one command:\n"
-"\n"
+"Use this app for workspace-specific customization that should stay local to this workspace.\n\n"
+"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n\n"
+"#### Build your own app\n\n"
+"Scaffold a new app in one command:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
+"```\n\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"استضِف تخصيصات وتجاوزات مساحة العمل لديك.\n"
-"\n"
+msgstr "استضِف تخصيصات وتجاوزات مساحة العمل لديك.\n\n"
 "#### ما الذي يتضمنه\n"
-"يتم تجميع كل إضافة تنشئها فوق التطبيق القياسي ضمن مخصص. ويحتفظ بتغييرات المخطط، وتغييرات الواجهة، والمنطق الخاص بمساحة العمل في مكان واحد.\n"
-"\n"
+"يتم تجميع كل إضافة تنشئها فوق التطبيق القياسي ضمن مخصص. ويحتفظ بتغييرات المخطط، وتغييرات الواجهة، والمنطق الخاص بمساحة العمل في مكان واحد.\n\n"
 "- كائنات وحقول مخصصة لنموذج البيانات الخاص بك\n"
 "- العروض، وعناصر التنقل، ومخططات السجلات التي تشكّل أسلوب عمل فريقك\n"
-"- دوال المنطق، ومكوّنات الواجهة الأمامية، والوكلاء الذين يقومون بأتمتة مساحة العمل أو توسيعها\n"
-"\n"
+"- دوال المنطق، ومكوّنات الواجهة الأمامية، والوكلاء الذين يقومون بأتمتة مساحة العمل أو توسيعها\n\n"
 "#### لماذا يوجد\n"
-"استخدم هذا التطبيق للتخصيصات الخاصة بمساحة العمل التي ينبغي أن تبقى محليّة ضمن هذه المساحة.\n"
-"\n"
-"إذا كنت تهيّئ مساحة عمل واحدة لنشاط تجاري واحد، فاحتفظ بها هنا. أمّا إذا كنت تبني تطبيقًا تجاريًا قابلًا لإعادة الاستخدام وله نموذج بيانات وواجهة مستخدم وأتمتة خاصة به، ويتعيّن إصداره ومشاركته أو تثبيته عبر مساحات عمل متعددة، فأنشئ تطبيقًا مخصصًا مستقلًا بدلًا من ذلك.\n"
-"\n"
-"#### أنشئ تطبيقك الخاص\n"
-"\n"
-"ولّد هيكل تطبيق جديد بأمر واحد:\n"
-"\n"
+"استخدم هذا التطبيق للتخصيصات الخاصة بمساحة العمل التي ينبغي أن تبقى محليّة ضمن هذه المساحة.\n\n"
+"إذا كنت تهيّئ مساحة عمل واحدة لنشاط تجاري واحد، فاحتفظ بها هنا. أمّا إذا كنت تبني تطبيقًا تجاريًا قابلًا لإعادة الاستخدام وله نموذج بيانات وواجهة مستخدم وأتمتة خاصة به، ويتعيّن إصداره ومشاركته أو تثبيته عبر مساحات عمل متعددة، فأنشئ تطبيقًا مخصصًا مستقلًا بدلًا من ذلك.\n\n"
+"#### أنشئ تطبيقك الخاص\n\n"
+"ولّد هيكل تطبيق جديد بأمر واحد:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
+"```\n\n"
 "اطّلع على [دليل البدء](https://twenty.com/developers/extend/apps/getting-started) للاطلاع على الشرح الكامل، وعلى [بناء التطبيقات](https://twenty.com/developers/extend/apps/building) لواجهات برمجة التطبيقات `defineApplication` / `defineEntity`."
 
 #. js-lingui-id: yY8wAv
@@ -10882,12 +10864,12 @@ msgstr "التسمية"
 #. js-lingui-id: B9/B0O
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Label (plural)"
-msgstr ""
+msgstr "التسمية (الجمع)"
 
 #. js-lingui-id: J8GEvd
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Label (singular)"
-msgstr ""
+msgstr "التسمية (المفرد)"
 
 #. js-lingui-id: w8Rv8T
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -10913,7 +10895,7 @@ msgstr "اللغات"
 #. js-lingui-id: PEi+K2
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Languages without their own translation show the source text."
-msgstr ""
+msgstr "تعرض اللغات التي ليس لها ترجمتها الخاصة النص المصدر."
 
 #. js-lingui-id: k7rCa/
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -11859,7 +11841,7 @@ msgstr "الحد الأقصى للمخرجات"
 #. js-lingui-id: D0Z4Jd
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Max output must be a positive integer"
-msgstr ""
+msgstr "يجب أن يكون الحد الأقصى للإخراج عددًا صحيحًا موجبًا"
 
 #. js-lingui-id: 2ICF9k
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -14059,7 +14041,7 @@ msgstr "سيتم مشاركة التاريخ والمشاركين فقط مع ف
 #. js-lingui-id: aluwJP
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Only in {currentLanguageLabel}"
-msgstr ""
+msgstr "فقط في {currentLanguageLabel}"
 
 #. js-lingui-id: Ecstfp
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
@@ -15847,7 +15829,7 @@ msgstr "إعادة تسمية الدردشة"
 #. js-lingui-id: 1PqGzu
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Rename for all languages"
-msgstr ""
+msgstr "إعادة التسمية لجميع اللغات"
 
 #. js-lingui-id: oQjB9l
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -17852,7 +17834,7 @@ msgstr "عنوان البريد الإلكتروني المصدر"
 #. js-lingui-id: MEXVHu
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Source: {canonicalValue}"
-msgstr ""
+msgstr "المصدر: {canonicalValue}"
 
 #. js-lingui-id: xqlr9R
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -18584,67 +18566,45 @@ msgstr "منطقة AWS الخاصة بـ Bedrock"
 
 #. js-lingui-id: HP7per
 #: src/pages/settings/applications/utils/getStandardApplicationDescription.ts
-msgid ""
-"The base data model every Twenty workspace runs on.\n"
-"\n"
-"#### What \"foundation\" means\n"
-"\n"
-"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n"
-"\n"
+msgid "The base data model every Twenty workspace runs on.\n\n"
+"#### What \"foundation\" means\n\n"
+"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n\n"
 "#### Included objects\n"
 "- **People & Companies**: contact and account records\n"
 "- **Opportunities**: your sales pipeline\n"
 "- **Notes & Tasks**: activity and follow-ups\n"
-"- **Workflows & Dashboards**: automation and reporting\n"
-"\n"
-"Remove this app and the rest of Twenty has nothing to hang off.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n"
-"\n"
+"- **Workflows & Dashboards**: automation and reporting\n\n"
+"Remove this app and the rest of Twenty has nothing to hang off.\n\n"
+"#### Build your own app\n\n"
+"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Then inside the folder:\n"
-"\n"
+"```\n\n"
+"Then inside the folder:\n\n"
 "```bash\n"
 "cd my-twenty-app\n"
 "yarn twenty dev\n"
-"```\n"
-"\n"
+"```\n\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"نموذج البيانات الأساسي الذي تعمل عليه كل مساحة عمل في Twenty.\n"
-"\n"
-"#### معنى \"الأساس\"\n"
-"\n"
-"كل مساحة عمل في Twenty تبدأ بهذه المجموعة من العناصر. تحدّد شكل CRM الخاص بك، بما في ذلك العلاقات والنشاط والتقارير. كل شيء آخر — بما في ذلك تطبيقات السوق ووكلاء الذكاء الاصطناعي والعناصر المخصصة — يندمج معها.\n"
-"\n"
+msgstr "نموذج البيانات الأساسي الذي تعمل عليه كل مساحة عمل في Twenty.\n\n"
+"#### معنى \"الأساس\"\n\n"
+"كل مساحة عمل في Twenty تبدأ بهذه المجموعة من العناصر. تحدّد شكل CRM الخاص بك، بما في ذلك العلاقات والنشاط والتقارير. كل شيء آخر — بما في ذلك تطبيقات السوق ووكلاء الذكاء الاصطناعي والعناصر المخصصة — يندمج معها.\n\n"
 "#### العناصر المتضمنة\n"
 "- **الأشخاص والشركات**: سجلات جهات الاتصال والحسابات\n"
 "- **الفرص**: خط مبيعاتك\n"
 "- **الملاحظات والمهام**: النشاط والمتابعات\n"
-"- **سير العمل ولوحات القيادة**: الأتمتة والتقارير\n"
-"\n"
-"أزل هذا التطبيق وباقي Twenty لن يكون له ما يبنى عليه.\n"
-"\n"
-"#### ابنِ تطبيقك الخاص\n"
-"\n"
-"وسّع Twenty بعناصرك وحقولك ودوال المنطق أو مهارات الذكاء الاصطناعي الخاصة بك. أنشئ هيكل تطبيق جديد بأمر واحد:\n"
-"\n"
+"- **سير العمل ولوحات القيادة**: الأتمتة والتقارير\n\n"
+"أزل هذا التطبيق وباقي Twenty لن يكون له ما يبنى عليه.\n\n"
+"#### ابنِ تطبيقك الخاص\n\n"
+"وسّع Twenty بعناصرك وحقولك ودوال المنطق أو مهارات الذكاء الاصطناعي الخاصة بك. أنشئ هيكل تطبيق جديد بأمر واحد:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"ثم داخل المجلد:\n"
-"\n"
+"```\n\n"
+"ثم داخل المجلد:\n\n"
 "```bash\n"
 "cd my-twenty-app\n"
 "yarn twenty dev\n"
-"```\n"
-"\n"
+"```\n\n"
 "راجع [دليل البدء](https://twenty.com/developers/extend/apps/getting-started) للشرح الكامل، و[بناء التطبيقات](https://twenty.com/developers/extend/apps/building) لواجهات `defineApplication` / `defineEntity`."
 
 #. js-lingui-id: VsxjzF
@@ -18897,8 +18857,7 @@ msgstr "لا يمكن التراجع عن هذا الإجراء. سيتم إزا
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid ""
-"This action cannot be undone. This will permanently delete your\n"
+msgid "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "لا يمكن التراجع عن هذا الإجراء. سيؤدي ذلك إلى حذف حسابك بالكامل بشكل دائم."
 
@@ -19497,14 +19456,14 @@ msgstr "جارٍ النقل..."
 #. js-lingui-id: 0DTqrp
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Translate or rename?"
-msgstr ""
+msgstr "ترجمة أم إعادة تسمية؟"
 
 #. js-lingui-id: kAy5R9
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "Translations"
-msgstr ""
+msgstr "الترجمات"
 
 #. js-lingui-id: lhkaAC
 #: src/modules/settings/billing/components/internal/PlansTags.tsx
@@ -21273,12 +21232,12 @@ msgstr "بماذا يمكنني مساعدتك؟"
 #. js-lingui-id: /SZI25
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "What each language displays for this field's labels"
-msgstr ""
+msgstr "ما تعرضه كل لغة لتسميات هذا الحقل"
 
 #. js-lingui-id: 9IXG0o
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "What each language displays for this object's labels"
-msgstr ""
+msgstr "ما تعرضه كل لغة لتسميات هذا الكائن"
 
 #. js-lingui-id: cE4SvC
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -21727,7 +21686,7 @@ msgstr "أنت عضو بالفعل في مساحة العمل هذه"
 #. js-lingui-id: MuS9Gh
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "You are editing the {currentLanguageLabel} translation. Renaming instead changes the source label, for every language."
-msgstr ""
+msgstr "أنت تعدّل ترجمة {currentLanguageLabel}. أما إعادة التسمية فتغيّر التسمية المصدر لجميع اللغات."
 
 #. js-lingui-id: MFDARJ
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
@@ -21832,11 +21791,9 @@ msgstr "أنت على وشك تغيير النطاق الفرعي لمساحة �
 
 #. js-lingui-id: Z5uTAF
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid ""
-"You've hit your usage limit. \n"
+msgid "You've hit your usage limit. \n"
 "Reach to our support team to upgrade."
-msgstr ""
-"لقد وصلت إلى حد الاستخدام الخاص بك. \n"
+msgstr "لقد وصلت إلى حد الاستخدام الخاص بك. \n"
 "تواصل مع فريق الدعم لدينا للترقية."
 
 #. js-lingui-id: NTyvVW
@@ -21844,11 +21801,9 @@ msgstr ""
 #. placeholder {1}: nextResourceCreditPrice ?? ''
 #. placeholder {2}: nextTierInterval ?? ''
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid ""
-"You've hit your usage limit. \n"
+msgid "You've hit your usage limit. \n"
 "Upgrade to {0} credits for ${1}/{2}."
-msgstr ""
-"لقد وصلت إلى حد الاستخدام الخاص بك.\n"
+msgstr "لقد وصلت إلى حد الاستخدام الخاص بك.\n"
 "قم بالترقية إلى {0} من الأرصدة مقابل ${1}/{2}."
 
 #. js-lingui-id: yZ0wRS

@@ -3247,7 +3247,7 @@ msgstr "Explicație succintă a acestui câmp de ieșire"
 #. js-lingui-id: IjfaX/
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterFieldSelect.tsx
 msgid "Broken field reference. Select the field again to fix this condition."
-msgstr ""
+msgstr "Referință de câmp nevalidă. Selectați din nou câmpul pentru a remedia această condiție."
 
 #. js-lingui-id: CSDv65
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -4755,7 +4755,7 @@ msgstr "Fereastră de context"
 #. js-lingui-id: uKvqU1
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Context window must be a positive integer"
-msgstr ""
+msgstr "Fereastra de context trebuie să fie un număr întreg pozitiv"
 
 #. js-lingui-id: xGVfLh
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
@@ -7106,7 +7106,7 @@ msgstr "Editează înregistrări pentru toate obiectele"
 #. js-lingui-id: /VLYQj
 #: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
 msgid "Edit translations"
-msgstr ""
+msgstr "Editează traducerile"
 
 #. js-lingui-id: eMFB6/
 #: src/modules/views/view-picker/components/ViewPickerContentEditMode.tsx
@@ -9726,53 +9726,35 @@ msgstr "Linie orizontală de separare"
 
 #. js-lingui-id: WOXdI6
 #: src/pages/settings/applications/utils/getCustomApplicationDescription.ts
-msgid ""
-"Host your workspace's customizations and overrides.\n"
-"\n"
+msgid "Host your workspace's customizations and overrides.\n\n"
 "#### What it includes\n"
-"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n"
-"\n"
+"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n\n"
 "- Custom objects and fields for your own data model\n"
 "- Views, navigation items, and record layouts that shape how your team works\n"
-"- Logic functions, front components, and agents that automate or extend the workspace\n"
-"\n"
+"- Logic functions, front components, and agents that automate or extend the workspace\n\n"
 "#### Why it exists\n"
-"Use this app for workspace-specific customization that should stay local to this workspace.\n"
-"\n"
-"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Scaffold a new app in one command:\n"
-"\n"
+"Use this app for workspace-specific customization that should stay local to this workspace.\n\n"
+"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n\n"
+"#### Build your own app\n\n"
+"Scaffold a new app in one command:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
+"```\n\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"Găzduiește personalizările și suprascrierile spațiului tău de lucru.\n"
-"\n"
+msgstr "Găzduiește personalizările și suprascrierile spațiului tău de lucru.\n\n"
 "#### Ce include\n"
-"Fiecare extensie pe care o creezi peste aplicația standard este grupată sub Custom. Păstrează modificările de schemă, modificările de interfață și logica specifică spațiului de lucru într-un singur loc.\n"
-"\n"
+"Fiecare extensie pe care o creezi peste aplicația standard este grupată sub Custom. Păstrează modificările de schemă, modificările de interfață și logica specifică spațiului de lucru într-un singur loc.\n\n"
 "- Obiecte și câmpuri personalizate pentru propriul tău model de date\n"
 "- Vizualizări, elemente de navigare și machete ale înregistrărilor care modelează modul în care lucrează echipa ta\n"
-"- Funcții logice, componente front-end și agenți care automatizează sau extind spațiul de lucru\n"
-"\n"
+"- Funcții logice, componente front-end și agenți care automatizează sau extind spațiul de lucru\n\n"
 "#### De ce există\n"
-"Folosește această aplicație pentru personalizări specifice spațiului de lucru care ar trebui să rămână locale acestui spațiu de lucru.\n"
-"\n"
-"Dacă modelezi un singur spațiu de lucru pentru o singură afacere, păstrează-l aici. Dacă construiești o aplicație de business reutilizabilă, cu propriul model de date, interfață (UI) și automatizări care trebuie versiunate, partajate sau instalate în mai multe spații de lucru, creează în schimb o aplicație dedicată.\n"
-"\n"
-"#### Construiește-ți propria aplicație\n"
-"\n"
-"Inițializează o aplicație nouă cu o singură comandă:\n"
-"\n"
+"Folosește această aplicație pentru personalizări specifice spațiului de lucru care ar trebui să rămână locale acestui spațiu de lucru.\n\n"
+"Dacă modelezi un singur spațiu de lucru pentru o singură afacere, păstrează-l aici. Dacă construiești o aplicație de business reutilizabilă, cu propriul model de date, interfață (UI) și automatizări care trebuie versiunate, partajate sau instalate în mai multe spații de lucru, creează în schimb o aplicație dedicată.\n\n"
+"#### Construiește-ți propria aplicație\n\n"
+"Inițializează o aplicație nouă cu o singură comandă:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
+"```\n\n"
 "Vezi [Ghidul de pornire](https://twenty.com/developers/extend/apps/getting-started) pentru parcursul complet, și [Construirea aplicațiilor](https://twenty.com/developers/extend/apps/building) pentru API-urile `defineApplication` / `defineEntity`."
 
 #. js-lingui-id: yY8wAv
@@ -10882,12 +10864,12 @@ msgstr "Etichetă"
 #. js-lingui-id: B9/B0O
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Label (plural)"
-msgstr ""
+msgstr "Etichetă (plural)"
 
 #. js-lingui-id: J8GEvd
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Label (singular)"
-msgstr ""
+msgstr "Etichetă (singular)"
 
 #. js-lingui-id: w8Rv8T
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -10913,7 +10895,7 @@ msgstr "Limbi"
 #. js-lingui-id: PEi+K2
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Languages without their own translation show the source text."
-msgstr ""
+msgstr "Limbile fără traducere proprie afișează textul sursă."
 
 #. js-lingui-id: k7rCa/
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -11859,7 +11841,7 @@ msgstr "Ieșire maximă"
 #. js-lingui-id: D0Z4Jd
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Max output must be a positive integer"
-msgstr ""
+msgstr "Ieșirea maximă trebuie să fie un număr întreg pozitiv"
 
 #. js-lingui-id: 2ICF9k
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -14059,7 +14041,7 @@ msgstr "Doar data și participanții vor fi partajați cu echipa dvs."
 #. js-lingui-id: aluwJP
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Only in {currentLanguageLabel}"
-msgstr ""
+msgstr "Doar în luna {currentLanguageLabel}"
 
 #. js-lingui-id: Ecstfp
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
@@ -15847,7 +15829,7 @@ msgstr "Redenumiți chatul"
 #. js-lingui-id: 1PqGzu
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Rename for all languages"
-msgstr ""
+msgstr "Redenumește pentru toate limbile"
 
 #. js-lingui-id: oQjB9l
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -17852,7 +17834,7 @@ msgstr "Adresă de e-mail sursă"
 #. js-lingui-id: MEXVHu
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Source: {canonicalValue}"
-msgstr ""
+msgstr "Sursă: {canonicalValue}"
 
 #. js-lingui-id: xqlr9R
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -18584,67 +18566,45 @@ msgstr "Regiunea AWS pentru Bedrock"
 
 #. js-lingui-id: HP7per
 #: src/pages/settings/applications/utils/getStandardApplicationDescription.ts
-msgid ""
-"The base data model every Twenty workspace runs on.\n"
-"\n"
-"#### What \"foundation\" means\n"
-"\n"
-"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n"
-"\n"
+msgid "The base data model every Twenty workspace runs on.\n\n"
+"#### What \"foundation\" means\n\n"
+"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n\n"
 "#### Included objects\n"
 "- **People & Companies**: contact and account records\n"
 "- **Opportunities**: your sales pipeline\n"
 "- **Notes & Tasks**: activity and follow-ups\n"
-"- **Workflows & Dashboards**: automation and reporting\n"
-"\n"
-"Remove this app and the rest of Twenty has nothing to hang off.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n"
-"\n"
+"- **Workflows & Dashboards**: automation and reporting\n\n"
+"Remove this app and the rest of Twenty has nothing to hang off.\n\n"
+"#### Build your own app\n\n"
+"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Then inside the folder:\n"
-"\n"
+"```\n\n"
+"Then inside the folder:\n\n"
 "```bash\n"
 "cd my-twenty-app\n"
 "yarn twenty dev\n"
-"```\n"
-"\n"
+"```\n\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"Modelul de date de bază pe care rulează fiecare spațiu de lucru Twenty.\n"
-"\n"
-"#### Ce înseamnă „fundament”\n"
-"\n"
-"Fiecare spațiu de lucru Twenty pornește cu acest set de obiecte. Ele definesc forma CRM-ului tău, incluzând relațiile, activitatea și raportarea. Tot restul, inclusiv aplicațiile din marketplace, agenții AI și obiectele personalizate, se conectează la acestea.\n"
-"\n"
+msgstr "Modelul de date de bază pe care rulează fiecare spațiu de lucru Twenty.\n\n"
+"#### Ce înseamnă „fundament”\n\n"
+"Fiecare spațiu de lucru Twenty pornește cu acest set de obiecte. Ele definesc forma CRM-ului tău, incluzând relațiile, activitatea și raportarea. Tot restul, inclusiv aplicațiile din marketplace, agenții AI și obiectele personalizate, se conectează la acestea.\n\n"
 "#### Obiecte incluse\n"
 "- **Persoane și companii**: înregistrări de contact și de cont\n"
 "- **Oportunități**: pipeline-ul tău de vânzări\n"
 "- **Note și sarcini**: activitate și urmăriri\n"
-"- **Fluxuri de lucru și Tablouri de bord**: automatizare și raportare\n"
-"\n"
-"Dacă elimini această aplicație, restul Twenty nu mai are pe ce se sprijini.\n"
-"\n"
-"#### Construiește-ți propria aplicație\n"
-"\n"
-"Extinde Twenty cu propriile obiecte, câmpuri, funcții logice sau abilități AI. Inițializează o aplicație nouă cu o singură comandă:\n"
-"\n"
+"- **Fluxuri de lucru și Tablouri de bord**: automatizare și raportare\n\n"
+"Dacă elimini această aplicație, restul Twenty nu mai are pe ce se sprijini.\n\n"
+"#### Construiește-ți propria aplicație\n\n"
+"Extinde Twenty cu propriile obiecte, câmpuri, funcții logice sau abilități AI. Inițializează o aplicație nouă cu o singură comandă:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Apoi, în interiorul folderului:\n"
-"\n"
+"```\n\n"
+"Apoi, în interiorul folderului:\n\n"
 "```bash\n"
 "cd my-twenty-app\n"
 "yarn twenty dev\n"
-"```\n"
-"\n"
+"```\n\n"
 "Vezi [Ghidul de pornire](https://twenty.com/developers/extend/apps/getting-started) pentru parcursul complet, și [Construirea aplicațiilor](https://twenty.com/developers/extend/apps/building) pentru API-urile `defineApplication` / `defineEntity`."
 
 #. js-lingui-id: VsxjzF
@@ -18897,8 +18857,7 @@ msgstr "Această acțiune nu poate fi anulată. Acest membru va fi eliminat și 
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid ""
-"This action cannot be undone. This will permanently delete your\n"
+msgid "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "Această acțiune nu poate fi anulată. Acest lucru va șterge definitiv întregul tău cont."
 
@@ -19497,14 +19456,14 @@ msgstr "Se transferă..."
 #. js-lingui-id: 0DTqrp
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Translate or rename?"
-msgstr ""
+msgstr "Traduceți sau redenumiți?"
 
 #. js-lingui-id: kAy5R9
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "Translations"
-msgstr ""
+msgstr "Traduceri"
 
 #. js-lingui-id: lhkaAC
 #: src/modules/settings/billing/components/internal/PlansTags.tsx
@@ -21273,12 +21232,12 @@ msgstr "Cu ce vă pot ajuta?"
 #. js-lingui-id: /SZI25
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "What each language displays for this field's labels"
-msgstr ""
+msgstr "Ce afișează fiecare limbă pentru etichetele acestui câmp"
 
 #. js-lingui-id: 9IXG0o
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "What each language displays for this object's labels"
-msgstr ""
+msgstr "Ce afișează fiecare limbă pentru etichetele acestui obiect"
 
 #. js-lingui-id: cE4SvC
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -21727,7 +21686,7 @@ msgstr "Aparții deja acestui spațiu de lucru"
 #. js-lingui-id: MuS9Gh
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "You are editing the {currentLanguageLabel} translation. Renaming instead changes the source label, for every language."
-msgstr ""
+msgstr "Editați traducerea în {currentLanguageLabel}. Redenumirea modifică în schimb eticheta sursă, pentru fiecare limbă."
 
 #. js-lingui-id: MFDARJ
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
@@ -21832,11 +21791,9 @@ msgstr "Sunteți pe punctul de a schimba subdomeniul spațiului dumneavoastră d
 
 #. js-lingui-id: Z5uTAF
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid ""
-"You've hit your usage limit. \n"
+msgid "You've hit your usage limit. \n"
 "Reach to our support team to upgrade."
-msgstr ""
-"Ați atins limita de utilizare. \n"
+msgstr "Ați atins limita de utilizare. \n"
 "Contactați echipa noastră de asistență pentru actualizare."
 
 #. js-lingui-id: NTyvVW
@@ -21844,11 +21801,9 @@ msgstr ""
 #. placeholder {1}: nextResourceCreditPrice ?? ''
 #. placeholder {2}: nextTierInterval ?? ''
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid ""
-"You've hit your usage limit. \n"
+msgid "You've hit your usage limit. \n"
 "Upgrade to {0} credits for ${1}/{2}."
-msgstr ""
-"Ați atins limita de utilizare. \n"
+msgstr "Ați atins limita de utilizare. \n"
 "Actualizați la {0} credite pentru ${1}/{2}."
 
 #. js-lingui-id: yZ0wRS

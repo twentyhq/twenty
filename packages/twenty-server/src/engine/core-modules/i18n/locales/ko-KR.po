@@ -3879,7 +3879,7 @@ msgstr "필드 유형 TS_VECTOR의 이름은 \"searchVector\"이어야 합니다
 #. js-lingui-id: VkSxbb
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
 msgid "Field type TS_VECTOR must have SYSTEM writability"
-msgstr ""
+msgstr "필드 유형 TS_VECTOR은 SYSTEM 쓰기 가능 상태여야 합니다."
 
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts

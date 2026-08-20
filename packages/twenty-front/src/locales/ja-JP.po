@@ -3247,7 +3247,7 @@ msgstr "この出力フィールドの簡単な説明"
 #. js-lingui-id: IjfaX/
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterFieldSelect.tsx
 msgid "Broken field reference. Select the field again to fix this condition."
-msgstr ""
+msgstr "フィールド参照が壊れています。この条件を修正するには、フィールドをもう一度選択してください。"
 
 #. js-lingui-id: CSDv65
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -4755,7 +4755,7 @@ msgstr "コンテキストウィンドウ"
 #. js-lingui-id: uKvqU1
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Context window must be a positive integer"
-msgstr ""
+msgstr "コンテキストウィンドウは正の整数である必要があります"
 
 #. js-lingui-id: xGVfLh
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
@@ -7106,7 +7106,7 @@ msgstr "全オブジェクトでレコードを編集する"
 #. js-lingui-id: /VLYQj
 #: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
 msgid "Edit translations"
-msgstr ""
+msgstr "翻訳を編集"
 
 #. js-lingui-id: eMFB6/
 #: src/modules/views/view-picker/components/ViewPickerContentEditMode.tsx
@@ -9726,53 +9726,35 @@ msgstr "横方向の区切り線"
 
 #. js-lingui-id: WOXdI6
 #: src/pages/settings/applications/utils/getCustomApplicationDescription.ts
-msgid ""
-"Host your workspace's customizations and overrides.\n"
-"\n"
+msgid "Host your workspace's customizations and overrides.\n\n"
 "#### What it includes\n"
-"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n"
-"\n"
+"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n\n"
 "- Custom objects and fields for your own data model\n"
 "- Views, navigation items, and record layouts that shape how your team works\n"
-"- Logic functions, front components, and agents that automate or extend the workspace\n"
-"\n"
+"- Logic functions, front components, and agents that automate or extend the workspace\n\n"
 "#### Why it exists\n"
-"Use this app for workspace-specific customization that should stay local to this workspace.\n"
-"\n"
-"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Scaffold a new app in one command:\n"
-"\n"
+"Use this app for workspace-specific customization that should stay local to this workspace.\n\n"
+"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n\n"
+"#### Build your own app\n\n"
+"Scaffold a new app in one command:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
+"```\n\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"ワークスペースのカスタマイズや上書き設定をホストします。\n"
-"\n"
+msgstr "ワークスペースのカスタマイズや上書き設定をホストします。\n\n"
 "#### 含まれる内容\n"
-"標準アプリの上に作成するすべての拡張は Custom にまとめられます。スキーマの変更、インターフェースの変更、ワークスペース固有のロジックを1か所に保持します。\n"
-"\n"
+"標準アプリの上に作成するすべての拡張は Custom にまとめられます。スキーマの変更、インターフェースの変更、ワークスペース固有のロジックを1か所に保持します。\n\n"
 "- 独自のデータモデル用のカスタムオブジェクトとフィールド\n"
 "- チームの働き方を形作るビュー、ナビゲーション項目、レコードのレイアウト\n"
-"- ワークスペースを自動化・拡張するロジック関数、フロントコンポーネント、エージェント\n"
-"\n"
+"- ワークスペースを自動化・拡張するロジック関数、フロントコンポーネント、エージェント\n\n"
 "#### 存在理由\n"
-"このワークスペースにローカルに留めるべき、ワークスペース固有のカスタマイズにはこのアプリを使用します。\n"
-"\n"
-"1つの事業のために1つのワークスペースを整えている場合は、ここに保持してください。独自のデータモデル、UI、オートメーションを備え、バージョン管理・共有・複数ワークスペースへのインストールが必要な再利用可能な業務アプリを構築している場合は、代わりに専用のアプリを作成してください。\n"
-"\n"
-"#### 独自のアプリを構築する\n"
-"\n"
-"1つのコマンドで新しいアプリのひな型を作成します:\n"
-"\n"
+"このワークスペースにローカルに留めるべき、ワークスペース固有のカスタマイズにはこのアプリを使用します。\n\n"
+"1つの事業のために1つのワークスペースを整えている場合は、ここに保持してください。独自のデータモデル、UI、オートメーションを備え、バージョン管理・共有・複数ワークスペースへのインストールが必要な再利用可能な業務アプリを構築している場合は、代わりに専用のアプリを作成してください。\n\n"
+"#### 独自のアプリを構築する\n\n"
+"1つのコマンドで新しいアプリのひな型を作成します:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
+"```\n\n"
 "詳しい手順は[入門ガイド](https://twenty.com/developers/extend/apps/getting-started)を参照し、`defineApplication` / `defineEntity` API については[アプリの構築](https://twenty.com/developers/extend/apps/building)を参照してください。},{"
 
 #. js-lingui-id: yY8wAv
@@ -10882,12 +10864,12 @@ msgstr "ラベル"
 #. js-lingui-id: B9/B0O
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Label (plural)"
-msgstr ""
+msgstr "ラベル（複数形）"
 
 #. js-lingui-id: J8GEvd
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Label (singular)"
-msgstr ""
+msgstr "ラベル（単数形）"
 
 #. js-lingui-id: w8Rv8T
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -10913,7 +10895,7 @@ msgstr "言語"
 #. js-lingui-id: PEi+K2
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Languages without their own translation show the source text."
-msgstr ""
+msgstr "独自の翻訳がない言語では、ソーステキストが表示されます。"
 
 #. js-lingui-id: k7rCa/
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -11859,7 +11841,7 @@ msgstr "最大出力"
 #. js-lingui-id: D0Z4Jd
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Max output must be a positive integer"
-msgstr ""
+msgstr "最大出力は正の整数である必要があります"
 
 #. js-lingui-id: 2ICF9k
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
@@ -14059,7 +14041,7 @@ msgstr "日付と参加者だけがチームと共有されます。"
 #. js-lingui-id: aluwJP
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Only in {currentLanguageLabel}"
-msgstr ""
+msgstr "{currentLanguageLabel} のみ"
 
 #. js-lingui-id: Ecstfp
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getMonthsDescription.ts
@@ -15847,7 +15829,7 @@ msgstr "チャット名を変更"
 #. js-lingui-id: 1PqGzu
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Rename for all languages"
-msgstr ""
+msgstr "すべての言語で名前を変更"
 
 #. js-lingui-id: oQjB9l
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -17852,7 +17834,7 @@ msgstr "送信元メールアドレス"
 #. js-lingui-id: MEXVHu
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 msgid "Source: {canonicalValue}"
-msgstr ""
+msgstr "ソース: {canonicalValue}"
 
 #. js-lingui-id: xqlr9R
 #: src/modules/settings/experience/components/NumberFormatSelect.tsx
@@ -18584,67 +18566,45 @@ msgstr "Bedrock 用の AWS リージョン"
 
 #. js-lingui-id: HP7per
 #: src/pages/settings/applications/utils/getStandardApplicationDescription.ts
-msgid ""
-"The base data model every Twenty workspace runs on.\n"
-"\n"
-"#### What \"foundation\" means\n"
-"\n"
-"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n"
-"\n"
+msgid "The base data model every Twenty workspace runs on.\n\n"
+"#### What \"foundation\" means\n\n"
+"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n\n"
 "#### Included objects\n"
 "- **People & Companies**: contact and account records\n"
 "- **Opportunities**: your sales pipeline\n"
 "- **Notes & Tasks**: activity and follow-ups\n"
-"- **Workflows & Dashboards**: automation and reporting\n"
-"\n"
-"Remove this app and the rest of Twenty has nothing to hang off.\n"
-"\n"
-"#### Build your own app\n"
-"\n"
-"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n"
-"\n"
+"- **Workflows & Dashboards**: automation and reporting\n\n"
+"Remove this app and the rest of Twenty has nothing to hang off.\n\n"
+"#### Build your own app\n\n"
+"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"Then inside the folder:\n"
-"\n"
+"```\n\n"
+"Then inside the folder:\n\n"
 "```bash\n"
 "cd my-twenty-app\n"
 "yarn twenty dev\n"
-"```\n"
-"\n"
+"```\n\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
-msgstr ""
-"すべての Twenty ワークスペースが稼働する基盤となるデータモデル。\n"
-"\n"
-"#### 「基盤」の意味\n"
-"\n"
-"すべての Twenty ワークスペースは、この一連のオブジェクトから始まります。これらが、関係性、アクティビティ、レポーティングを含む CRM の構造を定義します。マーケットプレイスのアプリ、AI エージェント、カスタムオブジェクトなど、その他のすべてはこれらに接続されます。\n"
-"\n"
+msgstr "すべての Twenty ワークスペースが稼働する基盤となるデータモデル。\n\n"
+"#### 「基盤」の意味\n\n"
+"すべての Twenty ワークスペースは、この一連のオブジェクトから始まります。これらが、関係性、アクティビティ、レポーティングを含む CRM の構造を定義します。マーケットプレイスのアプリ、AI エージェント、カスタムオブジェクトなど、その他のすべてはこれらに接続されます。\n\n"
 "#### 含まれるオブジェクト\n"
 "- **人物と企業**: 連絡先およびアカウントのレコード\n"
 "- **商談**: 営業パイプライン\n"
 "- **メモとタスク**: アクティビティとフォローアップ\n"
-"- **ワークフローとダッシュボード**: 自動化とレポーティング\n"
-"\n"
-"このアプリを削除すると、Twenty の他のすべてが成り立たなくなります。\n"
-"\n"
-"#### 独自のアプリを構築する\n"
-"\n"
-"独自のオブジェクト、フィールド、ロジック関数、または AI スキルで Twenty を拡張できます。1 つのコマンドで新しいアプリのひな型を作成します:\n"
-"\n"
+"- **ワークフローとダッシュボード**: 自動化とレポーティング\n\n"
+"このアプリを削除すると、Twenty の他のすべてが成り立たなくなります。\n\n"
+"#### 独自のアプリを構築する\n\n"
+"独自のオブジェクト、フィールド、ロジック関数、または AI スキルで Twenty を拡張できます。1 つのコマンドで新しいアプリのひな型を作成します:\n\n"
 "```bash\n"
 "npx create-twenty-app@latest my-twenty-app\n"
-"```\n"
-"\n"
-"次に、そのフォルダー内で:\n"
-"\n"
+"```\n\n"
+"次に、そのフォルダー内で:\n\n"
 "```bash\n"
 "cd my-twenty-app\n"
 "yarn twenty dev\n"
-"```\n"
-"\n"
+"```\n\n"
 "詳しい手順は[はじめにガイド](https://twenty.com/developers/extend/apps/getting-started)を、`defineApplication` / `defineEntity` API については[アプリの構築](https://twenty.com/developers/extend/apps/building)をご覧ください。"
 
 #. js-lingui-id: VsxjzF
@@ -18897,8 +18857,7 @@ msgstr "この操作は元に戻せません。このメンバーは削除され
 
 #. js-lingui-id: Ox1hE7
 #: src/modules/settings/profile/components/DeleteAccount.tsx
-msgid ""
-"This action cannot be undone. This will permanently delete your\n"
+msgid "This action cannot be undone. This will permanently delete your\n"
 "            entire account."
 msgstr "この操作は取り消せません。これにより、アカウント全体が永久に削除されます。"
 
@@ -19497,14 +19456,14 @@ msgstr "転送中..."
 #. js-lingui-id: 0DTqrp
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "Translate or rename?"
-msgstr ""
+msgstr "翻訳または名前を変更しますか？"
 
 #. js-lingui-id: kAy5R9
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/translations/components/SettingsTranslationsButton.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "Translations"
-msgstr ""
+msgstr "翻訳"
 
 #. js-lingui-id: lhkaAC
 #: src/modules/settings/billing/components/internal/PlansTags.tsx
@@ -21273,12 +21232,12 @@ msgstr "何をお手伝いできますか？"
 #. js-lingui-id: /SZI25
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "What each language displays for this field's labels"
-msgstr ""
+msgstr "このフィールドのラベルについて各言語で表示される内容"
 
 #. js-lingui-id: 9IXG0o
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "What each language displays for this object's labels"
-msgstr ""
+msgstr "このオブジェクトのラベルについて各言語で表示される内容"
 
 #. js-lingui-id: cE4SvC
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -21727,7 +21686,7 @@ msgstr "すでにこのワークスペースに所属しています"
 #. js-lingui-id: MuS9Gh
 #: src/modules/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm.tsx
 msgid "You are editing the {currentLanguageLabel} translation. Renaming instead changes the source label, for every language."
-msgstr ""
+msgstr "{currentLanguageLabel}の翻訳を編集中です。代わりに名前を変更すると、すべての言語のソースラベルが変更されます。"
 
 #. js-lingui-id: MFDARJ
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly.tsx
@@ -21832,11 +21791,9 @@ msgstr "ワークスペースのサブドメインを変更しようとしてい
 
 #. js-lingui-id: Z5uTAF
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid ""
-"You've hit your usage limit. \n"
+msgid "You've hit your usage limit. \n"
 "Reach to our support team to upgrade."
-msgstr ""
-"ご利用上限に達しました。 \n"
+msgstr "ご利用上限に達しました。 \n"
 "アップグレードするにはサポートチームにご連絡ください。"
 
 #. js-lingui-id: NTyvVW
@@ -21844,11 +21801,9 @@ msgstr ""
 #. placeholder {1}: nextResourceCreditPrice ?? ''
 #. placeholder {2}: nextTierInterval ?? ''
 #: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
-msgid ""
-"You've hit your usage limit. \n"
+msgid "You've hit your usage limit. \n"
 "Upgrade to {0} credits for ${1}/{2}."
-msgstr ""
-"ご利用上限に達しました。 \n"
+msgstr "ご利用上限に達しました。 \n"
 "${1}/{2}で{0}クレジットにアップグレードできます。"
 
 #. js-lingui-id: yZ0wRS
