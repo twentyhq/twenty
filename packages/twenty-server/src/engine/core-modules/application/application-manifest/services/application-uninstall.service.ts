@@ -12,6 +12,7 @@ import {
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import {
   buildWorkspaceUninstallHookPayload,
+  type UninstallHookPayload,
   type WorkspaceUninstallHookRequestType,
 } from 'src/engine/core-modules/application/application-manifest/utils/build-workspace-uninstall-hook-payload.util';
 import { isApplicationUninstallHookPending } from 'src/engine/core-modules/application/utils/is-application-uninstall-hook-pending.util';
@@ -245,7 +246,7 @@ export class ApplicationUninstallService {
   }: {
     application: ApplicationForUninstallHook;
     workspaceId: string;
-    payload: object;
+    payload: UninstallHookPayload;
     workspaceDeletionRequestTimestamp?: string;
   }): Promise<void> {
     if (!isDefined(application.uninstallLogicFunctionId)) {
