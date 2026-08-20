@@ -126,15 +126,11 @@ each string against its catalog, falling back to the source when a translation
 is missing. Switching language in the host re-renders `Trans` and
 `useTranslate().t` strings live.
 
-Because catalogs are compiled at build time, updating a translation means
-re-running `twenty dev:build` (and redeploying), the same as any other change.
-
-<Note>
-Translations are compiled on every sync — `twenty dev:build`, `twenty apply`
-and the continuous `twenty dev` watch alike — so localized output can be
-tested without a one-off build. Front component catalogs are baked into the
-bundle at build time, so those still need a rebuild to change.
-</Note>
+Manifest labels are compiled on every sync — `twenty dev:build`, `twenty apply`
+and the continuous `twenty dev` watch alike — so editing a locale file and
+syncing is enough to see the new text. Front component catalogs are baked into
+each component bundle at build time, so changing one of those still means
+re-running `twenty dev:build` (and redeploying).
 
 `Trans` text children may span multiple lines — whitespace is collapsed the
 same way JSX collapses it, so both of these extract to the key `Welcome back`:
