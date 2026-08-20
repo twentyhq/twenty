@@ -70,6 +70,11 @@ t({ message: 'Open', context: 'window' });
 <Trans context="card-title">Untitled</Trans>
 ```
 
+Las cadenas contextuales aparecen en los catálogos de configuración regional como un grupo indexado por su
+contexto: `"\<context>": { "\<message>": "\<translation>" }`. Las etiquetas del manifiesto son
+contextuales por construcción: cada una lleva el metadato del rol que desempeña (`objectMetadata.labelSingular`, `fieldMetadata.label`, `view.name`, …), por lo que
+la misma palabra puede traducirse de manera diferente como nombre de objeto y como nombre de vista.
+
 ## Extrayendo y traduciendo
 
 Ejecutar el comando de extracción desde el directorio de la aplicación:
@@ -86,9 +91,17 @@ La extracción recopila tanto las etiquetas de tu manifest como las cadenas de `
 {
   "Loading postcard…": "Chargement de la carte…",
   "Hi {name}": "Bonjour {name}",
-  "Saved {count} cards": "{count} cartes enregistrées"
+  "Saved {count} cards": "{count} cartes enregistrées",
+  "door": {
+    "Open": "Ouvrir"
+  },
+  "objectMetadata.labelSingular": {
+    "Postcard": "Carte postale"
+  }
 }
 ```
+
+Las cadenas sin contexto son entradas planas; las cadenas contextuales —incluida cada etiqueta de manifiesto— están anidadas bajo su clave de contexto.
 
 Los marcadores de posición como `{name}` se sustituyen en tiempo de ejecución — manténgalos en la traducción
 . Cualquier cadena que quede vacía regresa al texto original.

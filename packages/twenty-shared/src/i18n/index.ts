@@ -10,6 +10,8 @@
 export type { LocaleMessagesMap } from './create-i18n-instance-factory';
 export { createI18nInstanceFactory } from './create-i18n-instance-factory';
 export { generateMessageId } from './generate-message-id';
+export { getMetadataLabelContext } from './get-metadata-label-context';
+export { interpolateCommandMenuItemPlaceholders } from './interpolate-command-menu-item-placeholders';
 export { interpolateMessagePlaceholders } from './interpolate-message-placeholders';
 export type {
   MetadataLabelPlaceholderName,
@@ -23,6 +25,7 @@ export {
   buildObjectMetadataLabelPlaceholderValues,
   hasObjectMetadataLabelPlaceholder,
 } from './metadata-label-placeholder';
+export { rewriteLegacyMetadataLabelTemplate } from './rewrite-legacy-metadata-label-template';
 export type {
   TranslatableMetadataName,
   TranslatablePropertyName,

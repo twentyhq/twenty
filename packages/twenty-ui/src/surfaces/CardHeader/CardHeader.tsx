@@ -11,7 +11,6 @@ export const CardHeader = ({
   ...rest
 }: CardHeaderProps) => {
   return (
-    // oxlint-disable-next-line react/jsx-props-no-spreading
     <div className={clsx(styles.cardHeader, className)} {...rest}>
       {children}
     </div>

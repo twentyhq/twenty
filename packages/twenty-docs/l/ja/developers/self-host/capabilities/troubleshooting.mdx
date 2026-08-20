@@ -239,6 +239,10 @@ add_header X-Accel-Buffering no always;
 
 ホストでのデータフォルダの所有権をrootから他のユーザーとグループに切り替えると、この問題が解決されます。
 
+#### ワークフローで Logic 関数をテストする際の「ファイルが見つかりません」エラー
+
+不足している依存関係の問題を解決するには、twenty-server コンテナで `yarn command:prod application:rebuild-default-deps` コマンドを実行します。
+
 ## サポートを受ける
 
 このガイドにカバーされていない問題がある場合:
