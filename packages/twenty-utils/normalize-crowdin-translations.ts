@@ -45,7 +45,6 @@ import {
 import { mapWithConcurrency } from './map-with-concurrency.util';
 
 const DEFAULT_PROJECT_ID = 2;
-// How many per-language lookups to run in parallel (Crowdin rate limits are generous).
 const FETCH_CONCURRENCY = 10;
 const MAX_PREVIEWED_FINDINGS = 15;
 
@@ -206,8 +205,6 @@ async function repair(
 
   for (const finding of findings) {
     try {
-      // Add before delete: the newly added translation becomes the exported one,
-      // so a failed re-add can never leave the string without a translation.
       await addTranslation(context, {
         stringId: finding.stringId,
         languageId: finding.languageId,
@@ -278,8 +275,6 @@ async function main() {
     `Repaired ${findings.length - failed} translation(s) in Crowdin.`,
   );
 
-  // Surface failures loudly: a silent partial run leaves a language unbuildable
-  // and every one of its pages stale until someone notices.
   if (failed > 0) {
     throw new Error(`${failed} translation(s) could not be normalized`);
   }

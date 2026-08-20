@@ -1,5 +1,4 @@
-// Runs `handler` over `items` with at most `limit` promises in flight, keeping
-// the results in input order.
+// At most `limit` handlers run at once; results stay in input order.
 export async function mapWithConcurrency<TItem, TResult>({
   items,
   limit,

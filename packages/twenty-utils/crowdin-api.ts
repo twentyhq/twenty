@@ -1,11 +1,4 @@
-/**
- * Thin Crowdin API v2 client for the translation maintenance scripts.
- *
- * Token: https://twenty.crowdin.com/u/settings#api-key
- */
-
 const CROWDIN_BASE_URL = 'https://twenty.api.crowdin.com/api/v2';
-// Crowdin caps the URL length rather than the id count; 50 keeps every request short.
 const MAX_STRING_IDS_PER_REQUEST = 50;
 const PAGE_SIZE = 500;
 
@@ -99,8 +92,6 @@ async function fetchAllPages<TItem>(
   return items;
 }
 
-// Plural strings carry their variants in an object instead of `text`; no rule
-// targets them today, so they are skipped rather than half-read.
 export async function fetchSourceStringsById(
   context: CrowdinContext,
 ): Promise<Map<number, string>> {
@@ -135,9 +126,6 @@ function chunkStringIds(stringIds: number[]): number[][] {
   return batches;
 }
 
-// Returns the translation that Crowdin actually exports for each string. The
-// per-string endpoint would also return older suggestions, and re-adding one of
-// those would promote it over the current translation.
 export async function fetchLanguageTranslations(
   context: CrowdinContext,
   { languageId, stringIds }: { languageId: string; stringIds?: number[] },
@@ -158,7 +146,6 @@ export async function fetchLanguageTranslations(
     );
   }
 
-  // Plural translations carry their variants in an object instead of `text`.
   return translations.filter(
     (translation): translation is CrowdinTranslation =>
       typeof translation.text === 'string',
@@ -194,8 +181,6 @@ export async function addTranslation(
       },
     );
   } catch (error) {
-    // Crowdin rejects an addition identical to an existing translation, which
-    // means the corrected text is already there - the repair is a no-op.
     if (!/identical/i.test(`${error}`)) throw error;
   }
 }

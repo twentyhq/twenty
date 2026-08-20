@@ -10,17 +10,11 @@ export type NormalizationRule = {
   name: string;
   detect: (text: string) => boolean;
   fix: (text: string) => string;
-  // When present, only source strings matching this predicate are scanned, which
-  // lets the engine use the cheap targeted lookup instead of a full scan.
   sourceFilter?: (sourceText: string) => boolean;
 };
 
-// A full inline-code span, backticks included. Markdown does not allow a newline
-// inside a single-backtick span, so the span never crosses lines.
 const INLINE_CODE_SPAN_REGEX = /`[^`\n]+`/g;
-// The build-breaking signature: an angle bracket that came back HTML-escaped
 const ESCAPED_TAG_REGEX = /&lt;|&gt;|&#0*60;|&#0*62;|&#x0*3c;|&#x0*3e;/i;
-// Literal \uXXXX sequences that leaked into a translation instead of the character
 const ESCAPED_UNICODE_REGEX = /\\u[0-9a-fA-F]{4}/;
 
 function inlineCodeSpans(text: string): string[] {
@@ -37,9 +31,6 @@ function hasEscapedTagInInlineCode(text: string): boolean {
   return inlineCodeSpans(text).some((span) => ESCAPED_TAG_REGEX.test(span));
 }
 
-// Scoped to inline-code spans on purpose: an angle bracket escaped anywhere else
-// is how MDX carries a literal `<` in prose, and unescaping it would turn
-// documentation content into markup and break the very build we are protecting.
 function unescapeTagsInInlineCode(text: string): string {
   return text.replace(INLINE_CODE_SPAN_REGEX, (span) =>
     span
@@ -70,7 +61,6 @@ export const NORMALIZATION_RULES: NormalizationRule[] = [
   },
 ];
 
-// Applies every rule whose source string qualifies and whose pattern is present.
 export function evaluateRules({
   rules,
   sourceText,
