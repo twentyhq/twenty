@@ -1,5 +1,5 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { getWidgetVerticalListSizing } from '@/page-layout/widgets/utils/getWidgetVerticalListSizing';
+import { isViewportFillingWidgetType } from '@/page-layout/widgets/utils/isViewportFillingWidgetType';
 
 type GetAdjacentFitContentWidgetIndexParams = {
   widgets: PageLayoutWidget[];
@@ -14,7 +14,7 @@ export const getAdjacentFitContentWidgetIndex = ({
 }: GetAdjacentFitContentWidgetIndexParams): number | undefined => {
   if (
     !(widgetIndex in widgets) ||
-    getWidgetVerticalListSizing(widgets[widgetIndex].type) !== 'FIT_CONTENT'
+    isViewportFillingWidgetType(widgets[widgetIndex].type)
   ) {
     return undefined;
   }
@@ -23,13 +23,11 @@ export const getAdjacentFitContentWidgetIndex = ({
     direction === 'up'
       ? widgets.findLastIndex(
           (widget, index) =>
-            index < widgetIndex &&
-            getWidgetVerticalListSizing(widget.type) === 'FIT_CONTENT',
+            index < widgetIndex && !isViewportFillingWidgetType(widget.type),
         )
       : widgets.findIndex(
           (widget, index) =>
-            index > widgetIndex &&
-            getWidgetVerticalListSizing(widget.type) === 'FIT_CONTENT',
+            index > widgetIndex && !isViewportFillingWidgetType(widget.type),
         );
 
   return adjacentFitContentWidgetIndex >= 0

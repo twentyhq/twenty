@@ -5,7 +5,7 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { getIsSingleWidgetTab } from '@/page-layout/utils/getIsSingleWidgetTab';
-import { getWidgetVerticalListSizing } from '@/page-layout/widgets/utils/getWidgetVerticalListSizing';
+import { isViewportFillingWidgetType } from '@/page-layout/widgets/utils/isViewportFillingWidgetType';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useIsDashboardPageLayout } from '@/side-panel/pages/page-layout/hooks/useIsDashboardPageLayout';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
@@ -139,7 +139,7 @@ export const useOpenWidgetSettingsInSidePanel = (
       const isViewportFillingWidgetInVerticalList =
         isDefined(containingTab) &&
         containingTab.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST &&
-        getWidgetVerticalListSizing(widgetType) === 'FILL_VIEWPORT';
+        isViewportFillingWidgetType(widgetType);
 
       if (
         isContainingTabSingleWidget &&

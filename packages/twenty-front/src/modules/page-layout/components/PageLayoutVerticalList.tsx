@@ -6,7 +6,7 @@ import { type PageLayoutWidgetDragData } from '@/page-layout/types/PageLayoutWid
 import { type PageLayoutWidgetListDropData } from '@/page-layout/types/PageLayoutWidgetListDropData';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
-import { getWidgetVerticalListSizing } from '@/page-layout/widgets/utils/getWidgetVerticalListSizing';
+import { isViewportFillingWidgetType } from '@/page-layout/widgets/utils/isViewportFillingWidgetType';
 import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
 import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
 import { pointerIntersection } from '@dnd-kit/collision';
@@ -141,7 +141,7 @@ export const PageLayoutVerticalList = ({
       {widgets.map((widget, index) => {
         const fillsViewport =
           layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST &&
-          getWidgetVerticalListSizing(widget.type) === 'FILL_VIEWPORT';
+          isViewportFillingWidgetType(widget.type);
 
         const widgetDragData: PageLayoutWidgetDragData = {
           type: 'widget',

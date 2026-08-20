@@ -7,7 +7,7 @@ import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/con
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
 import { getWidgetContentPadding } from '@/page-layout/widgets/utils/getWidgetContentPadding';
-import { getWidgetVerticalListSizing } from '@/page-layout/widgets/utils/getWidgetVerticalListSizing';
+import { isViewportFillingWidgetType } from '@/page-layout/widgets/utils/isViewportFillingWidgetType';
 import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetCard';
 import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/WidgetCardContent';
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
@@ -63,8 +63,7 @@ export const WidgetCardShell = ({
 
   const isVerticalList = layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST;
   const fillsViewport =
-    isVerticalList &&
-    getWidgetVerticalListSizing(widget.type) === 'FILL_VIEWPORT';
+    isVerticalList && isViewportFillingWidgetType(widget.type);
   const isFixedHeightIframe =
     isVerticalList && widget.type === WidgetType.IFRAME;
   const contentPadding =

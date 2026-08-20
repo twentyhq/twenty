@@ -25,25 +25,15 @@ const StyledListContainer = styled.div`
   }
 `;
 
-const StyledFramelessList = styled.div`
-  > :not(:last-child) {
-    border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  }
-`;
-
 type ActivityListProps = React.PropsWithChildren<{
-  isFrameless?: boolean;
   isScrollable?: boolean;
 }>;
 
 export const ActivityList = ({
   children,
-  isFrameless = false,
   isScrollable = false,
 }: ActivityListProps) => {
-  return isFrameless ? (
-    <StyledFramelessList>{children}</StyledFramelessList>
-  ) : (
+  return (
     <StyledListContainer data-scrollable={isScrollable || undefined}>
       <Card>{children}</Card>
     </StyledListContainer>
