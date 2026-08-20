@@ -148,11 +148,17 @@ const preloadOnboardingPages = () => {
   return null;
 };
 
-const createWorkspaceAppRouter = (
-  isFunctionSettingsEnabled?: boolean,
-  isAdminPageEnabled?: boolean,
-  isWorkflowCoreIndexPageEnabled?: boolean,
-) =>
+type CreateWorkspaceAppRouterArgs = {
+  isFunctionSettingsEnabled?: boolean;
+  isAdminPageEnabled?: boolean;
+  isWorkflowCoreIndexPageEnabled?: boolean;
+};
+
+const createWorkspaceAppRouter = ({
+  isFunctionSettingsEnabled,
+  isAdminPageEnabled,
+  isWorkflowCoreIndexPageEnabled,
+}: CreateWorkspaceAppRouterArgs) =>
   createBrowserRouter(
     createRoutesFromElements(
       <Route
@@ -366,18 +372,18 @@ const createWorkspaceAppRouter = (
     ),
   );
 
-export const useCreateWorkspaceAppRouter = (
-  isFunctionSettingsEnabled?: boolean,
-  isAdminPageEnabled?: boolean,
-  isWorkflowCoreIndexPageEnabled?: boolean,
-) =>
+export const useCreateWorkspaceAppRouter = ({
+  isFunctionSettingsEnabled,
+  isAdminPageEnabled,
+  isWorkflowCoreIndexPageEnabled,
+}: CreateWorkspaceAppRouterArgs) =>
   useMemo(
     () =>
-      createWorkspaceAppRouter(
+      createWorkspaceAppRouter({
         isFunctionSettingsEnabled,
         isAdminPageEnabled,
         isWorkflowCoreIndexPageEnabled,
-      ),
+      }),
     [
       isFunctionSettingsEnabled,
       isAdminPageEnabled,

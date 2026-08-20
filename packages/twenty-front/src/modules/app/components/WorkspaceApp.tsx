@@ -21,11 +21,11 @@ export const WorkspaceApp = () => {
 
   return (
     <RouterProvider
-      router={useCreateWorkspaceAppRouter(
+      router={useCreateWorkspaceAppRouter({
         isFunctionSettingsEnabled,
         isAdminPageEnabled,
         isWorkflowCoreIndexPageEnabled,
-      )}
+      })}
     />
   );
 };
