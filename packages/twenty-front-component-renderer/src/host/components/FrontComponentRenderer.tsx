@@ -69,7 +69,6 @@ export const FrontComponentRenderer = ({
   const [isExecutionContextInitialized, setIsExecutionContextInitialized] =
     useState(false);
   const [geometryTracker] = useState(() => createGeometryTracker());
-  const [initialExecutionContext] = useState(executionContext);
 
   const isReady = isDefined(receiver) && isExecutionContextInitialized;
 
@@ -85,7 +84,6 @@ export const FrontComponentRenderer = ({
           sharedDependenciesUrl={sharedDependenciesUrl}
           applicationVariables={applicationVariables}
           storageNamespace={storageNamespace}
-          initialExecutionContext={initialExecutionContext}
           geometryTracker={geometryTracker}
           mediaSessionHost={mediaSessionHost}
           setReceiver={setReceiver}
