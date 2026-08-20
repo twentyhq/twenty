@@ -481,6 +481,15 @@ export const buildMessageStandardFlatFieldMetadatas = ({
           color: 'gray',
         },
         {
+          id: 'c9f2b6d4-1a83-4e57-90cb-7d5e2f8a4b16',
+          value: 'SENDING',
+          label: i18nLabel(
+            msg({ message: `Sending`, context: 'fieldMetadata.label' }),
+          ),
+          position: 10,
+          color: 'blue',
+        },
+        {
           id: 'af7390a3-bd35-480b-9bc2-6f7d8589b3d2',
           value: 'SENT',
           label: i18nLabel(
@@ -524,6 +533,45 @@ export const buildMessageStandardFlatFieldMetadatas = ({
           ),
           position: 5,
           color: 'yellow',
+        },
+        {
+          id: 'f8c27100-56d8-442a-aa5b-0521975ea1d7',
+          value: 'DELIVERED',
+          label: i18nLabel(
+            msg({ message: `Delivered`, context: 'fieldMetadata.label' }),
+          ),
+          position: 6,
+          color: 'turquoise',
+        },
+        {
+          id: '6dd1b1d8-7f7c-4493-83a9-95238fff3d24',
+          value: 'SOFT_BOUNCED',
+          label: i18nLabel(
+            msg({ message: `Soft bounced`, context: 'fieldMetadata.label' }),
+          ),
+          position: 7,
+          color: 'yellow',
+        },
+        {
+          id: 'd5742d80-2ed0-481e-8878-c7897eb67eac',
+          value: 'REJECTED',
+          label: i18nLabel(
+            msg({ message: `Rejected`, context: 'fieldMetadata.label' }),
+          ),
+          position: 8,
+          color: 'red',
+        },
+        {
+          id: '64335cef-6a22-4666-9e10-8ce7533157d9',
+          value: 'RENDERING_FAILED',
+          label: i18nLabel(
+            msg({
+              message: `Rendering failed`,
+              context: 'fieldMetadata.label',
+            }),
+          ),
+          position: 9,
+          color: 'red',
         },
       ],
     },

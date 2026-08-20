@@ -488,6 +488,15 @@ export const STANDARD_OBJECT_FIELDS = {
     sentCount: {
       universalIdentifier: '2f333d2b-37b8-4ddc-ad0d-c07c6ce066ad',
     },
+    attemptedCount: {
+      universalIdentifier: '592b8721-98c7-4d87-b065-076b6b1bbdcf',
+    },
+    deliveredCount: {
+      universalIdentifier: 'f4ee1d33-7379-42fe-ad63-e023449baea6',
+    },
+    softBouncedCount: {
+      universalIdentifier: 'd340597d-997c-47e6-8ec8-212cc883a64a',
+    },
     failedCount: {
       universalIdentifier: 'd373fcd7-b1ce-4c77-8031-a5785c475028',
     },
@@ -496,6 +505,9 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     complainedCount: {
       universalIdentifier: '82842cfa-f12a-4bab-bbde-b2cf587d0406',
+    },
+    skippedCount: {
+      universalIdentifier: 'a1f4c6d2-5e8b-4a37-9c60-31b7f0d2a984',
     },
     unsubscribeTopicId: {
       universalIdentifier: '0648e7ad-1769-4ff6-a4d5-72da79ef169c',
