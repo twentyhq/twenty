@@ -7,8 +7,6 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { ViewAccessService } from 'src/engine/metadata-modules/view-permissions/services/view-access.service';
 
-// Mutations on the view itself carry its id directly, so access is decided
-// without a lookup.
 @Injectable()
 export class ViewPermissionGuard implements CanActivate {
   constructor(private readonly viewAccessService: ViewAccessService) {}

@@ -7,9 +7,6 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { ViewAccessService } from 'src/engine/metadata-modules/view-permissions/services/view-access.service';
 
-// Creation names the target view directly, so no lookup is needed. The bulk
-// argument is only populated by the entities that expose a bulk mutation; for
-// the rest it is absent and the branch does nothing.
 @Injectable()
 export class CreateViewChildEntityPermissionGuard implements CanActivate {
   constructor(private readonly viewAccessService: ViewAccessService) {}
