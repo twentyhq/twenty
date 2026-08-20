@@ -17,6 +17,7 @@ import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -112,6 +113,13 @@ export const SidePanelTopBar = () => {
     useRemoveFocusItemFromFocusStackById();
   const handleSidePanelBackspace = useHandleSidePanelBackspace();
   const handleSidePanelEscape = useHandleSidePanelEscape();
+
+  useGlobalHotkeys({
+    keys: [Key.Escape],
+    callback: handleSidePanelEscape,
+    containsModifier: false,
+    dependencies: [handleSidePanelEscape],
+  });
 
   const handleInputFocus = () => {
     pushFocusItemToFocusStack({
@@ -214,7 +222,7 @@ export const SidePanelTopBar = () => {
       <StyledRightControlsContainer>
         <SidePanelTopBarRightCornerIcon />
         <SidePanelExpandButton />
-        <SidePanelCloseButton isHidden={shouldHideCloseButton} />
+        {shouldHideCloseButton ? null : <SidePanelCloseButton />}
       </StyledRightControlsContainer>
     </StyledInputContainer>
   );

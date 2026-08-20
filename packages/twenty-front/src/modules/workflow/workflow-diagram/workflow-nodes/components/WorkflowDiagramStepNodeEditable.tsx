@@ -68,8 +68,6 @@ export const WorkflowDiagramStepNodeEditable = ({
         getIcon(getWorkflowNodeIconKey(data)),
         id,
       );
-
-      return;
     }
   };
 

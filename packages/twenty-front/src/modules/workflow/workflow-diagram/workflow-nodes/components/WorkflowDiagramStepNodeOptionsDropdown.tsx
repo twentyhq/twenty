@@ -1,21 +1,17 @@
 import { OptionsDropdownMenu } from '@/ui/layout/dropdown/components/OptionsDropdownMenu';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID } from '@/workflow/workflow-diagram/constants/WorkflowDiagramStepNodeClickOutsideId';
+import { WorkflowStepOptionsMenuItems } from '@/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems';
+import { WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS } from '@/workflow/workflow-steps/constants/WorkflowStepOptionsMenuItemIds';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconCopyPlus,
-  IconDotsVertical,
-  IconPencil,
-  IconTrash,
-} from 'twenty-ui/icon';
+import { IconDotsVertical } from 'twenty-ui/icon';
 import { FloatingIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledOptionsButtonContainer = styled.div`
@@ -28,19 +24,11 @@ const StyledOptionsButtonContainer = styled.div`
   transform: translateX(100%);
 `;
 
-const WORKFLOW_NODE_OPTION_IDS = {
-  changeNode: 'change-node',
-  duplicateNode: 'duplicate-node',
-  deleteNode: 'delete-node',
-} as const;
-
 export const WorkflowDiagramStepNodeOptionsDropdown = ({
-  nodeId,
   onChangeNode,
   onDuplicateNode,
   onDelete,
 }: {
-  nodeId: string;
   onChangeNode: () => void;
   onDuplicateNode?: () => void;
   onDelete: () => void;
@@ -48,13 +36,13 @@ export const WorkflowDiagramStepNodeOptionsDropdown = ({
   const { t } = useLingui();
   const { closeDropdown } = useCloseDropdown();
 
-  const dropdownId = `workflow-diagram-node-options-${nodeId}`;
+  const dropdownId = useId();
   const selectableItemIds = [
-    WORKFLOW_NODE_OPTION_IDS.changeNode,
+    WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.changeNode,
     ...(isDefined(onDuplicateNode)
-      ? [WORKFLOW_NODE_OPTION_IDS.duplicateNode]
+      ? [WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.duplicateNode]
       : []),
-    WORKFLOW_NODE_OPTION_IDS.deleteNode,
+    WORKFLOW_STEP_OPTIONS_MENU_ITEM_IDS.deleteNode,
   ];
 
   const selectedItemId = useAtomComponentStateValue(
@@ -69,7 +57,9 @@ export const WorkflowDiagramStepNodeOptionsDropdown = ({
 
   const handleChangeNode = closeDropdownThen(onChangeNode);
   const handleDeleteNode = closeDropdownThen(onDelete);
-  const handleDuplicateNode = closeDropdownThen(() => onDuplicateNode?.());
+  const handleDuplicateNode = isDefined(onDuplicateNode)
+    ? closeDropdownThen(onDuplicateNode)
+    : undefined;
 
   return (
     <StyledOptionsButtonContainer className="nodrag nopan">
@@ -89,44 +79,14 @@ export const WorkflowDiagramStepNodeOptionsDropdown = ({
           dropdownPlacement="right-start"
           shouldRegisterOptionsHotkey={false}
         >
-          <SelectableListItem
-            itemId={WORKFLOW_NODE_OPTION_IDS.changeNode}
-            onEnter={handleChangeNode}
-          >
-            <MenuItem
-              LeftIcon={IconPencil}
-              text={t`Change node`}
-              focused={selectedItemId === WORKFLOW_NODE_OPTION_IDS.changeNode}
-              onClick={handleChangeNode}
-            />
-          </SelectableListItem>
-          {isDefined(onDuplicateNode) ? (
-            <SelectableListItem
-              itemId={WORKFLOW_NODE_OPTION_IDS.duplicateNode}
-              onEnter={handleDuplicateNode}
-            >
-              <MenuItem
-                LeftIcon={IconCopyPlus}
-                text={t`Duplicate node`}
-                focused={
-                  selectedItemId === WORKFLOW_NODE_OPTION_IDS.duplicateNode
-                }
-                onClick={handleDuplicateNode}
-              />
-            </SelectableListItem>
-          ) : null}
-          <SelectableListItem
-            itemId={WORKFLOW_NODE_OPTION_IDS.deleteNode}
-            onEnter={handleDeleteNode}
-          >
-            <MenuItem
-              LeftIcon={IconTrash}
-              text={t`Delete node`}
-              accent="danger"
-              focused={selectedItemId === WORKFLOW_NODE_OPTION_IDS.deleteNode}
-              onClick={handleDeleteNode}
-            />
-          </SelectableListItem>
+          <WorkflowStepOptionsMenuItems
+            selectedItemId={selectedItemId}
+            changeNodeText={t`Change node`}
+            onChangeNode={handleChangeNode}
+            onDuplicateNode={handleDuplicateNode}
+            onDeleteNode={handleDeleteNode}
+            deleteNodeAccent="danger"
+          />
         </OptionsDropdownMenu>
       </ParentClickOutsideIdContext.Provider>
     </StyledOptionsButtonContainer>

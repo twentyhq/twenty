@@ -18,7 +18,6 @@ export const Default: Story = {
     ariaLabel: 'Search',
     variant: 'tertiary',
     size: 'small',
-    tooltipId: 'icon-button-with-tooltip-story',
     tooltipContent: 'Search',
   },
 };

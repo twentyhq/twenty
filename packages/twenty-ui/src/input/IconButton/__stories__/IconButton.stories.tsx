@@ -45,10 +45,11 @@ export const TertiaryDefaultUsesSecondaryTextColor: Story = {
   },
   play: async ({ canvasElement }) => {
     const button = within(canvasElement).getByRole('button');
+    const computedStyle = getComputedStyle(button);
 
     await expect(
-      getComputedStyle(button).getPropertyValue('--icon-button-color').trim(),
-    ).toBe('var(--t-font-color-secondary)');
+      computedStyle.getPropertyValue('--icon-button-color').trim(),
+    ).toBe(computedStyle.getPropertyValue('--t-font-color-secondary').trim());
   },
 };
 

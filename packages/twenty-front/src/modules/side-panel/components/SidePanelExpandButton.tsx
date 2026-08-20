@@ -10,8 +10,6 @@ import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/conte
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 
-const SIDE_PANEL_EXPAND_BUTTON_ID = 'side-panel-expand-button';
-
 // Registered only for targets that claim the shortcut, so pages whose content
 // owns cmd+enter keep it to themselves.
 const SidePanelExpandShortcutEffect = ({ expand }: { expand: () => void }) => {
@@ -42,7 +40,6 @@ const SidePanelExpandButtonContent = () => {
         <SidePanelExpandShortcutEffect expand={expandTarget.expand} />
       )}
       <IconButtonWithTooltip
-        tooltipId={SIDE_PANEL_EXPAND_BUTTON_ID}
         tooltipContent={tooltipContent}
         Icon={IconMaximize}
         size="small"

@@ -10,7 +10,6 @@ describe('WorkflowDiagramStepNodeOptionsDropdown', () => {
       <I18nProvider i18n={i18n}>
         <JotaiProvider>
           <WorkflowDiagramStepNodeOptionsDropdown
-            nodeId="trigger"
             onChangeNode={jest.fn()}
             onDelete={jest.fn()}
           />
@@ -33,7 +32,6 @@ describe('WorkflowDiagramStepNodeOptionsDropdown', () => {
       <I18nProvider i18n={i18n}>
         <JotaiProvider>
           <WorkflowDiagramStepNodeOptionsDropdown
-            nodeId="node-under-test"
             onChangeNode={onChangeNode}
             onDuplicateNode={onDuplicateNode}
             onDelete={onDelete}
