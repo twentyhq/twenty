@@ -42,7 +42,6 @@ import { FieldMetadataRestApiExceptionFilter } from 'src/engine/metadata-modules
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata.service';
 import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-field-metadata-entity-to-field-metadata-dto.util';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
-import { resolveTranslatableProperties } from 'src/engine/metadata-modules/application-translation-catalog/utils/resolve-translatable-properties.util';
 import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import {
@@ -93,32 +92,19 @@ export class FieldMetadataController {
     locale: keyof typeof APP_LOCALES | undefined;
     workspaceId: string;
   }): Promise<FieldMetadataDTO[]> {
-    const getI18nContext =
-      await this.applicationTranslationCatalogService.getI18nContextByApplicationId(
+    const resolvedFields =
+      await this.applicationTranslationCatalogService.resolveTranslatablePropertiesForEntities(
         {
-          applicationIds: fields.map((field) => field.applicationId),
+          metadataName: 'fieldMetadata',
+          entities: fields,
           locale,
           workspaceId,
         },
       );
 
-    return fields.map((field) => {
-      const dto = fromFieldMetadataEntityToFieldMetadataDto(
-        field,
-        uniqueFieldMetadataIds,
-      );
-      const resolved = resolveTranslatableProperties({
-        metadataName: 'fieldMetadata',
-        entity: field,
-        i18nContext: getI18nContext(field.applicationId ?? undefined),
-      });
-
-      return {
-        ...dto,
-        label: resolved.label ?? dto.label,
-        description: resolved.description ?? dto.description,
-      };
-    });
+    return resolvedFields.map((field) =>
+      fromFieldMetadataEntityToFieldMetadataDto(field, uniqueFieldMetadataIds),
+    );
   }
 
   @Get()

@@ -47,7 +47,6 @@ import {
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { fromObjectMetadataEntityToObjectMetadataDto } from 'src/engine/metadata-modules/object-metadata/utils/from-object-metadata-entity-to-object-metadata-dto.util';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
-import { resolveTranslatableProperties } from 'src/engine/metadata-modules/application-translation-catalog/utils/resolve-translatable-properties.util';
 import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import {
@@ -314,52 +313,43 @@ export class ObjectMetadataController {
     locale: keyof typeof APP_LOCALES | undefined;
     workspaceId: string;
   }): Promise<ObjectMetadataWithFieldsDTO[]> {
-    const allFields = objects.flatMap(
-      (object) => fieldsByObjectId.get(object.id) ?? [],
-    );
-
-    const getI18nContext =
-      await this.applicationTranslationCatalogService.getI18nContextByApplicationId(
+    const [resolvedObjects, resolvedFields] = await Promise.all([
+      this.applicationTranslationCatalogService.resolveTranslatablePropertiesForEntities(
         {
-          applicationIds: [...objects, ...allFields].map(
-            (entity) => entity.applicationId,
+          metadataName: 'objectMetadata',
+          entities: objects,
+          locale,
+          workspaceId,
+        },
+      ),
+      this.applicationTranslationCatalogService.resolveTranslatablePropertiesForEntities(
+        {
+          metadataName: 'fieldMetadata',
+          entities: objects.flatMap(
+            (object) => fieldsByObjectId.get(object.id) ?? [],
           ),
           locale,
           workspaceId,
         },
-      );
+      ),
+    ]);
+    const resolvedFieldsByObjectId = new Map<string, FieldMetadataEntity[]>();
 
-    return objects.map((object) => {
-      const objectDto = fromObjectMetadataEntityToObjectMetadataDto(object);
-      const resolvedObject = resolveTranslatableProperties({
-        metadataName: 'objectMetadata',
-        entity: object,
-        i18nContext: getI18nContext(object.applicationId ?? undefined),
-      });
+    for (const field of resolvedFields) {
+      resolvedFieldsByObjectId.set(field.objectMetadataId, [
+        ...(resolvedFieldsByObjectId.get(field.objectMetadataId) ?? []),
+        field,
+      ]);
+    }
 
-      return {
-        ...objectDto,
-        labelSingular: resolvedObject.labelSingular ?? objectDto.labelSingular,
-        labelPlural: resolvedObject.labelPlural ?? objectDto.labelPlural,
-        description: resolvedObject.description ?? objectDto.description,
-        fields: (fieldsByObjectId.get(object.id) ?? []).map((field) => {
-          const fieldDto = fromFieldMetadataEntityToFieldMetadataDto(
-            field,
-            uniqueFieldMetadataIds,
-          );
-          const resolvedField = resolveTranslatableProperties({
-            metadataName: 'fieldMetadata',
-            entity: field,
-            i18nContext: getI18nContext(field.applicationId ?? undefined),
-          });
-
-          return {
-            ...fieldDto,
-            label: resolvedField.label ?? fieldDto.label,
-            description: resolvedField.description ?? fieldDto.description,
-          };
-        }),
-      };
-    });
+    return resolvedObjects.map((object) => ({
+      ...fromObjectMetadataEntityToObjectMetadataDto(object),
+      fields: (resolvedFieldsByObjectId.get(object.id) ?? []).map((field) =>
+        fromFieldMetadataEntityToFieldMetadataDto(
+          field,
+          uniqueFieldMetadataIds,
+        ),
+      ),
+    }));
   }
 }
