@@ -5,29 +5,23 @@ import {
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { ViewAccessService } from 'src/engine/metadata-modules/view-permissions/services/view-access.service';
 
 @Injectable()
-export class CreateViewFilterPermissionGuard implements CanActivate {
+export class ViewPermissionGuard implements CanActivate {
   constructor(private readonly viewAccessService: ViewAccessService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const gqlContext = GqlExecutionContext.create(context);
     const request = gqlContext.getContext().req;
-
-    let viewId: string | null = null;
-
     const args = gqlContext.getArgs();
 
-    if (typeof args?.input?.viewId === 'string') {
-      viewId = args.input.viewId;
-    }
+    const viewId =
+      [args?.id, request.params?.id].find(isNonEmptyString) ?? null;
 
-    if (!viewId && typeof request.body?.viewId === 'string') {
-      viewId = request.body.viewId;
-    }
-
-    return this.viewAccessService.canUserModifyViewByChildEntity(
+    return this.viewAccessService.canUserModifyView(
       viewId,
       request.userWorkspaceId,
       request.workspace.id,
