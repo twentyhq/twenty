@@ -79,10 +79,14 @@ describe('McpInstructionBuilderService', () => {
 
     expect(
       flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps,
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps,
     ).toHaveBeenCalledWith({
       workspaceId: 'workspace-1',
       flatMapsKeys: ['flatObjectMetadataMaps'],
     });
+    expect(skillService.findAllFlatSkills).toHaveBeenCalledTimes(1);
     expect(skillService.findAllFlatSkills).toHaveBeenCalledWith('workspace-1');
   });
 });
