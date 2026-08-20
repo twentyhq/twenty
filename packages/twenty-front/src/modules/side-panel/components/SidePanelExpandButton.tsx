@@ -1,13 +1,16 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { IconLayoutSidebarRightExpand } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/input';
+import { IconMaximize } from 'twenty-ui/icon';
+import { IconButtonWithTooltip } from 'twenty-ui/input';
+import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 import { useSidePanelExpandTarget } from '@/side-panel/hooks/useSidePanelExpandTarget';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
+
+const SIDE_PANEL_EXPAND_BUTTON_ID = 'side-panel-expand-button';
 
 // Registered only for targets that claim the shortcut, so pages whose content
 // owns cmd+enter keep it to themselves.
@@ -29,13 +32,19 @@ const SidePanelExpandButtonContent = () => {
     return null;
   }
 
+  const tooltipContent = expandTarget.hasExpandShortcut
+    ? `${expandTarget.label} | ${getOsControlSymbol()}⏎`
+    : expandTarget.label;
+
   return (
     <>
       {expandTarget.hasExpandShortcut && (
         <SidePanelExpandShortcutEffect expand={expandTarget.expand} />
       )}
-      <IconButton
-        Icon={IconLayoutSidebarRightExpand}
+      <IconButtonWithTooltip
+        tooltipId={SIDE_PANEL_EXPAND_BUTTON_ID}
+        tooltipContent={tooltipContent}
+        Icon={IconMaximize}
         size="small"
         variant="tertiary"
         onClick={expandTarget.expand}

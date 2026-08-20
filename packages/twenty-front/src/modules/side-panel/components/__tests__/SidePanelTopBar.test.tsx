@@ -19,6 +19,7 @@ import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconDotsVertical } from 'twenty-ui/icon';
+import { type IconButtonWithTooltipProps } from 'twenty-ui/input';
 
 jest.mock('@/side-panel/components/SidePanelTopBarInputFocusEffect', () => ({
   SidePanelTopBarInputFocusEffect: () => null,
@@ -33,6 +34,7 @@ jest.mock('@/side-panel/components/SidePanelExpandButton', () => ({
 }));
 
 const mockCloseSidePanelMenu = jest.fn();
+const mockIconButtonWithTooltip = jest.fn();
 
 jest.mock('@/side-panel/hooks/useSidePanelContextChips', () => ({
   useSidePanelContextChips: () => ({ contextChips: [] }),
@@ -49,6 +51,24 @@ let mockIsMobile = false;
 jest.mock('twenty-ui/utilities', () => ({
   useIsMobile: () => mockIsMobile,
 }));
+
+jest.mock('twenty-ui/input', () => {
+  const actual = jest.requireActual('twenty-ui/input');
+
+  return {
+    ...actual,
+    IconButtonWithTooltip: ({
+      tooltipId,
+      tooltipContent,
+      ...iconButtonProps
+    }: IconButtonWithTooltipProps) => {
+      mockIconButtonWithTooltip({ tooltipId, tooltipContent });
+
+      // oxlint-disable-next-line react/jsx-props-no-spreading
+      return <actual.IconButton {...iconButtonProps} />;
+    },
+  };
+});
 
 const recordIndexFocusItem = {
   focusId: PageFocusId.RecordIndex,
@@ -119,6 +139,7 @@ const renderSidePanelCommandMenu = (store = createSidePanelTopBarStore()) => {
 describe('SidePanelTopBar', () => {
   beforeEach(() => {
     mockCloseSidePanelMenu.mockClear();
+    mockIconButtonWithTooltip.mockClear();
     mockIsMobile = false;
   });
 
@@ -279,6 +300,46 @@ describe('SidePanelTopBar', () => {
 
     expect(store.get(sidePanelNavigationStackState.atom)).toHaveLength(1);
     expect(mockCloseSidePanelMenu).not.toHaveBeenCalled();
+  });
+
+  it('goes back with Escape while the search input is not focused', () => {
+    const { store } = renderSidePanelCommandMenu(
+      createSidePanelTopBarStore({
+        sidePanelPage: SidePanelPages.SearchRecords,
+        sidePanelNavigationStack: [
+          {
+            page: SidePanelPages.CommandMenuDisplay,
+            pageTitle: 'Command Menu',
+            pageIcon: IconDotsVertical,
+            pageId: 'command-menu',
+          },
+          {
+            page: SidePanelPages.SearchRecords,
+            pageTitle: 'Search',
+            pageIcon: IconDotsVertical,
+            pageId: 'search-records',
+          },
+        ],
+      }),
+    );
+
+    fireEvent.keyDown(document.body, {
+      key: 'Escape',
+      code: 'Escape',
+    });
+
+    expect(store.get(sidePanelNavigationStackState.atom)).toHaveLength(1);
+    expect(mockCloseSidePanelMenu).not.toHaveBeenCalled();
+  });
+
+  it('shows the close keyboard shortcut in the tooltip', () => {
+    renderSidePanelCommandMenu();
+
+    expect(mockIconButtonWithTooltip).toHaveBeenCalledWith(
+      expect.objectContaining({
+        tooltipContent: 'Close side panel | esc',
+      }),
+    );
   });
 
   it('renders the close button after the command menu content', () => {

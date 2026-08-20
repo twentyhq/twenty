@@ -1,4 +1,5 @@
 import { SidePanelBackButton } from '@/side-panel/components/SidePanelBackButton';
+import { SidePanelCloseButton } from '@/side-panel/components/SidePanelCloseButton';
 import { SidePanelPageInfo } from '@/side-panel/components/SidePanelPageInfo';
 import { SidePanelTopBarInputFocusEffect } from '@/side-panel/components/SidePanelTopBarInputFocusEffect';
 import { SidePanelExpandButton } from '@/side-panel/components/SidePanelExpandButton';
@@ -9,7 +10,6 @@ import { SIDE_PANEL_TOP_BAR_HEIGHT } from '@/side-panel/constants/SidePanelTopBa
 import { SIDE_PANEL_TOP_BAR_HEIGHT_MOBILE } from '@/side-panel/constants/SidePanelTopBarHeightMobile';
 import { useHandleSidePanelBackspace } from '@/side-panel/hooks/useHandleSidePanelBackspace';
 import { useHandleSidePanelEscape } from '@/side-panel/hooks/useHandleSidePanelEscape';
-import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useSidePanelContextChips } from '@/side-panel/hooks/useSidePanelContextChips';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
@@ -24,8 +24,6 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext, useRef } from 'react';
 import { Key } from 'ts-key-enum';
-import { IconX } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -99,8 +97,6 @@ export const SidePanelTopBar = () => {
 
   const isMobile = useIsMobile();
 
-  const { closeSidePanelMenu } = useSidePanelMenu();
-
   const sidePanelPage = useAtomStateValue(sidePanelPageState);
 
   const sidePanelNavigationStack = useAtomStateValue(
@@ -152,7 +148,12 @@ export const SidePanelTopBar = () => {
       return;
     }
 
-    if (event.key === Key.Backspace && handleSidePanelBackspace()) {
+    if (
+      event.key === Key.Backspace &&
+      !event.metaKey &&
+      !event.ctrlKey &&
+      handleSidePanelBackspace()
+    ) {
       event.preventDefault();
       event.stopPropagation();
       event.nativeEvent.stopImmediatePropagation();
@@ -213,15 +214,7 @@ export const SidePanelTopBar = () => {
       <StyledRightControlsContainer>
         <SidePanelTopBarRightCornerIcon />
         <SidePanelExpandButton />
-        {!shouldHideCloseButton && (
-          <IconButton
-            Icon={IconX}
-            size="small"
-            variant="primary"
-            onClick={closeSidePanelMenu}
-            ariaLabel={t`Close side panel`}
-          />
-        )}
+        <SidePanelCloseButton isHidden={shouldHideCloseButton} />
       </StyledRightControlsContainer>
     </StyledInputContainer>
   );

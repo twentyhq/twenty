@@ -7,6 +7,7 @@ import { WorkflowDiagramStepNodeEditableContent } from '@/workflow/workflow-diag
 import '@xyflow/react/dist/style.css';
 import { useStore } from 'jotai';
 import { useEffect } from 'react';
+import { fn } from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
 import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
 import { ReactflowDecorator } from '~/testing/decorators/ReactflowDecorator';
@@ -147,6 +148,9 @@ export const Catalog: CatalogStory<
     id: 'story-node',
     data: ALL_STEPS[0],
     selected: false,
+    onChangeNode: fn(),
+    onDuplicateNode: fn(),
+    onDelete: fn(),
   },
   parameters: {
     pseudo: { hover: ['.hover'] },

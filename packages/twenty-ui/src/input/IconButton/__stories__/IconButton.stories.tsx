@@ -1,5 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconSearch } from '@ui/icon';
+import { expect, within } from 'storybook/test';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
@@ -34,6 +35,21 @@ export const Default: Story = {
     ariaLabel: 'Search',
   },
   decorators: [ComponentDecorator],
+};
+
+export const TertiaryDefaultUsesSecondaryTextColor: Story = {
+  args: {
+    ...Default.args,
+    variant: 'tertiary',
+    accent: 'default',
+  },
+  play: async ({ canvasElement }) => {
+    const button = within(canvasElement).getByRole('button');
+
+    await expect(
+      getComputedStyle(button).getPropertyValue('--icon-button-color').trim(),
+    ).toBe('var(--t-font-color-secondary)');
+  },
 };
 
 export const Catalog: CatalogStory<Story, typeof IconButton> = {
