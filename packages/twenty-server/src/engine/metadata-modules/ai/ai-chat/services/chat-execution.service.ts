@@ -239,7 +239,9 @@ export class ChatExecutionService {
     // learn_tools returns schemas as text; execute_tool dispatches via the registry.
     const activeTools: ToolSet = {
       ...directTools,
-      [ASK_QUESTIONS_TOOL_NAME]: createAskQuestionsTool(),
+      [ASK_QUESTIONS_TOOL_NAME]: createAskQuestionsTool({
+        isWorkspaceSetupThread,
+      }),
       ...(isWorkspaceSetupThread
         ? {
             [COMPLETE_WORKSPACE_SETUP_TOOL_NAME]:
