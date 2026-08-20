@@ -6,6 +6,7 @@ import { WidgetContentRenderer } from '@/page-layout/widgets/components/WidgetCo
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
+import { getWidgetContentPadding } from '@/page-layout/widgets/utils/getWidgetContentPadding';
 import { getWidgetLayoutBehavior } from '@/page-layout/widgets/utils/getWidgetLayoutBehavior';
 import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetCard';
 import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/WidgetCardContent';
@@ -65,6 +66,10 @@ export const WidgetCardShell = ({
     isVerticalList && getWidgetLayoutBehavior(widget.type) === 'TAB_VIEWPORT';
   const isFixedHeightIframe =
     isVerticalList && widget.type === WidgetType.IFRAME;
+  const contentPadding =
+    isEditable || variant !== 'flush'
+      ? 'default'
+      : getWidgetContentPadding(widget.type);
 
   const dataTestId =
     widget.type === WidgetType.FIELDS ? 'record-fields-widget' : widget.id;
@@ -112,6 +117,7 @@ export const WidgetCardShell = ({
           isEditable={isEditable}
           hasInteractiveContent={widget.type === WidgetType.RECORD_TABLE}
           isFixedHeight={isFixedHeightIframe}
+          contentPadding={contentPadding}
         >
           {hasAccess ? (
             <ErrorBoundary

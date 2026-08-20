@@ -67,12 +67,14 @@ const widget = {
 } satisfies PageLayoutWidget;
 
 type RenderWidgetCardShellParams = {
+  isEditable?: boolean;
   layoutMode?: PageLayoutTabLayoutMode;
   variant?: WidgetCardVariant;
   widgetType?: WidgetType;
 };
 
 const renderWidgetCardShell = ({
+  isEditable = false,
   layoutMode = PageLayoutTabLayoutMode.VERTICAL_LIST,
   variant = 'flush',
   widgetType = WidgetType.FIELDS,
@@ -82,7 +84,7 @@ const renderWidgetCardShell = ({
       <WidgetCardShell
         widget={{ ...widget, type: widgetType }}
         variant={variant}
-        isEditable={false}
+        isEditable={isEditable}
         isEditing={false}
         isDragging={false}
         isResizing={false}
@@ -113,6 +115,48 @@ describe('WidgetCardShell layout behavior', () => {
 
     expect(mockWidgetCardContent).toHaveBeenCalledWith(
       expect.objectContaining({ isFixedHeight: true }),
+    );
+  });
+
+  it.each([
+    WidgetType.WORKFLOW,
+    WidgetType.WORKFLOW_VERSION,
+    WidgetType.WORKFLOW_RUN,
+  ])('removes content padding from %s canvases in view mode', (widgetType) => {
+    renderWidgetCardShell({ widgetType });
+
+    expect(mockWidgetCardContent).toHaveBeenCalledWith(
+      expect.objectContaining({ contentPadding: 'none' }),
+    );
+  });
+
+  it('keeps default content padding for task widgets', () => {
+    renderWidgetCardShell({ widgetType: WidgetType.TASKS });
+
+    expect(mockWidgetCardContent).toHaveBeenCalledWith(
+      expect.objectContaining({ contentPadding: 'default' }),
+    );
+  });
+
+  it('keeps default content padding around workflow canvases in edit mode', () => {
+    renderWidgetCardShell({
+      isEditable: true,
+      widgetType: WidgetType.WORKFLOW,
+    });
+
+    expect(mockWidgetCardContent).toHaveBeenCalledWith(
+      expect.objectContaining({ contentPadding: 'default' }),
+    );
+  });
+
+  it('keeps default content padding around framed workflow canvases', () => {
+    renderWidgetCardShell({
+      variant: 'framed',
+      widgetType: WidgetType.WORKFLOW,
+    });
+
+    expect(mockWidgetCardContent).toHaveBeenCalledWith(
+      expect.objectContaining({ contentPadding: 'default' }),
     );
   });
 });

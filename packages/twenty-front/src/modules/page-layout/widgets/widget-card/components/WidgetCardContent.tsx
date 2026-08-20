@@ -1,3 +1,4 @@
+import { type WidgetContentPadding } from '@/page-layout/widgets/utils/getWidgetContentPadding';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type WidgetCardVariant } from '~/modules/page-layout/widgets/types/WidgetCardVariant';
@@ -9,6 +10,7 @@ type WidgetCardContentStyledProps = {
   hasHeader: boolean;
   isEditable: boolean;
   isFixedHeight: boolean;
+  contentPadding: WidgetContentPadding;
 };
 
 const StyledWidgetCardContent = styled.div<WidgetCardContentStyledProps>`
@@ -28,11 +30,14 @@ const StyledWidgetCardContent = styled.div<WidgetCardContentStyledProps>`
   overflow: ${({ isFixedHeight }) =>
     isFixedHeight ? 'clip' : 'var(--widget-card-content-overflow, hidden)'};
 
-  padding-block: ${({ hasHeader, isEditable, variant }) =>
-    hasHeader && !isEditable && variant === 'flush'
-      ? `${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[2]}`
-      : themeCssVariables.spacing[2]};
-  padding-inline: var(--widget-card-padding-inline);
+  padding-block: ${({ contentPadding, hasHeader, isEditable, variant }) =>
+    contentPadding === 'none'
+      ? '0'
+      : hasHeader && !isEditable && variant === 'flush'
+        ? `${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[2]}`
+        : themeCssVariables.spacing[2]};
+  padding-inline: ${({ contentPadding }) =>
+    contentPadding === 'none' ? '0' : 'var(--widget-card-padding-inline)'};
 
   &:empty {
     margin-top: 0;
@@ -46,6 +51,7 @@ type WidgetCardContentProps = {
   isEditable: boolean;
   hasInteractiveContent?: boolean;
   isFixedHeight?: boolean;
+  contentPadding?: WidgetContentPadding;
   children?: React.ReactNode;
 };
 
@@ -55,6 +61,7 @@ export const WidgetCardContent = ({
   isEditable,
   hasInteractiveContent = false,
   isFixedHeight = false,
+  contentPadding = 'default',
   children,
 }: WidgetCardContentProps) => {
   const handleContentClick = (event: React.MouseEvent) => {
@@ -71,6 +78,7 @@ export const WidgetCardContent = ({
       hasHeader={hasHeader}
       isEditable={isEditable}
       isFixedHeight={isFixedHeight}
+      contentPadding={contentPadding}
       onClick={handleContentClick}
     >
       {children}
