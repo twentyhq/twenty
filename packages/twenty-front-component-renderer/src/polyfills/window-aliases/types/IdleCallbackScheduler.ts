@@ -1,9 +1,9 @@
 import { type TimerHandle } from '@/polyfills/window-aliases/types/TimerHandle';
 
 export type IdleCallbackScheduler = {
-  requestIdleCallback: (
+  request: (
     callback: IdleRequestCallback,
     options?: IdleRequestOptions,
   ) => TimerHandle;
-  cancelIdleCallback: (idleCallbackHandle: TimerHandle) => void;
+  cancel: (idleCallbackHandle: TimerHandle) => void;
 };

@@ -42,7 +42,7 @@ describe('installFetchWindowAlias', () => {
     expect(globalScope.fetch).toBe(initialFetch);
   });
 
-  it('should throw a TypeError when no global fetch exists at call time', () => {
+  it('should reject with a TypeError when no global fetch exists at call time', async () => {
     const polyfillWindow: Record<string, unknown> = {};
     const globalScope: Record<string, unknown> = { window: polyfillWindow };
 
@@ -50,6 +50,23 @@ describe('installFetchWindowAlias', () => {
 
     const windowFetch = polyfillWindow.fetch as typeof fetch;
 
-    expect(() => windowFetch('https://api.twenty.com')).toThrow(TypeError);
+    await expect(windowFetch('https://api.twenty.com')).rejects.toThrow(
+      TypeError,
+    );
+  });
+
+  it('should leave a window fetch that is already defined untouched', () => {
+    const existingWindowFetch = jest.fn();
+    const polyfillWindow: Record<string, unknown> = {
+      fetch: existingWindowFetch,
+    };
+    const globalScope: Record<string, unknown> = {
+      window: polyfillWindow,
+      fetch: jest.fn(),
+    };
+
+    installFetchWindowAlias(globalScope);
+
+    expect(polyfillWindow.fetch).toBe(existingWindowFetch);
   });
 });

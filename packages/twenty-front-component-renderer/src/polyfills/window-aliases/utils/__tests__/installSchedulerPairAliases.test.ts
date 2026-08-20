@@ -3,7 +3,7 @@ import { installAnimationFrameWindowAliases } from '../installAnimationFrameWind
 type RequestFrame = (callback: FrameRequestCallback) => number;
 type CancelFrame = (frameHandle: number) => void;
 
-describe('installAnimationFrameWindowAliases', () => {
+describe('installSchedulerPairAliases', () => {
   afterEach(() => {
     jest.useRealTimers();
   });
@@ -36,7 +36,7 @@ describe('installAnimationFrameWindowAliases', () => {
     expect(nativeCancelAnimationFrame).toHaveBeenCalledWith(7);
   });
 
-  it('should install a timeout fallback on every target when no native scheduler exists', () => {
+  it('should install a fallback on every target when no native scheduler exists', () => {
     jest.useFakeTimers();
 
     const polyfillWindow: Record<string, unknown> = {};
@@ -60,29 +60,7 @@ describe('installAnimationFrameWindowAliases', () => {
     expect(firedCallback).toHaveBeenCalledWith(expect.any(Number));
   });
 
-  it('should keep fallback frame ids cancelable through the same cancel function', () => {
-    jest.useFakeTimers();
-
-    const polyfillWindow: Record<string, unknown> = {};
-    const globalScope: Record<string, unknown> = { window: polyfillWindow };
-
-    installAnimationFrameWindowAliases(globalScope);
-
-    const canceledCallback = jest.fn();
-    const frameHandle = (polyfillWindow.requestAnimationFrame as RequestFrame)(
-      canceledCallback,
-    );
-
-    (polyfillWindow.cancelAnimationFrame as CancelFrame)(frameHandle);
-
-    jest.advanceTimersByTime(32);
-
-    expect(canceledCallback).not.toHaveBeenCalled();
-  });
-
-  it('should replace a partial native scheduler with a coherent fallback pair', () => {
-    jest.useFakeTimers();
-
+  it('should keep a native scheduler that is missing its cancel function', () => {
     const nativeRequestAnimationFrame = jest.fn();
     const polyfillWindow: Record<string, unknown> = {};
     const globalScope: Record<string, unknown> = {
@@ -92,23 +70,28 @@ describe('installAnimationFrameWindowAliases', () => {
 
     installAnimationFrameWindowAliases(globalScope);
 
-    expect(globalScope.requestAnimationFrame).not.toBe(
-      nativeRequestAnimationFrame,
+    expect(globalScope.requestAnimationFrame).toBe(nativeRequestAnimationFrame);
+    expect(globalScope.cancelAnimationFrame).toBeUndefined();
+    expect(polyfillWindow.requestAnimationFrame).toEqual(expect.any(Function));
+    expect(polyfillWindow.cancelAnimationFrame).toEqual(expect.any(Function));
+  });
+
+  it('should not overwrite a target that already holds the whole pair', () => {
+    const existingRequestAnimationFrame = jest.fn();
+    const existingCancelAnimationFrame = jest.fn();
+    const polyfillWindow: Record<string, unknown> = {
+      requestAnimationFrame: existingRequestAnimationFrame,
+      cancelAnimationFrame: existingCancelAnimationFrame,
+    };
+    const globalScope: Record<string, unknown> = { window: polyfillWindow };
+
+    installAnimationFrameWindowAliases(globalScope);
+
+    expect(polyfillWindow.requestAnimationFrame).toBe(
+      existingRequestAnimationFrame,
     );
-    expect(globalScope.requestAnimationFrame).toBe(
-      polyfillWindow.requestAnimationFrame,
+    expect(polyfillWindow.cancelAnimationFrame).toBe(
+      existingCancelAnimationFrame,
     );
-
-    const canceledCallback = jest.fn();
-    const frameHandle = (globalScope.requestAnimationFrame as RequestFrame)(
-      canceledCallback,
-    );
-
-    (globalScope.cancelAnimationFrame as CancelFrame)(frameHandle);
-
-    jest.advanceTimersByTime(32);
-
-    expect(canceledCallback).not.toHaveBeenCalled();
-    expect(nativeRequestAnimationFrame).not.toHaveBeenCalled();
   });
 });

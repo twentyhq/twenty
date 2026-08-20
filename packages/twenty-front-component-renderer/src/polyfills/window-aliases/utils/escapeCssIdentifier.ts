@@ -1,5 +1,3 @@
-// Backs the sandbox CSS.escape: https://drafts.csswg.org/cssom/#serialize-an-identifier
-
 const NULL_REPLACEMENT_CHARACTER = '�';
 
 const isControlCodeUnit = (codeUnit: number): boolean =>

@@ -21,8 +21,25 @@ describe('evaluateCssSupportsQuery', () => {
   it('should return false for unknown properties and values', () => {
     expect(evaluateCssSupportsQuery(['made-up-property', 'flex'])).toBe(false);
     expect(evaluateCssSupportsQuery(['display', 'made-up-value'])).toBe(false);
-    expect(evaluateCssSupportsQuery(['--custom-property', 'red'])).toBe(false);
     expect(evaluateCssSupportsQuery(['display', ''])).toBe(false);
+  });
+
+  it('should support any non-empty value on a custom property', () => {
+    expect(evaluateCssSupportsQuery(['--custom-property', 'red'])).toBe(true);
+    expect(evaluateCssSupportsQuery(['(--custom-property: 0 0 0)'])).toBe(true);
+    expect(evaluateCssSupportsQuery(['--custom-property', ''])).toBe(false);
+  });
+
+  it('should not resolve property names through the object prototype', () => {
+    expect(evaluateCssSupportsQuery(['toString', 'inherit'])).toBe(false);
+    expect(evaluateCssSupportsQuery(['constructor', 'flex'])).toBe(false);
+    expect(evaluateCssSupportsQuery(['__proto__', 'inherit'])).toBe(false);
+    expect(evaluateCssSupportsQuery(['valueOf', 'initial'])).toBe(false);
+  });
+
+  it('should not report support for values no browser implements', () => {
+    expect(evaluateCssSupportsQuery(['user-select', 'contain'])).toBe(false);
+    expect(evaluateCssSupportsQuery(['overflow-anchor', 'none'])).toBe(false);
   });
 
   it('should evaluate single-argument declaration conditions', () => {

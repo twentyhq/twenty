@@ -1,1 +1,0 @@
-export const IDLE_CALLBACK_FRAME_BUDGET_MS = 50;

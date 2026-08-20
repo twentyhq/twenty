@@ -794,7 +794,9 @@ Elements can measure themselves: the host mirrors geometry into the sandbox, so 
 Positioning from `getBoundingClientRect` now works, but anything watching size changes through `ResizeObserver` (recharts `ResponsiveContainer`, Floating UI's `autoUpdate`) still does not. Prefer CSS for layout anyway: your stylesheet reaches the real page, so flexbox, grid, `aspect-ratio`, `clamp()` and `@container` behave normally, with no frame lag.
 
 <Note>
-`requestAnimationFrame`, `fetch`, `setTimeout` and `queueMicrotask` work, with or without the `window.` prefix, and so do `performance` and `requestIdleCallback` (backed by a timer, so the idle deadline is approximate).
+`requestAnimationFrame`, `fetch`, `setTimeout` and `queueMicrotask` work, with or without the `window.` prefix, and so do `console`, `crypto`, `performance`, `structuredClone`, `btoa`/`atob`, `URL`, `AbortController`, `Headers`/`Request`/`Response`, `Blob`, `FormData` and `TextEncoder`/`TextDecoder`.
+
+`requestIdleCallback` is backed by a timer rather than real idle detection: the callback runs almost immediately and its deadline advertises a small fixed budget, so treat it as "soon", not as "when the thread is free". A `timeout` option is honoured.
 </Note>
 
 ### DOM access
@@ -824,7 +826,7 @@ Each element forwards its own properties to the host DOM (`href` on `a`, `src`/`
 
 Component CSS, whether from `import './styles.css'`, CSS-in-JS or a `style` element, is injected into the host page's `head` **unscoped**. So class names collide with Twenty's own (prefix them, and never write bare `div { ... }` selectors), and `@media` matches the browser window rather than your widget (use `@container` with your own `container-type`). Inline `style` props are unaffected.
 
-`CSS.escape()` works. `CSS.supports()` answers truthfully for a short allowlist of common layout properties (`display`, `position`, `flex-wrap`, ...) and returns `false` for everything else, even values the browser supports, so write the CSS directly instead of feature-detecting it.
+`CSS.escape()` works, and `CSS.supports()` answers `true` for custom properties and for a short allowlist of common layout properties (`display`, `position`, `flex-wrap`, ...). Everything else returns `false`, including values the browser supports and any condition combining `and`, `or` or `not`, so write the CSS directly instead of feature-detecting it.
 
 ### Storage and network
 

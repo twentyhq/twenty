@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { CSS_WIDE_KEYWORDS } from '@/polyfills/window-aliases/constants/CssWideKeywords';
 import { SUPPORTED_CSS_PROPERTY_KEYWORDS } from '@/polyfills/window-aliases/constants/SupportedCssPropertyKeywords';
+import { isCssCustomPropertyName } from '@/utils/css/isCssCustomPropertyName';
 import { normalizeCssPropertyName } from '@/utils/css/normalizeCssPropertyName';
 
 type EvaluateCssSupportsDeclarationInput = {
@@ -17,9 +18,18 @@ export const evaluateCssSupportsDeclaration = ({
   const normalizedProperty = normalizeCssPropertyName(property.trim());
   const normalizedValue = value.trim().toLowerCase();
 
-  const supportedKeywords = SUPPORTED_CSS_PROPERTY_KEYWORDS[normalizedProperty];
+  if (!isNonEmptyString(normalizedValue)) {
+    return false;
+  }
 
-  if (!isDefined(supportedKeywords) || !isNonEmptyString(normalizedValue)) {
+  if (isCssCustomPropertyName(normalizedProperty)) {
+    return true;
+  }
+
+  const supportedKeywords =
+    SUPPORTED_CSS_PROPERTY_KEYWORDS.get(normalizedProperty);
+
+  if (!isDefined(supportedKeywords)) {
     return false;
   }
 

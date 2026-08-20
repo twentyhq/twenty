@@ -1,5 +1,3 @@
-// Backs the sandbox CSS.supports: unknown or complex input is conservatively false
-
 import { evaluateCssSupportsCondition } from '@/polyfills/window-aliases/utils/evaluateCssSupportsCondition';
 import { evaluateCssSupportsDeclaration } from '@/polyfills/window-aliases/utils/evaluateCssSupportsDeclaration';
 

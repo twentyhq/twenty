@@ -4,4 +4,7 @@ export const NATIVE_FUNCTION_WINDOW_ALIAS_NAMES = [
   'clearTimeout',
   'setInterval',
   'clearInterval',
+  'structuredClone',
+  'btoa',
+  'atob',
 ] as const;

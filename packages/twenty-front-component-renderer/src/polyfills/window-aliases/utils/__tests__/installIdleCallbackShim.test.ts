@@ -1,6 +1,9 @@
 import { installIdleCallbackShim } from '../installIdleCallbackShim';
 
-type RequestIdle = (callback: IdleRequestCallback) => number;
+type RequestIdle = (
+  callback: IdleRequestCallback,
+  options?: IdleRequestOptions,
+) => number;
 type CancelIdle = (idleCallbackHandle: number) => void;
 
 describe('installIdleCallbackShim', () => {
@@ -43,7 +46,28 @@ describe('installIdleCallbackShim', () => {
 
     expect(idleDeadline.didTimeout).toBe(false);
     expect(idleDeadline.timeRemaining()).toBeGreaterThanOrEqual(0);
-    expect(idleDeadline.timeRemaining()).toBeLessThanOrEqual(50);
+    expect(idleDeadline.timeRemaining()).toBeLessThanOrEqual(5);
+  });
+
+  it('should report didTimeout when the requested timeout is shorter than the schedule delay', () => {
+    jest.useFakeTimers();
+
+    const globalScope: Record<string, unknown> = { window: {} };
+
+    installIdleCallbackShim(globalScope);
+
+    const idleCallback = jest.fn();
+
+    (globalScope.requestIdleCallback as RequestIdle)(idleCallback, {
+      timeout: 0,
+    });
+
+    jest.advanceTimersByTime(1);
+
+    expect(idleCallback).toHaveBeenCalledTimes(1);
+    expect((idleCallback.mock.calls[0][0] as IdleDeadline).didTimeout).toBe(
+      true,
+    );
   });
 
   it('should cancel a scheduled idle callback through its handle', () => {
@@ -90,35 +114,5 @@ describe('installIdleCallbackShim', () => {
     (polyfillWindow.cancelIdleCallback as CancelIdle)(idleCallbackHandle);
 
     expect(nativeCancelIdleCallback).toHaveBeenCalledWith(3);
-  });
-
-  it('should replace a partial native scheduler with a coherent fallback pair', () => {
-    jest.useFakeTimers();
-
-    const nativeRequestIdleCallback = jest.fn();
-    const polyfillWindow: Record<string, unknown> = {};
-    const globalScope: Record<string, unknown> = {
-      window: polyfillWindow,
-      requestIdleCallback: nativeRequestIdleCallback,
-    };
-
-    installIdleCallbackShim(globalScope);
-
-    expect(globalScope.requestIdleCallback).not.toBe(nativeRequestIdleCallback);
-    expect(globalScope.requestIdleCallback).toBe(
-      polyfillWindow.requestIdleCallback,
-    );
-
-    const canceledCallback = jest.fn();
-    const idleCallbackHandle = (globalScope.requestIdleCallback as RequestIdle)(
-      canceledCallback,
-    );
-
-    (globalScope.cancelIdleCallback as CancelIdle)(idleCallbackHandle);
-
-    jest.advanceTimersByTime(10);
-
-    expect(canceledCallback).not.toHaveBeenCalled();
-    expect(nativeRequestIdleCallback).not.toHaveBeenCalled();
   });
 });

@@ -19,10 +19,9 @@ describe('installCssNamespacePolyfill', () => {
 
     expect(cssNamespace.escape('.foo#bar')).toBe('\\.foo\\#bar');
     expect(cssNamespace.supports('display', 'flex')).toBe(true);
-    expect(cssNamespace.supports()).toBe(false);
   });
 
-  it('should throw a TypeError when escape is called without an argument', () => {
+  it('should throw a TypeError when escape or supports is called without an argument', () => {
     const globalScope: Record<string, unknown> = { window: {} };
 
     installCssNamespacePolyfill(globalScope);
@@ -30,6 +29,7 @@ describe('installCssNamespacePolyfill', () => {
     const cssNamespace = globalScope.CSS as CssNamespace;
 
     expect(() => cssNamespace.escape()).toThrow(TypeError);
+    expect(() => cssNamespace.supports()).toThrow(TypeError);
   });
 
   it('should never throw on unstringifiable supports arguments', () => {
@@ -42,19 +42,17 @@ describe('installCssNamespacePolyfill', () => {
     expect(cssNamespace.supports(Symbol('display'))).toBe(false);
   });
 
-  it('should not overwrite an existing CSS namespace', () => {
+  it('should alias an existing CSS namespace onto the window instead of shadowing it', () => {
     const existingCssNamespace = { escape: () => 'existing' };
+    const polyfillWindow: Record<string, unknown> = {};
     const globalScope: Record<string, unknown> = {
-      window: {},
+      window: polyfillWindow,
       CSS: existingCssNamespace,
     };
 
     installCssNamespacePolyfill(globalScope);
 
     expect(globalScope.CSS).toBe(existingCssNamespace);
-    expect((globalScope.window as Record<string, unknown>).CSS).toBeDefined();
-    expect((globalScope.window as Record<string, unknown>).CSS).not.toBe(
-      existingCssNamespace,
-    );
+    expect(polyfillWindow.CSS).toBe(existingCssNamespace);
   });
 });

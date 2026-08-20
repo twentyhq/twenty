@@ -1,17 +1,14 @@
 import { evaluateCssSupportsDeclaration } from '@/polyfills/window-aliases/utils/evaluateCssSupportsDeclaration';
+import { isSingleTopLevelCssGroup } from '@/utils/css/isSingleTopLevelCssGroup';
 import { stripImportantPriorityFromCssValue } from '@/utils/css/stripImportantPriorityFromCssValue';
-
-const COMPLEX_SUPPORTS_CONDITION_PATTERN = /\b(?:and|or|not|selector)\b/i;
 
 export const evaluateCssSupportsCondition = (condition: string): boolean => {
   const trimmedCondition = condition.trim();
+  const isParenthesized = trimmedCondition.startsWith('(');
 
-  if (COMPLEX_SUPPORTS_CONDITION_PATTERN.test(trimmedCondition)) {
+  if (isParenthesized && !isSingleTopLevelCssGroup(trimmedCondition)) {
     return false;
   }
-
-  const isParenthesized =
-    trimmedCondition.startsWith('(') && trimmedCondition.endsWith(')');
 
   const unwrappedCondition = isParenthesized
     ? trimmedCondition.slice(1, -1).trim()

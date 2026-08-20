@@ -33,6 +33,22 @@ describe('installNativeWindowAliases', () => {
     expect(polyfillWindow.clearInterval).toEqual(expect.any(Function));
   });
 
+  it('should alias namespaces and constructors by reference rather than binding them', () => {
+    const abortControllerAlias = AbortController;
+    const consoleAlias = { log: () => {} };
+    const polyfillWindow: Record<string, unknown> = {};
+    const globalScope: Record<string, unknown> = {
+      window: polyfillWindow,
+      AbortController: abortControllerAlias,
+      console: consoleAlias,
+    };
+
+    installNativeWindowAliases(globalScope);
+
+    expect(polyfillWindow.AbortController).toBe(abortControllerAlias);
+    expect(polyfillWindow.console).toBe(consoleAlias);
+  });
+
   it('should alias the performance object as-is', () => {
     const performanceAlias = { now: () => 42 };
     const polyfillWindow: Record<string, unknown> = {};
