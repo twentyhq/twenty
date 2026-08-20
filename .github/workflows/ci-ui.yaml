@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        task: [lint, typecheck, test, size, pack-size, generate:check]
+        task: [lint, typecheck, test, size, pack-size]
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -39,6 +39,9 @@ jobs:
         uses: ./.github/actions/yarn-install
       - name: Run ${{ matrix.task }}
         run: npx nx ${{ matrix.task }} twenty-ui
+      - name: Check generated theme artifacts are up to date
+        if: matrix.task == 'lint'
+        run: npx nx generate:check twenty-ui
   ui-sb-build:
     needs: changed-files-check
     if: >-

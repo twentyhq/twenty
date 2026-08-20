@@ -1,6 +1,10 @@
 import { COLOR_TOKENS } from './color';
 import { GRAY_SCALE_TOKENS } from './grayScale';
 import { token } from './token';
+
+const SM_RADIUS = token('4px');
+const MD_RADIUS = token('8px');
+
 export const BORDER_TOKENS = {
   color: {
     strong: GRAY_SCALE_TOKENS.gray6,
@@ -14,10 +18,10 @@ export const BORDER_TOKENS = {
   },
   radius: {
     xs: token('2px'),
-    sm: token('4px'),
-    md: token('8px'),
-    smRound: token('4px'),
-    mdRound: token('8px'),
+    sm: SM_RADIUS,
+    md: MD_RADIUS,
+    smRound: SM_RADIUS,
+    mdRound: MD_RADIUS,
     lg: token('16px'),
     xl: token('20px'),
     xxl: token('40px'),

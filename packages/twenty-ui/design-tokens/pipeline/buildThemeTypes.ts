@@ -9,6 +9,6 @@ export const buildThemeTypes = (leaves: CollectedTokenLeaf[]): string => {
     leafValue: (leaf) => (leaf.unit === 'number' ? 'number' : 'string'),
   });
   return `${GENERATED_TYPESCRIPT_HEADER}
-export type ThemeType = ${serializeTree({ node: tree, indent: 2, separator: ';' })};
+export type ThemeType = ${serializeTree({ node: tree, separator: ';' })};
 `;
 };

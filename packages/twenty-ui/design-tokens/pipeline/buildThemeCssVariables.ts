@@ -12,6 +12,6 @@ export const buildThemeCssVariables = (
     leafValue: (leaf) => quoteSingle(`var(${leaf.varName})`),
   });
   return `${GENERATED_TYPESCRIPT_HEADER}
-export const themeCssVariables = ${serializeTree({ node: tree, indent: 2, separator: ',' })};
+export const themeCssVariables = ${serializeTree({ node: tree, separator: ',' })};
 `;
 };

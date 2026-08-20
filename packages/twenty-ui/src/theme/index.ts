@@ -7,8 +7,8 @@
  *                              |___/
  */
 
-export type { AnimationDuration } from './constants/Animation';
 export { ANIMATION } from './constants/Animation';
+export type { AnimationDuration } from './constants/AnimationDuration';
 export { DEFAULT_THEME_COLOR_FALLBACK } from './constants/DefaultThemeColorFallback';
 export { GRAY_SCALE_DARK } from './constants/GrayScaleDark';
 export { GRAY_SCALE_LIGHT } from './constants/GrayScaleLight';

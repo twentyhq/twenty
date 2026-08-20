@@ -1,8 +1,6 @@
-export type CollectedTokenLeaf = {
+import { type DesignTokenLeaf } from './DesignTokenLeaf';
+
+export type CollectedTokenLeaf = DesignTokenLeaf & {
   path: string[];
   varName: string;
-  light: string;
-  dark: string;
-  unit?: 'number';
-  jsValue?: 'cssVariable';
 };

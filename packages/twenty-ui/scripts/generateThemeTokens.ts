@@ -8,8 +8,10 @@ import { DESIGN_TOKENS } from '../design-tokens/designTokens';
 import { buildMainColorNames } from '../design-tokens/pipeline/buildMainColorNames';
 import { buildThemeConstants } from '../design-tokens/pipeline/buildThemeConstants';
 import { buildThemeCss } from '../design-tokens/pipeline/buildThemeCss';
+import { buildThemeCommon } from '../design-tokens/pipeline/buildThemeCommon';
 import { buildThemeCssVariables } from '../design-tokens/pipeline/buildThemeCssVariables';
 import { buildThemeSpacing } from '../design-tokens/pipeline/buildThemeSpacing';
+import { buildThemeSubtreeConstant } from '../design-tokens/pipeline/buildThemeSubtreeConstant';
 import { buildThemeTypes } from '../design-tokens/pipeline/buildThemeTypes';
 import { collectLeaves } from '../design-tokens/pipeline/collectLeaves';
 import { THEME_CSS_FILE_NAME_BY_SCHEME } from '../design-tokens/themeCssFileNameByScheme';
@@ -20,37 +22,82 @@ const themeDirectory = resolve(packageRoot, 'src/theme');
 
 const leaves = collectLeaves(DESIGN_TOKENS);
 
-const sourceOutputs: Record<string, string> = {
-  [resolve(themeConstantsDirectory, THEME_CSS_FILE_NAME_BY_SCHEME.light)]:
-    buildThemeCss({ leaves, scheme: 'light' }),
-  [resolve(themeConstantsDirectory, THEME_CSS_FILE_NAME_BY_SCHEME.dark)]:
-    buildThemeCss({ leaves, scheme: 'dark' }),
-  [resolve(themeConstantsDirectory, 'themeCssVariables.ts')]:
-    buildThemeCssVariables(leaves),
-  [resolve(themeConstantsDirectory, 'themeTypes.generated.ts')]:
-    buildThemeTypes(leaves),
-  [resolve(themeDirectory, 'internal/themeSpacing.ts')]:
-    buildThemeSpacing(leaves),
-  [resolve(themeDirectory, 'constants/ThemeLight.ts')]: buildThemeConstants({
-    leaves,
-    scheme: 'light',
-  }),
-  [resolve(themeDirectory, 'constants/ThemeDark.ts')]: buildThemeConstants({
-    leaves,
-    scheme: 'dark',
-  }),
-  [resolve(themeDirectory, 'constants/MainColorNames.ts')]: buildMainColorNames(
-    Object.keys(MAIN_COLOR_TOKENS),
-  ),
-};
+const sourceOutputs = [
+  {
+    path: resolve(themeConstantsDirectory, THEME_CSS_FILE_NAME_BY_SCHEME.light),
+    content: buildThemeCss({ leaves, scheme: 'light' }),
+  },
+  {
+    path: resolve(themeConstantsDirectory, THEME_CSS_FILE_NAME_BY_SCHEME.dark),
+    content: buildThemeCss({ leaves, scheme: 'dark' }),
+  },
+  {
+    path: resolve(themeConstantsDirectory, 'themeCssVariables.ts'),
+    content: buildThemeCssVariables(leaves),
+  },
+  {
+    path: resolve(themeConstantsDirectory, 'themeTypes.ts'),
+    content: buildThemeTypes(leaves),
+  },
+  {
+    path: resolve(themeDirectory, 'internal/themeSpacing.ts'),
+    content: buildThemeSpacing(leaves),
+  },
+  {
+    path: resolve(themeDirectory, 'constants/ThemeLight.ts'),
+    content: buildThemeConstants({ leaves, scheme: 'light' }),
+  },
+  {
+    path: resolve(themeDirectory, 'constants/ThemeDark.ts'),
+    content: buildThemeConstants({ leaves, scheme: 'dark' }),
+  },
+  {
+    path: resolve(themeDirectory, 'constants/ThemeCommon.ts'),
+    content: buildThemeCommon(leaves),
+  },
+  {
+    path: resolve(themeDirectory, 'constants/MainColorNames.ts'),
+    content: buildMainColorNames(Object.keys(MAIN_COLOR_TOKENS)),
+  },
+  {
+    path: resolve(themeDirectory, 'constants/Animation.ts'),
+    content: buildThemeSubtreeConstant({
+      leaves,
+      rootKey: 'animation',
+      scheme: 'light',
+      exportName: 'ANIMATION',
+    }),
+  },
+  {
+    path: resolve(themeDirectory, 'constants/GrayScaleLight.ts'),
+    content: buildThemeSubtreeConstant({
+      leaves,
+      rootKey: 'grayScale',
+      scheme: 'light',
+      exportName: 'GRAY_SCALE_LIGHT',
+    }),
+  },
+  {
+    path: resolve(themeDirectory, 'constants/GrayScaleDark.ts'),
+    content: buildThemeSubtreeConstant({
+      leaves,
+      rootKey: 'grayScale',
+      scheme: 'dark',
+      exportName: 'GRAY_SCALE_DARK',
+    }),
+  },
+];
 
-for (const [filePath, content] of Object.entries(sourceOutputs)) {
-  writeFileSync(filePath, content, 'utf-8');
+for (const { path, content } of sourceOutputs) {
+  writeFileSync(path, content, 'utf-8');
 }
 
+// oxfmt owns the final bytes of every artifact, CSS included: it rewraps long
+// declarations at printWidth, so the committed files are its output, not the
+// builders'.
 const formatResult = spawnSync(
   'npx',
-  ['oxfmt', ...Object.keys(sourceOutputs)],
+  ['oxfmt', ...sourceOutputs.map(({ path }) => path)],
   { cwd: packageRoot, stdio: 'inherit' },
 );
 if (formatResult.status !== 0) {

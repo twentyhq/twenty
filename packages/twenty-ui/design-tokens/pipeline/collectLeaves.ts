@@ -22,8 +22,8 @@ const collectLeavesUnderPath = (
         varName: pathToVarName(valuePath),
         light: value.light,
         dark: value.dark,
-        ...(value.unit === 'number' ? { unit: 'number' } : {}),
-        ...(value.jsValue === 'cssVariable' ? { jsValue: 'cssVariable' } : {}),
+        unit: value.unit,
+        jsValue: value.jsValue,
       });
       continue;
     }

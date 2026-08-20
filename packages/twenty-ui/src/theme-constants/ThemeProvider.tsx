@@ -5,7 +5,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { ThemeScopeContext } from './ThemeScopeContext';
 import { themeCssVariables } from './themeCssVariables';
-import { type ThemeType } from './themeTypes.generated';
+import { type ThemeType } from './themeTypes';
 
 export type ThemeContextType = {
   theme: ThemeType;
