@@ -7,6 +7,10 @@ import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 
 describe('McpInstructionBuilderService', () => {
   let service: McpInstructionBuilderService;
+  let flatEntityMapsCacheService: {
+    getOrRecomputeManyOrAllFlatEntityMaps: jest.Mock;
+  };
+  let skillService: { findAllFlatSkills: jest.Mock };
 
   const buildWorkspace = (aiAdditionalInstructions: string | null) =>
     ({
@@ -46,6 +50,10 @@ describe('McpInstructionBuilderService', () => {
     service = module.get<McpInstructionBuilderService>(
       McpInstructionBuilderService,
     );
+    flatEntityMapsCacheService = module.get(
+      WorkspaceManyOrAllFlatEntityMapsCacheService,
+    );
+    skillService = module.get(SkillService);
   });
 
   it('should include the workspace ai instructions', async () => {
@@ -64,5 +72,17 @@ describe('McpInstructionBuilderService', () => {
 
     expect(instructions).toContain('Available objects: companies.');
     expect(instructions).not.toContain('## Workspace Instructions');
+  });
+
+  it('should scope its lookups to the given workspace', async () => {
+    await service.buildInstructions(buildWorkspace(null));
+
+    expect(
+      flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps,
+    ).toHaveBeenCalledWith({
+      workspaceId: 'workspace-1',
+      flatMapsKeys: ['flatObjectMetadataMaps'],
+    });
+    expect(skillService.findAllFlatSkills).toHaveBeenCalledWith('workspace-1');
   });
 });
