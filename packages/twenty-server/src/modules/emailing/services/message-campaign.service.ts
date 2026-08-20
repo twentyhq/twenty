@@ -199,33 +199,10 @@ export class MessageCampaignService {
             roleId,
           );
 
-          const normalized = normalizeCampaignRecipients(
+          return normalizeCampaignRecipients(
             rawRecipients,
             MAX_CAMPAIGN_RECIPIENTS,
           );
-
-          const campaignRepository = await this.getRoleScopedRepository(
-            workspaceId,
-            MessageCampaignWorkspaceEntity,
-            roleId,
-          );
-
-          const { affected } = await campaignRepository.update(
-            { id: campaignId, status: MessageCampaignStatus.DRAFT },
-            { status: MessageCampaignStatus.SENDING },
-          );
-
-          if (affected !== 1) {
-            throw new EmailingDomainException(
-              `Campaign ${campaignId} is no longer a sendable draft`,
-              EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
-            );
-          }
-
-          return {
-            recipients: normalized.recipients,
-            skipped: normalized.skipped,
-          };
         },
       );
 
@@ -236,19 +213,88 @@ export class MessageCampaignService {
         workspaceId,
       });
 
-    await this.messageQueueService.add<MaterializeCampaignJobData>(
-      MATERIALIZE_CAMPAIGN_JOB,
-      {
-        workspaceId,
-        campaignId,
-        messageChannelId: messageChannel.id,
-        emailingDomainId: emailingDomain.id,
-        recipients,
-      },
-      { retryLimit: 3 },
-    );
+    await this.claimDraftCampaignForSendingOrThrow({
+      workspaceId,
+      campaignId,
+      roleId,
+    });
+
+    await this.messageQueueService
+      .add<MaterializeCampaignJobData>(
+        MATERIALIZE_CAMPAIGN_JOB,
+        {
+          workspaceId,
+          campaignId,
+          messageChannelId: messageChannel.id,
+          emailingDomainId: emailingDomain.id,
+          recipients,
+        },
+        { retryLimit: 3 },
+      )
+      .catch(async (error) => {
+        await this.releaseSendingCampaignBackToDraft({
+          workspaceId,
+          campaignId,
+          roleId,
+        });
+
+        throw error;
+      });
 
     return { campaignId, queuedCount: recipients.length, skipped };
+  }
+
+  private async claimDraftCampaignForSendingOrThrow({
+    workspaceId,
+    campaignId,
+    roleId,
+  }: {
+    workspaceId: string;
+    campaignId: string;
+    roleId: string;
+  }): Promise<void> {
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const campaignRepository = await this.getRoleScopedRepository(
+        workspaceId,
+        MessageCampaignWorkspaceEntity,
+        roleId,
+      );
+
+      const { affected } = await campaignRepository.update(
+        { id: campaignId, status: MessageCampaignStatus.DRAFT },
+        { status: MessageCampaignStatus.SENDING },
+      );
+
+      if (affected !== 1) {
+        throw new EmailingDomainException(
+          `Campaign ${campaignId} is no longer a sendable draft`,
+          EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE,
+        );
+      }
+    });
+  }
+
+  private async releaseSendingCampaignBackToDraft({
+    workspaceId,
+    campaignId,
+    roleId,
+  }: {
+    workspaceId: string;
+    campaignId: string;
+    roleId: string;
+  }): Promise<void> {
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const campaignRepository = await this.getRoleScopedRepository(
+        workspaceId,
+        MessageCampaignWorkspaceEntity,
+        roleId,
+      );
+
+      await campaignRepository.update(
+        { id: campaignId, status: MessageCampaignStatus.SENDING },
+        { status: MessageCampaignStatus.DRAFT },
+      );
+    });
   }
 
   async sendTest({
