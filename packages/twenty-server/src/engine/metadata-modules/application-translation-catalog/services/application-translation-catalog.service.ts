@@ -130,7 +130,9 @@ export class ApplicationTranslationCatalogService {
   // The common case: merge every resolved translatable property back onto the
   // entity it came from. Callers that present several metadata names in one
   // payload use getI18nContextByApplicationId directly instead.
-  async resolveTranslatablePropertiesForEntities<TEntity extends object>({
+  async resolveTranslatablePropertiesForEntities<
+    TEntity extends { applicationId?: string | null },
+  >({
     metadataName,
     entities,
     locale,
@@ -143,7 +145,7 @@ export class ApplicationTranslationCatalogService {
   }): Promise<TEntity[]> {
     const getI18nContext = await this.getI18nContextByApplicationId({
       applicationIds: entities.map(
-        (entity) => (entity as { applicationId?: string }).applicationId,
+        (entity) => entity.applicationId ?? undefined,
       ),
       locale,
       workspaceId,
@@ -154,9 +156,7 @@ export class ApplicationTranslationCatalogService {
       ...resolveTranslatableProperties({
         metadataName,
         entity,
-        i18nContext: getI18nContext(
-          (entity as { applicationId?: string }).applicationId,
-        ),
+        i18nContext: getI18nContext(entity.applicationId ?? undefined),
       }),
     }));
   }

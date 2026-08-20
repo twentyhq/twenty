@@ -336,10 +336,11 @@ export class ObjectMetadataController {
     const resolvedFieldsByObjectId = new Map<string, FieldMetadataEntity[]>();
 
     for (const field of resolvedFields) {
-      resolvedFieldsByObjectId.set(field.objectMetadataId, [
-        ...(resolvedFieldsByObjectId.get(field.objectMetadataId) ?? []),
-        field,
-      ]);
+      const fieldsForObject =
+        resolvedFieldsByObjectId.get(field.objectMetadataId) ?? [];
+
+      fieldsForObject.push(field);
+      resolvedFieldsByObjectId.set(field.objectMetadataId, fieldsForObject);
     }
 
     return resolvedObjects.map((object) => ({
