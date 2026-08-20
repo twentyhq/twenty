@@ -1,4 +1,4 @@
-import { interpolateMessagePlaceholders } from 'twenty-shared/i18n';
+import { interpolateCommandMenuItemPlaceholders } from 'twenty-shared/i18n';
 import { type CommandMenuContextApi, type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { getCommandMenuItemPlaceholderValues } from '@/command-menu-item/utils/getCommandMenuItemPlaceholderValues';
@@ -17,11 +17,13 @@ export const interpolateCommandMenuItemFields = (
   const values = getCommandMenuItemPlaceholderValues(commandMenuContextApi);
 
   const interpolate = (value: Nullable<string>): Nullable<string> =>
-    isDefined(value) ? interpolateMessagePlaceholders(value, values) : value;
+    isDefined(value)
+      ? interpolateCommandMenuItemPlaceholders(value, values)
+      : value;
 
   return {
     iconKey: interpolate(item.icon),
-    label: interpolateMessagePlaceholders(item.label, values),
+    label: interpolateCommandMenuItemPlaceholders(item.label, values),
     shortLabel: interpolate(item.shortLabel),
   };
 };
