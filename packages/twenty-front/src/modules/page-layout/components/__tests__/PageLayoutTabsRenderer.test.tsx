@@ -7,6 +7,8 @@ import {
 } from '~/generated-metadata/graphql';
 
 let mockActiveTabId = 'hidden-transcript-tab-id';
+let mockTargetRecordId = 'calendar-event-id';
+let mockIsInSidePanel = false;
 const mockSetActiveTabId = jest.fn();
 
 const homeTab = {
@@ -71,10 +73,10 @@ jest.mock('@/page-layout/PageLayoutMainContent', () => ({
 
 jest.mock('@/ui/layout/contexts/LayoutRenderingContext', () => ({
   useLayoutRenderingContext: () => ({
-    isInSidePanel: false,
-    layoutType: 'record-page',
+    isInSidePanel: mockIsInSidePanel,
+    layoutType: PageLayoutType.RECORD_PAGE,
     targetRecordIdentifier: {
-      id: 'calendar-event-id',
+      id: mockTargetRecordId,
       targetObjectNameSingular: 'calendarEvent',
     },
   }),
@@ -96,11 +98,26 @@ jest.mock('@/ui/utilities/responsive/hooks/useIsMobile', () => ({
 }));
 
 jest.mock('@/ui/utilities/scroll/components/ScrollWrapper', () => ({
-  ScrollWrapper: ({ children }: { children: ReactNode }) => <>{children}</>,
+  ScrollWrapper: ({
+    children,
+    componentInstanceId,
+  }: {
+    children: ReactNode;
+    componentInstanceId: string;
+  }) => (
+    <div
+      id={`scroll-wrapper-${componentInstanceId}`}
+      data-testid="scroll-wrapper"
+    >
+      {children}
+    </div>
+  ),
 }));
 
 describe('PageLayoutTabsRenderer', () => {
   beforeEach(() => {
+    mockTargetRecordId = 'calendar-event-id';
+    mockIsInSidePanel = false;
     mockSetActiveTabId.mockClear();
   });
 
@@ -119,5 +136,44 @@ describe('PageLayoutTabsRenderer', () => {
     render(<PageLayoutTabsRenderer />);
 
     expect(screen.getByText('Rendered tab: home-tab-id')).toBeVisible();
+  });
+
+  it('resets the scroll position when the target record changes', () => {
+    mockActiveTabId = 'home-tab-id';
+
+    const { rerender } = render(<PageLayoutTabsRenderer />);
+
+    const scrollWrapper = screen.getByTestId('scroll-wrapper');
+
+    scrollWrapper.scrollTop = 200;
+    mockTargetRecordId = 'another-calendar-event-id';
+
+    rerender(<PageLayoutTabsRenderer />);
+
+    expect(scrollWrapper.scrollTop).toBe(0);
+  });
+
+  it('resets the scroll wrapper owned by the current rendering context', () => {
+    mockActiveTabId = 'home-tab-id';
+
+    render(<PageLayoutTabsRenderer />);
+
+    const mainViewScrollWrapper = screen.getByTestId('scroll-wrapper');
+    mainViewScrollWrapper.scrollTop = 200;
+
+    mockIsInSidePanel = true;
+
+    const { rerender } = render(<PageLayoutTabsRenderer />);
+    const sidePanelScrollWrapper = screen.getAllByTestId('scroll-wrapper')[1];
+
+    expect(sidePanelScrollWrapper.id).not.toBe(mainViewScrollWrapper.id);
+
+    sidePanelScrollWrapper.scrollTop = 200;
+    mockActiveTabId = 'hidden-transcript-tab-id';
+
+    rerender(<PageLayoutTabsRenderer />);
+
+    expect(mainViewScrollWrapper.scrollTop).toBe(200);
+    expect(sidePanelScrollWrapper.scrollTop).toBe(0);
   });
 });
