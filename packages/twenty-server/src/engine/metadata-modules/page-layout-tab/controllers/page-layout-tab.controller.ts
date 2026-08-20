@@ -19,7 +19,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
-import { resolveTranslatableProperties } from 'src/engine/metadata-modules/application-translation-catalog/utils/resolve-translatable-properties.util';
 import { paginateMetadataRestItems } from 'src/engine/api/rest/metadata/utils/paginate-metadata-rest-items.util';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -79,11 +78,15 @@ export class PageLayoutTabController {
     });
 
     return paginateMetadataRestItems({
-      items: await this.resolvePageLayoutTabTitles({
-        items,
-        locale,
-        workspaceId: workspace.id,
-      }),
+      items:
+        await this.applicationTranslationCatalogService.resolveTranslatablePropertiesForEntities(
+          {
+            metadataName: 'pageLayoutTab',
+            entities: items,
+            locale,
+            workspaceId: workspace.id,
+          },
+        ),
       request,
     });
   }
@@ -100,11 +103,15 @@ export class PageLayoutTabController {
       workspaceId: workspace.id,
     });
 
-    const [resolvedPageLayoutTab] = await this.resolvePageLayoutTabTitles({
-      items: [pageLayoutTab],
-      locale,
-      workspaceId: workspace.id,
-    });
+    const [resolvedPageLayoutTab] =
+      await this.applicationTranslationCatalogService.resolveTranslatablePropertiesForEntities(
+        {
+          metadataName: 'pageLayoutTab',
+          entities: [pageLayoutTab],
+          locale,
+          workspaceId: workspace.id,
+        },
+      );
 
     return resolvedPageLayoutTab;
   }
@@ -145,33 +152,5 @@ export class PageLayoutTabController {
       id,
       workspaceId: workspace.id,
     });
-  }
-
-  private async resolvePageLayoutTabTitles({
-    items,
-    locale,
-    workspaceId,
-  }: {
-    items: PageLayoutTabDTO[];
-    locale: keyof typeof APP_LOCALES | undefined;
-    workspaceId: string;
-  }): Promise<PageLayoutTabDTO[]> {
-    const getI18nContext =
-      await this.applicationTranslationCatalogService.getI18nContextByApplicationId(
-        {
-          applicationIds: items.map((item) => item.applicationId),
-          locale,
-          workspaceId,
-        },
-      );
-
-    return items.map((item) => ({
-      ...item,
-      ...resolveTranslatableProperties({
-        metadataName: 'pageLayoutTab',
-        entity: item,
-        i18nContext: getI18nContext(item.applicationId),
-      }),
-    }));
   }
 }

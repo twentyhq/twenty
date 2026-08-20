@@ -19,7 +19,6 @@ import { type APP_LOCALES } from 'twenty-shared/translations';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
-import { resolveTranslatableProperties } from 'src/engine/metadata-modules/application-translation-catalog/utils/resolve-translatable-properties.util';
 import { paginateMetadataRestItems } from 'src/engine/api/rest/metadata/utils/paginate-metadata-rest-items.util';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -79,11 +78,15 @@ export class PageLayoutWidgetController {
     });
 
     return paginateMetadataRestItems({
-      items: await this.resolvePageLayoutWidgetTitles({
-        items,
-        locale,
-        workspaceId: workspace.id,
-      }),
+      items:
+        await this.applicationTranslationCatalogService.resolveTranslatablePropertiesForEntities(
+          {
+            metadataName: 'pageLayoutWidget',
+            entities: items,
+            locale,
+            workspaceId: workspace.id,
+          },
+        ),
       request,
     });
   }
@@ -102,13 +105,15 @@ export class PageLayoutWidgetController {
       },
     );
 
-    const [resolvedPageLayoutWidget] = await this.resolvePageLayoutWidgetTitles(
-      {
-        items: [pageLayoutWidget],
-        locale,
-        workspaceId: workspace.id,
-      },
-    );
+    const [resolvedPageLayoutWidget] =
+      await this.applicationTranslationCatalogService.resolveTranslatablePropertiesForEntities(
+        {
+          metadataName: 'pageLayoutWidget',
+          entities: [pageLayoutWidget],
+          locale,
+          workspaceId: workspace.id,
+        },
+      );
 
     return resolvedPageLayoutWidget;
   }
@@ -149,33 +154,5 @@ export class PageLayoutWidgetController {
       id,
       workspaceId: workspace.id,
     });
-  }
-
-  private async resolvePageLayoutWidgetTitles({
-    items,
-    locale,
-    workspaceId,
-  }: {
-    items: PageLayoutWidgetDTO[];
-    locale: keyof typeof APP_LOCALES | undefined;
-    workspaceId: string;
-  }): Promise<PageLayoutWidgetDTO[]> {
-    const getI18nContext =
-      await this.applicationTranslationCatalogService.getI18nContextByApplicationId(
-        {
-          applicationIds: items.map((item) => item.applicationId),
-          locale,
-          workspaceId,
-        },
-      );
-
-    return items.map((item) => ({
-      ...item,
-      ...resolveTranslatableProperties({
-        metadataName: 'pageLayoutWidget',
-        entity: item,
-        i18nContext: getI18nContext(item.applicationId),
-      }),
-    }));
   }
 }

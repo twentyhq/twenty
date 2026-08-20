@@ -32,7 +32,6 @@ import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/pa
 import { PageLayoutRestApiExceptionFilter } from 'src/engine/metadata-modules/page-layout/filters/page-layout-rest-api-exception.filter';
 import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
-import { resolveTranslatableProperties } from 'src/engine/metadata-modules/application-translation-catalog/utils/resolve-translatable-properties.util';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
 
@@ -67,11 +66,14 @@ export class PageLayoutController {
     });
 
     return {
-      data: await this.resolvePageLayoutNames({
-        pageLayouts: page.items,
-        workspaceId: workspace.id,
-        locale,
-      }),
+      data: await this.applicationTranslationCatalogService.resolveTranslatablePropertiesForEntities(
+        {
+          metadataName: 'pageLayout',
+          entities: page.items,
+          locale,
+          workspaceId: workspace.id,
+        },
+      ),
       pageInfo: page.pageInfo,
       totalCount: page.totalCount,
     };
@@ -89,11 +91,15 @@ export class PageLayoutController {
       workspaceId: workspace.id,
     });
 
-    const [resolvedPageLayout] = await this.resolvePageLayoutNames({
-      pageLayouts: [pageLayout],
-      workspaceId: workspace.id,
-      locale,
-    });
+    const [resolvedPageLayout] =
+      await this.applicationTranslationCatalogService.resolveTranslatablePropertiesForEntities(
+        {
+          metadataName: 'pageLayout',
+          entities: [pageLayout],
+          locale,
+          workspaceId: workspace.id,
+        },
+      );
 
     return resolvedPageLayout;
   }
@@ -136,35 +142,5 @@ export class PageLayoutController {
       id,
       workspaceId: workspace.id,
     });
-  }
-
-  private async resolvePageLayoutNames({
-    pageLayouts,
-    workspaceId,
-    locale,
-  }: {
-    pageLayouts: PageLayoutDTO[];
-    workspaceId: string;
-    locale: keyof typeof APP_LOCALES | undefined;
-  }): Promise<PageLayoutDTO[]> {
-    const getI18nContext =
-      await this.applicationTranslationCatalogService.getI18nContextByApplicationId(
-        {
-          applicationIds: pageLayouts.map(
-            (pageLayout) => pageLayout.applicationId,
-          ),
-          locale,
-          workspaceId,
-        },
-      );
-
-    return pageLayouts.map((pageLayout) => ({
-      ...pageLayout,
-      ...resolveTranslatableProperties({
-        metadataName: 'pageLayout',
-        entity: pageLayout,
-        i18nContext: getI18nContext(pageLayout.applicationId),
-      }),
-    }));
   }
 }

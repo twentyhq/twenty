@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { type TranslatableMetadataName } from 'twenty-shared/i18n';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -8,6 +9,7 @@ import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { resolveRegistrationIdByApplicationId } from 'src/engine/metadata-modules/application-translation-catalog/utils/resolve-registration-id-by-application-id.util';
+import { resolveTranslatableProperties } from 'src/engine/metadata-modules/application-translation-catalog/utils/resolve-translatable-properties.util';
 import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/utils/effective-entity-i18n-context.type';
 import { getTwentyStandardApplicationIdOrThrow } from 'src/engine/metadata-modules/utils/get-twenty-standard-application-id-or-throw.util';
 
@@ -123,6 +125,40 @@ export class ApplicationTranslationCatalogService {
         ? catalogByApplicationId.get(applicationId)
         : undefined,
     });
+  }
+
+  // The common case: merge every resolved translatable property back onto the
+  // entity it came from. Callers that present several metadata names in one
+  // payload use getI18nContextByApplicationId directly instead.
+  async resolveTranslatablePropertiesForEntities<TEntity extends object>({
+    metadataName,
+    entities,
+    locale,
+    workspaceId,
+  }: {
+    metadataName: TranslatableMetadataName;
+    entities: TEntity[];
+    locale: keyof typeof APP_LOCALES | undefined;
+    workspaceId: string;
+  }): Promise<TEntity[]> {
+    const getI18nContext = await this.getI18nContextByApplicationId({
+      applicationIds: entities.map(
+        (entity) => (entity as { applicationId?: string }).applicationId,
+      ),
+      locale,
+      workspaceId,
+    });
+
+    return entities.map((entity) => ({
+      ...entity,
+      ...resolveTranslatableProperties({
+        metadataName,
+        entity,
+        i18nContext: getI18nContext(
+          (entity as { applicationId?: string }).applicationId,
+        ),
+      }),
+    }));
   }
 
   private async getFlatApplicationMaps({
