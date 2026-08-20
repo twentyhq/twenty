@@ -11,6 +11,7 @@ import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { MoveToTabDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/MoveToTabDropdownContent';
 import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
+import { shouldShowAddWidgetBelow } from '@/side-panel/pages/page-layout/utils/shouldShowAddWidgetBelow';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -81,6 +82,10 @@ export const WidgetSettingsPlacementSection = ({
 
   const showMoveUp = canMovePageLayoutWidgetUp(pageLayoutEditingWidgetId);
   const showMoveDown = canMovePageLayoutWidgetDown(pageLayoutEditingWidgetId);
+  const showAddWidgetBelow = shouldShowAddWidgetBelow({
+    currentTab,
+    pageLayoutEditingWidgetId,
+  });
 
   const handleMoveUp = () => {
     movePageLayoutWidgetUp(pageLayoutEditingWidgetId);
@@ -167,17 +172,19 @@ export const WidgetSettingsPlacementSection = ({
           onClick={handleAddWidgetAbove}
         />
       </SelectableListItem>
-      <SelectableListItem
-        itemId={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.ADD_WIDGET_BELOW}
-        onEnter={handleAddWidgetBelow}
-      >
-        <CommandMenuItem
-          id={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.ADD_WIDGET_BELOW}
-          Icon={IconRowInsertBottom}
-          label={t`Add widget below`}
-          onClick={handleAddWidgetBelow}
-        />
-      </SelectableListItem>
+      {showAddWidgetBelow && (
+        <SelectableListItem
+          itemId={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.ADD_WIDGET_BELOW}
+          onEnter={handleAddWidgetBelow}
+        >
+          <CommandMenuItem
+            id={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.ADD_WIDGET_BELOW}
+            Icon={IconRowInsertBottom}
+            label={t`Add widget below`}
+            onClick={handleAddWidgetBelow}
+          />
+        </SelectableListItem>
+      )}
     </SidePanelGroup>
   );
 };

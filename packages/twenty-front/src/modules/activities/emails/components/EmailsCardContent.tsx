@@ -52,11 +52,11 @@ export const EmailsCardContent = ({
           {timelineThreads.map((thread) => (
             <EmailThreadPreview key={thread.id} thread={thread} />
           ))}
+          <CustomResolverFetchMoreLoader
+            loading={isFetchingMore}
+            onLastRowVisible={onLastRowVisible}
+          />
         </ActivityList>
-        <CustomResolverFetchMoreLoader
-          loading={isFetchingMore}
-          onLastRowVisible={onLastRowVisible}
-        />
       </StyledSection>
     </StyledContainer>
   );

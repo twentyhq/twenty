@@ -3,6 +3,7 @@ import { PageLayoutContent } from '@/page-layout/components/PageLayoutContent';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
 import { useCurrentPageLayout } from '@/page-layout/hooks/useCurrentPageLayout';
 import { usePageLayoutTabWithVisibleWidgetsOrThrow } from '@/page-layout/hooks/usePageLayoutTabWithVisibleWidgetsOrThrow';
+import { getScrollWrapperInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getScrollWrapperInstanceIdFromPageLayoutAndRecord';
 import { getTabLayoutMode } from '@/page-layout/utils/getTabLayoutMode';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
@@ -34,18 +35,28 @@ const StyledContainer = styled.div`
 `;
 
 type PageLayoutLeftPanelProps = {
+  pageLayoutId: string;
   pinnedLeftTabId: string;
 };
 
 export const PageLayoutLeftPanel = ({
+  pageLayoutId,
   pinnedLeftTabId,
 }: PageLayoutLeftPanelProps) => {
   const { currentPageLayout } = useCurrentPageLayout();
   const targetRecordIdentifier = useTargetRecord();
-  const { isInSidePanel } = useLayoutRenderingContext();
+  const { isInSidePanel, layoutType } = useLayoutRenderingContext();
   const pinnedTab = usePageLayoutTabWithVisibleWidgetsOrThrow(pinnedLeftTabId);
 
-  const scrollWrapperInstanceId = `page-layout-left-panel-${pinnedLeftTabId}`;
+  const scrollWrapperInstanceId =
+    getScrollWrapperInstanceIdFromPageLayoutAndRecord({
+      pageLayoutId,
+      layoutType,
+      targetRecordIdentifier,
+      isInSidePanel,
+      scrollWrapperArea: 'left-panel',
+      pageLayoutTabId: pinnedLeftTabId,
+    });
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement(
     scrollWrapperInstanceId,
   );

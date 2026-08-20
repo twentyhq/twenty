@@ -139,4 +139,42 @@ describe('addWidgetToTab', () => {
       },
     ]);
   });
+
+  it('should preserve saved vertical-list order when appending to an unsorted widget array', () => {
+    const widgetA = {
+      ...mockWidget,
+      id: 'widget-a',
+      position: {
+        __typename: 'PageLayoutWidgetVerticalListPosition' as const,
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+        index: 1,
+      },
+    };
+    const widgetB = {
+      ...mockWidget,
+      id: 'widget-b',
+      position: {
+        __typename: 'PageLayoutWidgetVerticalListPosition' as const,
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+        index: 0,
+      },
+    };
+    const verticalListTab = {
+      ...mockTabs[0],
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      widgets: [widgetA, widgetB],
+    };
+    const newWidget = {
+      ...mockWidget,
+      id: 'widget-c',
+    };
+
+    const result = addWidgetToTab([verticalListTab], 'tab-1', newWidget);
+
+    expect(result[0].widgets.map(({ id }) => id)).toEqual([
+      'widget-b',
+      'widget-a',
+      'widget-c',
+    ]);
+  });
 });

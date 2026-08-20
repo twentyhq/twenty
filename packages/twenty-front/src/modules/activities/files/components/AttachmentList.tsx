@@ -44,11 +44,17 @@ const StyledContainer = styled.div`
   align-items: flex-start;
   align-self: stretch;
   display: flex;
+  flex: 1;
   flex-direction: column;
+  height: 100%;
+  min-height: 0;
   width: 100%;
 `;
 
 const StyledDropZoneContainer = styled.div`
+  flex: 1;
+  height: 100%;
+  min-height: 0;
   width: 100%;
 `;
 

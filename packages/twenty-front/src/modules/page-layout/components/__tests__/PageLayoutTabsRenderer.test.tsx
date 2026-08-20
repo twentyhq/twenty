@@ -8,6 +8,7 @@ import {
 
 let mockActiveTabId = 'hidden-transcript-tab-id';
 let mockTargetRecordId = 'calendar-event-id';
+let mockIsInSidePanel = false;
 const mockSetActiveTabId = jest.fn();
 
 const homeTab = {
@@ -72,8 +73,8 @@ jest.mock('@/page-layout/PageLayoutMainContent', () => ({
 
 jest.mock('@/ui/layout/contexts/LayoutRenderingContext', () => ({
   useLayoutRenderingContext: () => ({
-    isInSidePanel: false,
-    layoutType: 'record-page',
+    isInSidePanel: mockIsInSidePanel,
+    layoutType: PageLayoutType.RECORD_PAGE,
     targetRecordIdentifier: {
       id: mockTargetRecordId,
       targetObjectNameSingular: 'calendarEvent',
@@ -116,6 +117,7 @@ jest.mock('@/ui/utilities/scroll/components/ScrollWrapper', () => ({
 describe('PageLayoutTabsRenderer', () => {
   beforeEach(() => {
     mockTargetRecordId = 'calendar-event-id';
+    mockIsInSidePanel = false;
     mockSetActiveTabId.mockClear();
   });
 
@@ -149,5 +151,29 @@ describe('PageLayoutTabsRenderer', () => {
     rerender(<PageLayoutTabsRenderer />);
 
     expect(scrollWrapper.scrollTop).toBe(0);
+  });
+
+  it('resets the scroll wrapper owned by the current rendering context', () => {
+    mockActiveTabId = 'home-tab-id';
+
+    render(<PageLayoutTabsRenderer />);
+
+    const mainViewScrollWrapper = screen.getByTestId('scroll-wrapper');
+    mainViewScrollWrapper.scrollTop = 200;
+
+    mockIsInSidePanel = true;
+
+    const { rerender } = render(<PageLayoutTabsRenderer />);
+    const sidePanelScrollWrapper = screen.getAllByTestId('scroll-wrapper')[1];
+
+    expect(sidePanelScrollWrapper.id).not.toBe(mainViewScrollWrapper.id);
+
+    sidePanelScrollWrapper.scrollTop = 200;
+    mockActiveTabId = 'hidden-transcript-tab-id';
+
+    rerender(<PageLayoutTabsRenderer />);
+
+    expect(mainViewScrollWrapper.scrollTop).toBe(200);
+    expect(sidePanelScrollWrapper.scrollTop).toBe(0);
   });
 });

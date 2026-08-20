@@ -8,7 +8,7 @@ import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutIn
 import { usePageLayoutAddTabStrategy } from '@/page-layout/hooks/usePageLayoutAddTabStrategy';
 import { usePageLayoutRenderableTabs } from '@/page-layout/hooks/usePageLayoutRenderableTabs';
 import { PageLayoutMainContent } from '@/page-layout/PageLayoutMainContent';
-import { getScrollWrapperInstanceIdFromPageLayoutId } from '@/page-layout/utils/getScrollWrapperInstanceIdFromPageLayoutId';
+import { getScrollWrapperInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getScrollWrapperInstanceIdFromPageLayoutAndRecord';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
@@ -107,9 +107,14 @@ export const PageLayoutTabsRenderer = () => {
 
   const activeTabId = useAtomComponentStateValue(activeTabIdComponentState);
 
-  const scrollWrapperInstanceId = getScrollWrapperInstanceIdFromPageLayoutId(
-    currentPageLayout.id,
-  );
+  const scrollWrapperInstanceId =
+    getScrollWrapperInstanceIdFromPageLayoutAndRecord({
+      pageLayoutId: currentPageLayout.id,
+      layoutType,
+      targetRecordIdentifier,
+      isInSidePanel,
+      scrollWrapperArea: 'tab-content',
+    });
 
   const { getScrollWrapperElement } = useScrollWrapperHTMLElement(
     scrollWrapperInstanceId,
@@ -151,7 +156,10 @@ export const PageLayoutTabsRenderer = () => {
     <PageLayoutWidgetDndProvider>
       <StyledContainer hasPinnedTab={isDefined(pinnedLeftTab)}>
         {isDefined(pinnedLeftTab) && (
-          <PageLayoutLeftPanel pinnedLeftTabId={pinnedLeftTab.id} />
+          <PageLayoutLeftPanel
+            pageLayoutId={currentPageLayout.id}
+            pinnedLeftTabId={pinnedLeftTab.id}
+          />
         )}
 
         <StyledTabsAndDashboardContainer>

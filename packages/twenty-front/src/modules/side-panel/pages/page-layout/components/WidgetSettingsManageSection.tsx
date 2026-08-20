@@ -3,6 +3,7 @@ import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
 import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
 import { useResetPageLayoutWidgetToDefault } from '@/page-layout/hooks/useResetPageLayoutWidgetToDefault';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { WidgetVisibilityDropdownContent } from '@/side-panel/pages/page-layout/components/dropdown-content/WidgetVisibilityDropdownContent';
@@ -27,6 +28,7 @@ import {
   IconTrash,
 } from 'twenty-ui/icon';
 import { AppTooltip } from 'twenty-ui/surfaces';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 const RESET_WIDGET_TO_DEFAULT_MODAL_ID = 'reset-widget-to-default-modal';
 const RESET_WIDGET_TO_DEFAULT_MENU_ITEM_ID =
@@ -42,6 +44,11 @@ export const WidgetSettingsManageSection = ({
   const { t } = useLingui();
 
   const { widgetInEditMode } = useWidgetInEditMode(pageLayoutId);
+
+  const pageLayoutDraft = useAtomComponentStateValue(
+    pageLayoutDraftComponentState,
+    pageLayoutId,
+  );
 
   const pageLayoutEditingWidgetId = useAtomComponentStateValue(
     pageLayoutEditingWidgetIdComponentState,
@@ -85,7 +92,10 @@ export const WidgetSettingsManageSection = ({
 
   const handleReplaceWidget = () => {
     navigatePageLayoutSidePanel({
-      sidePanelPage: SidePanelPages.PageLayoutRecordPageWidgetTypeSelect,
+      sidePanelPage:
+        pageLayoutDraft.type === PageLayoutType.DASHBOARD
+          ? SidePanelPages.PageLayoutDashboardWidgetTypeSelect
+          : SidePanelPages.PageLayoutRecordPageWidgetTypeSelect,
     });
   };
 

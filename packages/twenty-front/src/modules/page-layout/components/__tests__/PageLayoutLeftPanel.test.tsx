@@ -7,6 +7,7 @@ let mockTargetRecordIdentifier = {
   id: 'record-id',
   targetObjectNameSingular: 'company',
 };
+let mockIsInSidePanel = false;
 
 jest.mock('@/object-record/record-show/components/SummaryCard', () => ({
   SummaryCard: () => null,
@@ -38,7 +39,10 @@ jest.mock('@/page-layout/utils/getTabLayoutMode', () => ({
 }));
 
 jest.mock('@/ui/layout/contexts/LayoutRenderingContext', () => ({
-  useLayoutRenderingContext: () => ({ isInSidePanel: false }),
+  useLayoutRenderingContext: () => ({
+    isInSidePanel: mockIsInSidePanel,
+    layoutType: PageLayoutType.RECORD_PAGE,
+  }),
 }));
 
 jest.mock('@/ui/layout/contexts/useTargetRecord', () => ({
@@ -68,11 +72,15 @@ describe('PageLayoutLeftPanel', () => {
       id: 'record-id',
       targetObjectNameSingular: 'company',
     };
+    mockIsInSidePanel = false;
   });
 
   it('resets the pinned scroll position when the target record changes', () => {
     const { rerender } = render(
-      <PageLayoutLeftPanel pinnedLeftTabId="pinned-tab-id" />,
+      <PageLayoutLeftPanel
+        pageLayoutId="page-layout-id"
+        pinnedLeftTabId="pinned-tab-id"
+      />,
     );
 
     const scrollWrapper = screen.getByTestId('pinned-scroll-wrapper');
@@ -83,8 +91,59 @@ describe('PageLayoutLeftPanel', () => {
       id: 'another-record-id',
     };
 
-    rerender(<PageLayoutLeftPanel pinnedLeftTabId="pinned-tab-id" />);
+    rerender(
+      <PageLayoutLeftPanel
+        pageLayoutId="page-layout-id"
+        pinnedLeftTabId="pinned-tab-id"
+      />,
+    );
 
     expect(scrollWrapper.scrollTop).toBe(0);
+  });
+
+  it('resets the pinned scroll wrapper owned by the current rendering context', () => {
+    render(
+      <PageLayoutLeftPanel
+        pageLayoutId="page-layout-id"
+        pinnedLeftTabId="pinned-tab-id"
+      />,
+    );
+
+    const mainViewScrollWrapper = screen.getByTestId('pinned-scroll-wrapper');
+    mainViewScrollWrapper.scrollTop = 200;
+
+    mockTargetRecordIdentifier = {
+      ...mockTargetRecordIdentifier,
+      id: 'side-panel-record-id',
+    };
+    mockIsInSidePanel = true;
+
+    const { rerender } = render(
+      <PageLayoutLeftPanel
+        pageLayoutId="page-layout-id"
+        pinnedLeftTabId="pinned-tab-id"
+      />,
+    );
+    const sidePanelScrollWrapper = screen.getAllByTestId(
+      'pinned-scroll-wrapper',
+    )[1];
+
+    expect(sidePanelScrollWrapper.id).not.toBe(mainViewScrollWrapper.id);
+
+    sidePanelScrollWrapper.scrollTop = 200;
+    mockTargetRecordIdentifier = {
+      ...mockTargetRecordIdentifier,
+      id: 'another-side-panel-record-id',
+    };
+
+    rerender(
+      <PageLayoutLeftPanel
+        pageLayoutId="page-layout-id"
+        pinnedLeftTabId="pinned-tab-id"
+      />,
+    );
+
+    expect(mainViewScrollWrapper.scrollTop).toBe(200);
+    expect(sidePanelScrollWrapper.scrollTop).toBe(0);
   });
 });
