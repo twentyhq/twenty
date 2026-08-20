@@ -5012,6 +5012,7 @@ export type QueryInvokingUserHasPermissionFlagArgs = {
   permissionFlag: PermissionFlagType;
 };
 
+
 export type QueryIsApplicationStoppedArgs = {
   applicationUniversalIdentifier: Scalars['String']['input'];
 };

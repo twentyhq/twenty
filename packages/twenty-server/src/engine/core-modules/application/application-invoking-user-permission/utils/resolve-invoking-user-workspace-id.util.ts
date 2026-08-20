@@ -8,5 +8,4 @@ export const resolveInvokingUserWorkspaceId = ({
 }: {
   invokingUser?: LogicFunctionInvokingUser;
   tokenUserWorkspaceId?: string;
-}): string | undefined =>
-  invokingUser?.userWorkspaceId ?? tokenUserWorkspaceId;
+}): string | undefined => invokingUser?.userWorkspaceId ?? tokenUserWorkspaceId;
