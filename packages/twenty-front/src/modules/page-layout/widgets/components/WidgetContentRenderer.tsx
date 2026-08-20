@@ -25,12 +25,12 @@ import { WidgetType } from '~/generated-metadata/graphql';
 
 type WidgetContentRendererProps = {
   widget: PageLayoutWidget;
-  isTabViewport: boolean;
+  fillsViewport: boolean;
 };
 
 export const WidgetContentRenderer = ({
   widget,
-  isTabViewport,
+  fillsViewport,
 }: WidgetContentRendererProps) => {
   switch (widget.type) {
     case WidgetType.GRAPH:
@@ -68,21 +68,21 @@ export const WidgetContentRenderer = ({
 
     case WidgetType.WORKFLOW:
       return (
-        <WorkflowDiagramAllowPageScrollContext.Provider value={isTabViewport}>
+        <WorkflowDiagramAllowPageScrollContext.Provider value={fillsViewport}>
           <WorkflowWidget />
         </WorkflowDiagramAllowPageScrollContext.Provider>
       );
 
     case WidgetType.WORKFLOW_VERSION:
       return (
-        <WorkflowDiagramAllowPageScrollContext.Provider value={isTabViewport}>
+        <WorkflowDiagramAllowPageScrollContext.Provider value={fillsViewport}>
           <WorkflowVersionWidget />
         </WorkflowDiagramAllowPageScrollContext.Provider>
       );
 
     case WidgetType.WORKFLOW_RUN:
       return (
-        <WorkflowDiagramAllowPageScrollContext.Provider value={isTabViewport}>
+        <WorkflowDiagramAllowPageScrollContext.Provider value={fillsViewport}>
           <WorkflowRunWidget />
         </WorkflowDiagramAllowPageScrollContext.Provider>
       );

@@ -6,7 +6,7 @@ import { type PageLayoutWidgetDragData } from '@/page-layout/types/PageLayoutWid
 import { type PageLayoutWidgetListDropData } from '@/page-layout/types/PageLayoutWidgetListDropData';
 import { WidgetRenderer } from '@/page-layout/widgets/components/WidgetRenderer';
 import { useIsInPinnedTab } from '@/page-layout/widgets/hooks/useIsInPinnedTab';
-import { getWidgetLayoutBehavior } from '@/page-layout/widgets/utils/getWidgetLayoutBehavior';
+import { getWidgetVerticalListSizing } from '@/page-layout/widgets/utils/getWidgetVerticalListSizing';
 import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
 import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
 import { pointerIntersection } from '@dnd-kit/collision';
@@ -26,7 +26,7 @@ const StyledVerticalListContainer = styled.div<{
     shouldUseWhiteBackground
       ? themeCssVariables.background.primary
       : themeCssVariables.background.secondary};
-  --viewport-widget-editor-block-inset: ${({
+  --viewport-filling-widget-editor-block-inset: ${({
     isInEditMode,
     isSideColumnContext,
   }) =>
@@ -73,11 +73,11 @@ const StyledWidgetSlot = styled.div<{
   min-width: 0;
 
   @container tab-viewport (min-height: 0px) {
-    &.page-layout-tab-viewport-slot {
+    &.page-layout-viewport-filling-widget-slot {
       --widget-height: 100%;
       --widget-scroll-overflow: auto;
 
-      height: calc(100cqh - var(--viewport-widget-editor-block-inset));
+      height: calc(100cqh - var(--viewport-filling-widget-editor-block-inset));
       overflow: clip;
 
       .widget {
@@ -139,9 +139,9 @@ export const PageLayoutVerticalList = ({
       shouldUseWhiteBackground={!isInPinnedTab || isMobile}
     >
       {widgets.map((widget, index) => {
-        const isTabViewport =
+        const fillsViewport =
           layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST &&
-          getWidgetLayoutBehavior(widget.type) === 'TAB_VIEWPORT';
+          getWidgetVerticalListSizing(widget.type) === 'FILL_VIEWPORT';
 
         const widgetDragData: PageLayoutWidgetDragData = {
           type: 'widget',
@@ -153,7 +153,9 @@ export const PageLayoutVerticalList = ({
         return (
           <StyledWidgetSlot
             className={
-              isTabViewport ? 'page-layout-tab-viewport-slot' : undefined
+              fillsViewport
+                ? 'page-layout-viewport-filling-widget-slot'
+                : undefined
             }
             isInEditMode={isInEditMode}
             key={widget.id}
@@ -177,7 +179,7 @@ export const PageLayoutVerticalList = ({
               hasTransition={false}
               highlightWhileDragging={isInEditMode}
               orientation="horizontal"
-              fill={isTabViewport}
+              fill={fillsViewport}
             >
               <WidgetRenderer widget={widget} />
             </DragDropItemSortableCell>

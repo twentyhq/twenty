@@ -1,6 +1,6 @@
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
-import { getAdjacentExpandableWidgetIndex } from '@/page-layout/utils/getAdjacentExpandableWidgetIndex';
+import { getAdjacentFitContentWidgetIndex } from '@/page-layout/utils/getAdjacentFitContentWidgetIndex';
 import { moveWidgetWithinTabInDraft } from '@/page-layout/utils/moveWidgetWithinTabInDraft';
 import { sortWidgetsByVerticalListPosition } from '@/page-layout/utils/sortWidgetsByVerticalListPosition';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -37,7 +37,7 @@ export const useMovePageLayoutWidgetDown = (pageLayoutIdFromProps?: string) => {
         const currentIndex = sortedWidgets.findIndex(
           (widget) => widget.id === widgetId,
         );
-        const targetIndex = getAdjacentExpandableWidgetIndex({
+        const targetIndex = getAdjacentFitContentWidgetIndex({
           widgets: sortedWidgets,
           widgetIndex: currentIndex,
           direction: 'down',

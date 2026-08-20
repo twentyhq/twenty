@@ -1,6 +1,6 @@
 import { makeWidget } from '@/page-layout/testing/pageLayoutDraftFixtures';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { sortWidgetsWithViewportLast } from '@/page-layout/utils/sortWidgetsWithViewportLast';
+import { sortWidgetsWithViewportFillingLast } from '@/page-layout/utils/sortWidgetsWithViewportFillingLast';
 import { WidgetType } from '~/generated-metadata/graphql';
 
 const makeWidgetWithType = (
@@ -12,8 +12,8 @@ const makeWidgetWithType = (
   type,
 });
 
-describe('sortWidgetsWithViewportLast', () => {
-  it('normalizes a viewport widget after expandable widgets during edits', () => {
+describe('sortWidgetsWithViewportFillingLast', () => {
+  it('normalizes a viewport-filling widget after fit-content widgets during edits', () => {
     const timelineWidget = makeWidgetWithType(
       'timeline',
       0,
@@ -23,7 +23,7 @@ describe('sortWidgetsWithViewportLast', () => {
     const fieldWidget = makeWidgetWithType('field', 2, WidgetType.FIELD);
 
     expect(
-      sortWidgetsWithViewportLast([
+      sortWidgetsWithViewportFillingLast([
         timelineWidget,
         fieldsWidget,
         fieldWidget,
@@ -31,7 +31,7 @@ describe('sortWidgetsWithViewportLast', () => {
     ).toEqual(['fields', 'field', 'timeline']);
   });
 
-  it('keeps two viewport widgets at the end in their existing order', () => {
+  it('keeps two viewport-filling widgets at the end in their existing order', () => {
     const timelineWidget = makeWidgetWithType(
       'timeline',
       0,
@@ -46,7 +46,7 @@ describe('sortWidgetsWithViewportLast', () => {
     );
 
     expect(
-      sortWidgetsWithViewportLast([
+      sortWidgetsWithViewportFillingLast([
         timelineWidget,
         fieldsWidget,
         emailsWidget,
@@ -55,12 +55,12 @@ describe('sortWidgetsWithViewportLast', () => {
     ).toEqual(['fields', 'rich-text', 'timeline', 'emails']);
   });
 
-  it('preserves the order of expandable widgets', () => {
+  it('preserves the order of fit-content widgets', () => {
     const fieldsWidget = makeWidgetWithType('fields', 0, WidgetType.FIELDS);
     const fieldWidget = makeWidgetWithType('field', 1, WidgetType.FIELD);
 
     expect(
-      sortWidgetsWithViewportLast([fieldsWidget, fieldWidget]).map(
+      sortWidgetsWithViewportFillingLast([fieldsWidget, fieldWidget]).map(
         ({ id }) => id,
       ),
     ).toEqual(['fields', 'field']);

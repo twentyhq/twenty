@@ -108,7 +108,7 @@ describe('addWidgetToTab', () => {
     expect(result[0].widgets).toHaveLength(1);
   });
 
-  it('should normalize an appended widget before a viewport widget in a vertical-list tab', () => {
+  it('should normalize an appended widget before a viewport-filling widget in a vertical-list tab', () => {
     const timelineWidget = {
       ...mockWidget,
       id: 'timeline-widget',

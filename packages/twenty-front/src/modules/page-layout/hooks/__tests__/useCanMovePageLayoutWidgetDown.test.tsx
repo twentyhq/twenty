@@ -114,7 +114,7 @@ describe('useCanMovePageLayoutWidgetDown', () => {
     expect(result.current.canMovePageLayoutWidgetDown('widget-a')).toBe(false);
   });
 
-  it('should return false for a TAB_VIEWPORT widget', () => {
+  it('should return false for a FILL_VIEWPORT widget', () => {
     const store = createStore();
     const wrapper = getWrapper(store);
 
@@ -139,7 +139,7 @@ describe('useCanMovePageLayoutWidgetDown', () => {
     );
   });
 
-  it('should return false for the last expandable before a viewport widget', () => {
+  it('should return false for the last fit-content widget before a viewport-filling widget', () => {
     const store = createStore();
     const wrapper = getWrapper(store);
 
@@ -164,7 +164,7 @@ describe('useCanMovePageLayoutWidgetDown', () => {
     );
   });
 
-  it('should ignore viewport widgets when resolving the expandable widget below', () => {
+  it('should ignore viewport-filling widgets when resolving the fit-content widget below', () => {
     const store = createStore();
     const wrapper = getWrapper(store);
 

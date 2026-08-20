@@ -25,13 +25,13 @@ describe('usePageLayoutHeaderInfo', () => {
     ).result.current;
   };
 
-  it('identifies a viewport widget in the side-panel header', () => {
+  it('identifies a viewport-filling widget in the side-panel header', () => {
     expect(getWidgetSettingsHeaderInfo(WidgetType.EMAILS)?.headerType).toBe(
-      'Viewport Widget',
+      'Full-height Widget',
     );
   });
 
-  it('keeps the generic label for an expandable widget', () => {
+  it('keeps the generic label for a fit-content widget', () => {
     expect(
       getWidgetSettingsHeaderInfo(WidgetType.FRONT_COMPONENT)?.headerType,
     ).toBe('Widget');

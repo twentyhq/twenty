@@ -1,6 +1,6 @@
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
-import { getAdjacentExpandableWidgetIndex } from '@/page-layout/utils/getAdjacentExpandableWidgetIndex';
+import { getAdjacentFitContentWidgetIndex } from '@/page-layout/utils/getAdjacentFitContentWidgetIndex';
 import { sortWidgetsByVerticalListPosition } from '@/page-layout/utils/sortWidgetsByVerticalListPosition';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -43,7 +43,7 @@ export const useCanMovePageLayoutWidgetDown = (
       );
 
       return isDefined(
-        getAdjacentExpandableWidgetIndex({
+        getAdjacentFitContentWidgetIndex({
           widgets: sortedWidgets,
           widgetIndex,
           direction: 'down',

@@ -1,6 +1,6 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { getWidgetLayoutBehavior } from '@/page-layout/widgets/utils/getWidgetLayoutBehavior';
+import { getWidgetVerticalListSizing } from '@/page-layout/widgets/utils/getWidgetVerticalListSizing';
 import { GRAPH_TYPE_INFORMATION } from '@/side-panel/pages/page-layout/constants/GraphTypeInformation';
 import { getCurrentGraphTypeFromConfig } from '@/side-panel/pages/page-layout/utils/getCurrentGraphTypeFromConfig';
 import { isWidgetConfigurationOfTypeGraph } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfTypeGraph';
@@ -111,8 +111,8 @@ export const usePageLayoutHeaderInfo = ({
         headerIcon: IconLayoutDashboard,
         headerIconColor: iconColor,
         headerType:
-          getWidgetLayoutBehavior(widgetInEditMode.type) === 'TAB_VIEWPORT'
-            ? t`Viewport Widget`
+          getWidgetVerticalListSizing(widgetInEditMode.type) === 'FILL_VIEWPORT'
+            ? t`Full-height Widget`
             : t`Widget`,
         title,
         isReadonly: false,

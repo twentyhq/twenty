@@ -95,7 +95,7 @@ describe('PageLayoutVerticalList', () => {
     mockLayoutMode = PageLayoutTabLayoutMode.VERTICAL_LIST;
   });
 
-  it('gives Timeline TAB_VIEWPORT treatment regardless of its position', () => {
+  it('gives Timeline FILL_VIEWPORT sizing regardless of its position', () => {
     render(
       <PageLayoutVerticalList
         isInEditMode={false}
@@ -107,14 +107,18 @@ describe('PageLayoutVerticalList', () => {
     );
 
     expect(
-      screen.getByTestId('timeline').closest('.page-layout-tab-viewport-slot'),
+      screen
+        .getByTestId('timeline')
+        .closest('.page-layout-viewport-filling-widget-slot'),
     ).not.toBeNull();
     expect(screen.getByTestId('timeline-sortable-cell')).toHaveAttribute(
       'data-fill',
       'true',
     );
     expect(
-      screen.getByTestId('fields').closest('.page-layout-tab-viewport-slot'),
+      screen
+        .getByTestId('fields')
+        .closest('.page-layout-viewport-filling-widget-slot'),
     ).toBeNull();
     expect(screen.getByTestId('fields-sortable-cell')).toHaveAttribute(
       'data-fill',
@@ -122,7 +126,7 @@ describe('PageLayoutVerticalList', () => {
     );
   });
 
-  it('gives TAB_VIEWPORT treatment to other intrinsic viewport widgets', () => {
+  it('gives FILL_VIEWPORT sizing to other viewport-filling widgets', () => {
     const viewportWidgets = [
       makeWidget('calendar', WidgetType.CALENDAR),
       makeWidget('call-recording-summary', WidgetType.CALL_RECORDING_SUMMARY),
@@ -148,7 +152,9 @@ describe('PageLayoutVerticalList', () => {
 
     for (const widget of viewportWidgets) {
       expect(
-        screen.getByTestId(widget.id).closest('.page-layout-tab-viewport-slot'),
+        screen
+          .getByTestId(widget.id)
+          .closest('.page-layout-viewport-filling-widget-slot'),
       ).not.toBeNull();
       expect(screen.getByTestId(`${widget.id}-sortable-cell`)).toHaveAttribute(
         'data-fill',
@@ -157,11 +163,13 @@ describe('PageLayoutVerticalList', () => {
     }
 
     expect(
-      screen.getByTestId('fields').closest('.page-layout-tab-viewport-slot'),
+      screen
+        .getByTestId('fields')
+        .closest('.page-layout-viewport-filling-widget-slot'),
     ).toBeNull();
   });
 
-  it('gates TAB_VIEWPORT treatment on vertical-list layout mode', () => {
+  it('gates FILL_VIEWPORT sizing on vertical-list layout mode', () => {
     mockLayoutMode = PageLayoutTabLayoutMode.CANVAS;
 
     render(
@@ -172,7 +180,9 @@ describe('PageLayoutVerticalList', () => {
     );
 
     expect(
-      screen.getByTestId('timeline').closest('.page-layout-tab-viewport-slot'),
+      screen
+        .getByTestId('timeline')
+        .closest('.page-layout-viewport-filling-widget-slot'),
     ).toBeNull();
     expect(screen.getByTestId('timeline-sortable-cell')).toHaveAttribute(
       'data-fill',

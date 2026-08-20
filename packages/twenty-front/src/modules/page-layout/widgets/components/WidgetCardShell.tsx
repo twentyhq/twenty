@@ -7,7 +7,7 @@ import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/con
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
 import { type WidgetCardVariant } from '@/page-layout/widgets/types/WidgetCardVariant';
 import { getWidgetContentPadding } from '@/page-layout/widgets/utils/getWidgetContentPadding';
-import { getWidgetLayoutBehavior } from '@/page-layout/widgets/utils/getWidgetLayoutBehavior';
+import { getWidgetVerticalListSizing } from '@/page-layout/widgets/utils/getWidgetVerticalListSizing';
 import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetCard';
 import { WidgetCardContent } from '@/page-layout/widgets/widget-card/components/WidgetCardContent';
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
@@ -62,8 +62,9 @@ export const WidgetCardShell = ({
   const { layoutMode } = usePageLayoutContentContext();
 
   const isVerticalList = layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST;
-  const isTabViewport =
-    isVerticalList && getWidgetLayoutBehavior(widget.type) === 'TAB_VIEWPORT';
+  const fillsViewport =
+    isVerticalList &&
+    getWidgetVerticalListSizing(widget.type) === 'FILL_VIEWPORT';
   const isFixedHeightIframe =
     isVerticalList && widget.type === WidgetType.IFRAME;
   const contentPadding =
@@ -130,7 +131,7 @@ export const WidgetCardShell = ({
             >
               <WidgetContentRenderer
                 widget={widget}
-                isTabViewport={isTabViewport}
+                fillsViewport={fillsViewport}
               />
             </ErrorBoundary>
           ) : (

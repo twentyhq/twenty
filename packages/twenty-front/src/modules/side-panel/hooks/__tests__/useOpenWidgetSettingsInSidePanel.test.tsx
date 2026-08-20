@@ -68,7 +68,7 @@ describe('useOpenWidgetSettingsInSidePanel', () => {
       },
     );
 
-  it('opens widget settings for a TAB_VIEWPORT widget in a vertical-list tab', () => {
+  it('opens widget settings for a FILL_VIEWPORT widget in a vertical-list tab', () => {
     const store = createStore();
     const timelineWidget = {
       ...makeWidget('timeline-widget', 1),
@@ -99,7 +99,7 @@ describe('useOpenWidgetSettingsInSidePanel', () => {
     expect(mockCloseSidePanelMenu).not.toHaveBeenCalled();
   });
 
-  it('opens widget settings for a TAB_VIEWPORT widget in a grid tab', () => {
+  it('opens widget settings for a FILL_VIEWPORT widget in a grid tab', () => {
     const store = createStore();
     const timelineWidget = {
       ...makeWidget('timeline-widget', 1),
@@ -134,7 +134,7 @@ describe('useOpenWidgetSettingsInSidePanel', () => {
     expect(mockCloseSidePanelMenu).not.toHaveBeenCalled();
   });
 
-  it('opens widget settings for an expandable widget in a multi-widget tab', () => {
+  it('opens widget settings for a fit-content widget in a multi-widget tab', () => {
     const store = createStore();
     const frontComponentWidget = {
       ...makeWidget('front-component-widget', 1),

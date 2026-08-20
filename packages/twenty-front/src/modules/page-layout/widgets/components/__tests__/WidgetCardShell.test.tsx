@@ -11,9 +11,9 @@ import {
 } from '~/generated-metadata/graphql';
 
 jest.mock('@/page-layout/widgets/components/WidgetContentRenderer', () => ({
-  WidgetContentRenderer: ({ isTabViewport }: { isTabViewport: boolean }) => (
+  WidgetContentRenderer: ({ fillsViewport }: { fillsViewport: boolean }) => (
     <div
-      data-is-tab-viewport={String(isTabViewport)}
+      data-fills-viewport={String(fillsViewport)}
       data-testid="widget-content"
     />
   ),
@@ -101,11 +101,11 @@ describe('WidgetCardShell layout behavior', () => {
     mockWidgetCardContent.mockClear();
   });
 
-  it('forwards intrinsic TAB_VIEWPORT treatment for Timeline', () => {
+  it('forwards intrinsic FILL_VIEWPORT sizing for Timeline', () => {
     renderWidgetCardShell({ widgetType: WidgetType.TIMELINE });
 
     expect(screen.getByTestId('widget-content')).toHaveAttribute(
-      'data-is-tab-viewport',
+      'data-fills-viewport',
       'true',
     );
   });

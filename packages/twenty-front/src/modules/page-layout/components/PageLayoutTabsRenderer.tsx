@@ -40,7 +40,7 @@ const StyledContainer = styled.div<{ hasPinnedTab: boolean }>`
       container-type: normal !important;
     }
 
-    .page-layout-tab-viewport-slot {
+    .page-layout-viewport-filling-widget-slot {
       --widget-height: auto !important;
 
       height: auto !important;

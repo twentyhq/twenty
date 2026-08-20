@@ -63,7 +63,7 @@ describe('useMovePageLayoutWidgetUp', () => {
     expect(widgetAPosition).toEqual(expect.objectContaining({ index: 1 }));
   });
 
-  it('should move relative to the expandable widget above and canonicalize the list', () => {
+  it('should move relative to the fit-content widget above and canonicalize the list', () => {
     const store = createStore();
     const wrapper = getWrapper(store);
 
@@ -104,7 +104,7 @@ describe('useMovePageLayoutWidgetUp', () => {
     ).toEqual([0, 1, 2]);
   });
 
-  it('should not move a viewport widget', () => {
+  it('should not move a viewport-filling widget', () => {
     const store = createStore();
     const wrapper = getWrapper(store);
 

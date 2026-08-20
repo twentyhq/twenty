@@ -104,7 +104,7 @@ describe('useInsertCreatedWidgetAtContext', () => {
     expect(widgetIds).toEqual(['widget-a', 'widget-c', 'widget-b']);
   });
 
-  it('should normalize a newly inserted widget before the viewport widget', () => {
+  it('should normalize a newly inserted widget before the viewport-filling widget', () => {
     const store = createStore();
     const wrapper = getWrapper(store);
 
