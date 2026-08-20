@@ -1666,6 +1666,7 @@ msgstr "Cancel Edition"
 
 #. js-lingui-id: JrNGiU
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Canceled"
 msgstr "Canceled"
@@ -5955,6 +5956,7 @@ msgstr "March"
 
 #. js-lingui-id: 6lmi/1
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "Marketing sending is on hold until the unsubscribe domain is verified."
 msgstr "Marketing sending is on hold until the unsubscribe domain is verified."
 
@@ -6867,6 +6869,12 @@ msgctxt "fieldMetadata.description"
 msgid "Number of emails that failed to send"
 msgstr "Number of emails that failed to send"
 
+#. js-lingui-id: JUyrVC
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Number of recipients skipped without being emailed"
+msgstr "Number of recipients skipped without being emailed"
+
 #. js-lingui-id: bgG8mY
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -7071,6 +7079,11 @@ msgstr "One or more redirect URIs are invalid."
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "One or more requested scopes are invalid."
 msgstr "One or more requested scopes are invalid."
+
+#. js-lingui-id: EkozT1
+#: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
+msgid "Only a campaign that is currently sending can be canceled."
+msgstr "Only a campaign that is currently sending can be canceled."
 
 #. js-lingui-id: NYONBC
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -8915,6 +8928,12 @@ msgstr "Skill with name \"{name}\" already exists"
 msgctxt "fieldMetadata.label"
 msgid "Skipped"
 msgstr "Skipped"
+
+#. js-lingui-id: 9KFM/B
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Skipped count"
+msgstr "Skipped count"
 
 #. js-lingui-id: kIKb9e
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts

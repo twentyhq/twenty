@@ -525,6 +525,15 @@ export const buildMessageStandardFlatFieldMetadatas = ({
           position: 5,
           color: 'yellow',
         },
+        {
+          id: '6e7a45bd-6d81-464d-bb49-11879ab57302',
+          value: 'SENDING',
+          label: i18nLabel(
+            msg({ message: `Sending`, context: 'fieldMetadata.label' }),
+          ),
+          position: 6,
+          color: 'blue',
+        },
       ],
     },
     standardObjectMetadataRelatedEntityIds,

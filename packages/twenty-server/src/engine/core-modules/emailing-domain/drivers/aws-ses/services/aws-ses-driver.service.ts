@@ -22,7 +22,7 @@ import {
 } from 'src/engine/core-modules/emailing-domain/drivers/interfaces/emailing-domain-driver.interface';
 import { type EmailingDomainSendEmailRequest } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-input.type';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
-import { getUnsubscribeBaseUrl } from 'src/engine/core-modules/emailing-domain/drivers/utils/get-unsubscribe-base-url.util';
+import { getUnsubscribeBaseUrlOrThrow } from 'src/engine/core-modules/emailing-domain/drivers/utils/get-unsubscribe-base-url.util';
 import { type UnsubscribeContentService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-content.service';
 
 import { AWS_SES_RESOURCE_NAME_PREFIX } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/aws-ses-resource-name-prefix.constant';
@@ -130,7 +130,9 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
   async sendEmail(
     input: EmailingDomainSendEmailRequest,
   ): Promise<EmailingDomainSendEmailResult> {
-    const unsubscribeBaseUrl = getUnsubscribeBaseUrl(input.emailingDomain);
+    const unsubscribeBaseUrl = getUnsubscribeBaseUrlOrThrow(
+      input.emailingDomain,
+    );
     const emailToSend = this.unsubscribeContentService.addTo(
       input,
       unsubscribeBaseUrl,

@@ -22,7 +22,7 @@ import { RESEND_WORKSPACE_TAG_NAME } from 'src/engine/core-modules/emailing-doma
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { type EmailingDomainSendEmailRequest } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-input.type';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
-import { getUnsubscribeBaseUrl } from 'src/engine/core-modules/emailing-domain/drivers/utils/get-unsubscribe-base-url.util';
+import { getUnsubscribeBaseUrlOrThrow } from 'src/engine/core-modules/emailing-domain/drivers/utils/get-unsubscribe-base-url.util';
 import { type UnsubscribeContentService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-content.service';
 
 export class ResendDriver implements EmailingDomainDriverInterface {
@@ -34,8 +34,6 @@ export class ResendDriver implements EmailingDomainDriverInterface {
     private readonly unsubscribeContentService: UnsubscribeContentService,
   ) {}
 
-  // Resend has no per-workspace resources: domains are account-level and
-  // workspace attribution travels on each send as a tag.
   async provisionWorkspace(workspaceId: string): Promise<void> {
     this.logger.log(
       `No Resend resources to provision for workspace ${workspaceId}`,
@@ -48,9 +46,7 @@ export class ResendDriver implements EmailingDomainDriverInterface {
     );
   }
 
-  async registerDomain(_input: EmailingDomainResourceInput): Promise<void> {
-    // the return-path subdomain is configured by Resend at domain creation
-  }
+  async registerDomain(_input: EmailingDomainResourceInput): Promise<void> {}
 
   async verifyDomain(
     input: EmailingDomainResourceInput,
@@ -123,7 +119,9 @@ export class ResendDriver implements EmailingDomainDriverInterface {
       );
     }
 
-    const unsubscribeBaseUrl = getUnsubscribeBaseUrl(input.emailingDomain);
+    const unsubscribeBaseUrl = getUnsubscribeBaseUrlOrThrow(
+      input.emailingDomain,
+    );
     const emailToSend = this.unsubscribeContentService.addTo(
       input,
       unsubscribeBaseUrl,

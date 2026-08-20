@@ -1103,6 +1103,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "sentCount": {
         "universalIdentifier": "2f333d2b-37b8-4ddc-ad0d-c07c6ce066ad",
       },
+      "skippedCount": {
+        "universalIdentifier": "a1f4c6d2-5e8b-4a37-9c60-31b7f0d2a984",
+      },
       "status": {
         "universalIdentifier": "c7117256-3de6-48e1-87df-c99c32bad610",
       },
@@ -1168,6 +1171,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           "sentCount": {
             "universalIdentifier": "e55b655a-038e-5257-ab2c-f2966900d2de",
           },
+          "skippedCount": {
+            "universalIdentifier": "9ab64cf1-133e-56a4-8eda-e33a4bc8aba9",
+          },
           "status": {
             "universalIdentifier": "68714967-d906-5082-af8c-2791705ce682",
           },
@@ -1198,6 +1204,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
           "sentCount": {
             "universalIdentifier": "46bd8f8e-4053-5418-9abc-e67e0842701b",
+          },
+          "skippedCount": {
+            "universalIdentifier": "87b7b9db-3692-5c0a-af1b-e28530f24d82",
           },
           "status": {
             "universalIdentifier": "246db7b1-e241-5d06-87df-99af5d4ba9bc",
