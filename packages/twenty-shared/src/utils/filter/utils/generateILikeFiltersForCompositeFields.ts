@@ -29,12 +29,18 @@ export const generateILikeFiltersForCompositeFields = (
     });
   }
 
-  const tokens = filterString.split(' ').filter(Boolean);
-  if (tokens.length <= 1) {
+  const trimmed = filterString.trim();
+  const tokens = trimmed.split(/\s+/).filter(Boolean);
+
+  if (tokens.length === 0) {
+    return [];
+  }
+
+  if (tokens.length === 1) {
     return subFields.map((subField) => ({
       [baseFieldName]: {
         [subField]: {
-          ilike: `%${filterString}%`,
+          ilike: `%${tokens[0]}%`,
         },
       },
     }));
