@@ -166,7 +166,7 @@ describe('createWorkerGeometryStore', () => {
     expect(store.getViewportSnapshot()?.innerWidth).toBe(1200);
   });
 
-  it('should notify viewport subscribers only on batches that carry a viewport', () => {
+  it('should notify viewport subscribers only when the viewport actually changed', () => {
     const { store } = createRootedStore();
     const viewportUpdateListener = jest.fn();
 
@@ -177,6 +177,31 @@ describe('createWorkerGeometryStore', () => {
 
     store.applyGeometryBatch({ viewport: createViewport(800) });
     expect(viewportUpdateListener).toHaveBeenCalledTimes(1);
+
+    store.applyGeometryBatch({
+      viewport: createViewport(800),
+      elements: { '0': createSnapshot(9) },
+    });
+    expect(viewportUpdateListener).toHaveBeenCalledTimes(1);
+  });
+
+  it('should keep notifying viewport subscribers when one of them throws', () => {
+    const { store } = createRootedStore();
+    const throwingListener = jest.fn(() => {
+      throw new Error('listener failure');
+    });
+    const viewportUpdateListener = jest.fn();
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+    store.subscribeToViewportUpdates(throwingListener);
+    store.subscribeToViewportUpdates(viewportUpdateListener);
+
+    expect(() =>
+      store.applyGeometryBatch({ viewport: createViewport(800) }),
+    ).not.toThrow();
+    expect(viewportUpdateListener).toHaveBeenCalledTimes(1);
+
+    warn.mockRestore();
   });
 
   it('should stop notifying an unsubscribed viewport listener', () => {

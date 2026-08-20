@@ -785,13 +785,16 @@ Elements can measure themselves: the host mirrors geometry into the sandbox, so 
 | API | What happens |
 |-----|--------------|
 | `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Work, from the mirror; assigning `scrollTop` / `scrollLeft` is a no-op |
-| `getClientRects()`, `window.matchMedia()` | Throws |
+| `getClientRects()` | Throws |
+| `window.matchMedia()` | Works for `width`, `height`, `orientation`, `device-pixel-ratio`, `resolution` and `prefers-color-scheme`, with `change` events; widths and heights describe **your widget's box**, not the browser viewport, so they follow `document.body.clientWidth` rather than `window.innerWidth`. Any other feature evaluates to `false` |
 | `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY` | Work, reporting the **browser viewport**; your widget's own size is `document.body.clientWidth` / `clientHeight` |
 | `window.getComputedStyle()` | Returns the element's inline styles only, never the host-computed cascade |
 | `ResizeObserver`, `IntersectionObserver` | `ReferenceError` (`typeof` guards do work) |
 | `MutationObserver` | Works, including `subtree`, `attributeFilter`, old values and `takeRecords()` |
 
 Positioning from `getBoundingClientRect` now works, but anything watching size changes through `ResizeObserver` (recharts `ResponsiveContainer`, Floating UI's `autoUpdate`) still does not. Prefer CSS for layout anyway: your stylesheet reaches the real page, so flexbox, grid, `aspect-ratio`, `clamp()` and `@container` behave normally, with no frame lag.
+
+Because that stylesheet reaches the real page, a `@media (min-width: ...)` rule is evaluated by the host against the browser viewport, while `matchMedia('(min-width: ...)')` answers for your widget's box. Use `@container` when you want CSS to follow the same box your JavaScript sees.
 
 <Note>
 `requestAnimationFrame`, `fetch`, `setTimeout` and `queueMicrotask` work without the `window.` prefix. Only `window.requestAnimationFrame(...)` and friends throw.

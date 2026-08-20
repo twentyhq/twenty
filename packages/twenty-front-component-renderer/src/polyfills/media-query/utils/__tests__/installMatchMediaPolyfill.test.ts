@@ -1,4 +1,5 @@
 import { type MediaQueryEnvironment } from '@/polyfills/media-query/types/MediaQueryEnvironment';
+import { type MediaQueryEnvironmentListener } from '@/polyfills/media-query/types/MediaQueryEnvironmentListener';
 import { type WorkerMediaQueryList } from '@/polyfills/media-query/types/WorkerMediaQueryList';
 import { installMatchMediaPolyfill } from '../installMatchMediaPolyfill';
 
@@ -6,13 +7,13 @@ type MatchMediaFunction = (query: unknown) => WorkerMediaQueryList;
 
 const setupMatchMedia = () => {
   let environment: MediaQueryEnvironment = {
-    viewportWidth: 0,
-    viewportHeight: 0,
+    componentWidth: 0,
+    componentHeight: 0,
     devicePixelRatio: 1,
     colorScheme: 'light',
   };
 
-  const environmentUpdateListeners = new Set<() => void>();
+  const environmentUpdateListeners = new Set<MediaQueryEnvironmentListener>();
 
   const globalScope: Record<string, unknown> = {};
 
@@ -34,7 +35,7 @@ const setupMatchMedia = () => {
     environment = { ...environment, ...overrides };
 
     for (const environmentUpdateListener of environmentUpdateListeners) {
-      environmentUpdateListener();
+      environmentUpdateListener(environment);
     }
   };
 
@@ -48,7 +49,7 @@ const setupMatchMedia = () => {
 describe('installMatchMediaPolyfill', () => {
   it('should evaluate min-width and max-width against the environment', () => {
     const { matchMedia, setEnvironment } = setupMatchMedia();
-    setEnvironment({ viewportWidth: 1024 });
+    setEnvironment({ componentWidth: 1024 });
 
     expect(matchMedia('(min-width: 800px)').matches).toBe(true);
     expect(matchMedia('(min-width: 1024px)').matches).toBe(true);
@@ -59,7 +60,7 @@ describe('installMatchMediaPolyfill', () => {
 
   it('should evaluate combined and comma-separated queries', () => {
     const { matchMedia, setEnvironment } = setupMatchMedia();
-    setEnvironment({ viewportWidth: 1024 });
+    setEnvironment({ componentWidth: 1024 });
 
     expect(
       matchMedia('screen and (min-width: 800px) and (max-width: 1200px)')
@@ -83,7 +84,7 @@ describe('installMatchMediaPolyfill', () => {
     expect(matchMedia('(min-resolution: 3dppx)').matches).toBe(false);
   });
 
-  it('should report zero viewport sizes before the first environment update', () => {
+  it('should report zero component sizes before the first environment update', () => {
     const { matchMedia } = setupMatchMedia();
 
     expect(matchMedia('(min-width: 1px)').matches).toBe(false);
@@ -92,9 +93,9 @@ describe('installMatchMediaPolyfill', () => {
 
   it('should return false for unknown or unparseable queries without throwing', () => {
     const { matchMedia, setEnvironment } = setupMatchMedia();
-    setEnvironment({ viewportWidth: 1024 });
+    setEnvironment({ componentWidth: 1024 });
 
-    expect(matchMedia('(orientation: portrait)').matches).toBe(false);
+    expect(matchMedia('(hover: hover)').matches).toBe(false);
     expect(matchMedia('(min-width >= 600px)').matches).toBe(false);
     expect(matchMedia('garbage').matches).toBe(false);
     expect(matchMedia(undefined).matches).toBe(false);
@@ -105,7 +106,34 @@ describe('installMatchMediaPolyfill', () => {
     const { matchMedia } = setupMatchMedia();
 
     expect(matchMedia('').matches).toBe(true);
+    expect(matchMedia('   ').matches).toBe(true);
     expect(matchMedia('all').matches).toBe(true);
+  });
+
+  it('should treat an empty query inside a list as never matching', () => {
+    const { matchMedia, setEnvironment } = setupMatchMedia();
+    setEnvironment({ componentWidth: 320 });
+
+    expect(matchMedia('(min-width: 2000px),').matches).toBe(false);
+    expect(
+      matchMedia('(min-width: 2000px), , (min-width: 3000px)').matches,
+    ).toBe(false);
+    expect(matchMedia('(min-width: 2000px), (min-width: 100px)').matches).toBe(
+      true,
+    );
+  });
+
+  it('should evaluate orientation from the component box', () => {
+    const { matchMedia, setEnvironment } = setupMatchMedia();
+    setEnvironment({ componentWidth: 1024, componentHeight: 400 });
+
+    expect(matchMedia('(orientation: landscape)').matches).toBe(true);
+    expect(matchMedia('(orientation: portrait)').matches).toBe(false);
+
+    setEnvironment({ componentWidth: 400, componentHeight: 1024 });
+
+    expect(matchMedia('(orientation: portrait)').matches).toBe(true);
+    expect(matchMedia('(orientation: landscape)').matches).toBe(false);
   });
 
   it('should evaluate prefers-color-scheme from the environment', () => {
@@ -129,39 +157,45 @@ describe('installMatchMediaPolyfill', () => {
     setEnvironment({ colorScheme: 'dark' });
 
     expect(changeListener).toHaveBeenCalledTimes(1);
-    expect(changeListener).toHaveBeenCalledWith({
-      type: 'change',
-      media: '(prefers-color-scheme: dark)',
-      matches: true,
-    });
+    expect(changeListener).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'change',
+        media: '(prefers-color-scheme: dark)',
+        matches: true,
+      }),
+    );
   });
 
   it('should notify a change listener exactly once per flip', () => {
     const { matchMedia, setEnvironment } = setupMatchMedia();
-    setEnvironment({ viewportWidth: 1024 });
+    setEnvironment({ componentWidth: 1024 });
 
     const changeListener = jest.fn();
     const mediaQueryList = matchMedia('(min-width: 1000px)');
     mediaQueryList.addEventListener('change', changeListener);
 
-    setEnvironment({ viewportWidth: 800 });
-    setEnvironment({ viewportWidth: 700 });
+    setEnvironment({ componentWidth: 800 });
+    setEnvironment({ componentWidth: 700 });
 
     expect(changeListener).toHaveBeenCalledTimes(1);
-    expect(changeListener).toHaveBeenLastCalledWith({
-      type: 'change',
-      media: '(min-width: 1000px)',
-      matches: false,
-    });
+    expect(changeListener).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        type: 'change',
+        media: '(min-width: 1000px)',
+        matches: false,
+      }),
+    );
 
-    setEnvironment({ viewportWidth: 1200 });
+    setEnvironment({ componentWidth: 1200 });
 
     expect(changeListener).toHaveBeenCalledTimes(2);
-    expect(changeListener).toHaveBeenLastCalledWith({
-      type: 'change',
-      media: '(min-width: 1000px)',
-      matches: true,
-    });
+    expect(changeListener).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        type: 'change',
+        media: '(min-width: 1000px)',
+        matches: true,
+      }),
+    );
   });
 
   it('should install matchMedia on both the global scope and a distinct window', () => {
@@ -172,8 +206,8 @@ describe('installMatchMediaPolyfill', () => {
       globalScope,
       environmentSource: {
         readEnvironment: () => ({
-          viewportWidth: 0,
-          viewportHeight: 0,
+          componentWidth: 0,
+          componentHeight: 0,
           devicePixelRatio: 1,
           colorScheme: 'light',
         }),

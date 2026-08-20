@@ -1,5 +1,6 @@
 import { type Meta } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
+import { type FrontComponentExecutionContext } from 'twenty-sdk/front-component';
 
 import { type FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
 
@@ -24,18 +25,21 @@ export const hostApiMocks = {
   storageClear: fn().mockResolvedValue(undefined),
 };
 
-export const FRONT_COMPONENT_STORY_DEFAULT_ARGS: NonNullable<
-  Meta<typeof FrontComponentRenderer>['args']
-> = {
-  onError: errorHandler,
-  applicationAccessToken: 'fake-token',
-  executionContext: {
+export const FRONT_COMPONENT_STORY_DEFAULT_EXECUTION_CONTEXT: FrontComponentExecutionContext =
+  {
     frontComponentId: 'unset',
     userId: null,
     recordId: null,
     selectedRecordIds: [],
     colorScheme: 'light',
-  },
+  };
+
+export const FRONT_COMPONENT_STORY_DEFAULT_ARGS: NonNullable<
+  Meta<typeof FrontComponentRenderer>['args']
+> = {
+  onError: errorHandler,
+  applicationAccessToken: 'fake-token',
+  executionContext: FRONT_COMPONENT_STORY_DEFAULT_EXECUTION_CONTEXT,
   colorScheme: 'light',
   frontComponentHostCommunicationApi: hostApiMocks,
 };

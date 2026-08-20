@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ParsedMediaQueryCondition } from '@/polyfills/media-query/types/ParsedMediaQueryCondition';
@@ -5,6 +6,7 @@ import { parseMediaQueryColorSchemeCondition } from '@/polyfills/media-query/uti
 import { parseMediaQueryComparisonPrefix } from '@/polyfills/media-query/utils/parseMediaQueryComparisonPrefix';
 import { parseMediaQueryDevicePixelRatioValue } from '@/polyfills/media-query/utils/parseMediaQueryDevicePixelRatioValue';
 import { parseMediaQueryLengthToPixels } from '@/polyfills/media-query/utils/parseMediaQueryLengthToPixels';
+import { parseMediaQueryOrientationCondition } from '@/polyfills/media-query/utils/parseMediaQueryOrientationCondition';
 import { parseMediaQueryResolutionToDevicePixelRatio } from '@/polyfills/media-query/utils/parseMediaQueryResolutionToDevicePixelRatio';
 
 const CONDITION_WRAPPING_PARENTHESES_PATTERN = /^\((.*)\)$/;
@@ -22,9 +24,12 @@ const MEDIA_QUERY_NUMERIC_FEATURES: Record<
   string,
   MediaQueryNumericFeature | undefined
 > = {
-  width: { source: 'viewportWidth', parseValue: parseMediaQueryLengthToPixels },
+  width: {
+    source: 'componentWidth',
+    parseValue: parseMediaQueryLengthToPixels,
+  },
   height: {
-    source: 'viewportHeight',
+    source: 'componentHeight',
     parseValue: parseMediaQueryLengthToPixels,
   },
   'device-pixel-ratio': {
@@ -59,12 +64,16 @@ export const parseMediaQueryCondition = (
   const featureName = conditionContent.slice(0, colonIndex).trim();
   const featureValue = conditionContent.slice(colonIndex + 1).trim();
 
-  if (featureName === '' || featureValue === '') {
+  if (!isNonEmptyString(featureName) || !isNonEmptyString(featureValue)) {
     return null;
   }
 
   if (featureName === 'prefers-color-scheme') {
     return parseMediaQueryColorSchemeCondition(featureValue);
+  }
+
+  if (featureName === 'orientation') {
+    return parseMediaQueryOrientationCondition(featureValue);
   }
 
   const isWebkitPrefixed = featureName.startsWith(WEBKIT_FEATURE_PREFIX);

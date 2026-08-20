@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MATCHING_MEDIA_TYPES } from '@/polyfills/media-query/constants/MatchingMediaTypes';
@@ -15,8 +16,8 @@ export const parseMediaQuery = (
 ): ParsedMediaQuery | null => {
   const normalizedQuery = mediaQueryString.trim().toLowerCase();
 
-  if (normalizedQuery === '') {
-    return { isNegated: false, matchesMediaType: true, conditions: [] };
+  if (!isNonEmptyString(normalizedQuery)) {
+    return null;
   }
 
   const [firstQueryPart, ...followingQueryParts] = normalizedQuery.split(

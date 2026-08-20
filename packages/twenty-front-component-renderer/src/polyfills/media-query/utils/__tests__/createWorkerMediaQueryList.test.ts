@@ -1,32 +1,42 @@
+import { type MediaQueryEnvironment } from '@/polyfills/media-query/types/MediaQueryEnvironment';
+import { type MediaQueryEnvironmentListener } from '@/polyfills/media-query/types/MediaQueryEnvironmentListener';
 import { createWorkerMediaQueryList } from '../createWorkerMediaQueryList';
+
+const ENVIRONMENT: MediaQueryEnvironment = {
+  componentWidth: 0,
+  componentHeight: 0,
+  devicePixelRatio: 1,
+  colorScheme: 'light',
+};
 
 const setupMediaQueryList = (initialMatches = false) => {
   let matches = initialMatches;
-  const environmentListeners = new Set<() => void>();
+  const environmentListeners = new Set<MediaQueryEnvironmentListener>();
   const unsubscribe = jest.fn();
-  const reportListenerError = jest.fn();
 
-  const subscribeToEnvironmentUpdates = jest.fn((listener: () => void) => {
-    environmentListeners.add(listener);
+  const subscribeToEnvironmentUpdates = jest.fn(
+    (listener: MediaQueryEnvironmentListener) => {
+      environmentListeners.add(listener);
 
-    return () => {
-      environmentListeners.delete(listener);
-      unsubscribe();
-    };
-  });
+      return () => {
+        environmentListeners.delete(listener);
+        unsubscribe();
+      };
+    },
+  );
 
   const mediaQueryList = createWorkerMediaQueryList({
     media: '(min-width: 600px)',
+    readEnvironment: () => ENVIRONMENT,
     evaluateMatches: () => matches,
     subscribeToEnvironmentUpdates,
-    reportListenerError,
   });
 
   const setMatches = (nextMatches: boolean) => {
     matches = nextMatches;
 
     for (const environmentListener of [...environmentListeners]) {
-      environmentListener();
+      environmentListener(ENVIRONMENT);
     }
   };
 
@@ -35,7 +45,6 @@ const setupMediaQueryList = (initialMatches = false) => {
     setMatches,
     subscribeToEnvironmentUpdates,
     unsubscribe,
-    reportListenerError,
   };
 };
 
@@ -99,11 +108,13 @@ describe('createWorkerMediaQueryList', () => {
 
     setMatches(true);
     expect(changeListener).toHaveBeenCalledTimes(1);
-    expect(changeListener).toHaveBeenCalledWith({
-      type: 'change',
-      media: '(min-width: 600px)',
-      matches: true,
-    });
+    expect(changeListener).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'change',
+        media: '(min-width: 600px)',
+        matches: true,
+      }),
+    );
 
     mediaQueryList.removeListener(changeListener);
 
@@ -112,7 +123,7 @@ describe('createWorkerMediaQueryList', () => {
   });
 
   it('should invoke and clear the onchange handler', () => {
-    const { mediaQueryList, setMatches } = setupMediaQueryList();
+    const { mediaQueryList, setMatches, unsubscribe } = setupMediaQueryList();
     const onchangeHandler = jest.fn();
 
     mediaQueryList.onchange = onchangeHandler;
@@ -124,6 +135,79 @@ describe('createWorkerMediaQueryList', () => {
 
     setMatches(false);
     expect(onchangeHandler).toHaveBeenCalledTimes(1);
+    expect(unsubscribe).toHaveBeenCalledTimes(1);
+  });
+
+  it('should invoke the onchange handler in its registration position', () => {
+    const { mediaQueryList, setMatches } = setupMediaQueryList();
+    const invocationOrder: string[] = [];
+
+    mediaQueryList.addEventListener('change', () =>
+      invocationOrder.push('first'),
+    );
+    mediaQueryList.onchange = () => invocationOrder.push('onchange');
+    mediaQueryList.addEventListener('change', () =>
+      invocationOrder.push('last'),
+    );
+
+    setMatches(true);
+
+    expect(invocationOrder).toEqual(['first', 'onchange', 'last']);
+  });
+
+  it('should invoke a once listener a single time and release the subscription', () => {
+    const { mediaQueryList, setMatches, unsubscribe } = setupMediaQueryList();
+    const changeListener = jest.fn();
+
+    mediaQueryList.addEventListener('change', changeListener, { once: true });
+
+    setMatches(true);
+    setMatches(false);
+
+    expect(changeListener).toHaveBeenCalledTimes(1);
+    expect(unsubscribe).toHaveBeenCalledTimes(1);
+  });
+
+  it('should detach a listener when its abort signal fires', () => {
+    const { mediaQueryList, setMatches, unsubscribe } = setupMediaQueryList();
+    const abortController = new AbortController();
+    const changeListener = jest.fn();
+
+    mediaQueryList.addEventListener('change', changeListener, {
+      signal: abortController.signal,
+    });
+
+    abortController.abort();
+    setMatches(true);
+
+    expect(changeListener).not.toHaveBeenCalled();
+    expect(unsubscribe).toHaveBeenCalledTimes(1);
+  });
+
+  it('should notify listeners passed as an object with handleEvent', () => {
+    const { mediaQueryList, setMatches } = setupMediaQueryList();
+    const handleEvent = jest.fn();
+
+    mediaQueryList.addEventListener('change', { handleEvent });
+
+    setMatches(true);
+
+    expect(handleEvent).toHaveBeenCalledTimes(1);
+  });
+
+  it('should keep notifying remaining listeners when one of them throws', () => {
+    const { mediaQueryList, setMatches } = setupMediaQueryList();
+
+    const throwingListener = jest.fn(() => {
+      throw new Error('listener failure');
+    });
+    const secondListener = jest.fn();
+
+    mediaQueryList.addEventListener('change', throwingListener);
+    mediaQueryList.addEventListener('change', secondListener);
+
+    expect(() => setMatches(true)).not.toThrow();
+    expect(secondListener).toHaveBeenCalledTimes(1);
   });
 
   it('should not invoke a listener removed by an earlier listener during dispatch', () => {
@@ -141,23 +225,5 @@ describe('createWorkerMediaQueryList', () => {
 
     expect(firstListener).toHaveBeenCalledTimes(1);
     expect(secondListener).not.toHaveBeenCalled();
-  });
-
-  it('should keep notifying remaining listeners when one of them throws', () => {
-    const { mediaQueryList, setMatches, reportListenerError } =
-      setupMediaQueryList();
-
-    const listenerError = new Error('listener failure');
-    const throwingListener = jest.fn(() => {
-      throw listenerError;
-    });
-    const secondListener = jest.fn();
-
-    mediaQueryList.addEventListener('change', throwingListener);
-    mediaQueryList.addEventListener('change', secondListener);
-
-    expect(() => setMatches(true)).not.toThrow();
-    expect(secondListener).toHaveBeenCalledTimes(1);
-    expect(reportListenerError).toHaveBeenCalledWith(listenerError);
   });
 });

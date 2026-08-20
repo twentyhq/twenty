@@ -3,9 +3,7 @@ import { type WorkerMediaQueryList } from '@/polyfills/media-query/types/WorkerM
 import { createWorkerMediaQueryList } from '@/polyfills/media-query/utils/createWorkerMediaQueryList';
 import { evaluateParsedMediaQueryList } from '@/polyfills/media-query/utils/evaluateParsedMediaQueryList';
 import { parseMediaQueryList } from '@/polyfills/media-query/utils/parseMediaQueryList';
-import { reportErrorToPolyfillWindow } from '@/polyfills/utils/reportErrorToPolyfillWindow';
 import { resolveGlobalScopeInstallTargets } from '@/polyfills/utils/resolveGlobalScopeInstallTargets';
-import { resolvePolyfillWindow } from '@/polyfills/utils/resolvePolyfillWindow';
 
 type InstallMatchMediaPolyfillInput = {
   globalScope: Record<string, unknown>;
@@ -16,23 +14,17 @@ export const installMatchMediaPolyfill = ({
   globalScope,
   environmentSource,
 }: InstallMatchMediaPolyfillInput): void => {
-  const polyfillWindow = resolvePolyfillWindow(globalScope);
-
   const matchMedia = (mediaQuery: unknown): WorkerMediaQueryList => {
     const media = String(mediaQuery);
     const parsedMediaQueryList = parseMediaQueryList(media);
 
     return createWorkerMediaQueryList({
       media,
-      evaluateMatches: () =>
-        evaluateParsedMediaQueryList({
-          parsedMediaQueryList,
-          environment: environmentSource.readEnvironment(),
-        }),
+      readEnvironment: environmentSource.readEnvironment,
+      evaluateMatches: (environment) =>
+        evaluateParsedMediaQueryList({ parsedMediaQueryList, environment }),
       subscribeToEnvironmentUpdates:
         environmentSource.subscribeToEnvironmentUpdates,
-      reportListenerError: (error) =>
-        reportErrorToPolyfillWindow({ polyfillWindow, error }),
     });
   };
 

@@ -4,6 +4,7 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 import {
   errorHandler,
   FRONT_COMPONENT_STORY_DEFAULT_ARGS,
+  FRONT_COMPONENT_STORY_DEFAULT_EXECUTION_CONTEXT,
   resetFrontComponentStoryMocks,
 } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { MOUNT_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
@@ -68,40 +69,64 @@ const mutationObserverTest: Story['play'] = async ({ canvasElement }) => {
   expect(errorHandler).not.toHaveBeenCalled();
 };
 
-const matchMediaTest: Story['play'] = async ({ canvasElement }) => {
-  const canvas = within(canvasElement);
+const createMatchMediaTest =
+  (expectedColorScheme: 'light' | 'dark'): Story['play'] =>
+  async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
 
-  await canvas.findByTestId(
-    'match-media-component',
-    {},
-    { timeout: MOUNT_TIMEOUT },
-  );
+    await canvas.findByTestId(
+      'match-media-component',
+      {},
+      { timeout: MOUNT_TIMEOUT },
+    );
 
-  expect(canvas.getByTestId('match-media-min-width')).toHaveTextContent(
-    'min-width matches: true',
-  );
-  expect(canvas.getByTestId('match-media-unknown-query')).toHaveTextContent(
-    'unknown query matches: false',
-  );
-  expect(
-    canvas.getByTestId('match-media-light-color-scheme'),
-  ).toHaveTextContent('light color scheme matches: true');
+    await waitFor(
+      () => {
+        expect(
+          canvas.getByTestId('match-media-color-scheme'),
+        ).toHaveTextContent(`color scheme: ${expectedColorScheme}`);
+      },
+      { timeout: MOUNT_TIMEOUT },
+    );
 
-  expect(errorHandler).not.toHaveBeenCalled();
-};
+    expect(canvas.getByTestId('match-media-own-width')).toHaveTextContent(
+      'own width matches: true',
+    );
+    expect(
+      canvas.getByTestId('match-media-wider-than-own-width'),
+    ).toHaveTextContent('wider than own width matches: false');
+    expect(canvas.getByTestId('match-media-unknown-query')).toHaveTextContent(
+      'unknown query matches: false',
+    );
+    expect(
+      canvas.getByTestId('match-media-empty-query-in-list'),
+    ).toHaveTextContent('empty query in list matches: false');
+    expect(canvas.getByTestId('match-media-orientation')).toHaveTextContent(
+      'orientation matches: true',
+    );
+
+    expect(errorHandler).not.toHaveBeenCalled();
+  };
 
 type CreateStoryInput = {
   name: string;
   play: Story['play'];
   runtime?: 'preact';
+  args?: Partial<Story['args']>;
 };
 
-const createStory = ({ name, play, runtime }: CreateStoryInput): Story => ({
+const createStory = ({
+  name,
+  play,
+  runtime,
+  args,
+}: CreateStoryInput): Story => ({
   args: {
     componentUrl: getBuiltStoryComponentPathForRender(
       `${name}.front-component`,
       runtime,
     ),
+    ...args,
   },
   play,
 });
@@ -117,10 +142,21 @@ export const MutationObserverPreact: Story = createStory({
 });
 export const MatchMediaReact: Story = createStory({
   name: 'match-media',
-  play: matchMediaTest,
+  play: createMatchMediaTest('light'),
 });
 export const MatchMediaPreact: Story = createStory({
   name: 'match-media',
-  play: matchMediaTest,
+  play: createMatchMediaTest('light'),
   runtime: 'preact',
+});
+export const MatchMediaDarkColorScheme: Story = createStory({
+  name: 'match-media',
+  play: createMatchMediaTest('dark'),
+  args: {
+    colorScheme: 'dark',
+    executionContext: {
+      ...FRONT_COMPONENT_STORY_DEFAULT_EXECUTION_CONTEXT,
+      colorScheme: 'dark',
+    },
+  },
 });
