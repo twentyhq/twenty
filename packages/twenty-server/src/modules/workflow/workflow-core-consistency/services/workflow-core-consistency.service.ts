@@ -16,6 +16,12 @@ import {
 
 type DriftCounts = Record<string, number>;
 
+export type WorkflowCoreConsistencyResult = {
+  workflow: DriftCounts;
+  workflowVersion: DriftCounts;
+  automatedTrigger: DriftCounts;
+};
+
 // Detect drift between the workspace source-of-truth records and their core
 // mirror. The dual-write is best-effort (async, not transactional), so core can
 // silently fall out of sync; this quantifies that per workspace as metrics.
@@ -41,7 +47,28 @@ export class WorkflowCoreConsistencyService {
 
     for (const { workspaceId, databaseSchema } of workspaces) {
       try {
-        await this.checkWorkspace(workspaceId, databaseSchema);
+        const result = await this.checkWorkspace(workspaceId, databaseSchema);
+
+        if (isDefined(result)) {
+          this.emitDrift(
+            MetricsKeys.WorkflowCoreConsistencyWorkflowDrift,
+            workspaceId,
+            'workflow',
+            result.workflow,
+          );
+          this.emitDrift(
+            MetricsKeys.WorkflowCoreConsistencyVersionDrift,
+            workspaceId,
+            'workflowVersion',
+            result.workflowVersion,
+          );
+          this.emitDrift(
+            MetricsKeys.WorkflowCoreConsistencyAutomatedTriggerDrift,
+            workspaceId,
+            'automatedTrigger',
+            result.automatedTrigger,
+          );
+        }
       } catch (error) {
         this.exceptionHandlerService.captureExceptions([error], {
           workspace: { id: workspaceId },
@@ -50,10 +77,10 @@ export class WorkflowCoreConsistencyService {
     }
   }
 
-  private async checkWorkspace(
+  async checkWorkspace(
     workspaceId: string,
     schema: string,
-  ): Promise<void> {
+  ): Promise<WorkflowCoreConsistencyResult | null> {
     const [{ shouldCheck }] = await this.coreDataSource.query(
       `SELECT (
          EXISTS (SELECT 1 FROM "${schema}"."workflow" WHERE "deletedAt" IS NULL)
@@ -63,24 +90,29 @@ export class WorkflowCoreConsistencyService {
     );
 
     if (!shouldCheck) {
-      return;
+      return null;
     }
 
-    await this.checkWorkflowSync(workspaceId, schema);
-    await this.checkWorkflowVersionSync(workspaceId, schema);
-    await this.checkAutomatedTriggerSync(workspaceId, schema);
+    return {
+      workflow: await this.checkWorkflowSync(workspaceId, schema),
+      workflowVersion: await this.checkWorkflowVersionSync(workspaceId, schema),
+      automatedTrigger: await this.checkAutomatedTriggerSync(
+        workspaceId,
+        schema,
+      ),
+    };
   }
 
   private async checkWorkflowSync(
     workspaceId: string,
     schema: string,
-  ): Promise<void> {
+  ): Promise<DriftCounts> {
     const [counts] = await this.coreDataSource.query(
       `SELECT
          count(*) FILTER (WHERE wf."coreWorkflowId" IS NULL)::int AS unlinked,
          count(*) FILTER (WHERE wf."coreWorkflowId" IS NOT NULL AND c.id IS NULL)::int AS "missingCore",
          count(*) FILTER (WHERE c.id IS NOT NULL AND (
-           wf.name IS DISTINCT FROM c.name
+           NULLIF(wf.name, '') IS DISTINCT FROM NULLIF(c.name, '')
            OR NULLIF(wf."lastPublishedVersionId", '') IS DISTINCT FROM c."lastPublishedVersionId"::text
          ))::int AS "fieldMismatch"
        FROM "${schema}"."workflow" wf
@@ -100,23 +132,18 @@ export class WorkflowCoreConsistencyService {
       [workspaceId],
     );
 
-    this.emitDrift(
-      MetricsKeys.WorkflowCoreConsistencyWorkflowDrift,
-      workspaceId,
-      'workflow',
-      {
-        unlinked: counts.unlinked,
-        missingCore: counts.missingCore,
-        fieldMismatch: counts.fieldMismatch,
-        orphanCore,
-      },
-    );
+    return {
+      unlinked: counts.unlinked,
+      missingCore: counts.missingCore,
+      fieldMismatch: counts.fieldMismatch,
+      orphanCore,
+    };
   }
 
   private async checkWorkflowVersionSync(
     workspaceId: string,
     schema: string,
-  ): Promise<void> {
+  ): Promise<DriftCounts> {
     const [counts] = await this.coreDataSource.query(
       `SELECT
          count(*) FILTER (WHERE wf."coreWorkflowVersionId" IS NULL)::int AS unlinked,
@@ -146,23 +173,18 @@ export class WorkflowCoreConsistencyService {
       [workspaceId],
     );
 
-    this.emitDrift(
-      MetricsKeys.WorkflowCoreConsistencyVersionDrift,
-      workspaceId,
-      'workflowVersion',
-      {
-        unlinked: counts.unlinked,
-        missingCore: counts.missingCore,
-        fieldMismatch: counts.fieldMismatch,
-        orphanCore,
-      },
-    );
+    return {
+      unlinked: counts.unlinked,
+      missingCore: counts.missingCore,
+      fieldMismatch: counts.fieldMismatch,
+      orphanCore,
+    };
   }
 
   private async checkAutomatedTriggerSync(
     workspaceId: string,
     schema: string,
-  ): Promise<void> {
+  ): Promise<DriftCounts> {
     const { workflowAutomatedTriggerMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'workflowAutomatedTriggerMaps',
@@ -208,12 +230,7 @@ export class WorkflowCoreConsistencyService {
       }
     }
 
-    this.emitDrift(
-      MetricsKeys.WorkflowCoreConsistencyAutomatedTriggerDrift,
-      workspaceId,
-      'automatedTrigger',
-      { inTableNotCache, inCacheNotTable, mismatch },
-    );
+    return { inTableNotCache, inCacheNotTable, mismatch };
   }
 
   private triggerIdentity(

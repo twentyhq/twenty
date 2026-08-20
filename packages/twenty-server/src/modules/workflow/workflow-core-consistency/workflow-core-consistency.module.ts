@@ -13,6 +13,6 @@ import { WorkflowCoreConsistencyService } from 'src/modules/workflow/workflow-co
     WorkflowCoreConsistencyCronJob,
     WorkflowCoreConsistencyCronCommand,
   ],
-  exports: [WorkflowCoreConsistencyCronCommand],
+  exports: [WorkflowCoreConsistencyCronCommand, WorkflowCoreConsistencyService],
 })
 export class WorkflowCoreConsistencyModule {}
