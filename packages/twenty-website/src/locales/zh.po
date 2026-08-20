@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-20 10:17\n"
+"PO-Revision-Date: 2026-08-20 16:13\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -150,11 +150,9 @@ msgstr "+ 每组织每月 $7000"
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"+$75/user per month\n"
+msgid "+$75/user per month\n"
 "Switch to enterprise!"
-msgstr ""
-"+ 每用户每月 $75\n"
+msgstr "+ 每用户每月 $75\n"
 "切换到企业版！"
 
 #. js-lingui-id: iK+ikF
@@ -164,12 +162,10 @@ msgstr "+ 其他 1 万人"
 
 #. js-lingui-id: nRtVCK
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"+20% of net spend\n"
+msgid "+20% of net spend\n"
 "+$75/user per month\n"
 "Switch to enterprise!"
-msgstr ""
-"+ 净支出的 20%\n"
+msgstr "+ 净支出的 20%\n"
 "+ 每用户每月 $75\n"
 "切换到企业版！"
 
@@ -253,12 +249,10 @@ msgstr "$1,500 至 $3,500"
 
 #. js-lingui-id: 6inRXo
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"$1/orchestration run/org\n"
+msgid "$1/orchestration run/org\n"
 "+$75/user per month\n"
 "Switch to enterprise!"
-msgstr ""
-"$1/每次编排运行/每组织\n"
+msgstr "$1/每次编排运行/每组织\n"
 "+ 每用户每月 $75\n"
 "切换到企业版！"
 
@@ -486,11 +480,9 @@ msgstr "每分钟 100 次"
 
 #. js-lingui-id: uuKUqZ
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"11 permissions\n"
+msgid "11 permissions\n"
 "groups"
-msgstr ""
-"11 个权限\n"
+msgstr "11 个权限\n"
 "组"
 
 #. js-lingui-id: 2szX5S
@@ -562,11 +554,9 @@ msgstr "3"
 
 #. js-lingui-id: BL47wE
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"3 2 years contract\n"
+msgid "3 2 years contract\n"
 "-33% off"
-msgstr ""
-"3 个 2 年合约\n"
+msgstr "3 个 2 年合约\n"
 "立减 33%"
 
 #. js-lingui-id: /jgC+9
@@ -646,11 +636,9 @@ msgstr "为*行动迅速*的团队打造的 CRM"
 
 #. js-lingui-id: MXRINg
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"A CRM that\n"
+msgid "A CRM that\n"
 "*grows* with you"
-msgstr ""
-"一个\n"
+msgstr "一个\n"
 "*能与你一同成长的* CRM"
 
 #. js-lingui-id: diWAWP
@@ -665,11 +653,9 @@ msgstr "一个能与你一同成长的 CRM | NetZero 与 Twenty"
 
 #. js-lingui-id: N3qsQD
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"A CRM they\n"
+msgid "A CRM they\n"
 "*actually own*"
-msgstr ""
-"一个他们\n"
+msgstr "一个他们\n"
 "*真正拥有的* CRM"
 
 #. js-lingui-id: muZzEA
@@ -684,20 +670,16 @@ msgstr "一款定制 CRM 能让你的组织占得先机，*但构建它*会带�
 
 #. js-lingui-id: 4lAzBW
 #: src/sections/compare/compare-data.ts
-msgid ""
-"A feature-by-feature price check, with sources.\n"
+msgid "A feature-by-feature price check, with sources.\n"
 "Most of what HubSpot gates behind tiers is simply included in Twenty."
-msgstr ""
-"按功能逐项核对价格，并附来源说明。\n"
+msgstr "按功能逐项核对价格，并附来源说明。\n"
 "HubSpot 按套餐分级限制的大部分功能，在 Twenty 中都已直接包含。"
 
 #. js-lingui-id: eZ3I1t
 #: src/sections/compare/compare-data.ts
-msgid ""
-"A friendly price on the front page.\n"
+msgid "A friendly price on the front page.\n"
 "The caps show up after you sign."
-msgstr ""
-"首页上的价格看起来很友好。\n"
+msgstr "首页上的价格看起来很友好。\n"
 "但各种限制会在你签约之后才出现。"
 
 #. js-lingui-id: uNIo/j
@@ -718,7 +700,7 @@ msgstr "全新的维护模式可帮助管理员在执行敏感操作时暂停对
 #. js-lingui-id: iIggw/
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "A new onboarding experience"
-msgstr ""
+msgstr "全新的上手体验"
 
 #. js-lingui-id: P5BDuh
 #: src/case-studies/case-study-stories.ts
@@ -732,11 +714,9 @@ msgstr "一个随时准备扩展的平台"
 
 #. js-lingui-id: vbJW8I
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"A real estate agency on WhatsApp built a\n"
+msgid "A real estate agency on WhatsApp built a\n"
 "*CRM* around it"
-msgstr ""
-"一家在 WhatsApp 上运营的房地产中介围绕它打造了一套\n"
+msgstr "一家在 WhatsApp 上运营的房地产中介围绕它打造了一套\n"
 "*CRM*"
 
 #. js-lingui-id: hwoGni
@@ -752,7 +732,7 @@ msgstr "真正的预发布环境"
 #. js-lingui-id: DbvKWj
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "A rebuilt setup flow guides new teams through workspace creation, contact import, and teammate invitations."
-msgstr ""
+msgstr "重新构建的设置流程将引导新团队完成工作区创建、联系人导入和队友邀请。"
 
 #. js-lingui-id: WjUlJr
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -870,12 +850,12 @@ msgstr "添加对象和字段"
 #. js-lingui-id: jRsHwI
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Add objects, views, records, links, and folders to Favorites from a dedicated sidebar panel."
-msgstr ""
+msgstr "可通过专用侧边栏面板将对象、视图、记录、链接和文件夹添加到收藏夹。"
 
 #. js-lingui-id: e20nHx
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Add recipients with autocomplete, person matching, duplicate detection, and inline email validation."
-msgstr ""
+msgstr "通过自动完成、人员匹配、重复检测和内联电子邮件验证添加收件人。"
 
 #. js-lingui-id: ZuoQMi
 #: src/platform/releases/ReleaseNotes.tsx
@@ -1223,11 +1203,9 @@ msgstr "未找到应用 — Twenty"
 
 #. js-lingui-id: k8I7/G
 #: src/partner-application/partner-application-copy.ts
-msgid ""
-"Apply to build\n"
+msgid "Apply to build\n"
 "*the future of CRM*"
-msgstr ""
-"申请一起构建\n"
+msgstr "申请一起构建\n"
 "*CRM 的未来*"
 
 #. js-lingui-id: LJCDxT
@@ -1275,7 +1253,7 @@ msgstr "亚美尼亚 🇦🇲"
 #. js-lingui-id: GYKCBW
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Ask AI to build or reconfigure dashboards and views from your workspace data."
-msgstr ""
+msgstr "让 AI 根据你的工作区数据构建或重新配置仪表板和视图。"
 
 #. js-lingui-id: S+Q+1d
 #: src/sections/product-hero/ProductHero.tsx
@@ -1394,11 +1372,9 @@ msgstr "因为 Twenty 的 API 完全开放，我可以把它与我们技术栈�
 
 #. js-lingui-id: kWm0dC
 #: src/sections/partner-hero/PartnerHero.tsx
-msgid ""
-"Become\n"
+msgid "Become\n"
 "*our partner*"
-msgstr ""
-"成为\n"
+msgstr "成为\n"
 "*我们的合作伙伴*"
 
 #. js-lingui-id: PKMHNe
@@ -1460,7 +1436,7 @@ msgstr "Bertrams"
 #. js-lingui-id: BSmDFu
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Better sorted kanban boards"
-msgstr ""
+msgstr "排序更佳的看板"
 
 #. js-lingui-id: mzTjnf
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -1575,7 +1551,7 @@ msgstr "基于实时 CRM 数据构建自定义仪表盘。将交易、账户、�
 #. js-lingui-id: IQcVFZ
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Build dashboards with AI"
-msgstr ""
+msgstr "使用 AI 构建仪表板"
 
 #. js-lingui-id: rdvFK9
 #: src/sections/why-twenty-editorial/editorials.data.ts
@@ -1758,7 +1734,7 @@ msgstr "在邀请队友加入工作区时，直接选择角色。"
 #. js-lingui-id: FcSFIg
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Choose between abbreviated and full values for number widgets on dashboards."
-msgstr ""
+msgstr "为仪表板中的数字小组件选择显示缩写值还是完整值。"
 
 #. js-lingui-id: geiXTM
 #: src/platform/releases/ReleaseNotes.tsx
@@ -1773,7 +1749,7 @@ msgstr "使用通用的 Unicode 日期格式，为任意字段选择最适合你
 #. js-lingui-id: uOuvkn
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Choose which part of a name or address field a view should sort by directly from the sort chip."
-msgstr ""
+msgstr "直接从排序标签中选择视图应按名称或地址字段的哪个部分排序。"
 
 #. js-lingui-id: lAAXeW
 #: src/partner-application/partner-application-copy.ts
@@ -1794,7 +1770,7 @@ msgstr "清除筛选条件"
 #. js-lingui-id: zwMBoX
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Clearer dashboard numbers"
-msgstr ""
+msgstr "更清晰的仪表板数字"
 
 #. js-lingui-id: yz7wBu
 #: src/partners-marketplace/CaseStudyModal.tsx
@@ -2073,7 +2049,7 @@ msgstr "复制"
 #. js-lingui-id: gqCWGE
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Copy a call recording's transcript or video link directly from the record page."
-msgstr ""
+msgstr "直接从记录页面复制通话录音的转录文本或视频链接。"
 
 #. js-lingui-id: 7qTWwB
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -2150,7 +2126,7 @@ msgstr "使用全新的仪表盘功能，基于工作区数据创建自定义图
 #. js-lingui-id: sSow0u
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Create events on connected Google or Microsoft calendars from AI and workflows, with optional Meet or Teams links."
-msgstr ""
+msgstr "通过 AI 和工作流在已连接的 Google 或 Microsoft 日历中创建事件，并可选择添加 Meet 或 Teams 链接。"
 
 #. js-lingui-id: YxktRb
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2175,7 +2151,7 @@ msgstr "创建记录"
 #. js-lingui-id: w0KavK
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Create synced calendar events"
-msgstr ""
+msgstr "创建同步的日历事件"
 
 #. js-lingui-id: oS1RiS
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -2649,12 +2625,12 @@ msgstr "发现新内容"
 #. js-lingui-id: /Gu7LB
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Display related records as a full table directly inside a record page layout."
-msgstr ""
+msgstr "直接在记录页面布局中以完整表格显示关联记录。"
 
 #. js-lingui-id: wPD3lD
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Display related records as a table, kanban board, calendar, or grouped table directly inside a record page."
-msgstr ""
+msgstr "直接在记录页面中以表格、看板、日历或分组表格显示关联记录。"
 
 #. js-lingui-id: rHLwDO
 #: src/partner-application/data/partner-country-options.ts
@@ -2710,7 +2686,7 @@ msgstr "起草一条电子邮件序列的工作流"
 #. js-lingui-id: jp1S8f
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Drag a column edge to resize every column in a kanban view, with the width saved for that view."
-msgstr ""
+msgstr "拖动列边缘可调整看板视图中每一列的大小，并为该视图保存列宽。"
 
 #. js-lingui-id: q7M3jo
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2720,12 +2696,12 @@ msgstr "拖放小部件来构建记录页面、仪表盘和布局页面，使其
 #. js-lingui-id: bm5qja
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Drag kanban column headers into the order that works best for your team."
-msgstr ""
+msgstr "将看板列标题拖动为最适合团队的顺序。"
 
 #. js-lingui-id: cfThV+
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Drag widgets between tabs"
-msgstr ""
+msgstr "在选项卡之间拖动小组件"
 
 #. js-lingui-id: fPma12
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -2791,7 +2767,7 @@ msgstr "现在，每个工作区都会获得一个专用子域名，以提供更
 #. js-lingui-id: eBNtzO
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Easier favorites"
-msgstr ""
+msgstr "更轻松地使用收藏夹"
 
 #. js-lingui-id: s+5p5k
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2816,12 +2792,12 @@ msgstr "编辑动作"
 #. js-lingui-id: 0cnnX+
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Edit long-form text directly inside record page widgets with automatic saving."
-msgstr ""
+msgstr "直接在记录页面小组件中编辑长文本，并自动保存。"
 
 #. js-lingui-id: G/FRR4
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Editable text widgets"
-msgstr ""
+msgstr "可编辑的文本小组件"
 
 #. js-lingui-id: 4CJ4xV
 #: src/case-studies/case-study-catalog.ts
@@ -2876,7 +2852,7 @@ msgstr "邮件与聊天"
 #. js-lingui-id: oj7GrD
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Email forwarding"
-msgstr ""
+msgstr "邮件转发"
 
 #. js-lingui-id: rc8HEz
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3251,7 +3227,7 @@ msgstr "逐项功能价格核对，对比你大概率正在评估的各个 CRM�
 #. js-lingui-id: DMFb0o
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Featured apps"
-msgstr ""
+msgstr "精选应用"
 
 #. js-lingui-id: 3oXVPw
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
@@ -3331,7 +3307,7 @@ msgstr "筛选合作伙伴"
 #. js-lingui-id: EOUC8o
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Filter records using fields from a related object, such as People whose Company name contains a specific value."
-msgstr ""
+msgstr "使用关联对象中的字段筛选记录，例如筛选公司名称包含特定值的人员。"
 
 #. js-lingui-id: kUUNrw
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3341,12 +3317,12 @@ msgstr "可以筛选 webhook 返回的内容，使其仅在发生特定操作（
 #. js-lingui-id: +UmKPb
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Filter through relationships"
-msgstr ""
+msgstr "通过关联进行筛选"
 
 #. js-lingui-id: xbs4q4
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Filter, archive, and manage conversations from the AI chat list."
-msgstr ""
+msgstr "从 AI 聊天列表中筛选、归档和管理对话。"
 
 #. js-lingui-id: iabLgo
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -3377,7 +3353,7 @@ msgstr "查找 Twenty 合作伙伴 — 开源 CRM 市场"
 #. js-lingui-id: RiVrPY
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Find and install featured apps such as People Data Labs, Last Contact, and Call Recorder directly from the marketplace."
-msgstr ""
+msgstr "直接从应用市场查找并安装 People Data Labs、Last Contact 和 Call Recorder 等精选应用。"
 
 #. js-lingui-id: wHyJkT
 #: src/sections/pricing-engagement-band/PricingEngagementBand.tsx
@@ -3416,11 +3392,9 @@ msgstr "灵活关系"
 
 #. js-lingui-id: HBJ0P5
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"Flow\n"
+msgid "Flow\n"
 "orchestration"
-msgstr ""
-"流程\n"
+msgstr "流程\n"
 "编排"
 
 #. js-lingui-id: obrJBN
@@ -3476,7 +3450,7 @@ msgstr "二十年来，CRM 的含义始终如一：一个记录电话、跟踪�
 #. js-lingui-id: Z0PcL7
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Forward shared inboxes such as support@yourcompany.com into Twenty without connecting a full mailbox."
-msgstr ""
+msgstr "将 support@yourcompany.com 等共享收件箱转发至 Twenty，而无需连接完整邮箱。"
 
 #. js-lingui-id: UCoxP5
 #: src/sections/testimonials/partner-testimonials.data.ts
@@ -3530,11 +3504,9 @@ msgstr "从文档到开放 API"
 
 #. js-lingui-id: 2CtZ6T
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"From Salesforce to\n"
+msgid "From Salesforce to\n"
 "*self-hosted Twenty*"
-msgstr ""
-"从 Salesforce 到\n"
+msgstr "从 Salesforce 到\n"
 "*自托管 Twenty*"
 
 #. js-lingui-id: kl+hEJ
@@ -3725,12 +3697,12 @@ msgstr "格林纳达 🇬🇩"
 #. js-lingui-id: c7mbFb
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Group records by relationships"
-msgstr ""
+msgstr "按关联分组记录"
 
 #. js-lingui-id: lAlV+Q
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Group table and kanban views by a related record, such as an account owner or company."
-msgstr ""
+msgstr "按关联记录（例如账户负责人或公司）对表格和看板视图进行分组。"
 
 #. js-lingui-id: MCLWq4
 #: src/sections/helped/helped.data.ts
@@ -3903,11 +3875,9 @@ msgstr "Nine Dots Ventures 如何在每天 2,000+ 条 WhatsApp 消息之上，�
 
 #. js-lingui-id: 5sWcC0
 #: src/sections/case-study-promo/CaseStudyPromo.tsx
-msgid ""
-"How teams\n"
+msgid "How teams\n"
 "*built with Twenty*"
-msgstr ""
-"团队如何\n"
+msgstr "团队如何\n"
 "*基于 Twenty 构建*"
 
 #. js-lingui-id: Z3Cabh
@@ -3969,7 +3939,7 @@ msgstr "如果你的公司高度依赖 Microsoft 365，并且已经使用 Power 
 #. js-lingui-id: zMq4mR
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Image attachments now show a thumbnail inside file field chips, so they are easier to identify at a glance."
-msgstr ""
+msgstr "图像附件现在会在文件字段标签中显示缩略图，以便一眼识别。"
 
 #. js-lingui-id: Grur3I
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4008,7 +3978,7 @@ msgstr "实现了骨架屏加载，在获取数据时通过显示占位内容来
 #. js-lingui-id: F+7508
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Import larger CSV and spreadsheet files through AI chat with more reliable relation matching and bulk updates."
-msgstr ""
+msgstr "通过 AI 聊天导入更大的 CSV 和电子表格文件，获得更可靠的关联匹配和批量更新。"
 
 #. js-lingui-id: WxaeWx
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4152,12 +4122,12 @@ msgstr "无限滚动仍然“敬请期待”，但发票不会。"
 #. js-lingui-id: w8vi/L
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Inline image previews"
-msgstr ""
+msgstr "内嵌图像预览"
 
 #. js-lingui-id: /eL+82
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Inspect AI calls, code output, HTTP requests, and emails for every step of a workflow run."
-msgstr ""
+msgstr "检查工作流运行中每个步骤的 AI 调用、代码输出、HTTP 请求和邮件。"
 
 #. js-lingui-id: TKQ7K+
 #: src/apps-marketplace/AppDetail.tsx
@@ -4481,11 +4451,9 @@ msgstr "拉美地区（LATAM）"
 
 #. js-lingui-id: WvrtRi
 #: src/sections/releases-hero/ReleasesHero.tsx
-msgid ""
-"Latest\n"
+msgid "Latest\n"
 "*Releases*"
-msgstr ""
-"最新\n"
+msgstr "最新\n"
 "*版本发布*"
 
 #. js-lingui-id: 7OHfcc
@@ -4630,7 +4598,7 @@ msgstr "实时数据与 AI 架构"
 #. js-lingui-id: WxYx+e
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Live email and calendar tabs"
-msgstr ""
+msgstr "实时邮件和日历选项卡"
 
 #. js-lingui-id: GObQuL
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -4951,7 +4919,7 @@ msgstr "更强大的搜索"
 #. js-lingui-id: p8VzrC
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "More visual dashboard views"
-msgstr ""
+msgstr "更直观的仪表板视图"
 
 #. js-lingui-id: LAFO4Y
 #: src/partner-application/data/partner-country-options.ts
@@ -4966,17 +4934,17 @@ msgstr "多态多重关系"
 #. js-lingui-id: FaszS0
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Move cards between kanban columns without removing the view's active sort."
-msgstr ""
+msgstr "在不移除视图当前排序的情况下，在看板列之间移动卡片。"
 
 #. js-lingui-id: XsEFUP
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Move through command bar results to see the fields that matter before opening a record."
-msgstr ""
+msgstr "在打开记录前，浏览命令栏结果以查看重要字段。"
 
 #. js-lingui-id: qpfkDL
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Move widgets between record page tabs with drag and drop, including directly onto an empty tab."
-msgstr ""
+msgstr "通过拖放在记录页面选项卡之间移动小组件，包括直接移至空选项卡。"
 
 #. js-lingui-id: EwJDrS
 #: src/partner-application/data/partner-country-options.ts
@@ -5092,7 +5060,7 @@ msgstr "新数组字段类型"
 #. js-lingui-id: gy5v+A
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "New emails and calendar events now appear on record pages without a manual refresh."
-msgstr ""
+msgstr "新邮件和日历事件现在会显示在记录页面上，无需手动刷新。"
 
 #. js-lingui-id: DNUCGO
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
@@ -5102,7 +5070,7 @@ msgstr "新字段"
 #. js-lingui-id: DmbQpA
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "New objects now start with a record page layout and fields view ready to customize."
-msgstr ""
+msgstr "新对象现在默认包含可自定义的记录页面布局和字段视图。"
 
 #. js-lingui-id: BcCzLv
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
@@ -5227,11 +5195,9 @@ msgstr "不会。直接在 Settings 中构建自定义对象、字段、视图�
 
 #. js-lingui-id: 4yg7QV
 #: src/sections/compare/compare-data.ts
-msgid ""
-"Nobody buys Dynamics, they license it.\n"
+msgid "Nobody buys Dynamics, they license it.\n"
 "Here is what it costs once storage and add-ons land."
-msgstr ""
-"没有人“购买” Dynamics，只是获取其授权。\n"
+msgstr "没有人“购买” Dynamics，只是获取其授权。\n"
 "这是假如把存储和附加组件都算上的全部成本。"
 
 #. js-lingui-id: EVSOLf
@@ -5446,7 +5412,7 @@ msgstr "Organization，$19/用户"
 #. js-lingui-id: 6yVLtC
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Organized AI chats"
-msgstr ""
+msgstr "井然有序的 AI 聊天"
 
 #. js-lingui-id: /IX/7x
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
@@ -5741,7 +5707,7 @@ msgstr "准备入职演示文档"
 #. js-lingui-id: zhFhSW
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Preview records while you search"
-msgstr ""
+msgstr "搜索时预览记录"
 
 #. js-lingui-id: DHhJ7s
 #: src/partners-marketplace/CaseStudyModal.tsx
@@ -5953,7 +5919,7 @@ msgstr "准备好*与 Twenty 一起成长了吗？*"
 #. js-lingui-id: weCYiW
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Ready-to-use object pages"
-msgstr ""
+msgstr "即用型对象页面"
 
 #. js-lingui-id: zTY2by
 #: src/platform/routing/static-website-routes.ts
@@ -6009,12 +5975,12 @@ msgstr "记录"
 #. js-lingui-id: duvxlo
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Recurring events from connected Google calendars now stay in sync with Twenty."
-msgstr ""
+msgstr "已连接 Google 日历中的重复事件现在会与 Twenty 保持同步。"
 
 #. js-lingui-id: r3Tq0N
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Recurring Google Calendar events"
-msgstr ""
+msgstr "重复的 Google 日历事件"
 
 #. js-lingui-id: q45OlW
 #: src/partners-marketplace/PartnerReachFacts.tsx
@@ -6040,7 +6006,7 @@ msgstr "记录页面上的关系字段"
 #. js-lingui-id: Bg5IzU
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Relation tables on record pages"
-msgstr ""
+msgstr "记录页面上的关联表格"
 
 #. js-lingui-id: plY6Rp
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6061,7 +6027,7 @@ msgstr "版本发布"
 #. js-lingui-id: 9nnpPJ
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Reliable AI data imports"
-msgstr ""
+msgstr "可靠的 AI 数据导入"
 
 #. js-lingui-id: BkBq/5
 #. placeholder {0}: pill.text
@@ -6082,7 +6048,7 @@ msgstr "重命名、下载和删除附件"
 #. js-lingui-id: 7wBrBJ
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Reorder kanban columns"
-msgstr ""
+msgstr "重新排序看板列"
 
 #. js-lingui-id: t9yxlZ
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -6117,7 +6083,7 @@ msgstr "将布局重置为默认设置，选择标签图标，并将快捷方式
 #. js-lingui-id: YgVdyA
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Resizable kanban columns"
-msgstr ""
+msgstr "可调整大小的看板列"
 
 #. js-lingui-id: tpLAlL
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6142,7 +6108,7 @@ msgstr "包含 REST 与 GraphQL API"
 #. js-lingui-id: fbiZYk
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Restart a failed workflow run from the step that failed instead of running everything again."
-msgstr ""
+msgstr "从失败的步骤重新启动失败的工作流运行，而不必重新运行所有步骤。"
 
 #. js-lingui-id: kx0s+n
 #: src/case-studies/case-study-stories.ts
@@ -6157,7 +6123,7 @@ msgstr "复古 2015"
 #. js-lingui-id: dB1hYH
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Retry failed workflows"
-msgstr ""
+msgstr "重试失败的工作流"
 
 #. js-lingui-id: H0dEn+
 #: src/app-preview/stage/FlyingTrafficLights.tsx
@@ -6203,7 +6169,7 @@ msgstr "富文本布局"
 #. js-lingui-id: k5VLHK
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Richer relation layouts"
-msgstr ""
+msgstr "更丰富的关联布局"
 
 #. js-lingui-id: /gaSVU
 #: src/case-studies/case-study-stories.ts
@@ -6473,11 +6439,9 @@ msgstr "安全审查与 DPA"
 
 #. js-lingui-id: nmVU/t
 #: src/sections/customers-hero/CustomersHero.tsx
-msgid ""
-"See how teams\n"
+msgid "See how teams\n"
 "build *on Twenty*"
-msgstr ""
-"看看各团队如何\n"
+msgstr "看看各团队如何\n"
 "在 *Twenty 之上构建*"
 
 #. js-lingui-id: aB+XpI
@@ -6646,7 +6610,7 @@ msgstr "按你的业务塑造记录模型"
 #. js-lingui-id: vn7QMM
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Share call insights"
-msgstr ""
+msgstr "分享通话洞察"
 
 #. js-lingui-id: XawGZE
 #: src/client-brief/client-brief-copy.ts
@@ -6681,7 +6645,7 @@ msgstr "收起"
 #. js-lingui-id: 41IhZl
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Show records in dashboard widgets as grouped tables, kanban boards, or calendars instead of flat tables only."
-msgstr ""
+msgstr "在仪表板小组件中将记录显示为分组表格、看板或日历，而不仅限于平铺表格。"
 
 #. js-lingui-id: RhU4bB
 #: src/partners-marketplace/FilterBar.tsx
@@ -6710,11 +6674,9 @@ msgstr "在一分钟内注册 Cloud 并开始你的 30 天试用。对于更大�
 
 #. js-lingui-id: qTFDyz
 #: src/sections/pricing-plans/PricingIntro.tsx
-msgid ""
-"Simple\n"
+msgid "Simple\n"
 "*Pricing*"
-msgstr ""
-"简单\n"
+msgstr "简单\n"
 "*定价*"
 
 #. js-lingui-id: 0eG5g+
@@ -6786,12 +6748,12 @@ msgstr "智能模式、快捷方式和布局让日常任务执行得更快、更
 #. js-lingui-id: yp+1TH
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Smarter email recipients"
-msgstr ""
+msgstr "更智能的邮件收件人"
 
 #. js-lingui-id: E/7H9X
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Smarter record assignment"
-msgstr ""
+msgstr "更智能的记录分配"
 
 #. js-lingui-id: GUqjZ0
 #: src/sections/footer/FooterBottom.tsx
@@ -6842,7 +6804,7 @@ msgstr "部分队友的更改现在会立刻显示，让协作更快速、更实
 #. js-lingui-id: tzdMJX
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Sort composite fields"
-msgstr ""
+msgstr "对复合字段排序"
 
 #. js-lingui-id: tiFPjk
 #: src/sections/compare/CompareCostTable.tsx
@@ -6934,11 +6896,9 @@ msgstr "从今天起*更快行动。*"
 
 #. js-lingui-id: sBOFB0
 #: src/sections/pricing-plans/PricingIntro.tsx
-msgid ""
-"Start your free trial today\n"
+msgid "Start your free trial today\n"
 "without credit card."
-msgstr ""
-"今天就开始你的免费试用，\n"
+msgstr "今天就开始你的免费试用，\n"
 "无需信用卡。"
 
 #. js-lingui-id: ThcPyu
@@ -6965,7 +6925,7 @@ msgstr "循序渐进的指南和操作手册，帮助你的团队最大化利用
 #. js-lingui-id: 6xMwu3
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Step-by-step workflow logs"
-msgstr ""
+msgstr "分步骤的工作流日志"
 
 #. js-lingui-id: jKt86V
 #: src/sections/faq/Faq.tsx
@@ -7193,11 +7153,9 @@ msgstr "告诉我们更多信息"
 
 #. js-lingui-id: YXuDx1
 #: src/client-brief/client-brief-copy.ts
-msgid ""
-"Tell us what you need\n"
+msgid "Tell us what you need\n"
 "*We'll find the right partner*"
-msgstr ""
-"告诉我们你的需求\n"
+msgstr "告诉我们你的需求\n"
 "*我们会为你找到合适的合作伙伴*"
 
 #. js-lingui-id: kjnQvE
@@ -7381,11 +7339,9 @@ msgstr "关键决策是不从零开始构建一切。Twenty 覆盖了数据模�
 
 #. js-lingui-id: aa8o1y
 #: src/sections/compare/compare-data.ts
-msgid ""
-"The license is the cheap part.\n"
+msgid "The license is the cheap part.\n"
 "Here is what SAP Sales Cloud costs by the time it goes live."
-msgstr ""
-"许可证只是较小的一部分成本。\n"
+msgstr "许可证只是较小的一部分成本。\n"
 "这是 SAP Sales Cloud 在真正上线时的总成本。"
 
 #. js-lingui-id: gav9Hl
@@ -7400,11 +7356,9 @@ msgstr "项目明细逐项累加起来"
 
 #. js-lingui-id: DIMXNH
 #: src/sections/compare/compare-data.ts
-msgid ""
-"The list price is only the beginning.\n"
+msgid "The list price is only the beginning.\n"
 "Here is what the invoice looks like once a real team is on it."
-msgstr ""
-"标价只是开始。\n"
+msgstr "标价只是开始。\n"
 "当一支真实团队在使用时，发票看起来会是这样。"
 
 #. js-lingui-id: nf1NnD
@@ -7710,11 +7664,9 @@ msgstr "Twenty Apps 打开的是构建产品的大门，而不仅仅是做实施
 
 #. js-lingui-id: fZsVj6
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"Twenty as the\n"
+msgid "Twenty as the\n"
 "*API backbone* of a go-to-market stack"
-msgstr ""
-"将 Twenty 作为市场拓展技术栈的\n"
+msgstr "将 Twenty 作为市场拓展技术栈的\n"
 "*API 支柱*"
 
 #. js-lingui-id: +w9xZW
@@ -8330,47 +8282,37 @@ msgstr "你需要什么方面的帮助？*"
 
 #. js-lingui-id: Gln6w3
 #: src/sections/compare/compare-data.ts
-msgid ""
-"What does\n"
+msgid "What does\n"
 "*Dynamics 365* really cost?"
-msgstr ""
-"*Dynamics 365* 的\n"
+msgstr "*Dynamics 365* 的\n"
 "真实成本是多少？"
 
 #. js-lingui-id: ndwi6c
 #: src/sections/compare/compare-data.ts
-msgid ""
-"What does\n"
+msgid "What does\n"
 "*HubSpot* really cost?"
-msgstr ""
-"*HubSpot* 的\n"
+msgstr "*HubSpot* 的\n"
 "真实成本是多少？"
 
 #. js-lingui-id: QSAZlS
 #: src/sections/compare/compare-data.ts
-msgid ""
-"What does\n"
+msgid "What does\n"
 "*Pipedrive* really cost?"
-msgstr ""
-"*Pipedrive* 的\n"
+msgstr "*Pipedrive* 的\n"
 "真实成本是多少？"
 
 #. js-lingui-id: rv6SWP
 #: src/sections/compare/compare-data.ts
-msgid ""
-"What does\n"
+msgid "What does\n"
 "*Salesforce* really cost?"
-msgstr ""
-"*Salesforce* 的\n"
+msgstr "*Salesforce* 的\n"
 "真实成本是多少？"
 
 #. js-lingui-id: mdVDDM
 #: src/sections/compare/compare-data.ts
-msgid ""
-"What does\n"
+msgid "What does\n"
 "*SAP Sales Cloud* really cost?"
-msgstr ""
-"*SAP Sales Cloud* 的\n"
+msgstr "*SAP Sales Cloud* 的\n"
 "真实成本是多少？"
 
 #. js-lingui-id: phiBjc
@@ -8456,11 +8398,9 @@ msgstr "当供应商拔掉插头"
 
 #. js-lingui-id: 8SbakK
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"When your CRM is\n"
+msgid "When your CRM is\n"
 "*the product*"
-msgstr ""
-"当你的 CRM\n"
+msgstr "当你的 CRM\n"
 "*就是产品*"
 
 #. js-lingui-id: OQ41z8
@@ -8601,7 +8541,7 @@ msgstr "工作流"
 #. js-lingui-id: fUwLtb
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Workflows can pick records randomly, in round-robin order, or by choosing the least-loaded assignee."
-msgstr ""
+msgstr "工作流可随机选择记录、按轮询顺序选择记录，或选择工作负载最低的受让人。"
 
 #. js-lingui-id: OteDxj
 #: src/case-studies/case-study-stories.ts
@@ -8883,3 +8823,4 @@ msgstr "津巴布韦 🇿🇼"
 #: src/app-preview/stage/TrafficLights.tsx
 msgid "Zoom"
 msgstr "缩放"
+

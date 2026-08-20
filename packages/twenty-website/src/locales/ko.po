@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-20 10:17\n"
+"PO-Revision-Date: 2026-08-20 16:13\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -150,11 +150,9 @@ msgstr "+ $7000/조직/월"
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"+$75/user per month\n"
+msgid "+$75/user per month\n"
 "Switch to enterprise!"
-msgstr ""
-"+ $75/사용자/월\n"
+msgstr "+ $75/사용자/월\n"
 "엔터프라이즈로 전환하세요!"
 
 #. js-lingui-id: iK+ikF
@@ -164,12 +162,10 @@ msgstr "+10k명 이상의 다른 사용자"
 
 #. js-lingui-id: nRtVCK
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"+20% of net spend\n"
+msgid "+20% of net spend\n"
 "+$75/user per month\n"
 "Switch to enterprise!"
-msgstr ""
-"순지출의 +20%\n"
+msgstr "순지출의 +20%\n"
 "+ $75/사용자/월\n"
 "엔터프라이즈로 전환하세요!"
 
@@ -253,12 +249,10 @@ msgstr "$1,500~$3,500"
 
 #. js-lingui-id: 6inRXo
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"$1/orchestration run/org\n"
+msgid "$1/orchestration run/org\n"
 "+$75/user per month\n"
 "Switch to enterprise!"
-msgstr ""
-"$1/오케스트레이션 실행/조직\n"
+msgstr "$1/오케스트레이션 실행/조직\n"
 "+ $75/사용자/월\n"
 "엔터프라이즈로 전환하세요!"
 
@@ -486,8 +480,7 @@ msgstr "분당 100회"
 
 #. js-lingui-id: uuKUqZ
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"11 permissions\n"
+msgid "11 permissions\n"
 "groups"
 msgstr "권한 그룹 11개"
 
@@ -560,11 +553,9 @@ msgstr "3"
 
 #. js-lingui-id: BL47wE
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"3 2 years contract\n"
+msgid "3 2 years contract\n"
 "-33% off"
-msgstr ""
-"3 2년 계약\n"
+msgstr "3 2년 계약\n"
 "-33% 할인"
 
 #. js-lingui-id: /jgC+9
@@ -644,11 +635,9 @@ msgstr "*빠르게 움직이는* 팀을 위한 CRM"
 
 #. js-lingui-id: MXRINg
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"A CRM that\n"
+msgid "A CRM that\n"
 "*grows* with you"
-msgstr ""
-"함께\n"
+msgstr "함께\n"
 "*성장하는* CRM"
 
 #. js-lingui-id: diWAWP
@@ -663,11 +652,9 @@ msgstr "함께 성장하는 CRM | NetZero & Twenty"
 
 #. js-lingui-id: N3qsQD
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"A CRM they\n"
+msgid "A CRM they\n"
 "*actually own*"
-msgstr ""
-"그들이\n"
+msgstr "그들이\n"
 "*실제로 소유하는* CRM"
 
 #. js-lingui-id: muZzEA
@@ -682,20 +669,16 @@ msgstr "커스텀 CRM은 조직에 우위를 제공하지만, *직접 구축하�
 
 #. js-lingui-id: 4lAzBW
 #: src/sections/compare/compare-data.ts
-msgid ""
-"A feature-by-feature price check, with sources.\n"
+msgid "A feature-by-feature price check, with sources.\n"
 "Most of what HubSpot gates behind tiers is simply included in Twenty."
-msgstr ""
-"기능별로 하나씩 가격을 비교하고 출처를 제공합니다.\n"
+msgstr "기능별로 하나씩 가격을 비교하고 출처를 제공합니다.\n"
 "HubSpot이 티어 뒤에 가두어 두는 대부분의 기능은 Twenty에는 기본으로 포함됩니다."
 
 #. js-lingui-id: eZ3I1t
 #: src/sections/compare/compare-data.ts
-msgid ""
-"A friendly price on the front page.\n"
+msgid "A friendly price on the front page.\n"
 "The caps show up after you sign."
-msgstr ""
-"첫 화면에는 친근한 가격이 보입니다.\n"
+msgstr "첫 화면에는 친근한 가격이 보입니다.\n"
 "한도를 알게 되는 건 계약서에 서명한 뒤입니다."
 
 #. js-lingui-id: uNIo/j
@@ -716,7 +699,7 @@ msgstr "새로운 유지 관리 모드로, 관리자가 민감한 작업 중에 
 #. js-lingui-id: iIggw/
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "A new onboarding experience"
-msgstr ""
+msgstr "새로운 온보딩 경험 제공하기."
 
 #. js-lingui-id: P5BDuh
 #: src/case-studies/case-study-stories.ts
@@ -730,11 +713,9 @@ msgstr "성장을 준비한 플랫폼"
 
 #. js-lingui-id: vbJW8I
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"A real estate agency on WhatsApp built a\n"
+msgid "A real estate agency on WhatsApp built a\n"
 "*CRM* around it"
-msgstr ""
-"WhatsApp으로 운영되는 부동산 에이전시가 이를 중심으로\n"
+msgstr "WhatsApp으로 운영되는 부동산 에이전시가 이를 중심으로\n"
 "*CRM*을 구축했습니다"
 
 #. js-lingui-id: hwoGni
@@ -750,7 +731,7 @@ msgstr "실제 스테이징 환경"
 #. js-lingui-id: DbvKWj
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "A rebuilt setup flow guides new teams through workspace creation, contact import, and teammate invitations."
-msgstr ""
+msgstr "새롭게 구축된 설정 흐름이 새 팀이 워크스페이스를 만들고, 연락처를 가져오고, 팀원을 초대하도록 안내합니다."
 
 #. js-lingui-id: WjUlJr
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -868,12 +849,12 @@ msgstr "객체와 필드 추가"
 #. js-lingui-id: jRsHwI
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Add objects, views, records, links, and folders to Favorites from a dedicated sidebar panel."
-msgstr ""
+msgstr "전용 사이드바 패널에서 객체, 보기, 레코드, 링크 및 폴더를 즐겨찾기에 추가하세요."
 
 #. js-lingui-id: e20nHx
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Add recipients with autocomplete, person matching, duplicate detection, and inline email validation."
-msgstr ""
+msgstr "자동 완성, 사람 일치, 중복 감지 및 인라인 이메일 유효성 검사를 사용하여 수신자를 추가하세요."
 
 #. js-lingui-id: ZuoQMi
 #: src/platform/releases/ReleaseNotes.tsx
@@ -1221,11 +1202,9 @@ msgstr "앱을 찾을 수 없음 — Twenty"
 
 #. js-lingui-id: k8I7/G
 #: src/partner-application/partner-application-copy.ts
-msgid ""
-"Apply to build\n"
+msgid "Apply to build\n"
 "*the future of CRM*"
-msgstr ""
-"CRM의\n"
+msgstr "CRM의\n"
 "*미래를 함께 만들기 위해* 지원하기"
 
 #. js-lingui-id: LJCDxT
@@ -1273,7 +1252,7 @@ msgstr "Armenia 🇦🇲"
 #. js-lingui-id: GYKCBW
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Ask AI to build or reconfigure dashboards and views from your workspace data."
-msgstr ""
+msgstr "AI에게 워크스페이스 데이터로 대시보드와 보기를 구축하거나 재구성하도록 요청하세요."
 
 #. js-lingui-id: S+Q+1d
 #: src/sections/product-hero/ProductHero.tsx
@@ -1392,11 +1371,9 @@ msgstr "Twenty의 API가 완전히 개방되어 있어, 스택의 다른 모든 
 
 #. js-lingui-id: kWm0dC
 #: src/sections/partner-hero/PartnerHero.tsx
-msgid ""
-"Become\n"
+msgid "Become\n"
 "*our partner*"
-msgstr ""
-"우리의\n"
+msgstr "우리의\n"
 "*파트너가 되세요*"
 
 #. js-lingui-id: PKMHNe
@@ -1458,7 +1435,7 @@ msgstr "Bertrams"
 #. js-lingui-id: BSmDFu
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Better sorted kanban boards"
-msgstr ""
+msgstr "더욱 향상된 정렬의 칸반 보드"
 
 #. js-lingui-id: mzTjnf
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -1573,7 +1550,7 @@ msgstr "라이브 CRM 데이터로 맞춤형 대시보드를 만드세요. 딜, 
 #. js-lingui-id: IQcVFZ
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Build dashboards with AI"
-msgstr ""
+msgstr "AI로 대시보드 만들기"
 
 #. js-lingui-id: rdvFK9
 #: src/sections/why-twenty-editorial/editorials.data.ts
@@ -1756,7 +1733,7 @@ msgstr "워크스페이스에 팀원을 초대할 때 역할을 바로 선택할
 #. js-lingui-id: FcSFIg
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Choose between abbreviated and full values for number widgets on dashboards."
-msgstr ""
+msgstr "대시보드의 숫자 위젯에 축약된 값과 전체 값 중에서 선택하세요."
 
 #. js-lingui-id: geiXTM
 #: src/platform/releases/ReleaseNotes.tsx
@@ -1771,7 +1748,7 @@ msgstr "범용 유니코드 날짜 형식을 사용해, 어떤 필드에서든 �
 #. js-lingui-id: uOuvkn
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Choose which part of a name or address field a view should sort by directly from the sort chip."
-msgstr ""
+msgstr "정렬 칩에서 직접 보기가 이름 또는 주소 필드의 어느 부분을 기준으로 정렬할지 선택하세요."
 
 #. js-lingui-id: lAAXeW
 #: src/partner-application/partner-application-copy.ts
@@ -1792,7 +1769,7 @@ msgstr "필터 초기화"
 #. js-lingui-id: zwMBoX
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Clearer dashboard numbers"
-msgstr ""
+msgstr "더 명확해진 대시보드 숫자"
 
 #. js-lingui-id: yz7wBu
 #: src/partners-marketplace/CaseStudyModal.tsx
@@ -2071,7 +2048,7 @@ msgstr "복사"
 #. js-lingui-id: gqCWGE
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Copy a call recording's transcript or video link directly from the record page."
-msgstr ""
+msgstr "레코드 페이지에서 통화 녹음의 대화 내용 또는 동영상 링크를 직접 복사하세요."
 
 #. js-lingui-id: 7qTWwB
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -2148,7 +2125,7 @@ msgstr "새로운 대시보드 기능으로 워크스페이스 데이터를 사�
 #. js-lingui-id: sSow0u
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Create events on connected Google or Microsoft calendars from AI and workflows, with optional Meet or Teams links."
-msgstr ""
+msgstr "선택 사항인 Meet 또는 Teams 링크와 함께 AI 및 워크플로를 통해 연결된 Google 또는 Microsoft 캘린더에 이벤트를 만드세요."
 
 #. js-lingui-id: YxktRb
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2173,7 +2150,7 @@ msgstr "레코드 생성"
 #. js-lingui-id: w0KavK
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Create synced calendar events"
-msgstr ""
+msgstr "동기화된 캘린더 이벤트 만들기"
 
 #. js-lingui-id: oS1RiS
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -2647,12 +2624,12 @@ msgstr "새로 나온 소식 살펴보기"
 #. js-lingui-id: /Gu7LB
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Display related records as a full table directly inside a record page layout."
-msgstr ""
+msgstr "레코드 페이지 레이아웃 내에서 관련 레코드를 전체 테이블로 직접 표시하세요."
 
 #. js-lingui-id: wPD3lD
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Display related records as a table, kanban board, calendar, or grouped table directly inside a record page."
-msgstr ""
+msgstr "레코드 페이지 내에서 관련 레코드를 테이블, 칸반 보드, 캘린더 또는 그룹화된 테이블로 직접 표시하세요."
 
 #. js-lingui-id: rHLwDO
 #: src/partner-application/data/partner-country-options.ts
@@ -2708,7 +2685,7 @@ msgstr "이메일 시퀀스를 위한 워크플로 초안을 작성해 주세요
 #. js-lingui-id: jp1S8f
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Drag a column edge to resize every column in a kanban view, with the width saved for that view."
-msgstr ""
+msgstr "칸반 보기에서 열 가장자리를 드래그하여 모든 열의 크기를 조정하고, 너비를 해당 보기에 저장하세요."
 
 #. js-lingui-id: q7M3jo
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2718,12 +2695,12 @@ msgstr "드래그 앤 드롭 방식으로 위젯을 배치해, 팀의 실제 업
 #. js-lingui-id: bm5qja
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Drag kanban column headers into the order that works best for your team."
-msgstr ""
+msgstr "칸반 열 헤더를 팀에 가장 적합한 순서로 드래그하세요."
 
 #. js-lingui-id: cfThV+
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Drag widgets between tabs"
-msgstr ""
+msgstr "탭 간 위젯 드래그"
 
 #. js-lingui-id: fPma12
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -2789,7 +2766,7 @@ msgstr "각 워크스페이스는 이제 더 안전한 사용 환경을 위해 �
 #. js-lingui-id: eBNtzO
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Easier favorites"
-msgstr ""
+msgstr "더 쉬워진 즐겨찾기"
 
 #. js-lingui-id: s+5p5k
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2814,12 +2791,12 @@ msgstr "동작 편집"
 #. js-lingui-id: 0cnnX+
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Edit long-form text directly inside record page widgets with automatic saving."
-msgstr ""
+msgstr "자동 저장을 사용하여 레코드 페이지 위젯 내에서 긴 형식의 텍스트를 직접 편집하세요."
 
 #. js-lingui-id: G/FRR4
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Editable text widgets"
-msgstr ""
+msgstr "편집 가능한 텍스트 위젯"
 
 #. js-lingui-id: 4CJ4xV
 #: src/case-studies/case-study-catalog.ts
@@ -2874,7 +2851,7 @@ msgstr "이메일 및 채팅"
 #. js-lingui-id: oj7GrD
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Email forwarding"
-msgstr ""
+msgstr "이메일 전달"
 
 #. js-lingui-id: rc8HEz
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3249,7 +3226,7 @@ msgstr "아마도 비교 중이실 여러 CRM과 기능별로 가격을 대조�
 #. js-lingui-id: DMFb0o
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Featured apps"
-msgstr ""
+msgstr "추천 앱"
 
 #. js-lingui-id: 3oXVPw
 #: src/sections/product-feature/DashboardVisual/data/dashboard-visual-data.ts
@@ -3329,7 +3306,7 @@ msgstr "파트너 필터링"
 #. js-lingui-id: EOUC8o
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Filter records using fields from a related object, such as People whose Company name contains a specific value."
-msgstr ""
+msgstr "회사 이름에 특정 값이 포함된 사람처럼 관련 객체의 필드를 사용하여 레코드를 필터링하세요."
 
 #. js-lingui-id: kUUNrw
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3339,12 +3316,12 @@ msgstr "웹훅이 반환하는 콘텐츠를 필터링하여, 회사 생성과 �
 #. js-lingui-id: +UmKPb
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Filter through relationships"
-msgstr ""
+msgstr "관계를 통한 필터링"
 
 #. js-lingui-id: xbs4q4
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Filter, archive, and manage conversations from the AI chat list."
-msgstr ""
+msgstr "AI 채팅 목록에서 대화를 필터링, 보관 및 관리하세요."
 
 #. js-lingui-id: iabLgo
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -3375,7 +3352,7 @@ msgstr "Twenty 파트너 찾기 — 오픈 소스 CRM 마켓플레이스"
 #. js-lingui-id: RiVrPY
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Find and install featured apps such as People Data Labs, Last Contact, and Call Recorder directly from the marketplace."
-msgstr ""
+msgstr "마켓플레이스에서 People Data Labs, Last Contact, Call Recorder 등의 추천 앱을 직접 찾아 설치하세요."
 
 #. js-lingui-id: wHyJkT
 #: src/sections/pricing-engagement-band/PricingEngagementBand.tsx
@@ -3414,11 +3391,9 @@ msgstr "유연한 관계"
 
 #. js-lingui-id: HBJ0P5
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
-msgid ""
-"Flow\n"
+msgid "Flow\n"
 "orchestration"
-msgstr ""
-"플로우\n"
+msgstr "플로우\n"
 "오케스트레이션"
 
 #. js-lingui-id: obrJBN
@@ -3474,7 +3449,7 @@ msgstr "지난 20년 동안 CRM의 의미는 같았습니다. 통화를 기록�
 #. js-lingui-id: Z0PcL7
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Forward shared inboxes such as support@yourcompany.com into Twenty without connecting a full mailbox."
-msgstr ""
+msgstr "전체 사서함을 연결하지 않고 support@yourcompany.com과 같은 공유 받은편지함을 Twenty로 전달하세요."
 
 #. js-lingui-id: UCoxP5
 #: src/sections/testimonials/partner-testimonials.data.ts
@@ -3528,11 +3503,9 @@ msgstr "문서에서 오픈 API로"
 
 #. js-lingui-id: 2CtZ6T
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"From Salesforce to\n"
+msgid "From Salesforce to\n"
 "*self-hosted Twenty*"
-msgstr ""
-"Salesforce에서\n"
+msgstr "Salesforce에서\n"
 "*self-hosted Twenty*로"
 
 #. js-lingui-id: kl+hEJ
@@ -3723,12 +3696,12 @@ msgstr "Grenada 🇬🇩"
 #. js-lingui-id: c7mbFb
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Group records by relationships"
-msgstr ""
+msgstr "관계별로 레코드 그룹화"
 
 #. js-lingui-id: lAlV+Q
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Group table and kanban views by a related record, such as an account owner or company."
-msgstr ""
+msgstr "계정 소유자 또는 회사와 같은 관련 레코드별로 테이블 및 칸반 보기를 그룹화하세요."
 
 #. js-lingui-id: MCLWq4
 #: src/sections/helped/helped.data.ts
@@ -3901,11 +3874,9 @@ msgstr "Nine Dots Ventures가 Twenty, API, n8n, Grafana, AI를 활용해 하루 
 
 #. js-lingui-id: 5sWcC0
 #: src/sections/case-study-promo/CaseStudyPromo.tsx
-msgid ""
-"How teams\n"
+msgid "How teams\n"
 "*built with Twenty*"
-msgstr ""
-"팀이 Twenty로\n"
+msgstr "팀이 Twenty로\n"
 "*어떻게 구축했는지*"
 
 #. js-lingui-id: Z3Cabh
@@ -3967,7 +3938,7 @@ msgstr "회사가 Microsoft 365와 Power Platform을 중심으로 운영되고 �
 #. js-lingui-id: zMq4mR
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Image attachments now show a thumbnail inside file field chips, so they are easier to identify at a glance."
-msgstr ""
+msgstr "이제 이미지 첨부 파일은 파일 필드 칩 안에 썸네일을 표시하므로 한눈에 더 쉽게 식별할 수 있습니다."
 
 #. js-lingui-id: Grur3I
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4006,7 +3977,7 @@ msgstr "데이터를 가져오는 동안 플레이스홀더 콘텐츠를 표시�
 #. js-lingui-id: F+7508
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Import larger CSV and spreadsheet files through AI chat with more reliable relation matching and bulk updates."
-msgstr ""
+msgstr "더 안정적인 관계 일치 및 일괄 업데이트를 통해 AI 채팅에서 더 큰 CSV 및 스프레드시트 파일을 가져오세요."
 
 #. js-lingui-id: WxaeWx
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4150,12 +4121,12 @@ msgstr "무한 스크롤은 여전히 \"곧 제공\" 상태지만, 송장은 이
 #. js-lingui-id: w8vi/L
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Inline image previews"
-msgstr ""
+msgstr "인라인 이미지 미리보기"
 
 #. js-lingui-id: /eL+82
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Inspect AI calls, code output, HTTP requests, and emails for every step of a workflow run."
-msgstr ""
+msgstr "워크플로 실행의 각 단계에 대한 AI 호출, 코드 출력, HTTP 요청 및 이메일을 검사하세요."
 
 #. js-lingui-id: TKQ7K+
 #: src/apps-marketplace/AppDetail.tsx
@@ -4479,11 +4450,9 @@ msgstr "LATAM"
 
 #. js-lingui-id: WvrtRi
 #: src/sections/releases-hero/ReleasesHero.tsx
-msgid ""
-"Latest\n"
+msgid "Latest\n"
 "*Releases*"
-msgstr ""
-"최신\n"
+msgstr "최신\n"
 "*릴리스*"
 
 #. js-lingui-id: 7OHfcc
@@ -4628,7 +4597,7 @@ msgstr "라이브 데이터와 AI 내장"
 #. js-lingui-id: WxYx+e
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Live email and calendar tabs"
-msgstr ""
+msgstr "실시간 이메일 및 캘린더 탭"
 
 #. js-lingui-id: GObQuL
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
@@ -4949,7 +4918,7 @@ msgstr "더 강력해진 검색"
 #. js-lingui-id: p8VzrC
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "More visual dashboard views"
-msgstr ""
+msgstr "더 시각적인 대시보드 보기"
 
 #. js-lingui-id: LAFO4Y
 #: src/partner-application/data/partner-country-options.ts
@@ -4964,17 +4933,17 @@ msgstr "Morph Many 관계"
 #. js-lingui-id: FaszS0
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Move cards between kanban columns without removing the view's active sort."
-msgstr ""
+msgstr "보기의 활성 정렬을 해제하지 않고 칸반 열 간에 카드를 이동하세요."
 
 #. js-lingui-id: XsEFUP
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Move through command bar results to see the fields that matter before opening a record."
-msgstr ""
+msgstr "레코드를 열기 전에 명령 모음 결과를 이동하며 중요한 필드를 확인하세요."
 
 #. js-lingui-id: qpfkDL
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Move widgets between record page tabs with drag and drop, including directly onto an empty tab."
-msgstr ""
+msgstr "빈 탭으로 직접 이동하는 것을 포함하여 드래그 앤 드롭으로 레코드 페이지 탭 간에 위젯을 이동하세요."
 
 #. js-lingui-id: EwJDrS
 #: src/partner-application/data/partner-country-options.ts
@@ -5090,7 +5059,7 @@ msgstr "새로운 Array 필드 유형"
 #. js-lingui-id: gy5v+A
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "New emails and calendar events now appear on record pages without a manual refresh."
-msgstr ""
+msgstr "이제 새 이메일과 캘린더 이벤트가 수동 새로 고침 없이 레코드 페이지에 표시됩니다."
 
 #. js-lingui-id: DNUCGO
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
@@ -5100,7 +5069,7 @@ msgstr "새 필드"
 #. js-lingui-id: DmbQpA
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "New objects now start with a record page layout and fields view ready to customize."
-msgstr ""
+msgstr "이제 새 객체는 사용자 지정할 수 있는 레코드 페이지 레이아웃과 필드 보기가 준비된 상태로 시작합니다."
 
 #. js-lingui-id: BcCzLv
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
@@ -5225,11 +5194,9 @@ msgstr "아니요. Settings에서 바로 커스텀 오브젝트, 필드, 뷰, �
 
 #. js-lingui-id: 4yg7QV
 #: src/sections/compare/compare-data.ts
-msgid ""
-"Nobody buys Dynamics, they license it.\n"
+msgid "Nobody buys Dynamics, they license it.\n"
 "Here is what it costs once storage and add-ons land."
-msgstr ""
-"Dynamics는 아무도 ‘구매’하지 않습니다. ‘라이선스’를 받죠.\n"
+msgstr "Dynamics는 아무도 ‘구매’하지 않습니다. ‘라이선스’를 받죠.\n"
 "스토리지와 애드온을 더하면 실제 비용이 어떻게 되는지 보여드립니다."
 
 #. js-lingui-id: EVSOLf
@@ -5444,7 +5411,7 @@ msgstr "Organization, 사용자당 $19"
 #. js-lingui-id: 6yVLtC
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Organized AI chats"
-msgstr ""
+msgstr "정리된 AI 채팅"
 
 #. js-lingui-id: /IX/7x
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
@@ -5739,7 +5706,7 @@ msgstr "온보딩 자료를 준비하세요."
 #. js-lingui-id: zhFhSW
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Preview records while you search"
-msgstr ""
+msgstr "검색 중 레코드 미리보기"
 
 #. js-lingui-id: DHhJ7s
 #: src/partners-marketplace/CaseStudyModal.tsx
@@ -5951,7 +5918,7 @@ msgstr "Twenty와 함께 *성장할 준비가 되셨나요?*"
 #. js-lingui-id: weCYiW
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Ready-to-use object pages"
-msgstr ""
+msgstr "바로 사용할 수 있는 객체 페이지"
 
 #. js-lingui-id: zTY2by
 #: src/platform/routing/static-website-routes.ts
@@ -6007,12 +5974,12 @@ msgstr "레코드"
 #. js-lingui-id: duvxlo
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Recurring events from connected Google calendars now stay in sync with Twenty."
-msgstr ""
+msgstr "이제 연결된 Google 캘린더의 반복 이벤트가 Twenty와 동기화 상태를 유지합니다."
 
 #. js-lingui-id: r3Tq0N
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Recurring Google Calendar events"
-msgstr ""
+msgstr "반복되는 Google 캘린더 이벤트"
 
 #. js-lingui-id: q45OlW
 #: src/partners-marketplace/PartnerReachFacts.tsx
@@ -6038,7 +6005,7 @@ msgstr "레코드 페이지의 관계 필드"
 #. js-lingui-id: Bg5IzU
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Relation tables on record pages"
-msgstr ""
+msgstr "레코드 페이지의 관계 테이블"
 
 #. js-lingui-id: plY6Rp
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6059,7 +6026,7 @@ msgstr "릴리즈"
 #. js-lingui-id: 9nnpPJ
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Reliable AI data imports"
-msgstr ""
+msgstr "안정적인 AI 데이터 가져오기"
 
 #. js-lingui-id: BkBq/5
 #. placeholder {0}: pill.text
@@ -6080,7 +6047,7 @@ msgstr "첨부 파일 이름 변경, 다운로드, 삭제"
 #. js-lingui-id: 7wBrBJ
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Reorder kanban columns"
-msgstr ""
+msgstr "칸반 열 순서 변경"
 
 #. js-lingui-id: t9yxlZ
 #: src/sections/pricing-plan-table/plan-table-data.ts
@@ -6115,7 +6082,7 @@ msgstr "레이아웃을 기본값으로 재설정하고, 탭 아이콘을 선택
 #. js-lingui-id: YgVdyA
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Resizable kanban columns"
-msgstr ""
+msgstr "크기 조절 가능한 칸반 열"
 
 #. js-lingui-id: tpLAlL
 #: src/platform/releases/ReleaseNotes.tsx
@@ -6140,7 +6107,7 @@ msgstr "REST 및 GraphQL API 포함"
 #. js-lingui-id: fbiZYk
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Restart a failed workflow run from the step that failed instead of running everything again."
-msgstr ""
+msgstr "실패한 워크플로 실행을 처음부터 다시 실행하는 대신 실패한 단계부터 다시 시작하세요."
 
 #. js-lingui-id: kx0s+n
 #: src/case-studies/case-study-stories.ts
@@ -6155,7 +6122,7 @@ msgstr "레트로 2015"
 #. js-lingui-id: dB1hYH
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Retry failed workflows"
-msgstr ""
+msgstr "실패한 워크플로 재시도"
 
 #. js-lingui-id: H0dEn+
 #: src/app-preview/stage/FlyingTrafficLights.tsx
@@ -6201,7 +6168,7 @@ msgstr "리치 텍스트 레이아웃"
 #. js-lingui-id: k5VLHK
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Richer relation layouts"
-msgstr ""
+msgstr "더 풍부한 관계 레이아웃"
 
 #. js-lingui-id: /gaSVU
 #: src/case-studies/case-study-stories.ts
@@ -6471,11 +6438,9 @@ msgstr "보안 검토 및 DPA"
 
 #. js-lingui-id: nmVU/t
 #: src/sections/customers-hero/CustomersHero.tsx
-msgid ""
-"See how teams\n"
+msgid "See how teams\n"
 "build *on Twenty*"
-msgstr ""
-"팀들이\n"
+msgstr "팀들이\n"
 "*Twenty 위에서* 어떻게 구축하는지 확인하세요"
 
 #. js-lingui-id: aB+XpI
@@ -6644,7 +6609,7 @@ msgstr "비즈니스에 맞게 레코드 구조화"
 #. js-lingui-id: vn7QMM
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Share call insights"
-msgstr ""
+msgstr "통화 인사이트 공유"
 
 #. js-lingui-id: XawGZE
 #: src/client-brief/client-brief-copy.ts
@@ -6679,7 +6644,7 @@ msgstr "간단히 보기"
 #. js-lingui-id: 41IhZl
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Show records in dashboard widgets as grouped tables, kanban boards, or calendars instead of flat tables only."
-msgstr ""
+msgstr "대시보드 위젯에서 레코드를 일반 테이블뿐 아니라 그룹화된 테이블, 칸반 보드 또는 캘린더로 표시하세요."
 
 #. js-lingui-id: RhU4bB
 #: src/partners-marketplace/FilterBar.tsx
@@ -6708,11 +6673,9 @@ msgstr "1분 이내에 Cloud에 가입해 30일 체험을 시작하세요. 더 �
 
 #. js-lingui-id: qTFDyz
 #: src/sections/pricing-plans/PricingIntro.tsx
-msgid ""
-"Simple\n"
+msgid "Simple\n"
 "*Pricing*"
-msgstr ""
-"간단한\n"
+msgstr "간단한\n"
 "*요금제*"
 
 #. js-lingui-id: 0eG5g+
@@ -6784,12 +6747,12 @@ msgstr "스마트한 패턴, 단축키, 레이아웃으로 매일 반복되는 �
 #. js-lingui-id: yp+1TH
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Smarter email recipients"
-msgstr ""
+msgstr "더 스마트한 이메일 수신자"
 
 #. js-lingui-id: E/7H9X
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Smarter record assignment"
-msgstr ""
+msgstr "더 스마트한 레코드 할당"
 
 #. js-lingui-id: GUqjZ0
 #: src/sections/footer/FooterBottom.tsx
@@ -6840,7 +6803,7 @@ msgstr "일부 팀원의 변경 사항은 이제 즉시 반영되어, 협업이 
 #. js-lingui-id: tzdMJX
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Sort composite fields"
-msgstr ""
+msgstr "복합 필드 정렬"
 
 #. js-lingui-id: tiFPjk
 #: src/sections/compare/CompareCostTable.tsx
@@ -6932,11 +6895,9 @@ msgstr "오늘 바로 *더 빠르게 움직이세요.*"
 
 #. js-lingui-id: sBOFB0
 #: src/sections/pricing-plans/PricingIntro.tsx
-msgid ""
-"Start your free trial today\n"
+msgid "Start your free trial today\n"
 "without credit card."
-msgstr ""
-"오늘 바로 무료 체험을 시작하세요.\n"
+msgstr "오늘 바로 무료 체험을 시작하세요.\n"
 "신용카드는 필요 없습니다."
 
 #. js-lingui-id: ThcPyu
@@ -6963,7 +6924,7 @@ msgstr "팀이 워크스페이스를 최대한 활용할 수 있도록 돕는 �
 #. js-lingui-id: 6xMwu3
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Step-by-step workflow logs"
-msgstr ""
+msgstr "단계별 워크플로 로그"
 
 #. js-lingui-id: jKt86V
 #: src/sections/faq/Faq.tsx
@@ -7191,11 +7152,9 @@ msgstr "더 알려 주세요"
 
 #. js-lingui-id: YXuDx1
 #: src/client-brief/client-brief-copy.ts
-msgid ""
-"Tell us what you need\n"
+msgid "Tell us what you need\n"
 "*We'll find the right partner*"
-msgstr ""
-"필요한 내용을 알려 주세요\n"
+msgstr "필요한 내용을 알려 주세요\n"
 "*저희가 알맞은 파트너를 찾아드립니다*"
 
 #. js-lingui-id: kjnQvE
@@ -7379,11 +7338,9 @@ msgstr "핵심 결정은 모든 것을 처음부터 직접 구축하지 않기�
 
 #. js-lingui-id: aa8o1y
 #: src/sections/compare/compare-data.ts
-msgid ""
-"The license is the cheap part.\n"
+msgid "The license is the cheap part.\n"
 "Here is what SAP Sales Cloud costs by the time it goes live."
-msgstr ""
-"라이선스는 가장 작은 부분일 뿐입니다.\n"
+msgstr "라이선스는 가장 작은 부분일 뿐입니다.\n"
 "실제 운영에 들어갈 때 SAP Sales Cloud에 드는 총비용을 보여드립니다."
 
 #. js-lingui-id: gav9Hl
@@ -7398,11 +7355,9 @@ msgstr "줄줄이 쌓이는 청구 항목"
 
 #. js-lingui-id: DIMXNH
 #: src/sections/compare/compare-data.ts
-msgid ""
-"The list price is only the beginning.\n"
+msgid "The list price is only the beginning.\n"
 "Here is what the invoice looks like once a real team is on it."
-msgstr ""
-"리스트 가격은 시작에 불과합니다.\n"
+msgstr "리스트 가격은 시작에 불과합니다.\n"
 "실제 팀이 사용하기 시작하면 인보이스가 어떻게 바뀌는지 보여드립니다."
 
 #. js-lingui-id: nf1NnD
@@ -7708,11 +7663,9 @@ msgstr "Twenty Apps는 단순 구현을 넘어 제품을 구축할 수 있는 �
 
 #. js-lingui-id: fZsVj6
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"Twenty as the\n"
+msgid "Twenty as the\n"
 "*API backbone* of a go-to-market stack"
-msgstr ""
-"고투마켓 스택의\n"
+msgstr "고투마켓 스택의\n"
 "*API 백본*으로서의 Twenty"
 
 #. js-lingui-id: +w9xZW
@@ -8328,47 +8281,37 @@ msgstr "어떤 도움을 필요로 하시나요? *"
 
 #. js-lingui-id: Gln6w3
 #: src/sections/compare/compare-data.ts
-msgid ""
-"What does\n"
+msgid "What does\n"
 "*Dynamics 365* really cost?"
-msgstr ""
-"\n"
+msgstr "\n"
 "*Dynamics 365*의 실제 비용은 얼마일까요?"
 
 #. js-lingui-id: ndwi6c
 #: src/sections/compare/compare-data.ts
-msgid ""
-"What does\n"
+msgid "What does\n"
 "*HubSpot* really cost?"
-msgstr ""
-"\n"
+msgstr "\n"
 "*HubSpot*의 실제 비용은 얼마일까요?"
 
 #. js-lingui-id: QSAZlS
 #: src/sections/compare/compare-data.ts
-msgid ""
-"What does\n"
+msgid "What does\n"
 "*Pipedrive* really cost?"
-msgstr ""
-"\n"
+msgstr "\n"
 "*Pipedrive*의 실제 비용은 얼마일까요?"
 
 #. js-lingui-id: rv6SWP
 #: src/sections/compare/compare-data.ts
-msgid ""
-"What does\n"
+msgid "What does\n"
 "*Salesforce* really cost?"
-msgstr ""
-"\n"
+msgstr "\n"
 "*Salesforce*의 실제 비용은 얼마일까요?"
 
 #. js-lingui-id: mdVDDM
 #: src/sections/compare/compare-data.ts
-msgid ""
-"What does\n"
+msgid "What does\n"
 "*SAP Sales Cloud* really cost?"
-msgstr ""
-"\n"
+msgstr "\n"
 "*SAP Sales Cloud*의 실제 비용은 얼마일까요?"
 
 #. js-lingui-id: phiBjc
@@ -8454,11 +8397,9 @@ msgstr "벤더가 서비스를 중단했을 때"
 
 #. js-lingui-id: 8SbakK
 #: src/case-studies/case-study-stories.ts
-msgid ""
-"When your CRM is\n"
+msgid "When your CRM is\n"
 "*the product*"
-msgstr ""
-"CRM이\n"
+msgstr "CRM이\n"
 "*곧 제품*일 때"
 
 #. js-lingui-id: OQ41z8
@@ -8599,7 +8540,7 @@ msgstr "워크플로"
 #. js-lingui-id: fUwLtb
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Workflows can pick records randomly, in round-robin order, or by choosing the least-loaded assignee."
-msgstr ""
+msgstr "워크플로에서 레코드를 무작위로, 라운드 로빈 순서로 또는 작업량이 가장 적은 담당자를 선택하여 지정할 수 있습니다."
 
 #. js-lingui-id: OteDxj
 #: src/case-studies/case-study-stories.ts
@@ -8881,3 +8822,4 @@ msgstr "짐바브웨 🇿🇼"
 #: src/app-preview/stage/TrafficLights.tsx
 msgid "Zoom"
 msgstr "Zoom"
+
