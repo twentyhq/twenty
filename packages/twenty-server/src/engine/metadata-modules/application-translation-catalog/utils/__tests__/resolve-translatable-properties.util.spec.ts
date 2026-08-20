@@ -5,7 +5,7 @@ import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/uti
 
 const i18nContext: EffectiveEntityI18nContext = {
   locale: 'fr-FR',
-  i18nInstance: { _: (messageId: string) => messageId } as never,
+  i18nInstance: { _: (messageId: string) => messageId },
   isStandardApp: false,
   applicationCatalog: undefined,
 };
