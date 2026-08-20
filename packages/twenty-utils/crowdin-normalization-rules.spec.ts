@@ -21,8 +21,6 @@ const evaluate = ({
 }) => evaluateRules({ rules, sourceText, translationText });
 
 describe('escaped-inline-code-tags', () => {
-  // The Crowdin build failure this normalizer exists for: an inline-code tag
-  // that came back HTML-escaped makes the whole language unbuildable.
   it('repairs an escaped tag inside an inline-code span', () => {
     const result = evaluate({
       rules: INLINE_CODE_RULE,
