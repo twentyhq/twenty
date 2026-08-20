@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
+import { PermissionFlagType } from 'twenty-shared/constants';
+import { BlocklistScope } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
@@ -13,67 +15,169 @@ import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { isDomain } from 'src/engine/utils/is-domain';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { type BlocklistItem } from 'src/modules/blocklist/types/blocklist-item.type';
+import { type BlocklistMutationContext } from 'src/modules/blocklist/types/blocklist-mutation-context.type';
 
-export type BlocklistItem = Omit<
-  BlocklistWorkspaceEntity,
-  'createdAt' | 'updatedAt' | 'workspaceMember'
-> & {
-  createdAt: string;
-  updatedAt: string;
-  workspaceMemberId: string;
+type BlocklistCreateEntry = {
+  item: Partial<BlocklistItem>;
+  existingRecord: BlocklistWorkspaceEntity | null;
 };
+
+const resolveUniquenessOwner = ({
+  existingRecord,
+  context,
+}: {
+  existingRecord: Pick<BlocklistWorkspaceEntity, 'workspaceMemberId'> | null;
+  context: BlocklistMutationContext;
+}): string => existingRecord?.workspaceMemberId ?? context.workspaceMemberId;
+
+const emailOrDomainSchema = z
+  .string()
+  .trim()
+  .pipe(z.email({ error: 'Invalid email or domain' }))
+  .or(
+    z
+      .string()
+      .refine(
+        (value) => value.startsWith('@') && isDomain(value.slice(1)),
+        'Invalid email or domain',
+      ),
+  );
 
 @Injectable()
 export class BlocklistValidationService {
   constructor(
     @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
     private readonly blocklistRepository: BlocklistRepository,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly permissionsService: PermissionsService,
   ) {}
 
-  public async validateBlocklistForCreateMany(
-    payload: CreateManyResolverArgs<BlocklistItem>,
-    userId: string,
-    workspaceId: string,
-  ) {
-    await this.validateSchema(payload.data);
-    await this.validateUniquenessForCreateMany(payload, userId, workspaceId);
-  }
+  public async validateBlocklistForCreateMany({
+    payload,
+    context,
+  }: {
+    payload: CreateManyResolverArgs<Partial<BlocklistItem>>;
+    context: BlocklistMutationContext;
+  }): Promise<void> {
+    this.validateSchema(payload.data);
 
-  public async validateBlocklistForUpdateOne(
-    payload: UpdateOneResolverArgs<BlocklistItem>,
-    userId: string,
-    workspaceId: string,
-  ) {
-    if (payload.data.handle) {
-      await this.validateSchema([payload.data]);
+    const entries: BlocklistCreateEntry[] = [];
+
+    for (const item of payload.data) {
+      const existingRecord = isDefined(item.id)
+        ? await this.blocklistRepository.getById({
+            id: item.id,
+            workspaceId: context.workspaceId,
+          })
+        : null;
+
+      if (isDefined(existingRecord)) {
+        await this.assertCanManageExistingRecord({ existingRecord, context });
+        this.assertScopeAndOwnerAreUnchanged({ data: item, existingRecord });
+      } else {
+        await this.assertCanCreate({ item, context });
+      }
+
+      entries.push({ item, existingRecord });
     }
-    await this.validateUniquenessForUpdateOne(payload, userId, workspaceId);
+
+    await this.validateUniquenessForCreateMany({ entries, context });
   }
 
-  public async validateSchema(blocklist: BlocklistItem[]) {
-    const emailOrDomainSchema = z
-      .string()
-      .trim()
-      .pipe(z.email({ error: 'Invalid email or domain' }))
-      .or(
-        z
-          .string()
-          .refine(
-            (value) => value.startsWith('@') && isDomain(value.slice(1)),
-            'Invalid email or domain',
-          ),
-      );
+  public async validateBlocklistForUpdateOne({
+    payload,
+    context,
+  }: {
+    payload: UpdateOneResolverArgs<Partial<BlocklistItem>>;
+    context: BlocklistMutationContext;
+  }): Promise<void> {
+    const existingRecord = await this.getExistingRecordOrThrow({
+      id: payload.id,
+      context,
+    });
 
-    for (const handle of blocklist.map((item) => item.handle)) {
-      if (!handle) {
+    await this.assertCanManageExistingRecord({ existingRecord, context });
+    this.assertScopeAndOwnerAreUnchanged({
+      data: payload.data,
+      existingRecord,
+    });
+
+    if (!isDefined(payload.data.handle)) {
+      return;
+    }
+
+    this.validateSchema([payload.data]);
+
+    if (payload.data.handle === existingRecord.handle) {
+      return;
+    }
+
+    const siblingHandles = await this.getHandlesInScope({
+      scope: existingRecord.scope,
+      workspaceMemberId: resolveUniquenessOwner({ existingRecord, context }),
+      context,
+    });
+
+    this.assertHandlesAreNew({
+      handles: [payload.data.handle],
+      existingHandles: siblingHandles.filter(
+        (handle) => handle !== existingRecord.handle,
+      ),
+    });
+  }
+
+  public async validateBlocklistAccessToRecord({
+    id,
+    context,
+  }: {
+    id: string;
+    context: BlocklistMutationContext;
+  }): Promise<void> {
+    const existingRecord = await this.getExistingRecordOrThrow({ id, context });
+
+    await this.assertCanManageExistingRecord({ existingRecord, context });
+  }
+
+  public async validateBlocklistForRestoreOne({
+    id,
+    context,
+  }: {
+    id: string;
+    context: BlocklistMutationContext;
+  }): Promise<void> {
+    const existingRecord = await this.getExistingRecordOrThrow({ id, context });
+
+    await this.assertCanManageExistingRecord({ existingRecord, context });
+
+    if (!isDefined(existingRecord.handle)) {
+      return;
+    }
+
+    const liveHandles = await this.getHandlesInScope({
+      scope: existingRecord.scope,
+      workspaceMemberId: resolveUniquenessOwner({ existingRecord, context }),
+      context,
+    });
+
+    this.assertHandlesAreNew({
+      handles: [existingRecord.handle],
+      existingHandles: liveHandles,
+    });
+  }
+
+  private validateSchema(blocklist: Partial<BlocklistItem>[]): void {
+    for (const { handle } of blocklist) {
+      if (!isDefined(handle)) {
         throw new CommonQueryRunnerException(
           'Blocklist handle is required',
           CommonQueryRunnerExceptionCode.BAD_REQUEST,
@@ -93,59 +197,224 @@ export class BlocklistValidationService {
     }
   }
 
-  public async validateUniquenessForCreateMany(
-    payload: CreateManyResolverArgs<BlocklistItem>,
-    userId: string,
-    workspaceId: string,
-  ) {
-    const authContext = buildSystemAuthContext(workspaceId);
-
-    const currentWorkspaceMember =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const workspaceMemberRepository =
-            await this.globalWorkspaceOrmManager.getRepository(
-              workspaceId,
-              WorkspaceMemberWorkspaceEntity,
-              { shouldBypassPermissionChecks: true },
-            );
-
-          return workspaceMemberRepository.findOneByOrFail({
-            userId,
-          });
-        },
-        authContext,
-      );
-
+  private async assertCanCreate({
+    item,
+    context,
+  }: {
+    item: Partial<Pick<BlocklistItem, 'scope' | 'workspaceMemberId'>>;
+    context: BlocklistMutationContext;
+  }): Promise<void> {
     if (
-      payload.data.some(
-        (item) =>
-          isDefined(item.workspaceMemberId) &&
-          item.workspaceMemberId !== currentWorkspaceMember.id,
-      )
+      (item.scope ?? BlocklistScope.WORKSPACE_MEMBER) ===
+      BlocklistScope.WORKSPACE
     ) {
+      if (isDefined(item.workspaceMemberId)) {
+        throw new CommonQueryRunnerException(
+          'A workspace-scoped blocklist entry cannot target a workspace member',
+          CommonQueryRunnerExceptionCode.BAD_REQUEST,
+          {
+            userFriendlyMessage: msg`A workspace-wide blocklist entry cannot target a workspace member.`,
+          },
+        );
+      }
+
+      await this.assertHasWorkspaceBlocklistPermission(context);
+
+      return;
+    }
+
+    if (item.workspaceMemberId !== context.workspaceMemberId) {
       throw new CommonQueryRunnerException(
-        'Cannot create blocklist entry for another workspace member',
+        'A workspace-member-scoped blocklist entry must target its own workspace member',
         CommonQueryRunnerExceptionCode.BAD_REQUEST,
         {
-          userFriendlyMessage: msg`Cannot create blocklist entry for another workspace member.`,
+          userFriendlyMessage: msg`Cannot manage a blocklist entry of another workspace member.`,
         },
       );
     }
+  }
 
-    const currentBlocklist =
-      await this.blocklistRepository.getByWorkspaceMemberId(
-        currentWorkspaceMember.id,
-        workspaceId,
+  private async assertCanManageExistingRecord({
+    existingRecord,
+    context,
+  }: {
+    existingRecord: BlocklistWorkspaceEntity;
+    context: BlocklistMutationContext;
+  }): Promise<void> {
+    if (
+      existingRecord.scope === BlocklistScope.WORKSPACE_MEMBER &&
+      existingRecord.workspaceMemberId === context.workspaceMemberId
+    ) {
+      return;
+    }
+
+    await this.assertHasWorkspaceBlocklistPermission(context);
+  }
+
+  private async assertHasWorkspaceBlocklistPermission(
+    context: BlocklistMutationContext,
+  ): Promise<void> {
+    const hasPermission =
+      await this.permissionsService.userHasWorkspaceSettingPermission({
+        userWorkspaceId: context.userWorkspaceId,
+        setting: PermissionFlagType.WORKSPACE,
+        workspaceId: context.workspaceId,
+      });
+
+    if (!hasPermission) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+        {
+          userFriendlyMessage: msg`You do not have permission to manage the workspace blocklist.`,
+        },
       );
+    }
+  }
 
-    const currentBlocklistHandles = currentBlocklist.map(
-      (blocklist) => blocklist.handle,
-    );
+  private assertScopeAndOwnerAreUnchanged({
+    data,
+    existingRecord,
+  }: {
+    data: Partial<BlocklistItem>;
+    existingRecord: BlocklistWorkspaceEntity;
+  }): void {
+    if ('scope' in data && data.scope !== existingRecord.scope) {
+      throw new CommonQueryRunnerException(
+        'Blocklist scope cannot be updated',
+        CommonQueryRunnerExceptionCode.BAD_REQUEST,
+        { userFriendlyMessage: msg`Blocklist scope cannot be updated.` },
+      );
+    }
 
     if (
-      payload.data.some((item) => currentBlocklistHandles.includes(item.handle))
+      'workspaceMemberId' in data &&
+      data.workspaceMemberId !== existingRecord.workspaceMemberId
     ) {
+      throw new CommonQueryRunnerException(
+        'Workspace member cannot be updated',
+        CommonQueryRunnerExceptionCode.BAD_REQUEST,
+        { userFriendlyMessage: msg`Workspace member cannot be updated.` },
+      );
+    }
+  }
+
+  private async validateUniquenessForCreateMany({
+    entries,
+    context,
+  }: {
+    entries: BlocklistCreateEntry[];
+    context: BlocklistMutationContext;
+  }): Promise<void> {
+    const groups = new Map<
+      string,
+      {
+        scope: BlocklistScope;
+        workspaceMemberId: string;
+        handles: string[];
+        retainedHandles: string[];
+      }
+    >();
+
+    for (const { item, existingRecord } of entries) {
+      if (!isDefined(item.handle)) {
+        continue;
+      }
+
+      if (existingRecord?.handle === item.handle) {
+        continue;
+      }
+
+      const scope =
+        existingRecord?.scope ?? item.scope ?? BlocklistScope.WORKSPACE_MEMBER;
+      const workspaceMemberId = resolveUniquenessOwner({
+        existingRecord,
+        context,
+      });
+
+      const groupKey = `${scope}:${workspaceMemberId}`;
+      const group = groups.get(groupKey) ?? {
+        scope,
+        workspaceMemberId,
+        handles: [],
+        retainedHandles: [],
+      };
+
+      group.handles.push(item.handle);
+
+      if (isDefined(existingRecord?.handle)) {
+        group.retainedHandles.push(existingRecord.handle);
+      }
+
+      groups.set(groupKey, group);
+    }
+
+    for (const {
+      scope,
+      workspaceMemberId,
+      handles,
+      retainedHandles,
+    } of groups.values()) {
+      if (new Set(handles).size !== handles.length) {
+        throw new CommonQueryRunnerException(
+          'Blocklist handle is duplicated in the payload',
+          CommonQueryRunnerExceptionCode.BAD_REQUEST,
+          { userFriendlyMessage: msg`Blocklist handle already exists.` },
+        );
+      }
+
+      const existingHandles = await this.getHandlesInScope({
+        scope,
+        workspaceMemberId,
+        context,
+      });
+
+      this.assertHandlesAreNew({
+        handles,
+        existingHandles: existingHandles.filter(
+          (handle) => !retainedHandles.includes(handle),
+        ),
+      });
+    }
+  }
+
+  private async getHandlesInScope({
+    scope,
+    workspaceMemberId,
+    context,
+  }: {
+    scope: BlocklistScope;
+    workspaceMemberId: string;
+    context: BlocklistMutationContext;
+  }): Promise<string[]> {
+    if (scope === BlocklistScope.WORKSPACE) {
+      const workspaceBlocklist =
+        await this.blocklistRepository.getWorkspaceScoped(context.workspaceId);
+
+      return workspaceBlocklist
+        .map((blocklistItem) => blocklistItem.handle)
+        .filter(isDefined);
+    }
+
+    const memberBlocklist =
+      await this.blocklistRepository.getByWorkspaceMemberId({
+        workspaceMemberId,
+        workspaceId: context.workspaceId,
+      });
+
+    return memberBlocklist
+      .map((blocklistItem) => blocklistItem.handle)
+      .filter(isDefined);
+  }
+
+  private assertHandlesAreNew({
+    handles,
+    existingHandles,
+  }: {
+    handles: string[];
+    existingHandles: string[];
+  }): void {
+    if (handles.some((handle) => existingHandles.includes(handle))) {
       throw new CommonQueryRunnerException(
         'Blocklist handle already exists',
         CommonQueryRunnerExceptionCode.BAD_REQUEST,
@@ -154,17 +423,19 @@ export class BlocklistValidationService {
     }
   }
 
-  public async validateUniquenessForUpdateOne(
-    payload: UpdateOneResolverArgs<BlocklistItem>,
-    userId: string,
-    workspaceId: string,
-  ) {
-    const existingRecord = await this.blocklistRepository.getById(
-      payload.id,
-      workspaceId,
-    );
+  private async getExistingRecordOrThrow({
+    id,
+    context,
+  }: {
+    id: string;
+    context: BlocklistMutationContext;
+  }): Promise<BlocklistWorkspaceEntity> {
+    const existingRecord = await this.blocklistRepository.getById({
+      id,
+      workspaceId: context.workspaceId,
+    });
 
-    if (!existingRecord) {
+    if (!isDefined(existingRecord)) {
       throw new CommonQueryRunnerException(
         'Blocklist item not found',
         CommonQueryRunnerExceptionCode.RECORD_NOT_FOUND,
@@ -172,53 +443,6 @@ export class BlocklistValidationService {
       );
     }
 
-    if (existingRecord.workspaceMemberId !== payload.data.workspaceMemberId) {
-      throw new CommonQueryRunnerException(
-        'Workspace member cannot be updated',
-        CommonQueryRunnerExceptionCode.BAD_REQUEST,
-        { userFriendlyMessage: msg`Workspace member cannot be updated.` },
-      );
-    }
-
-    if (existingRecord.handle === payload.data.handle) {
-      return;
-    }
-
-    const authContext = buildSystemAuthContext(workspaceId);
-
-    const currentWorkspaceMember =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const workspaceMemberRepository =
-            await this.globalWorkspaceOrmManager.getRepository(
-              workspaceId,
-              WorkspaceMemberWorkspaceEntity,
-              { shouldBypassPermissionChecks: true },
-            );
-
-          return workspaceMemberRepository.findOneByOrFail({
-            userId,
-          });
-        },
-        authContext,
-      );
-
-    const currentBlocklist =
-      await this.blocklistRepository.getByWorkspaceMemberId(
-        currentWorkspaceMember.id,
-        workspaceId,
-      );
-
-    const currentBlocklistHandles = currentBlocklist
-      .filter((blocklist) => blocklist.id !== payload.id)
-      .map((blocklist) => blocklist.handle);
-
-    if (currentBlocklistHandles.includes(payload.data.handle)) {
-      throw new CommonQueryRunnerException(
-        'Blocklist handle already exists',
-        CommonQueryRunnerExceptionCode.BAD_REQUEST,
-        { userFriendlyMessage: msg`Blocklist handle already exists.` },
-      );
-    }
+    return existingRecord;
   }
 }

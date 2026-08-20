@@ -77,6 +77,9 @@ export const STANDARD_OBJECTS = {
       workspaceMemberIdIndex: {
         universalIdentifier: '4daf320e-74d0-4f24-a45a-af3a09d741cb',
       },
+      workspaceScopedHandleUniqueIndex: {
+        universalIdentifier: '0e6b91ef-2c45-4d1e-8a73-5f0c94b6ad28',
+      },
     },
     views: {
       allBlocklists: buildStandardObjectIndexView({

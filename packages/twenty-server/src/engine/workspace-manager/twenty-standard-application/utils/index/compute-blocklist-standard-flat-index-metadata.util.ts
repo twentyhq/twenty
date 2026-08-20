@@ -28,4 +28,18 @@ export const buildBlocklistStandardFlatIndexMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  workspaceScopedHandleUniqueIndex: createStandardIndexFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      indexName: 'workspaceScopedHandleUniqueIndex',
+      relatedFieldNames: ['handle'],
+      isUnique: true,
+      indexWhereClause: `"scope" = 'WORKSPACE' AND "deletedAt" IS NULL`,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
 });

@@ -152,6 +152,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "position": {
         "universalIdentifier": "f127537d-097c-5d45-ae9c-0ad7c5de8c2b",
       },
+      "scope": {
+        "universalIdentifier": "20202020-1a5f-4c9e-9b3e-7d2a6f4c8e11",
+      },
       "searchVector": {
         "universalIdentifier": "94cc4e59-9c2a-5710-8ce1-41a38d9561ce",
       },
@@ -168,6 +171,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
     "indexes": {
       "workspaceMemberIdIndex": {
         "universalIdentifier": "4daf320e-74d0-4f24-a45a-af3a09d741cb",
+      },
+      "workspaceScopedHandleUniqueIndex": {
+        "universalIdentifier": "0e6b91ef-2c45-4d1e-8a73-5f0c94b6ad28",
       },
     },
     "universalIdentifier": "20202020-0408-4f38-b8a8-4d5e3e26e24d",

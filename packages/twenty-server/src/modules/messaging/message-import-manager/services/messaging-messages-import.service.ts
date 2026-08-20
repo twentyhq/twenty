@@ -167,12 +167,11 @@ export class MessagingMessagesImportService {
               })
             : null;
 
-          const blocklist = workspaceMember
-            ? await this.blocklistRepository.getByWorkspaceMemberId(
-                workspaceMember.id,
-                workspaceId,
-              )
-            : [];
+          const blocklist =
+            await this.blocklistRepository.getApplicableToWorkspaceMember({
+              workspaceMemberId: workspaceMember?.id ?? null,
+              workspaceId,
+            });
 
           if (!isDefined(messageChannel.handle)) {
             throw new MessageImportDriverException(

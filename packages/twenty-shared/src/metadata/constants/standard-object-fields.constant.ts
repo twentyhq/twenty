@@ -242,6 +242,7 @@ export const STANDARD_OBJECT_FIELDS = {
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.blocklist,
     ),
     handle: { universalIdentifier: '20202020-eef3-44ed-aa32-4641d7fd4a3e' },
+    scope: { universalIdentifier: '20202020-1a5f-4c9e-9b3e-7d2a6f4c8e11' },
     workspaceMember: {
       universalIdentifier: '20202020-548d-4084-a947-fa20a39f7c06',
     },

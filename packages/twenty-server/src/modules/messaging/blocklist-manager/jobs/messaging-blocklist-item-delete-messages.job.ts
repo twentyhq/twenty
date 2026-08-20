@@ -4,7 +4,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { type ObjectRecordCreateEvent } from 'twenty-shared/database-events';
 import { MessageParticipantRole } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { And, Any, ILike, In, Not, Or, Repository } from 'typeorm';
+import {
+  And,
+  Any,
+  type FindOptionsSelect,
+  ILike,
+  In,
+  Not,
+  Or,
+  Repository,
+} from 'typeorm';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -16,6 +25,7 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { type BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
+import { partitionBlocklistHandlesByScope } from 'src/modules/blocklist/utils/partition-blocklist-handles-by-scope.util';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
@@ -24,6 +34,20 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
 export type BlocklistItemDeleteMessagesJobData = WorkspaceEventBatch<
   ObjectRecordCreateEvent<BlocklistWorkspaceEntity>
 >;
+
+const MESSAGE_CHANNEL_BLOCKLIST_SELECT: FindOptionsSelect<MessageChannelEntity> =
+  {
+    id: true,
+    handle: true,
+    connectedAccount: {
+      handleAliases: true,
+    },
+  };
+
+const BLOCKLISTED_PARTICIPANT_ROLES = [
+  MessageParticipantRole.FROM,
+  MessageParticipantRole.TO,
+] as const;
 
 @Processor({
   queueName: MessageQueue.messagingQueue,
@@ -65,161 +89,27 @@ export class BlocklistItemDeleteMessagesJob {
           },
         });
 
-        const handlesToDeleteByWorkspaceMemberIdMap = blocklist.reduce(
-          (acc, blocklistItem) => {
-            const { handle, workspaceMemberId } = blocklistItem;
+        const { workspaceScopedHandles, handlesByWorkspaceMemberId } =
+          partitionBlocklistHandlesByScope(blocklist);
 
-            if (!acc.has(workspaceMemberId)) {
-              acc.set(workspaceMemberId, []);
-            }
-
-            if (!isDefined(handle)) {
-              return acc;
-            }
-
-            acc.get(workspaceMemberId)?.push(handle);
-
-            return acc;
-          },
-          new Map<string, string[]>(),
-        );
-
-        const messageChannelMessageAssociationRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+        if (workspaceScopedHandles.length > 0) {
+          await this.deleteMessagesForMessageChannels({
+            messageChannels:
+              await this.findWorkspaceMessageChannels(workspaceId),
+            handles: workspaceScopedHandles,
             workspaceId,
-            'messageChannelMessageAssociation',
-          );
-
-        const workspaceMemberRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            workspaceId,
-            'workspaceMember',
-            { shouldBypassPermissionChecks: true },
-          );
-
-        const messageParticipantRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageParticipantWorkspaceEntity>(
-            workspaceId,
-            'messageParticipant',
-            { shouldBypassPermissionChecks: true },
-          );
-
-        for (const workspaceMemberId of handlesToDeleteByWorkspaceMemberIdMap.keys()) {
-          const handles =
-            handlesToDeleteByWorkspaceMemberIdMap.get(workspaceMemberId);
-
-          if (!handles) {
-            continue;
-          }
-
-          const rolesToDelete = [
-            MessageParticipantRole.FROM,
-            MessageParticipantRole.TO,
-          ] as const;
-
-          const workspaceMember = await workspaceMemberRepository.findOne({
-            where: { id: workspaceMemberId },
           });
+        }
 
-          if (!workspaceMember) {
-            continue;
-          }
-
-          const userWorkspace = await this.userWorkspaceRepository.findOne({
-            where: { userId: workspaceMember.userId, workspaceId },
-          });
-
-          if (!userWorkspace) {
-            continue;
-          }
-
-          const connectedAccounts = await this.connectedAccountRepository.find({
-            where: { userWorkspaceId: userWorkspace.id, workspaceId },
-          });
-
-          const connectedAccountIds = connectedAccounts.map((ca) => ca.id);
-
-          if (connectedAccountIds.length === 0) {
-            continue;
-          }
-
-          const messageChannels = await this.messageChannelRepository.find({
-            select: {
-              id: true,
-              handle: true,
-              connectedAccount: {
-                handleAliases: true,
-              },
-            },
-            where: {
-              connectedAccountId: In(connectedAccountIds),
+        for (const [workspaceMemberId, handles] of handlesByWorkspaceMemberId) {
+          await this.deleteMessagesForMessageChannels({
+            messageChannels: await this.findWorkspaceMemberMessageChannels({
+              workspaceMemberId,
               workspaceId,
-            },
-            relations: { connectedAccount: true },
+            }),
+            handles,
+            workspaceId,
           });
-
-          for (const messageChannel of messageChannels) {
-            const messageChannelHandles = [messageChannel.handle];
-
-            const handleAliases =
-              messageChannel.connectedAccount?.handleAliases;
-
-            if (isDefined(handleAliases)) {
-              const aliasList: string[] = Array.isArray(handleAliases)
-                ? handleAliases
-                : (handleAliases as string).split(',');
-
-              messageChannelHandles.push(...aliasList);
-            }
-
-            const handleConditions = handles.map((handle) => {
-              const isHandleDomain = handle.startsWith('@');
-
-              return isHandleDomain
-                ? {
-                    handle: And(
-                      Or(ILike(`%${handle}`), ILike(`%.${handle.slice(1)}`)),
-                      Not(In(messageChannelHandles)),
-                    ),
-                    role: In(rolesToDelete),
-                  }
-                : { handle, role: In(rolesToDelete) };
-            });
-
-            const matchingParticipants =
-              await messageParticipantRepository.find({
-                where: handleConditions,
-                select: { messageId: true },
-              });
-
-            const messageIds = [
-              ...new Set(
-                matchingParticipants.map(
-                  (participant) => participant.messageId,
-                ),
-              ),
-            ];
-
-            if (messageIds.length === 0) {
-              continue;
-            }
-
-            const messageChannelMessageAssociationsToDelete =
-              await messageChannelMessageAssociationRepository.find({
-                where: {
-                  messageChannelId: messageChannel.id,
-                  messageId: In(messageIds),
-                },
-              });
-
-            if (messageChannelMessageAssociationsToDelete.length === 0) {
-              continue;
-            }
-
-            await messageChannelMessageAssociationRepository.delete(
-              messageChannelMessageAssociationsToDelete.map(({ id }) => id),
-            );
-          }
         }
 
         await this.threadCleanerService.cleanOrphanMessagesAndThreads(
@@ -229,5 +119,140 @@ export class BlocklistItemDeleteMessagesJob {
       authContext,
       { lite: true },
     );
+  }
+
+  private async findWorkspaceMessageChannels(
+    workspaceId: string,
+  ): Promise<MessageChannelEntity[]> {
+    return this.messageChannelRepository.find({
+      select: MESSAGE_CHANNEL_BLOCKLIST_SELECT,
+      where: { workspaceId },
+      relations: { connectedAccount: true },
+    });
+  }
+
+  private async findWorkspaceMemberMessageChannels({
+    workspaceMemberId,
+    workspaceId,
+  }: {
+    workspaceMemberId: string;
+    workspaceId: string;
+  }): Promise<MessageChannelEntity[]> {
+    const workspaceMemberRepository =
+      await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+        workspaceId,
+        'workspaceMember',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const workspaceMember = await workspaceMemberRepository.findOne({
+      where: { id: workspaceMemberId },
+    });
+
+    if (!isDefined(workspaceMember)) {
+      return [];
+    }
+
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { userId: workspaceMember.userId, workspaceId },
+    });
+
+    if (!isDefined(userWorkspace)) {
+      return [];
+    }
+
+    const connectedAccounts = await this.connectedAccountRepository.find({
+      where: { userWorkspaceId: userWorkspace.id, workspaceId },
+    });
+
+    if (connectedAccounts.length === 0) {
+      return [];
+    }
+
+    return this.messageChannelRepository.find({
+      select: MESSAGE_CHANNEL_BLOCKLIST_SELECT,
+      where: {
+        connectedAccountId: In(
+          connectedAccounts.map((connectedAccount) => connectedAccount.id),
+        ),
+        workspaceId,
+      },
+      relations: { connectedAccount: true },
+    });
+  }
+
+  private async deleteMessagesForMessageChannels({
+    messageChannels,
+    handles,
+    workspaceId,
+  }: {
+    messageChannels: MessageChannelEntity[];
+    handles: string[];
+    workspaceId: string;
+  }): Promise<void> {
+    const messageChannelMessageAssociationRepository =
+      await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+        workspaceId,
+        'messageChannelMessageAssociation',
+      );
+
+    const messageParticipantRepository =
+      await this.globalWorkspaceOrmManager.getRepository<MessageParticipantWorkspaceEntity>(
+        workspaceId,
+        'messageParticipant',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    for (const messageChannel of messageChannels) {
+      const messageChannelHandles = [
+        messageChannel.handle,
+        ...(messageChannel.connectedAccount?.handleAliases ?? []),
+      ];
+
+      const handleConditions = handles.map((handle) => {
+        const isHandleDomain = handle.startsWith('@');
+
+        return isHandleDomain
+          ? {
+              handle: And(
+                Or(ILike(`%${handle}`), ILike(`%.${handle.slice(1)}`)),
+                Not(In(messageChannelHandles)),
+              ),
+              role: In(BLOCKLISTED_PARTICIPANT_ROLES),
+            }
+          : { handle, role: In(BLOCKLISTED_PARTICIPANT_ROLES) };
+      });
+
+      const matchingParticipants = await messageParticipantRepository.find({
+        where: handleConditions,
+        select: { messageId: true },
+      });
+
+      const messageIds = [
+        ...new Set(
+          matchingParticipants.map((participant) => participant.messageId),
+        ),
+      ];
+
+      if (messageIds.length === 0) {
+        continue;
+      }
+
+      const messageChannelMessageAssociationsToDelete =
+        await messageChannelMessageAssociationRepository.find({
+          where: {
+            messageChannelId: messageChannel.id,
+            messageId: In(messageIds),
+          },
+        });
+
+      if (messageChannelMessageAssociationsToDelete.length === 0) {
+        continue;
+      }
+
+      await messageChannelMessageAssociationRepository.delete(
+        messageChannelMessageAssociationsToDelete.map(({ id }) => id),
+      );
+    }
   }
 }
