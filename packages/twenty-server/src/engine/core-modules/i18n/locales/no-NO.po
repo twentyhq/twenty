@@ -40,7 +40,7 @@ msgstr "\"{0}\" er ikke et gyldig underfelt av \"{1}\"."
 #. js-lingui-id: gKGO2f
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-values-are-valid.util.ts
 msgid "\"{fieldName}\" received an invalid value."
-msgstr ""
+msgstr "\"{fieldName}\" mottok en ugyldig verdi."
 
 #. js-lingui-id: SsRDX3
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
@@ -52,25 +52,25 @@ msgstr "\"{payloadKey}\" er ikke et gyldig arbeidsområdemedlemsfelt."
 #. placeholder {1}: sourceField.label
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
 msgid "{0} does not belong to the object {1} points to."
-msgstr ""
+msgstr "{0} tilhører ikke objektet som {1} peker på."
 
 #. js-lingui-id: bSLhyc
 #. placeholder {0}: sourceField.label
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
 msgid "{0} does not belong to this widget's object."
-msgstr ""
+msgstr "{0} tilhører ikke denne widgetens objekt."
 
 #. js-lingui-id: MTdK9i
 #. placeholder {0}: sourceField.label
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
 msgid "{0} must be a one-to-many or many-to-one relation field."
-msgstr ""
+msgstr "{0} må være et én-til-mange- eller mange-til-én-relasjonsfelt."
 
 #. js-lingui-id: EIb+ss
 #. placeholder {0}: nestedField.label
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
 msgid "{0} must be a one-to-many relation field."
-msgstr ""
+msgstr "{0} må være et én-til-mange-relasjonsfelt."
 
 #. js-lingui-id: Q0ISF1
 #: src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util.ts
@@ -124,12 +124,12 @@ msgstr "Det oppstod en cache-låsefeil."
 #. js-lingui-id: PInBOB
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
 msgid "A chart filter has no field"
-msgstr ""
+msgstr "Et diagramfilter har ikke noe felt"
 
 #. js-lingui-id: bhuNSV
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
 msgid "A chart filter of widget \"{widgetTitle}\" has no field metadata universal identifier"
-msgstr ""
+msgstr "Et diagramfilter for widgeten \"{widgetTitle}\" har ingen universell identifikator for feltmetadata"
 
 #. js-lingui-id: OaxxOp
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -208,12 +208,12 @@ msgstr "Det oppstod en navnekonflikt."
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A name is required for FOLDER type"
-msgstr ""
+msgstr "Et navn er påkrevd for typen FOLDER"
 
 #. js-lingui-id: 9er1TA
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
 msgid "A nested relation widget must use the table layout."
-msgstr ""
+msgstr "En nestet relasjonswidget må bruke tabelloppsettet."
 
 #. js-lingui-id: ChJFls
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
@@ -316,7 +316,7 @@ msgstr "En ferdighet med dette navnet finnes allerede."
 #. js-lingui-id: IAfaPi
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-create-side-effect-handler.service.ts
 msgid "A standard object required to provision default relations could not be found"
-msgstr ""
+msgstr "Et standardobjekt som kreves for å klargjøre standardrelasjoner ble ikke funnet"
 
 #. js-lingui-id: VzpL85
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -349,37 +349,37 @@ msgstr "En bruker med denne e-postadressen finnes allerede."
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid link is required for LINK type"
-msgstr ""
+msgstr "En gyldig lenke er påkrevd for typen LINK"
 
 #. js-lingui-id: hfYxN9
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid pageLayoutUniversalIdentifier is required for PAGE_LAYOUT type"
-msgstr ""
+msgstr "En gyldig pageLayoutUniversalIdentifier er påkrevd for typen PAGE_LAYOUT"
 
 #. js-lingui-id: jS+jUv
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid targetObjectMetadataUniversalIdentifier is required for OBJECT type"
-msgstr ""
+msgstr "En gyldig targetObjectMetadataUniversalIdentifier er påkrevd for typen OBJECT"
 
 #. js-lingui-id: KUnzGr
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid targetObjectMetadataUniversalIdentifier is required for RECORD type"
-msgstr ""
+msgstr "En gyldig targetObjectMetadataUniversalIdentifier er påkrevd for typen RECORD"
 
 #. js-lingui-id: RfwvVB
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid targetRecordId is required for RECORD type"
-msgstr ""
+msgstr "En gyldig targetRecordId er påkrevd for typen RECORD"
 
 #. js-lingui-id: +FHERL
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "A valid viewUniversalIdentifier is required for VIEW type"
-msgstr ""
+msgstr "En gyldig viewUniversalIdentifier er påkrevd for typen VIEW"
 
 #. js-lingui-id: qqnpQ9
 #: src/engine/metadata-modules/view/exceptions/view.exception.ts
@@ -489,7 +489,7 @@ msgstr "Kontoansvarlig for firmaer"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Accounts"
-msgstr ""
+msgstr "Kontoer"
 
 #. js-lingui-id: j0DfGR
 #: src/engine/core-modules/auth/services/reset-password.service.ts
@@ -505,13 +505,13 @@ msgstr "Tiltak nødvendig for å sette passord"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Activate"
-msgstr ""
+msgstr "Aktiver"
 
 #. js-lingui-id: GJ1sW1
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Activate Workflow"
-msgstr ""
+msgstr "Aktiver arbeidsflyt"
 
 #. js-lingui-id: AnKsxx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
@@ -536,13 +536,13 @@ msgstr "Faktisk opptaksstart"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Add a Node"
-msgstr ""
+msgstr "Legg til node"
 
 #. js-lingui-id: Opy73Z
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Add a Node"
-msgstr ""
+msgstr "Legg til node"
 
 #. js-lingui-id: ffpvxH
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
@@ -553,7 +553,7 @@ msgstr "Legg til minst ett felt som skal oppdateres."
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Add to Favorites"
-msgstr ""
+msgstr "Legg til i Favoritter"
 
 #. js-lingui-id: EtSC0Y
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -571,7 +571,7 @@ msgstr "Adressen til firmaet"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Admin Panel"
-msgstr ""
+msgstr "Adminpanel"
 
 #. js-lingui-id: VmatbA
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -631,7 +631,7 @@ msgstr "Samlet/filtrert hendelse som skal vises på tidslinjen"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "AI"
-msgstr ""
+msgstr "AI"
 
 #. js-lingui-id: WG8+0x
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
@@ -642,7 +642,7 @@ msgstr "Kjøring av AI-agentsteg mislyktes."
 #: src/engine/metadata-modules/view/constants/index-view-name.constant.ts
 msgctxt "view.name"
 msgid "All {objectLabelPlural}"
-msgstr ""
+msgstr "Alle {objectLabelPlural}"
 
 #. js-lingui-id: wgGOAj
 #: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
@@ -737,7 +737,7 @@ msgstr "Det oppstod en uventet faktureringsfeil."
 #. js-lingui-id: U8C7oj
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "An unexpected billing error occurred. Please contact support."
-msgstr ""
+msgstr "Det oppstod en uventet faktureringsfeil. Vennligst kontakt brukerstøtte."
 
 #. js-lingui-id: acTNEg
 #: src/engine/core-modules/twenty-config/twenty-config.exception.ts
@@ -914,7 +914,7 @@ msgstr "Godkjent tilgangsdomene ikke funnet."
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Apps"
-msgstr ""
+msgstr "Apper"
 
 #. js-lingui-id: naCW6Z
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -937,13 +937,13 @@ msgstr "Arkivert"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Ask AI"
-msgstr ""
+msgstr "Spør AI"
 
 #. js-lingui-id: qOe49F
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Ask AI"
-msgstr ""
+msgstr "Spør AI"
 
 #. js-lingui-id: z2Vy8H
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -955,7 +955,7 @@ msgstr "Tildelte oppgaver"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-task-views.util.ts
 msgctxt "view.name"
 msgid "Assigned to Me"
-msgstr ""
+msgstr "Tilordnet til meg"
 
 #. js-lingui-id: EqqZEp
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
@@ -1096,7 +1096,7 @@ msgstr "August"
 #. js-lingui-id: X7GoTa
 #: src/engine/core-modules/auth/token/services/sso-exchange-token.service.ts
 msgid "Authentication failed, please sign in again."
-msgstr ""
+msgstr "Autentisering mislyktes. Vennligst logg inn igjen."
 
 #. js-lingui-id: LB4qX/
 #: src/engine/core-modules/auth/utils/auth-graphql-api-exception-handler.util.ts
@@ -1159,7 +1159,7 @@ msgstr "Bcc"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Billing"
-msgstr ""
+msgstr "Fakturering"
 
 #. js-lingui-id: rkIGWa
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -1190,7 +1190,7 @@ msgstr "Faktureringsprodukt ikke funnet."
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Block Settings"
-msgstr ""
+msgstr "Blokkinnstillinger"
 
 #. js-lingui-id: IlqwEl
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -1316,13 +1316,13 @@ msgstr "Virksomhet"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-opportunity-views.util.ts
 msgctxt "view.name"
 msgid "By Stage"
-msgstr ""
+msgstr "Per fase"
 
 #. js-lingui-id: WluVVo
 #: src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-task-views.util.ts
 msgctxt "view.name"
 msgid "By Status"
-msgstr ""
+msgstr "Per status"
 
 #. js-lingui-id: ma0oop
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -1391,24 +1391,24 @@ msgstr "Kalenderkanal ikke funnet."
 #. js-lingui-id: 9uvvYS
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar end field metadata not found"
-msgstr ""
+msgstr "Kalendersluttfeltets metadata ikke funnet"
 
 #. js-lingui-id: 6BRvIC
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar end field must be a date or date time field"
-msgstr ""
+msgstr "Kalendersluttfeltet må være et dato- eller datotidsfelt"
 
 #. js-lingui-id: PEXN0U
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar end field must belong to the view object"
-msgstr ""
+msgstr "Kalendersluttfeltet må tilhøre visningsobjektet"
 
 #. js-lingui-id: k6cK5J
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar end field not found"
-msgstr ""
+msgstr "Kalendersluttfelt ikke funnet"
 
 #. js-lingui-id: 8brwDQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1497,24 +1497,24 @@ msgstr "Kalenderhendelser"
 #. js-lingui-id: Sn4xhy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar field metadata not found"
-msgstr ""
+msgstr "Kalenderfeltets metadata ikke funnet"
 
 #. js-lingui-id: J3xD/M
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar field must be a date or date time field"
-msgstr ""
+msgstr "Kalenderfeltet må være et dato- eller datotidsfelt"
 
 #. js-lingui-id: hUOMKq
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar field must belong to the view object"
-msgstr ""
+msgstr "Kalenderfelt må tilhøre visningsobjektet"
 
 #. js-lingui-id: 26b8pD
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar field not found"
-msgstr ""
+msgstr "Kalenderfelt ikke funnet"
 
 #. js-lingui-id: GtrALl
 #: src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception.ts
@@ -1525,13 +1525,13 @@ msgstr "Kalenderleverandør støttes ikke."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar start and end fields must be different"
-msgstr ""
+msgstr "Kalenderens start- og sluttfelt må være forskjellige"
 
 #. js-lingui-id: DRukEV
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar start and end fields must have the same type"
-msgstr ""
+msgstr "Kalenderens start- og sluttfelt må ha samme type"
 
 #. js-lingui-id: CnNFfU
 #: src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception.ts
@@ -1542,25 +1542,25 @@ msgstr "Kalendersynkroniseringsfeil."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar view must have a calendar field"
-msgstr ""
+msgstr "Kalendervisning må ha et kalenderfelt"
 
 #. js-lingui-id: JhktJw
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar view must have a calendar layout"
-msgstr ""
+msgstr "Kalendervisning må ha et kalenderoppsett"
 
 #. js-lingui-id: D9pZ2l
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
 msgid "Calendar widget views only support the month layout"
-msgstr ""
+msgstr "Kalenderwidgetvisninger støtter bare månedsoppsettet"
 
 #. js-lingui-id: 0U7DBn
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Calendars"
-msgstr ""
+msgstr "Kalendere"
 
 #. js-lingui-id: WwTvrh
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -1661,13 +1661,13 @@ msgstr "Kan ikke gjøre brukeren via API-nøkkel"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Cancel"
-msgstr ""
+msgstr "Avbryt"
 
 #. js-lingui-id: 7g3N+g
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Cancel Edition"
-msgstr ""
+msgstr "Avbryt redigering"
 
 #. js-lingui-id: JrNGiU
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -1899,12 +1899,12 @@ msgstr "Kanal-ID"
 #. js-lingui-id: z851aK
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
 msgid "Chart filter operand is not supported for this field type"
-msgstr ""
+msgstr "Diagramfilteroperand støttes ikke for denne felttypen"
 
 #. js-lingui-id: QHFBKw
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
 msgid "Chart filter value is not valid for this operand"
-msgstr ""
+msgstr "Diagramfilterverdi er ikke gyldig for denne operanden"
 
 #. js-lingui-id: erTWgO
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -1941,7 +1941,7 @@ msgstr "Sirkulær avhengighet oppdaget i visningsfiltergruppehierarkiet"
 #. js-lingui-id: fDGNL3
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Claiming is not configured on this server. Ask an administrator to configure the GitHub OAuth app."
-msgstr ""
+msgstr "Funksjonen for å kreve eierskap er ikke konfigurert på denne serveren. Be en administrator om å konfigurere GitHub OAuth-appen."
 
 #. js-lingui-id: J7dFKa
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -1993,7 +1993,7 @@ msgstr "Komma og punktum"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Community"
-msgstr ""
+msgstr "Fellesskap"
 
 #. js-lingui-id: UMn+XF
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -2053,19 +2053,19 @@ msgstr "Fullført"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Compose"
-msgstr ""
+msgstr "Skriv e-post"
 
 #. js-lingui-id: +TR7Gb
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Compose Campaign"
-msgstr ""
+msgstr "Skriv kampanje"
 
 #. js-lingui-id: 6Kufr1
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Compose Email"
-msgstr ""
+msgstr "Skriv e-post"
 
 #. js-lingui-id: L1uQuF
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -2260,49 +2260,49 @@ msgstr "Kontakt"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Contact's avatar"
-msgstr ""
+msgstr "Kontaktens avatar"
 
 #. js-lingui-id: bJZ2Tj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Contact's avatar file"
-msgstr ""
+msgstr "Kontaktens avatarfil"
 
 #. js-lingui-id: Pjih6W
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Contact's company"
-msgstr ""
+msgstr "Kontaktens selskap"
 
 #. js-lingui-id: SKkz1Y
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Contact's Emails"
-msgstr ""
+msgstr "Kontaktens e-poster"
 
 #. js-lingui-id: eX6v+/
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Contact's job title"
-msgstr ""
+msgstr "Kontaktens jobbtittel"
 
 #. js-lingui-id: RS0wew
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Contact's Linkedin account"
-msgstr ""
+msgstr "Kontaktens LinkedIn-konto"
 
 #. js-lingui-id: 1F/w2I
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Contact's name"
-msgstr ""
+msgstr "Kontaktens navn"
 
 #. js-lingui-id: aNDPqw
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Contact's phone numbers"
-msgstr ""
+msgstr "Kontaktens telefonnumre"
 
 #. js-lingui-id: rx63gq
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-skill-required-properties.util.ts
@@ -2324,13 +2324,13 @@ msgstr "Motstridende feltrettigheter er oppdaget på et relasjonsfelt."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Core workflow id"
-msgstr ""
+msgstr "Kjernearbeidsflyt-ID"
 
 #. js-lingui-id: WkctC4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Core workflow version id"
-msgstr ""
+msgstr "Kjernearbeidsflytversjon-ID"
 
 #. js-lingui-id: xuYXJX
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
@@ -2388,23 +2388,23 @@ msgstr "Kunne ikke løse overordnet objektmetadata \"{0}\" for sideeffekt for un
 #. js-lingui-id: 5I3Pop
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-create-side-effect-handler.service.ts
 msgid "Could not resolve standard relation object \"{standardObjectNameSingular}\" to provision default relations"
-msgstr ""
+msgstr "Kunne ikke finne standardrelasjonsobjektet \"{standardObjectNameSingular}\" for å klargjøre standardrelasjoner"
 
 #. js-lingui-id: NJXy7w
 #. placeholder {0}: updatedFlatObjectMetadata.nameSingular
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-update-side-effect-handler.service.ts
 msgid "Could not resolve the existing object \"{0}\" to rename its default relations"
-msgstr ""
+msgstr "Kunne ikke finne det eksisterende objektet \"{0}\" for å gi nytt navn til standardrelasjonene"
 
 #. js-lingui-id: 5rS7nl
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-index-view-label-identifier-on-update-side-effect-handler.service.ts
 msgid "Could not resolve the existing object to reconcile its INDEX label identifier view field"
-msgstr ""
+msgstr "Kunne ikke finne det eksisterende objektet for å avstemme etikettidentifikator-feltet i INDEX-visningen"
 
 #. js-lingui-id: TYpgQ/
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-record-page-label-identifier-on-update-side-effect-handler.service.ts
 msgid "Could not resolve the existing object to reconcile its record-page label identifier view field"
-msgstr ""
+msgstr "Kunne ikke finne det eksisterende objektet for å avstemme etikettidentifikator-feltet i visningen for oppføringssiden"
 
 #. js-lingui-id: hYgDIe
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -2421,25 +2421,25 @@ msgstr "Opprett kalenderhendelse"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Create new {objectLabelSingular}"
-msgstr ""
+msgstr "Opprett ny {objectLabelSingular}"
 
 #. js-lingui-id: fyryIW
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Create new Campaign"
-msgstr ""
+msgstr "Opprett ny kampanje"
 
 #. js-lingui-id: oh0oix
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Create View"
-msgstr ""
+msgstr "Opprett visning"
 
 #. js-lingui-id: 0ij6VP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Create View"
-msgstr ""
+msgstr "Opprett visning"
 
 #. js-lingui-id: V+Pnck
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -2561,12 +2561,12 @@ msgstr "Opprettelsesdato og -tid"
 #. js-lingui-id: iMikvq
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Credit grant must expire after it becomes effective."
-msgstr ""
+msgstr "Kredittildelingen må utløpe etter at den trer i kraft."
 
 #. js-lingui-id: J0OIhA
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Credit grant not found."
-msgstr ""
+msgstr "Kredittildeling ikke funnet."
 
 #. js-lingui-id: OZIOad
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
@@ -2651,7 +2651,7 @@ msgstr "Dashbord"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Data Model"
-msgstr ""
+msgstr "Datamodell"
 
 #. js-lingui-id: Bv/LBb
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -2718,13 +2718,13 @@ msgstr "Dag først"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Deactivate"
-msgstr ""
+msgstr "Deaktiver"
 
 #. js-lingui-id: lPFYWf
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Deactivate Workflow"
-msgstr ""
+msgstr "Deaktiver Arbeidsflyt"
 
 #. js-lingui-id: GuGzWG
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
@@ -2777,91 +2777,91 @@ msgstr "Avslått"
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
 msgctxt "pageLayout.name"
 msgid "Default Blocklist Layout"
-msgstr ""
+msgstr "Standard blokklistelayout"
 
 #. js-lingui-id: Quk4RZ
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
 msgctxt "pageLayout.name"
 msgid "Default Calendar Channel Event Association Layout"
-msgstr ""
+msgstr "Standard layout for tilknytning av kalenderkanalhendelse"
 
 #. js-lingui-id: krxpzA
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
 msgctxt "pageLayout.name"
 msgid "Default Calendar Event Layout"
-msgstr ""
+msgstr "Standard kalenderhendelseslayout"
 
 #. js-lingui-id: WiNZD1
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
 msgctxt "pageLayout.name"
 msgid "Default Calendar Event Participant Layout"
-msgstr ""
+msgstr "Standard layout for deltaker i kalenderhendelse"
 
 #. js-lingui-id: UKFDwW
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
 msgctxt "pageLayout.name"
 msgid "Default Call Recording Layout"
-msgstr ""
+msgstr "Standard samtaleopptakslayout"
 
 #. js-lingui-id: 2BTedV
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
 msgctxt "pageLayout.name"
 msgid "Default Campaign Layout"
-msgstr ""
+msgstr "Standard kampanjelayout"
 
 #. js-lingui-id: aBOgPF
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
 msgctxt "pageLayout.name"
 msgid "Default Company Layout"
-msgstr ""
+msgstr "Standard selskapslayout"
 
 #. js-lingui-id: if0x7I
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
 msgctxt "pageLayout.name"
 msgid "Default List Layout"
-msgstr ""
+msgstr "Standard listesideoppsett"
 
 #. js-lingui-id: HZYS1p
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
 msgctxt "pageLayout.name"
 msgid "Default Message Channel Message Association Layout"
-msgstr ""
+msgstr "Standard meldingskanalmeldingstilknytningslayout"
 
 #. js-lingui-id: Yvew2T
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
 msgctxt "pageLayout.name"
 msgid "Default Message Channel Message Association Message Folder Layout"
-msgstr ""
+msgstr "Standard layout for meldingsmapper for meldingskanal-meldingstilknytning"
 
 #. js-lingui-id: jmaSDc
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
 msgctxt "pageLayout.name"
 msgid "Default Message Participant Layout"
-msgstr ""
+msgstr "Standard meldingsdeltakerlayout"
 
 #. js-lingui-id: jasdD2
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
 msgctxt "pageLayout.name"
 msgid "Default Message Thread Layout"
-msgstr ""
+msgstr "Standard meldingstrådslayout"
 
 #. js-lingui-id: WWmatL
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
 msgctxt "pageLayout.name"
 msgid "Default Note Layout"
-msgstr ""
+msgstr "Standard notatlayout"
 
 #. js-lingui-id: 994EW7
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
 msgctxt "pageLayout.name"
 msgid "Default Opportunity Layout"
-msgstr ""
+msgstr "Standard mulighetslayout"
 
 #. js-lingui-id: offvgc
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
 msgctxt "pageLayout.name"
 msgid "Default Person Layout"
-msgstr ""
+msgstr "Standard personlayout"
 
 #. js-lingui-id: cgV4xo
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -2872,7 +2872,7 @@ msgstr "Standardrolle ikke funnet."
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
 msgctxt "pageLayout.name"
 msgid "Default Task Layout"
-msgstr ""
+msgstr "Standard oppgavelayout"
 
 #. js-lingui-id: GGNmm+
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -2906,25 +2906,25 @@ msgstr "Standardverdier må være unike"
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
 msgctxt "pageLayout.name"
 msgid "Default Workflow Automated Trigger Layout"
-msgstr ""
+msgstr "Standard layout for automatisk utløser for arbeidsflyt"
 
 #. js-lingui-id: xCnoll
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
 msgctxt "pageLayout.name"
 msgid "Default Workflow Layout"
-msgstr ""
+msgstr "Standard arbeidsflytoppsett"
 
 #. js-lingui-id: hhRoz2
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
 msgctxt "pageLayout.name"
 msgid "Default Workflow Run Layout"
-msgstr ""
+msgstr "Standard layout for kjøring av arbeidsflyt"
 
 #. js-lingui-id: 2rlDLU
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
 msgctxt "pageLayout.name"
 msgid "Default Workflow Version Layout"
-msgstr ""
+msgstr "Standard layout for arbeidsflytversjon"
 
 #. js-lingui-id: cnGeoo
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -2942,13 +2942,13 @@ msgstr "Slett"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Delete {objectLabel}"
-msgstr ""
+msgstr "Slett {objectLabel}"
 
 #. js-lingui-id: pYUji4
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Deleted {objectLabelPlural}"
-msgstr ""
+msgstr "Slettet {objectLabelPlural}"
 
 #. js-lingui-id: Sf3H2K
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -2992,7 +2992,7 @@ msgstr "Leveringsstatus"
 #. js-lingui-id: G768/0
 #: src/filters/__tests__/unhandled-exception.filter.spec.ts
 msgid "denied"
-msgstr ""
+msgstr "avslått"
 
 #. js-lingui-id: Dx5QXJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -3010,13 +3010,13 @@ msgstr "Beskrivelse"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Design"
-msgstr ""
+msgstr "Design"
 
 #. js-lingui-id: BlbMIB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Destroy"
-msgstr ""
+msgstr "Ødelegg"
 
 #. js-lingui-id: m2jBI/
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
@@ -3033,13 +3033,13 @@ msgstr "Retning"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Discard Draft"
-msgstr ""
+msgstr "Forkast kladd"
 
 #. js-lingui-id: HCcqwM
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Discard Draft"
-msgstr ""
+msgstr "Forkast kladd"
 
 #. js-lingui-id: N4sZ6H
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -3080,7 +3080,7 @@ msgstr "Domenenavn"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Domains"
-msgstr ""
+msgstr "Domener"
 
 #. js-lingui-id: uyJle/
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
@@ -3118,13 +3118,13 @@ msgstr "Forfallsdato"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Duplicate"
-msgstr ""
+msgstr "Dupliser"
 
 #. js-lingui-id: zC/oFa
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Duplicate Dashboard"
-msgstr ""
+msgstr "Dupliser dashbord"
 
 #. js-lingui-id: UrzTjS
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
@@ -3135,7 +3135,7 @@ msgstr "Duplisert rot-resolver funnet. Hver rot-resolver kan bare kalles én gan
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Duplicate Workflow"
-msgstr ""
+msgstr "Dupliser arbeidsflyt"
 
 #. js-lingui-id: BXtAxc
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -3147,25 +3147,25 @@ msgstr "Duplisert alternativ {field}"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Edit"
-msgstr ""
+msgstr "Rediger"
 
 #. js-lingui-id: AEhPtE
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Edit Dashboard"
-msgstr ""
+msgstr "Rediger dashbord"
 
 #. js-lingui-id: 0YMUrV
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Edit Layout"
-msgstr ""
+msgstr "Rediger layout"
 
 #. js-lingui-id: O+Be8v
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Edit Layout"
-msgstr ""
+msgstr "Rediger layout"
 
 #. js-lingui-id: n6jNyT
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
@@ -3176,13 +3176,13 @@ msgstr "Enten arbeidsflytversjon eller frontkomponent er påkrevd."
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
 msgctxt "pageLayoutTab.title"
 msgid "Email"
-msgstr ""
+msgstr "E-post"
 
 #. js-lingui-id: bFP5hd
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Email"
-msgstr ""
+msgstr "E-post"
 
 #. js-lingui-id: AcnTuz
 #: src/engine/core-modules/user/services/user.service.ts
@@ -3518,7 +3518,7 @@ msgstr "Forventet at de samme begrensningsfeltene brukes konsekvent på tvers av
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Experience"
-msgstr ""
+msgstr "Erfaring"
 
 #. js-lingui-id: PCGpYB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -3526,25 +3526,25 @@ msgstr ""
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Export"
-msgstr ""
+msgstr "Eksporter"
 
 #. js-lingui-id: 7fdI39
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Export {objectLabel}"
-msgstr ""
+msgstr "Eksporter {objectLabel}"
 
 #. js-lingui-id: xvfw7w
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Export to PDF"
-msgstr ""
+msgstr "Eksporter til PDF"
 
 #. js-lingui-id: c5P53s
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Export View"
-msgstr ""
+msgstr "Eksporter visning"
 
 #. js-lingui-id: jCBIuc
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -3876,6 +3876,11 @@ msgstr "Felttypen TS_VECTOR må være et systemfelt"
 msgid "Field type TS_VECTOR must be named \"searchVector\""
 msgstr "Felttypen TS_VECTOR må ha navnet \"searchVector\""
 
+#. js-lingui-id: VkSxbb
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-ts-vector-flat-field-metadata.util.ts
+msgid "Field type TS_VECTOR must have SYSTEM writability"
+msgstr "Felttypen TS_VECTOR må ha SYSTEM-skrivbarhet"
+
 #. js-lingui-id: 5Buorv
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "Field type validation error."
@@ -4056,12 +4061,12 @@ msgstr "Filteret bruker et valgalternativ som ikke finnes"
 #. js-lingui-id: NCkLG1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-value-error.util.ts
 msgid "Filter value is not valid for this operand"
-msgstr ""
+msgstr "Filterverdi er ikke gyldig for denne operanden"
 
 #. js-lingui-id: 8oFGnQ
 #: src/engine/api/common/common-query-runners/common-find-many-query-runner.service.ts
 msgid "Filtering or ordering through this relation is not supported."
-msgstr ""
+msgstr "Filtrering eller sortering gjennom denne relasjonen støttes ikke."
 
 #. js-lingui-id: KujtjC
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -4276,115 +4281,115 @@ msgstr "GIN-indekser fungerer på multi-select-, array-, JSON- og søkevektorkol
 #. js-lingui-id: odCOaU
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "GitHub authentication failed. Try connecting your GitHub account again."
-msgstr ""
+msgstr "GitHub-autentisering mislyktes. Prøv å koble til GitHub-kontoen din på nytt."
 
 #. js-lingui-id: crn/PJ
 #: src/engine/metadata-modules/flat-command-menu-item/utils/build-navigation-flat-command-menu-item.util.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to {objectLabelPlural}"
-msgstr ""
+msgstr "Gå til {objectLabelPlural}"
 
 #. js-lingui-id: LZngY5
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Accounts Settings"
-msgstr ""
+msgstr "Gå til kontoinnstillinger"
 
 #. js-lingui-id: tKVJbL
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Admin Panel Settings"
-msgstr ""
+msgstr "Gå til innstillinger for administrasjonspanel"
 
 #. js-lingui-id: iLqs3S
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to AI Settings"
-msgstr ""
+msgstr "Gå til KI-innstillinger"
 
 #. js-lingui-id: 60o/+J
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Apps Settings"
-msgstr ""
+msgstr "Gå til appinnstillinger"
 
 #. js-lingui-id: tlIbgN
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Billing Settings"
-msgstr ""
+msgstr "Gå til faktureringsinnstillinger"
 
 #. js-lingui-id: BKhayt
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Calendars Settings"
-msgstr ""
+msgstr "Gå til kalenderinnstillinger"
 
 #. js-lingui-id: u5u/QJ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Community Settings"
-msgstr ""
+msgstr "Gå til fellesskapsinnstillinger"
 
 #. js-lingui-id: dZPXqH
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Data Model Settings"
-msgstr ""
+msgstr "Gå til innstillinger for datamodell"
 
 #. js-lingui-id: OLopIl
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Domains Settings"
-msgstr ""
+msgstr "Gå til domeneinnstillinger"
 
 #. js-lingui-id: gawQTB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Emails Settings"
-msgstr ""
+msgstr "Gå til e-postinnstillinger"
 
 #. js-lingui-id: 46ZD9h
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Experience Settings"
-msgstr ""
+msgstr "Gå til opplevelsesinnstillinger"
 
 #. js-lingui-id: gfZlPy
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to General Settings"
-msgstr ""
+msgstr "Gå til generelle innstillinger"
 
 #. js-lingui-id: 1EPmDp
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to MCP & APIs Settings"
-msgstr ""
+msgstr "Gå til MCP- og API-innstillinger"
 
 #. js-lingui-id: vPl+B/
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Members Settings"
-msgstr ""
+msgstr "Gå til medlemsinnstillinger"
 
 #. js-lingui-id: qN3wNQ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Roles Settings"
-msgstr ""
+msgstr "Gå til rolleinnstillinger"
 
 #. js-lingui-id: xAAHTC
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Security Settings"
-msgstr ""
+msgstr "Gå til sikkerhetsinnstillinger"
 
 #. js-lingui-id: Rrvufq
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to Settings"
-msgstr ""
+msgstr "Gå til innstillinger"
 
 #. js-lingui-id: cvJ2e6
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -4455,13 +4460,13 @@ msgstr "Meldingshode-ID"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Hide deleted"
-msgstr ""
+msgstr "Skjul slettede"
 
 #. js-lingui-id: rLnr2R
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Hide deleted {objectLabelPlural}"
-msgstr ""
+msgstr "Skjul slettede {objectLabelPlural}"
 
 #. js-lingui-id: 52iQDS
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
@@ -4573,13 +4578,13 @@ msgstr "Bilde"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Import"
-msgstr ""
+msgstr "Importer"
 
 #. js-lingui-id: k5fVFW
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Import {objectLabelPlural}"
-msgstr ""
+msgstr "Importer {objectLabelPlural}"
 
 #. js-lingui-id: QPcp0k
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
@@ -4670,13 +4675,13 @@ msgstr "Utilstrekkelige tillatelser."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Interface Scale"
-msgstr ""
+msgstr "Grensesnittskala"
 
 #. js-lingui-id: 9vWP4H
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Internal name of the campaign"
-msgstr ""
+msgstr "Internt navn på kampanjen"
 
 #. js-lingui-id: pSjWxS
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
@@ -4908,7 +4913,7 @@ msgstr "Ugyldig filterparameter."
 #. js-lingui-id: 8KxLoh
 #: src/engine/api/graphql/graphql-query-runner/utils/assert-array-operator-value-is-non-empty-array.util.ts
 msgid "Invalid filter value"
-msgstr ""
+msgstr "Ugyldig filterverdi"
 
 #. js-lingui-id: NOU3zh
 #: src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-string-operator-value-or-throw.util.ts
@@ -5992,7 +5997,7 @@ msgstr "Mai"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "MCP & APIs"
-msgstr ""
+msgstr "MCP og API-er"
 
 #. js-lingui-id: DICk6O
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -6040,13 +6045,13 @@ msgstr "Medlemmer"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Merge"
-msgstr ""
+msgstr "Slå sammen"
 
 #. js-lingui-id: PvCGwJ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Merge {objectLabelPlural}"
-msgstr ""
+msgstr "Flett {objectLabelPlural}"
 
 #. js-lingui-id: T+v4U0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -6303,13 +6308,13 @@ msgstr "Meldingstråder"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "MessageCampaign"
-msgstr ""
+msgstr "MessageCampaign"
 
 #. js-lingui-id: j5w8z0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "MessageList"
-msgstr ""
+msgstr "MessageList"
 
 #. js-lingui-id: KocG+N
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -6431,7 +6436,7 @@ msgstr "Flere abonnementer funnet der ett var forventet."
 #: src/engine/metadata-modules/page-layout/constants/standard-page-layout-names.ts
 msgctxt "pageLayout.name"
 msgid "My First Dashboard"
-msgstr ""
+msgstr "Mitt første dashbord"
 
 #. js-lingui-id: WFhVi3
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
@@ -6515,13 +6520,13 @@ msgstr "Naviger i appen"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Navigate to next {objectLabelSingular}"
-msgstr ""
+msgstr "Gå til neste {objectLabelSingular}"
 
 #. js-lingui-id: GjtAeJ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Navigate to previous {objectLabelSingular}"
-msgstr ""
+msgstr "Gå til forrige {objectLabelSingular}"
 
 #. js-lingui-id: RJyaoR
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -6575,13 +6580,13 @@ msgstr "Ny"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "New {objectLabelSingular}"
-msgstr ""
+msgstr "Nytt {objectLabelSingular}"
 
 #. js-lingui-id: YT3d3p
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "New Campaign"
-msgstr ""
+msgstr "Ny kampanje"
 
 #. js-lingui-id: TYhxR+
 #: src/engine/core-modules/user/services/user.service.ts
@@ -6631,7 +6636,7 @@ msgstr "Ingen tillatelser funnet i datakilden."
 #. js-lingui-id: 9iQhTU
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "No provenance attestation was found for the published package. Publish it with npm trusted publishing from GitHub Actions, then try again."
-msgstr ""
+msgstr "Det ble ikke funnet noen proveniensattest for den publiserte pakken. Publiser den med npm trusted publishing fra GitHub Actions, og prøv deretter igjen."
 
 #. js-lingui-id: NcwTz7
 #: src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception.ts
@@ -6681,7 +6686,7 @@ msgstr "Ingen gyldig autentiseringskontekst funnet."
 #. js-lingui-id: r+kse7
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "No verified sending domain matches this from address."
-msgstr ""
+msgstr "Ingen verifiserte avsenderdomener samsvarer med denne fra-adressen."
 
 #. js-lingui-id: a78k8n
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -6698,7 +6703,7 @@ msgstr "Ikke autorisert til å få tilgang til denne OAuth-leverandøren."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Not recorded"
-msgstr ""
+msgstr "Ikke tatt opp"
 
 #. js-lingui-id: NpVtef
 #: src/modules/dashboard/chart-data/utils/build-unique-relation-labels.util.ts
@@ -6906,7 +6911,7 @@ msgstr "Objektet eksisterer allerede"
 #. js-lingui-id: AV0hPh
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
 msgid "Object already has a view with the {reservedViewKey} key"
-msgstr ""
+msgstr "Objektet har allerede en visning med nøkkelen {reservedViewKey}"
 
 #. js-lingui-id: wLX74t
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-label.util.ts
@@ -7085,7 +7090,7 @@ msgstr "Bare administratorer kan utgi seg for brukere med administratorrettighet
 #. js-lingui-id: JzXn58
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Only applications published to npm can be claimed this way."
-msgstr ""
+msgstr "Bare applikasjoner som er publisert til npm, kan det kreves eierskap til på denne måten."
 
 #. js-lingui-id: XLn1DI
 #: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
@@ -7101,23 +7106,23 @@ msgstr "Kun feltbegrensninger er tillatt."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Open Records In"
-msgstr ""
+msgstr "Åpne poster i"
 
 #. js-lingui-id: e/+ykp
 #. placeholder {0}: allowedOperands.join(', ')
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-incompatible-view-filter-operand-error.util.ts
 msgid "Operand \"{operand}\" is not supported on field type \"{filterType}\". Supported operands: {0}."
-msgstr ""
+msgstr "Operand \"{operand}\" støttes ikke for felttypen \"{filterType}\". Støttede operander: {0}."
 
 #. js-lingui-id: iD+jGc
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Operand \"{operand}\" requires a value, an empty predicate would remove the row restriction entirely"
-msgstr ""
+msgstr "Operanden \"{operand}\" krever en verdi, et tomt predikat vil fjerne radbegrensningen fullstendig"
 
 #. js-lingui-id: Rh2dh5
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
 msgid "Operand \"{rawOperand}\" of a chart filter of widget \"{widgetTitle}\" is not supported on field type \"{effectiveFieldType}\". Supported operands: {allowedOperandsText}."
-msgstr ""
+msgstr "Operanden \"{rawOperand}\" i et diagramfilter i widgeten \"{widgetTitle}\" støttes ikke for felttypen \"{effectiveFieldType}\". Støttede operander: {allowedOperandsText}."
 
 #. js-lingui-id: LXazcQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -7457,7 +7462,7 @@ msgstr "Foreldrevisningsfiltergruppe ble ikke funnet"
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Participants"
-msgstr ""
+msgstr "Deltakere"
 
 #. js-lingui-id: /GJDxy
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -7535,7 +7540,7 @@ msgstr "Nyttelast for observabilitet per steg (tokenbruk, verktøykall, loggoppf
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Permanently destroy {objectLabel}"
-msgstr ""
+msgstr "Slett {objectLabel} permanent"
 
 #. js-lingui-id: 3zRddX
 #: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
@@ -7812,13 +7817,13 @@ msgstr "Prebuilt-pakke er ikke installert på funksjonen. Bygg på nytt og prøv
 #. js-lingui-id: OAanPr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Predicate is missing a value"
-msgstr ""
+msgstr "Predikatet mangler en verdi"
 
 #. js-lingui-id: a/WH2z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Predicate value is not valid for this operand"
-msgstr ""
+msgstr "Predikatverdien er ikke gyldig for denne operanden"
 
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -7830,7 +7835,7 @@ msgstr "Foretrukket fargeskjema"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Preferred interface scale"
-msgstr ""
+msgstr "Foretrukket grensesnittskala"
 
 #. js-lingui-id: wg/hr/
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -7848,7 +7853,7 @@ msgstr "Presentasjon"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Previous AI Chats"
-msgstr ""
+msgstr "Tidligere AI-chatter"
 
 #. js-lingui-id: +DJKfQ
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-bar-chart-configuration.util.ts
@@ -8043,13 +8048,13 @@ msgstr "ID for gjentakende hendelse"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Reference to the core workflow row"
-msgstr ""
+msgstr "Referanse til raden for kjernearbeidsflyten"
 
 #. js-lingui-id: avBuTv
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Reference to the core workflowVersion row"
-msgstr ""
+msgstr "Referanse til raden for kjernearbeidsflytversjonen"
 
 #. js-lingui-id: 1GvzpH
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
@@ -8140,7 +8145,7 @@ msgstr "Eksterne objekter er ikke støttet ennå"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Remove from Favorites"
-msgstr ""
+msgstr "Fjern fra favoritter"
 
 #. js-lingui-id: yFLhnq
 #: src/engine/metadata-modules/flat-permission-flag/validators/utils/validate-permission-flag-not-in-use-cross-entity.util.ts
@@ -8151,13 +8156,13 @@ msgstr "Fjern denne tillatelsen fra alle roller før du sletter den"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Reply"
-msgstr ""
+msgstr "Svar"
 
 #. js-lingui-id: 2LlOmm
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Reply"
-msgstr ""
+msgstr "Svar"
 
 #. js-lingui-id: v1QfnP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -8253,25 +8258,25 @@ msgstr "Svarstatus"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Restore"
-msgstr ""
+msgstr "Gjenopprett"
 
 #. js-lingui-id: u8G1rR
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Restore {objectLabel}"
-msgstr ""
+msgstr "Gjenopprett {objectLabel}"
 
 #. js-lingui-id: xKCu0t
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Retry"
-msgstr ""
+msgstr "Prøv igjen"
 
 #. js-lingui-id: Q5lxQn
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Retry"
-msgstr ""
+msgstr "Prøv igjen"
 
 #. js-lingui-id: NP2/a6
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
@@ -8403,7 +8408,7 @@ msgstr "Rollemål mangler identifikator."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, or agentUniversalIdentifier"
-msgstr ""
+msgstr "Rolens mål må ha nøyaktig én av: apiKeyId, userWorkspaceId eller agentUniversalIdentifier"
 
 #. js-lingui-id: oNYUjk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
@@ -8427,7 +8432,7 @@ msgstr "Rollemål med denne universelle identifikatoren eksisterer allerede"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Roles"
-msgstr ""
+msgstr "Roller"
 
 #. js-lingui-id: Ub8R48
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
@@ -8545,18 +8550,18 @@ msgstr "Lørdag"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Save"
-msgstr ""
+msgstr "Lagre"
 
 #. js-lingui-id: H2SymB
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
 msgid "Save Campaign"
-msgstr ""
+msgstr "Lagre kampanje"
 
 #. js-lingui-id: Zi3Ych
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Save Dashboard"
-msgstr ""
+msgstr "Lagre dashbord"
 
 #. js-lingui-id: gqz/Jf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -8685,91 +8690,91 @@ msgstr "Søkevektorfelt ikke funnet"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Security"
-msgstr ""
+msgstr "Sikkerhet"
 
 #. js-lingui-id: BqBYOO
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "See Active Version"
-msgstr ""
+msgstr "Se aktiv versjon"
 
 #. js-lingui-id: BWZaOR
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "See Active Version"
-msgstr ""
+msgstr "Se aktiv versjon"
 
 #. js-lingui-id: BCRQC8
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "See deleted {objectLabelPlural}"
-msgstr ""
+msgstr "Se slettede {objectLabelPlural}"
 
 #. js-lingui-id: VGVS7x
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "See Runs"
-msgstr ""
+msgstr "Se kjøringer"
 
 #. js-lingui-id: iWhqvt
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "See Runs"
-msgstr ""
+msgstr "Se kjøringer"
 
 #. js-lingui-id: pRQO5R
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "See Version"
-msgstr ""
+msgstr "Se versjon"
 
 #. js-lingui-id: onFkTP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "See Version"
-msgstr ""
+msgstr "Se versjon"
 
 #. js-lingui-id: cyovqN
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "See Versions"
-msgstr ""
+msgstr "Se versjoner"
 
 #. js-lingui-id: VsCNJG
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "See Versions History"
-msgstr ""
+msgstr "Se historikk over versjoner"
 
 #. js-lingui-id: gIacCF
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "See Workflow"
-msgstr ""
+msgstr "Se arbeidsflyt"
 
 #. js-lingui-id: kRmDjY
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "See Workflow"
-msgstr ""
+msgstr "Se arbeidsflyt"
 
 #. js-lingui-id: dj45uB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Send"
-msgstr ""
+msgstr "Send"
 
 #. js-lingui-id: w7dUdB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Send Campaign"
-msgstr ""
+msgstr "Send kampanje"
 
 #. js-lingui-id: i/TzEU
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
@@ -8796,7 +8801,7 @@ msgstr "Send e-post"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Send Test Email"
-msgstr ""
+msgstr "Send test-e-post"
 
 #. js-lingui-id: nzBQFi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -8853,7 +8858,7 @@ msgstr "Tilgang for serveradministrator endret"
 #. js-lingui-id: uK5uBy
 #: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts
 msgid "Server keys require the application publisher workspace to have the application installed."
-msgstr ""
+msgstr "Servernøkler krever at applikasjonsutgiverens arbeidsområde har applikasjonen installert."
 
 #. js-lingui-id: Q8FQ55
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -8950,12 +8955,12 @@ msgstr ""
 #. js-lingui-id: eAMUPx
 #: src/engine/core-modules/onboarding/onboarding.exception.ts
 msgid "Something went wrong while saving your onboarding progress."
-msgstr ""
+msgstr "Noe gikk galt under lagringen av onboarding-fremdriften din."
 
 #. js-lingui-id: RjTo7h
 #: src/engine/core-modules/onboarding/onboarding.exception.ts
 msgid "Something went wrong while starting the app installation. Please try again."
-msgstr ""
+msgstr "Noe gikk galt da appinstallasjonen skulle starte. Prøv igjen."
 
 #. js-lingui-id: fWsBTs
 #: src/engine/core-modules/admin-panel/admin-panel.exception.ts
@@ -9085,7 +9090,7 @@ msgstr "Tilstand til arbeidsflytkjøringen"
 #: src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-message-campaign-view-field-groups.util.ts
 msgctxt "viewFieldGroup.name"
 msgid "Stats"
-msgstr ""
+msgstr "Statistikk"
 
 #. js-lingui-id: a1tUtz
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -9127,13 +9132,13 @@ msgstr "Aksjemarked (Iframe)"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Stop"
-msgstr ""
+msgstr "Stopp"
 
 #. js-lingui-id: 9nbPBZ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Stop"
-msgstr ""
+msgstr "Stopp"
 
 #. js-lingui-id: oupUKG
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -9475,7 +9480,7 @@ msgstr "Foreløpig"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Test"
-msgstr ""
+msgstr "Test"
 
 #. js-lingui-id: M10it4
 #: src/utils/__test__/custom-exception.spec.ts
@@ -9493,7 +9498,7 @@ msgstr "Test brukervennlig melding"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Test Workflow"
-msgstr ""
+msgstr "Test arbeidsflyt"
 
 #. js-lingui-id: 1bQnL5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -9521,12 +9526,12 @@ msgstr "Tekstresponsformat bør ikke ha et skjema"
 #. js-lingui-id: kFsyD4
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
 msgid "The {reservedViewKey} view key is reserved for the default view"
-msgstr ""
+msgstr "{reservedViewKey}-visningsnøkkelen er reservert for standardvisningen"
 
 #. js-lingui-id: 7s8NoS
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
 msgid "The {reservedViewKey} view key is reserved for the engine-owned default view; remove the key from the view definition"
-msgstr ""
+msgstr "{reservedViewKey}-visningsnøkkelen er reservert for standardvisningen som eies av motoren; fjern nøkkelen fra visningsdefinisjonen"
 
 #. js-lingui-id: GekZDw
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
@@ -9557,12 +9562,12 @@ msgstr "Applikasjonen har ikke blitt tildelt en gyldig rolle. Vennligst sjekk ap
 #. js-lingui-id: QyGlqv
 #: src/engine/core-modules/application/application.exception.ts
 msgid "The application key-value entry could not be saved. Please try again."
-msgstr ""
+msgstr "Nøkkel-verdi-oppføringen for applikasjonen kunne ikke lagres. Prøv igjen."
 
 #. js-lingui-id: WPAHpm
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 msgid "The application's production dependencies are too large to install. Move packages that are not imported by its logic functions (UI libraries, dev tooling) out of \"dependencies\"."
-msgstr ""
+msgstr "Applikasjonens produksjonsavhengigheter er for store til å installeres. Flytt pakker som ikke importeres av logikkfunksjonene (UI-biblioteker, utviklerverktøy) ut av \"dependencies\"."
 
 #. js-lingui-id: KHtcGn
 #: src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception.ts
@@ -9693,7 +9698,7 @@ msgstr "Feltet \"{field}\" kan ikke oppdateres. Vennligst kontakt arbeidsplassad
 #. js-lingui-id: xM30Ha
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
 msgid "The field configured for this widget could not be found."
-msgstr ""
+msgstr "Feltet som er konfigurert for denne widgeten, ble ikke funnet."
 
 #. js-lingui-id: LdhPiK
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -9741,17 +9746,17 @@ msgstr "Listen denne kampanjen ble sendt til"
 #. js-lingui-id: zIwdvk
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function to run on connect was not found."
-msgstr ""
+msgstr "Logikkfunksjonen som skal kjøres ved tilkobling ble ikke funnet."
 
 #. js-lingui-id: PgpPoi
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The logic function to run on disconnect was not found."
-msgstr ""
+msgstr "Logikkfunksjonen som skal kjøres ved frakobling ble ikke funnet."
 
 #. js-lingui-id: fIq00W
 #: src/engine/metadata-modules/page-layout-widget/utils/validate-field-configuration-nested-relation.util.ts
 msgid "The nested relation field configured for this widget could not be found."
-msgstr ""
+msgstr "Det nestede relasjonsfeltet som er konfigurert for denne widgeten, ble ikke funnet."
 
 #. js-lingui-id: kdTB4e
 #: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
@@ -9766,17 +9771,17 @@ msgstr "OAuth-state-parameteren er ugyldig eller utløpt."
 #. js-lingui-id: w/9iNJ
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-system-relations-on-update-side-effect-handler.service.ts
 msgid "The object to rename could not be found to update its default relations"
-msgstr ""
+msgstr "Objektet som skulle gis nytt navn, ble ikke funnet for å oppdatere standardrelasjonene"
 
 #. js-lingui-id: s9DUGk
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-index-view-label-identifier-on-update-side-effect-handler.service.ts
 msgid "The object to update could not be found to reconcile its INDEX view"
-msgstr ""
+msgstr "Objektet som skulle oppdateres, ble ikke funnet for å avstemme INDEX-visningen"
 
 #. js-lingui-id: /QTsIU
 #: src/engine/metadata-modules/metadata-side-effect/handlers/object-metadata/services/object-record-page-label-identifier-on-update-side-effect-handler.service.ts
 msgid "The object to update could not be found to reconcile its record page"
-msgstr ""
+msgstr "Objektet som skulle oppdateres, ble ikke funnet for å avstemme oppføringssiden."
 
 #. js-lingui-id: hx2IZ4
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -9793,7 +9798,7 @@ msgstr "Mulighetens navn"
 #. js-lingui-id: D/w+3o
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "The package registry could not be reached to verify the package provenance. Try again later."
-msgstr ""
+msgstr "Pakkeregisteret kunne ikke nås for å verifisere pakkens proveniens. Prøv igjen senere."
 
 #. js-lingui-id: IMF5Er
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -9820,12 +9825,17 @@ msgstr "Den oppgitte e-postadressen er ikke gyldig. Vennligst bruk et standard e
 #. js-lingui-id: cjqhZq
 #: src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception.ts
 msgid "The provider denied access to this account. Please reconnect it."
-msgstr ""
+msgstr "Tilbyderen har avslått tilgang til denne kontoen. Koble den til på nytt."
 
 #. js-lingui-id: XX3Gdh
 #: src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception.ts
 msgid "The provider is temporarily unavailable. Please try again later."
-msgstr ""
+msgstr "Tilbyderen er midlertidig utilgjengelig. Prøv igjen senere."
+
+#. js-lingui-id: xKvSoz
+#: src/modules/messaging/message-import-manager/drivers/inbound-email/sources/resend-inbound-email-message-source.service.ts
+msgid "The received email content is no longer available."
+msgstr "Innholdet i den mottatte e-posten er ikke lenger tilgjengelig."
 
 #. js-lingui-id: pv+BoZ
 #: src/engine/core-modules/graphql/hooks/use-validate-graphql-query-complexity.hook.ts
@@ -9878,7 +9888,7 @@ msgstr "Entall og flertallsnavn kan ikke være de samme for et objekt"
 #. js-lingui-id: Dvwk3g
 #: src/modules/connected-account/webhook-subscription-manager/drivers/exceptions/webhook-subscription-driver.exception.ts
 msgid "The subscription is no longer available on the provider."
-msgstr ""
+msgstr "Abonnementet er ikke lenger tilgjengelig hos tilbyderen."
 
 #. js-lingui-id: J1prza
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -10002,12 +10012,12 @@ msgstr "Det finnes ingen mislykket melding å prøve på nytt."
 #. js-lingui-id: jMDu2a
 #: src/engine/core-modules/onboarding/onboarding.exception.ts
 msgid "There is no previous onboarding step to go back to."
-msgstr ""
+msgstr "Det finnes ingen tidligere onboarding-steg å gå tilbake til."
 
 #. js-lingui-id: Yi0Q/T
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
-msgstr ""
+msgstr "Disse feltene kan ikke oppdateres før arbeidsområdet er aktivert: {fieldsList}."
 
 #. js-lingui-id: Iy9pZw
 #: src/engine/api/graphql/workspace-query-runner/utils/handle-duplicate-key-error.util.ts
@@ -10017,18 +10027,18 @@ msgstr "Denne {fieldLabel}-verdien er allerede i bruk. Vennligst sjekk dataene d
 #. js-lingui-id: bypqPt
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This action is currently unavailable."
-msgstr ""
+msgstr "Denne handlingen er for øyeblikket ikke tilgjengelig."
 
 #. js-lingui-id: jrTmnG
 #: src/engine/metadata-modules/ai/ai.exception.ts
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This action is not available for your request."
-msgstr ""
+msgstr "Denne handlingen er ikke tilgjengelig for forespørselen din."
 
 #. js-lingui-id: 4CW4iW
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This address cannot be removed from the suppression list."
-msgstr ""
+msgstr "Denne adressen kan ikke fjernes fra sperrelisten."
 
 #. js-lingui-id: Izdz+Y
 #: src/engine/core-modules/api-key/services/api-key.service.ts
@@ -10069,22 +10079,22 @@ msgstr "Denne appen krever en nyere versjon enn det dette arbeidsområdet er fer
 #. js-lingui-id: ecIX3O
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "This application is already owned by a workspace."
-msgstr ""
+msgstr "Denne applikasjonen eies allerede av et arbeidsområde."
 
 #. js-lingui-id: SRnMG0
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign cannot be sent. It may be missing a sender, subject or recipient list, or it was already sent."
-msgstr ""
+msgstr "Denne kampanjen kan ikke sendes. Den mangler kanskje en avsender, emne eller mottakerliste, eller den er allerede sendt."
 
 #. js-lingui-id: ZyEq3L
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This campaign no longer exists."
-msgstr ""
+msgstr "Denne kampanjen finnes ikke lenger."
 
 #. js-lingui-id: 5MvgEo
 #: src/modules/emailing/utils/compile-campaign-email-content.util.ts
 msgid "This campaign's email content is invalid."
-msgstr ""
+msgstr "E-postinnholdet i denne kampanjen er ugyldig."
 
 #. js-lingui-id: 99gsJ/
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
@@ -10165,7 +10175,7 @@ msgstr "Dette feltet kan ikke endres."
 #. js-lingui-id: dxfM0y
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "This field cannot be updated directly on a workflow version"
-msgstr ""
+msgstr "Dette feltet kan ikke oppdateres direkte på en arbeidsflytversjon"
 
 #. js-lingui-id: AKIPVa
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
@@ -10186,7 +10196,7 @@ msgstr "Dette feltet refererer til et objekt som ikke ble funnet"
 #. js-lingui-id: 5F02zD
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "This file format is not supported."
-msgstr ""
+msgstr "Dette filformatet støttes ikke."
 
 #. js-lingui-id: HUJCXI
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
@@ -10197,6 +10207,11 @@ msgstr "Denne filen er allerede lastet opp."
 #: src/engine/core-modules/file/file-upload/services/file-upload.service.ts
 msgid "This file upload has already been finalized."
 msgstr "Denne filopplastingen er allerede fullført."
+
+#. js-lingui-id: bHna44
+#: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
+msgid "This HTTP method is not allowed on this server route."
+msgstr "Denne HTTP-metoden er ikke tillatt på denne serverruten."
 
 #. js-lingui-id: cvWDSJ
 #: src/engine/metadata-modules/metadata-side-effect/utils/map-system-side-effect-collision-to-failure.util.ts
@@ -10216,7 +10231,7 @@ msgstr "Denne instansen rapporterte ikke en serveridentifikator. Sett SERVER_ID 
 #. js-lingui-id: wQ3edW
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This kind of credit grant cannot be created by hand."
-msgstr ""
+msgstr "Denne typen kredittildeling kan ikke opprettes manuelt."
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -10244,7 +10259,7 @@ msgstr "Dette navnet er reservert. Bruk et annet navn, ellers vil systemet legge
 #. js-lingui-id: /mGcny
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-creation.util.ts
 msgid "This object already has a default view"
-msgstr ""
+msgstr "Dette objektet har allerede en standardvisning"
 
 #. js-lingui-id: R8zIJd
 #: src/engine/metadata-modules/object-metadata/object-metadata.exception.ts
@@ -10359,7 +10374,7 @@ msgstr "Denne rollen kan ikke endres fordi det er en systemrolle. Kun tilpassede
 #. js-lingui-id: DEJJoY
 #: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts
 msgid "This server key is already claimed by another workspace."
-msgstr ""
+msgstr "Denne servernøkkelen er allerede tatt i bruk av et annet arbeidsområde."
 
 #. js-lingui-id: nFIPim
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -10369,7 +10384,7 @@ msgstr "Dette underdomenet er allerede tatt."
 #. js-lingui-id: dZF5Gw
 #: src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception.ts
 msgid "This suppressed address no longer exists."
-msgstr ""
+msgstr "Denne sperrede adressen finnes ikke lenger."
 
 #. js-lingui-id: aXBMTb
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -10404,7 +10419,7 @@ msgstr "Denne versjonen av applikasjonen er allerede installert i dette arbeidso
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "This workspace already has a subscription."
-msgstr ""
+msgstr "Dette arbeidsområdet har allerede et abonnement."
 
 #. js-lingui-id: IdEnkZ
 #: src/engine/core-modules/application/application.exception.ts
@@ -10438,13 +10453,13 @@ msgstr "Torsdag"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Tidy up"
-msgstr ""
+msgstr "Rydd opp"
 
 #. js-lingui-id: l+VvdV
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Tidy up Workflow"
-msgstr ""
+msgstr "Rydd opp i arbeidsflyt"
 
 #. js-lingui-id: SEdApj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -10688,13 +10703,13 @@ msgstr "Universell identifikator er reservert for systemadministrerte metadata"
 #: src/modules/dashboard/chart-data/utils/build-unique-relation-labels.util.ts
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Unknown"
-msgstr ""
+msgstr "Ukjent"
 
 #. js-lingui-id: of4ZuG
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 #: src/engine/metadata-modules/flat-navigation-menu-item/validators/utils/validate-navigation-menu-item-type-required-properties.util.ts
 msgid "Unknown navigation menu item type {type}"
-msgstr ""
+msgstr "Ukjent navigasjonsmenyelementtype {type}"
 
 #. js-lingui-id: tEncxN
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -10765,7 +10780,7 @@ msgstr "Oppdater"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Update {objectLabelPlural}"
-msgstr ""
+msgstr "Oppdater {objectLabelPlural}"
 
 #. js-lingui-id: QGupmf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -10840,19 +10855,19 @@ msgstr "URL må være en streng for widgeten \"{widgetTitle}\""
 #. js-lingui-id: P7NKk0
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Usage could not be read. Please try again later."
-msgstr ""
+msgstr "Forbruk kunne ikke leses. Vennligst prøv igjen senere."
 
 #. js-lingui-id: xwq0b4
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Use as Draft"
-msgstr ""
+msgstr "Bruk som utkast"
 
 #. js-lingui-id: 4Pp2U8
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Use as Draft"
-msgstr ""
+msgstr "Bruk som utkast"
 
 #. js-lingui-id: GkcfmO
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -10953,52 +10968,52 @@ msgstr "Konfigurasjon for brukerens arbeidsområderolle ikke funnet."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "User's preferred date format"
-msgstr ""
+msgstr "Brukers foretrukne datoformat"
 
 #. js-lingui-id: Gy0Tk5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "User's preferred number format"
-msgstr ""
+msgstr "Brukers foretrukne tallformat"
 
 #. js-lingui-id: Uadtry
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "User's preferred start day of the week"
-msgstr ""
+msgstr "Brukerens foretrukne startdag i uken"
 
 #. js-lingui-id: ZIo8Cj
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "User's preferred time format"
-msgstr ""
+msgstr "Brukers foretrukne tidsformat"
 
 #. js-lingui-id: sFN4Dx
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-value-error.util.ts
 msgid "Value \"{stringifiedValue}\" is not valid for operand \"{operand}\" on field type \"{filterType}\"."
-msgstr ""
+msgstr "Verdien \"{stringifiedValue}\" er ikke gyldig for operanden \"{operand}\" på felttypen \"{filterType}\"."
 
 #. js-lingui-id: ccqQWi
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-invalid-view-filter-value-error.util.ts
 msgid "Value \"{stringifiedValue}\" is not valid for operand \"{operand}\" on field type \"{filterType}\". {hint}"
-msgstr ""
+msgstr "Verdien \"{stringifiedValue}\" er ikke gyldig for operanden \"{operand}\" på felttypen \"{filterType}\". {hint}"
 
 #. js-lingui-id: p3MMwa
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
 msgid "Value \"{stringifiedValue}\" of a chart filter of widget \"{widgetTitle}\" is not valid for operand \"{operand}\" on field type \"{filterType}\"."
-msgstr ""
+msgstr "Verdien \"{stringifiedValue}\" i et diagramfilter i widgeten \"{widgetTitle}\" er ikke gyldig for operanden \"{operand}\" på felttypen \"{filterType}\"."
 
 #. js-lingui-id: JaflDh
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-chart-filter.util.ts
 msgid "Value \"{stringifiedValue}\" of a chart filter of widget \"{widgetTitle}\" is not valid for operand \"{operand}\" on field type \"{filterType}\". {hint}"
-msgstr ""
+msgstr "Verdien \"{stringifiedValue}\" i et diagramfilter i widgeten \"{widgetTitle}\" er ikke gyldig for operanden \"{operand}\" på felttypen \"{filterType}\". {hint}"
 
 #. js-lingui-id: l+Dvh5
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Value \"{stringifiedValue}\" resolves to no record for operand \"{operand}\", the current record is not available to a row level permission predicate"
-msgstr ""
+msgstr "Verdien \"{stringifiedValue}\" tilsvarer ingen oppføring for operanden \"{operand}\", og den gjeldende oppføringen er ikke tilgjengelig for et predikat for tillatelser på radnivå"
 
 #. js-lingui-id: UBPzFQ
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -11309,7 +11324,7 @@ msgstr "Visning ble ikke funnet for widgeten"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "View Previous AI Chats"
-msgstr ""
+msgstr "Vis tidligere AI-chatter"
 
 #. js-lingui-id: ipFNcM
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-sort-validator.service.ts
@@ -11490,7 +11505,7 @@ msgstr "Når kampanjen var ferdig med å sende"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Where records open for objects that follow the member's preference"
-msgstr ""
+msgstr "Hvor poster åpnes for objekter som følger medlemmets preferanse"
 
 #. js-lingui-id: zSq4aO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -11547,7 +11562,7 @@ msgstr "Widget-typen VIEW støttes ikke ennå."
 #. js-lingui-id: s8y6wj
 #: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
 msgid "Widget views must use a widget view type"
-msgstr ""
+msgstr "Widgetvisninger må bruke en widgetvisningstype"
 
 #. js-lingui-id: qRILxq
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -11805,7 +11820,7 @@ msgstr "ArbeidsflytAutomatisertUtløser arbeidsflyt"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "WorkflowRun"
-msgstr ""
+msgstr "WorkflowRun"
 
 #. js-lingui-id: zSsbOe
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-navigation-menu-item.constant.ts
@@ -11823,7 +11838,7 @@ msgstr "Arbeidsflyter"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "WorkflowVersion"
-msgstr ""
+msgstr "WorkflowVersion"
 
 #. js-lingui-id: mhEqo/
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
@@ -11883,7 +11898,7 @@ msgstr "Arbeidsområdet er ikke klart for å ta imot nye medlemmer"
 #. js-lingui-id: 8RwcFg
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 msgid "Workspace is suspended."
-msgstr ""
+msgstr "Arbeidsområdet er suspendert."
 
 #. js-lingui-id: iN7doz
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
@@ -12008,7 +12023,7 @@ msgstr "Arbeidsområdeskjema ikke funnet."
 #. js-lingui-id: 2gzz0t
 #: src/engine/metadata-modules/ai/ai-chat/services/workspace-setup-chat.service.ts
 msgid "Workspace setup"
-msgstr ""
+msgstr "Oppsett av arbeidsområde"
 
 #. js-lingui-id: kjLpTn
 #: src/engine/metadata-modules/view-field/exceptions/view-field.exception.ts
@@ -12118,7 +12133,7 @@ msgstr "Du kan ikke endre din egen rolle. Vennligst spør en annen administrator
 #. js-lingui-id: xqrB9X
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "You cannot delete a role you are assigned to. Ask another administrator to delete it."
-msgstr ""
+msgstr "Du kan ikke slette en rolle du er tildelt. Be en annen administrator om å slette den."
 
 #. js-lingui-id: y5haJ4
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
@@ -12129,7 +12144,7 @@ msgstr "Du kan ikke gi redigeringstillatelser uten også å gi lesetillatelser. 
 #. js-lingui-id: KcnT7Q
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "You cannot remove settings access from your own role. Ask another administrator to make this change."
-msgstr ""
+msgstr "Du kan ikke fjerne tilgang til innstillinger fra din egen rolle. Be en annen administrator om å gjøre denne endringen."
 
 #. js-lingui-id: 8wovNr
 #: src/engine/metadata-modules/user-role/user-role.service.ts
@@ -12294,7 +12309,7 @@ msgstr "Din appversjon er utdatert. Vennligst oppdater siden for å fortsette."
 #. js-lingui-id: Lmx0IG
 #: src/engine/metadata-modules/logic-function/logic-function.exception.ts
 msgid "Your application's production dependencies are too large to install. Move packages that are not imported by your logic functions (UI libraries, dev tooling) out of \"dependencies\"."
-msgstr ""
+msgstr "Produksjonsavhengighetene i applikasjonen din er for store til å installeres. Flytt pakker som ikke importeres av logikkfunksjonene dine (UI-biblioteker, utviklerverktøy) ut av \"dependencies\"."
 
 #. js-lingui-id: J5Vm4Q
 #: src/engine/core-modules/billing/billing.validate.ts
@@ -12304,7 +12319,7 @@ msgstr "Abonnementet ditt for fakturering er skadet. Vennligst kontakt support."
 #. js-lingui-id: K48BuZ
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "Your GitHub account does not own the organization that publishes this package. If you are an owner, make sure you granted this app access to the organization on GitHub's authorization screen (Organization access section)."
-msgstr ""
+msgstr "GitHub-kontoen din eier ikke organisasjonen som publiserer denne pakken. Hvis du er en eier, må du forsikre deg om at du har gitt denne appen tilgang til organisasjonen på GitHubs autorisasjonsskjerm (seksjonen Organization access)."
 
 #. js-lingui-id: bTyBrW
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -12314,7 +12329,7 @@ msgstr "Ditt passord har blitt endret med hell"
 #. js-lingui-id: AKLZnk
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Your payment method was declined. Please update it and try again."
-msgstr ""
+msgstr "Betalingsmåten din ble avvist. Vennligst oppdater den og prøv igjen."
 
 #. js-lingui-id: XxkUFT
 #: src/engine/metadata-modules/permissions/permissions.service.ts

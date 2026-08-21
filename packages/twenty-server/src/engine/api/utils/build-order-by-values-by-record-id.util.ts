@@ -1,37 +1,13 @@
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { computeOrderByLeafColumn } from 'src/engine/api/utils/compute-order-by-leaf-column.util';
 import {
   checkIfLeafCanCarryCursorValue,
   type OrderByLeaf,
 } from 'src/engine/api/utils/resolve-order-by-leaves.utils';
-import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 
 export type OrderByValuesByRecordId = Record<string, Record<string, unknown>>;
-
-const computeRawColumnAlias = (
-  leaf: OrderByLeaf,
-  objectNameSingular: string,
-): string => {
-  switch (leaf.kind) {
-    // The relation ordering always selects its joined columns under the
-    // deterministic "<joinAlias>_<column>" raw alias, whatever the client
-    // selected (see addRelationOrderColumnsToBuilder)
-    case 'relation':
-      return `${leaf.path[0]}_${
-        isDefined(leaf.targetCompositeProperty)
-          ? computeCompositeColumnName(
-              leaf.path[1],
-              leaf.targetCompositeProperty,
-            )
-          : leaf.path[1]
-      }`;
-    case 'composite':
-      return `${objectNameSingular}_${computeCompositeColumnName(leaf.path[0], leaf.compositeProperty)}`;
-    case 'scalar':
-      return `${objectNameSingular}_${leaf.path[0]}`;
-  }
-};
 
 // Cursors are encoded from the raw rows of the scan rather than from the
 // formatted records: result formatting presents SQL NULLs of TEXT-like columns
@@ -82,7 +58,17 @@ export const buildOrderByValuesByRecordId = ({
     const orderByValues: Record<string, unknown> = {};
 
     for (const leaf of cursorLeaves) {
-      const rawValue = rawRow[computeRawColumnAlias(leaf, objectNameSingular)];
+      const leafColumn = computeOrderByLeafColumn(leaf, objectNameSingular);
+
+      if (!isDefined(leafColumn)) {
+        continue;
+      }
+
+      // Every ordered column is selected under this raw alias, by the find
+      // options for root columns and by addRelationOrderColumnsToBuilder for
+      // joined ones
+      const rawValue =
+        rawRow[`${leafColumn.tableAlias}_${leafColumn.columnName}`];
 
       let container = orderByValues;
 

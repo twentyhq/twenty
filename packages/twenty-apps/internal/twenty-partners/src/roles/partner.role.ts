@@ -312,11 +312,6 @@ export default defineRole({
       canUpdateFieldValue: false,
     },
     {
-      objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
-      fieldUniversalIdentifier: '5412e4ca-cc96-4be8-8652-b73dace7673b',
-      canUpdateFieldValue: false,
-    },
-    {
       // Partner Tier — read-locked too: admin-only on the record page, hidden from partners.
       objectUniversalIdentifier: PARTNER_OBJECT_UNIVERSAL_IDENTIFIER,
       fieldUniversalIdentifier: 'd4fa6461-37b6-49ee-9181-dd482e74a70b',
