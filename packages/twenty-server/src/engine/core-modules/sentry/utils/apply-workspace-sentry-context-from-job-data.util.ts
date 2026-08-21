@@ -10,6 +10,7 @@ export const applyWorkspaceSentryContextFromJobData = (
   const workspaceId = (jobData as { workspaceId?: unknown }).workspaceId;
   const userWorkspaceId = (jobData as { userWorkspaceId?: unknown })
     .userWorkspaceId;
+  const workflowRunId = (jobData as { workflowRunId?: unknown }).workflowRunId;
 
   if (typeof workspaceId !== 'string' || workspaceId.length === 0) {
     return;
@@ -20,6 +21,10 @@ export const applyWorkspaceSentryContextFromJobData = (
     userWorkspaceId:
       typeof userWorkspaceId === 'string' && userWorkspaceId.length > 0
         ? userWorkspaceId
+        : undefined,
+    workflowRunId:
+      typeof workflowRunId === 'string' && workflowRunId.length > 0
+        ? workflowRunId
         : undefined,
   });
 };

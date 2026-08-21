@@ -3,6 +3,7 @@ import * as Sentry from '@sentry/node';
 type WorkspaceSentryFields = {
   workspaceId: string;
   userWorkspaceId?: string;
+  workflowRunId?: string;
 };
 
 export const applyWorkspaceSentryFields = (
@@ -16,11 +17,17 @@ export const applyWorkspaceSentryFields = (
   if (fields.userWorkspaceId) {
     Sentry.setTag('twenty.user_workspace.id', fields.userWorkspaceId);
   }
+  if (fields.workflowRunId) {
+    Sentry.setTag('twenty.workflow_run.id', fields.workflowRunId);
+  }
 
   Sentry.setContext('twenty', {
     workspace_id: fields.workspaceId,
     ...(fields.userWorkspaceId && {
       user_workspace_id: fields.userWorkspaceId,
+    }),
+    ...(fields.workflowRunId && {
+      workflow_run_id: fields.workflowRunId,
     }),
   });
 };
