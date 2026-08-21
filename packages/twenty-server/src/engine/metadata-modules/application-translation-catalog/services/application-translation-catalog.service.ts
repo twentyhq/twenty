@@ -121,23 +121,30 @@ export class ApplicationTranslationCatalogService {
       return getI18nContext(applicationId);
     }
 
-    return {
+    const getI18nContext = this.toI18nContextResolver({
+      standardApplicationId: await loaders.standardApplicationIdLoader.load({
+        workspaceId,
+      }),
+      catalogByApplicationId: new Map(
+        isDefined(applicationId)
+          ? [
+              [
+                applicationId,
+                await loaders.applicationTranslationCatalogLoader.load({
+                  applicationId,
+                  workspaceId,
+                  locale: safeLocale,
+                }),
+              ],
+            ]
+          : [],
+      ),
       locale,
-      i18nInstance: this.i18nService.getI18nInstance(safeLocale),
-      isStandardApp:
-        applicationId ===
-        (await loaders.standardApplicationIdLoader.load({ workspaceId })),
-      applicationCatalog: isDefined(applicationId)
-        ? await loaders.applicationTranslationCatalogLoader.load({
-            applicationId,
-            workspaceId,
-            locale: safeLocale,
-          })
-        : undefined,
-    };
+    });
+
+    return getI18nContext(applicationId);
   }
 
-  // The batched counterpart: one context per application for a whole page.
   async getI18nContextByApplicationId({
     applicationIds,
     locale,
@@ -149,15 +156,34 @@ export class ApplicationTranslationCatalogService {
   }): Promise<
     (applicationId: string | undefined) => EffectiveEntityI18nContext
   > {
-    const safeLocale = locale ?? SOURCE_LOCALE;
-
     const { standardApplicationId, catalogByApplicationId } =
       await this.getCatalogs({
         applicationIds,
-        locale: safeLocale,
+        locale: locale ?? SOURCE_LOCALE,
         workspaceId,
       });
-    const i18nInstance = this.i18nService.getI18nInstance(safeLocale);
+
+    return this.toI18nContextResolver({
+      standardApplicationId,
+      catalogByApplicationId,
+      locale,
+    });
+  }
+
+  // The one place the context shape is built, so the loader-backed and
+  // batched sources cannot drift apart.
+  private toI18nContextResolver({
+    standardApplicationId,
+    catalogByApplicationId,
+    locale,
+  }: {
+    standardApplicationId: string;
+    catalogByApplicationId: Map<string, Record<string, string> | undefined>;
+    locale: keyof typeof APP_LOCALES | undefined;
+  }): (applicationId: string | undefined) => EffectiveEntityI18nContext {
+    const i18nInstance = this.i18nService.getI18nInstance(
+      locale ?? SOURCE_LOCALE,
+    );
 
     return (applicationId) => ({
       locale,
