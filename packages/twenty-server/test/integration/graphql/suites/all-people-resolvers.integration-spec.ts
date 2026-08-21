@@ -33,18 +33,10 @@ describe('people resolvers (integration)', () => {
       data: [
         {
           id: TEST_PERSON_1_ID,
-          name: {
-            firstName: 'John',
-            lastName: 'Doe',
-          },
           jobTitle: personJobTitle1,
         },
         {
           id: TEST_PERSON_2_ID,
-          name: {
-            firstName: 'Jane',
-            lastName: 'Smith',
-          },
           jobTitle: personJobTitle2,
         },
       ],

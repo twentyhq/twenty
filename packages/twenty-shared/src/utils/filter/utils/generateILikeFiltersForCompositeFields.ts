@@ -29,34 +29,35 @@ export const generateILikeFiltersForCompositeFields = (
     });
   }
 
-  const trimmed = filterString.trim();
-  const tokens = trimmed.split(/\s+/).filter(Boolean);
+  const tokens = filterString.trim().split(/\s+/).filter(Boolean);
 
-  if (tokens.length === 0) {
-    return [];
-  }
-
-  if (tokens.length === 1) {
-    return subFields.map((subField) => ({
-      [baseFieldName]: {
-        [subField]: {
-          ilike: `%${tokens[0]}%`,
+  if (tokens.length <= 1) {
+    return subFields.map((subField) => {
+      return {
+        [baseFieldName]: {
+          [subField]: {
+            ilike: `%${tokens[0] ?? ''}%`,
+          },
         },
-      },
-    }));
+      };
+    });
   }
 
   return [
     {
-      and: tokens.map((token) => ({
-        or: subFields.map((subField) => ({
-          [baseFieldName]: {
-            [subField]: {
-              ilike: `%${token}%`,
-            },
-          },
-        })),
-      })),
+      and: tokens.map((token) => {
+        return {
+          or: subFields.map((subField) => {
+            return {
+              [baseFieldName]: {
+                [subField]: {
+                  ilike: `%${token}%`,
+                },
+              },
+            };
+          }),
+        };
+      }),
     },
   ];
 };
