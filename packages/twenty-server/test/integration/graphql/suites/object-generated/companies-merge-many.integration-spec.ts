@@ -5,6 +5,7 @@ import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { mergeManyOperationFactory } from 'test/integration/graphql/utils/merge-many-operation-factory.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
+import { waitForTimelineActivities } from 'test/integration/utils/wait-for-timeline-activities.util';
 
 describe('companies merge resolvers (integration)', () => {
   let createdCompanyIds: string[] = [];
@@ -70,6 +71,11 @@ describe('companies merge resolvers (integration)', () => {
       const company2Id = createResponse.body.data.createCompanies[1].id;
 
       createdCompanyIds.push(company1Id, company2Id);
+
+      await waitForTimelineActivities('targetCompanyId', [
+        company1Id,
+        company2Id,
+      ]);
 
       const mergeOperation = mergeManyOperationFactory({
         objectMetadataPluralName: 'companies',
@@ -161,6 +167,11 @@ describe('companies merge resolvers (integration)', () => {
 
       createdCompanyIds.push(company1Id, company2Id);
 
+      await waitForTimelineActivities('targetCompanyId', [
+        company1Id,
+        company2Id,
+      ]);
+
       const mergeOperation = mergeManyOperationFactory({
         objectMetadataPluralName: 'companies',
         gqlFields: COMPANY_GQL_FIELDS,
@@ -232,6 +243,11 @@ describe('companies merge resolvers (integration)', () => {
       const company2Id = createResponse.body.data.createCompanies[1].id;
 
       createdCompanyIds.push(company1Id, company2Id);
+
+      await waitForTimelineActivities('targetCompanyId', [
+        company1Id,
+        company2Id,
+      ]);
 
       const mergeWithPriority1 = mergeManyOperationFactory({
         objectMetadataPluralName: 'companies',
@@ -314,6 +330,12 @@ describe('companies merge resolvers (integration)', () => {
       createdPersonIds.push(relatedPerson.id);
 
       expect(relatedPerson.company.id).toBe(duplicateCompanyId);
+
+      await waitForTimelineActivities('targetCompanyId', [
+        survivorCompanyId,
+        duplicateCompanyId,
+      ]);
+      await waitForTimelineActivities('targetPersonId', [relatedPerson.id]);
 
       const mergeOperation = mergeManyOperationFactory({
         objectMetadataPluralName: 'companies',
@@ -420,6 +442,13 @@ describe('companies merge resolvers (integration)', () => {
       );
 
       createdPersonIds.push(...createdPeopleIds);
+
+      await waitForTimelineActivities('targetCompanyId', [
+        survivorCompanyId,
+        duplicateOneId,
+        duplicateTwoId,
+      ]);
+      await waitForTimelineActivities('targetPersonId', createdPeopleIds);
 
       const mergeOperation = mergeManyOperationFactory({
         objectMetadataPluralName: 'companies',

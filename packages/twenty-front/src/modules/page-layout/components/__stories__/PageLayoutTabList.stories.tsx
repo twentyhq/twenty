@@ -22,6 +22,8 @@ const StyledContainer = styled.div`
 
 const createInitialTabs = (): PageLayoutTab[] => [
   {
+    isSystemSideEffect: false,
+    universalIdentifier: 'universal-identifier-mock',
     __typename: 'PageLayoutTab',
     isActive: true,
     applicationId: '',
@@ -36,6 +38,8 @@ const createInitialTabs = (): PageLayoutTab[] => [
     deletedAt: null,
   },
   {
+    isSystemSideEffect: false,
+    universalIdentifier: 'universal-identifier-mock',
     __typename: 'PageLayoutTab',
     isActive: true,
     applicationId: '',
@@ -49,6 +53,8 @@ const createInitialTabs = (): PageLayoutTab[] => [
     deletedAt: null,
   },
   {
+    isSystemSideEffect: false,
+    universalIdentifier: 'universal-identifier-mock',
     __typename: 'PageLayoutTab',
     isActive: true,
     applicationId: '',
@@ -96,6 +102,8 @@ const PageLayoutTabListPlayground = ({
             __typename: 'PageLayoutTab',
             isActive: true,
             applicationId: '',
+            isSystemSideEffect: false,
+            universalIdentifier: 'universal-identifier-mock',
             id: `new-tab-${nextIndex}`,
             title: `New Tab ${nextIndex}`,
             position: nextIndex,

@@ -52,11 +52,7 @@ export class ConnectionProviderService {
     const valuesByKey = new Map(
       variables.map((v) => [
         v.key,
-        v.encryptedValue !== ''
-          ? this.secretEncryptionService.decryptVersionedOrThrow(
-              v.encryptedValue,
-            )
-          : '',
+        this.secretEncryptionService.decryptVersionedOrThrow(v.encryptedValue),
       ]),
     );
 
@@ -138,7 +134,13 @@ export class ConnectionProviderService {
     const filledKeysByRegistrationId = new Map<string, Set<string>>();
 
     for (const variable of variables) {
-      if (variable.encryptedValue === '') continue;
+      if (
+        this.secretEncryptionService.decryptVersionedOrThrow(
+          variable.encryptedValue,
+        ) === ''
+      ) {
+        continue;
+      }
       const set =
         filledKeysByRegistrationId.get(variable.applicationRegistrationId) ??
         new Set<string>();

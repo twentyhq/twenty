@@ -86,6 +86,93 @@ describe('StreamingRestLink', () => {
       );
     });
 
+    it('should send credentials when the link is configured with them', () => {
+      const credentialedLink = new StreamingRestLink({
+        uri: 'https://api.example.com',
+        credentials: 'include',
+      });
+
+      const operation = {
+        query: gql`
+          query StreamTest($threadId: String!) {
+            streamChatResponse(threadId: $threadId)
+              @stream(
+                path: "/agent-chat/stream/{args.threadId}"
+                method: "POST"
+                bodyKey: "requestBody"
+              )
+          }
+        `,
+        variables: { threadId: '123', requestBody: { threadId: '123' } },
+        getContext: () => ({ onChunk: jest.fn() }),
+        operationName: 'StreamTest',
+        extensions: {},
+        setContext: jest.fn(),
+      } as unknown as Operation;
+
+      (global.fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+        body: {
+          getReader: () => ({
+            read: jest.fn().mockResolvedValue({ done: true }),
+            releaseLock: jest.fn(),
+          }),
+        },
+      });
+
+      credentialedLink.request(operation, mockForward).subscribe({
+        next: jest.fn(),
+        error: jest.fn(),
+        complete: jest.fn(),
+      });
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({ credentials: 'include' }),
+      );
+    });
+
+    it('should omit credentials when the link is not configured with them', () => {
+      const operation = {
+        query: gql`
+          query StreamTest($threadId: String!) {
+            streamChatResponse(threadId: $threadId)
+              @stream(
+                path: "/agent-chat/stream/{args.threadId}"
+                method: "POST"
+                bodyKey: "requestBody"
+              )
+          }
+        `,
+        variables: { threadId: '123', requestBody: { threadId: '123' } },
+        getContext: () => ({ onChunk: jest.fn() }),
+        operationName: 'StreamTest',
+        extensions: {},
+        setContext: jest.fn(),
+      } as unknown as Operation;
+
+      (global.fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+        body: {
+          getReader: () => ({
+            read: jest.fn().mockResolvedValue({ done: true }),
+            releaseLock: jest.fn(),
+          }),
+        },
+      });
+
+      streamingLink.request(operation, mockForward).subscribe({
+        next: jest.fn(),
+        error: jest.fn(),
+        complete: jest.fn(),
+      });
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.not.objectContaining({ credentials: expect.anything() }),
+      );
+    });
+
     it('should handle network errors', async () => {
       const operation = {
         query: gql`

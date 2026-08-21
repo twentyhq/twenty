@@ -60,6 +60,7 @@ export class UpdateConnectedAccountOnReconnectService {
             refreshToken: encryptedRefreshToken,
             scopes,
             authFailedAt: null,
+            archivedAt: null,
           },
         );
     }, authContext);

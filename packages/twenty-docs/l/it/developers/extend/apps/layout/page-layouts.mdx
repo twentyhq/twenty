@@ -58,6 +58,28 @@ export default definePageLayout({
 * Ogni `widget` all'interno di una scheda può renderizzare un [front component](/l/it/developers/extend/apps/layout/front-components), un elenco di relazioni o altri tipi di widget integrati.
 * `position` sulle schede controlla il loro ordine. Usa valori più alti (ad es., 50) per posizionare le schede personalizzate dopo quelle integrate.
 
+### Widget dei campi
+
+Un widget `FIELD` esegue il rendering di un campo del record. Per i campi di relazione può anche incorporare un elenco di record correlati:
+
+```ts
+{
+  universalIdentifier: 'c1c2c3c4-c5c6-4000-8000-000000000003',
+  title: 'People → Opportunities',
+  type: 'FIELD',
+  configuration: {
+    configurationType: 'FIELD',
+    fieldMetadataId: PEOPLE_FIELD_UNIVERSAL_IDENTIFIER,
+    fieldDisplayMode: 'TABLE',
+    nestedRelationFieldMetadataId: OPPORTUNITIES_FIELD_UNIVERSAL_IDENTIFIER,
+  },
+}
+```
+
+* `fieldMetadataId` accetta l'identificatore universale di un campo sull'oggetto del layout.
+* `fieldDisplayMode` può essere uno tra `'FIELD'`, `'CARD'`, `'EDITOR'`, `'VIEW'` o `'TABLE'`. `TABLE` incorpora una vista che elenca i record di un campo di relazione uno-a-molti.
+* `nestedRelationFieldMetadataId` è facoltativo e accetta l'identificatore universale di un campo di relazione uno-a-molti sull'oggetto di destinazione della relazione, per elencare i record a due salti di relazione di distanza (ad es. una pagina Company che elenca le opportunità delle persone dell'azienda, o una pagina Person che elenca le opportunità dell'azienda della persona). Il primo salto può essere un campo di relazione uno-a-molti o molti-a-uno, il secondo deve essere uno-a-molti (le relazioni di giunzione non sono supportate) e richiede `fieldDisplayMode: 'TABLE'` — combinarlo con qualsiasi altra modalità di visualizzazione genera un errore di convalida, poiché un widget annidato viene sempre renderizzato come una vista incorporata.
+
 ## definePageLayoutTab
 
 Usa questo quando vuoi solo **aggiungere** una scheda a un layout esistente — per esempio, una scheda di analisi sulla pagina Company standard, o una scheda di riepilogo AI collegata al layout del tuo oggetto.

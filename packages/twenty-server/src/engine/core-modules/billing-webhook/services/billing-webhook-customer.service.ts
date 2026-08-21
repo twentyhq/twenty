@@ -13,6 +13,7 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
+import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -28,6 +29,7 @@ export class BillingWebhookCustomerService {
     @InjectRepository(BillingCustomerEntity)
     private readonly billingCustomerRepositoryUnscoped: Repository<BillingCustomerEntity>,
     private readonly stripeCustomerService: StripeCustomerService,
+    private readonly billingCreditService: BillingCreditService,
   ) {}
 
   async processStripeEvent(
@@ -69,6 +71,11 @@ export class BillingWebhookCustomerService {
         skipUpdateIfNoValuesChanged: true,
       },
     );
+
+    // Credits granted before this row existed, an onboarding reward at signup
+    // above all, mirrored onto nothing. This is the earliest point the row is
+    // known to exist, so put the ledger balance on it here.
+    await this.billingCreditService.reconcileMirroredBalance(workspaceId);
   }
 
   private async processPaymentMethodAttachedEvent(

@@ -172,6 +172,10 @@ Pour des raisons de sécurité, les en-têtes de réponse sont restreints à une
 Le code d’état doit être un code d’état HTTP valide (compris entre 100 et 599). Les noms des en-têtes de réponse sont comparés sans tenir compte de la casse.
 </Note>
 
+#### Réponses d’erreur de la plateforme
+
+Au-delà des réponses propres à votre gestionnaire, la plateforme répond directement aux appels de route dans certaines situations : `404` lorsque la route ou la fonction n’existe pas, `403` lorsque l’application est arrêtée, `429` lorsque la limite de débit d’exécution est atteinte, et `422` lorsque les `dependencies` de production de l’application sont trop volumineuses pour être installées — voir [limites de taille des dépendances](/l/fr/developers/extend/apps/getting-started/project-structure#dependencies).
+
 #### Déclencheur de route serveur
 
 `httpRouteTriggerSettings` expose une fonction sous `/s/` et résout l’espace de travail à partir de l’hôte de la requête — ce qui fonctionne lorsque chaque espace de travail a son propre domaine. Les fournisseurs tiers, en revanche, envoient les événements de chaque locataire vers **une** URL. Dans ce cas, utilisez `serverRouteTriggerSettings`.
@@ -278,6 +282,28 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 ```
 
 L’identifiant est le `universalIdentifier` du résolveur issu de votre manifeste. Enregistrez cette URL auprès du fournisseur.
+
+**Répondre à une vérification GET.** Certains fournisseurs vérifient un point de terminaison avant d'y effectuer une livraison, en envoyant une requête `GET` contenant une vérification à la même URL vers laquelle ils effectueront ensuite des événements `POST` — l'API WhatsApp Cloud de Meta en est un exemple. Une route de serveur répond uniquement à `POST`, sauf indication contraire. Déclarez donc les deux méthodes :
+
+```ts
+serverRouteTriggerSettings: {
+  forwardedRequestHeaders: ['x-hub-signature-256'],
+  httpMethods: ['GET', 'POST'],
+}
+```
+
+La vérification arrive dans `event.queryStringParameters`, et le renvoi d'une `Response` la renvoie au fournisseur dans la même requête. Un corps de chaîne est envoyé en tant que `text/plain`, ce que ces fournisseurs attendent :
+
+```ts
+const handler = async (event: RoutePayload) => {
+  if (event.requestContext.http.method === 'GET') {
+    return new Response(event.queryStringParameters['hub.challenge']);
+  }
+  // …handle the delivered event
+};
+```
+
+`httpMethods` remplace la valeur par défaut au lieu de s'y ajouter, donc `['GET']` seul fait que la route rejette `POST`. Seuls `GET` et `POST` sont pris en charge. Ne le définissez pas, sauf si le fournisseur a besoin du deuxième verbe : une route qui déclare `GET` verra son résolveur exécuté par tout appelant non authentifié, y compris les robots d'exploration et les outils de déploiement des aperçus de liens qui envoient des requêtes `GET` sans y être invités. Toute requête pour laquelle la plateforme ne dispose pas de méthode reçoit une réponse `405` sans que le résolveur ne soit jamais exécuté.
 
 <Note>
 **L’application doit être revendiquée et installée sur son espace de travail propriétaire.** Comme le résolveur s’exécute dans l’**espace de travail propriétaire** (l’espace de travail qui détient l’enregistrement de l’application), un déclencheur de route serveur ne fonctionne que lorsque l’application a été *revendiquée* — c’est‑à‑dire qu’elle possède un espace de travail propriétaire — **et** que cette application est **installée sur l’espace de travail propriétaire**. Tant que ces deux conditions ne sont pas remplies, le résolveur n’a nulle part où s’exécuter, donc la route ne peut pas être envoyée. Une application qui expose une fonction logique `serverRouteTriggerSettings` ne peut donc pas être répertoriée sur la place de marché tant qu’elle n’a pas été revendiquée et installée sur son espace de travail propriétaire.

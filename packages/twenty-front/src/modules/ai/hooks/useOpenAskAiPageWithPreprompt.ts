@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
+import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
@@ -48,7 +49,8 @@ export const useOpenAskAiPageWithPreprompt = () => {
 
     setAgentChatDraftsByThreadId((prev) => ({
       ...prev,
-      [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: text,
+      [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]:
+        serializePlainTextAsAdvancedTextEditorDocument(text),
     }));
     setAgentChatPreprompt({ text, mode });
   };

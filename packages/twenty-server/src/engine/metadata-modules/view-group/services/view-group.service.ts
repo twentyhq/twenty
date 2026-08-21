@@ -384,7 +384,7 @@ export class ViewGroupService {
       where: {
         deletedAt: IsNull(),
       },
-      order: { position: 'ASC' },
+      order: { position: 'ASC', id: 'ASC' },
       relations: ['workspace', 'view'],
     });
   }
@@ -398,7 +398,7 @@ export class ViewGroupService {
         viewId,
         deletedAt: IsNull(),
       },
-      order: { position: 'ASC' },
+      order: { position: 'ASC', id: 'ASC' },
       relations: ['workspace', 'view'],
     });
   }

@@ -1,5 +1,6 @@
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
+import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { mergeManyOperationFactory } from 'test/integration/graphql/utils/merge-many-operation-factory.util';
@@ -15,6 +16,82 @@ describe('people merge resolvers (integration)', () => {
       await deleteRecordsByIds('person', createdPersonIdsForCleaning);
       createdPersonIdsForCleaning = [];
     }
+  });
+
+  describe('migrating related records', () => {
+    it('should migrate timeline activities targeting the merged person', async () => {
+      const createPersonsOperation = createManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: PERSON_GQL_FIELDS,
+        data: [
+          {
+            name: {
+              firstName: 'Priority',
+              lastName: 'Person',
+            },
+          },
+          {
+            name: {
+              firstName: 'Duplicate',
+              lastName: 'Person',
+            },
+          },
+        ],
+      });
+
+      const createPersonsResponse = await makeGraphqlAPIRequest(
+        createPersonsOperation,
+      );
+      const [priorityPerson, duplicatePerson] =
+        createPersonsResponse.body.data.createPeople;
+
+      createdPersonIdsForCleaning.push(priorityPerson.id, duplicatePerson.id);
+
+      const createTimelineActivityResponse = await makeGraphqlAPIRequest(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'timelineActivity',
+          gqlFields: 'id targetPersonId',
+          data: {
+            happensAt: new Date().toISOString(),
+            targetPersonId: duplicatePerson.id,
+          },
+        }),
+      );
+
+      expect(createTimelineActivityResponse.body.errors).toBeUndefined();
+
+      const timelineActivity =
+        createTimelineActivityResponse.body.data.createTimelineActivity;
+
+      const mergeResponse = await makeGraphqlAPIRequest(
+        mergeManyOperationFactory({
+          objectMetadataPluralName: 'people',
+          gqlFields: PERSON_GQL_FIELDS,
+          ids: [priorityPerson.id, duplicatePerson.id],
+          conflictPriorityIndex: 0,
+        }),
+      );
+
+      expect(mergeResponse.body.errors).toBeUndefined();
+
+      const findTimelineActivityResponse = await makeGraphqlAPIRequest(
+        findOneOperationFactory({
+          objectMetadataSingularName: 'timelineActivity',
+          gqlFields: 'id targetPersonId',
+          filter: {
+            id: {
+              eq: timelineActivity.id,
+            },
+          },
+        }),
+      );
+
+      expect(findTimelineActivityResponse.body.errors).toBeUndefined();
+      expect(
+        findTimelineActivityResponse.body.data.timelineActivity.targetPersonId,
+      ).toBe(priorityPerson.id);
+    });
   });
 
   describe('merging composite fields', () => {

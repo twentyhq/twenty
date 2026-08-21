@@ -153,7 +153,6 @@ export const computeStandardMessageCampaignViewFields = (
       },
     }),
 
-    // messageCampaignRecordPageFields view fields
     messageCampaignRecordPageFieldsStatus: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'messageCampaign',

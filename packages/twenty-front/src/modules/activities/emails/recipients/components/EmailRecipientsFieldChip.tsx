@@ -7,7 +7,7 @@ import { type EmailRecipientResolution } from '@/activities/emails/recipients/ho
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';
 import { formatEmailRecipient } from '@/activities/emails/recipients/utils/formatEmailRecipient';
 import { getEmailIdentityDisplayName } from '@/activities/emails/utils/getEmailIdentityDisplayName';
-import { BaseChip } from '@/object-record/record-field/ui/form-types/components/BaseChip';
+import { BaseChip } from '@/ui/input/components/BaseChip';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 

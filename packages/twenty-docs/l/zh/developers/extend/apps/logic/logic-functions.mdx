@@ -172,6 +172,10 @@ const handler = async (event: RoutePayload) => {
 状态码必须是有效的 HTTP 状态码（介于 100 和 599 之间）。 响应头名称的匹配不区分大小写。
 </Note>
 
+#### 平台错误响应
+
+除了处理程序自身的响应之外，在某些情况下，平台会直接对路由调用做出响应：当路由或函数不存在时返回 `404`，当应用停止时返回 `403`，当触发执行速率限制时返回 `429`，以及当应用的生产环境 `dependencies` 过大而无法安装时返回 `422`——请参见[依赖项大小限制](/l/zh/developers/extend/apps/getting-started/project-structure#dependencies)。
+
 #### 服务端路由触发器
 
 `httpRouteTriggerSettings` 在 `/s/` 下暴露一个函数，并根据请求主机解析 workspace——这在每个 workspace 都有自己域名时有效。 然而，第三方服务商会将每个租户的事件发送到**同一个** URL。 在这种情况下，请使用 `serverRouteTriggerSettings`。
@@ -278,6 +282,28 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 ```
 
 该标识符是清单（manifest）中 resolver 的 `universalIdentifier`。 在服务商处注册该 URL。
+
+**响应验证 GET 请求。** 某些提供商会在向端点传递内容之前对其进行验证，方法是向其稍后将 `POST` 事件到的同一 URL 发送携带质询的 `GET` 请求——Meta 的 WhatsApp Cloud API 就是其中之一。 除非另有指定，否则服务器路由仅响应 `POST`，因此请声明两种方法：
+
+```ts
+serverRouteTriggerSettings: {
+  forwardedRequestHeaders: ['x-hub-signature-256'],
+  httpMethods: ['GET', 'POST'],
+}
+```
+
+质询会在 `event.queryStringParameters` 中到达，返回 `Response` 会在同一请求中将其回传给提供商。 字符串主体会以 `text/plain` 发送，这正是这些提供商所期望的：
+
+```ts
+const handler = async (event: RoutePayload) => {
+  if (event.requestContext.http.method === 'GET') {
+    return new Response(event.queryStringParameters['hub.challenge']);
+  }
+  // …handle the delivered event
+};
+```
+
+`httpMethods` 会替换默认值，而不是在其基础上添加，因此仅使用 `['GET']` 会使路由拒绝 `POST`。 仅支持 `GET` 和 `POST`。 除非提供商需要第二种方法，否则请将其留空：声明 `GET` 的路由会让任何未经身份验证的调用方执行其解析器，包括会在未提示的情况下发送 `GET` 的爬虫和链接展开器。 对于平台没有对应方法的任何请求，都会返回 `405`，且解析器不会运行。
 
 <Note>
 **应用程序必须在其所属工作区中被认领并安装。** 由于 resolver 在**所属工作区**中运行（即拥有应用程序注册的工作区），服务器路由触发器只有在应用程序已被*认领*——也就是说它已有一个所属工作区——**并且**该应用程序**已安装在所属工作区**之后才会生效。 在这两个条件都满足之前，resolver 无处可运行，因此无法分发该路由。 因此，暴露 `serverRouteTriggerSettings` 逻辑函数的应用程序在被认领并安装到其所属工作区之前，不能在 marketplace 中列出。

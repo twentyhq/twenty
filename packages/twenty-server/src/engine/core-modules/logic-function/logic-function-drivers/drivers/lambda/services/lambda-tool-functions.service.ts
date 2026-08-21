@@ -33,6 +33,7 @@ import {
   type YarnInstallLambdaPayload,
   type YarnInstallLambdaResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
+import { buildYarnInstallFailureException } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-yarn-install-failure-exception.util';
 import { computeHashedLambdaResourceName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/compute-hashed-lambda-resource-name.util';
 import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
 import { copyBuilder } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-builder';
@@ -150,10 +151,7 @@ export class LambdaToolFunctionsService {
         ? JSON.parse(result.Payload.transformToString())
         : {};
 
-      throw new LogicFunctionException(
-        `Yarn install Lambda failed: ${JSON.stringify(parsedResult)}`,
-        LogicFunctionExceptionCode.LOGIC_FUNCTION_CREATE_FAILED,
-      );
+      throw buildYarnInstallFailureException(parsedResult);
     }
 
     const parsedResult: YarnInstallLambdaResult = result.Payload
@@ -346,7 +344,12 @@ export class LambdaToolFunctionsService {
     this.yarnInstallFunctionName = computeHashedLambdaResourceName({
       resourceNamePrefix: YARN_INSTALL_FUNCTION_NAME_PREFIX,
       namespace: this.options.resourceNamespace,
-      contents: [handlerContent],
+      contents: [
+        handlerContent,
+        String(YARN_INSTALL_LAMBDA_MEMORY_MB),
+        String(YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS),
+        String(LAMBDA_EPHEMERAL_STORAGE_MB),
+      ],
     });
 
     return this.yarnInstallFunctionName;
@@ -362,7 +365,12 @@ export class LambdaToolFunctionsService {
     this.builderFunctionName = computeHashedLambdaResourceName({
       resourceNamePrefix: BUILDER_FUNCTION_NAME_PREFIX,
       namespace: this.options.resourceNamespace,
-      contents: [handlerContent],
+      contents: [
+        handlerContent,
+        String(BUILDER_LAMBDA_MEMORY_MB),
+        String(BUILDER_LAMBDA_TIMEOUT_SECONDS),
+        String(LAMBDA_EPHEMERAL_STORAGE_MB),
+      ],
     });
 
     return this.builderFunctionName;

@@ -3,6 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type Request } from 'express';
+import { ApiPath } from 'twenty-shared/types';
 import { parseJson } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -82,7 +83,7 @@ export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
       return false;
     }
 
-    const url = new URL('/auth/microsoft', 'http://localhost');
+    const url = new URL(`/${ApiPath.Auth}/microsoft`, 'http://localhost');
 
     url.searchParams.set('oauthRetryCount', String(oauthRetryCount + 1));
 

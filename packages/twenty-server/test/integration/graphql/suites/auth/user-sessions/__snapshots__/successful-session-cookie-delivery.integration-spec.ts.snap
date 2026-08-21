@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`successful session cookie delivery on a secure deployment (integration) should deliver the host-locked secure cookie variant: secure-session-cookie 1`] = `"__Host-twenty-session=sess_<redacted>; Path=/; Expires=<redacted>; HttpOnly; Secure; SameSite=None"`;

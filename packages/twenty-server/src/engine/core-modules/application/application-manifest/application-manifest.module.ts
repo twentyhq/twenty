@@ -6,7 +6,6 @@ import { ApplicationManifestApplyService } from 'src/engine/core-modules/applica
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
 import { ComputeApplicationManifestAllUniversalFlatEntityMapsService } from 'src/engine/core-modules/application/application-manifest/services/compute-application-manifest-all-universal-flat-entity-maps.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
-import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationTranslationModule } from 'src/engine/core-modules/application/application-translation/application-translation.module';
 import { ApplicationVariableEntityModule } from 'src/engine/core-modules/application/application-variable/application-variable.module';
@@ -15,13 +14,14 @@ import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-sto
 import { LogicFunctionExecutorModule } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
+import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ApplicationRegistrationEntity]),
+    TypeOrmModule.forFeature([FrontComponentEntity]),
     ApplicationModule,
     ApplicationRegistrationModule,
     ApplicationTranslationModule,

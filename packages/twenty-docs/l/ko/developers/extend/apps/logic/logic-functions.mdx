@@ -171,6 +171,10 @@ const handler = async (event: RoutePayload) => {
 상태 코드는 유효한 HTTP 상태 코드(100에서 599 사이)여야 합니다. 응답 헤더 이름은 대소문자를 구분하지 않습니다.
 </Note>
 
+#### 플랫폼 오류 응답
+
+핸들러 자체의 응답 외에도, 플랫폼은 일부 상황에서 라우트 호출에 직접 응답합니다. 라우트나 함수가 존재하지 않을 때는 `404`, 애플리케이션이 중지된 상태일 때는 `403`, 실행 속도 제한에 도달했을 때는 `429`, 애플리케이션의 프로덕션 `dependencies`가 너무 커서 설치할 수 없을 때는 `422`를 반환합니다. 자세한 내용은 [dependencies size limits](/l/ko/developers/extend/apps/getting-started/project-structure#dependencies)를 참조하세요.
+
 #### 서버 라우트 트리거
 
 `httpRouteTriggerSettings`는 `/s/` 아래에 함수를 노출하고 요청 호스트에서 워크스페이스를 해석합니다. 이는 각 워크스페이스가 자체 도메인을 가질 때 동작합니다. 그러나 타사 공급자는 모든 테넌트의 이벤트를 **하나의** URL로 전달합니다. 그 경우에는 `serverRouteTriggerSettings`를 사용하세요.
@@ -277,6 +281,28 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 ```
 
 이 식별자는 manifest에 있는 resolver의 `universalIdentifier`입니다. 해당 URL을 공급자에 등록하세요.
+
+**검증 `GET`에 응답하기.** 일부 공급자는 이벤트를 나중에 `POST`할 동일한 URL로 챌린지가 포함된 `GET`을 전송하여 엔드포인트에 전달하기 전에 이를 검증합니다. Meta의 WhatsApp Cloud API가 그중 하나입니다. 서버 경로는 별도로 지정하지 않는 한 `POST`에만 응답하므로, 두 메서드를 모두 선언하세요:
+
+```ts
+serverRouteTriggerSettings: {
+  forwardedRequestHeaders: ['x-hub-signature-256'],
+  httpMethods: ['GET', 'POST'],
+}
+```
+
+챌린지는 `event.queryStringParameters`에 도착하며, `Response`를 반환하면 동일한 요청에서 공급자에게 이를 다시 에코합니다. 문자열 본문은 `text/plain`으로 전송되며, 이는 이러한 공급자가 예상하는 형식입니다:
+
+```ts
+const handler = async (event: RoutePayload) => {
+  if (event.requestContext.http.method === 'GET') {
+    return new Response(event.queryStringParameters['hub.challenge']);
+  }
+  // …handle the delivered event
+};
+```
+
+`httpMethods`는 기본값에 추가하는 대신 이를 대체하므로, `['GET']`만 지정하면 경로는 `POST`를 거부합니다. `GET` 및 `POST`만 지원됩니다. 공급자에게 두 번째 메서드가 필요하지 않은 한 설정하지 않은 상태로 두세요. `GET`을 선언하는 경로는 별도 요청 없이 `GET`을 보내는 크롤러와 링크 미리보기 생성기를 포함한 모든 인증되지 않은 호출자에 의해 해당 리졸버가 실행됩니다. 플랫폼에 메서드가 없는 모든 요청에는 리졸버가 실행되지 않은 채 `405`가 응답됩니다.
 
 <Note>
 **애플리케이션은 소유자 워크스페이스가 지정되어 해당 워크스페이스에 설치되어 있어야 합니다.** 리졸버는 **소유자 워크스페이스**(애플리케이션 등록을 소유한 워크스페이스)에서 실행되므로, 서버 라우트 트리거는 애플리케이션에 소유자 워크스페이스가 *지정되고* — 즉, 소유자 워크스페이스가 있고 — **그리고** 그 애플리케이션이 **소유자 워크스페이스에 설치된** 때에만 동작합니다. 이 두 조건이 모두 충족되기 전에는 리졸버가 실행될 위치가 없으므로, 라우트를 디스패치할 수 없습니다. 따라서 `serverRouteTriggerSettings` 로직 함수를 노출하는 애플리케이션은 소유자 워크스페이스가 지정되어 그 워크스페이스에 설치되기 전까지는 마켓플레이스에 등록될 수 없습니다.

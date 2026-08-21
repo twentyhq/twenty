@@ -86,15 +86,12 @@ describe('hasTokenPair', () => {
 
   describe('validation behavior', () => {
     it('should rely on getTokenPair for all validation logic', () => {
-      // Test that hasTokenPair doesn't do its own validation
-      // and trusts getTokenPair's validation completely
       mockGetTokenPair.mockReturnValue(undefined);
 
       hasTokenPair();
 
       expect(mockGetTokenPair).toHaveBeenCalledTimes(1);
 
-      // Reset and test with valid token
       mockGetTokenPair.mockClear();
       const validToken = {
         accessOrWorkspaceAgnosticToken: {
@@ -115,7 +112,6 @@ describe('hasTokenPair', () => {
     });
 
     it('should not perform additional validation beyond getTokenPair', () => {
-      // This test ensures hasTokenPair doesn't duplicate validation logic
       const tokenPair = {
         accessOrWorkspaceAgnosticToken: {
           token: 'any-token-that-getTokenPair-considers-valid',
@@ -131,7 +127,6 @@ describe('hasTokenPair', () => {
       const result = hasTokenPair();
 
       expect(result).toBe(true);
-      // Should only call getTokenPair once, no additional validation
       expect(mockGetTokenPair).toHaveBeenCalledTimes(1);
     });
   });

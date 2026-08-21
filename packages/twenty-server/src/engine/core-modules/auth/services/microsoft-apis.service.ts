@@ -45,6 +45,7 @@ import {
   MessagingMessageListFetchJob,
   type MessagingMessageListFetchJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
+import { OnboardingRecentMessagesImportService } from 'src/modules/onboarding-recent-messages-import/services/onboarding-recent-messages-import.service';
 import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
@@ -65,6 +66,7 @@ export class MicrosoftAPIsService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly syncMessageFoldersService: SyncMessageFoldersService,
     private readonly emailAliasManagerService: EmailAliasManagerService,
+    private readonly onboardingRecentMessagesImportService: OnboardingRecentMessagesImportService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectRepository(UserWorkspaceEntity)
@@ -126,6 +128,7 @@ export class MicrosoftAPIsService {
 
         const existingAccountId = connectedAccount?.id;
         const newOrExistingConnectedAccountId = existingAccountId ?? v4();
+        const wasArchived = isDefined(connectedAccount?.archivedAt);
 
         const existingMessageChannels =
           await this.messageChannelRepository.find({
@@ -217,6 +220,30 @@ export class MicrosoftAPIsService {
                 transactionManager,
               });
             }
+
+            if (wasArchived && existingMessageChannels.length > 0) {
+              await transactionManager
+                .getRepository(MessageChannelEntity)
+                .update(
+                  {
+                    connectedAccountId: newOrExistingConnectedAccountId,
+                    workspaceId,
+                  },
+                  { isSyncEnabled: true },
+                );
+            }
+
+            if (wasArchived && existingCalendarChannels.length > 0) {
+              await transactionManager
+                .getRepository(CalendarChannelEntity)
+                .update(
+                  {
+                    connectedAccountId: newOrExistingConnectedAccountId,
+                    workspaceId,
+                  },
+                  { isSyncEnabled: true },
+                );
+            }
           },
         );
 
@@ -282,6 +309,12 @@ export class MicrosoftAPIsService {
                   messageChannelId: messageChannel.id,
                 },
               );
+              this.onboardingRecentMessagesImportService
+                .importRecentMessages({
+                  messageChannelId: messageChannel.id,
+                  workspaceId,
+                })
+                .catch(() => undefined);
             }
           }
         }

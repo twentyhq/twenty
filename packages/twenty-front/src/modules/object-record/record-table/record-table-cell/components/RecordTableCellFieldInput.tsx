@@ -34,12 +34,18 @@ export const RecordTableCellFieldInput = () => {
     onMoveFocus('down');
   };
 
-  const handleSubmit: FieldInputEvent = ({ newValue, skipPersist }) => {
+  const handleSubmit: FieldInputEvent = ({
+    newValue,
+    skipPersist,
+    skipClose,
+  }) => {
     if (skipPersist !== true) {
       persistFieldFromFieldInputContext(newValue);
     }
 
-    onCloseTableCell();
+    if (skipClose !== true) {
+      onCloseTableCell();
+    }
   };
 
   const handleCancel = () => {

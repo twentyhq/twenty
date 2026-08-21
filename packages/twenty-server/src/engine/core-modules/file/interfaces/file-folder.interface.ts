@@ -1,5 +1,6 @@
 import { registerEnumType } from '@nestjs/graphql';
 
+import { EMAIL_IMAGE_MIME_TYPES } from 'twenty-shared/constants';
 import { FileFolder } from 'twenty-shared/types';
 
 registerEnumType(FileFolder, {
@@ -9,6 +10,7 @@ registerEnumType(FileFolder, {
 export type FileFolderConfig = {
   ignoreExpirationToken: boolean;
   cacheControl: string | null;
+  allowedMimeTypes?: readonly string[];
 };
 
 export const IMMUTABLE_FILE_CACHE_CONTROL = 'private, max-age=86400, immutable';
@@ -60,6 +62,11 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
   [FileFolder.EmailAttachment]: {
     ignoreExpirationToken: false,
     cacheControl: IMMUTABLE_FILE_CACHE_CONTROL,
+  },
+  [FileFolder.EmailImage]: {
+    ignoreExpirationToken: true,
+    cacheControl: IMMUTABLE_FILE_CACHE_CONTROL,
+    allowedMimeTypes: EMAIL_IMAGE_MIME_TYPES,
   },
   [FileFolder.AppTarball]: {
     ignoreExpirationToken: false,

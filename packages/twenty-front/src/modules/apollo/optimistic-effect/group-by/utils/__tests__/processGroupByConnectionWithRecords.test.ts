@@ -55,6 +55,7 @@ describe('processGroupByConnectionWithRecords', () => {
       groupByDimensionValues: [],
       groupByConfig: undefined,
       objectMetadataItem: mockObjectMetadataItem,
+      objectMetadataItems: [mockObjectMetadataItem],
       readField: mockReadField,
       toReference: mockToReference,
     });
@@ -80,6 +81,7 @@ describe('processGroupByConnectionWithRecords', () => {
       groupByDimensionValues: [],
       groupByConfig: undefined,
       objectMetadataItem: mockObjectMetadataItem,
+      objectMetadataItems: [mockObjectMetadataItem],
       readField: mockReadField,
       toReference: mockToReference,
     });
@@ -111,6 +113,7 @@ describe('processGroupByConnectionWithRecords', () => {
       groupByDimensionValues: [],
       groupByConfig: undefined,
       objectMetadataItem: mockObjectMetadataItem,
+      objectMetadataItems: [mockObjectMetadataItem],
       readField: mockReadField,
       toReference: mockToReference,
     });

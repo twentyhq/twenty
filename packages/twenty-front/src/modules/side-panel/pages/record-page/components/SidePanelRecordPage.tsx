@@ -7,6 +7,7 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { INFORMATION_BANNER_HEIGHT } from '@/information-banner/constants/InformationBannerHeight';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { PageLayoutRecordPageRenderer } from '@/object-record/record-show/components/PageLayoutRecordPageRenderer';
+import { RecordShowPageSSESubscribeEffect } from '@/object-record/record-show/components/RecordShowPageSSESubscribeEffect';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
@@ -87,6 +88,11 @@ export const SidePanelRecordPage = () => {
                   targetObjectNameSingular: objectNameSingular,
                 }}
                 isInSidePanel
+              />
+              <RecordShowPageSSESubscribeEffect
+                objectNameSingular={objectNameSingular}
+                recordId={objectRecordId}
+                queryScope="side-panel-record"
               />
             </TimelineActivityContext.Provider>
           </StyledSidePanelRecord>

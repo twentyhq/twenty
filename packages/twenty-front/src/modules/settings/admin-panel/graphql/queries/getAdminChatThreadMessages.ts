@@ -9,16 +9,25 @@ export const GET_ADMIN_CHAT_THREAD_MESSAGES = gql`
         totalInputTokens
         totalOutputTokens
         conversationSize
+        messageCount
         createdAt
         updatedAt
       }
       messages {
         id
         role
+        isHidden
         parts {
           type
+          orderIndex
           textContent
+          reasoningContent
           toolName
+          toolCallId
+          toolInput
+          toolOutput
+          state
+          errorMessage
         }
         createdAt
       }

@@ -6,6 +6,7 @@ import styles from './NavigationBar.module.scss';
 
 type NavigationBarProps = {
   activeItemName: string;
+  isHidden?: boolean;
   items: {
     name: string;
     label: string;
@@ -16,10 +17,15 @@ type NavigationBarProps = {
 
 export const NavigationBar = ({
   activeItemName,
+  isHidden = false,
   items,
 }: NavigationBarProps) => {
   return (
-    <div className={styles.container}>
+    <nav
+      className={styles.container}
+      data-hidden={isHidden ? '' : undefined}
+      aria-hidden={isHidden}
+    >
       {items.map(({ Icon, name, label, onClick }) => (
         <NavigationBarItem
           key={name}
@@ -29,6 +35,6 @@ export const NavigationBar = ({
           ariaLabel={label}
         />
       ))}
-    </div>
+    </nav>
   );
 };

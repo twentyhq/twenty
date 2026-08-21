@@ -111,7 +111,7 @@ export class BillingPortalWorkspaceService {
     ) {
       throw new BillingException(
         'Customer already has a non-canceled billing subscription',
-        BillingExceptionCode.BILLING_SUBSCRIPTION_INVALID,
+        BillingExceptionCode.BILLING_SUBSCRIPTION_ALREADY_EXISTS,
       );
     }
 

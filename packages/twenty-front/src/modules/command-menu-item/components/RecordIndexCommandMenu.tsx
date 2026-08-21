@@ -1,3 +1,4 @@
+import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { RecordIndexCommandMenuDropdown } from '@/command-menu-item/components/RecordIndexCommandMenuDropdown';
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
 import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
@@ -7,7 +8,6 @@ import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsMobile } from 'twenty-ui/utilities';
 
 export const RecordIndexCommandMenu = () => {
   const contextStoreCurrentObjectMetadataItemId = useAtomComponentStateValue(
@@ -15,7 +15,6 @@ export const RecordIndexCommandMenu = () => {
     MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
 
-  const isMobile = useIsMobile();
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
@@ -27,15 +26,15 @@ export const RecordIndexCommandMenu = () => {
           <CommandMenuContextProvider
             isInSidePanel={false}
             displayType="button"
-            containerType="index-page-header"
+            containerType={CommandMenuItemContainerType.IndexPageHeader}
             isInPreviewMode={isLayoutCustomizationModeEnabled}
           >
-            {!isMobile && <PinnedCommandMenuItemButtons />}
+            <PinnedCommandMenuItemButtons />
           </CommandMenuContextProvider>
           <CommandMenuContextProvider
             isInSidePanel={false}
             displayType="dropdownItem"
-            containerType="index-page-dropdown"
+            containerType={CommandMenuItemContainerType.IndexPageDropdown}
           >
             <RecordIndexCommandMenuDropdown />
           </CommandMenuContextProvider>

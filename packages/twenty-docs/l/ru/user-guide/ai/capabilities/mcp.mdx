@@ -3,10 +3,6 @@ title: Сервер MCP
 description: Подключайте ИИ-ассистентов к вашему рабочему пространству Twenty с помощью протокола Model Context Protocol.
 ---
 
-<Warning>
-В настоящее время MCP находится на стадии **alpha** и доступен только в некоторых рабочих пространствах. В вашем рабочем пространстве он может быть ещё не включён.
-</Warning>
-
 Twenty предоставляет сервер [MCP](https://modelcontextprotocol.io/), чтобы ИИ-ассистенты — Claude Desktop, Claude Code, Cursor, ChatGPT и другие — могли читать и записывать ваши данные CRM на естественном языке.
 
 Используйте **URL рабочей области** (URL, который вы используете для доступа к Twenty) в качестве конечной точки MCP. В Twenty Cloud URL вашей рабочей области может быть `https://{mycompany}.twenty.com` или собственный домен. Сервер доступен по адресу:
@@ -72,20 +68,20 @@ Twenty предоставляет сервер [MCP](https://modelcontextprotoco
 Ваш ключ API предоставляет доступ к данным рабочей области. Не храните его в системе контроля версий и общих dotfiles.
 </Warning>
 
-Чтобы создать ключ API, перейдите в **Settings > APIs & Webhooks > + Create key**. См. [API](/l/ru/developers/extend/api#create-an-api-key) для подробностей.
+Чтобы создать ключ API, перейдите в **Settings → MCP & APIs → API → + Create key**. См. [API](/l/ru/developers/extend/api#create-an-api-key) для подробностей.
 
 ## Быстрый старт
 
 ### 1. Скопируйте конфигурацию
 
-Перейдите в **Settings > AI > More > MCP Server** в Twenty. Выберите метод аутентификации (OAuth или ключ API), скопируйте фрагмент JSON (в нём уже будет использован URL вашей рабочей области) и вставьте его в файл конфигурации вашего MCP-клиента.
+Перейдите в **Settings → MCP & APIs → MCP** в Twenty. Выберите метод аутентификации (OAuth или ключ API), скопируйте фрагмент JSON (в нём уже будет использован URL вашей рабочей области) и вставьте его в файл конфигурации вашего MCP-клиента.
 
-| Клиент             | Расположение файла конфигурации                                                                                                                                                |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Claude Desktop** | `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) или `%APPDATA%\Claude\claude_desktop_config.json` (Windows)                                          |
-| **Claude Code**    | `~/.claude.json` (пользователь) или `.mcp.json` (проект)                                                                                                                       |
-| **Cursor**         | `.cursor/mcp.json` в вашем проекте или `~/.cursor/mcp.json` глобально                                                                                                          |
-| **ChatGPT**        | Включите режим разработчика в **Settings > Apps & Connectors > Advanced settings**, затем используйте **Create** в **Settings > Apps & Connectors**, чтобы добавить сервер MCP |
+| Клиент             | Расположение файла конфигурации                                                                                                                                                 |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Claude Desktop** | `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) или `%APPDATA%\Claude\claude_desktop_config.json` (Windows)                                           |
+| **Claude Code**    | `~/.claude.json` (пользователь) или `.mcp.json` (проект)                                                                                                                        |
+| **Cursor**         | `.cursor/mcp.json` в вашем проекте или `~/.cursor/mcp.json` глобально                                                                                                           |
+| **ChatGPT**        | Включите режим разработчика в **Settings → Apps & Connectors → Advanced settings**, затем используйте **Create** в **Settings → Apps & Connectors**, чтобы добавить сервер MCP. |
 
 ### 2. Подключение
 
@@ -113,7 +109,7 @@ Twenty предоставляет сервер [MCP](https://modelcontextprotoco
 Подключения MCP наследуют разрешения аутентифицированного пользователя (OAuth) или роль, назначенную ключу API. Чтобы ограничить действия, доступные серверу MCP:
 
 * **OAuth**: Применяется роль пользователя в рабочей области.
-* **API Key**: Назначьте ключу API роль в **Settings > Roles**. См. [Разрешения](/l/ru/user-guide/permissions-access/capabilities/permissions).
+* **API Key**: Назначьте ключу API роль в **Settings → Members → Roles**. См. [Разрешения](/l/ru/user-guide/permissions-access/capabilities/permissions).
 
 ## Конфигурация для самостоятельного хостинга
 
