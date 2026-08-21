@@ -482,7 +482,7 @@ const handler = async (
 
 #### Whose access a call uses
 
-A client acts as the person who triggered the run: their role intersected with your application's, so the call can never do more than either of you. That is the default, and it means a person can never use your app to exceed their own permissions.
+Every client — `CoreApiClient`, `MetadataApiClient` and `RestApiClient` — acts as the person who triggered the run: their role intersected with your application's, so the call can never do more than either of you. That is the default, and it means a person can never use your app to exceed their own permissions.
 
 When nobody triggered the run there is no person to act as, so the same client falls back to your application's own access: cron schedules, install hooks and unauthenticated webhooks need no special handling.
 
@@ -503,7 +503,13 @@ const handler = async (event: DatabaseEventPayload) => {
 };
 ```
 
-Build both once, at module scope, and every call site then says which access it uses by which client it calls.
+Build both once, at module scope, and every call site then says which access it uses by which client it calls. `RestApiClient` takes the same option:
+
+```ts
+import { RestApiClient } from 'twenty-client-sdk/rest';
+
+const asApplication = new RestApiClient({ runAs: 'application' });
+```
 
 <Note>
 **A run nobody triggered acts as your application.** Cron schedules, install hooks and unauthenticated webhooks have no person behind them, so the default client falls back to your application's own access and keeps working. `runAs: 'application'` is only needed when you want that access in a run a person *did* trigger.
