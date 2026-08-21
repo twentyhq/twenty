@@ -58,7 +58,11 @@ exports[`registry-derived override property maps derives the overridable propert
   "rowLevelPermissionPredicateGroup": [],
   "searchFieldMetadata": [],
   "skill": [],
-  "timelineActivityRule": [],
+  "timelineActivityRule": [
+    "actions",
+    "triggerFieldMetadataIds",
+    "isActive",
+  ],
   "view": [
     "name",
     "type",
