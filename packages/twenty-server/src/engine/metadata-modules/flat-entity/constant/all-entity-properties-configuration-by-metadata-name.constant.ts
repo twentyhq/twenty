@@ -1907,15 +1907,23 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
     actions: {
       toCompare: true,
       toStringify: true,
+      isOverridable: true,
       universalProperty: undefined,
     },
     triggerFieldMetadataIds: {
       toCompare: true,
       toStringify: true,
+      isOverridable: true,
       universalProperty: undefined,
     },
     isActive: {
       toCompare: true,
+      toStringify: false,
+      isOverridable: true,
+      universalProperty: undefined,
+    },
+    overrides: {
+      toCompare: false,
       toStringify: false,
       universalProperty: undefined,
     },

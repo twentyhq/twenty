@@ -4,6 +4,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { resolveEffectiveEntity } from 'src/engine/metadata-modules/utils/resolve-effective-entity.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -53,9 +54,13 @@ export class TimelineActivityRuleResolverService {
         },
       );
 
+    // Resolved once here so every rule the engine sees already carries the
+    // workspace edits that application synchronization must not discard.
     const persistedFlatRules = Object.values(
       flatTimelineActivityRuleMaps.byUniversalIdentifier,
-    ).filter(isDefined);
+    )
+      .filter(isDefined)
+      .map(resolveEffectiveEntity);
 
     const relationRules = persistedFlatRules
       .filter(
