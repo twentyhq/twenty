@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { getSendableEmailHandles, isDefined } from 'twenty-shared/utils';
 
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
@@ -23,12 +23,7 @@ export const resolveOutboundFromHandleOrThrow = ({
     .trim()
     .toLowerCase();
 
-  const allowedFromHandles = [
-    connectedAccount.handle,
-    ...(connectedAccount.handleAliases ?? []),
-  ].filter(isNonEmptyString);
-
-  const matchedFromHandle = allowedFromHandles.find(
+  const matchedFromHandle = getSendableEmailHandles(connectedAccount).find(
     (allowedFromHandle) =>
       allowedFromHandle.trim().toLowerCase() === normalizedRequestedFromHandle,
   );

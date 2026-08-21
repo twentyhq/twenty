@@ -41,6 +41,17 @@ export const useEmailComposerState = ({
   const [sender, setSender] = useState<ConnectedAccountSender>({
     connectedAccountId: initialConnectedAccountId,
   });
+  const [senderAccountId, setSenderAccountId] = useState(
+    initialConnectedAccountId,
+  );
+
+  const isSenderFromAnotherAccount =
+    senderAccountId !== initialConnectedAccountId;
+
+  if (isSenderFromAnotherAccount) {
+    setSenderAccountId(initialConnectedAccountId);
+    setSender({ connectedAccountId: initialConnectedAccountId });
+  }
 
   const { connectedAccountId, fromHandle } = sender;
   const [to, setTo] = useState<EmailRecipient[]>(() =>

@@ -19,7 +19,10 @@ jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
   useApolloCoreClient: () => ({ refetchQueries: jest.fn() }),
 }));
 
-const createSendEmailMock = (input: Record<string, unknown>) => ({
+const createSendEmailMock = (input: {
+  connectedAccountId: string;
+  fromHandle?: string;
+}) => ({
   request: {
     query: SEND_EMAIL,
     variables: {
@@ -117,5 +120,32 @@ describe('useEmailComposerState', () => {
 
     expect(onSent).toHaveBeenCalledWith('message-thread-1');
     expect(mockEnqueueErrorSnackBar).not.toHaveBeenCalled();
+  });
+
+  it('drops a picked alias when the reply moves to another account', () => {
+    const { result, rerender } = renderHook(
+      ({ connectedAccountId }: { connectedAccountId: string }) =>
+        useEmailComposerState({ connectedAccountId }),
+      {
+        initialProps: { connectedAccountId: 'account-1' },
+        wrapper: ({ children }: { children: ReactNode }) => (
+          <MockedProvider mocks={[]}>{children}</MockedProvider>
+        ),
+      },
+    );
+
+    act(() => {
+      result.current.setSender({
+        connectedAccountId: 'account-1',
+        fromHandle: 'sales@twenty.com',
+      });
+    });
+
+    expect(result.current.fromHandle).toBe('sales@twenty.com');
+
+    rerender({ connectedAccountId: 'account-2' });
+
+    expect(result.current.connectedAccountId).toBe('account-2');
+    expect(result.current.fromHandle).toBeUndefined();
   });
 });

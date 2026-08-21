@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 import {
@@ -152,7 +153,7 @@ export const WorkflowRunStepLogsEmailDetail = ({
       <StyledSection>
         <StyledSectionTitle>{t`Recipients`}</StyledSectionTitle>
         <StyledRecipientsCard>
-          {isDefined(details.fromHandle) && details.fromHandle.length > 0 && (
+          {isNonEmptyString(details.fromHandle) && (
             <>
               <StyledRecipientLabel>{t`From`}</StyledRecipientLabel>
               <StyledRecipientValue>{details.fromHandle}</StyledRecipientValue>
