@@ -44,6 +44,10 @@ export type ReadRecordQueryBuilder = RecordQueryBuilder & {
   limit(count?: number): unknown;
   offset(count?: number): unknown;
   getMany(): Promise<ObjectLiteral[]>;
+  getRawAndEntities(): Promise<{
+    entities: ObjectLiteral[];
+    raw: Record<string, unknown>[];
+  }>;
   getRawOne<T extends Record<string, unknown> = ObjectLiteral>(): Promise<
     T | undefined
   >;

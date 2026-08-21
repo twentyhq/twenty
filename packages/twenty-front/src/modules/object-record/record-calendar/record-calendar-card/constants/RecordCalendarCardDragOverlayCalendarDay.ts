@@ -1,0 +1,1 @@
+export const RECORD_CALENDAR_CARD_DRAG_OVERLAY_CALENDAR_DAY = 'drag-overlay';

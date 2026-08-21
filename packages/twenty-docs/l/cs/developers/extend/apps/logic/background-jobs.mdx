@@ -36,10 +36,10 @@ Cílová funkce přijímá `payload` jako argument svého handleru, úplně stej
 
 ## Možnosti úlohy
 
-| Možnost      | Výchozí | Rozsah                  | K čemu slouží                                                                                                         |
-| ------------ | ------- | ----------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `retryLimit` | `0`     | `0`–`10`                | Další pokusy, pokud spuštění vyvolá výjimku. Zvyšujte tuto hodnotu jen u handlerů, které je bezpečné spustit dvakrát. |
-| `delayMs`    | `0`     | `0`–`604800000` (7 dní) | Po tuto dobu se čeká, než se spuštění stane způsobilým.                                                               |
+| Možnost      | Výchozí | Rozsah                  | K čemu slouží                                                                                                                                                          |
+| ------------ | ------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `retryLimit` | `0`     | `0`–`10`                | Celkový počet dalších pokusů ve frontě. Počet opakování vyžádaných aplikací je omezen na `3`. Zvyšujte tuto hodnotu jen u handlerů, které je bezpečné spustit dvakrát. |
+| `delayMs`    | `0`     | `0`–`604800000` (7 dní) | Po tuto dobu se čeká, než se spuštění stane způsobilým.                                                                                                                |
 
 ```ts
 await enqueueJob({
@@ -55,6 +55,40 @@ await enqueueJob({
 </Note>
 
 Zařazené spuštění dědí jednajícího uživatele funkce, která ho zařadila, takže pracuje se stejnými oprávněními.
+
+## Opakování při přechodném selhání.
+
+Twenty neopakuje každou výjimku z kódu aplikace. Běžně vyvolaná chyba se považuje za trvalé selhání. Při přechodném selhání může logická funkce zařazená do fronty požádat až o tři opakování vyvoláním `RetryableLogicFunctionError`.
+
+```ts
+import {
+  type LogicFunctionExecutionContext,
+  RetryableLogicFunctionError,
+} from 'twenty-sdk/logic-function';
+
+export const handler = async (
+  _payload: unknown,
+  { retryCount, maxRetries }: LogicFunctionExecutionContext,
+) => {
+  const response = await fetch('https://api.example.com/contacts');
+
+  if (response.status === 429 || response.status >= 500) {
+    throw new RetryableLogicFunctionError(
+      `The contacts API is temporarily unavailable (${response.status}); retry ${retryCount} of ${maxRetries}`,
+    );
+  }
+};
+```
+
+Pokud je to možné, vyvolejte `RetryableLogicFunctionError` přímo. Pokud ji rozšiřujete, nenahrazujte její `name`: Twenty rozpozná serializovaný název `RetryableLogicFunctionError` napříč běhovými prostředími.
+
+`retryCount` má při počátečním spuštění hodnotu `0` a zvyšuje se pouze tehdy, když kód aplikace požádá o opakování. `maxRetries` je nejvýše `3` a může být nižší, pokud má úloha ve frontě nižší celkový limit opakování. Selhání platformy nezvyšují `retryCount`, přesto však spotřebovávají celkový bezpečnostní rozpočet fronty.
+
+Fronta zpožďuje pokusy o opakování exponenciálním backoffem a jitterem. Přesná prodleva záměrně není zaručena, takže kód aplikace by neměl záviset na tom, že k opakování dojde v přesný čas. Jakmile je dosaženo `maxRetries`, další `RetryableLogicFunctionError` se zaznamená jako konečné selhání aplikace bez dalšího spuštění.
+
+<Warning>
+Opakování znovu spustí celou obslužnou funkci a může k nim dojít poté, co některé vedlejší účinky již úspěšně proběhly. Před požádáním o opakování zajistěte, aby byla obslužná funkce idempotentní.
+</Warning>
 
 ## Použití: stránkování dlouhé synchronizace
 
@@ -159,7 +193,3 @@ Co to drží pohromadě:
 * **Uložte průběh před zařazením dalšího spuštění,** takže se neúspěšný článek řetězu znovu spustí od posledního dokončeného bloku místo od začátku.
 * **Udržujte každý blok idempotentní.** Znovuzpracování jednoho bloku po opakování nesmí vést k dvojím zápisům – své zápisy važte na záznam nebo externí ID, které zpracováváte.
 * **Preferujte řetězec po blocích před jedním obřím rozvětvením**, když práce zasahuje třetí stranu s omezením rychlosti: řetězec s `delayMs` sám sebe dávkuje, zatímco tisíce úloh zařazených najednou se stanou způsobilými okamžitě.
-
-<Warning>
-Opakované pokusy znovu spustí celý handler. Než nastavíte `retryLimit` nad `0`, udržujte zařazené handlery idempotentní.
-</Warning>

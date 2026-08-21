@@ -44,7 +44,10 @@ export const RecordCalendarTimeGridAllDayCell = ({
     <StyledAllDayCell>
       {allDayRecordIds.map((recordId) => (
         <StyledCardContainer key={recordId} data-selectable-id={recordId}>
-          <RecordCalendarCard recordId={recordId} />
+          <RecordCalendarCard
+            recordId={recordId}
+            calendarDay={day.toString()}
+          />
         </StyledCardContainer>
       ))}
     </StyledAllDayCell>
