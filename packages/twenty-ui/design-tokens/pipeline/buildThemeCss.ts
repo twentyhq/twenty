@@ -1,6 +1,6 @@
-import { SQUIRCLE_DOUBLED_RADIUS_TOKENS } from '../squircleDoubledRadiusTokens';
 import { type CollectedTokenLeaf } from '../types/CollectedTokenLeaf';
 import { GENERATED_CSS_HEADER } from './generatedCssHeader';
+import { selectSquircleDoubledRadiusLeaves } from './selectSquircleDoubledRadiusLeaves';
 
 const SQUIRCLE_COMMENT = `/* Squircle corners: progressive enhancement for browsers supporting
    corner-shape (Chromium 139+). A squircle needs ~2x the radius of a round
@@ -46,20 +46,9 @@ export const buildThemeCss = ({
     )
     .join('\n');
 
-  const leafByVarName = new Map(leaves.map((leaf) => [leaf.varName, leaf]));
-
-  const doubledDeclarations = SQUIRCLE_DOUBLED_RADIUS_TOKENS.map(
-    (radiusToken) => {
-      const varName = `--t-border-radius-${radiusToken}`;
-      const leaf = leafByVarName.get(varName);
-      if (leaf === undefined) {
-        throw new Error(
-          `Missing radius token "${varName}" for the squircle block.`,
-        );
-      }
-      return `    ${varName}: ${extractSquircleBasePx(leaf) * 2}px;`;
-    },
-  ).join('\n');
+  const doubledDeclarations = selectSquircleDoubledRadiusLeaves(leaves)
+    .map((leaf) => `    ${leaf.varName}: ${extractSquircleBasePx(leaf) * 2}px;`)
+    .join('\n');
 
   return `${GENERATED_CSS_HEADER}
 

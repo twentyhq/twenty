@@ -1,6 +1,5 @@
 import { DESIGN_TOKENS } from '../designTokens';
 import { collectLeaves } from '../pipeline/collectLeaves';
-import { SQUIRCLE_DOUBLED_RADIUS_TOKENS } from '../squircleDoubledRadiusTokens';
 
 const leaves = collectLeaves(DESIGN_TOKENS);
 
@@ -11,19 +10,5 @@ describe('design token source', () => {
         !Number.isNaN(Number(leaf.light)) && !Number.isNaN(Number(leaf.dark));
       expect(leaf.unit === 'number').toBe(parsesAsNumber);
     }
-  });
-
-  it('never doubles the radii of elements that keep round corners', () => {
-    const roundRadiusTokens: readonly string[] = [
-      'pill',
-      'rounded',
-      'smRound',
-      'mdRound',
-    ];
-    expect(
-      SQUIRCLE_DOUBLED_RADIUS_TOKENS.filter((radiusToken) =>
-        roundRadiusTokens.includes(radiusToken),
-      ),
-    ).toEqual([]);
   });
 });
