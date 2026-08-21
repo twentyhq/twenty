@@ -175,6 +175,29 @@ describe('mapPartnerForMarketplace', () => {
     ]);
   });
 
+  it('falls back to the uploaded file when coverImageUrl is the TEXT default', () => {
+    const node = makeNode();
+    node.partnerContents.edges = [
+      {
+        node: {
+          contentType: ['CASE_STUDY'],
+          status: 'APPROVED',
+          clientName: 'Acme Corp',
+          headline: 'CRM migration',
+          body: { markdown: 'Moved 12 teams to Twenty.' },
+          coverImageUrl: '',
+          coverImage: [{ url: 'https://file.example.com/cover.png' }],
+          caseStudyLink: { primaryLinkUrl: 'https://example.com/case-study' },
+          position: 1,
+        },
+      },
+    ];
+
+    expect(mapPartnerForMarketplace(node, 'profile').portfolio[0].imageUrl).toBe(
+      'https://file.example.com/cover.png',
+    );
+  });
+
   it('prefers the pasted coverImageUrl over the uploaded coverImage file in portfolio', () => {
     const node = makeNode();
     node.partnerContents.edges = [
