@@ -1,8 +1,9 @@
 import { useCallback, useState, type CSSProperties } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
-  closeSidePanel,
   enqueueSnackbar,
+  openSidePanelPage,
+  SidePanelPages,
   useFrontComponentExecutionContext,
   type FrontComponentExecutionContext,
 } from 'twenty-sdk/front-component';
@@ -106,7 +107,12 @@ const ApplyToBrief = () => {
 
       if (result.ok) {
         await enqueueSnackbar({ message: 'Application sent', variant: 'success' });
-        await closeSidePanel();
+        await openSidePanelPage({
+          page: SidePanelPages.ViewRecord,
+          recordId: result.applicationId,
+          objectNameSingular: 'application',
+          resetNavigationStack: true,
+        });
       } else {
         setErrorMessage(getRefusalMessage(result.reason));
       }
